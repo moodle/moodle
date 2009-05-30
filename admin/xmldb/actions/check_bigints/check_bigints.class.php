@@ -208,6 +208,10 @@ class check_bigints extends XMLDBAction {
                                 $o.='        </ul>';
                             }
                             $o.='    </li>';
+                        /// Give the script some more time (resetting to current if exists)
+                            if ($currenttl = @ini_get('max_execution_time')) {
+                                @ini_set('max_execution_time',$currenttl);
+                            }
                         }
                         $o.='        </ul>';
                     }
