@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @version Moodle 2.0
@@ -89,7 +90,7 @@ function resource_get_content_for_index(&$notneeded) {
             id as trueid,
             r.*
         FROM 
-            {resource} r
+            {resource} as r
         WHERE 
             alltext != '' AND 
             alltext != ' ' AND 
@@ -126,9 +127,9 @@ function resource_get_content_for_index(&$notneeded) {
                r.type as type,
                r.timemodified as timemodified
             FROM 
-                {resource} r,
-                {course_modules} cm,
-                {modules} m
+                {resource} as r,
+                {course_modules} as cm,
+                {modules} as m
             WHERE 
                r.type = 'file' AND
                cm.instance = r.id AND
@@ -239,9 +240,9 @@ function resource_single_document($id, $itemtype) {
            r.type as type,
            r.timemodified as timemodified
         FROM 
-            {resource} r,
-            {course_modules} cm,
-            {modules} m
+            {resource} as r,
+            {course_modules} as cm,
+            {modules} as m
         WHERE 
             cm.instance = r.id AND
             cm.course = r.course AND
@@ -312,6 +313,9 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     $r = $DB->get_record('resource', array('id' => $this_id));
     $module_context = $DB->get_record('context', array('id' => $context_id));
     $cm = $DB->get_record('course_modules', array('id' => $module_context->instanceid));
+
+    if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
+
     $course = $DB->get_record('course', array('id' => $r->course));
     $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
 

@@ -7,7 +7,6 @@
 * @subpackage search_engine
 * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
-* @version prepared for 2.0
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 */
 
@@ -278,6 +277,7 @@ class SearchQuery {
                     $resultdoc->doctype = $hit->doctype;
                     $resultdoc->author  = $hit->author;
                     $resultdoc->courseid = $hit->course_id;
+                    $resultdoc->userid = $hit->user_id;
                     
                     //and store it
                     $resultdocs[] = clone($resultdoc);
@@ -326,12 +326,12 @@ class SearchQuery {
     */
     public function page_numbers() {
       $pages  = $this->total_pages();
-      $query  = htmlentities($this->term);
+      $query = htmlentities($this->term,ENT_NOQUOTES,'utf-8');
       $page   = $this->pagenumber;
       $next   = get_string('next', 'search');
       $back   = get_string('back', 'search');
 
-      $ret = "<div class='mdl-align' id='search_page_links'>";
+      $ret = "<div align='center' id='search_page_links'>";
 
       //Back is disabled if we're on page 1
       if ($page > 1) {

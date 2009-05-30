@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @version Moodle 2.0
@@ -181,6 +182,8 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
     $lesson = $DB->get_record('lesson', array('id' => $page->lessonid));
     $context = $DB->get_record('context', array('id' => $context_id));
     $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
+
+    if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden lesson ";

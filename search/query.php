@@ -7,7 +7,6 @@
     * @subpackage search_engine
     * @author Michael Champanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
     * @date 2008/03/31
-    * @version prepared for 2.0
     * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
     *
     * The query page - accepts a user-entered query string and returns results.
@@ -118,9 +117,9 @@
         } 
         
         // add module restriction
-        $doctypestr = get_string('doctype', 'search');
-        $titlestr = get_string('title', 'search');
-        $authorstr = get_string('author', 'search');
+        $doctypestr = 'doctype';
+        $titlestr = 'title';
+        $authorstr = 'author';
         if ($adv->module != 'all') {
             $query_string .= " +{$doctypestr}:".$adv->module;
         } 
@@ -274,7 +273,8 @@
     ?>
     </form>
     <br/>
-    <div class="mdl-align">
+    
+    <div align="center">
     <?php
     print_string('searching', 'search') . ': ';
     
@@ -334,7 +334,7 @@
             foreach ($hits as $listing) {  
                 
                 if ($listing->doctype == 'user'){ // A special handle for users                    
-                    $icon = print_user_picture ($listing->author, 0, true, 0, true, false) ;
+                    $icon = print_user_picture ($listing->userid, 0, true, 0, true, false) ;
                 } else {
                     $iconpath = $CFG->modpixpath.'/'.$listing->doctype.'/icon.gif';
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";
@@ -368,7 +368,7 @@
         }     
         print_box_end();
     ?>
-    <div class="mdl-align">
+    <div align="center">
     <?php 
         print_string('ittook', 'search');
         search_stopwatch(); 

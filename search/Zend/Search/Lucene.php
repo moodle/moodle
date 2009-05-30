@@ -62,6 +62,7 @@ require_once "Zend/Search/Lucene/Index/SegmentInfoPriorityQueue.php";
 
 /** Zend_Search_Lucene_LockManager */
 require_once "Zend/Search/Lucene/LockManager.php";
+//require_once "Zend/Search/Lucene/SoftLockManager.php";
 
 
 
@@ -409,7 +410,7 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
         Zend_Search_Lucene_LockManager::obtainReadLock($this->_directory);
         
         // Escalate read lock to prevent current generation index files to be deleted while opening process is not done 
-//        Zend_Search_Lucene_LockManager::escalateReadLock($this->_directory);
+        Zend_Search_Lucene_LockManager::escalateReadLock($this->_directory);
         
         
         $this->_generation = self::getActualGeneration($this->_directory);
@@ -452,7 +453,7 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
         }
         
         // De-escalate read lock to prevent current generation index files to be deleted while opening process is not done 
-//        Zend_Search_Lucene_LockManager::escalateReadLock($this->_directory);
+        Zend_Search_Lucene_LockManager::deEscalateReadLock($this->_directory);
     }
 
     /**

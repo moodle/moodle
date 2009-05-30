@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @version Moodle 2.0
@@ -82,7 +83,7 @@ class DataCommentSearchDocument extends SearchDocument {
         //remove '(ip.ip.ip.ip)' from data record author field
         $doc->author    = preg_replace('/\(.*?\)/', '', $comment['author']);
         $doc->contents  = $comment['content'];
-        $doc->url       = data_make_link($data_id, $comment['recordid']);
+        $doc->url       = data_make_link($comment['dataid'], $comment['recordid']);
         
         // module specific information; optional
         $data->database = $comment['dataid'];
@@ -205,7 +206,7 @@ function data_get_content_for_index(&$database) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // getting records for indexing
-    $records_content = data_get_records($database->id, 'text');
+    $records_content = data_get_records($database->id, 'text,textarea');
     if ($records_content){
         foreach(array_keys($records_content) as $arecordid) {
     
@@ -232,6 +233,8 @@ function data_get_content_for_index(&$database) {
     if ($records_comments){
         foreach($records_comments as $aComment){
             $aComment->title = $recordsTitle[$aComment->recordid];
+            $authoruser = $DB->get_record('user', array('id' => $aComment->userid));
+            $aComment->author = fullname($authoruser);
             $documents[] = new DataCommentSearchDocument(get_object_vars($aComment), $database->course, $context->id);
         }
     }
@@ -257,7 +260,7 @@ function data_single_document($id, $itemtype) {
         $cm = $DB->get_record('course_modules', array('course' => $record_course, 'module' => $coursemodule, 'instance' => $recordMetaData->dataid));
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         // compute text
-        $recordData = data_get_records($recordMetaData->dataid, 'text', $id);
+        $recordData = data_get_records($recordMetaData->dataid, 'text,textarea', $id);
         if ($recordData){
             $dataArray = array_values($recordData);
             $record_content = $dataArray[0]; // We cannot have more than one record here
@@ -290,6 +293,8 @@ function data_single_document($id, $itemtype) {
         $comment->title = $DB->get_field('search_document', 'title', array('docid' => $record->id, 'itemtype' => 'record'));
         $comment->dataid = $record->dataid;
         $comment->groupid = $record->groupid;
+        $authoruser = $DB->get_record('user', array('id' => $comment->userid));
+        $comment->author = fullname($authoruser);
         // make document
         return new DataCommentSearchDocument(get_object_vars($comment), $record_course, $context->id);
     } else {
@@ -355,6 +360,8 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     $data = $DB->get_record('data', array('id' => $record->dataid));
     $context = $DB->get_record('context', array('id' => $context_id));
     $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
+
+    if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
 
     if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $context)) {
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden database ";

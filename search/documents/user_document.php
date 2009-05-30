@@ -51,7 +51,7 @@ class UserSearchDocument extends SearchDocument {
         // module specific information; optional
         
         // construct the parent class
-        parent::__construct($doc, $data, 0, 0, 0, PATH_FOR_SEARCH_TYPE_USER);
+        parent::__construct($doc, $data, 0, 0, $user_id, PATH_FOR_SEARCH_TYPE_USER);
     } 
 }
 
@@ -77,18 +77,20 @@ class UserPostSearchDocument extends SearchDocument {
         $user               = $DB->get_record('user', array('id' => $user_id));
 
         // we cannot call userdate with relevant locale at indexing time.
-        $doc->title         = get_string('post').': '.fullname($user);
+        //$doc->title         = get_string('post').': '.fullname($user);
+        $doc->title         = $post['subject'];
         $doc->date          = $post['created'];
         
         //remove '(ip.ip.ip.ip)' from chat author list
         $doc->author        = fullname($user);
         $doc->contents      = $post['description'];
-        $doc->url           = user_make_link($user_id, 'post');
+        // $doc->url           = user_make_link($user_id, 'post');
+        $doc->url           = user_make_link($post['id'], 'post');
         
         // module specific information; optional
         
         // construct the parent class
-        parent::__construct($doc, $data, 0, 0, 0, PATH_FOR_SEARCH_TYPE_USER);
+        parent::__construct($doc, $data, 0, 0, $user_id, PATH_FOR_SEARCH_TYPE_USER);
     } 
 }
 
@@ -125,7 +127,7 @@ class UserBlogAttachmentSearchDocument extends SearchDocument {
         // module specific information; optional
         
         // construct the parent class
-        parent::__construct($doc, $data, 0, 0, 0, PATH_FOR_SEARCH_TYPE_USER);
+        parent::__construct($doc, $data, 0, 0, $post['userid'], PATH_FOR_SEARCH_TYPE_USER);
     } 
 }
 
@@ -143,7 +145,7 @@ function user_make_link($itemid, $itemtype) {
     if ($itemtype == 'user'){
         return $CFG->wwwroot.'/user/view.php?id='.$itemid;
     } elseif ($itemtype == 'post') {
-        return $CFG->wwwroot.'/blog/index.php?userid='.$itemid;
+        return $CFG->wwwroot.'/blog/index.php?postid='.$itemid;
     } elseif ($itemtype == 'attachment') {
         $post = $DB->get_record('post', array('id' => $itemid));
         if (!$CFG->slasharguments){
