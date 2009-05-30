@@ -261,6 +261,9 @@ function upgrade_plugin_savepoint($result, $version, $type, $dir, $allowabort=tr
         throw new upgrade_exception("$type/$dir", $version);
     }
 
+    /// TODO: Check that $type is a correct type - based on get_plugin_types()
+    /// TODO: Check that $dir (that perhaps should be named $name) is an existing plugin
+
     $fullname = $type.'_'.$dir;
     $component = $type.'/'.$dir;
 
