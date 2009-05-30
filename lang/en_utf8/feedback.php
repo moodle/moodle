@@ -193,6 +193,7 @@ $string['update_item'] = 'Save changes to question';
 $string['use_one_line_for_each_value'] = '<br />Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
+$string['url_for_continue_button'] = 'URL for continue-button';
 $string['vertical'] = 'vertical';
 
 ?>
