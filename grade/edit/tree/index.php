@@ -63,9 +63,9 @@ if (has_capability('moodle/grade:manage', $context)) {
         $USER->gradeediting[$course->id] = 0;
     }
 
-    if (($showadvanced == 1) and confirm_sesskey()) {
+    if ($showadvanced == 1) {
         $USER->gradeediting[$course->id] = 1;
-    } else if (($showadvanced == 0) and confirm_sesskey()) {
+    } else if ($showadvanced == 0) {
         $USER->gradeediting[$course->id] = 0;
     }
 
@@ -137,7 +137,7 @@ switch ($action) {
             }
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-            if ($confirm and confirm_sesskey()) {
+            if ($confirm) {
                 $object->delete('grade/report/grader/category');
                 redirect($returnurl);
 
@@ -212,11 +212,9 @@ if ($current_view != '') {
 
 print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
 
-$form_key = optional_param('sesskey', null, PARAM_ALPHANUM);
-
-if ($form_key && $data = data_submitted()) {
+if ($data = data_submitted() and confirm_sesskey()) {
     // Perform bulk actions first
-    if (!empty($data->bulkmove) && confirm_sesskey()) {
+    if (!empty($data->bulkmove)) {
         $elements = array();
 
         foreach ($data as $key => $value) {
@@ -231,75 +229,58 @@ if ($form_key && $data = data_submitted()) {
     // Category and item field updates
     foreach ($data as $key => $value) {
         // Grade category text inputs
-        if (preg_match('/(aggregation|droplow|keephigh)_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
-            $value = required_param($matches[0], PARAM_INT);
+        if (preg_match('/^(aggregation|droplow|keephigh)_([0-9]+)$/', $key, $matches)) {
+            $param = $matches[1];
+            $aid   = $matches[2];
 
             // Do not allow negative values
+            $value = clean_param($value, PARAM_INT);
             $value = ($value < 0) ? 0 : $value;
 
-            $param = $matches[1];
-            $a->id = $matches[2];
-
-            $grade_category = grade_category::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $grade_category = grade_category::fetch(array('id'=>$aid, 'courseid'=>$courseid));
             $grade_category->$param = $value;
 
             $grade_category->update();
             grade_regrade_final_grades($courseid);
 
         // Grade item text inputs
-        } elseif (preg_match('/(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
-            $defaults = array('grademax' => 100, 'aggregationcoef' => 1, 'multfactor' => 1, 'plusfactor' => 0);
-
-            if (is_string($_POST[$matches[0]]) && strlen($_POST[$matches[0]]) < 1) {
-                $_POST[$matches[0]] = null;
-            }
-            $value = optional_param($matches[0], $defaults[$matches[1]], PARAM_NUMBER);
-
+        } elseif (preg_match('/^(grademax|aggregationcoef|multfactor|plusfactor)_([0-9]+)$/', $key, $matches)) {
             $param = $matches[1];
-            $a->id = $matches[2];
-            $grade_item = grade_item::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
+            $aid   = $matches[2];
+
+            $value = unformat_float($value);
+            $value = clean_param($value, PARAM_NUMBER);
+
+            $grade_item = grade_item::fetch(array('id'=>$aid, 'courseid'=>$courseid));
+
+            if ($param === 'grademax' and $value < $grade_item->grademin) {
+                // better not allow values lower than grade min
+                $value = $grade_item->grademin;
+            }
             $grade_item->$param = $value;
 
             $grade_item->update();
             grade_regrade_final_grades($courseid);
 
         // Grade item checkbox inputs
-        } elseif (preg_match('/extracredit_original_([0-9]*)/', $key, $matches) && confirm_sesskey()) { // Sum extra credit checkbox
-            $extracredit = optional_param("extracredit_{$matches[1]}", null, PARAM_BOOL);
-            $original_value = required_param($matches[0], PARAM_BOOL);
-            $a->id = $matches[1];
-            $newvalue = null;
-            if ($original_value == 1 && is_null($extracredit)) {
-                $newvalue = 0;
-            } elseif ($original_value == 0 && $extracredit == 1) {
-                $newvalue = 1;
-            } else {
-                continue;
-            }
+        } elseif (preg_match('/^extracredit_([0-9]+)$/', $key, $matches)) { // Sum extra credit checkbox
+            $aid   = $matches[1];
+            $value = clean_param($value, PARAM_BOOL);
 
-            $grade_item = grade_item::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
-            $grade_item->aggregationcoef = $newvalue;
+            $grade_item = grade_item::fetch(array('id'=>$aid, 'courseid'=>$courseid));
+            $grade_item->aggregationcoef = $value;
 
             $grade_item->update();
             grade_regrade_final_grades($courseid);
 
         // Grade category checkbox inputs
-        } elseif (preg_match('/aggregate(onlygraded|subcats|outcomes)_original_([0-9]*)/', $key, $matches) && confirm_sesskey()) {
-            $setting = optional_param('aggregate'.$matches[1].'_'.$matches[2], null, PARAM_BOOL);
-            $original_value = required_param($matches[0], PARAM_BOOL);
-            $a->id = $matches[2];
+        } elseif (preg_match('/^aggregate(onlygraded|subcats|outcomes)_([0-9]+)$/', $key, $matches)) {
+            $param = 'aggregate'.$matches[1];
+            $aid    = $matches[2];
+            $value = clean_param($value, PARAM_BOOL);
 
-            $newvalue = null;
-            if ($original_value == 1 && is_null($setting)) {
-                $newvalue = 0;
-            } elseif ($original_value == 0 && $setting == 1) {
-                $newvalue = 1;
-            } else {
-                continue;
-            }
-
-            $grade_category = grade_category::fetch(array('id'=>$a->id, 'courseid'=>$courseid));
-            $grade_category->{'aggregate'.$matches[1]} = $newvalue;
+            $grade_category = grade_category::fetch(array('id'=>$aid, 'courseid'=>$courseid));
+            $grade_category->$param = $value;
 
             $grade_category->update();
             grade_regrade_final_grades($courseid);

@@ -337,18 +337,16 @@ class grade_edit_tree {
 
         if ((($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef') && $type == 'weight') ||
             ($aggcoef == 'aggregationcoefextra' && $type == 'extra')) {
-                return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
-                    value="'.format_float($item->aggregationcoef).'" />';
+            return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
+                value="'.format_float($item->aggregationcoef, 4).'" />';
         } elseif ($aggcoef == 'aggregationcoefextrasum' && $type == 'extra') {
-                $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
-                $extracredit = ($item->aggregationcoef > 0) ? 1 : 0;
-
-                return '<input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" ' . "$checked />\n"
-                               . '<input type="hidden" name="extracredit_original_'.$item->id.'" value="'.$extracredit.'" />';
-            } else {
-                return '';
-            }
+            $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
+            return '<input type="hidden" name="extracredit_'.$item->id.'" value="0" />
+                    <input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" value="1" '."$checked />\n";
+        } else {
+            return '';
         }
+    }
 
     /**
      * Given an element of the grade tree, returns whether it is deletable or not (only manual grade items are deletable)
@@ -688,7 +686,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } else {
-            $grademax = '<input type="text" size="3" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
+            $grademax = '<input type="text" size="4" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
         }
 
         return '<td class="cell">'.$grademax.'</td>';
@@ -717,14 +715,14 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
 
     public function get_category_cell($category, $levelclass, $params) {
         $onlygradedcheck = ($category->aggregateonlygraded == 1) ? 'checked="checked"' : '';
-        $aggregateonlygraded ='<input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.$category->id.'" '.$onlygradedcheck . ' />';
-        $hidden = '<input type="hidden" name="aggregateonlygraded_original_'.$category->id.'" value="'.$category->aggregateonlygraded.'" />';
+        $hidden = '<input type="hidden" name="aggregateonlygraded_'.$category->id.'" value="0" />';
+        $aggregateonlygraded ='<input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.$category->id.'" value="1" '.$onlygradedcheck . ' />';
 
         if ($this->forced) {
             $aggregateonlygraded = ($category->aggregateonlygraded) ? get_string('yes') : get_string('no');
         }
 
-        return '<td class="cell '.$levelclass.'">' . $aggregateonlygraded . $hidden.'</td>';
+        return '<td class="cell '.$levelclass.'">'.$hidden.$aggregateonlygraded.'</td>';
     }
 
     public function get_item_cell($item, $params) {
@@ -745,14 +743,14 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
 
     public function get_category_cell($category, $levelclass, $params) {
         $subcatscheck = ($category->aggregatesubcats == 1) ? 'checked="checked"' : '';
-        $aggregatesubcats = '<input type="checkbox" id="aggregatesubcats_'.$category->id.'" name="aggregatesubcats_'.$category->id.'" ' . $subcatscheck.' />';
-        $hidden = '<input type="hidden" name="aggregatesubcats_original_'.$category->id.'" value="'.$category->aggregatesubcats.'" />';
+        $hidden = '<input type="hidden" name="aggregatesubcats_'.$category->id.'" value="0" />';
+        $aggregatesubcats = '<input type="checkbox" id="aggregatesubcats_'.$category->id.'" name="aggregatesubcats_'.$category->id.'" value="1" ' . $subcatscheck.' />';
 
         if ($this->forced) {
             $aggregatesubcats = ($category->aggregatesubcats) ? get_string('yes') : get_string('no');
         }
 
-        return '<td class="cell '.$levelclass.'">' . $aggregatesubcats . $hidden.'</td>';
+        return '<td class="cell '.$levelclass.'">'.$hidden.$aggregatesubcats.'</td>';
 
     }
 
@@ -775,14 +773,14 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
     public function get_category_cell($category, $levelclass, $params) {
 
         $outcomescheck = ($category->aggregateoutcomes == 1) ? 'checked="checked"' : '';
-        $aggregateoutcomes = '<input type="checkbox" id="aggregateoutcomes_'.$category->id.'" name="aggregateoutcomes_'.$category->id.'" ' . $outcomescheck.' />';
-        $hidden = '<input type="hidden" name="aggregateoutcomes_original_'.$category->id.'" value="'.$category->aggregateoutcomes.'" />';
+        $hidden = '<input type="hidden" name="aggregateoutcomes_'.$category->id.'" value="0" />';
+        $aggregateoutcomes = '<input type="checkbox" id="aggregateoutcomes_'.$category->id.'" name="aggregateoutcomes_'.$category->id.'" value="1" ' . $outcomescheck.' />';
 
         if ($this->forced) {
             $aggregateoutcomes = ($category->aggregateoutcomes) ? get_string('yes') : get_string('no');
         }
 
-        return '<td class="cell '.$levelclass.'">' . $aggregateoutcomes . $hidden.'</td>';
+        return '<td class="cell '.$levelclass.'">'.$hidden.$aggregateoutcomes.'</td>';
     }
 
     public function get_item_cell($item, $params) {
@@ -868,7 +866,7 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
         if (!$item->is_raw_used()) {
             return '<td class="cell">&nbsp;</td>';
         }
-        $multfactor = '<input type="text" size="3" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.format_float($item->multfactor).'" />';
+        $multfactor = '<input type="text" size="4" id="multfactor'.$item->id.'" name="multfactor_'.$item->id.'" value="'.format_float($item->multfactor, 4).'" />';
         return '<td class="cell">'.$multfactor.'</td>';
     }
 
@@ -897,7 +895,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
         if (!$item->is_raw_used()) {
             return '<td class="cell">&nbsp;</td>';
         }
-        $plusfactor = '<input type="text" size="3" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.format_float($item->plusfactor).'" />';
+        $plusfactor = '<input type="text" size="4" id="plusfactor_'.$item->id.'" name="plusfactor_'.$item->id.'" value="'.format_float($item->plusfactor, 4).'" />';
         return '<td class="cell">'.$plusfactor.'</td>';
 
     }
