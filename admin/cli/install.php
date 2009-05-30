@@ -114,7 +114,7 @@ $CFG->httpsthemewww        = $CFG->wwwroot;
 $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
-//$CFG->running_installer    = true;
+//$CFG->running_installer    = true; //TODO: uncomment when install lang packs are regenerated
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
 
@@ -336,8 +336,6 @@ if ($CFG->lang != 'en_utf8') {
         }
     }
 }
-unset($CFG->running_installer); // we use full lang packs from now on
-
 
 // ask for db type - show only drivers available
 if ($interactive) {
@@ -467,11 +465,15 @@ if ($interactive) {
     cli_separator();
     if (!$options['agree-license']) {
         echo "Do you agree to Moodle license blah blah blah?\n"; //TODO: localize and use real license
-        $input = cli_input('Type yes or y if you agree, ctrl+c if not', '', array('yes', 'y')); // TODO: localize including yes/y
+        $prompt = get_string('cliyesnoprompt', 'admin');
+        $input = cli_input($prompt, '', array('n', 'y'));
+        if ($input == get_string('clianswerno', 'admin')) {
+            exit(1);
+        }
     }
 } else {
     if (!$options['agree-license']) {
-        cli_error('You must aggree to license by specifying --agree-license'); //TODO: localize
+        cli_error(get_string('climustagreelicense', 'install'));
     }
 }
 
@@ -485,9 +487,6 @@ if (($fh = fopen($configfile, 'w')) !== false) {
 
 if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
-} else if ($interactive) {
-    cli_separator();
-    echo "config.php created\n";
 }
 
 // return back to original dir before executing setup.php chich changes the dir again
@@ -508,7 +507,7 @@ $CFG->release = "";
 require($CFG->dirroot.'/version.php');
 
 if ($DB->get_tables() ) {
-    cli_error('Database tables already present, cli installation can not continue.');
+    cli_error(get_string('clitablesexist', 'install'));
 }
 
 if (!$DB->setup_is_unicodedb()) {
@@ -520,7 +519,7 @@ if (!$DB->setup_is_unicodedb()) {
 
 if ($interactive) {
     cli_separator();
-    echo get_string('databasesetup')."\n";
+    cli_heading(get_string('databasesetup'));
 }
 
 // install core
@@ -548,6 +547,5 @@ admin_apply_default_settings(NULL, true);
 admin_apply_default_settings(NULL, true);
 set_config('registerauth', '');
 
-echo "yay!!!\n";
-
+echo get_string('cliinstallfinished', 'install')."\n";
 exit(0); // 0 means success
