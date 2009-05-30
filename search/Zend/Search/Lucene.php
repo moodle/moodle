@@ -779,7 +779,7 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
     public function find($query)
     {
         if (is_string($query)) {
-            $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
+            $query = Zend_Search_Lucene_Search_QueryParser::parse($query, 'UTF-8');
         }
 
         if (!$query instanceof Zend_Search_Lucene_Search_Query) {

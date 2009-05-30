@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
@@ -29,7 +30,7 @@ function get_text_for_indexing_doc(&$resource, $directfile = ''){
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_word_to_text_cmd)){
         if (!file_exists("{$moodleroot}{$CFG->block_search_word_to_text_cmd}")){
-            mtrace('Error with MSWord to text converter command : exectuable not found.');
+            mtrace('Error with MSWord to text converter command : exectutable not found at '.$moodleroot.$CFG->block_search_word_to_text_cmd);
         } else {
             if ($directfile == ''){
                 $file = escapeshellarg("{$CFG->dataroot}/{$resource->course}/{$resource->reference}");

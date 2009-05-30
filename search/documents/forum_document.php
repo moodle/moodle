@@ -5,6 +5,7 @@
 * @package search
 * @category core
 * @subpackage document_wrappers
+* @contributor Tatsuva Shirai 20090530
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -278,8 +279,8 @@ function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
     $discussion = get_record('forum_discussions', 'id', $post->discussion);
     $context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $cm = get_coursemodule_from_instance('forum', $discussion->forum, $discussion->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (empty($cm)) return false; // Shirai 20093005 - MDL19342 - course module might have been delete
+
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden forum resource ";
         return false;

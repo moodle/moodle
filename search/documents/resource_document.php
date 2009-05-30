@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Michael Campanis (mchampan) [cynnical@gmail.com], Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
@@ -307,6 +308,7 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
     $r = get_record('resource', 'id', $this_id);
     $module_context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $module_context->instanceid);
+    if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
     $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
 
     //check if course is visible

@@ -6,6 +6,7 @@
 * @category core
 * @subpackage document_wrappers
 * @author Valery Fremaux [valery.fremaux@club-internet.fr] > 1.8
+* @contributor Tatsuva Shirai 20090530
 * @date 2008/03/31
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 *
@@ -89,6 +90,10 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
     $course = get_record('course', 'id', $chat->course);
     $coursemodule = get_field('modules', 'id', 'name', 'data');
     $cm = get_record('course_modules', 'course', $course->id, 'module', $coursemodule, 'instance', $chat->id);
+    if (empty($cm)) { // Shirai 20090530
+        mtrace("Missing this chat: Course=".$chat->course."/ ChatID=".$chat_id);
+        return array();
+    }
     $groupmode = groupmode($course, $cm);
 
     $fromtimeclause = ($fromtime) ? "AND timestamp >= {$fromtime}" : ''; 
@@ -260,8 +265,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     $chat = get_record('chat', 'id', $chat_id);
     $context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $context->instanceid);
-    // $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden chat ";
