@@ -465,11 +465,11 @@ if ($interactive) {
     if (!$options['agree-license']) {
         cli_separator();
         cli_heading(get_string('copyrightnotice'));
-        echo "Modular Object-Oriented Dynamic Learning Environment\n";
+        echo "Moodle  - Modular Object-Oriented Dynamic Learning Environment\n";
         echo get_string('gpl')."\n\n";
         echo get_string('doyouagree')."\n";
         $prompt = get_string('cliyesnoprompt', 'admin');
-        $input = cli_input($prompt, '', array('n', 'y'));
+        $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
         if ($input == get_string('clianswerno', 'admin')) {
             exit(1);
         }
