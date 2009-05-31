@@ -37,8 +37,6 @@ require_once($CFG->libdir.'/clilib.php');      // cli only functions
 list($options, $unrecognized) = cli_get_params(array('help'=>false),
                                                array('h'=>'help'));
 
-$interactive = empty($options['non-interactive']);
-
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));

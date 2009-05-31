@@ -64,6 +64,7 @@ $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueretry'] = 'Incorrect value, please retry';
 $string['clitypevalue'] = 'type value';
 $string['clitypevaluedefault'] = 'type value, press Enter to use default value ($a)';
+$string['cliupgradefinished'] = 'Command line upgrade completed successfully.';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['cliunknowoption'] = "Unrecognized options:\n  \$a\n. Please use --help option.";
 $string['commonfiltersettings'] = 'Common filter settings';
