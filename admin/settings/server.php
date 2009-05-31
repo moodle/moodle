@@ -159,7 +159,13 @@ $temp->add(new admin_setting_configpasswordunmask('proxypassword', get_string('p
 $temp->add(new admin_setting_configtext('proxybypass', get_string('proxybypass', 'admin'), get_string('configproxybypass', 'admin'), 'localhost, 127.0.0.1'));
 $ADMIN->add('server', $temp);
 
-$ADMIN->add('server', new admin_externalpage('maintenancemode', get_string('sitemaintenancemode', 'admin'), "$CFG->wwwroot/$CFG->admin/maintenance.php"));
+$temp = new admin_settingpage('maintenancemode', get_string('sitemaintenancemode', 'admin'));
+$options = array(0=>get_string('disable'), 1=>get_string('enable'));
+$temp->add(new admin_setting_configselect('maintenance_enabled', get_string('sitemaintenancemode', 'admin'),
+                                          get_string('helpsitemaintenance', 'admin'), 0, $options));
+$temp->add(new admin_setting_confightmleditor('maintenance_message', get_string('optionalmaintenancemessage', 'admin'),
+                                              '', ''));
+$ADMIN->add('server', $temp);
 
 $temp = new admin_settingpage('cleanup', get_string('cleanup', 'admin'));
 $temp->add(new admin_setting_configselect('longtimenosee', get_string('longtimenosee', 'admin'), get_string('configlongtimenosee', 'admin'), 120, array(0 => get_string('never'),

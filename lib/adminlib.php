@@ -1560,11 +1560,8 @@ class admin_setting_configtext extends admin_setting {
  * @package moodlecore
  */
 class admin_setting_configtextarea extends admin_setting_configtext {
-    /**
-     * @var string Represents the number of rows/cols to make the editor
-     */
-    public $rows;
-    public $cols;
+    private $rows;
+    private $cols;
 
     /**
      * @param string $name
@@ -1596,7 +1593,50 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         }
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-textarea form-textarea-advanced" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
+                '<div class="form-textarea" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
+                $this->description, true, '', $defaultinfo, $query);
+    }
+}
+
+/**
+ * General text area with html editor.
+ */
+class admin_setting_confightmleditor extends admin_setting_configtext {
+    private $rows;
+    private $cols;
+    
+    /**
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param mixed $defaultsetting string or array
+     * @param mixed $paramtype
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
+        $this->rows = $rows;
+        $this->cols = $cols;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype);
+    }
+    /**
+     * Returns an XHTML string for the editor
+     *
+     * @param string $data
+     * @param string $query
+     * @return string XHTML string for the editor
+     */
+    public function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+
+        $defaultinfo = $default;
+        if (!is_null($default) and $default !== '') {
+            $defaultinfo = "\n".$default;
+        }
+
+        $editor = get_preferred_texteditor(FORMAT_HTML);
+        $editorclass = $editor->get_legacy_textarea_class();
+
+        return format_admin_setting($this, $this->visiblename,
+                '<div class="form-textarea"><textarea class="'.$editorclass.'" rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
                 $this->description, true, '', $defaultinfo, $query);
     }
 }

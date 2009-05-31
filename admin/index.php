@@ -357,9 +357,8 @@ if (empty($CFG->filter_multilang_converted)) {
 }
 
 // Alert if we are currently in maintenance mode
-// TODO: we are not using coursefiles directories anymore anymore - needs rewrite
-if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
-    print_box(get_string('sitemaintenancewarning', 'admin'), 'generalbox adminwarning');
+if (!empty($CFG->maintenance_enabled)) {
+    print_box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');
 }
 
 

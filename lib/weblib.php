@@ -2435,8 +2435,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $button = '&nbsp;';
     }
 
-    if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
-        $button = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
+    if (!empty($CFG->maintenance_enabled)) {
+        $button = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=maintenancemode">'.get_string('maintenancemode', 'admin').'</a> '.$button;
         if(!empty($title)) {
             $title .= ' - ';
         }
@@ -6923,22 +6923,22 @@ function page_id_and_class(&$getid, &$getclass) {
 }
 
 /**
- * Prints a maintenance message from /maintenance.html
- *
- * @global object
- * @global object
+ * Prints a maintenance message from $CFG->maintenance_message or default if empty
  * @return void 
  */
-function print_maintenance_message () {
-    global $CFG, $SITE;
+function print_maintenance_message() {
+    global $CFG, $SITE, $PAGE;
 
     $PAGE->set_pagetype('maintenance-message');
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
-    print_box_start();
     print_heading(get_string('sitemaintenance', 'admin'));
-    @include($CFG->dataroot.'/1/maintenance.html');
-    print_box_end();
+    if (isset($CFG->maintenance_message) and !html_is_blank($CFG->maintenance_message)) {
+        print_box_start('maintenance_message generalbox boxwidthwide boxaligncenter');
+        echo $CFG->maintenance_message;
+        print_box_end();
+    }
     print_footer();
+    die;
 }
 
 /**

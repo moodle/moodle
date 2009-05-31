@@ -2077,11 +2077,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
 
 /// If the site is currently under maintenance, then print a message
-    if (!has_capability('moodle/site:config', $sysctx)) {
-        if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
-            print_maintenance_message();
-            exit;
-        }
+    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', $sysctx)) {
+        print_maintenance_message();
     }
 
 /// groupmembersonly access control

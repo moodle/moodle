@@ -58,12 +58,17 @@
         user_accesstime_log();
     }
 
+/// If the site is currently under maintenance, then print a message
+    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        print_maintenance_message();
+    }
+
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         if (moodle_needs_upgrading()) {
             redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
         }
     } else if (!empty($CFG->mymoodleredirect)) {    // Redirect logged-in users to My Moodle overview if required
-        if (isloggedin() && $USER->username != 'guest') {
+        if (isloggedin() && !isguestuser()) {
             redirect($CFG->wwwroot .'/my/index.php');
         }
     }
