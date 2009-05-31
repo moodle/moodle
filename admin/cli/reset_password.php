@@ -40,8 +40,8 @@ list($options, $unrecognized) = cli_get_params(array('help'=>false),
 $interactive = empty($options['non-interactive']);
 
 if ($unrecognized) {
-    $error = implode("\n  ", $unrecognized);
-    cli_error("Unrecognized options:\n  $error \n. Please use --help option."); // TODO: localize
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
 if ($options['help']) {

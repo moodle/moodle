@@ -178,7 +178,7 @@ if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
-    cli_error('cliunknowoption', 'admin', $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
 if ($options['help']) {
