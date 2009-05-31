@@ -56,12 +56,13 @@ Options:
 -h, --help            Print out this help
 
 Example: \$sudo -u wwwrun /usr/bin/php admin/cli/reset_password.php
-"; //TODO: localize
+"; //TODO: localize, mark as needed in install - to be translated later when everything is finished
 
     echo $help;
     die;
 }
-$prompt = "Password reset - enter username (manual authentication only)"; // TODO: localize
+cli_heading('Password reset'); // TODO: localize
+$prompt = "enter username (manual authentication only)"; // TODO: localize
 $username = cli_input($prompt);
 
 if (!$user = $DB->get_record('user', array('auth'=>'manual', 'username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
@@ -80,6 +81,6 @@ $hashedpassword = hash_internal_user_password($password);
 
 $DB->set_field('user', 'password', $hashedpassword, array('id'=>$user->id));
 
-echo "yay!\n";
+echo "Password cahnged\n";
 
 exit(0); // 0 means success
