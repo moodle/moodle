@@ -76,7 +76,7 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 // Next, specify the full OS directory path to this same location
 // Make sure the upper/lower case is correct.  Some examples:
 //
-//    $CFG->dirroot = 'c:\program files\easyphp\www\moodle';    // Windows
+//    $CFG->dirroot = 'C:\program files\easyphp\www\moodle';    // Windows
 //    $CFG->dirroot = '/var/www/html/moodle';     // Redhat Linux
 //    $CFG->dirroot = '/home/example/public_html/moodle'; // Cpanel host
 
