@@ -22,6 +22,8 @@
 function xmldb_main_upgrade($oldversion) {
     global $CFG, $THEME, $USER, $DB;
 
+    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
+    
     $result = true;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes

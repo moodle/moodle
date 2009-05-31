@@ -1060,7 +1060,6 @@ function upgrade_core($version, $verbose) {
     global $CFG;
 
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
-    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 
     try {
         // Upgrade current language pack if we can
