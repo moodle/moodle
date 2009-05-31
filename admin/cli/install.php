@@ -114,7 +114,7 @@ $CFG->httpsthemewww        = $CFG->wwwroot;
 $CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))).'/moodledata');
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->directorypermissions = 00777;
-//$CFG->running_installer    = true; //TODO: uncomment when install lang packs are regenerated
+$CFG->running_installer    = true;
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
 
@@ -462,9 +462,12 @@ if ($interactive) {
 }
 
 if ($interactive) {
-    cli_separator();
     if (!$options['agree-license']) {
-        echo "Do you agree to Moodle license blah blah blah?\n"; //TODO: localize and use real license
+        cli_separator();
+        cli_heading(get_string('copyrightnotice'));
+        echo "Modular Object-Oriented Dynamic Learning Environment\n";
+        echo get_string('gpl')."\n\n";
+        echo get_string('doyouagree')."\n";
         $prompt = get_string('cliyesnoprompt', 'admin');
         $input = cli_input($prompt, '', array('n', 'y'));
         if ($input == get_string('clianswerno', 'admin')) {
