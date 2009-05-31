@@ -56,7 +56,7 @@ Options:
 -h, --help            Print out this help
 
 Example: \$sudo -u wwwrun /usr/bin/php admin/cli/reset_password.php
-"; //TODO: localize, mark as needed in install - to be translated later when everything is finished
+"; //TODO: localize - to be translated later when everything is finished
 
     echo $help;
     die;
