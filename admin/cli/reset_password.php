@@ -25,7 +25,7 @@
  */
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    error_log("admin/cli/upgrade.php can not be called from web server!");
+    error_log("admin/cli/reset_password.php can not be called from web server!");
     exit;
 }
 
