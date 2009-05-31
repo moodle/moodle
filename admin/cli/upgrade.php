@@ -48,8 +48,8 @@ list($options, $unrecognized) = cli_get_params(array('non-interactive'=>false, '
 $interactive = empty($options['non-interactive']);
 
 if ($unrecognized) {
-    $error = implode("\n  ", $unrecognized);
-    cli_error("Unrecognized options:\n  $error \n. Please use --help option."); // TODO: localize
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error('cliunknowoption', 'admin', $unrecognized);
 }
 
 if ($options['help']) {
@@ -65,14 +65,14 @@ Options:
 -h, --help            Print out this help
 
 Example: \$sudo -u wwwrun /usr/bin/php admin/cli/upgrade.php
-"; //TODO: localize
+"; //TODO: localize, mark as needed in install - to be translated later when everything is finished
 
     echo $help;
     die;
 }
 
 if (empty($CFG->version)) {
-    cli_error('missingconfigversion', 'debug');
+    cli_error(get_string('missingconfigversion', 'debug'));
 }
 
 require("$CFG->dirroot/version.php");       // defines $version and $release
@@ -82,9 +82,15 @@ if ($version < $CFG->version) {
     cli_error('The code you are using is OLDER than the version that made these databases!'); // TODO: localize
 }
 
+$newversion = "$release ($version)";
+
 if ($interactive) {
-    $prompt = "Do you really want to upgrade Moodle at '$CFG->wwwroot' from '$CFG->release' to '$release'?\nPress ctrl+c to cancel."; // TODO: localize
-    cli_input($prompt);
+    echo html_to_text(get_string('upgradesure', 'admin', $newversion))."\n";
+    $prompt = get_string('cliyesnoprompt', 'admin');
+    $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
+    if ($input == get_string('clianswerno', 'admin')) {
+        exit(1);
+    }
 }
 
 if ($version > $CFG->version) {
@@ -104,6 +110,5 @@ session_set_user($admin);
 admin_apply_default_settings(NULL, true);
 admin_apply_default_settings(NULL, true);
 
-echo "yay!\n";
-
+echo get_string('cliupgradefinished', 'admin')."\n";
 exit(0); // 0 means success
