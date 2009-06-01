@@ -165,10 +165,12 @@ if (!empty($dataid)) {
     // set up the course so that build_navigation works nice
     $PAGE->set_course($course);
 
-    // and now we know the course for sure, call require_login with it
-    require_login($course);
-
     list($extranav, $cm) = $caller->get_navigation();
+
+    // and now we know the course for sure and maybe the cm, call require_login with it
+    // todo this will have to change when we have things exporting content outside the course context (eg blogs)
+    require_login($course, false, $cm);
+
     $extranav[] = array('type' => 'title', 'name' => get_string('exporting', 'portfolio'));
     $navigation = build_navigation($extranav, $cm);
 
