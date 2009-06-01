@@ -166,7 +166,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             }
         }
         $datasetdefs = $this->get_dataset_definitions($question->id, $question->dataset);
-              //         echo "<p> datasetdefs  save  <pre>";print_r($datasetdefs);echo"</pre></p>";
                     // Handle adding and removing of dataset items
        $i = 1;
         ksort($question->definition);
@@ -202,7 +201,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         // Report any problems.
         //convert to calculated
         if(!empty($question->makecopy) && !empty($question->convert) ){
-        //	echo "<p> question  save  <pre>";print_r($question);echo"</pre></p>";
         	        if (!$DB->set_field('question', 'qtype', 'calculated', array('id'=> $question->id))) {
         	        	print_error('cannotupdateitem', 'question');
         	        }
@@ -274,7 +272,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         $delimiter = '';
 
        // $answers = $question->options->answers;
-        //  echo "<p>comments header answers  <pre>";print_r($answers);echo"</pre></p>";
 
         foreach ($answers as $key => $answer) {
          /*   if (is_string($answer)) {
