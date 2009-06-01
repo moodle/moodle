@@ -139,10 +139,16 @@ if (!empty($dataid)) {
             $callbackargs[substr($key, 3)] = $value;
         }
     }
+    if (!confirm_sesskey()) {
+        throw new portfolio_caller_exception('confirmsesskeybad', 'error');
+    }
     // righto, now we have the callback args set up
     // load up the caller file and class and tell it to set up all the data
     // it needs
     require_once($CFG->dirroot . $callbackfile);
+    if (!class_exists($callbackclass) || !is_subclass_of($callbackclass, 'portfolio_caller_base')) {
+        throw new portfolio_caller_exception('callbackclassinvalid', 'portfolio');
+    }
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
     $caller->load_data();

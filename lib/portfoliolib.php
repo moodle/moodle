@@ -224,6 +224,8 @@ class portfolio_add_button {
             $linkoutput .= 'ca_' . $key . '=' . $value . '&amp;';
             $formoutput .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
         }
+        $formoutput .= "\n" . '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+        $linkoutput .= 'sesskey=' . sesskey() . '&amp;';
         $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $this->callbackfile . '" />';
         $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $this->callbackclass . '" />';
         $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';

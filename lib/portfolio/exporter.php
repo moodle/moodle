@@ -676,6 +676,10 @@ class portfolio_exporter {
         if (!$readonly && !confirm_sesskey($this->get('sesskey'))) {
             throw new portfolio_exception('confirmsesskeybad');
         }
+        if (!$this->caller->check_permissions()) {
+            throw new portfolio_caller_exception('nopermissions', 'portfolio', $this->caller->get_return_url());
+        }
+        error_log("checking permissions after waking");
     }
     /**
     * copies a file from somewhere else in moodle
