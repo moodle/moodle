@@ -300,20 +300,42 @@ class moodleform {
 
     /**
      * Check that form data is valid.
+     * You should almost always use this, rather than {@see validate_defined_fields}
      *
      * @return bool true if form data valid
      */
     function is_validated() {
-        static $validated = null; // one validation is enough
-        $mform =& $this->_form;
-
         //finalize the form definition before any processing
         if (!$this->_definition_finalized) {
             $this->_definition_finalized = true;
             $this->definition_after_data();
         }
+        return $this->validate_defined_fields();
+    }
 
-        if ($this->no_submit_button_pressed()){
+    /**
+     * Validate the form.
+     *
+     * You almost always want to call {@see is_validated} instead of this
+     * because it calls {@see definition_after_data} first, before validating the form,
+     * which is what you want in 99% of cases.
+     *
+     * This is provided as a separate function for those special cases where
+     * you want the form validated before definition_after_data is called
+     * for example, to selectively add new elements depending on a no_submit_button press,
+     * but only when the form is valid when the no_submit_button is pressed,
+     *
+     * @param boolean $validateonnosubmit optional, defaults to false.  The default behaviour
+     *                is NOT to validate the form when a no submit button has been pressed.
+     *                pass true here to override this behaviour
+     *
+     * @return bool true if form data valid
+     */
+    function validate_defined_fields($validateonnosubmit=false) {
+        static $validated = null; // one validation is enough
+        $mform =& $this->_form;
+
+        if ($this->no_submit_button_pressed() && empty($validateonnosubmit)){
             return false;
         } elseif ($validated === null) {
             $internal_val = $mform->validate();
