@@ -69,7 +69,7 @@ print_js_config(array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->i
 print_js_config(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist), 'chat_lang');
 ?>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/element/element-beta-min.js"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/element/element-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/dragdrop/dragdrop-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/resize/resize-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/layout-min.js"></script>
@@ -77,11 +77,11 @@ print_js_config(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/connection/connection-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/json/json-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/button-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/selector/selector-beta-min.js"></script>
+<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/selector/selector-min.js"></script>
 <script type="text/javascript" src="script.js"></script>
 <style type="text/css">
 #listing a{text-decoration:none;color:gray}
-#listing a:hover{text-decoration:underline;color:white;background:blue}
+#listing a:hover {text-decoration:underline;color:white;background:blue}
 #listing{padding: .5em}
 </style>
 </head>

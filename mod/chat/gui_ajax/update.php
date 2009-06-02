@@ -44,9 +44,15 @@ if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) {
     chat_print_error('ERROR', get_string('invaliduserid', 'error'));
 }
 
+if (!$chat = $DB->get_record('chat', array('id'=>$chatuser->chatid))) {
+    chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
+}
+
 if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $course->id)) {
     chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
 }
+// setup $PAGE so that format_text will work properly
+$PAGE->set_cm($cm, $course, $chat);
 
 if($CFG->chat_use_cache){
     $cache = new file_cache();
