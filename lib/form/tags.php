@@ -176,7 +176,11 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
                     $other = array();
                     if ($this->_options['display'] != MoodleQuickForm_tags::NOOFFICIAL) {
                         $this->_load_official_tags();
-                        $officaltags = array_combine($this->_officialtags, $this->_officialtags);
+                        if (!empty($this->_officialtags)) {
+                            $officaltags = array_combine($this->_officialtags, $this->_officialtags);
+                        } else {
+                            $officaltags = array();
+                        }
                         foreach ($value as $tag) {
                             if (isset($officaltags[$tag])) {
                                 $official[] = $tag;
