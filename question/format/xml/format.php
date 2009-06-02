@@ -561,6 +561,10 @@ class qformat_xml extends qformat_default {
             elseif ($question_type=='calculated') {
                 $qo = $this->import_calculated( $question );
             }
+            elseif ($question_type=='calculatedsimple') {
+                $qo = $this->import_calculated( $question );
+                $qo->qtype = CALCULATEDSIMPLE ;
+            }
             elseif ($question_type=='category') {
                 $qo = $this->import_category( $question );
             }
@@ -627,6 +631,9 @@ class qformat_xml extends qformat_default {
             break;
         case CALCULATED:
             $name = 'calculated';
+            break;
+        case CALCULATEDSIMPLE:
+            $name = 'calculatedsimple';
             break;
         default:
             $name = false;
@@ -940,6 +947,7 @@ class qformat_xml extends qformat_default {
             }
             break;
         case CALCULATED:
+        case CALCULATEDSIMPLE:
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
                 $tolerancetype = $answer->tolerancetype;
@@ -967,18 +975,20 @@ class qformat_xml extends qformat_default {
                 }
                 $expout .= "</units>\n";
              } 
-        //echo "<pre> question calc";print_r($question);echo "</pre>"; 
-        //First, we a new function to get all the   data itmes in the database
-         //   $question_datasetdefs =$QTYPES['calculated']->get_datasets_for_export ($question);
-        //    echo "<pre> question defs";print_r($question_datasetdefs);echo "</pre>";      
-        //If there are question_datasets
+            //The tag $question->export_process has been set so we get all the data items in the database
+            //   from the function $QTYPES['calculated']->get_question_options(&$question);
+            //  calculatedsimple defaults to calculated
             if( isset($question->options->datasets)&&count($question->options->datasets)){// there should be
                 $expout .= "<dataset_definitions>\n";
                 foreach ($question->options->datasets as $def) {
                     $expout .= "<dataset_definition>\n";
                     $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
                     $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
-                    $expout .= "    <type>calculated</type>\n";
+                    if ( $question->qtype == CALCULATED){
+                        $expout .= "    <type>calculated</type>\n";
+                    }else {
+                        $expout .= "    <type>calculatedsimple</type>\n";
+                    }
                     $expout .= "    <distribution>".$this->writetext($def->distribution)."</distribution>\n";
                     $expout .= "    <minimum>".$this->writetext($def->minimum)."</minimum>\n";
                     $expout .= "    <maximum>".$this->writetext($def->maximum)."</maximum>\n";
