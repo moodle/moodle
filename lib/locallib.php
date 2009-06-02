@@ -27,6 +27,8 @@
  *
  * These are similar to the module interface, however, not all the the
  * facilities that are available to modules are available to local code (yet).
+ * See also http://docs.moodle.org/en/Development:Local_customisation for more
+ * information.
  *
  *
  * Local database customisations
@@ -72,12 +74,29 @@
  * Local language support
  * ----------------------
  *
- * Moodle supports looking in the local/ directory for language files.
- * You would need to create local/lang/en_utf8/local.php 
- * and then could call strings like get_string('key', 'local');
- * Make sure you don't call the language file something that moodle already has one of, 
- * stick to local or $clientname)
- * 
+ * Moodle already supports local overriding of any language strings, or the
+ * creation of new strings. Just create a folder lang/XX_utf8_local where XX is
+ * a language code. Any language files you put in there will be used before
+ * the standard files. So, for example, can can create a file
+ * lang/en_utf8_local/moodle.php containing
+ *   $strings['login'] = 'Sign in';
+ * and that will change the string 'Login' to 'Sign in'. (See also
+ * http://docs.moodle.org/en/Language_editing for another way to achieve this.)
+ *
+ * This mechanism can also be used to create completely new language files. For
+ * example, suppose you have created some code in local/myfeature.php that needs
+ * some language strings. You can put those strings in the file
+ * lang/en_utf8_local/local_myfeature.php, and then access then using
+ * get_string('mystring', 'local_myfeature'). (Note that you do not have to call
+ * the file local_myfeature.php, you can call it anything you like, however,
+ * the convention of calling lang files for local/ code local_somthing is recommended.)
+ *
+ * In addition, there is one other mechanism that is available. Strings from the
+ * 'local' langauge file (for example get_string('mystring', 'local') will be
+ * found if the string is found in the file local/lang/en_utf8/local.php. Since
+ * the lang file 'local' is used for a lot of things like capability names, you
+ * can use this file for things like that.
+ *
  *
  * Local admin menu items
  * ----------------------
