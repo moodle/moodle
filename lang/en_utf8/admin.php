@@ -682,6 +682,7 @@ $string['sessionhandling'] = 'Session Handling';
 $string['sessiontimeout'] = 'Timeout';
 $string['showblocksonmodpages'] = 'Show blocks on module pages';
 $string['simpletest'] = 'Unit tests';
+$string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by Moodle.';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemailcharset'] = 'Character set';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
