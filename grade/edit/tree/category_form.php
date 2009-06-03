@@ -249,6 +249,17 @@ class edit_category_form extends moodleform {
         $gpr = $this->_customdata['gpr'];
         $gpr->add_mform_elements($mform);
 
+/// mark advanced according to site settings
+        if (isset($CFG->grade_item_advanced)) {
+            $advanced = explode(',', $CFG->grade_item_advanced);
+            foreach ($advanced as $el) {
+                $el = 'grade_item_'.$el;
+                if ($mform->elementExists($el)) {
+                    $mform->setAdvanced($el);
+                }
+            }
+        }
+
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
