@@ -864,16 +864,9 @@ class oci_native_moodle_database extends moodle_database {
             $returnid = false;
         } else {
             if ($returnid) {
-                if ($this->is_min_version('10.0')) {
-                    $returning = "RETURNING id INTO :oracle_id";// crazy name nobody is ever going to use or parameter ;-)
-                    unset($params['id']);
-                } else {
-                    //ugly workaround for oracle 9
-                    die('TODO - implement oracle 9.2 insert support'); //TODO
-                }
-            } else {
-                unset($params['id']);
+                $returning = "RETURNING id INTO :oracle_id";// crazy name nobody is ever going to use or parameter ;-)
             }
+            unset($params['id']);
         }
 
         if (empty($params)) {
