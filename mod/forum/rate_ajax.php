@@ -123,7 +123,7 @@
             $oldrating->rating = $rate;
             $oldrating->time   = time();
             if (!update_record('forum_ratings', $oldrating)) {
-                print_error('cannotupdaterate', 'error', '', (object)array('id'=>$post->id, 'rating'=>$rate));
+                error("Could not update an old rating ($post->id = $rate)");
             }
         }
 
