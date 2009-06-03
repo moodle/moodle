@@ -138,6 +138,7 @@ require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/environmentlib.php');
 
 //Database types
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
@@ -511,6 +512,19 @@ require($CFG->dirroot.'/version.php');
 
 if ($DB->get_tables() ) {
     cli_error(get_string('clitablesexist', 'install'));
+}
+
+// test environment first
+if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_RELEASE)) {
+    $errors = environment_get_errors($environment_results);
+    cli_heading(get_string('environment', 'admin'));
+    foreach ($errors as $error) {
+        list($info, $report) = $error;
+        echo "!! $info !!\n$report\n\n";
+    }
+    //remove config.php, we do not want half finished upgrades!
+    unlink($configfile);
+    exit(1);
 }
 
 if (!$DB->setup_is_unicodedb()) {

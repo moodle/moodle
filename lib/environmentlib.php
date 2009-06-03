@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -70,11 +70,11 @@
 
 /// Define algorithm used to select the xml file
     /** To select the newer file available to perform checks */
-    define('ENV_SELECT_NEWER',                   0); 
+    define('ENV_SELECT_NEWER',                   0);
     /** To enforce the use of the file under dataroot */
-    define('ENV_SELECT_DATAROOT',                1); 
+    define('ENV_SELECT_DATAROOT',                1);
     /** To enforce the use of the file under admin (release) */
-    define('ENV_SELECT_RELEASE',                 2); 
+    define('ENV_SELECT_RELEASE',                 2);
 
 /**
  * This function will perform the whole check, returning
@@ -323,6 +323,101 @@ function print_moodle_environment($result, $environment_results) {
 
 
 /**
+ * Returns array of critical errors in plain text format
+ * @param array $environment_results array of results gathered
+ * @return array errors
+ */
+function environment_get_errors($environment_results) {
+    global $CFG;
+    $errors = array();
+
+    // Iterate over each environment_result
+    foreach ($environment_results as $environment_result) {
+        $type = $environment_result->getPart();
+        $info = $environment_result->getInfo();
+        $status = $environment_result->getStatus();
+        $error_code = $environment_result->getErrorCode();
+
+        $a = new object();
+        if ($error_code) {
+            $a->error_code = $error_code;
+            $errors[] = array($info, get_string('environmentxmlerror', 'admin', $a));
+            return $errors;
+        }
+
+        /// Calculate the status value
+        if ($environment_result->getBypassStr() != '') {
+            // not interesting
+            continue;
+        } else if ($environment_result->getRestrictStr() != '') {
+            // error
+        } else {
+            if ($status) {
+                // ok
+                continue;
+            } else {
+                if ($environment_result->getLevel() == 'optional') {
+                    // just a warning
+                    continue;
+                } else {
+                    // error
+                }
+            }
+        }
+
+        // We are comparing versions
+        if ($rec->needed = $environment_result->getNeededVersion()) {
+            $rec->current = $environment_result->getCurrentVersion();
+            if ($environment_result->getLevel() == 'required') {
+                $stringtouse = 'environmentrequireversion';
+            } else {
+                $stringtouse = 'environmentrecommendversion';
+            }
+        // We are checking installed & enabled things
+        } else if ($environment_result->getPart() == 'custom_check') {
+            if ($environment_result->getLevel() == 'required') {
+                $stringtouse = 'environmentrequirecustomcheck';
+            } else {
+                $stringtouse = 'environmentrecommendcustomcheck';
+            }
+        } else if ($environment_result->getPart() == 'php_setting') {
+            if ($status) {
+                $stringtouse = 'environmentsettingok';
+            } else if ($environment_result->getLevel() == 'required') {
+                $stringtouse = 'environmentmustfixsetting';
+            } else {
+                $stringtouse = 'environmentshouldfixsetting';
+            }
+        } else {
+            if ($environment_result->getLevel() == 'required') {
+                $stringtouse = 'environmentrequireinstall';
+            } else {
+                $stringtouse = 'environmentrecommendinstall';
+            }
+        }
+        $report = get_string($stringtouse, 'admin', $rec);
+
+        // Here we'll store all the feedback found
+        $feedbacktext = '';
+        // Append  the feedback if there is some
+        $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), 'error');
+        // Append the restrict if there is some
+        $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
+
+        $report .= html_to_text($feedbacktext);
+
+        if ($environment_result->getPart() == 'custom_check'){
+            $errors[] = array($info, $report);
+        } else {
+            $errors[] = array(($info !== '' ? "$type $info" : $type), $report);
+        }
+    }
+
+    return $errors;
+}
+
+
+/**
  * This function will normalize any version to just a serie of numbers
  * separated by dots. Everything else will be removed.
  *
@@ -330,7 +425,7 @@ function print_moodle_environment($result, $environment_results) {
  * @return string the normalized version
  */
 function normalize_version($version) {
- 
+
 /// 1.9 Beta 2 should be read 1.9 on enviromental checks, not 1.9.2
 /// we can discard everything after the first space
     $version = trim($version);
@@ -1386,7 +1481,7 @@ class environment_results {
     }
 
     /**
-     * @todo Document this function 
+     * @todo Document this function
      *
      * @param mixed $string params for get_string, either a string to fetch from admin.php or an array of
      *                       params for get_string.

@@ -36,9 +36,10 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once dirname(dirname(dirname(__FILE__))).'/config.php';
-require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
-require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
-require_once($CFG->libdir.'/clilib.php');      // cli only functions
+require_once($CFG->libdir.'/adminlib.php');       // various admin-only functions
+require_once($CFG->libdir.'/upgradelib.php');     // general upgrade/install related functions
+require_once($CFG->libdir.'/clilib.php');         // cli only functions
+require_once($CFG->libdir.'/environmentlib.php');
 
 
 // now get cli options
@@ -83,6 +84,17 @@ if ($version < $CFG->version) {
 }
 
 $newversion = "$release ($version)";
+
+// test environment first
+if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_RELEASE)) {
+    $errors = environment_get_errors($environment_results);
+    cli_heading(get_string('environment', 'admin'));
+    foreach ($errors as $error) {
+        list($info, $report) = $error;
+        echo "!! $info !!\n$report\n\n";
+    }
+    exit(1);
+}
 
 if ($interactive) {
     echo html_to_text(get_string('upgradesure', 'admin', $newversion))."\n";
