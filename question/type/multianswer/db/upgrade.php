@@ -28,6 +28,8 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
 
     if ($result && $oldversion < 2008050800) {
         question_multianswer_fix_subquestion_parents_and_categories();
+    /// multianswer savepoint reached
+        upgrade_plugin_savepoint($result, 2008050800, 'qtype', 'multianswer');
     }
 
     return $result;
