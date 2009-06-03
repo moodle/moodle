@@ -120,6 +120,8 @@ function xmldb_main_upgrade($oldversion) {
                 set_config('defaultuserroleid', null);
             }
         }
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008051200);
     }
 
     if ($result && $oldversion < 2008051201) {
