@@ -61,6 +61,7 @@ Example: \$sudo -u wwwrun /usr/bin/php admin/cli/maintenance.php
 }
 
 cli_heading(get_string('sitemaintenancemode', 'admin')." ($CFG->wwwroot)");
+
 if ($options['enable']) {
     set_config('maintenance_enabled', 1);
     echo get_string('sitemaintenanceon', 'admin')."\n";
@@ -72,7 +73,7 @@ if ($options['enable']) {
 }
 
 if (!empty($CFG->maintenance_enabled)) {
-    echo "Status: enabled\n"; // TODO: localize
+    echo get_string('clistatusenabled', 'admin')."\n";
 } else {
-    echo "Status: disabled\n"; // TODO: localize
+    echo get_string('clistatusdisabled', 'admin')."\n";
 }
