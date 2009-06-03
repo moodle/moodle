@@ -172,6 +172,9 @@ httpsrequired();
             if ($userauth->can_change_password()) {
                 if ($userauth->change_password_url()) {
                     $passwordchangeurl = $userauth->change_password_url();
+                    if(!$passwordchangeurl) {
+                        $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
+                    }
                 } else {
                     $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
                 }
