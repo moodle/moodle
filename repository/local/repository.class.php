@@ -108,8 +108,10 @@ class repository_local extends repository {
                     $path[] = array('name'=>$level->get_visible_name(), 'path'=>$params);
                     $level = $level->get_parent();
                 }
-                $path = array_reverse($path);
-                $ret['path'] = $path;
+                if (!empty($path) && is_array($path)) {
+                    $path = array_reverse($path);
+                    $ret['path'] = $path;
+                }
                 $children = $fileinfo->get_children();
                 foreach ($children as $child) {
                     if ($child->is_directory()) {
