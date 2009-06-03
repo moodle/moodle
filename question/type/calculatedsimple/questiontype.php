@@ -427,5 +427,6 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_calculatedsimple_qtype());
 
+define("CALCULATEDSIMPLE",    "calculatedsimple");
 
 ?>
