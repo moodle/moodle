@@ -74,21 +74,23 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, array());
             
                 if(!empty($this->datasetdefs)){
-                    foreach ($this->datasetdefs as $datasetdef) {        
+                    foreach ($this->datasetdefs as $defid => $datasetdef) {
+                    	// first get the items in case their number does not correspond to itemcount        
+                        if (isset($datasetdef->id)) {
+                						$this->datasetdefs[$defid]->items = $this->qtypeobj->get_database_dataset_items($datasetdef->id);
+                						if ( $this->datasetdefs[$defid]->items != '') {
+                								$datasetdef->itemcount = count($this->datasetdefs[$defid]->items);
+                						} else {
+                								$datasetdef->itemcount = 0 ;
+                						}
+                        }
                         // Get maxnumber
                         if ($this->maxnumber == -1 || $datasetdef->itemcount < $this->maxnumber) {
                             $this->maxnumber = $datasetdef->itemcount;
                         }
                     }
-                    foreach ($this->datasetdefs as $defid => $datasetdef) {
-                        if (isset($datasetdef->id)) {
-                            $this->datasetdefs[$defid]->items = $DB->get_records_sql( // Use number as key!!
-                                    " SELECT itemnumber, definition, id, value
-                                      FROM {question_dataset_items}
-                                      WHERE definition = ? ", array($datasetdef->id));
-                        }
-                    }
                 }
+
                 $i = 0 ;
                 foreach($this->question->options->answers as $answer){
                      $this->answer[$i] = $answer ;
@@ -467,15 +469,15 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $mform->closeHeaderBefore('additemhdr');
         $addgrp = array();
         $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('generatenewitemsset', 'qtype_calculatedsimple'));
-        $addgrp[] =& $mform->createElement('select', "selectadd", get_string('wildcardvalues', 'qtype_calculatedsimple'), $addoptions);
-        $addgrp[] = & $mform->createElement('static',"stat",'',get_string('wildcardvalues', 'qtype_calculatedsimple'));
+        $addgrp[] =& $mform->createElement('select', "selectadd", '', $addoptions);
+        $addgrp[] = & $mform->createElement('static',"stat",'',get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
         $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
         $mform->registerNoSubmitButton('addbutton');
         $mform->closeHeaderBefore('addgrp');
         $addgrp1 = array();
         $addgrp1[] =& $mform->createElement('submit', 'showbutton', get_string('showitems', 'qtype_calculatedsimple'));
         $addgrp1[] =& $mform->createElement('select', "selectshow",'' , $showoptions);
-        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('wildcardvalues', 'qtype_calculatedsimple'));
+        $addgrp1[] = & $mform->createElement('static',"stat",'',get_string('setwildcardvalues', 'qtype_calculatedsimple'));
         $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         $mform->registerNoSubmitButton('showbutton');
         $mform->closeHeaderBefore('addgrp1');
@@ -526,7 +528,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             if (!empty( $strquestionlabel) && ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ) ){
              //   $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
-                	$mform->addElement('static', "answercomment[$i]", "<b>".get_string('itemno', 'qtype_datasetdependent', $i)."</b>&nbsp;&nbsp;".$strquestionlabel);
+                	$mform->addElement('static', "answercomment[$i]", "<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;".$strquestionlabel);
                 	
             }
                if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors )){             
