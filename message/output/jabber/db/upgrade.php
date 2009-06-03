@@ -44,6 +44,9 @@ function xmldb_message_jabber_upgrade($oldversion) {
         if (! $DB->record_exists('message_processors', array('name' => $processor->name))){
             $result = $result && $DB->insert_record('message_processors', $processor);
         }
+
+    /// jabber savepoint reached
+        upgrade_plugin_savepoint($result, 2008072401, 'message', 'jabber');
     }
 
     return $result;
