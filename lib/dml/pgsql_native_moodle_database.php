@@ -689,22 +689,8 @@ class pgsql_native_moodle_database extends moodle_database {
             $returnid = false;
         } else {
             if ($returnid) {
-                if ($this->is_min_version('8.2.0')) {
-                    $returning = "RETURNING id";
-                    unset($params['id']);
-                } else {
-                    //ugly workaround for pg < 8.2
-                    $seqsql = "SELECT NEXTVAL('{$this->prefix}{$table}_id_seq') AS id";
-                    $this->query_start($seqsql, NULL, SQL_QUERY_AUX);
-                    $result = pg_query($this->pgsql, $seqsql);
-                    $this->query_end($result);
-                    if ($result === false) {
-                        throw new dml_exception('missingidsequence', "{$this->prefix}{$table}"); // TODO: add localised string
-                    }
-                    $row = pg_fetch_assoc($result);
-                    $params['id'] = reset($row);
-                    pg_free_result($result);
-                }
+                $returning = "RETURNING id";
+                unset($params['id']);
             } else {
                 unset($params['id']);
             }
@@ -1075,7 +1061,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
 /// session locking
     public function session_lock_supported() {
-        return $this->is_min_version('8.2.0');
+        return true;
     }
 
     public function get_session_lock($rowid) {
