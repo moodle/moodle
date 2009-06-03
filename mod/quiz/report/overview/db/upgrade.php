@@ -29,6 +29,9 @@ function xmldb_quizreport_overview_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+
+    /// overview savepoint reached
+        upgrade_plugin_savepoint($result, 2008062700, 'quizreport', 'overview');
     }
 
     if ($result && $oldversion < 2009030500) {
@@ -45,6 +48,9 @@ function xmldb_quizreport_overview_upgrade($oldversion) {
 
     /// Launch change of precision for field newgrade
         $dbman->change_field_precision($table, $field);
+
+    /// overview savepoint reached
+        upgrade_plugin_savepoint($result, 2009030500, 'quizreport', 'overview');
     }
 
     return $result;
