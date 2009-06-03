@@ -184,20 +184,12 @@ function forum_update_instance($forum) {
         $post->message  = $forum->intro;
         $post->modified = $forum->timemodified;
 
-        if (! $DB->update_record('forum_posts', ($post))) {
-            print_error('cannotupdatefirstpost', 'forum');
-        }
-
+        $DB->update_record('forum_posts', $post);
         $discussion->name = $forum->name;
-
-        if (! $DB->update_record('forum_discussions', ($discussion))) {
-            print_error('cannotupdatediscussion', 'forum');
-        }
+        $DB->update_record('forum_discussions', $discussion);
     }
 
-    if (!$DB->update_record('forum', $forum)) {
-        print_error('cannotupdateforum', 'forum');
-    }
+    $DB->update_record('forum', $forum);
 
     forum_grade_item_update($forum);
 

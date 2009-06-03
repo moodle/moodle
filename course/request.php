@@ -62,9 +62,7 @@
 
     /// Record the request.
         $data->requester = $USER->id;
-        if (!$DB->insert_record('course_request', $data)) {
-            print_error('errorsavingrequest', '', $returnurl);
-        }
+        $DB->insert_record('course_request', $data);
 
     /// Notify the admin if required.
         if ($CFG->courserequestnotify) {

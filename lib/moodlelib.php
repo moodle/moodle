@@ -2378,11 +2378,7 @@ function create_user_key($script, $userid, $instance=null, $iprestriction=null, 
         // must be unique
         $key->value     = md5($userid.'_'.time().random_string(40));
     }
-
-    if (!$DB->insert_record('user_private_key', $key)) {
-        print_error('cannotinsertkey');
-    }
-
+    $DB->insert_record('user_private_key', $key);
     return $key->value;
 }
 

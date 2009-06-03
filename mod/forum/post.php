@@ -389,9 +389,7 @@
             $newpost->parent  = 0;
             $newpost->subject = $name;
 
-            if (!$DB->update_record("forum_posts", $newpost)) {
-                print_error('cannotupdatediscussion', 'forum');
-            }
+            $DB->update_record("forum_posts", $newpost);
 
             forum_change_discussionid($post->id, $newid);
 

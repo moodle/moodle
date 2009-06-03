@@ -80,7 +80,6 @@ $string['cannotimportformat'] = 'Sorry, importing this format is not yet impleme
 $string['cannotinsertgrade'] = 'Cannot insert grade item without course id!';
 $string['cannotinsertrate'] = 'Could not insert a new rating ($a->id = $a->rating)';
 $string['cannotinsertrecord'] = 'Could not insert new record ID $a';
-$string['cannotinsertkey'] = 'Cannot insert new key';
 $string['cannotmailconfirm'] = 'Error sending password change confirmation email';
 $string['cannotmanualctrack'] = 'Activity does not provide manual completion tracking';
 $string['cannotmapfield'] = 'Mapping collision detected - two fields maps to the same grade item $a';
@@ -120,7 +119,6 @@ $string['cannotsetpassword'] = 'Could not set user password!';
 $string['cannotsetprefgrade'] = 'Could not set preference aggregationview to $a for this grade category';
 $string['cannotsettheme'] = 'Could not set the theme!';
 $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
-$string['cannotsetupcategory'] = 'Serious error! Could not set up a default course category!';
 $string['cannotsetupcapforplugin'] = 'Could not set up the capabilities for $a';
 $string['cannotsetupcapformod'] = 'Could not set up the capabilities for $a';
 $string['cannotshowhidecoursesincategory'] = 'Cannot show/hide the courses in category $a.';

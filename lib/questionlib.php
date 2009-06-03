@@ -2062,9 +2062,7 @@ function question_new_attempt_uniqueid($modulename='quiz') {
 
     $attempt = new stdClass;
     $attempt->modulename = $modulename;
-    if (!$id = $DB->insert_record('question_attempts', $attempt)) {
-        print_error('cannotcreate', 'question');
-    }
+    $id = $DB->insert_record('question_attempts', $attempt);
     return $id;
 }
 

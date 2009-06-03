@@ -1313,9 +1313,7 @@ function get_course_category($catid=0) {
             $cat->depth        = 1;
             $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
             $cat->timemodified = time();
-            if (!$catid = $DB->insert_record('course_categories', $cat)) {
-                print_error('cannotsetupcategory', 'error');
-            }
+            $catid = $DB->insert_record('course_categories', $cat);
             // make sure category context exists
             get_context_instance(CONTEXT_COURSECAT, $catid);
             mark_context_dirty('/'.SYSCONTEXTID);
