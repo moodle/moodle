@@ -34,6 +34,9 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
             notify("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
                     PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)");
         }
+
+        /// authorize savepoint reached
+        upgrade_plugin_savepoint($result, 2008020500, 'enrol', 'authorize');
     }
 
     if ($result && $oldversion < 2008092700) {
@@ -72,6 +75,9 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
         $table = new xmldb_table('enrol_authorize_refunds');
         $index = new xmldb_index('transid', XMLDB_INDEX_NOTUNIQUE, array('transid'));
         $dbman->add_index($table, $index);
+
+        /// authorize savepoint reached
+        upgrade_plugin_savepoint($result, 2008092700, 'enrol', 'authorize');
     }
 
     /// Dropping all enums/check contraints from core. MDL-18577
@@ -83,6 +89,9 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
 
     /// Launch change of list of values for field paymentmethod
         $dbman->drop_enum_from_field($table, $field);
+
+        /// authorize savepoint reached
+        upgrade_plugin_savepoint($result, 2009042700, 'enrol', 'authorize');
     }
 
     return $result;
