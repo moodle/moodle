@@ -772,6 +772,7 @@ $string['settingmemorylimit'] = 'Insufficient memory detected, please set higher
 $string['showblocksonmodpages'] = 'Show blocks on module pages';
 $string['showdetails'] = 'Show details';
 $string['simpletest'] = 'Unit tests';
+$string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by Moodle.';
 $string['dbtest'] = 'Functional DB tests';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemailcharset'] = 'Character set';
