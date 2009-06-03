@@ -155,10 +155,6 @@ function do_delete($post) {
     tag_set('post', $post->id, array());
     
     add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $post->userid, 'deleted blog entry with entry id# '. $post->id);
-
-    if (!$status) {
-        print_error('deleteposterror', 'blog', $returnurl);
-    }
 }
 
 /**
@@ -173,23 +169,18 @@ function do_add($post, $blogeditform) {
     $post->created      = time();
 
     // Insert the new blog entry.
-    if ($post->id = $DB->insert_record('post', $post)) {
-        // Add blog attachment
-        if ($blogeditform->get_new_filename('attachment')) {
-            if ($blogeditform->save_stored_file('attachment', SYSCONTEXTID, 'blog', $post->id, '/', false, $USER->id)) {
-                $DB->set_field("post", "attachment", 1, array("id"=>$post->id));
-            }
+    $post->id = $DB->insert_record('post', $post);
+    // Add blog attachment
+    if ($blogeditform->get_new_filename('attachment')) {
+        if ($blogeditform->save_stored_file('attachment', SYSCONTEXTID, 'blog', $post->id, '/', false, $USER->id)) {
+            $DB->set_field("post", "attachment", 1, array("id"=>$post->id));
         }
-
-        // Update tags.
-        tag_set('post', $post->id, $post->tags);
-
-        add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
-
-    } else {
-        print_error('deleteposterror', 'blog', $returnurl);
     }
 
+    // Update tags.
+    tag_set('post', $post->id, $post->tags);
+
+    add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 }
 
 /**
@@ -212,14 +203,10 @@ function do_edit($post, $blogeditform) {
     }
 
     // Update record
-    if ($DB->update_record('post', $post)) {
-        tag_set('post', $post->id, $post->tags);
+    $DB->update_record('post', $post);
+    tag_set('post', $post->id, $post->tags);
 
-        add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&postid='.$post->id, $post->subject);
-
-    } else {
-        print_error('deleteposterror', 'blog', $returnurl);
-    }
+    add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&postid='.$post->id, $post->subject);
 }
 
 ?>

@@ -97,15 +97,11 @@
             $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
             $usernew->confirmed  = 1;
             $usernew->password = hash_internal_user_password($usernew->newpassword);
-            if (!$usernew->id = $DB->insert_record('user', $usernew)) {
-                print_error('cannotcreateuser');
-            }
+            $usernew->id = $DB->insert_record('user', $usernew);
             $usercreated = true;
             
         } else {
-            if (!$DB->update_record('user', $usernew)) {
-                print_error('cannotupdateuser', 'message');
-            }
+            $DB->update_record('user', $usernew);
             // pass a true $userold here
             if (! $authplugin->user_update($user, $userform->get_data())) {
                 // auth update failed, rollback for moodle

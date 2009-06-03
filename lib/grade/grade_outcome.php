@@ -152,7 +152,7 @@ class grade_outcome extends grade_object {
             $goc = new object();
             $goc->courseid  = $courseid;
             $goc->outcomeid = $this->id;
-            return (bool)$DB->insert_record('grade_outcomes_courses', $goc);
+            $DB->insert_record('grade_outcomes_courses', $goc);
         }
         return true;
     }

@@ -203,9 +203,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$DB->update_record($this->table, $data)) {
-            return false;
-        }
+        $DB->update_record($this->table, $data);
 
         if (empty($CFG->disablegradehistory)) {
             unset($data->timecreated);
@@ -290,10 +288,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if (!$this->id = $DB->insert_record($this->table, $data)) {
-            debugging("Could not insert object into db");
-            return false;
-        }
+        $this->id = $DB->insert_record($this->table, $data);
 
         // set all object properties from real db data
         $this->update_from_db();

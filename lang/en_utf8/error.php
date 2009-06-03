@@ -33,7 +33,6 @@ $string['cannotcreatelangbase'] = 'Error: Could not create base lang directory';
 $string['cannotcreatetempdir'] = 'Cannot create temp directory';
 $string['cannotcreatesitedir'] = 'Cannot create site folder. The site administrator needs to fix the file permissions.';
 $string['cannotcreateuploaddir'] = 'Cannot create upload folder. The site administrator needs to fix the file permissions.';
-$string['cannotcreateuser'] = 'Error creating user record';
 $string['cannotcreateorfindstructs'] = 'Error finding or creating section structures for this course';
 $string['cannotcreatepopupwin'] = 'Undefined element - cannot create pop-up window';
 $string['cannotcustomisefiltersblockuser'] = 'You cannot customise filters settings in user or block contexts.';

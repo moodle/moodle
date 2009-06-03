@@ -36,15 +36,12 @@ if (empty($preferences['newemailattemptsleft'])) {
         print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
     } else {
         // update user email
-        if (!$DB->set_field('user', 'email', $user->email, array('id' => $user->id))) {
-            print_error('cannotupdateuser');
-        } else {
-            events_trigger('user_updated', $user);
-            $a->email = $user->email;
-            $stremailupdatesuccess = get_string('auth_emailupdatesuccess', 'auth', $a);
-            print_box($stremailupdatesuccess, 'center');
-            print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
-        }
+        $DB->set_field('user', 'email', $user->email, array('id' => $user->id));
+        events_trigger('user_updated', $user);
+        $a->email = $user->email;
+        $stremailupdatesuccess = get_string('auth_emailupdatesuccess', 'auth', $a);
+        print_box($stremailupdatesuccess, 'center');
+        print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
     }
 
 } else {

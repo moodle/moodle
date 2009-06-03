@@ -79,10 +79,9 @@ function glossary_add_instance($glossary) {
         print_error('unknowformat', '', '', $glossary->displayformat);
     }
 
-    if ($returnid = $DB->insert_record("glossary", $glossary)) {
-        $glossary->id = $returnid;
-        glossary_grade_item_update($glossary);
-    }
+    $returnid = $DB->insert_record("glossary", $glossary);
+    $glossary->id = $returnid;
+    glossary_grade_item_update($glossary);
 
     return $returnid;
 }
@@ -127,12 +126,11 @@ function glossary_update_instance($glossary) {
         print_error('unknowformat', '', '', $glossary->displayformat);
     }
 
-    if ($return = $DB->update_record("glossary", $glossary)) {
-        if ($glossary->defaultapproval) {
-            $DB->execute("UPDATE {glossary_entries} SET approved = 1 where approved <> 1 and glossaryid = ?", array($glossary->id));
-        }
-        glossary_grade_item_update($glossary);
+    $return = $DB->update_record("glossary", $glossary);
+    if ($glossary->defaultapproval) {
+        $DB->execute("UPDATE {glossary_entries} SET approved = 1 where approved <> 1 and glossaryid = ?", array($glossary->id));
     }
+    glossary_grade_item_update($glossary);
 
     return $return;
 }

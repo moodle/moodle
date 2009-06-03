@@ -22,7 +22,6 @@ $string['courseblogdisable'] = 'Course blogs is not enabled';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
 $string['donothaveblog'] = 'You do not have your own blog, sorry.';
 $string['deleteotagswarn'] = 'Are you sure you want to remove this / these tags <br />from all blog posts and remove it from the system?';
-$string['deleteposterror'] = 'Error occured while deleting post';
 $string['disableblogs'] = 'Disable blog system completely';
 $string['emptybody'] = 'Blog entry body can not be empty';
 $string['emptytitle'] = 'Blog entry title can not be empty';
