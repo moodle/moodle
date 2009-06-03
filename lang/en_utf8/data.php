@@ -30,7 +30,6 @@ $string['cannotadd'] = 'Can not add entries!';
 $string['cannotdeletepreset'] = 'Error deleting a preset!';
 $string['cannotrate'] = 'Rating of items not allowed!';
 $string['cannotunziptopreset'] = 'Cannot unzip to the preset directory';
-$string['cannotinsertempty'] = 'Could not make an empty record!';
 $string['cancel'] = 'Cancel';
 $string['checkbox'] = 'Checkbox';
 $string['chooseexportfields'] = 'Choose the fields you wish to export:';

@@ -355,9 +355,7 @@ WHERE
             $newanswer = $current;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
-            if (! $DB->update_record("choice_answers", $newanswer)) {
-                print_error('cannotupdatechoice', 'choice');
-            }
+            $DB->update_record("choice_answers", $newanswer);
             add_to_log($courseid, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
         } else {
             $newanswer = NULL;
@@ -365,9 +363,7 @@ WHERE
             $newanswer->userid = $userid;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
-            if (! $DB->insert_record("choice_answers", $newanswer)) {
-                print_error('cannotsavechoice', 'choice');
-            }
+            $DB->insert_record("choice_answers", $newanswer);
             add_to_log($courseid, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
         }
     } else {

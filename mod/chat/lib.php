@@ -646,10 +646,8 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message))
-            {
-                print_error('cantinsert', 'chat');
-            }
+            $DB->insert_record('chat_messages', $message);
+            $DB->insert_record('chat_messages_current', $message);
         }
     }
 
@@ -683,11 +681,8 @@ function chat_delete_old_users() {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!$DB->insert_record('chat_messages', $message)
-                || !$DB->insert_record('chat_messages_current', $message) )
-            {
-                print_error('cantinsert', 'chat');
-            }
+            $DB->insert_record('chat_messages', $message);
+            $DB->insert_record('chat_messages_current', $message);
         }
     }
 }

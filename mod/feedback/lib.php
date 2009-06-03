@@ -1244,9 +1244,7 @@ function feedback_set_tmp_values($feedbackcompleted) {
     // $tmpcpl = $feedbackcompleted;
     unset($tmpcpl->id);
     $tmpcpl->timemodified = time();
-    if(!$tmpcpl->id = $DB->insert_record('feedback_completedtmp', $tmpcpl)) {
-        print_error('cannotcreatetmpfeedback', 'feedback');
-    }
+    $tmpcpl->id = $DB->insert_record('feedback_completedtmp', $tmpcpl);
     //get all values of original-completed
     if(!$values = $DB->get_records('feedback_value', array('completed'=>$feedbackcompleted->id))) {
         return;
@@ -1283,9 +1281,7 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $us
         unset($newcpl->id);
         $newcpl->userid = $userid;
         $newcpl->timemodified = time();
-        if(!$newcpl->id = $DB->insert_record('feedback_completed', $newcpl)) {
-            print_error('cannotcreatecompletedfeedback', 'feedback');
-        }
+        $newcpl->id = $DB->insert_record('feedback_completed', $newcpl);
         //get all values of tmp-completed
         if(!$values = $DB->get_records('feedback_valuetmp', array('completed'=>$feedbackcompletedtmp->id))) {
             return false;

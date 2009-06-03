@@ -1571,9 +1571,7 @@ class assignment_base {
             return $submission;
         }
         $newsubmission = $this->prepare_new_submission($userid, $teachermodified);
-        if (!$DB->insert_record("assignment_submissions", $newsubmission)) {
-            print_error('cannotinsertempty', 'assignment');
-        }
+        $DB->insert_record("assignment_submissions", $newsubmission);
 
         return $DB->get_record('assignment_submissions', array('assignment'=>$this->assignment->id, 'userid'=>$userid));
     }

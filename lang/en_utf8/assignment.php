@@ -26,7 +26,6 @@ $string['assignmentname'] = 'Assignment name';
 $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
 $string['cannotdeletefiles'] = 'An error occurred and files could not be deleted';
-$string['cannotinsertempty'] = 'Could not insert a new empty submission';
 $string['cannotviewassignment'] = 'You can not view this assignment';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';

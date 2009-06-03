@@ -138,9 +138,7 @@ class data_field_file extends data_field_base {
             $content = new object();
             $content->fieldid  = $this->field->id;
             $content->recordid = $recordid;
-            if ($id = $DB->insert_record('data_content', $content)) {
-                print_error('cannotinsertempty', 'data');
-            }
+            $id = $DB->insert_record('data_content', $content);
             $content = $DB->get_record('data_content', array('id'=>$id));
         }
 

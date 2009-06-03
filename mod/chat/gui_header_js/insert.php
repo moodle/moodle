@@ -49,9 +49,8 @@
         $message->message = $chat_message;
         $message->timestamp = time();
 
-        if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message)) {
-            print_error('cantinsert', 'chat');
-        }
+        $DB->insert_record('chat_messages', $message);
+        $DB->insert_record('chat_messages_current', $message);
 
         $chatuser->lastmessageping = time() - 2;
         $DB->update_record('chat_users', $chatuser);
