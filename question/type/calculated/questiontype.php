@@ -898,7 +898,7 @@ class question_calculated_qtype extends default_questiontype {
     	global $CFG, $DB;
     		$databasedataitems = $DB->get_records_sql( // Use number as key!!
                         " SELECT id , itemnumber, definition,  value
-                          FROM {$CFG->prefix}question_dataset_items
+                          FROM {question_dataset_items}
                           WHERE definition = $definition order by id DESC ", array($definition));
       	$dataitems = Array();
        	foreach($databasedataitems as $id => $dataitem  ){
