@@ -518,27 +518,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008073111);
     }
 
-    if ($result && $oldversion < 2008073112) {
-    /// Define table files_cleanup to be created
-        $table = new xmldb_table('files_cleanup');
-
-    /// Adding fields to table files_cleanup
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
-
-    /// Adding keys to table files_cleanup
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Adding indexes to table files_cleanup
-        $table->add_index('contenthash', XMLDB_INDEX_UNIQUE, array('contenthash'));
-
-    /// Conditionally launch create table for files_cleanup
-        $dbman->create_table($table);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008073112);
-    }
-
     if ($result && $oldversion < 2008073113) {
     /// move all course, backup and other files to new filepool based storage
         upgrade_migrate_files_courses();
@@ -2153,6 +2132,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009051700);
+    }
+
+    if ($result && $oldversion < 2009060200) {
+    /// Define table files_cleanup to be dropped - not needed
+        $table = new xmldb_table('files_cleanup');
+
+    /// Conditionally launch drop table for files_cleanup
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009060200);
     }
 
     return $result;

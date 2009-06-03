@@ -544,7 +544,11 @@
             }
         }
     }
-    
+
+    // cleanup file trash
+    $fs = get_file_storage();
+    $fs->cron();
+
     // run any customized cronjobs, if any
     // looking for functions in lib/local/cron.php
     if (file_exists($CFG->dirroot.'/local/cron.php')) {

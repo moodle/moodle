@@ -4963,7 +4963,13 @@ function get_file_storage() {
         $filedir = $CFG->dataroot.'/filedir';
     }
 
-    $fs = new file_storage($filedir);
+    if (isset($CFG->trashdir)) {
+        $trashdirdir = $CFG->trashdir;
+    } else {
+        $trashdirdir = $CFG->dataroot.'/trashdir';
+    }
+
+    $fs = new file_storage($filedir, $trashdirdir, $CFG->directorypermissions, $CFG->filepermissions);
 
     return $fs;
 }

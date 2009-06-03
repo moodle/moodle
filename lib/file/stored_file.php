@@ -54,12 +54,14 @@ class stored_file {
 
     /**
      * Delete file
-     * @return success
+     * @return bool success
      */
     public function delete() {
         global $DB;
-        $this->fs->mark_delete_candidate($this->file_record->contenthash);
-        return $DB->delete_records('files', array('id'=>$this->file_record->id));
+        $DB->delete_records('files', array('id'=>$this->file_record->id));
+        // moves pool file to trash if content not needed any more
+        $this->fs->deleted_file_cleanup($this->file_record->contenthash);
+        return true;
     }
 
     /**
@@ -93,7 +95,9 @@ class stored_file {
     public function get_content_file_handle() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('storedfilecannotread');
+            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
+                throw new file_exception('storedfilecannotread');
+            }
         }
         return fopen($path, 'rb'); //binary reading only!!
     }
@@ -105,7 +109,9 @@ class stored_file {
     public function readfile() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('storedfilecannotread');
+            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
+                throw new file_exception('storedfilecannotread');
+            }
         }
         readfile($path);
     }
@@ -117,7 +123,9 @@ class stored_file {
     public function get_content() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('storedfilecannotread');
+            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
+                throw new file_exception('storedfilecannotread');
+            }
         }
         return file_get_contents($this->get_content_file_location());
     }
@@ -130,7 +138,9 @@ class stored_file {
     public function copy_content_to($pathname) {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('storedfilecannotread');
+            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
+                throw new file_exception('storedfilecannotread');
+            }
         }
         return copy($path, $pathname);
     }

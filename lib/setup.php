@@ -421,6 +421,11 @@ global $SCRIPT;
     if (empty($CFG->directorypermissions)) {
         $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
     }
+    if (empty($CFG->filepermissions)) {
+        $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
+    }
+/// better also set default umask because recursive mkdir() does not apply permissions recursively otherwise
+    umask(0000);
 
 /// Calculate and set $CFG->ostype to be used everywhere. Possible values are:
 /// - WINDOWS: for any Windows flavour.

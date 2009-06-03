@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20090501" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090602" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2021,7 +2021,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="message_working" NEXT="files_cleanup">
+    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="message_working" NEXT="repository">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contenthash"/>
         <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 hash of file content" PREVIOUS="id" NEXT="pathnamehash"/>
@@ -2049,19 +2049,7 @@
         <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash" PREVIOUS="contenthash"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="files_cleanup" COMMENT="File pool cleanup candidates" PREVIOUS="files" NEXT="repository">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contenthash"/>
-        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="contenthash" UNIQUE="true" FIELDS="contenthash"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance." PREVIOUS="files_cleanup" NEXT="repository_instances">
+    <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance." PREVIOUS="files" NEXT="repository_instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="type"/>
         <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="visible"/>

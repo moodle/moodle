@@ -35,29 +35,46 @@ require_once("$CFG->libdir/file/stored_file.php");
  * to use file_browser class instead.
  */
 class file_storage {
+    /** Directory with file contents */
     private $filedir;
-
+    /** Contents of deleted files not needed any more */
+    private $trashdir;
+    /** Permissions for new directories */
+    private $dirpermissions;
+    /** Permissions for new files */
+    private $filepermissions;
     /**
      * Contructor
      * @param string $filedir full path to pool directory
      */
-    public function __construct($filedir) {
-        $this->filedir = $filedir;
+    public function __construct($filedir, $trashdir, $dirpermissions, $filepermissions) {
+        $this->filedir         = $filedir;
+        $this->trashdir        = $trashdir;
+        $this->dirpermissions  = $dirpermissions;
+        $this->filepermissions = $filepermissions;
 
         // make sure the file pool directory exists
         if (!is_dir($this->filedir)) {
-            if (!check_dir_exists($this->filedir, true, true)) {
+            if (!mkdir($this->filedir, $this->dirpermissions, true)) {
                 throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
             }
             // place warning file in file pool root
-            file_put_contents($this->filedir.'/warning.txt',
-                              'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
+            if (!file_exists($this->filedir.'/warning.txt')) {
+                file_put_contents($this->filedir.'/warning.txt',
+                                  'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
+            }
+        }
+        // make sure the file pool directory exists
+        if (!is_dir($this->trashdir)) {
+            if (!mkdir($this->trashdir, $this->dirpermissions, true)) {
+                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+            }
         }
     }
 
     /**
      * Returns location of filedir (file pool)
-     * Do not use, this method is intended for stored_file instances.
+     * Do not use, this method is intended for stored_file instances only.
      * @return string pathname
      */
     public function get_filedir() {
@@ -805,8 +822,10 @@ class file_storage {
             $newfile = false;
 
         } else {
-            if (!check_dir_exists($hashpath, true, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+            if (!is_dir($hashpath)) {
+                if (!mkdir($hashpath, $this->dirpermissions, true)) {
+                    throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+                }
             }
             $newfile = true;
 
@@ -818,6 +837,7 @@ class file_storage {
                 @unlink($hashfile);
                 throw new file_pool_content_exception($contenthash);
             }
+            chmod($hashfile, $this->filepermissions); // fix permissions if needed
         }
 
 
@@ -844,8 +864,10 @@ class file_storage {
             $newfile = false;
 
         } else {
-            if (!check_dir_exists($hashpath, true, true)) {
-                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+            if (!is_dir($hashpath)) {
+                if (!mkdir($hashpath, $this->dirpermissions, true)) {
+                    throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
+                }
             }
             $newfile = true;
 
@@ -855,6 +877,7 @@ class file_storage {
                 @unlink($hashfile);
                 throw new file_pool_content_exception($contenthash);
             }
+            chmod($hashfile, $this->filepermissions); // fix permissions if needed
         }
 
         return array($contenthash, $filesize, $newfile);
@@ -876,37 +899,101 @@ class file_storage {
     }
 
     /**
-     * Marks pool file as candidate for deleting
+     * Return path to file with given hash
+     *
+     * NOTE: must not be public, files in pool must not be modified
+     *
      * @param string $contenthash
+     * @return string expected file location
      */
-    public function mark_delete_candidate($contenthash) {
+    protected function trash_path_from_hash($contenthash) {
+        $l1 = $contenthash[0].$contenthash[1];
+        $l2 = $contenthash[2].$contenthash[3];
+        $l3 = $contenthash[4].$contenthash[5];
+        return "$this->trashdir/$l1/$l2/$l3";
+    }
+
+    /**
+     * Tries to recover missing content of file from trash
+     * @param object $file_record
+     * @return bool success
+     */
+    public function try_content_recovery($file) {
+        $contenthash = $file->get_contenthash();
+        $trashfile = $this->trash_path_from_hash($contenthash).'/'.$contenthash;
+        if (!is_readable($trashfile)) {
+            if (!is_readable($this->trashdir.'/'.$contenthash)) {
+                return false;
+            }
+            // nice, at least alternative trash file in trash root exists
+            $trashfile = $this->trashdir.'/'.$contenthash;
+        }
+        if (filesize($trashfile) != $file->get_filesize() or sha1_file($trashfile) != $contenthash) {
+            //weird, better fail early
+            return false;
+        }
+        $contentdir  = $this->path_from_hash($contenthash);
+        $contentfile = $contentdir.'/'.$contenthash;
+        if (file_exists($contentfile)) {
+            //strange, no need to recover anything
+            return true;
+        }
+        if (!is_dir($contentdir)) {
+            if (!mkdir($contentdir, $this->dirpermissions, true)) {
+                return false;
+            }
+        }
+        return rename($trashfile, $contentfile);
+    }
+
+    /**
+     * Marks pool file as candidate for deleting
+     * DO NOT call directly - reserved for core!
+     * @param string $contenthash
+     * @return void
+     */
+    public function deleted_file_cleanup($contenthash) {
         global $DB;
 
-        if ($DB->record_exists('files_cleanup', array('contenthash'=>$contenthash))) {
+        //Note: this section is critical - in theory file could be reused at the same
+        //      time, if this happens we can still recover the file from trash
+        if ($DB->record_exists('files', array('contenthash'=>$contenthash))) {
+            // file content is still used
             return;
         }
-        $rec = new object();
-        $rec->contenthash = $contenthash;
-        $DB->insert_record('files_cleanup', $rec);
+        //move content file to trash
+        $contentfile = $this->path_from_hash($contenthash).'/'.$contenthash;
+        if (!file_exists($contentfile)) {
+            //weird, but no problem
+            return;
+        }
+        $trashpath = $this->trash_path_from_hash($contenthash);
+        $trashfile = $trashpath.'/'.$contenthash;
+        if (file_exists($trashfile)) {
+            // we already have this content in trash, no need to move it there
+            unlink($contentfile);
+            return;
+        }
+        if (!is_dir($trashpath)) {
+            mkdir($trashpath, $this->dirpermissions, true);
+        }
+        rename($contentfile, $trashfile);
+        chmod($trashfile, $this->filepermissions); // fix permissions if needed
     }
 
     /**
      * Cron cleanup job.
      */
     public function cron() {
-        global $DB;
-
-        //TODO: there is a small chance that reused files might be deleted
-        //      if this function takes too long we should add some table locking here
-
-        $sql = "SELECT 1 AS id, fc.contenthash
-                  FROM {files_cleanup} fc
-                  LEFT JOIN {files} f ON f.contenthash = fc.contenthash
-                 WHERE f.id IS NULL";
-        while ($hash = $DB->get_record_sql($sql, null, true)) {
-            $file = $this->path_from_hash($hash->contenthash).'/'.$hash->contenthash;
-            @unlink($file);
-            $DB->delete_records('files_cleanup', array('contenthash'=>$hash->contenthash));
+        global $CFG;
+        // remove trash pool files once a day
+        // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
+        if (empty($CFG->fileslastcleanup) or $CFG->fileslastcleanup < time() - 60*60*24) {
+            require_once($CFG->libdir.'/filelib.php');
+            mtrace('Deleting trash files... ', '');
+            fulldelete($this->trashdir);
+            set_config('fileslastcleanup', time());
+            mtrace('done.');
         }
     }
 }

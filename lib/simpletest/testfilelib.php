@@ -51,7 +51,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         parent::setUp();
         $tables = array('block_instance', 'cache_flags', 'capabilities', 'context', 'context_temp',
                         'course', 'course_modules', 'course_categories', 'course_sections','files',
-                        'files_cleanup', 'grade_items', 'grade_categories', 'groups', 'groups_members',
+                        'grade_items', 'grade_categories', 'groups', 'groups_members',
                         'modules', 'role', 'role_names', 'role_context_levels', 'role_assignments',
                         'role_capabilities', 'user');
         $this->create_test_tables($tables, 'lib');
