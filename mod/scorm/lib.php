@@ -78,9 +78,7 @@ function scorm_add_instance($scorm, $mform=null) {
     }
 
 /// update course module record - from now on this instance properly exists and all function may be used
-    if (!$DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid))) {
-        print_error('cannotaddcoursemodule');
-    }
+    $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
 
 /// reload scorm instance
     $scorm = $DB->get_record('scorm', array('id'=>$id));

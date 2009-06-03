@@ -79,9 +79,7 @@
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time   = time();
-                    if (!$DB->update_record('forum_ratings', $oldrating)) {
-                        print_error('cannotupdaterate', 'error', '', (object)array('id'=>$post->id, 'rating'=>$rating));
-                    }
+                    $DB->update_record('forum_ratings', $oldrating);
                     forum_update_grades($forum, $post->userid);
                 }
 

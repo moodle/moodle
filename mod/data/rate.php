@@ -71,9 +71,7 @@
 
             } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
-                if (!$DB->update_record('data_ratings', $oldrating)) {
-                    print_error('cannotupdaterate', 'error', '', (object)array('id'=>$record->id, 'rating'=>$rating));
-                }
+                $DB->update_record('data_ratings', $oldrating);
                 data_update_grades($data, $record->userid);
 
             }

@@ -70,9 +70,7 @@ if ($mform->is_cancelled()) {
     } else {
         // Create a new category.
         $newcategory->sortorder = 999;
-        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
-            print_error('cannotcreatecategory', '', '', format_string($newcategory->name));
-        }
+        $newcategory->id = $DB->insert_record('course_categories', $newcategory);
         $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
         mark_context_dirty($newcategory->context->path);
         fix_course_sortorder(); // Required to build course_categories.depth and .path.

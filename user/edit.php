@@ -135,9 +135,7 @@
 
         $usernew->timemodified = time();
 
-        if (!$DB->update_record('user', $usernew)) {
-            print_error('cannotupdateprofile');
-        }
+        $DB->update_record('user', $usernew);
 
         // pass a true $userold here
         if (! $authplugin->user_update($user, $userform->get_data())) {

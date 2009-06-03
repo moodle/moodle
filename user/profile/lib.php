@@ -113,9 +113,7 @@ class profile_field_base {
 
         if ($dataid = $DB->get_field('user_info_data', 'id', array('userid'=>$data->userid, 'fieldid'=>$data->fieldid))) {
             $data->id = $dataid;
-            if (!$DB->update_record('user_info_data', $data)) {
-                print_error('cannotupdatecustomprofile');
-            }
+            $DB->update_record('user_info_data', $data);
         } else {
             $DB->insert_record('user_info_data', $data);
         }

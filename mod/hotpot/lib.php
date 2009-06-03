@@ -626,9 +626,7 @@ function hotpot_add_chain(&$hotpot) {
             hotpot_set_name_summary_reference($hotpot, $i);
             $hotpot->reference = $hotpot->reference;
 
-            if (!$hotpot->instance = $DB->insert_record("hotpot", $hotpot)) {
-                print_error('cannotaddnewinstance', '', 'view.php?id='.$hotpot->course, $hotpot->modulename);
-            }
+            $hotpot->instance = $DB->insert_record("hotpot", $hotpot);
 
             // store (hotpot table) id of start of chain
             if ($i==0) {

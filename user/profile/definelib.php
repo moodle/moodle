@@ -266,9 +266,7 @@ function profile_delete_category($id) {
     }
 
     /// Finally we get to delete the category
-    if (!$DB->delete_records('user_info_category', array('id'=>$category->id))) {
-        print_error('cannotdeletecate');
-    }
+    $DB->delete_records('user_info_category', array('id'=>$category->id));
     profile_reorder_categories();
     return true;
 }

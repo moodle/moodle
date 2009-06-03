@@ -2458,9 +2458,7 @@ function question_make_default_categories($contexts) {
             $category->parent = 0;
             $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
             $category->stamp = make_unique_id_code();
-            if (!$category->id = $DB->insert_record('question_categories', $category)) {
-                print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
-            }
+            $category->id = $DB->insert_record('question_categories', $category);
         } else {
             $category = question_get_default_category($context->id);
         }

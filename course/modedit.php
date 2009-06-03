@@ -423,19 +423,13 @@
 
             $fromform->instance = $returnfromfunc;
 
-            if (!$DB->set_field('course_modules', 'instance', $returnfromfunc, array('id'=>$fromform->coursemodule))) {
-                print_error('cannotaddcoursemodule');
-            }
+            $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id'=>$fromform->coursemodule));
 
             // course_modules and course_sections each contain a reference
             // to each other, so we have to update one of them twice.
-            if (!$sectionid = add_mod_to_section($fromform)) {
-                print_error('cannotaddcmtosection');
-            }
+            $sectionid = add_mod_to_section($fromform);
 
-            if (!$DB->set_field('course_modules', 'section', $sectionid, array('id'=>$fromform->coursemodule))) {
-                print_error('cannotupdatecm');
-            }
+            $DB->set_field('course_modules', 'section', $sectionid, array('id'=>$fromform->coursemodule));
 
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);

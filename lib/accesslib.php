@@ -3512,11 +3512,8 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
                         array_key_exists($cachedcap->name, $newcapdef) === false) {
 
                 // Remove from capabilities cache.
-                if (!$DB->delete_records('capabilities', array('name'=>$cachedcap->name))) {
-                    print_error('cannotdeletecap', '', '', $cachedcap->name);
-                } else {
-                    $removedcount++;
-                }
+                $DB->delete_records('capabilities', array('name'=>$cachedcap->name));
+                $removedcount++;
                 // Delete from roles.
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach($roles as $role) {
