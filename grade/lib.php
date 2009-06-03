@@ -386,7 +386,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
  */
 function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=false) {
     global $CFG, $COURSE;
-
+    
     if (!isset($currenttab)) {
         $currenttab = '';
     }
@@ -551,7 +551,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $plugin_info['edittree']['simpleview'] =
                     new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades'));
             $plugin_info['edittree']['fullview'] =
-                    new grade_plugin_info('fullview', $url, get_string('fullview', 'grades'));
+                    new grade_plugin_info('fullview', $url_adv, get_string('fullview', 'grades'));
             $count++;
         }
 
@@ -816,7 +816,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     global $CFG, $COURSE;
     $strgrades = get_string('grades');
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
-
+    
     // Determine the string of the active plugin
     $stractive_plugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
     $stractive_type = $plugin_info['strings'][$active_type];
