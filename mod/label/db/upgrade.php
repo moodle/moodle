@@ -28,7 +28,7 @@ function xmldb_label_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($oldversion < 2007101510) {
+    if ($result && $oldversion < 2007101510) {
         $sql = "UPDATE {log_display} SET mtable = 'label' WHERE module = 'label'";
         $result = $DB->execute($sql);
         upgrade_mod_savepoint($result, 2007101510, 'label');

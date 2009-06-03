@@ -83,7 +83,7 @@ function xmldb_chat_upgrade($oldversion) {
     /// chat savepoint reached
         upgrade_mod_savepoint($result, 2009042000, 'chat');
     }
-    
+
     return $result;
 }
 

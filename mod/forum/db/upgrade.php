@@ -28,7 +28,7 @@ function xmldb_forum_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result and $oldversion < 2007101511) {
+    if ($result && $oldversion < 2007101511) {
         //MDL-13866 - send forum ratins to gradebook again
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         forum_upgrade_grades();
