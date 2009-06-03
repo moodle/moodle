@@ -19,6 +19,7 @@ $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
 $string['chooselanguagehead'] = '言語を選択してください。';
 $string['chooselanguagesub'] = 'インストールのみに使用する言語を選択してください。この言語は、サイトのデフォルト言語としても使用されます。サイト言語は、後で変更することが可能です。';
+$string['cliinstallheader'] = 'Moodle $a コマンドライン・インストールプログラム';
 $string['dataroot'] = 'データディレクトリ';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['environment'] = '動作環境';
