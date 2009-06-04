@@ -43,11 +43,11 @@ $return = true;
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository::get_instance($edit);
-        $instancetype = repository::get_type_by_id($instance->typeid);
+        $instancetype = repository::get_type_by_id($instance->options['typeid']);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
         $plugin = $instancetype->get_typename();
-        $typeid = $instance->typeid;
+        $typeid = $instance->options['typeid'];
     } else {
         $plugin = $new;
         $typeid = $new;

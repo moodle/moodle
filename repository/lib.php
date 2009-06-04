@@ -1020,7 +1020,7 @@ abstract class repository {
                 $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
             }
 
-            $type = repository::get_type_by_id($i->typeid);
+            $type = repository::get_type_by_id($i->options['typeid']);
             $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
 
             //display a grey row if the type is defined as not visible
@@ -1612,8 +1612,8 @@ final class repository_instance_form extends moodleform {
                 $result = $this->instance->instance_config_form($mform);
                 // and set the data if we have some.
                 foreach ($this->instance->get_instance_option_names() as $config) {
-                    if (!empty($this->instance->$config)) {
-                        $data[$config] = $this->instance->$config;
+                    if (!empty($this->instance->options[$config])) {
+                        $data[$config] = $this->instance->options[$config];
                      } else {
                         $data[$config] = '';
                      }

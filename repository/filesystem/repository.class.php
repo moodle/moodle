@@ -9,10 +9,10 @@ class repository_filesystem extends repository {
         );
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
-        if (empty($this->root_path)) {
+        if (empty($this->options['root_path'])) {
             return;
         }
-        $this->root_path = trim($this->root_path);
+        $this->root_path = trim($this->options['root_path']);
         if (!empty($options['ajax'])) {
             // if created from filepicker
             if (empty($this->root_path)) {
