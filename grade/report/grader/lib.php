@@ -746,7 +746,7 @@ class grade_report_grader extends grade_report {
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
-                            $user->idnumber.'</a></th>';
+                            $user->idnumber.'</th>';
                 }
 
             }
@@ -1163,7 +1163,7 @@ class grade_report_grader extends grade_report {
                 if ($this->get_pref('showuseridnumber')) {
                     $colspan = 'colspan="2" ';
                 }
-                $avghtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$straverage.'</th>';
+                $avghtml .= '<th class="header c0 range" '.$colspan.' scope="row">'.$straverage.'</th>';
             }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
@@ -1253,7 +1253,7 @@ class grade_report_grader extends grade_report {
                 if ($this->get_pref('showuseridnumber')) {
                     $colspan = 'colspan="2" ';
                 }
-                $rangehtml .= '<th class="header c0 range "'.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
+                $rangehtml .= '<th class="header c0 range" '.$colspan.' scope="row">'.$this->get_lang_string('range','grades').'</th>';
             }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
