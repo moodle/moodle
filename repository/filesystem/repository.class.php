@@ -97,7 +97,7 @@ class repository_filesystem extends repository {
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
                             'date' => time(),
-                            'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $this->root_path.$file)
+                            'thumbnail' => $CFG->httpswwwroot .'/pix/f/'. mimeinfo('icon32', $this->root_path.$file)
                         );
                     } else {
                         if (!empty($path)) {
@@ -108,7 +108,7 @@ class repository_filesystem extends repository {
                         $list['list'][] = array(
                             'title' => $file,
                             'children' => array(),
-                            'thumbnail' => $CFG->pixpath .'/f/folder-32.png',
+                            'thumbnail' => $CFG->httpswwwroot .'/pix/f/folder-32.png',
                             'path' => $current_path
                             );
                     }

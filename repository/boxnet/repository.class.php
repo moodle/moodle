@@ -154,7 +154,7 @@ class repository_boxnet extends repository {
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->options['auth_token'].'/'.$fileids[$n],
-                            'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $v));
+                            'thumbnail'=>$CFG->httpswwwroot.'/pix/f/'.mimeinfo('icon32', $v));
                 }
             }
         }
@@ -208,6 +208,14 @@ class repository_boxnet extends repository {
             $ret = array();
             $ret['login'] = array($ticket_field, $user_field, $passwd_field);
             return $ret;
+        } else {
+            echo '<table>';
+            echo '<tr><td><label>'.get_string('username', 'repository_boxnet').'</label></td>';
+            echo '<td><input type="text" name="boxusername" /></td></tr>';
+            echo '<tr><td><label>'.get_string('password', 'repository_boxnet').'</label></td>';
+            echo '<td><input type="password" name="boxpassword" /></td></tr>';
+            echo '<input type="hidden" name="ticket" value="'.$t['ticket'].'" />';
+            echo '</table>';
         }
     }
 
