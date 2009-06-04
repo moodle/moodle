@@ -441,6 +441,12 @@
 
         $ilike = $DB->sql_ilike(); //Be case-insensitive
 
+        // Init some variables to be used by advanced search
+        $advsearchselect = '';
+        $advwhere        = '';
+        $advtables       = '';
+        $advparams       = array();
+
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
 
@@ -489,10 +495,10 @@
                         $params['search_flname_'.$i] = "%$val->data%";
                         continue;
                     }
-                    $tables .= ', {data_content} c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id';
-                    $searchselect .= ' AND ('.$val->sql.') ';
-                    $params = array_merge($params, $val->params);
+                    $advtables .= ', {data_content} c'.$key.' ';
+                    $advwhere .= ' AND c'.$key.'.recordid = r.id';
+                    $advsearchselect .= ' AND ('.$val->sql.') ';
+                    $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
                 $searchselect = " AND (cs.content $ilike :search1 OR u.firstname $ilike :search2 OR u.lastname $ilike :search3 ) ";
@@ -535,10 +541,10 @@
                         $params['search_flname_'.$i] = "%$val->data%";
                         continue;
                     }
-                    $tables .= ', {data_content} c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
-                    $searchselect .= ' AND ('.$val->sql.') ';
-                    $params = array_merge($params, $val->params);
+                    $advtables .= ', {data_content} c'.$key.' ';
+                    $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
+                    $advsearchselect .= ' AND ('.$val->sql.') ';
+                    $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
                 $searchselect = " AND (cs.content $ilike :search1 OR u.firstname $ilike :search2 OR u.lastname $ilike :search3 ) ";
@@ -552,16 +558,17 @@
 
     /// To actually fetch the records
 
-        $fromsql    = "FROM $tables $where $groupselect $approveselect $searchselect";
+        $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
         $sqlselect  = "SELECT $what $fromsql $sortorder";
         $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
         $sqlrids    = "SELECT tmp.id FROM ($sqlselect) tmp";
         $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
+        $allparams  = array_merge($params, $advparams);
 
     /// Work out the paging numbers and counts
 
-        $totalcount = $DB->count_records_sql($sqlcount, $params);
-        if (empty($searchselect)) {
+        $totalcount = $DB->count_records_sql($sqlcount, $allparams);
+        if (empty($searchselect) && empty($advsearchselect)) {
             $maxcount = $totalcount;
         } else {
             $maxcount = $DB->count_records_sql($sqlmax, $params);
@@ -572,7 +579,7 @@
             $mode = 'single';
 
             $page = 0;
-            if ($allrecordids = $DB->get_records_sql($sqlrids, $params)) {
+            if ($allrecordids = $DB->get_records_sql($sqlrids, $allparams)) {
                 $allrecordids = array_keys($allrecordids);
                 $page = (int)array_search($record->id, $allrecordids);
                 unset($allrecordids);
@@ -587,7 +594,7 @@
 
     /// Get the actual records
 
-        if (!$records = $DB->get_records_sql($sqlselect, $params, $page * $nowperpage, $nowperpage)) {
+        if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
             // Nothing to show!
             if ($record) {         // Something was requested so try to show that at least (bug 5132)
                 if (has_capability('mod/data:manageentries', $context) || empty($data->approval) ||
