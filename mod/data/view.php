@@ -426,6 +426,11 @@
 
         $ilike = sql_ilike(); //Be case-insensitive
 
+        // Init some variables to be used by advanced search
+        $advsearchselect = '';
+        $advwhere        = '';
+        $advtables       = '';
+
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
 
@@ -469,9 +474,9 @@
                         $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
                         continue;
                     }
-                    $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id';
-                    $searchselect .= ' AND ('.$val->sql.') ';
+                    $advtables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
+                    $advwhere .= ' AND c'.$key.'.recordid = r.id';
+                    $advsearchselect .= ' AND ('.$val->sql.') ';
                 }
             } else if ($search) {
                 $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
@@ -506,9 +511,9 @@
                         $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
                         continue;
                     }
-                    $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
-                    $searchselect .= ' AND ('.$val->sql.') ';
+                    $advtables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
+                    $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
+                    $advsearchselect .= ' AND ('.$val->sql.') ';
                 }
             } else if ($search) {
                 $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
@@ -519,7 +524,7 @@
 
     /// To actually fetch the records
 
-        $fromsql    = "FROM $tables $where $groupselect $approveselect $searchselect";
+        $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
         $sqlselect  = "SELECT $what $fromsql $sortorder";
         $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
         $sqlrids    = "SELECT tmp.id FROM ($sqlselect) tmp";
@@ -528,7 +533,7 @@
     /// Work out the paging numbers and counts
 
         $totalcount = count_records_sql($sqlcount);
-        if (empty($searchselect)) {
+        if (empty($searchselect) && empty($advsearchselect)) {
             $maxcount = $totalcount;
         } else {
             $maxcount = count_records_sql($sqlmax);
