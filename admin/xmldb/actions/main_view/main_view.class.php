@@ -256,9 +256,9 @@ class main_view extends XMLDBAction {
                 $b .= '</td>';
             /// include the higlight
                 if ($hithis) {
-                    $o .= '<tr class="highlight"><td class="directory cell"><a name="lastused" />' . $f . $b . '</tr>';
+                    $o .= '<tr class="highlight"><td class="directory cell"><a name="lastused" />' . $f . '</td>' . $b . '</tr>';
                 } else {
-                    $o .= '<tr class="r' . $row . '"><td class="directory cell">' . $f . $b . '</tr>';
+                    $o .= '<tr class="r' . $row . '"><td class="directory cell">' . $f . '</td>' . $b . '</tr>';
                 }
                 $row = ($row + 1) % 2;
             /// show errors if they exist
