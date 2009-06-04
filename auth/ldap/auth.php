@@ -1797,6 +1797,9 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function loginpage_hook() {
         global $CFG, $SESSION;
+
+        // HTTPS is potentially required
+        httpsrequired();
  
         if (($_SERVER['REQUEST_METHOD'] === 'GET'         // Only on initial GET of loginpage
                 || ($_SERVER['REQUEST_METHOD'] === 'POST'
