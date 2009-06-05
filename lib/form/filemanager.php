@@ -119,7 +119,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
             $html .= '<li>';
             $html .= "<a href=\"$viewurl\"><img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
-            $html .= "<a href=\"###\" onclick='rm_$suffix(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";;
+            $html .= "<a href=\"###\" onclick='rm_file(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";;
             $html .= '</li>';
         }
         $html .= '</ul>';
@@ -170,6 +170,12 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $str .= $html;
         $str .= $repo_info['css'];
         $str .= $repo_info['js'];
+        $str .= <<<EOD
+<input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
+<div>
+    <input value="$straddfile" onclick="callpicker('$id', '$client_id', '$draftitemid')" type="button" />
+</div>
+EOD;
         if (empty($CFG->filemanagerjsloaded)) {
             $str .= <<<EOD
 <script type="text/javascript">
@@ -178,7 +184,7 @@ var selected_file = null;
 var rm_cb = {
     success: function(o) {
         if(o.responseText && o.responseText == 200){
-            selected_file.parentNode.removeChild(elitem);
+            selected_file.parentNode.removeChild(selected_file);
         }
     }
 }
@@ -220,12 +226,6 @@ function callpicker(el_id, client_id, itemid) {
 EOD;
             $CFG->filemanagerjsloaded = true;
         }
-        $str .= <<<EOD
-<input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
-<div>
-    <input value="$straddfile" onclick="callpicker('$id', '$client_id', '$draftitemid')" type="button" />
-</div>
-EOD;
         return $str;
     }
 
