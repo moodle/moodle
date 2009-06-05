@@ -5106,7 +5106,7 @@ class admin_setting_manageportfolio extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG;
 
-        $output = print_simple_box_start(true);
+        $output = print_box_start('generalbox','',true);
 
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'portfolio');
@@ -5163,7 +5163,7 @@ class admin_setting_manageportfolio extends admin_setting {
         if ($addable) {
             $output .= $instancehtml;
         }
-        $output .= print_simple_box_end(true);
+        $output .= print_box_end(true);
 
         return highlight($query, $output);
     }
