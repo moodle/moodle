@@ -128,7 +128,7 @@
                                           'sesskey' => sesskey(),
                                           'blockaction' => 'config',
                                           'currentaction' => 'configblock',
-                                          'id' => $this->courseid,
+                                          'id' => $this->page->course->id,
                                           'section' => 'rss'
                                           ));
                     $output .= '<div class="info"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';

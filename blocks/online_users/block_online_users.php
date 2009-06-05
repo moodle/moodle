@@ -111,7 +111,7 @@ class block_online_users extends block_base {
         $minutes  = floor($timetoshowusers/60);
 
         // Verify if we can see the list of users, if not just print number of users
-        if (!has_capability('block/online_users:viewlist', $blockcontext)) {
+        if (!has_capability('block/online_users:viewlist', $context)) {
             if (!$usercount = $DB->count_records_sql($csql, $params)) {
                 $usercount = get_string("none");
             }
