@@ -162,6 +162,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         $showquestiontext = false, $addcontexts = array()) {
     global $USER, $CFG, $THEME, $COURSE;
 
+    $lastchangedid=optional_param('lastchanged',0,PARAM_INT);
     list($categoryid, $contextid)=  explode(',', $categoryandcontext);
 
     $qtypemenu = question_type_menu();
@@ -297,6 +298,9 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         }
         if ($showquestiontext) {
             $nameclass .= ' header';
+        }
+        if ($question->id==$lastchangedid) {
+            $nameclass='highlight';
         }
         if ($nameclass) {
             $nameclass = 'class="' . $nameclass . '"';
