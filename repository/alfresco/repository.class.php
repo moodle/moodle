@@ -91,7 +91,7 @@ class repository_alfresco extends repository {
     }
 
     public function get_listing($uuid = '', $path = '') {
-        global $CFG;
+        global $CFG, $SESSION;
 
         $ret = array();
         $ret['dynload'] = true;
@@ -103,26 +103,31 @@ class repository_alfresco extends repository {
 
         $ret['path'] = array(array('name'=>'Root', 'path'=>''));
 
-        if (empty($uuid)) {
-            $this->current_node = $this->store->companyHome;
-        } else {
-            $this->current_node = $this->user_session->getNode($this->store, $uuid);
-        }
-        $folder_filter = "{http://www.alfresco.org/model/content/1.0}folder";
-        $file_filter = "{http://www.alfresco.org/model/content/1.0}content";
-        foreach ($this->current_node->children as $child)
-        {
-            if ($child->child->type == $folder_filter)
-            {
-                $ret['list'][] = array('title'=>$child->child->cm_name,
-                    'path'=>$child->child->id,
-                    'thumbnail'=>$CFG->httpswwwroot.'/pix/f/folder-32.png',
-                    'children'=>array());
-            } elseif ($child->child->type == $file_filter) {
-                $ret['list'][] = array('title'=>$child->child->cm_name,
-                    'thumbnail' => $CFG->httpswwwroot .'/pix/f/'. mimeinfo('icon32', $child->child->cm_name),
-                    'source'=>$child->child->id);
+        try {
+            if (empty($uuid)) {
+                $this->current_node = $this->store->companyHome;
+            } else {
+                $this->current_node = $this->user_session->getNode($this->store, $uuid);
             }
+            $folder_filter = "{http://www.alfresco.org/model/content/1.0}folder";
+            $file_filter = "{http://www.alfresco.org/model/content/1.0}content";
+            foreach ($this->current_node->children as $child)
+            {
+                if ($child->child->type == $folder_filter)
+                {
+                    $ret['list'][] = array('title'=>$child->child->cm_name,
+                        'path'=>$child->child->id,
+                        'thumbnail'=>$CFG->httpswwwroot.'/pix/f/folder-32.png',
+                        'children'=>array());
+                } elseif ($child->child->type == $file_filter) {
+                    $ret['list'][] = array('title'=>$child->child->cm_name,
+                        'thumbnail' => $CFG->httpswwwroot .'/pix/f/'. mimeinfo('icon32', $child->child->cm_name),
+                        'source'=>$child->child->id);
+                }
+            }
+        } catch (Exception $e) {
+            unset($SESSION->{$this->sessname});
+            $ret = $this->print_login();
         }
         return $ret;
     }
