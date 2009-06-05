@@ -139,12 +139,15 @@ border-style:solid;
 border-width:0 1px;
 }
 
+/* we don't want 25px height - at all
+ * This causes the columns to fall out of line if Static Students Column is enabled
 .grade-report-grader table#user-grades th.category,
 .grade-report-grader table#user-grades th.item,
 .grade-report-grader table#user-grades th.categoryitem,
 .grade-report-grader table#user-grades th.courseitem {
 height: 25px;
 }
+*/
 
 .grade-report-grader td,.grade-report-grader th {
 border-color:#CECECE;

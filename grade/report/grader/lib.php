@@ -975,7 +975,7 @@ class grade_report_grader extends grade_report {
             for ($i = 0; $i < $levels; $i++) {
                 $studentshtml .= '
                         <tr class="heading name_row">
-                            <td '.$colspan.' class="fixedcolumn cell c0 topleft"> </td>
+                            <td '.$colspan.' class="fixedcolumn cell c0 topleft">&nbsp;</td>
                         </tr>
                         ';
             }
