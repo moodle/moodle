@@ -21,7 +21,6 @@ class quiz_report extends quiz_default_report {
         // Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
         $strtimeformat = get_string('strftimedatetime');
-        $strreviewquestion = get_string('reviewresponse', 'quiz');
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -201,6 +200,7 @@ class quiz_report extends quiz_default_report {
                     // Ignore questions of zero length
                     $columns[] = 'qsgrade'.$id;
                     $headers[] = '#'.$question->number;
+                    $question->formattedname = strip_tags(format_string($question->name));
                 }
             }
     
@@ -539,7 +539,7 @@ class quiz_report extends quiz_default_report {
                                     $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
                                     $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
                                             $stateforqinattempt->id.'&amp;number='.$question->number,
-                                            'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
+                                            'reviewquestion', $grade, 450, 650, get_string('reviewresponsetoq', 'quiz', $question->formattedname), 'none', true);
                                 } else {
                                     $row[] = $grade;
                                 }
