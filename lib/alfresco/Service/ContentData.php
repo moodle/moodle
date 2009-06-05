@@ -24,7 +24,8 @@
  * http://www.alfresco.com/legal/licensing"
  */
 
-require_once("Functions.php");
+// change by moodle
+require_once($CFG->libdir."/alfresco/Service/Functions.php");
 
 class ContentData extends BaseObject
 {	
@@ -63,6 +64,7 @@ class ContentData extends BaseObject
 	public function __toString()
 	{
 		$this->populateContentData();
+		return "mimetype=".$this->mimetype."|encoding=".$this->encoding."|size=".$this->size;
 	}
 	
 	public function getNode()

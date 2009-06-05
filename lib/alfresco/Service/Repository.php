@@ -24,8 +24,9 @@
  * http://www.alfresco.com/legal/licensing"
  */
 
-require_once 'WebService/WebServiceFactory.php';
-require_once 'BaseObject.php';
+// change by moodle
+require_once $CFG->libdir.'/alfresco/Service/WebService/WebServiceFactory.php';
+require_once $CFG->libdir.'/alfresco/Service/BaseObject.php';
 
 if (isset($_SESSION) == false)
 {
@@ -33,7 +34,8 @@ if (isset($_SESSION) == false)
    session_start();
 }   
  
-class Al_Repository extends BaseObject  // Moodle
+// change by moodle
+class Alfresco_Repository extends BaseObject
 {
 	private $_connectionUrl;	
 	private $_host;
@@ -44,7 +46,11 @@ class Al_Repository extends BaseObject  // Moodle
 		$this->_connectionUrl = $connectionUrl;			
 		$parts = parse_url($connectionUrl);
 		$this->_host = $parts["host"];
-		$this->_port = $parts["port"];
+        if (empty($parts["port"])) {
+            $this->_port = 80;
+        } else {
+            $this->_port = $parts["port"];
+        }
 	}
 	
 	public function getConnectionUrl()

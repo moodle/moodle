@@ -122,7 +122,7 @@ class Session extends BaseObject
     public function getNodeFromString($value)
     {
     	// TODO
-    	throw Exception("getNode($value) no yet implemented");
+    	throw new Exception("getNode($value) not yet implemented");
     }
     
     /**

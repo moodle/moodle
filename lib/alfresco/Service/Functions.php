@@ -24,8 +24,9 @@
  * http://www.alfresco.com/legal/licensing"
  */
  
- require_once("Repository.php");
- require_once("Session.php");
+ // change by moodle
+ require_once($CFG->libdir."/alfresco/Service/Repository.php");
+ require_once($CFG->libdir."/alfresco/Service/Session.php");
  
  /**
   * Uploads a file into content store and returns the content data string which

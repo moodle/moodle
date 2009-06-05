@@ -55,7 +55,8 @@ class AlfrescoWebService extends SoapClient
          $input_headers[] = new SoapHeader($this->securityExtNS, "Security", null, 1);
          
          // Set the JSESSION cookie value
-         $sessionId = Al_Repository::getSessionId($this->ticket); // Moodle
+         // change by moodle
+         $sessionId = Alfresco_Repository::getSessionId($this->ticket);
          if ($sessionId != null)
          {
          	$this->__setCookie("JSESSIONID", $sessionId);

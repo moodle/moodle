@@ -92,12 +92,12 @@ class Node extends BaseObject
 		// Set the property values
 		foreach ($properties as $name=>$value)
 		{
-			$name = $this->expandToFullName($name);
+			$name = $this->_session->namespaceMap->getFullName($name);
 			$this->_properties[$name] = $value;
 		}		
 	}
 	
-	public function setContent($property, $mimetype=null, $encoding=null, $content=null)
+	public function updateContent($property, $mimetype, $encoding="UTF-8", $content=null)
 	{
 		list($property) = $this->_session->namespaceMap->getFullNames(array($property));
 		$contentData = new ContentData($this, $property, $mimetype, $encoding);

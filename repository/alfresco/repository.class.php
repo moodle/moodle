@@ -5,35 +5,38 @@
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-require_once($CFG->libdir . '/soaplib.php');
 
 class repository_alfresco extends repository {
-    private $repo = null;
+    private $instance = null;
     private $ticket = null;
-    private $sess = null;
+    private $user_session = null;
     private $store = null;
 
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $CFG;
-        parent::__construct ($repositoryid, $context, $options);
+        parent::__construct($repositoryid, $context, $options);
+        $this->sessname = 'alfresco_ticket_'.$this->id;
         if (class_exists('SoapClient')) {
             require_once($CFG->libdir . '/alfresco/Service/Repository.php');
             require_once($CFG->libdir . '/alfresco/Service/Session.php');
             require_once($CFG->libdir . '/alfresco/Service/SpacesStore.php');
             require_once($CFG->libdir . '/alfresco/Service/Node.php');
-            $this->repo = new Al_Repository($this->alfresco_url);
-            $this->sess_name = 'alfresco_ticket_'.$this->id;
+            // setup alfresco instance
+            $this->instance = new Alfresco_Repository($this->options['alfresco_url']);
             $this->username   = optional_param('al_username', '', PARAM_RAW);
             $this->password   = optional_param('al_password', '', PARAM_RAW);
             try{
-                if ( empty($SESSION->{$this->sess_name}) && !empty($this->username) && !empty($this->password)) {
-                    $this->ticket = $this->repo->authenticate($this->username, $this->password);
-                    $SESSION->{$this->sess_name} = $this->ticket;	
+                // deal with user logging in
+                if (empty($SESSION->{$this->sessname}) && !empty($this->username) && !empty($this->password)) {
+                    $this->ticket = $this->instance->authenticate($this->username, $this->password);
+                    $SESSION->{$this->sessname} = $this->ticket;	
                 } else {
-                    $this->ticket = $SESSION->{$this->sess_name}; 	
+                    if (!empty($SESSION->{$this->sessname})) {
+                        $this->ticket = $SESSION->{$this->sessname}; 	
+                    }
                 }
-                $this->sess = $this->repo->createSession($this->ticket);
-                $this->store = new SpacesStore($this->sess);
+                $this->user_session = $this->instance->createSession($this->ticket);
+                $this->store = new SpacesStore($this->user_session);
             } catch (Exception $e) {
                 $this->logout();
             }
@@ -62,13 +65,13 @@ class repository_alfresco extends repository {
 
     public function logout() {
         global $SESSION;
-        unset($SESSION->{$this->sess_name});
+        unset($SESSION->{$this->sessname});
         return $this->print_login();
     }
 
     public function check_login() {
         global $SESSION;
-        return !empty($SESSION->{$this->sess_name});
+        return !empty($SESSION->{$this->sessname});
     }
 
     private function get_url($node) {
@@ -93,7 +96,7 @@ class repository_alfresco extends repository {
         $ret = array();
         $ret['dynload'] = true;
         $ret['list'] = array();
-        $url = $this->alfresco_url;
+        $url = $this->options['alfresco_url'];
         $pattern = '#^(.*)api#';
         preg_match($pattern, $url, $matches);
         $ret['manage'] = $matches[1].'faces/jsp/dashboards/container.jsp';
@@ -103,7 +106,7 @@ class repository_alfresco extends repository {
         if (empty($uuid)) {
             $this->current_node = $this->store->companyHome;
         } else {
-            $this->current_node = $this->sess->getNode($this->store, $uuid);
+            $this->current_node = $this->user_session->getNode($this->store, $uuid);
         }
         $folder_filter = "{http://www.alfresco.org/model/content/1.0}folder";
         $file_filter = "{http://www.alfresco.org/model/content/1.0}content";
@@ -113,7 +116,7 @@ class repository_alfresco extends repository {
             {
                 $ret['list'][] = array('title'=>$child->child->cm_name,
                     'path'=>$child->child->id,
-                    'thumbnail'=>$CFG->httpswwwroot.'/pix/f/folder.gif',
+                    'thumbnail'=>$CFG->httpswwwroot.'/pix/f/folder-32.png',
                     'children'=>array());
             } elseif ($child->child->type == $file_filter) {
                 $ret['list'][] = array('title'=>$child->child->cm_name,
@@ -126,7 +129,7 @@ class repository_alfresco extends repository {
 
     public function get_file($uuid, $file = '') {
         global $CFG;
-        $node = $this->sess->getNode($this->store, $uuid);
+        $node = $this->user_session->getNode($this->store, $uuid);
         $url = $this->get_url($node);
         $path = $this->prepare_file($file);
         $fp = fopen($path, 'w');
@@ -138,7 +141,7 @@ class repository_alfresco extends repository {
     public function print_search($client_id) {
         $str = parent::print_search($client_id);
         $str .= '<label>Space: </label><br /><select name="space">';
-        foreach ($this->sess->stores as $v) {	
+        foreach ($this->user_session->stores as $v) {	
             $str .= '<option ';
             if ($v->__toString() === 'workspace://SpacesStore') {
                 $str .= 'selected ';
@@ -155,8 +158,8 @@ class repository_alfresco extends repository {
     public function search($search_text) {
         global $CFG;
         $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
-        $currentStore = $this->sess->getStoreFromString($space);	
-        $nodes = $this->sess->query($currentStore, $search_text);
+        $currentStore = $this->user_session->getStoreFromString($space);	
+        $nodes = $this->user_session->query($currentStore, $search_text);
         $ret = array();
         $ret['list'] = array();
         foreach($nodes as $v) {

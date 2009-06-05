@@ -25,38 +25,39 @@
  * http://www.alfresco.com/legal/licensing"
  */
 
-require_once 'AlfrescoWebService.php';
+// changed by moodle
+require_once ($CFG->libdir.'/alfresco/Service/WebService/AlfrescoWebService.php');
 
 class WebServiceFactory
 {
    public static function getAuthenticationService($path)
    {
         $path .= '/AuthenticationService?wsdl';
-        return new AlfrescoWebService($path, array());
+        return new AlfrescoWebService($path, array('location'=>$path));
    }
 
    public static function getRepositoryService($path, $ticket)
    {
         $path .= '/RepositoryService?wsdl';
-        return new AlfrescoWebService($path, array(), $ticket);
+        return new AlfrescoWebService($path, array('location'=>$path), $ticket);
    }
    
    public static function getContentService($path, $ticket)
    {
         $path .= '/ContentService?wsdl';
-        return new AlfrescoWebService($path, array(), $ticket);
+        return new AlfrescoWebService($path, array('location'=>$path), $ticket);
    }
    
    public static function getAdministrationService($path, $ticket)
    {
         $path .= '/AdministrationService?wsdl';
-        return new AlfrescoWebService($path, array(), $ticket);
+        return new AlfrescoWebService($path, array('location'=>$path), $ticket);
    }   
    
    public static function getAuthoringService($path, $ticket)
    {
         $path .= '/AuthoringService?wsdl';
-        return new AlfrescoWebService($path, array(), $ticket);
+        return new AlfrescoWebService($path, array('location'=>$path), $ticket);
    }
 }
 

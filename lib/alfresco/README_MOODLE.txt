@@ -1,14 +1,14 @@
 @VERSION $Id$
 
 == CHANGELOG ==
-
-Alfresco PHP Libarary was modified by Moodle, because of class name conflict.
-See, Service/Repository.php & Service/WebService/AlfrescoWebService.php
-All the changes are marked as "Moodle"
+1. Rename class name , see Service/Repository.php & Service/WebService/AlfrescoWebService.php
+2. Change library path name
+3. In Alfresco_Repository class construct function, set _port to 80 if it is not specified
 
 == Alfresco PHP Libarary ==
 
 Installation and developer documentation for the Alfresco PHP Library can be found on the Alfresco Wiki.
+Get the source from  http://svn.alfresco.com/repos/alfresco-open-mirror/alfresco/HEAD/root/modules/php-sdk
 
 == Documentation Links ==
 
