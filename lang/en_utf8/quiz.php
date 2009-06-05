@@ -640,6 +640,7 @@ $string['reviewopen'] = 'Later, while the quiz is still open';
 $string['reviewoptions'] = 'Students may review';
 $string['reviewoptionsheading'] = 'Review options';
 $string['reviewresponse'] = 'Review response';
+$string['reviewresponsetoq'] = 'Review response (question $a)';
 $string['reviewthisattempt'] = 'Review your responses to this attempt';
 $string['rqp'] = 'Remote Question';
 $string['rqps'] = 'Remote Questions';

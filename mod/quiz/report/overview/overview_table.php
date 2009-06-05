@@ -228,7 +228,8 @@ class quiz_report_overview_table extends table_sql {
                     }
                     $linktopopup = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
                             $attempt->attempt . '&amp;question=' . $question->id,
-                            'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
+                            'reviewquestion', $grade, 450, 650,
+                            get_string('reviewresponsetoq', 'quiz', $question->formattedname),
                             'none', true);
                     if (($this->questions[$questionid]->maxgrade != 0)){
                         $fractionofgrade = $stateforqinattempt->grade

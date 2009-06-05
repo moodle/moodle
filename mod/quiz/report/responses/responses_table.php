@@ -165,7 +165,8 @@ class quiz_report_responses_table extends table_sql {
                 if ($summary){
                     $summary = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
                         $attempt->attempt . '&amp;question=' . $question->id,
-                        'reviewquestion', $summary, 450, 650, get_string('reviewresponse', 'quiz'),
+                        'reviewquestion', $summary, 450, 650,
+                        get_string('reviewresponsetoq', 'quiz', $question->formattedname),
                         'none', true);
                     if (question_state_is_graded($stateforqinattempt)
                                 && ($question->maxgrade > 0)){

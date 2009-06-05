@@ -292,6 +292,7 @@ class quiz_responses_report extends quiz_default_report {
                 // Ignore questions of zero length
                 $columns[] = 'qsanswer'.$id;
                 $headers[] = '#'.$question->number;
+                $question->formattedname = strip_tags(format_string($question->name));
             }
     
     

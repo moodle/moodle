@@ -357,7 +357,8 @@ class quiz_overview_report extends quiz_default_report {
                     }
                     $header .='--/'.quiz_rescale_grade($question->maxgrade, $quiz, 'question');
                     $headers[] = $header;
-                 }
+                    $question->formattedname = strip_tags(format_string($question->name));
+                }
             }
             if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) && $regradedattempts){
                 $columns[] = 'regraded';
