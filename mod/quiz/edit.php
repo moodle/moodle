@@ -360,7 +360,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             /// Parse input for question -> grades
             $questionid = $matches[1];
-            $quiz->grades[$questionid] = $value;
+            $quiz->grades[$questionid] = clean_param($value, PARAM_FLOAT);
             quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz->id);
             quiz_delete_previews($quiz);
             quiz_update_sumgrades($quiz);
@@ -370,6 +370,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $questionid = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
+            $value = clean_param($value, PARAM_INTEGER);
             while (array_key_exists($value, $questions)) {
                 $value++;
             }
@@ -417,7 +418,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
 
     // If rescaling is required save the new maximum
-    $maxgrade = optional_param('maxgrade', -1, PARAM_NUMBER);
+    $maxgrade = optional_param('maxgrade', -1, PARAM_FLOAT);
     if ($maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
     }
