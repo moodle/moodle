@@ -776,6 +776,7 @@ class question_bank_view {
     protected $extrarows;
     protected $requiredcolumns;
     protected $sort;
+    protected $lastchangedid;
     protected $countsql;
     protected $loadsql;
     protected $sqlparams;
@@ -802,6 +803,8 @@ class question_bank_view {
         } else {
             $this->editquestionurl->param('courseid', $this->course->id);
         }
+
+        $this->lastchangedid = optional_param('lastchanged',0,PARAM_INT);
 
         $this->init_column_types();
         $this->init_columns($this->wanted_columns());
@@ -1339,6 +1342,9 @@ class question_bank_view {
         $classes = array();
         if ($question->hidden) {
             $classes[] = 'dimmed_text';
+        }
+        if ($question->id == $this->lastchangedid) {
+            $nameclass='highlight';
         }
         if (!empty($this->extrarows)) {
             $classes[] = 'r' . ($rowcount % 2);

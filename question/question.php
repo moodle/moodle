@@ -216,11 +216,12 @@ if ($mform->is_cancelled()){
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
-            if($appendqnumstring){
-                $returnurl_object=new moodle_url($returnurl);
-                $returnurl=$returnurl_object->out(false,array($appendqnumstring=>($question->id), "sesskey"=>sesskey(), "cmid"=>$cmid));
+            $nexturl = new moodle_url($returnurl);
+            $nexturl->param('lastchanged', $question->id);
+            if($appendqnumstring) {
+                $nexturl->params(array($appendqnumstring=>($question->id), "sesskey"=>sesskey(), "cmid"=>$cmid));
             }
-            redirect($returnurl);
+            redirect($nexturl->out());
         }
     } else {
         $nexturlparams = array('returnurl'=>$returnurl, 'appendqnumstring'=>$appendqnumstring);
