@@ -16,7 +16,11 @@
     if (!$course = $DB->get_record('course', array('id'=>$course))) {
         print_error('invalidcourseid');
     }
-    require_login($course->id);
+    if (!empty($USER->newadminuser)) {
+        $PAGE->set_course($SITE);
+    } else {
+        require_login($course);
+    }
 
     if ($course->id == SITEID) {
         $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
