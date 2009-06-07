@@ -1024,6 +1024,7 @@ function install_core($version, $verbose) {
     global $CFG, $DB;
 
     try {
+        set_time_limit(600);
         print_upgrade_part_start('moodle', true, $verbose); // does not store upgrade running flag
 
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
