@@ -19,7 +19,14 @@ $string['cannotsavezipfile'] = 'ZIPファイルを保存できません。';
 $string['cannotunzipfile'] = 'ZIPファイルを解凍できません。';
 $string['chooselanguagehead'] = '言語を選択してください。';
 $string['chooselanguagesub'] = 'インストールのみに使用する言語を選択してください。この言語は、サイトのデフォルト言語としても使用されます。サイト言語は、後で変更することが可能です。';
+$string['cliincorrectvalueerror'] = 'エラー、「 $a->option 」の値「 $a->value 」が正しくありません。';
+$string['cliincorrectvalueretry'] = '値が正しくありません、再度お試しください。';
 $string['cliinstallheader'] = 'Moodle $a コマンドライン・インストールプログラム';
+$string['clitypevalue'] = 'タイプ値';
+$string['clitypevaluedefault'] = 'タイプ値です。デフォルト値 ($a) を使用するには、Enterキーを押してください。';
+$string['cliunknowoption'] = '不明なオプション:
+$a
+「--help」オプションを使用してください。';
 $string['dataroot'] = 'データディレクトリ';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['environment'] = '動作環境';
