@@ -14,6 +14,9 @@ class MoodleQuickForm_password extends HTML_QuickForm_password{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_password($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::HTML_QuickForm_password($elementName, $elementLabel, $attributes);
+    }
     /**
      * set html for help button
      *

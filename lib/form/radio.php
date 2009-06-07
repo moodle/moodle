@@ -14,6 +14,9 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_radio($elementName=null, $elementLabel=null, $text=null, $value=null, $attributes=null) {
+        parent::HTML_QuickForm_radio($elementName, $elementLabel, $text, $value, $attributes);
+    }
     /**
      * set html for help button
      *

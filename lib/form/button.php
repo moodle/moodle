@@ -38,6 +38,9 @@ class MoodleQuickForm_button extends HTML_QuickForm_button
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_button($elementName=null, $value=null, $attributes=null) {
+        parent::HTML_QuickForm_button($elementName, $value, $attributes);
+    }
     /**
      * set html for help button
      *

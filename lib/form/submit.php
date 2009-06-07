@@ -11,6 +11,9 @@ require_once("HTML/QuickForm/submit.php");
  * @access       public
  */
 class MoodleQuickForm_submit extends HTML_QuickForm_submit {
+    function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null) {
+        parent::HTML_QuickForm_submit($elementName, $value, $attributes);
+    }
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *

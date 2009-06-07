@@ -23,6 +23,9 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
 
     var $_hiddenLabel=false;
 
+    function MoodleQuickForm_textarea($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::HTML_QuickForm_textarea($elementName, $elementLabel, $attributes);
+    }
     /**
      * set html for help button
      *

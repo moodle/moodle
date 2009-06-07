@@ -17,6 +17,9 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+        parent::HTML_QuickForm_group($elementName, $elementLabel, $elements, $separator, $appendName);
+    }
     //would cause problems with client side validation so will leave for now
     //var $_elementTemplateType='fieldset';
     /**

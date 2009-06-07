@@ -4,7 +4,10 @@ require_once("$CFG->libdir/form/submit.php");
 class MoodleQuickForm_submitlink extends MoodleQuickForm_submit {
     var $_js;
     var $_onclick;
-
+    function MoodleQuickForm_submitlink($elementName=null, $value=null, $attributes=null) {
+        parent::MoodleQuickForm_submit($elementName, $value, $attributes);
+    }
+    
     function toHtml() {
         $text = $this->_attributes['value'];
         $onmouseover = "window.status=\'" . $text . "\';";

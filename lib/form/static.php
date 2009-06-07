@@ -15,6 +15,9 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_static($elementName=null, $elementLabel=null, $text=null) {
+        parent::HTML_QuickForm_static($elementName, $elementLabel, $text);
+    }
     /**
      * set html for help button
      *

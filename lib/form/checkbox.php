@@ -14,6 +14,9 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_checkbox($elementName=null, $elementLabel=null, $text='', $attributes=null) {
+        parent::HTML_QuickForm_checkbox($elementName, $elementLabel, $text, $attributes);
+    }
     /**
      * set html for help button
      *
