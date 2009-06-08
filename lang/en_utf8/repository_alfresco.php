@@ -1,5 +1,6 @@
 <?php
 $string['alfresco_url'] = 'Alfresco URL';
+$string['alfrescourltext'] = 'Afresco API url should be: http://yoursite.com/alfresco/api';
 $string['configplugin'] = 'Alfresco configuration';
 $string['notitle'] = 'notitle';
 $string['repositoryname'] = 'Alfresco repository';
