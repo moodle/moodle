@@ -1344,7 +1344,7 @@ class question_bank_view {
             $classes[] = 'dimmed_text';
         }
         if ($question->id == $this->lastchangedid) {
-            $nameclass='highlight';
+            $classes[] ='highlight';
         }
         if (!empty($this->extrarows)) {
             $classes[] = 'r' . ($rowcount % 2);
