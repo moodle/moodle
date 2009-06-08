@@ -60,6 +60,14 @@ class repository_alfresco extends repository {
             $ret = array();
             $ret['login'] = array($user_field, $passwd_field);
             return $ret;
+        } else {
+            echo '<table>';
+            echo '<tr><td><label>'.get_string('username', 'repository_alfresco').'</label></td>';
+            echo '<td><input type="text" name="al_username" /></td></tr>';
+            echo '<tr><td><label>'.get_string('password', 'repository_alfresco').'</label></td>';
+            echo '<td><input type="password" name="al_password" /></td></tr>';
+            echo '</table>';
+            echo '<input type="submit" value="Enter" />';
         }
     }
 

@@ -165,6 +165,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $repo_info = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
 
         $html = $this->_get_draftfiles($draftitemid, $client_id);
+        $accessiblefp = get_string('accessiblefilepicker', 'repository');
 
         $str = $this->_getTabs();
         $str .= $html;
@@ -174,6 +175,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
 <div>
     <input value="$straddfile" onclick="callpicker('$id', '$client_id', '$draftitemid')" type="button" />
+    <a href="{$CFG->httpswwwroot}/repository/filepicker.php?ctx_id={$context->id}&&itemid=$draftitemid" target="_blank">$accessiblefp</a>
 </div>
 EOD;
         if (empty($CFG->filemanagerjsloaded)) {

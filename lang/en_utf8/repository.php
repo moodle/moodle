@@ -1,4 +1,5 @@
 <?php //$Id$
+$string['accessiblefilepicker']='Accessible file picker';
 $string['activerepository'] = 'Active repository plugins';
 $string['add'] = 'Add';
 $string['addplugin'] = 'Add a repository plugin';
