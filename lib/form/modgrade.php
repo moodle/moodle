@@ -11,8 +11,8 @@ require_once "$CFG->libdir/form/select.php";
  */
 class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
 
-
-    var $_includenograde=true;
+    var $_hidenograde = false;
+    
     /**
      * Class constructor
      *
@@ -23,11 +23,11 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
      * @access    public
      * @return    void
      */
-    function MoodleQuickForm_modgrade($elementName=null, $elementLabel=null, $attributes=null, $includenograde=true)
+    function MoodleQuickForm_modgrade($elementName=null, $elementLabel=null, $attributes=null, $hidenograde=false)
     {
         HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes, null);
         $this->_type = 'modgrade';
-        $this->_includenograde=$includenograde;
+        $this->_hidenograde = $hidenograde;
 
     } //end constructor
 
@@ -46,13 +46,16 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
         global $COURSE, $CFG;
         switch ($event) {
             case 'createElement':
+                // Need to call superclass first because we want the constructor
+                // to run.
+                $result = parent::onQuickFormEvent($event, $arg, $caller);
                 $strscale = get_string('scale');
                 $strscales = get_string('scales');
                 $scales = get_scales_menu($COURSE->id);
                 foreach ($scales as $i => $scalename) {
                     $grades[-$i] = $strscale .': '. $scalename;
                 }
-                if ($this->_includenograde) {
+                if (!$this->_hidenograde) {
                     $grades[0] = get_string('nograde');
                 }
                 for ($i=100; $i>=1; $i--) {
@@ -62,7 +65,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
                 $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
                 $this->setHelpButton(array('/course/scales.php?id='. $COURSE->id .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true), 'link_to_popup_window');
-                break;
+                return $result;
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
