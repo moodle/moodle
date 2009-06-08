@@ -11,6 +11,7 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 require_js('group/clientlib.js');
 
 $groupid = required_param('group', PARAM_INT);
