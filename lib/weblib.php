@@ -3941,7 +3941,11 @@ function build_navigation($extranavlinks, $cm = null) {
         if (!empty($navlink['type']) && $navlink['type'] == 'activity' && !$last && $hideactivitylink) {
             continue;
         }
-        $navigation .= '<li class="first">';
+        if ($first) {
+            $navigation .= '<li class="first">';
+        } else {
+            $navigation .= '<li>';
+        }
         if (!$first) {
             $navigation .= get_separator();
         }
