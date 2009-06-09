@@ -29,9 +29,7 @@
         $lang = "en";
     }
 
-    if ($httpsrequired) {
-        // this is an ugly hack to allow partial operation of editor on pages that require https when loginhttps enabled
-        // please note that some popups still show nonsecurre items and fullscreen may not function properly in IE
+    if ($httpsrequired or (!empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != 'off')) {
         $url = preg_replace('|https?://[^/]+|', '', $CFG->wwwroot).'/lib/editor/htmlarea/';
     } else {
         $url = $CFG->wwwroot.'/lib/editor/htmlarea/';
@@ -715,7 +713,7 @@ HTMLArea.prototype.generate = function () {
     // create the IFRAME
     var iframe = document.createElement("iframe");
 
-    iframe.src = "<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/blank.html";
+    iframe.src = "<?php echo $url ?>blank.html";
 
     iframe.className = "iframe";
 
