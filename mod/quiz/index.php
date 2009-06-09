@@ -43,9 +43,27 @@
         die;
     }
 
+// Check if we need the closing date header
+    $showclosingheader = false;
+    $showfeedback = false;
+    foreach ($quizzes as $quiz) {
+        if ($quiz->timeclose!=0) {
+            $showclosingheader=true;
+        }
+        if (quiz_has_feedback($quiz->id)) {
+            $showfeedback=true;
+        }
+    }
+
 // Configure table for displaying the list of instances.
-    $headings = array(get_string('name'), get_string('quizcloses', 'quiz'));
-    $align = array('left', 'left');
+    $headings = array(get_string('name'));
+    $align = array('left');
+
+    if ($showclosingheader) {
+        array_push($headings, get_string('quizcloses', 'quiz'));
+        array_push($align, 'left');
+    }
+
     if ($course->format == 'weeks' or $course->format == 'weekscss') {
         array_unshift($headings, get_string('week'));
     } else {
@@ -60,8 +78,12 @@
         array_push($align, 'left');
         $showing = 'stats';
     } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $coursecontext)) {
-        array_push($headings, get_string('bestgrade', 'quiz'), get_string('feedback', 'quiz'));
-        array_push($align, 'left', 'left');
+        array_push($headings, get_string('bestgrade', 'quiz'));
+        array_push($align, 'left');
+        if ($showfeedback) {
+            array_push($headings, get_string('feedback', 'quiz'));
+            array_push($align, 'left');
+        }
         $showing = 'scores';  // default
     }
 
@@ -98,7 +120,7 @@
         // Close date.
         if ($quiz->timeclose) {
             $data[] = userdate($quiz->timeclose);
-        } else {
+        } else if ($showclosingheader) {
             $data[] = '';
         }
 
@@ -129,7 +151,7 @@
                 }
             }
             $data[] = $grade;
-            $data[] = $feedback;
+            if ($showfeedback) $data[] = $feedback;
         }
 
         $table->data[] = $data;
