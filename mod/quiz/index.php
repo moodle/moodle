@@ -151,7 +151,9 @@
                 }
             }
             $data[] = $grade;
-            if ($showfeedback) $data[] = $feedback;
+            if ($showfeedback) {
+                $data[] = $feedback;
+            }
         }
 
         $table->data[] = $data;
