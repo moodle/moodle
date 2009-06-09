@@ -57,57 +57,55 @@ if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
     $err->e = get_string('invalidplugin', 'repository', $type);
     die(json_encode($err));
 }
-
-if ($action == 'download') {
-    $filepath = $repo->get_file($file, $title, $itemid);
-    if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
-        // youtube plugin return a url instead a file path
-        $url = $filepath;
-        echo json_encode(array(
-                    /* File picker need to know this is a link
-                     * in order to attach title to url
-                     */
-                    'type'=>'link',
-                    'client_id'=>$client_id,
-                    'url'=>$url,
-                    'id'=>$url,
-                    'file'=>$url
-                    )
-                );
-    } else if (is_array($filepath)) {
-        // file api don't have real file path, so we need more file api specific info for "local" plugin
-        $fileinfo = $filepath;
-        $info = array();
-        $info['file'] = $fileinfo['title'];
-        $info['id'] = $itemid;
-        $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-        echo json_encode($info);
-    } else {
-        // normal file path name
-        $info = repository::move_to_filepool($filepath, $title, $itemid);
-        //echo json_encode($info);
-        redirect($url, get_string('downloadsucc','repository'));
+//$context = get_context_instance_by_id($ctx_id);
+//$PAGE->set_course($context);
+switch ($action) {
+case 'embedded':
+    echo <<<EOD
+<html>
+<head>
+<style type="text/css">
+img{border:0}
+li{list-style-type:none;margin:0;padding:0}
+ul{margin:0;padding:0}
+</style>
+<meta http-equiv="Refresh" Content="3" />
+</head>
+<body>
+EOD;
+    $fs = get_file_storage();
+    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $files = $fs->get_area_files($context->id, 'user_draft', $itemid);
+    echo '<ul>';
+    foreach ($files as $file) {
+        if ($file->get_filename()!='.') {
+            $url = $CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename();
+            echo '<li><a href="'.$url.'">'.$file->get_filename().'</a> ';
+            echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&itemid='.$itemid.'&ctx_id='.$ctx_id.'&title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
+        }
     }
-    echo $filepath;
-} else if ($action == 'confirm') {
-    print_header(get_string('download', 'repository'), get_string('download', 'repository'));
-    echo '<img src="'.$icon.'" />';
-    echo '<form method="post"><table>';
-    echo '<tr>';
-    echo '<td><label>'.get_string('filename', 'repository').'</label></td>';
-    echo '<td><input type="text" name="title" value="'.$title.'" /></td>';
-    echo '<td><input type="hidden" name="file" value="'.$file.'" /></td>';
-    echo '<td><input type="hidden" name="action" value="download" /></td>';
-    echo '<td><input type="hidden" name="itemid" value="'.$itemid.'" /></td>';
-    echo '</tr>';
-    echo '</table>';
-    echo '<div>';
-    echo '<input type="submit" value="'.get_string('download', 'repository').'" />';
-    echo '</div>';
-    echo '</form>';
-    print_footer('empty');
+    echo '</ul>';
+    echo '</body></html>';
+    exit;
+    break;
+case 'deletedraft':
+    if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
+        echo 'non exist';
+    }
+    $contextid = $context->id;
+    $fs = get_file_storage();
+    if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
+        if($result = $file->delete()) {
+            header("Location: $CFG->httpswwwroot/repository/filepicker.php?action=embedded&itemid=$itemid&ctx_id=$ctx_id");
+        } else {
+            echo 'not deleteed';
+        }
+    }
+    exit;
+    break;
+case 'list':
+case 'sign':
 
-} else if ($action == 'list' or $action == 'sign') {
     $navlinks = array();
     $navlinks[] = array('name' => 'filepicker', 'link' => $url, 'type' => 'activityinstance');
     $navlinks[] = array('name' => $repo->get_name());
@@ -173,7 +171,58 @@ if ($action == 'download') {
         echo '</form>';
     }
     print_footer('empty');
-} else {
+    break;
+case 'download':
+    $filepath = $repo->get_file($file, $title, $itemid);
+    if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
+        // youtube plugin return a url instead a file path
+        $url = $filepath;
+        echo json_encode(array(
+                    /* File picker need to know this is a link
+                     * in order to attach title to url
+                     */
+                    'type'=>'link',
+                    'client_id'=>$client_id,
+                    'url'=>$url,
+                    'id'=>$url,
+                    'file'=>$url
+                    )
+                );
+    } else if (is_array($filepath)) {
+        // file api don't have real file path, so we need more file api specific info for "local" plugin
+        $fileinfo = $filepath;
+        $info = array();
+        $info['file'] = $fileinfo['title'];
+        $info['id'] = $itemid;
+        $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+        echo json_encode($info);
+    } else {
+        // normal file path name
+        $info = repository::move_to_filepool($filepath, $title, $itemid);
+        //echo json_encode($info);
+        redirect($url, get_string('downloadsucc','repository'));
+    }
+
+    break;
+case 'confirm':
+    print_header(get_string('download', 'repository'), get_string('download', 'repository'));
+    echo '<img src="'.$icon.'" />';
+    echo '<form method="post"><table>';
+    echo '<tr>';
+    echo '<td><label>'.get_string('filename', 'repository').'</label></td>';
+    echo '<td><input type="text" name="title" value="'.$title.'" /></td>';
+    echo '<td><input type="hidden" name="file" value="'.$file.'" /></td>';
+    echo '<td><input type="hidden" name="action" value="download" /></td>';
+    echo '<td><input type="hidden" name="itemid" value="'.$itemid.'" /></td>';
+    echo '</tr>';
+    echo '</table>';
+    echo '<div>';
+    echo '<input type="submit" value="'.get_string('download', 'repository').'" />';
+    echo '</div>';
+    echo '</form>';
+    print_footer('empty');
+    break;
+default:
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
     $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
     $navlinks = array();
@@ -187,5 +236,5 @@ if ($action == 'download') {
     }
     echo '</ul></div>';
     print_footer('empty');
+    break;
 }
-

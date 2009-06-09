@@ -175,7 +175,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
 <div>
     <input value="$straddfile" onclick="callpicker('$id', '$client_id', '$draftitemid')" type="button" />
-    <a href="{$CFG->httpswwwroot}/repository/filepicker.php?ctx_id={$context->id}&&itemid=$draftitemid" target="_blank">$accessiblefp</a>
 </div>
 EOD;
         if (empty($CFG->filemanagerjsloaded)) {
@@ -225,6 +224,12 @@ function callpicker(el_id, client_id, itemid) {
 }
 //]]>
 </script>
+<noscript>
+<div>
+<a href="{$CFG->httpswwwroot}/repository/filepicker.php?ctx_id={$context->id}&&itemid=$draftitemid" target="_blank">$accessiblefp</a>
+</div>
+<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="160" width="600" style="border:1px solid #000">Error</object>
+</noscript>
 EOD;
             $CFG->filemanagerjsloaded = true;
         }
