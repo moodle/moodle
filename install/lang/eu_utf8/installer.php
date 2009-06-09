@@ -44,17 +44,47 @@ $string['customcheck'] = 'Beste konprobazio batzuk';
 $string['database'] = 'Datu-basea';
 $string['databasecreationsettingshead'] = 'Orain Moodle-ren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Instalatzaileak, beherago zehaztutako ezarpenen arabera, datu-basea sortuko du.';
 $string['databasecreationsettingssub'] = '<b>Mota:</b> lehenetsitako balorea \"mysql\" da<br />
-<b>Zerbitzaria:</b> lehenetsitako balorea \"localhost\" da<br />
-<b>Izena:</b>datu-basearen izena, ad., moodle<br />
+<b>Ostalaria:</b> lehenetsitako balorea \"localhost\" da<br />
+<b>Izena:</b>datu-basearen izena, adib. moodle<br />
 <b>Erabiltzailea:</b> lehenetsitako balorea  \"root\" da<br />
 <b>Pasahitza:</b> datu-basearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula guztietarako aukerazko aurrizkia';
 $string['databasesettingshead'] = 'Orain Moodle-ren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Datu-base hori aldez aurretik sortu behar zen eta erabiltzaile-izena eta sarbide-pasahitza izan beharko lituzke.';
 $string['databasesettingssub'] = '<b>Mota:</b> mysql edo postgres7<br />
-<b>Zerbitzaria:</b> p.ej.: localhost edo db.zuredomeinua.com<br />
-<b>Erabiltzailea:</b> datu-basearen erabiltzaile-jabea<br />
-<b>Pasahitza:</b> datu-basearen erabiltzailearen pasahitza<br />
+<b>Ostalaria:</b> adib. localhost edo db.zuredomeinua.com<br />
+<b>Erabiltzailea:</b> datu-basearen erabiltzailea<br />
+<b>Pasahitza:</b> datu-basearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula guztietan erabiltzeko aukerazko aurrizkia';
+$string['databasesettingssub_mssql'] = '<b>mota:</b> SQL*Server (UTF-8-rik ez) <b><strong class=\"errormsg\">Esperimentala! (ez erabili produkzioan)</strong></b><br />
+<b>Ostalaria:</b> adib. localhost edo  db.zuredomeinua.com<br />
+<b>Izena:</b> datu-basearen izena,  adib.  moodle<br />
+<b>Erabiltzailea:</b> zure datu-basearen erabiltzaile-izena<br />
+<b>Pasahitza:</b> zure datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taulen izen guztietarako erabilitako aurrizkia (derrigorrezkoa)';
+$string['databasesettingssub_mssql_n'] = 'b>Mota:</b> SQL*Server (UTF-8 gaituta)<br />
+<b>Ostalaria:</b> adib. localhost edo  db.zuredomeinua.com<br />
+<b>Izena:</b> datu-basearen izena, adib. moodle<br />
+<b>erabiltzailea:</b> zure datu-basearen pasahitza<br />
+<b>Pasahitza:</b> zure datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taulen izen guztietarako erabilitako aurrizkia (derrigorrezkoa)';
+$string['databasesettingssub_mysql'] = '<b>Mota:</b> MySQL<br />
+<b>Ostalaria:</b> adib. localhost edo db.zuredomeinua.com<br />
+<b>Izena:</b> datu-basearen izena, adib. moodle<br />
+<b>Erabiltzaile-izena:</b> zure datu-basearen erabiltzaile-izena<br />
+<b>Pasahitza:</b> zure datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taulen izen guztietarako erabilitako aurrizkia (aukerakoa)';
+$string['databasesettingssub_mysqli'] = '<b>Mota:</b> Improved MySQL<br />
+<b>Ostalaria:</b> adib. localhost edo db.zuredomeinua.com<br />
+<b>Izena:</b> datu-basearen izena, adib. moodle<br />
+<b>Erabiltzaile-izena:</b> zure datu-basearen erabiltzaile-izena<br />
+<b>Pasahitza:</b> zure datu-basearen pasahitza<br />
+<b>Taulen aurrizkia:</b> taulen izen guztietarako erabilitako aurrizkia (aukerakoa)';
+$string['databasesettingssub_oci8po'] = '<b>Mota:</b> Oracle<br />
+<b>Ostalaria:</b> erabili gabea, zuriz utz daitek<br />
+<b>Izena:</b>tnsnames.ora konezioaren izena<br />
+<b>Erabiltzailea:</b> zure datu-basearen erabiltzaile-izena<br />
+<b>Pasahitza:</b> zure datu-basearen pasahitza<br/>
+<b>Taulen aurrizkia:</b> taulen izen guztietarako erabilitako aurrizkia (derrigorrezkoa, gehienez, 2cc.)';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['datarooterror'] = '\'Datu-direktorioa\' ezin izan da sortu edo aurkitu. Bidea zuzendu edo direktorioa eskuz sortu.';
 $string['datarootpublicerror'] = 'Zehaztutako \'Datu-direktoriora\' web bidez ailega daiteke, beste direktorio bat erabili behar duzu.';
@@ -148,7 +178,7 @@ $string['memorylimit'] = 'Memoriaren muga';
 $string['memorylimiterror'] = 'PHP memoriaren muga baxuegia da... Beranduago arazoak izan ditzakezu.';
 $string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga $a da.</p>
 
-<p>Aurrerago honek Moodleri arazoak sor diezaizkioke, bereziki modulo edo/eta erabiltzaile asko badituzu.</p>
+<p>Aurrerago honek Moodle-ri arazoak sor diezaizkioke, bereziki modulu edo/eta erabiltzaile asko badituzu.</p>
 
 <p>PHP muga altuenarekin konfiguratzea aholkatzen dizugu, ad. 40M.
 Hori egiteko modu asko daude:</p>
