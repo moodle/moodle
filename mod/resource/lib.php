@@ -535,7 +535,7 @@ function resource_get_types() {
         $type->modclass = MOD_CLASS_RESOURCE;
         $type->name = $resourcetype;
         $type->type = "resource&amp;type=$resourcetype";
-        $type->typestr = get_string("resourcetype$resourcetype", 'resource');
+        $type->typestr = resource_get_name($resourcetype);
         $types[] = $type;
     }
 
