@@ -336,6 +336,11 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
 
+    /**
+     * internal helper function, that converts between the format constant,
+     * which might be too specific (eg 'image') and the class in our *supported* list
+     * which might be higher up the format hierarchy tree (eg 'file')
+     */
     private function resolve_format() {
         $thisformat = $this->get_export_config('format');
         $allformats = portfolio_supported_formats();
