@@ -1098,6 +1098,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $fullnamesearch = '';
     $summarysearch = '';
+    $idnumbersearch = '';
+    $shortnamesearch = '';
 
     foreach ($searchterms as $searchterm) {
 
@@ -1119,18 +1121,30 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
         if ($summarysearch) {
             $summarysearch .= ' AND ';
         }
+        if ($idnumbersearch) {
+            $idnumbersearch .= ' AND ';
+        }
+        if ($shortnamesearch) {
+            $shortnamesearch .= ' AND ';
+        }
 
         if (substr($searchterm,0,1) == '+') {
             $searchterm      = substr($searchterm,1);
             $summarysearch  .= " c.summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " c.fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $idnumbersearch  .= " c.idnumber $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $shortnamesearch  .= " c.shortname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else if (substr($searchterm,0,1) == "-") {
             $searchterm      = substr($searchterm,1);
             $summarysearch  .= " c.summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " c.fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $idnumbersearch .= " c.idnumber $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $shortnamesearch .= " c.shortname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
             $summarysearch .= ' summary '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
             $fullnamesearch .= ' fullname '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
+            $idnumbersearch .= ' idnumber '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
+            $shortnamesearch .= ' shortname '. $NOT . $LIKE .' \'%'. $searchterm .'%\' ';
         }
 
     }
@@ -1141,7 +1155,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             FROM {$CFG->prefix}course c
             JOIN {$CFG->prefix}context ctx
              ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-            WHERE (( $fullnamesearch ) OR ( $summarysearch ))
+            WHERE (( $fullnamesearch ) OR ( $summarysearch ) OR ( $idnumbersearch ) OR ( $shortnamesearch ))
                   AND category > 0
             ORDER BY " . $sort;
 
