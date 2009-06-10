@@ -1,4 +1,5 @@
 <script type="text/javascript">
+//<![CDATA[
      function TestObj(id) {
          YAHOO.util.Event.onAvailable(id, colourLabel, this);
      }
@@ -59,4 +60,5 @@
     }
 
      var obj = new TestObj("footer");
+//]]>
 </script>
