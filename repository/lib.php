@@ -1098,7 +1098,6 @@ abstract class repository {
             $this->options[$n] = $v;
         }
         $this->name = $this->get_name();
-        $this->check_login();
         $this->super_called = true;
     }
 
