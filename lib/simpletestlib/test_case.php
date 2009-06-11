@@ -659,7 +659,12 @@ class TestSuite {
  *    @subpackage   UnitTester
  *    @deprecated
  */
-class GroupTest extends TestSuite { }
+class GroupTest extends TestSuite {
+    // moodle fix: adding old style constructor to make it compatible with PHP 5.3
+    function GroupTest($label = false) {
+        parent::TestSuite($label);
+    }
+}
 
 /**
  *    This is a failing group test for when a test suite hasn't
