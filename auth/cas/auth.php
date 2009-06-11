@@ -89,7 +89,7 @@ class auth_plugin_cas extends auth_plugin_base {
 	  global $SESSION;
 
       $site = get_site();
-      $CASform = get_string("CASform","auth");
+      $CASform = get_string("CASform","auth_cas");
       $username = optional_param("username");
 
       if (!empty($username)) {
@@ -636,7 +636,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
 
         if (!$ldapconnection) {
             $this->ldap_close($ldapconnection);
-            print get_string('auth_ldap_noconnect','auth',$this->config->host_url);
+            print get_string('auth_ldap_noconnect','auth_ldap',$this->config->host_url);
             exit;
         }
 
@@ -710,18 +710,18 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
-                            echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array($user->username, $user->id)); echo "\n";
                         } else {
-                            echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
                     } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
                         $updateuser = new object();
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
                         if ($DB->update_record('user', $updateuser)) {
-                            echo "\t"; print_string('auth_dbsuspenduser', 'auth', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array($user->username, $user->id)); echo "\n";
                         } else {
-                            echo "\t"; print_string('auth_dbsuspendusererror', 'auth', $user->username); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspendusererror', 'auth_db', $user->username); echo "\n";
                         }
                     }
                 }
@@ -747,9 +747,9 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                     $updateuser->id = $user->id;
                     $updateuser->auth = 'ldap';
                     if ($DB->pdate_record('user', $updateuser)) {
-                        echo "\t"; print_string('auth_dbreviveser', 'auth', array($user->username, $user->id)); echo "\n";
+                        echo "\t"; print_string('auth_dbreviveser', 'auth_db', array($user->username, $user->id)); echo "\n";
                     } else {
-                        echo "\t"; print_string('auth_dbreviveusererror', 'auth', $user->username); echo "\n";
+                        echo "\t"; print_string('auth_dbreviveusererror', 'auth_db', $user->username); echo "\n";
                     }
                 }
             } else {
@@ -802,7 +802,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 $maxxcount = 100;
 
                 foreach ($users as $user) {
-                    echo "\t"; print_string('auth_dbupdatinguser', 'auth', array($user->username, $user->id));
+                    echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array($user->username, $user->id));
                     if (!$this->update_user_record($user->username, $updatekeys)) {
                         echo " - ".get_string('skipped');
                     }
@@ -866,13 +866,13 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 }
 
                 if ($id = $DB->insert_record('user', $user)) {
-                    echo "\t"; print_string('auth_dbinsertuser', 'auth', array($user->username, $id)); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array($user->username, $id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);
                     if (!empty($this->config->forcechangepassword)) {
                         set_user_preference('auth_forcepasswordchange', 1, $userobj->id);
                     }
                 } else {
-                    echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
                 }
 
                 // add course creators if needed
@@ -912,7 +912,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: ".$username);
-            print_error('auth_dbusernotexist','auth','',$username);
+            print_error('auth_dbusernotexist','auth_db','',$username);
             die;
         }
 

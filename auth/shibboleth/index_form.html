@@ -15,7 +15,7 @@ if ($show_instructions) {
         if (isset($config->login_name) && !empty($config->login_name)){
             echo $config->login_name;
         } else {
-            print_string("auth_shibboleth_login_long", "auth");
+            print_string("auth_shibboleth_login_long", "auth_shibboleth");
         }
     ?></h2>
       <div class="subcontent loginsub">
@@ -29,10 +29,10 @@ if ($show_instructions) {
 
         ?>
           <div class="guestsub">
-          <p><?php print_string("auth_shibboleth_select_organization", "auth"); ?></p>
+          <p><?php print_string("auth_shibboleth_select_organization", "auth_shibboleth"); ?></p>
             <form action="login.php" method="post" id="guestlogin">
             <select name="idp"> 
-                <option value="-" ><?php print_string("auth_shibboleth_select_member", "auth"); ?></option>
+                <option value="-" ><?php print_string("auth_shibboleth_select_member", "auth_shibboleth"); ?></option>
                 <?php
                     print_idp_list();
                 ?>
@@ -40,7 +40,7 @@ if ($show_instructions) {
             </form>
             <p>
             <?php 
-                print_string("auth_shibboleth_contact_administrator", "auth"); 
+                print_string("auth_shibboleth_contact_administrator", "auth_shibboleth");
                 echo '<a href="mailto:'.get_admin()->email.'"> Moodle Administrator</a>.';
             ?>
             </p>

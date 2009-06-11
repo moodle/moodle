@@ -53,7 +53,7 @@
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-    <td align="right"><label for="host"><?php print_string("auth_dbhost_key", "auth") ?></label></td>
+    <td align="right"><label for="host"><?php print_string("auth_dbhost_key", "auth_db") ?></label></td>
     <td>
         <input id="host" name="host" type="text" size="30" value="<?php echo $config->host?>" />
         <?php
@@ -64,11 +64,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbhost", "auth") ?></td>
+    <td><?php print_string("auth_dbhost", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="menutype"><?php print_string("auth_dbtype_key", "auth") ?></label></td>
+    <td align="right"><label for="menutype"><?php print_string("auth_dbtype_key", "auth_db") ?></label></td>
     <td>
     <?php  $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mssql_n", "mysql", "mysqli", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
@@ -79,20 +79,20 @@
 
     </td>
     <td>
-    <?php print_string("auth_dbtype","auth") ?>
+    <?php print_string("auth_dbtype","auth_db") ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="menusybasequoting"><?php print_string("auth_dbsybasequoting", "auth") ?></label></td>
+    <td align="right"><label for="menusybasequoting"><?php print_string("auth_dbsybasequoting", "auth_db") ?></label></td>
     <td>
         <?php choose_from_menu($yesno, 'sybasequoting', $config->sybasequoting, ''); ?>
     </td>
-    <td><?php print_string("auth_dbsybasequotinghelp", "auth") ?></td>
+    <td><?php print_string("auth_dbsybasequotinghelp", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="name"><?php print_string("auth_dbname_key", "auth") ?></label></td>
+    <td align="right"><label for="name"><?php print_string("auth_dbname_key", "auth_db") ?></label></td>
     <td>
         <input id="name" name="name" type="text" size="30" value="<?php echo $config->name?>" />
         <?php
@@ -103,11 +103,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbname", "auth") ?></td>
+    <td><?php print_string("auth_dbname", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="user"><?php print_string("auth_dbuser_key", "auth") ?></label></td>
+    <td align="right"><label for="user"><?php print_string("auth_dbuser_key", "auth_db") ?></label></td>
     <td>
         <input id="user" name="user" type="text" size="30" value="<?php echo $config->user?>" />
         <?php
@@ -118,11 +118,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbuser", "auth") ?></td>
+    <td><?php print_string("auth_dbuser", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="pass"><?php print_string("auth_dbpass_key", "auth") ?></label></td>
+    <td align="right"><label for="pass"><?php print_string("auth_dbpass_key", "auth_db") ?></label></td>
     <td>
         <input id="pass" name="pass" type="text" size="30" value="<?php echo $config->pass?>" />
         <?php
@@ -134,12 +134,12 @@
         ?>
     </td>
     <td>
-    <?php print_string("auth_dbpass", "auth") ?>
+    <?php print_string("auth_dbpass", "auth_db") ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="table"><?php print_string("auth_dbtable_key", "auth") ?></label></td>
+    <td align="right"><label for="table"><?php print_string("auth_dbtable_key", "auth_db") ?></label></td>
     <td>
         <input id="table" name="table" type="text" size="30" value="<?php echo $config->table?>" />
         <?php
@@ -150,11 +150,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbtable", "auth") ?></td>
+    <td><?php print_string("auth_dbtable", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="fielduser"><?php print_string("auth_dbfielduser_key", "auth") ?></label></td>
+    <td align="right"><label for="fielduser"><?php print_string("auth_dbfielduser_key", "auth_db") ?></label></td>
     <td>
         <input id="fielduser" name="fielduser" type="text" size="30" value="<?php echo $config->fielduser?>" />
         <?php
@@ -165,11 +165,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbfielduser", "auth") ?></td>
+    <td><?php print_string("auth_dbfielduser", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="fieldpass"><?php print_string("auth_dbfieldpass_key", "auth") ?></label></td>
+    <td align="right"><label for="fieldpass"><?php print_string("auth_dbfieldpass_key", "auth_db") ?></label></td>
     <td>
         <input id="fieldpass" name="fieldpass" type="text" size="30" value="<?php echo $config->fieldpass?>" />
         <?php
@@ -180,11 +180,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbfieldpass", "auth") ?></td>
+    <td><?php print_string("auth_dbfieldpass", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="menupasstype"><?php print_string("auth_dbpasstype_key", "auth") ?></label></td>
+    <td align="right"><label for="menupasstype"><?php print_string("auth_dbpasstype_key", "auth_db") ?></label></td>
     <td>
         <?php
         $passtype = array();
@@ -196,11 +196,11 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_dbpasstype", "auth") ?></td>
+    <td><?php print_string("auth_dbpasstype", "auth_db") ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><label for="extencoding"><?php print_string("auth_dbextencoding", "auth") ?></label></td>
+    <td align="right"><label for="extencoding"><?php print_string("auth_dbextencoding", "auth_db") ?></label></td>
     <td>
         <input id="extencoding" name="extencoding" type="text" value="<?php echo $config->extencoding ?>" />
         <?php
@@ -211,27 +211,27 @@
 
         ?>
     </td>
-    <td><?php print_string('auth_dbextencodinghelp', 'auth') ?></td>
+    <td><?php print_string('auth_dbextencodinghelp', 'auth_db') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><label for="setupsql"><?php print_string("auth_dbsetupsql", "auth") ?></label></td>
+    <td align="right"><label for="setupsql"><?php print_string("auth_dbsetupsql", "auth_db") ?></label></td>
     <td>
         <input id="setupsql" name="setupsql" type="text" value="<?php echo $config->setupsql ?>" />
     </td>
-    <td><?php print_string('auth_dbsetupsqlhelp', 'auth') ?></td>
+    <td><?php print_string('auth_dbsetupsqlhelp', 'auth_db') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><label for="menudebugauthdb"><?php print_string("auth_dbdebugauthdb", "auth") ?></label></td>
+    <td align="right"><label for="menudebugauthdb"><?php print_string("auth_dbdebugauthdb", "auth_db") ?></label></td>
     <td>
         <?php choose_from_menu($yesno, 'debugauthdb', $config->debugauthdb, ''); ?>
     </td>
-    <td><?php print_string("auth_dbdebugauthdbhelp", "auth") ?></td>
+    <td><?php print_string("auth_dbdebugauthdbhelp", "auth_db") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><label for="changepasswordurl"><?php print_string("auth_dbchangepasswordurl_key", "auth") ?></label></td>
+    <td align="right"><label for="changepasswordurl"><?php print_string("auth_dbchangepasswordurl_key", "auth_db") ?></label></td>
     <td>
         <input id="changepasswordurl" name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php
@@ -269,7 +269,7 @@
 
 <?php
 
-print_auth_lock_options('db', $user_fields, get_string('auth_dbextrafields', 'auth'), true, true);
+print_auth_lock_options('db', $user_fields, get_string('auth_dbextrafields', 'auth_db'), true, true);
 
 ?>
 </table>

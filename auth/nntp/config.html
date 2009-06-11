@@ -15,7 +15,7 @@ if (!isset($config->changepasswordurl)) {
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_nntphost_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_nntphost_key', 'auth_nntp') ?>: </td>
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
@@ -29,7 +29,7 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <?php
 
-        print_string("auth_nntphost", "auth");
+        print_string("auth_nntphost", "auth_nntp");
         print_string("auth_multiplehosts", "auth");
 
         ?>
@@ -37,7 +37,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_nntpport_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_nntpport_key', 'auth_nntp') ?>: </td>
     <td>
         <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
         <?php
@@ -48,11 +48,11 @@ if (!isset($config->changepasswordurl)) {
 
         ?>
     </td>
-    <td><?php print_string("auth_nntpport", "auth") ?></td>
+    <td><?php print_string("auth_nntpport", "auth_nntp") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('auth_nntpchangepasswordurl_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_nntpchangepasswordurl_key', 'auth_nntp') ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php

@@ -51,7 +51,7 @@ class fcFPP
     $conn = fsockopen($host, $port, $errno, $errstr, 5);
     if (!$conn)
     {
-        print_error('auth_fcconnfail','auth', '', array($errno, $errstr));
+        print_error('auth_fcconnfail','auth_fc', '', array($errno, $errstr));
         return false;
     }
 

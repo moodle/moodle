@@ -4,7 +4,7 @@
 
     // Set to defaults if undefined
     if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
-        $config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/index.php');
+        $config->auth_instructions = get_string('auth_shib_instructions', 'auth_shibboleth', $CFG->wwwroot.'/auth/shibboleth/index.php');
     }
     if (!isset ($config->user_attribute)) {
         $config->user_attribute = '';
@@ -24,28 +24,28 @@
     <td>
         <input name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>" />
     </td>
-    <td><?php print_string("auth_shib_username_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_username_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_convert_data", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_convert_data", "auth_shibboleth") ?>:</td>
     <td>
         <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>" />
         <?php
 
         if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
               echo '<br/><font color="red">';
-              print_string("auth_shib_convert_data_warning", "auth");
+              print_string("auth_shib_convert_data_warning", "auth_shibboleth");
               echo '</font>';
         }
 
         ?>
     </td>
-    <td><?php print_string("auth_shib_convert_data_description", "auth"); echo $config->alt_login ?></td>
+    <td><?php print_string("auth_shib_convert_data_description", "auth_shibboleth"); echo $config->alt_login ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_integrated_wayf", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_integrated_wayf", "auth_shibboleth") ?>:</td>
     <td>
         <input name="alt_login" type="checkbox" <?php 
         if ( isset($config->alt_login) and $config->alt_login == 'on' ){
@@ -53,11 +53,11 @@
             }
         ?> />
     </td>
-    <td><?php print_string("auth_shib_integrated_wayf_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_integrated_wayf_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_idp_list", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_idp_list", "auth_shibboleth") ?>:</td>
     <td>
         <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto; white-space: nowrap;"
 ><?php 
@@ -73,16 +73,16 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
     <?php
        if (isset($config->organization_selection) && empty($config->organization_selection) && isset($config->alt_login) && $config->alt_login == 'on') {
               echo '<br/><font color="red">';
-              print_string("auth_shib_no_organizations_warning", "auth");
+              print_string("auth_shib_no_organizations_warning", "auth_shibboleth");
               echo '</font>';
         }
     ?>
     </td>
-    <td><?php print_string("auth_shib_idp_list_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_idp_list_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_logout_url", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_logout_url", "auth_shibboleth") ?>:</td>
     <td>
         <input name="logout_handler" type="text" size="30" value="<?php 
         if ( isset($config->logout_handler) and !empty($config->logout_handler)){
@@ -90,11 +90,11 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         }
         ?>" />
     </td>
-    <td><?php print_string("auth_shib_logout_url_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_logout_url_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_logout_return_url", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_logout_return_url", "auth_shibboleth") ?>:</td>
     <td>
         <input name="logout_return_url" type="text" size="30" value="<?php 
         if ( isset($config->logout_return_url) and !empty($config->logout_return_url)){
@@ -102,11 +102,11 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         }
         ?>" />
     </td>
-    <td><?php print_string("auth_shib_logout_return_url_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_logout_return_url_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_auth_method", "auth") ?>:</td>
+    <td align="right"><?php print_string("auth_shib_auth_method", "auth_shibboleth") ?>:</td>
     <td>
         <input name="login_name" type="text" size="30" value="<?php 
         if ( isset($config->login_name) and !empty($config->login_name)){
@@ -116,11 +116,11 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         }
         ?>" />
     </td>
-    <td><?php print_string("auth_shib_auth_method_description", "auth") ?></td>
+    <td><?php print_string("auth_shib_auth_method_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('auth_shib_changepasswordurl', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_shib_changepasswordurl', 'auth_shibboleth') ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php

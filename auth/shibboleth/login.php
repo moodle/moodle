@@ -65,7 +65,7 @@ httpsrequired();
             header('Location: /Shibboleth.sso?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
         }
     } elseif (isset($_POST['idp']) && !isset($IdPs[$_POST['idp']]))  {
-        $errormsg = get_string('auth_shibboleth_errormsg', 'auth');
+        $errormsg = get_string('auth_shibboleth_errormsg', 'auth_shibboleth');
     }
 
     $loginsite = get_string("loginsite");

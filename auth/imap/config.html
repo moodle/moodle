@@ -18,7 +18,7 @@ if (!isset($config->changepasswordurl)) {
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_imaphost_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_imaphost_key', 'auth_imap') ?>: </td>
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
@@ -32,7 +32,7 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <?php
 
-        print_string('auth_imaphost', 'auth');
+        print_string('auth_imaphost', 'auth_imap');
         print_string('auth_multiplehosts', 'auth');
 
         ?>
@@ -40,7 +40,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_imaptype_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_imaptype_key', 'auth_imap') ?>: </td>
     <td>
         <?php
 
@@ -52,11 +52,11 @@ if (!isset($config->changepasswordurl)) {
 
         ?>
     </td>
-    <td><?php print_string('auth_imaptype', 'auth') ?></td>
+    <td><?php print_string('auth_imaptype', 'auth_imap') ?></td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_imapport_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_imapport_key', 'auth_imap') ?>: </td>
     <td>
         <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
         <?php
@@ -67,11 +67,11 @@ if (!isset($config->changepasswordurl)) {
 
         ?>
     </td>
-    <td><?php print_string('auth_imapport', 'auth') ?></td>
+    <td><?php print_string('auth_imapport', 'auth_imap') ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('auth_imapchangepasswordurl_key', 'auth') ?>: </td>
+    <td align="right"><?php print_string('auth_imapchangepasswordurl_key', 'auth_imap') ?>: </td>
     <td>
         <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php

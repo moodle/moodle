@@ -125,7 +125,7 @@
                 $usernew->preference_newemailattemptsleft = 3;
                 $a->oldemail = $usernew->email = $user->email;
 
-                $email_changed_html = print_box(get_string('auth_changingemailaddress', 'auth', $a), 'generalbox', 'notice', true);
+                $email_changed_html = print_box(get_string('auth_changingemailaddress', 'auth_email', $a), 'generalbox', 'notice', true);
                 $email_changed_html .= print_continue("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", true);
                 $email_changed = true;
             }
@@ -177,8 +177,8 @@
             $a->site = $SITE->fullname;
             $a->fullname = fullname($user, true);
 
-            $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth', $a);
-            $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth', $a);
+            $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth_email', $a);
+            $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth_email', $a);
 
             if (!$mail_results = email_to_user($temp_user, get_admin(), $emailupdatetitle, $emailupdatemessage)) {
                 die("could not send email!");

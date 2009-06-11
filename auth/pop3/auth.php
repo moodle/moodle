@@ -41,7 +41,7 @@ class auth_plugin_pop3 extends auth_plugin_base {
      */
     function user_login($username, $password) {
         if (! function_exists('imap_open')) {
-            print_error('auth_pop3notinstalled','auth');
+            print_error('auth_pop3notinstalled','auth_pop3');
             exit;
         }
 

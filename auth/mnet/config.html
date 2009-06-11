@@ -19,7 +19,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
 <table cellspacing="0" cellpadding="5">
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('rpc_negotiation_timeout', 'auth'); ?>: </td>
+    <td align="right"><?php print_string('rpc_negotiation_timeout', 'auth_mnet'); ?>: </td>
     <td>
         <input name="rpc_negotiation_timeout" type="text" size="5" value="<?php echo $config->rpc_negotiation_timeout ?>" />
         <?php
@@ -33,14 +33,14 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     <td>
         <?php
 
-        print_string('auth_mnet_rpc_negotiation_timeout', 'auth');
+        print_string('auth_mnet_rpc_negotiation_timeout', 'auth_mnet');
 
         ?>
     </td>
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auto_add_remote_users', 'auth'); ?>: </td>
+    <td align="right"><?php print_string('auto_add_remote_users', 'auth_mnet'); ?>: </td>
     <td>
         <?php
 
@@ -51,13 +51,13 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     <td>
         <?php
 
-        print_string('auth_mnet_auto_add_remote_users', 'auth');
+        print_string('auth_mnet_auto_add_remote_users', 'auth_mnet');
 
         ?>
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td colspan="3"><?php print_string('auth_mnet_roamin', 'auth'); ?>: </td>
+    <td colspan="3"><?php print_string('auth_mnet_roamin', 'auth_mnet'); ?>: </td>
 </tr>
 <?php
 foreach($id_providers as $host) {
@@ -70,7 +70,7 @@ foreach($id_providers as $host) {
 }
 ?>
 <tr valign="top" class="required">
-    <td colspan="3"><?php print_string('auth_mnet_roamout', 'auth'); ?>: </td>
+    <td colspan="3"><?php print_string('auth_mnet_roamout', 'auth_mnet'); ?>: </td>
 </tr>
 <?php
 foreach($service_providers as $host) {

@@ -17,7 +17,7 @@ if (!in_array('ldap',$authsequence,true)) {
 
 $authplugin = get_auth_plugin('ldap');
 if (empty($authplugin->config->ntlmsso_enabled)) {
-    print_error('ntlmsso_isdisabled','auth');
+    print_error('ntlmsso_isdisabled','auth_ldap');
 }
 
 // If ntlmsso_finish() succeeds, then the code never returns,
@@ -31,6 +31,6 @@ if (!$authplugin->ntlmsso_finish()) {
     $navigation = build_navigation($navlinks);
     print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '', '', true);
     redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1', 
-             get_string('ntlmsso_failed','auth'), 3);
+             get_string('ntlmsso_failed','auth_ldap'), 3);
 }
 ?>

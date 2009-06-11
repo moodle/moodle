@@ -18,7 +18,7 @@ if (!in_array('ldap',$authsequence,true)) {
 
 $authplugin = get_auth_plugin('ldap');
 if (empty($authplugin->config->ntlmsso_enabled)) {
-    print_error('ntlmsso_isdisabled','auth');
+    print_error('ntlmsso_isdisabled','auth_ldap');
 }
 
 $sesskey = required_param('sesskey', PARAM_RAW);
@@ -44,7 +44,7 @@ if ($authplugin->ntlmsso_magic($sesskey)
     fclose($handle);
     exit;
 } else {
-    print_error('ntlmsso_iwamagicnotenabled','auth');
+    print_error('ntlmsso_iwamagicnotenabled','auth_ldap');
 }
 
 ?>

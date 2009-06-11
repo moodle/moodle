@@ -17,7 +17,7 @@ if (!in_array('ldap',$authsequence,true)) {
 
 $authplugin = get_auth_plugin('ldap');
 if (empty($authplugin->config->ntlmsso_enabled)) {
-    print_error('ntlmsso_isdisabled','auth');
+    print_error('ntlmsso_isdisabled','auth_ldap');
 }
 
 $sesskey = sesskey();
@@ -31,7 +31,7 @@ $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'))
 $navigation = build_navigation($navlinks);
 print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '', '', true);
 
-$msg = '<p>'.get_string('ntlmsso_attempting','auth').'</p>'
+$msg = '<p>'.get_string('ntlmsso_attempting','auth_ldap').'</p>'
     . '<img width="1", height="1" '
     . ' src="' . $CFG->wwwroot . '/auth/ldap/ntlmsso_magic.php?sesskey='
     . $sesskey . '" />';

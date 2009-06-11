@@ -60,7 +60,7 @@ class auth_plugin_db extends auth_plugin_base {
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."' ");
             if (!$rs) {
                 $authdb->Close();
-                print_error('auth_dbcantconnect','auth');
+                print_error('auth_dbcantconnect','auth_db');
                 return false;
             }
 
@@ -93,7 +93,7 @@ class auth_plugin_db extends auth_plugin_base {
                                   AND {$this->config->fieldpass} = '".$this->ext_addslashes($extpassword)."' ");
             if (!$rs) {
                 $authdb->Close();
-                print_error('auth_dbcantconnect','auth');
+                print_error('auth_dbcantconnect','auth_db');
                 return false;
             }
 
@@ -249,23 +249,23 @@ class auth_plugin_db extends auth_plugin_base {
             $remove_users = $DB->get_records_sql($sql);
 
             if (!empty($remove_users)) {
-                print_string('auth_dbuserstoremove','auth', count($remove_users)); echo "\n";
+                print_string('auth_dbuserstoremove','auth_db', count($remove_users)); echo "\n";
 
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
-                            echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteuser', 'auth_db', array($user->username, $user->id)); echo "\n";
                         } else {
-                            echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
+                            echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
                     } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
                         $updateuser = new object();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
                         if ($DB->update_record('user', $updateuser)) {
-                            echo "\t"; print_string('auth_dbsuspenduser', 'auth', array($user->username, $user->id)); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array($user->username, $user->id)); echo "\n";
                         } else {
-                            echo "\t"; print_string('auth_dbsuspendusererror', 'auth', $user->username); echo "\n";
+                            echo "\t"; print_string('auth_dbsuspendusererror', 'auth_db', $user->username); echo "\n";
                         }
                     }
                 }
@@ -306,7 +306,7 @@ class auth_plugin_db extends auth_plugin_base {
                     print "User entries to update: ". count($update_users). "\n";
 
                     foreach ($update_users as $user) {
-                        echo "\t"; print_string('auth_dbupdatinguser', 'auth', array($user->username, $user->id));
+                        echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array($user->username, $user->id));
                         if (!$this->update_user_record($user->username, $updatekeys)) {
                             echo " - ".get_string('skipped');
                         }
@@ -342,7 +342,7 @@ class auth_plugin_db extends auth_plugin_base {
         unset($usernames);
 
         if (!empty($add_users)) {
-            print_string('auth_dbuserstoadd','auth',count($add_users)); echo "\n";
+            print_string('auth_dbuserstoadd','auth_db',count($add_users)); echo "\n";
             $DB->begin_sql();
             foreach($add_users as $user) {
                 $username = $user;
@@ -362,16 +362,16 @@ class auth_plugin_db extends auth_plugin_base {
                 if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid))) {
                     $user->id = $old_user->id;
                     $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
-                    echo "\t"; print_string('auth_dbreviveuser', 'auth', array($user->username, $user->id)); echo "\n";
+                    echo "\t"; print_string('auth_dbreviveuser', 'auth_db', array($user->username, $user->id)); echo "\n";
                 } elseif ($id = $DB->insert_record ('user',$user)) { // it is truly a new user
-                    echo "\t"; print_string('auth_dbinsertuser','auth',array($user->username, $id)); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertuser','auth_db',array($user->username, $id)); echo "\n";
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
                         set_user_preference('create_password',          1, $id);
                     }
                 } else {
-                    echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
                 }
             }
             $DB->commit_sql();
@@ -394,7 +394,7 @@ class auth_plugin_db extends auth_plugin_base {
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."' ");
 
         if (!$rs) {
-            print_error('auth_dbcantconnect','auth');
+            print_error('auth_dbcantconnect','auth_db');
         } else if ( !$rs->EOF ) {
             // user exists exterally
             $result = true;
@@ -417,7 +417,7 @@ class auth_plugin_db extends auth_plugin_base {
                                 FROM   {$this->config->table} ");
 
         if (!$rs) {
-            print_error('auth_dbcantconnect','auth');
+            print_error('auth_dbcantconnect','auth_db');
         } else if ( !$rs->EOF ) {
             while ($rec = $rs->FetchRow()) {
                 $rec = (object)array_change_key_case((array)$rec , CASE_LOWER);
@@ -464,7 +464,7 @@ class auth_plugin_db extends auth_plugin_base {
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: $username");
-            print_error('auth_dbusernotexist','auth',$username);
+            print_error('auth_dbusernotexist','auth_db',$username);
             die;
         }
 

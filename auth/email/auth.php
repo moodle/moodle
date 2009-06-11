@@ -80,7 +80,7 @@ class auth_plugin_email extends auth_plugin_base {
         $user->password = hash_internal_user_password($user->password);
 
         if (! ($user->id = $DB->insert_record('user', $user)) ) {
-            print_error('auth_emailnoinsert','auth');
+            print_error('auth_emailnoinsert','auth_email');
         }
         
         /// Save any custom profile field information
@@ -90,7 +90,7 @@ class auth_plugin_email extends auth_plugin_base {
         events_trigger('user_created', $user);
 
         if (! send_confirmation_email($user)) {
-            print_error('auth_emailnoemail','auth');
+            print_error('auth_emailnoemail','auth_email');
         }
 
         if ($notify) {

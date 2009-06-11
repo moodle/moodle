@@ -41,7 +41,7 @@ class auth_plugin_nntp extends auth_plugin_base {
      */
     function user_login ($username, $password) {
         if (! function_exists('imap_open')) {
-            print_error('auth_nntpnotinstalled','auth');
+            print_error('auth_nntpnotinstalled','auth_nntp');
             exit;
         }
 
