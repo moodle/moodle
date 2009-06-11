@@ -173,9 +173,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $str .= $repo_info['js'];
         $str .= <<<EOD
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
-<div>
-    <a href="{$CFG->httpswwwroot}/repository/filepicker.php?ctx_id={$context->id}&&itemid=$draftitemid" onclick="return callpicker('$id', '$client_id', '$draftitemid')" target="_blank">$straddfile</a>
-</div>
+<a href="#nonjsfp" class="btnaddfile" onclick="return callpicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
 EOD;
         if (empty($CFG->filemanagerjsloaded)) {
             $str .= <<<EOD
@@ -226,7 +224,11 @@ function callpicker(el_id, client_id, itemid) {
 //]]>
 </script>
 <noscript>
-<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="160" width="600" style="border:1px solid #000">Error</object>
+<style type="text/css">
+.btnaddfile{display:none}
+</style>
+<a name="nonjsfp"></a>
+<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
 </noscript>
 EOD;
             $CFG->filemanagerjsloaded = true;
