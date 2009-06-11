@@ -124,14 +124,16 @@ class repository_flickr extends repository {
      * @param <type> $ajax
      * @return <type>
      */
-    public function print_login($ajax = true) {
-        if ($ajax) {
+    public function print_login() {
+        if ($this->options['ajax']) {
             $ret = array();
             $popup_btn = new stdclass;
             $popup_btn->type = 'popup';
             $popup_btn->url = $this->flickr->auth();
             $ret['login'] = array($popup_btn);
             return $ret;
+        } else {
+            echo '<a target="_blank" href="'.$this->flickr->auth().'">Login</a>';
         }
     }
 

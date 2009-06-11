@@ -45,8 +45,11 @@
                 $contextid = $context->id;
                 $fs = get_file_storage();
                 if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
-                    $file->delete();
-                    echo 200;
+                    if($result = $file->delete()) {
+                        echo 200;
+                    } else {
+                        echo '';
+                    }
                 } else {
                     echo '';
                 }
@@ -118,14 +121,21 @@
         // parent window, in this case, we need to alert user to refresh the repository
         // manually.
         $js  =<<<EOD
-<html><head><script type="text/javascript">
+<html><head>
+<script type="text/javascript">
 if(window.opener){
     window.opener.repository_callback($repo_id);
     window.close();
 } else {
     alert("If parent window is on HTTPS, then we are not allowed to access window.opener object, so we cannot refresh the repository for you automatically, but we already got your session, just go back to file picker and select the repository again, it should work now.");
 }
-</script><body></body></html>
+</script>
+<body>
+<noscript>
+Close this window and refresh file picker.
+</noscript>
+</body>
+</html>
 EOD;
         echo $js;
         die;
@@ -195,6 +205,7 @@ EOD;
                     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
                 }
                 if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
+                    // youtube plugin return a url instead a file path
                     $url = $filepath;
                     echo json_encode(array(
                                 /* File picker need to know this is a link
@@ -208,6 +219,7 @@ EOD;
                                 )
                             );
                 } else if (is_array($filepath)) {
+                    // file api don't have real file path, so we need more file api specific info for "local" plugin
                     $fileinfo = $filepath;
                     $info = array();
                     $info['client_id'] = $client_id;

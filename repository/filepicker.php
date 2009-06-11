@@ -122,13 +122,15 @@ case 'sign':
             echo '<input type="submit" value="Upload" />';
             echo '</form>';
         } else {
-            foreach ($list['path'] as $p) {
-                echo '<form method="post" style="display:inline">';
-                echo '<input type="hidden" name="p" value="'.$p['path'].'"';
-                echo '<input type="hidden" name="action" value="list"';
-                echo '<input type="submit" value="'.$p['name'].'" />';
-                echo '</form>';
-                echo ' <strong>/</strong> ';
+            if (!empty($list['path'])) {
+                foreach ($list['path'] as $p) {
+                    echo '<form method="post" style="display:inline">';
+                    echo '<input type="hidden" name="p" value="'.$p['path'].'"';
+                    echo '<input type="hidden" name="action" value="list"';
+                    echo '<input type="submit" value="'.$p['name'].'" />';
+                    echo '</form>';
+                    echo ' <strong>/</strong> ';
+                }
             }
             echo '<table>';
             foreach ($list['list'] as $item) {
