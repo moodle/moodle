@@ -38,6 +38,7 @@ function toggleCategorySelector() {
         if (itemboxes[i].checked) {
             document.getElementById('menumoveafter').disabled = false;
             return true;
+        }
     }
     document.getElementById('menumoveafter').disabled = 'disabled';
 }
