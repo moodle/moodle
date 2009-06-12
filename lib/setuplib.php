@@ -119,7 +119,17 @@ class invalid_state_exception extends moodle_exception {
  * Default exception handler, uncought exceptions are equivalent to using print_error()
  */
 function default_exception_handler($ex) {
-    global $CFG;
+    global $CFG, $DB, $SCRIPT;
+
+    // detect active db transactions, rollback and log as error
+    if ($DB->is_transaction_started()) {
+        error_log('Database transaction aborted by exception in '.$CFG->dirroot.$SCRIPT);
+        try {
+            // note: transaction blocks should never change current $_SESSION
+            $DB->rollback_sql();
+        } catch (Exception $ignored) {
+        }
+    }
 
     $backtrace = $ex->getTrace();
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));

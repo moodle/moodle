@@ -278,7 +278,8 @@ abstract class moodle_database {
      */
     public function dispose() {
         if ($this->intransaction) {
-            error_log('Active database transaction detected when disposing database!'); // probably can not write to console anymore, log problem instead  
+            // unfortunately we can not access global $CFG any more and can not print debug 
+            error_log('Active database transaction detected when disposing database!');  
         }
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it
