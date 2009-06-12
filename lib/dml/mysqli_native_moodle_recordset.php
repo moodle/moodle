@@ -27,6 +27,9 @@
 
 require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
+/**
+ * Mysqli specific moodle recordset class
+ */
 class mysqli_native_moodle_recordset extends moodle_recordset {
 
     protected $result;
