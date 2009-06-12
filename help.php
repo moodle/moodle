@@ -20,6 +20,8 @@ $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
 $skiplocal = optional_param('skiplocal', 0, PARAM_INT);     // shall _local help files be skipped?
 
+$PAGE->set_course($COURSE);
+
 // We look for the help to display in lots of different places, and
 // only display an error at the end if we can't find the help file
 // anywhere. This variable tracks that.
