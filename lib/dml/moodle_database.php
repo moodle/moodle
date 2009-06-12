@@ -60,53 +60,55 @@ define('SQL_QUERY_AUX', 5);
  */
 abstract class moodle_database {
 
-    // manipulates the db structure
+    /** @var database_manager db manager which allows db structure modifications */
     protected $database_manager;
-
+    /** @var array cache of column info */
     protected $columns = array(); // I wish we had a shared memory cache for this :-(
+    /** @var array cache of table info */
     protected $tables  = null;
 
     // db connection options
+    /** @var string db host name */
     protected $dbhost;
+    /** @var string db host user */
     protected $dbuser;
+    /** @var string db host password */
     protected $dbpass;
+    /** @var string db name */
     protected $dbname;
+    /** @var string table prefix */
     protected $prefix;
 
-    /**
-     * Database or driver specific options, such as sockets or TCPIP db connections
-     */
+    /** @var array Database or driver specific options, such as sockets or TCPIP db connections */
     protected $dboptions;
 
-    /**
-     * Non-moodle external database used.
-     */
+    /** @var bool true means non-moodle external database used.*/
     protected $external;
 
-    /**
-     * The database reads (performance counter).
-     */
+    /** @var int The database reads (performance counter).*/
     protected $reads = 0;
-
-    /**
-     * The database writes (performance counter).
-     */
+    /** @var int The database writes (performance counter).*/
     protected $writes = 0;
 
-    /** Debug level */
+    /** @var int Debug level */
     protected $debug  = 0;
 
+    /** @var string last query sql */
     protected $last_sql;
+    /** @var array last query parameters */
     protected $last_params;
+    /** @var int last query type */
     protected $last_type;
+    /** @var string last extra info */
     protected $last_extrainfo;
 
+    /** @var bool true if db used for db sessions */
     protected $used_for_db_sessions = false;
 
-    /** Flag indicating transaction in progress */
+    /** @var bool Flag indicating transaction in progress */
     protected $intransaction = false;
 
-    /** internal temporary variable */
+    /** @var int internal temporary variable */
     private $fix_sql_params_i;
 
     /**
@@ -1812,14 +1814,28 @@ abstract class moodle_database {
     }
 
 /// session locking
+    /**
+     * Is session lock supported in this driver?
+     * @return bool
+     */
     public function session_lock_supported() {
         return false;
     }
 
+    /**
+     * Obtain session lock
+     * @param int $rowid id of the row with session record
+     * @return success
+     */
     public function get_session_lock($rowid) {
         $this->used_for_db_sessions = true;
     }
 
+    /**
+     * Release session lock
+     * @param int $rowid id of the row with session record
+     * @return success
+     */
     public function release_session_lock($rowid) {
     }
 
