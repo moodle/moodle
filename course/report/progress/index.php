@@ -78,7 +78,7 @@ if($csv) {
     }
 } else {
     // Use SVG to draw sideways text if supported
-    $svgcleverness=can_use_rotated_text();
+    $svgcleverness = can_use_rotated_text();
 
     // Navigation and header
     $strreports = get_string("reports");
