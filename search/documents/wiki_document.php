@@ -241,9 +241,9 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     global $CFG;
     
     // get the wiki object and all related stuff
-    $page = get_record('wiki_pages', 'id', $id);
-    $entry = get_record('wiki_entries', 'id', $page->wiki);
-    $course = get_record('course', 'id', $entry->course);
+    $page = get_record('wiki_pages', 'id', $this_id);
+    $wiki = get_record('wiki', 'id', $page->wiki);
+    $course = get_record('course', 'id', $wiki->course);
     $context = get_record('context', 'id', $context_id);
     $cm = get_record('course_modules', 'id', $context->instanceid);
     if (empty($cm)) return false; // Shirai 20090530 - MDL19342 - course module might have been delete
