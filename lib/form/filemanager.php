@@ -225,9 +225,6 @@ function callpicker(el_id, client_id, itemid) {
 //]]>
 </script>
 <noscript>
-<style type="text/css">
-.btnaddfile{display:none}
-</style>
 <a name="nonjsfp"></a>
 <object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&amp;itemid={$draftitemid}&amp;ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
 </noscript>
