@@ -25,10 +25,10 @@ question_bank = {
 
     header_checkbox_click: function() {
         if (question_bank.firstcheckbox.checked) {
-            deselect_all_in('TABLE', null, 'categoryquestions');
+            select_all_in_element_with_id('categoryquestions', '');
             question_bank.headercheckbox.title = question_bank.strselectall;
         } else {
-            select_all_in('TABLE', null, 'categoryquestions');
+            select_all_in_element_with_id('categoryquestions', 'checked');
             question_bank.headercheckbox.title = question_bank.strdeselectall;
         }
         question_bank.headercheckbox.checked = false;
