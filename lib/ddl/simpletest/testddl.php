@@ -2,7 +2,6 @@
 /**
  * Unit tests for (some of) ddl lib.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
  */
 
 if (!defined('MOODLE_INTERNAL')) {

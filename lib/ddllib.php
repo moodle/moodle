@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,9 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
  * This library includes all the required functions used to handle the DB
@@ -33,32 +34,34 @@
  *
  * For further documentation, visit {@link http://docs.moodle.org/en/DDL_functions}
  *
- * @package   moodlecore
- * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @subpackage DDL
+ * @copyright  2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ *             2008 Petr Skoda                   http://skodak.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** Add required library */
+// Add required library
 require_once($CFG->libdir.'/xmlize.php');
 
-/** Add required XMLDB constants */
+// Add required XMLDB constants
 require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
 
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_object.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_file.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_structure.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_table.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_field.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_key.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_index.php');
-/** Add required XMLDB DB classes */
+// Add required XMLDB DB classes
 require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 
 require_once($CFG->libdir.'/ddl/sql_generator.php');
@@ -68,10 +71,6 @@ require_once($CFG->libdir.'/ddl/database_manager.php');
 
 /**
  * DDL exception class, use instead of error() and "return false;" in ddl code.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class ddl_exception extends moodle_exception {
     /**
@@ -85,10 +84,6 @@ class ddl_exception extends moodle_exception {
 
 /**
  * Table does not exist problem exception
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class ddl_table_missing_exception extends ddl_exception {
     /**
@@ -102,10 +97,6 @@ class ddl_table_missing_exception extends ddl_exception {
 
 /**
  * Table does not exist problem exception
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class ddl_field_missing_exception extends ddl_exception {
     /**
@@ -123,10 +114,6 @@ class ddl_field_missing_exception extends ddl_exception {
 
 /**
  * Error during changing db structure
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class ddl_change_structure_exception extends ddl_exception {
     /** @var string */
