@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,9 +11,10 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
  * This library contains all the Data Manipulation Language (DML) functions
@@ -30,21 +31,18 @@
  * For more info about the functions available in this library, please visit:
  *     http://docs.moodle.org/en/DML_functions
  * (feel free to modify, improve and document such page, thanks!)
- * 
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
+ *
+ * @package    moodlecore
+ * @subpackage DML
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /** Require the essential */
+// Require the essential
 require_once($CFG->libdir.'/dml/moodle_database.php');
 
 /**
  * DML exception class, use instead of error() in dml code.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class dml_exception extends moodle_exception {
     /**
@@ -59,10 +57,6 @@ class dml_exception extends moodle_exception {
 
 /**
  * DML db connection exception - triggered if database not accessible.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class dml_connection_exception extends dml_exception {
     /**
@@ -76,10 +70,6 @@ class dml_connection_exception extends dml_exception {
 
 /**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class dml_read_exception extends dml_exception {
     /** @var string */
@@ -104,10 +94,6 @@ class dml_read_exception extends dml_exception {
 
 /**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
- *
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package moodlecore
  */
 class dml_write_exception extends dml_exception {
     /** @var string */

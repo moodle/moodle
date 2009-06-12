@@ -1,7 +1,7 @@
 <?php
+
 /**
  * Unit tests for dml
- * @package dml
  */
 
 if (!defined('MOODLE_INTERNAL')) {
