@@ -1107,6 +1107,9 @@ class pgsql_native_moodle_database extends moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
+        if (!parent::begin_sql()) {
+            return false;
+        }
         $sql = "BEGIN ISOLATION LEVEL READ COMMITTED";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
@@ -1120,6 +1123,9 @@ class pgsql_native_moodle_database extends moodle_database {
      * on DBs that support it, commit the transaction
      */
     public function commit_sql() {
+        if (!parent::commit_sql()) {
+            return false;
+        }
         $sql = "COMMIT";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
@@ -1133,6 +1139,9 @@ class pgsql_native_moodle_database extends moodle_database {
      * on DBs that support it, rollback the transaction
      */
     public function rollback_sql() {
+        if (!parent::rollback_sql()) {
+            return false;
+        }
         $sql = "ROLLBACK";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);

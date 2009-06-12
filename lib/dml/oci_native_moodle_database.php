@@ -1215,7 +1215,10 @@ class oci_native_moodle_database extends moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
-        return false;
+        if (!parent::begin_sql()) {
+            return false;
+        }
+        return true;
 
         $sql = "BEGIN";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
@@ -1230,7 +1233,10 @@ class oci_native_moodle_database extends moodle_database {
      * on DBs that support it, commit the transaction
      */
     public function commit_sql() {
-        return false;
+        if (!parent::commit_sql()) {
+            return false;
+        }
+        return true;
 
         $sql = "COMMIT";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
@@ -1245,7 +1251,10 @@ class oci_native_moodle_database extends moodle_database {
      * on DBs that support it, rollback the transaction
      */
     public function rollback_sql() {
-        return false;
+        if (!parent::rollback_sql()) {
+            return false;
+        }
+        return true;
 
         $sql = "ROLLBACK";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);

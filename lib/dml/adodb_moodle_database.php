@@ -508,14 +508,23 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     public function begin_sql() {
+        if (!parent::begin_sql()) {
+            return false;
+        }
         $this->adodb->BeginTrans();
         return true;
     }
     public function commit_sql() {
+        if (!parent::commit_sql()) {
+            return false;
+        }
         $this->adodb->CommitTrans();
         return true;
     }
     public function rollback_sql() {
+        if (!parent::rollback_sql()) {
+            return false;
+        }
         $this->adodb->RollbackTrans();
         return true;
     }

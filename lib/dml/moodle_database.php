@@ -79,6 +79,9 @@ abstract class moodle_database {
 
     protected $used_for_db_sessions = false;
 
+    /** Flag indicating transaction in progress */
+    protected $intransaction = false;
+
     /** internal temporary variable */
     private $fix_sql_params_i;
 
@@ -248,6 +251,9 @@ abstract class moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
+        if ($this->intransaction) {
+            error_log('Active database transaction detected when disposing database!'); // probably can not write to console anymore, log problem instead  
+        }
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it
             session_get_instance()->write_close();
@@ -1739,23 +1745,46 @@ abstract class moodle_database {
      * you'll need to ensure you call commit_sql() or your changes *will* be lost.
      *
      * this is _very_ useful for massive updates
+     *
+     * Please note only one level of transactions is supported, please do not use
+     * transaction in moodle core! Transaction are intended for web services
+     * enrolment and auth synchronisation scripts, etc.
+     *
+     * @return bool success
      */
     public function begin_sql() {
-        return false;
+        if ($this->intransaction) {
+            debugging('Transaction already in progress');
+            return false;
+        }
+        $this->intransaction = true;
+        return true;
     }
 
     /**
      * on DBs that support it, commit the transaction
+     * @return bool success
      */
     public function commit_sql() {
-        return false;
+        if (!$this->intransaction) {
+            debugging('Transaction not in progress');
+            return false;
+        }
+        $this->intransaction = false;
+        return true;
     }
 
     /**
      * on DBs that support it, rollback the transaction
+     * @return bool success
      */
     public function rollback_sql() {
-        return false;
+        if (!$this->intransaction) {
+            debugging('Transaction not in progress');
+            return false;
+        }
+        $this->intransaction = false;
+        return true;
     }
 
 /// session locking
