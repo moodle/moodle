@@ -64,10 +64,10 @@ $str_userlist  = get_string('userlist',  'chat');
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/resize/assets/skins/sam/resize.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/assets/skins/sam/layout.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/assets/skins/sam/button.css" />
-<?php
-print_js_config(array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id, 'userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$str_chat,'chatroom_name'=>$str_title), 'chat_cfg');
-print_js_config(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist), 'chat_lang');
-?>
+<script type="text/javascript">
+var chat_cfg = <?php echo json_encode(array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id, 'userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$str_chat,'chatroom_name'=>$str_title)); ?>;
+var chat_lang = <?php echo json_encode(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist)); ?>;
+</script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/element/element-min.js"></script>
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/dragdrop/dragdrop-min.js"></script>

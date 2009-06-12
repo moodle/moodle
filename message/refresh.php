@@ -125,8 +125,11 @@
     }
 
     // Javascript for Mozilla to cope with the redirect bug from editor being on in this page
-    print_delayed_js_call($wait, 'document.location.replace', array(
-            "refresh.php?id=$userid&name=" . urlencode($userfullname) . "&wait=$wait"));
-    echo '</body>'."\n";
-    echo '</html>'."\n";
+    echo '<script type="text/javascript">//<![CDATA[' . "\n";
+    echo 'setTimeout(function() { document.location.replace(' .
+            json_encode("refresh.php?id=$userid&name=" . urlencode($userfullname) .
+            "&wait=$wait") . ');}, ' . ($wait * 1000) . ");\n";
+    echo "//]]></script>\n";
+    echo "</body>\n";
+    echo "</html>\n";
 ?>

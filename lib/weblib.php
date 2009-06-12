@@ -68,13 +68,6 @@ define('TRUSTTEXT', '#####TRUSTTEXT#####');
 
 
 /**
- * Javascript related defines
- */
-define('REQUIREJS_BEFOREHEADER', 0);
-define('REQUIREJS_INHEADER',     1);
-define('REQUIREJS_AFTERHEADER',  2);
-
-/**
  * Allowed tags - string of html tags that can be tested against for safe html tags
  * @global string $ALLOWED_TAGS
  * @name $ALLOWED_TAGS
@@ -369,12 +362,15 @@ class moodle_url {
      * @param string $paramname name
      * @param string $param Param value. Defaults to null. If null then return value of param 'name'
      * @return void|string If $param was null then the value of $paramname was returned
+     *      (null is returned if that param does not exist).
      */
     public function param($paramname, $param = null) {
         if (!is_null($param)) {
             $this->params = array($paramname => $param) + $this->params;
-        } else {
+        } else if (array_key_exists($paramname, $this->params)) {
             return $this->params[$paramname];
+        } else {
+            return null;
         }
     }
 
@@ -734,7 +730,8 @@ function close_window($delay = 0, $reloadopener = false) {
         $function = 'close_window';
     }
     echo '<p class="centerpara">' . get_string('windowclosing') . '</p>';
-    print_delayed_js_call($delay, $function);
+
+    $PAGE->requires->js_function_call($function)->after_delay($delay);
 
     print_footer('empty');
     exit;
@@ -2062,18 +2059,17 @@ function replace_smilies(&$text) {
  * @global object
  * @return string HTML for a list of smilies.
  */
-function get_emoticons_list_for_help_file(){
-    global $CFG, $SESSION;
+function get_emoticons_list_for_help_file() {
+    global $CFG, $SESSION, $PAGE;
     if (empty($CFG->emoticons)) {
         return '';
     }
 
-    require_js(array('yui_yahoo', 'yui_event'));
     $items = explode('{;}', $CFG->emoticons);
     $output = '<ul id="emoticonlist">';
     foreach ($items as $item) {
         $item = explode('{:}', $item);
-        $output .= '<li><img src="' . $CFG->pixpath.'/s/' . $item[1] . '.gif" alt="' .
+        $output .= '<li><img src="' . $CFG->pixpath . '/s/' . $item[1] . '.gif" alt="' .
                 $item[0] . '" /><code>' . $item[0] . '</code></li>';
     }
     $output .= '</ul>';
@@ -2085,7 +2081,8 @@ function get_emoticons_list_for_help_file(){
         $fieldname = 'message';
     }
 
-    $output .= print_js_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'), true);
+    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->js_function_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'));
     return $output;
 
 }
@@ -2405,10 +2402,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
     $meta = $meta."\n".$metapage;
-
-    $meta .= "\n".require_js('',1);
-
-    $meta .= standard_js_config();
+    $meta .= $PAGE->requires->get_head_code();
 
 /// Set up some navigation variables
 
@@ -2568,8 +2562,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
 
     // Add in any extra JavaScript libraries that occurred during the header
-    $output .= require_js('', 2);
-    $output .= print_js_call('moodle_initialise_body', array(), true);
+    $output .= $PAGE->requires->get_top_of_body_code();
 
     $PAGE->set_state(moodle_page::STATE_IN_BODY);
 
@@ -2578,252 +2571,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     } else {
         echo $output;
     }
-}
-
-/**
- * Used to include JavaScript libraries.
- *
- * When the $lib parameter is given, the function will ensure that the
- * named library or libraries is loaded onto the page - either in the
- * HTML <head>, just after the header, or at an arbitrary later point in
- * the page, depending on where this function is called.
- *
- * Libraries will not be included more than once, so this works like
- * require_once in PHP.
- *
- * There are two special-case calls to this function from print_header which are
- * internal to weblib and use the second $extracthtml parameter:
- * $extracthtml = 1: this is used before printing the header.
- *      It returns the script tag code that should go inside the <head>.
- * $extracthtml = 2: this is used after printing the header and handles any
- *      require_js calls that occurred within the header itself.
- *
- * @global object
- * @staticvar array $loadlib
- * @staticvar int $state Defaults to REQUIREJS_BEFOREHEADER
- * @staticvar string $latecode
- * @uses REQUIREJS_BEFOREHEADER
- * @uses REQUIREJS_INHEADER
- * @uses REQUIREJS_AFTERHEADER
- * @param mixed $lib The library or libraries to load (a string or array of strings)
- *      There are three way to specify the library:
- *      1. a shorname like 'yui_yahoo'. The list of recognised values is in lib/ajax/ajaxlib.php
- *      2. the path to the library relative to wwwroot, for example 'lib/javascript-static.js'
- *      3. (legacy) a full URL like $CFG->wwwroot . '/lib/javascript-static.js'.
- * @param int $extracthtml Private. For internal weblib use only.
- * @return mixed No return value (except when doing the internal $extracthtml
- *      calls, when it returns html code).
- */
-function require_js($lib, $extracthtml = 0) {
-    global $CFG;
-    static $loadlibs = array();
-
-    static $state = REQUIREJS_BEFOREHEADER;
-    static $latecode = '';
-
-    if (!empty($lib)) {
-        // Add the lib to the list of libs to be loaded, if it isn't already
-        // in the list.
-        if (is_array($lib)) {
-            foreach($lib as $singlelib) {
-                require_js($singlelib);
-            }
-        } else {
-            $libpath = ajax_get_lib($lib);
-            if (array_search($libpath, $loadlibs) === false) {
-                $loadlibs[] = $libpath;
-
-                // For state other than 0 we need to take action as well as just
-                // adding it to loadlibs
-                if($state != REQUIREJS_BEFOREHEADER) {
-                    // Get the script statement for this library
-                    $scriptstatement=get_require_js_code(array($libpath));
-
-                    if($state == REQUIREJS_AFTERHEADER) {
-                        // After the header, print it immediately
-                        print $scriptstatement;
-                    } else {
-                        // Haven't finished the header yet. Add it after the
-                        // header
-                        $latecode .= $scriptstatement;
-                    }
-                }
-            }
-        }
-    } else if($extracthtml==1) {
-        if($state !== REQUIREJS_BEFOREHEADER) {
-            debugging('Incorrect state in require_js (expected BEFOREHEADER): be careful not to call with empty $lib (except in print_header)');
-        } else {
-            $state = REQUIREJS_INHEADER;
-        }
-
-        return get_require_js_code($loadlibs);
-    } else if($extracthtml==2) {
-        if($state !== REQUIREJS_INHEADER) {
-            debugging('Incorrect state in require_js (expected INHEADER): be careful not to call with empty $lib (except in print_header)');
-            return '';
-        } else {
-            $state = REQUIREJS_AFTERHEADER;
-            return $latecode;
-        }
-    } else {
-        debugging('Unexpected value for $extracthtml');
-    }
-}
-
-/**
- * Should not be called directly - use require_js. This function obtains the code
- * (script tags) needed to include JavaScript libraries.
- *
- * @global object
- * @param array $loadlibs Array of library files to include
- * @return string HTML code to include them
- */
-function get_require_js_code($loadlibs) {
-    global $CFG;
-    // Return the html needed to load the JavaScript files defined in
-    // our list of libs to be loaded.
-    $output = '';
-    foreach ($loadlibs as $loadlib) {
-        $output .= '<script type="text/javascript" ';
-        $output .= " src=\"$loadlib\"></script>\n";
-        if ($loadlib == $CFG->wwwroot.'/lib/yui/logger/logger-min.js') {
-            // Special case, we need the CSS too.
-            $output .= '<link type="text/css" rel="stylesheet" ';
-            $output .= " href=\"{$CFG->wwwroot}/lib/yui/logger/assets/logger.css\" />\n";
-        }
-    }
-    return $output;
-}
-
-/**
- * Generate the HTML for calling a javascript funtion. You often need to do this
- * if you have your javascript in an external file, and need to call one function
- * to initialise it.
- *
- * You can pass in an optional list of arguments, which are properly escaped for
- * you using the json_encode function.
- *
- * @param string $function the name of the JavaScript function to call.
- * @param array $args an optional list of arguments to the function call.
- * @param boolean $return if true, return the HTML code, otherwise output it.
- * @return string|void string if $return is true, otherwise nothing.
- */
-function print_js_call($function, $args = array(), $return = false) {
-    $quotedargs = array();
-    foreach ($args as $arg) {
-        $quotedargs[] = json_encode($arg);
-    }
-    $html = '';
-    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
-    $html .= $function . '(' . implode(', ', $quotedargs) . ");\n";
-    $html .= "//]]></script>\n";
-    if ($return) {
-        return $html;
-    } else {
-        echo $html;
-    }
-}
-
-/**
- * Generate the HTML for calling a javascript funtion after a time delay.
- * In other respects, this function is the same as print_js_call.
- *
- * @param integer $delay the desired delay in seconds.
- * @param string $function the name of the JavaScript function to call.
- * @param array $args an optional list of arguments to the function call.
- * @param boolean $return if true, return the HTML code, otherwise output it.
- * @return string|void string if $return is true, otherwise nothing.
- */
-function print_delayed_js_call($delay, $function, $args = array(), $return = false) {
-    $quotedargs = array();
-    foreach ($args as $arg) {
-        $quotedargs[] = json_encode($arg);
-    }
-    $html = '';
-    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
-    $html .= 'setTimeout(function() {' . $function . '(' .
-            implode(', ', $quotedargs) . ');}, ' . ($delay * 1000) . ");\n";
-    $html .= "//]]></script>\n";
-    if ($return) {
-        return $html;
-    } else {
-        echo $html;
-    }
-}
-
-/**
- * Create a Javascript config object for use in code
- *
- * Sometimes you need access to some values in your JavaScript that you can only
- * get from PHP code. You can handle this by generating your JS in PHP, but a
- * better idea is to write static javascrip code that reads some configuration
- * variable, and then just output the configuration variables from PHP using
- * this function.
- *
- * For example, look at the code in question_init_qenginejs_script() in
- * lib/questionlib.php. It writes out a bunch of $settings like
- * 'pixpath' => $CFG->pixpath, with $prefix = 'qengine_config'. This gets output
- * in print_header, then the code in question/qengine.js can access these variables
- * as qengine_config.pixpath, and so on.
- *
- * This method will also work without a prefix, but it is better to avoid that
- * we don't want to add more things than necessary to the global JavaScript scope.
- *
- * This method automatically wrapps the values in quotes, and addslashes_js them.
- *
- * @param array $settings the values you want to write out, as variablename => value.
- * @param string $prefix a namespace prefix to use in the JavaScript.
- * @param boolean $return if true, return the HTML code, otherwise output it.
- * @return mixed string if $return is true, otherwise nothing.
- */
-function print_js_config($settings = array(), $prefix='', $return = false) {
-    $html = '';
-    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
-
-    // Have to treat the prefix and no prefix cases separately.
-    if ($prefix) {
-        // Recommended way, only one thing in global scope.
-        $html .= "var $prefix = " . json_encode($settings) . "\n";
-
-    } else {
-        // Old fashioned way.
-        foreach ($settings as $name => $value) {
-            $html .= "var $name = '" . addslashes_js($value) . "'\n";
-        }
-    }
-
-    // Finish off and return/output.
-    $html .= "//]]></script>\n";
-    if ($return) {
-        return $html;
-    } else {
-        echo $html;
-    }
-}
-
-/**
- * This function generates the code that defines the standard moodle_cfg object.
- *
- * This object has a number of fields that are values that various pieces of
- * JavaScript code need access too. For example $CFG->wwwroot and $CFG->pixpath.
- *
- * @global object
- * @uses DEBUG_DEVELOPER
- * @return string a <script> tag that defines the moodle_cfg object.
- */
-function standard_js_config() {
-    global $CFG;
-    $config = array(
-        'wwwroot' => $CFG->httpswwwroot, // Yes, really.
-        'pixpath' => $CFG->pixpath,
-        'modpixpath' => $CFG->modpixpath,
-        'sesskey' => sesskey(),
-    );
-    if (debugging('', DEBUG_DEVELOPER)) {
-        $config['developerdebug'] = true;
-    }
-    return print_js_config($config, 'moodle_cfg', true);
 }
 
 /**
@@ -3058,6 +2805,9 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     include($CFG->footer);
     $output = ob_get_contents();
     ob_end_clean();
+
+    // Put the end of page <script> tags just inside </body> to maintain validity.
+    $output = str_replace('</body>', $PAGE->requires->get_end_code() . '</body>', $output); 
 
     $PAGE->set_state(moodle_page::STATE_DONE);
 
@@ -4223,10 +3973,10 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
  * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     // Include required JavaScript libraries.
-    require_js(array('yui_yahoo', 'yui_dom-event', 'yui_event', 'yui_animation'));
+    $PAGE->requires->yui_lib('animation');
 
     // Work out the initial state.
     if (is_string($userpref)) {
@@ -4247,7 +3997,8 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= '<div id="' . $id . '_caption" class="collapsibleregioncaption">';
     $output .= $caption . ' ';
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
-    $output .= print_js_call('new collapsible_region', array($id, $userpref, get_string('clicktohideshow')), true);
+    $PAGE->requires->js_function_call('new collapsible_region',
+            array($id, $userpref, get_string('clicktohideshow')));
 
     if ($return) {
         return $output;
@@ -5119,8 +4870,8 @@ function print_table($table, $return=false) {
     $output .= '</table>'."\n";
 
     if ($table->rotateheaders && can_use_rotated_text()) {
-        require_js(array('yui_yahoo','yui_event','yui_dom'));
-        require_js('course/report/progress/textrotate.js');
+        $PAGE->requires->yui_lib('event');
+        $PAGE->requires->js('course/report/progress/textrotate.js');
     }
 
     if ($return) {
@@ -6478,7 +6229,7 @@ function redirect($url, $message='', $delay=-1) {
         @header('Location: '.$url);
         //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        print_js_call('document.location.replace', array($url));
+        echo $PAGE->requires->js_function_call('document.location.replace', array($url))->asap();
         die;
     }
 
@@ -6498,7 +6249,7 @@ function redirect($url, $message='', $delay=-1) {
     echo '</div>';
 
     if (!$errorprinted) {
-        print_delayed_js_call($delay, 'document.location.replace', array($url));
+        $PAGE->requires->js_function_call('document.location.replace', array($url))->after_delay($delay);
     }
 
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.

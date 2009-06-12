@@ -121,10 +121,10 @@ abstract class capability_table_base {
     /// End of the table.
             echo "</tbody>\n</table>\n";
             if (count($this->capabilities) > capability_table_base::NUM_CAPS_FOR_SEARCH) {
-                global $CFG;
-                require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
-                require_js($CFG->admin . '/roles/roles.js');
-                print_js_call('cap_table_filter.init',
+                global $CFG, $PAGE;
+                $PAGE->requires->yui_lib('dom-event');
+                $PAGE->requires->js($CFG->admin . '/roles/roles.js');
+                $PAGE->requires->js_function_call('cap_table_filter.init',
                         array($this->id, get_string('filter'), get_string('clear')));
             }
     }

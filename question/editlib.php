@@ -401,10 +401,11 @@ class question_bank_checkbox_column extends question_bank_column_base {
     }
 
     protected function display_content($question, $rowclasses) {
+        global $PAGE;
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
-            print_js_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+            $PAGE->requires->js_function_call('question_bank.init_checkbox_column', array(get_string('selectall'),
                     get_string('deselectall'), 'checkq' . $question->id));
             $this->firstrow = false;
         }
@@ -782,7 +783,7 @@ class question_bank_view {
     protected $sqlparams;
 
     public function __construct($contexts, $pageurl, $course, $cm = null) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $this->contexts = $contexts;
         $this->baseurl = $pageurl;
@@ -809,6 +810,8 @@ class question_bank_view {
         $this->init_column_types();
         $this->init_columns($this->wanted_columns());
         $this->init_sort();
+
+        $PAGE->requires->yui_lib('dom-event');
     }
 
     protected function wanted_columns() {
@@ -1831,9 +1834,8 @@ function require_login_in_context($contextorid = null){
  * the qtype radio buttons.
  */
 function print_choose_qtype_to_add_form($hiddenparams) {
-    global $CFG, $QTYPES;
-    require_js(array('yui_yahoo','yui_dom','yui_event'));
-    require_js('question/qbank.js');
+    global $CFG, $QTYPES, $PAGE;
+    $PAGE->requires->js('question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     print_heading(get_string('chooseqtypetoadd', 'question'), '', 3);
     echo "</div>\n";
@@ -1867,7 +1869,7 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    print_js_call('qtype_chooser.init', array('chooseqtype'));
+    $PAGE->requires->js_function_call('qtype_chooser.init', array('chooseqtype'));
 }
 
 /**

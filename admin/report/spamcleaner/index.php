@@ -32,8 +32,6 @@ $autokeywords = array(
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-require_js(array('yui_dom-event', 'yui_connection', 'yui_json'));
-
 $keyword = optional_param('keyword', '', PARAM_RAW);
 $autodetect = optional_param('autodetect', '', PARAM_RAW);
 $del = optional_param('del', '', PARAM_RAW);
@@ -44,6 +42,8 @@ $id = optional_param('id', '', PARAM_INT);
 
 require_login();
 admin_externalpage_setup('reportspamcleaner');
+$PAGE->requires->yui_lib('json');
+$PAGE->requires->yui_lib('connection');
 
 // Implement some AJAX calls 
 

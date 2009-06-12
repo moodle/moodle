@@ -49,6 +49,10 @@ function setup_core_javascript(page_requirements_manager $requires) {
     }
     $requires->data_for_js('moodle_cfg', $config)->in_head();
 
+    if (debugging('', DEBUG_DEVELOPER)) {
+        $requires->yui_lib('logger');
+    }
+
     // Note that, as a short-cut, the code 
     // $js = "document.body.className += ' jsenabled';\n";
     // is hard-coded in @see{page_requirements_manager::get_top_of_body_code}.
@@ -95,6 +99,10 @@ class page_requirements_manager {
      * @param $jsfile The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
      *      No leading slash. For example 'mod/mymod/customscripts.js';
      * @param boolean $fullurl This parameter is intended for internal use only.
+     *      However, in exceptional circumstances you may wish to use it to link
+     *      to JavaScript on another server. For example, lib/recaptchalib.php has to
+     *      do this. This really should only be done in exceptional circumstances. This
+     *      may change in the future without warning.
      *      (If true, $jsfile is treaded as a full URL, not relative $CFG->wwwroot.)
      * @return required_js A required_js object. This allows you to control when the
      *      link to the script is output by calling methods like ->asap() or
@@ -125,6 +133,8 @@ class page_requirements_manager {
      *
      * If the YUI library you ask for requires one or more CSS files, and if
      * &lt;head> has already been printed, then an exception will be thrown.
+     * Therefore, you are strongly advised to request all the YUI libraries you
+     * will need before the call to print_header.
      *
      * Even if a particular library is requested more than once (perhaps as a dependancy
      * of other libraries) it will only be linked to once.
@@ -162,7 +172,7 @@ class page_requirements_manager {
         global $CFG;
 
         if ($this->headdone) {
-            throw new coding_exception('Cannot require a CSS file after <head> has been printed.', $stylesheet);
+            throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
         }
         if (!$fullurl) {
             if (!file_exists($CFG->dirroot . '/' . $stylesheet)) {
@@ -207,14 +217,15 @@ class page_requirements_manager {
      * one link will be output).
      *
      * @param string $function the name of the JavaScritp function to call. Can
-     *      be a compound name like 'YAHOO.util.Event.addListener'.
+     *      be a compound name like 'YAHOO.util.Event.addListener'. Can also be
+     *      used to create and object by using a 'function name' like 'new user_selector'.
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
      * @return required_js_function_call A required_js_function_call object.
      *      This allows you to control when the link to the script is output by
-     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body() or
-     *      ->on_dom_ready() methods.
+     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body(),
+     *      ->on_dom_ready() or ->after_delay() methods.
      */
     public function js_function_call($function, $arguments = array()) {
         $requirement = new required_js_function_call($this, $function, $arguments);
@@ -324,6 +335,7 @@ class page_requirements_manager {
      * @return string the HTML code to to inside the &lt;head> tag.
      */
     public function get_head_code() {
+        setup_core_javascript($this);
         $output = $this->get_linked_resources_code(self::WHEN_IN_HEAD);
         $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
         $output .= ajax_generate_script_tag($js);
@@ -353,7 +365,10 @@ class page_requirements_manager {
     public function get_end_code() {
         $output = $this->get_linked_resources_code(self::WHEN_AT_END);
 
-        array_unshift($this->requiredjscode, new required_data_for_js($this, 'mstr', $this->stringsforjs));
+        if (!empty($this->stringsforjs)) {
+            array_unshift($this->requiredjscode, new required_data_for_js($this, 'mstr', $this->stringsforjs));
+        }
+
         $js = $this->get_javascript_code(self::WHEN_AT_END);
 
         $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
@@ -502,7 +517,7 @@ class required_js extends linked_requirement {
     }
 
     public function get_html() {
-        return '<script type="text/javascript"  src="' . $this->url . '"></script>' . "\n";
+        return ajax_get_link_to_script($this->url);
     }
 
     /**
@@ -591,7 +606,6 @@ class required_js extends linked_requirement {
  */
 class required_yui_lib extends linked_requirement {
     protected $jss = array();
-    protected $cssurls;
 
     /**
      * Constructor. Normally instances of this class should not be created
@@ -606,16 +620,12 @@ class required_yui_lib extends linked_requirement {
         parent::__construct($manager, '');
         $this->when = page_requirements_manager::WHEN_AT_END;
 
-        list($jsurls, $this->cssurls) = ajax_resolve_yui_lib($libname);
+        list($jsurls, $cssurls) = ajax_resolve_yui_lib($libname);
         foreach ($jsurls as $jsurl) {
             $this->jss[] = $manager->js($jsurl, true);
         }
-        foreach ($this->cssurls as $cssurl) {
-            $manager->css($cssurl, true);
-        }
-        if (!empty($this->cssurls)) {
-            global $PAGE;
-            $page->add_body_class('yui-skin-sam');
+        foreach ($cssurls as $cssurl) {
+            //$manager->css($cssurl, true);
         }
     }
 
@@ -645,7 +655,7 @@ class required_yui_lib extends linked_requirement {
 
         $ouput = '';
         foreach ($this->jss as $requiredjs) {
-            $ouput .= $requiredjs->immediately();
+            $ouput .= $requiredjs->asap();
         }
         $this->mark_done();
         return $ouput;
@@ -667,7 +677,7 @@ class required_yui_lib extends linked_requirement {
 
         $this->when = page_requirements_manager::WHEN_IN_HEAD;
         foreach ($this->jss as $requiredjs) {
-            $ouput .= $requiredjs->in_head();
+            $requiredjs->in_head();
         }
     }
 
@@ -850,6 +860,7 @@ abstract class required_js_code extends requirement_base {
 class required_js_function_call extends required_js_code {
     protected $function;
     protected $arguments;
+    protected $delay = 0;
 
     /**
      * Constructor. Normally the class and its subclasses should not be created
@@ -874,7 +885,11 @@ class required_js_function_call extends required_js_code {
         foreach ($this->arguments as $arg) {
             $quotedargs[] = json_encode($arg);
         }
-        return $this->function . '(' . implode(', ', $quotedargs) . ");\n";
+        $js = $this->function . '(' . implode(', ', $quotedargs) . ');';
+        if ($this->delay) {
+            $js = 'setTimeout(function() { ' . $js . ' }, ' . ($this->delay * 1000) . ');';
+        }
+        return $js . "\n";
     }
 
     /**
@@ -889,6 +904,20 @@ class required_js_function_call extends required_js_code {
         }
         $this->manager->yui_lib('event');
         $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
+    }
+
+    /**
+     * Indicate that this function should be called a certain number of seconds
+     * after the page has finished loading. (More exactly, a number of seconds
+     * after the onDomReady event fires.)
+     *
+     * @param integer $seconds the number of seconds delay.
+     */
+    public function after_delay($seconds) {
+        if ($seconds) {
+            $this->on_dom_ready();
+        }
+        $this->delay = $seconds;
     }
 }
 
@@ -943,8 +972,12 @@ class required_data_for_js extends required_js_code {
  * @return string HTML, the code wrapped in <script> tags.
  */
 function ajax_generate_script_tag($js) {
-    return '<script type="text/javascript">' . "\n//<![CDATA[\n" .
-            $js . "//]]>\n</script>\n";
+    if ($js) {
+        return '<script type="text/javascript">' . "\n//<![CDATA[\n" .
+                $js . "//]]>\n</script>\n";
+    } else {
+        return '';
+    }
 }
 
 
@@ -1102,98 +1135,12 @@ function ajax_resolve_yui_lib($libname) {
 }
 
 /**
- * Get the path to a JavaScript library.
- * @param $libname - the name of the library whose path we need.
- * @return string
+ * Return the HTML required to link to a JavaScript file.
+ * @param $url the URL of a JavaScript file.
+ * @return string the required HTML.
  */
-function ajax_get_lib($libname) {
-    global $CFG, $HTTPSPAGEREQUIRED;
-
-    $libpath = '';
-    $external_yui = false;
-
-    $translatelist = array(
-            'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
-            'yui_animation' => '/lib/yui/animation/animation-min.js',
-            'yui_autocomplete' => '/lib/yui/autocomplete/autocomplete-min.js',
-            'yui_button' => '/lib/yui/button/button-min.js',
-            'yui_calendar' => '/lib/yui/calendar/calendar-min.js',
-            'yui_charts' => '/lib/yui/charts/charts-min.js',
-            'yui_colorpicker' => '/lib/yui/colorpicker/colorpicker-min.js',
-            'yui_connection' => '/lib/yui/connection/connection-min.js',
-            'yui_container' => '/lib/yui/container/container-min.js',
-            'yui_cookie' => '/lib/yui/cookie/cookie-min.js',
-            'yui_datasource' => '/lib/yui/datasource/datasource-min.js',
-            'yui_datatable' => '/lib/yui/datatable/datatable-min.js',
-            'yui_dom' => '/lib/yui/dom/dom-min.js',
-            'yui_dom-event' => '/lib/yui/yahoo-dom-event/yahoo-dom-event.js',
-            'yui_dragdrop' => '/lib/yui/dragdrop/dragdrop-min.js',
-            'yui_editor' => '/lib/yui/editor/editor-min.js',
-            'yui_element' => '/lib/yui/element/element-min.js',
-            'yui_event' => '/lib/yui/event/event-min.js',
-            'yui_get' => '/lib/yui/get/get-min.js',
-            'yui_history' => '/lib/yui/history/history-min.js',
-            'yui_imagecropper' => '/lib/yui/imagecropper/imagecropper-min.js',
-            'yui_imageloader' => '/lib/yui/imageloader/imageloader-min.js',
-            'yui_json' => '/lib/yui/json/json-min.js',
-            'yui_layout' => '/lib/yui/layout/layout-min.js',
-            'yui_logger' => '/lib/yui/logger/logger-min.js',
-            'yui_menu' => '/lib/yui/menu/menu-min.js',
-            'yui_profiler' => '/lib/yui/profiler/profiler-min.js',
-            'yui_profilerviewer' => '/lib/yui/profilerviewer/profilerviewer-min.js',
-            'yui_resize' => '/lib/yui/resize/resize-min.js',
-            'yui_selector' => '/lib/yui/selector/selector-min.js',
-            'yui_simpleeditor' => '/lib/yui/editor/simpleeditor-min.js',
-            'yui_slider' => '/lib/yui/slider/slider-min.js',
-            'yui_tabview' => '/lib/yui/tabview/tabview-min.js',
-            'yui_treeview' => '/lib/yui/treeview/treeview-min.js',
-            'yui_uploader' => '/lib/yui/uploader/uploader-min.js',
-            'yui_utilities' => '/lib/yui/utilities/utilities.js',
-            'yui_yuiloader' => '/lib/yui/yuiloader/yuiloader-min.js',
-            'yui_yuitest' => '/lib/yui/yuitest/yuitest-min.js',
-            'ajaxcourse_blocks' => '/lib/ajax/block_classes.js',
-            'ajaxcourse_sections' => '/lib/ajax/section_classes.js',
-            'ajaxcourse' => '/lib/ajax/ajaxcourse.js'
-            );
-
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $wwwroot = $CFG->httpswwwroot;
-    } else {
-        $wwwroot = $CFG->wwwroot;
-    }
-
-    if (array_key_exists($libname, $translatelist)) {
-        // If this is a YUI file and we are using external libraries
-        if (substr($libname, 0, 3) == 'yui' && !empty($CFG->useexternalyui)) {
-            $external_yui = true;
-            // Get current version
-            include($CFG->libdir.'/yui/version.php');
-            $libpath = 'http://yui.yahooapis.com/'.$yuiversion.'/build/'.substr($translatelist[$libname], 9);
-        } else {
-            $libpath = $wwwroot . $translatelist[$libname];
-        }
-
-        // If we are in developer debug mode, use the non-compressed version of YUI for easier debugging.
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $libpath = str_replace('-min.js', '.js', $libpath);
-        }
-
-    } else if (preg_match('/^https?:/', $libname)) {
-        $libpath = $libname;
-
-    } else {
-        $libpath = $wwwroot . '/' . $libname;
-    }
-
-    // Make sure the file exists if it is local.
-    if ($external_yui === false) {
-        $testpath = str_replace($wwwroot, $CFG->dirroot, $libpath);
-        if (!file_exists($testpath)) {
-            throw new moodle_exception('unknownjsinrequirejs', '', '', $libpath);
-        }
-    }
-
-    return $libpath;
+function ajax_get_link_to_script($url) {
+    return '<script type="text/javascript"  src="' . $url . '"></script>' . "\n";
 }
 
 

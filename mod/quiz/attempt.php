@@ -77,8 +77,7 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
     // Print the page header
-    require_js(array('yui_yahoo','yui_event'));
-    require_js('mod/quiz/quiz.js');
+    $PAGE->requires->yui_lib('event');
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
@@ -118,8 +117,14 @@
     // Start the form
     echo '<form id="responseform" method="post" action="', $attemptobj->processattempt_url(),
             '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
+
+    // A quiz page with a lot of questions can take a long time to load, and we
+    // want the protection afforded by init_quiz_form immediately, so include the
+    // JS now.
+    echo $PAGE->requires->yui_lib('event')->asap();
+    echo $PAGE->requires->js('mod/quiz/quiz.js')->asap();
+    echo $PAGE->requires->js_function_call('init_quiz_form')->asap();
     echo '<div>';
-    print_js_call('init_quiz_form');
 
 /// Print the navigation panel in a left column.
     print_container_start();

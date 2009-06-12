@@ -1178,8 +1178,11 @@ function calendar_session_vars($course=null) {
 }
 
 function calendar_overlib_html() {
-    require_js('calendar/overlib.cfg.php');
-    return '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
+    global $PAGE;
+    $output = '';
+    $output .= $PAGE->requires->js('calendar/overlib.cfg.php')->asap();
+    $output .= '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
+    return $output;
 }
 
 function calendar_set_referring_course($courseid) {

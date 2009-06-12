@@ -2110,7 +2110,7 @@ function question_format_grade($cmoptions, $grade) {
  * to get from PHP.
  */
 function question_init_qenginejs_script() {
-    global $CFG;
+    global $CFG, $PAGE;
     $config = array(
         'pixpath' => $CFG->pixpath,
         'wwwroot' => $CFG->wwwroot,
@@ -2119,7 +2119,7 @@ function question_init_qenginejs_script() {
         'flaggedalt' => get_string('flagged', 'question'),
         'unflaggedalt' => get_string('notflagged', 'question'),
     );
-    return print_js_config($config, 'qengine_config', true);
+    $PAGE->requires->data_for_js('qengine_config', $config);
 }
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////

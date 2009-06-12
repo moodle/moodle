@@ -975,7 +975,7 @@ class default_questiontype {
      * @param integer $flagsoption the option that says whether flags should be displayed.
      */
     protected function print_question_flag($question, $state, $flagsoption) {
-        global $CFG;
+        global $CFG, $PAGE;
         switch ($flagsoption) {
             case QUESTION_FLAGSSHOWN:
                 $flagcontent = $this->get_question_flag_tag($state->flagged);
@@ -991,12 +991,12 @@ class default_questiontype {
                 $aid = $state->attempt;
                 $qid = $state->question;
                 $checksum = question_get_toggleflag_checksum($aid, $qid, $qsid);
-                $postdata = "qsid=$qsid&amp;aid=$aid&amp;qid=$qid&amp;checksum=$checksum&amp;sesskey=" . sesskey();
+                $postdata = "qsid=$qsid&aid=$aid&qid=$qid&checksum=$checksum&sesskey=" . sesskey();
                 $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
                         '" value="1" ' . $checked . ' />' . 
                         '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_question_flag_tag(
-                        $state->flagged, $id . 'img') . '</label>' . "\n" .
-                        print_js_call('question_flag_changer.init_flag', array($id, $postdata), true);
+                        $state->flagged, $id . 'img') . '</label>' . "\n";
+                $PAGE->requires->js_function_call('question_flag_changer.init_flag', array($id, $postdata));
                 break;
             default:
                 $flagcontent = '';

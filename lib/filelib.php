@@ -1874,7 +1874,7 @@ function file_modify_html_header($text) {
     $ufo = '';
     if (filter_is_enabled('filter/mediaplugin')) {
         // this script is needed by most media filter plugins.
-        $ufo = get_require_js_code(array($CFG->wwwroot . '/lib/ufo.js'));
+        $ufo = ajax_get_link_to_script($CFG->wwwroot . '/lib/ufo.js');
     }
 
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);

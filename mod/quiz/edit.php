@@ -456,8 +456,8 @@ $numberoflisteners = max(quiz_number_of_pages($quiz->questions), 1);
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
 }
-print_js_config($quizeditconfig, 'quiz_edit_config');
-require_js('mod/quiz/edit.js');
+$PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
+$PAGE->requires->js('mod/quiz/edit.js');
 
 // Print the tabs.
 $currenttab = 'edit';

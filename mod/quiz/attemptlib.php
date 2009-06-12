@@ -889,10 +889,12 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_question_buttons() {
+        global $PAGE;
         $html = '<div class="qn_buttons">' . "\n";
         foreach ($this->attemptobj->get_question_iterator() as $number => $question) {
-            $html .= $this->get_question_button($number, $question) . "\n" .
-                    $this->get_button_update_script($question) . "\n";
+            $html .= $this->get_question_button($number, $question) . "\n";
+            $PAGE->requires->js_function_call('quiz_init_nav_button',
+                    array($this->get_button_id($question), $question->id));
         }
         $html .= "</div>\n";
         return $html;
@@ -901,11 +903,6 @@ abstract class quiz_nav_panel_base {
     protected function get_button_id($question) {
         // The id to put on the button element in the HTML.
         return 'quiznavbutton' . $question->id;
-    }
-
-    protected function get_button_update_script($question) {
-        return print_js_call('quiz_init_nav_button',
-                array($this->get_button_id($question), $question->id), true);
     }
 
     abstract protected function get_question_button($number, $question);

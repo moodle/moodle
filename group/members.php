@@ -12,7 +12,6 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
-require_js('group/clientlib.js');
 
 $groupid = required_param('group', PARAM_INT);
 
@@ -82,6 +81,8 @@ $navlinks[] = array('name' => $strgroups, 'link' => "$CFG->wwwroot/group/index.p
 $navlinks[] = array('name' => $stradduserstogroup, 'link' => null, 'type' => 'misc');
 $navigation = build_navigation($navlinks);
 
+$PAGE->requires->js('group/clientlib.js');
+$PAGE->requires->js_function_call('init_add_remove_members_page');
 print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
 check_theme_arrows();
 ?>
@@ -123,6 +124,5 @@ check_theme_arrows();
 </div>
 
 <?php
-    print_js_call('init_add_remove_members_page');
     print_footer($course);
 ?>

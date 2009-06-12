@@ -32,8 +32,6 @@
 
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
-    require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
-    require_js($CFG->admin . '/roles/roles.js');
 
     define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
@@ -255,6 +253,8 @@
     }
 
 /// Print the header and tabs
+    $PAGE->requires->yui_lib('dom-event');
+    $PAGE->requires->js($CFG->admin . '/roles/roles.js');
     if ($context->contextlevel == CONTEXT_USER) {
         $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
@@ -355,7 +355,7 @@
 </div></form>
 
 <?php
-        print_js_call('init_add_assign_page');
+        $PAGE->requires->js_function_call('init_add_assign_page');
 
         if (!empty($errors)) {
             $msg = '<p>';

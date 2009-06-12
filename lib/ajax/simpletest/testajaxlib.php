@@ -391,25 +391,16 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
 class ajax_test extends ajaxlib_unit_test_base {
 
     function test_ajax_generate_script_tag() {
-        $html = ajax_generate_script_tag('');
+        $html = ajax_generate_script_tag('var x = 1;');
         $this->assertContains($html, '<script type="text/javascript">');
         $this->assertContains($html, '<![CDATA[');
         $this->assertContains($html, ']]>');
         $this->assertContains($html, '</script>');
     }
 
-    function test_ajax_get_lib() {
-        global $CFG;
-        $olddebug = $CFG->debug;
-        $CFG->debug = DEBUG_DEVELOPER;
-        $this->assertEqual(ajax_get_lib('yui_yahoo'), $CFG->wwwroot . '/lib/yui/yahoo/yahoo.js');
-        $CFG->debug = DEBUG_MINIMAL;
-        $this->assertEqual(ajax_get_lib('yui_yahoo'), $CFG->wwwroot . '/lib/yui/yahoo/yahoo-min.js');
-        $CFG->debug = $olddebug;
-        $this->assertEqual(ajax_get_lib('lib/javascript-static.js'), $CFG->wwwroot . '/lib/javascript-static.js');
-        $this->assertEqual(ajax_get_lib($CFG->wwwroot . '/lib/javascript-static.js'), $CFG->wwwroot . '/lib/javascript-static.js');
-        $this->expectException();
-        ajax_get_lib('a_file_that_does_not_exist.js');
+    function test_ajax_generate_script_tag_no_output_when_no_code() {
+        $html = ajax_generate_script_tag('');
+        $this->assertEqual($html, '');
     }
 }
 

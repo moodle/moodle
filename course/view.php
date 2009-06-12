@@ -161,27 +161,10 @@
                                                              // Course-based switches
 
             if (ajaxenabled($CFG->ajaxtestedbrowsers)) {     // Browser, user and site-based switches
-                
-                require_js(array('yui_yahoo',
-                                 'yui_dom',
-                                 'yui_event',
-                                 'yui_dragdrop',
-                                 'yui_connection',
-                                 'ajaxcourse_blocks',
-                                 'ajaxcourse_sections'));
-                
-                if (debugging('', DEBUG_DEVELOPER)) {
-                    require_js(array('yui_logger'));
-
-                    $bodytags = 'onload = "javascript:
-                    show_logger = function() {
-                        var logreader = new YAHOO.widget.LogReader();
-                        logreader.newestOnTop = false;
-                        logreader.setTitle(\'Moodle Debug: YUI Log Console\');
-                    };
-                    show_logger();
-                    "';
-                }
+                $PAGE->requires->yui_lib('dragdrop');
+                $PAGE->requires->yui_lib('connection');
+                $PAGE->requires->js('lib/ajax/block_classes.js');
+                $PAGE->requires->js('lib/ajax/section_classes.js');
 
                 // Okay, global variable alert. VERY UGLY. We need to create
                 // this object here before the <blockname>_print_block()
@@ -195,6 +178,17 @@
 
     $CFG->blocksdrag = $useajax;   // this will add a new class to the header so we can style differently
 
+    $completion = new completion_info($course);
+    if ($completion->is_enabled() && ajaxenabled()) {
+        $PAGE->requires->yui_lib('connection');
+        $PAGE->requires->js('course/completion.js');
+        $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));
+        $PAGE->requires->data_for_js('completion_strtitley', get_string('completion-title-manual-y', 'completion'));
+        $PAGE->requires->data_for_js('completion_strtitlen', get_string('completion-title-manual-n', 'completion'));
+        $PAGE->requires->data_for_js('completion_stralty', get_string('completion-alt-manual-y', 'completion'));
+        $PAGE->requires->data_for_js('completion_straltn', get_string('completion-alt-manual-n', 'completion'));
+    }
+
     // The "Editing On" button will be appearing only in the "main" course screen
     // (i.e., no breadcrumbs other than the default one added inside this function)
     $buttons = switchroles_form($course->id);
@@ -207,19 +201,7 @@
     print_header($title, $course->fullname, $navigation, '', '', true,
                  $buttons, user_login_string($course, $USER), false, $bodytags);
 
-    $completion=new completion_info($course);
-    if($completion->is_enabled() && ajaxenabled()) {
-        require_js(array('yui_yahoo','yui_event','yui_connection','yui_dom'));
-        // Need to do this after the header because it requires the YUI stuff
-        // to be loaded already
-        require_js('course/completion.js');
-        print_js_config(array(
-            'completion_strsaved' => get_string('saved','completion'),
-            'completion_strtitley' => get_string('completion-title-manual-y','completion'),
-            'completion_strtitlen' => get_string('completion-title-manual-n','completion'),
-            'completion_stralty' => get_string('completion-alt-manual-y','completion'),
-            'completion_straltn' => get_string('completion-alt-manual-n','completion'),
-        ));
+    if ($completion->is_enabled() && ajaxenabled()) {
         // This value tracks whether there has been a dynamic change to the page.
         // It is used so that if a user does this - (a) set some tickmarks, (b)
         // go to another page, (c) clicks Back button - the page will

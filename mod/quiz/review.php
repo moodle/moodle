@@ -235,7 +235,7 @@
                 get_string('saveflags', 'question') . '" />' .
                 "</div>\n" .
                 "\n</div></form>\n";
-        print_js_call('question_flag_changer.init_flag_save_form', array('savingflagssubmit'));
+        $PAGE->requires->js_function_call('question_flag_changer.init_flag_save_form', array('savingflagssubmit'));
     }
 
 /// Print a link to the next page.

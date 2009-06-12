@@ -301,7 +301,6 @@ class moodle_page {
         global $CFG;
         if (is_null($this->_requires)) {
             $this->_requires = new page_requirements_manager();
-            setup_core_javascript($this->_requires);
         }
         return $this->_requires;
     }
@@ -662,6 +661,7 @@ class moodle_page {
         $this->add_body_classes(get_browser_version_classes());
         $this->add_body_class('dir-' . get_string('thisdirection'));
         $this->add_body_class('lang-' . current_language());
+        $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.
 
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
 

@@ -5714,7 +5714,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
  */
 function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $PAGE;
 
     if (!empty($USER->id)) {
         $ownpost = ($USER->id == $post->userid);
@@ -5835,7 +5835,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             echo '<div class="ratingsubmit">';
             echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
             if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
-                print_js_call('init_rate_ajax');
+                $PAGE->requires->js_function_call('init_rate_ajax');
             }
             if ($forum->scale < 0) {
                 if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {

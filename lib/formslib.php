@@ -62,20 +62,17 @@ if ($CFG->debug >= DEBUG_ALL){
 }
 
 /**
- * @global object
+ * 
  * @staticvar bool $done
- * @todo This is NOT xhtml strict, we will need something like require_css() 
  */
 function form_init_date_js() {
-    global $CFG;
+    global $PAGE;
     static $done = false;
     if (!$done) {
-        //TODO: this is NOT xhtml strict, we will need something like require_css() 
-        echo '<style type="text/css">';
-        echo '@import "' . $CFG->httpswwwroot . '/lib/yui/assets/skins/sam/calendar.css";';
-        echo '</style>';
-        require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_calendar', 'yui_container'));
-        print_delayed_js_call(1, 'init_date_selectors', array(get_string('firstdayofweek')));
+        $PAGE->requires->yui_lib('calendar');
+        $PAGE->requires->yui_lib('container');
+        $PAGE->requires->js_function_call('init_date_selectors',
+                array(get_string('firstdayofweek')));
         $done = true;
     }
 }

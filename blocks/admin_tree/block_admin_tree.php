@@ -5,9 +5,10 @@ class block_admin_tree extends block_base {
     var $currentdepth;
     var $divcounter;
     var $tempcontent;
-    var $pathtosection;
-    var $expandjavascript;
     var $destination;
+    var $section = null;
+    var $pathtosection = array();
+    var $expandnodes = array();
 
     function init() {
         $this->title = get_string('administrationsite');
@@ -15,10 +16,8 @@ class block_admin_tree extends block_base {
         $this->currentdepth = 0;
         $this->divcounter = 1;
         $this->tempcontent = '';
-        // TODO
-        $this->section = (isset($this->page->section) ? $this->page->section : '');
-        $this->pathtosection = array();
-        $this->expandnodes = array();
+        global $PAGE; // TODO change this when there is a proper way for blocks to get stuff into head.
+        $PAGE->requires->yui_lib('event');
     }
 
     function applicable_formats() {
@@ -119,6 +118,7 @@ class block_admin_tree extends block_base {
         require_once($CFG->libdir.'/adminlib.php');
         $adminroot = admin_get_root(false, false); // settings not required - only pages
 
+        $this->section = $this->page->url->param('section');
         if ($current = $adminroot->locate($this->section, true)) {
             $this->pathtosection = $current->path;
             array_pop($this->pathtosection);
@@ -133,13 +133,13 @@ class block_admin_tree extends block_base {
         }
 
         if ($this->tempcontent !== '') {
-            require_js(array('yui_yahoo','yui_event'));
-            require_js('blocks/admin_tree/admintree.js');
+            $this->page->requires->js('blocks/admin_tree/admintree.js');
+            $this->page->requires->js_function_call('admin_tree.init',
+                    array($this->divcounter - 1, $this->expandnodes, $CFG->pixpath,
+                    get_string('folderopened'), get_string('folderclosed')));
+
             $this->content = new object();
             $this->content->text = '<div class="admintree">' . $this->tempcontent . "</div>\n";
-            $this->content->text .= print_js_call('admin_tree.init',
-                    array($this->divcounter - 1, $this->expandnodes, $CFG->pixpath,
-                    get_string('folderopened'), get_string('folderclosed')), true);
 
             // only do search if you have moodle/site:config
             if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {

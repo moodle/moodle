@@ -210,7 +210,7 @@ quiz_secure_window = {
             quiz_secure_window.close_next_url = url;
         }
         if (delay > 0) {
-            setTimeout(function() {quiz_secure_window.close('eval (x)', 0);}, delay*1000);
+            setTimeout(function() {quiz_secure_window.close('', 0);}, delay*1000);
         } else {
             if (window.opener) {
                 window.opener.document.location.reload();

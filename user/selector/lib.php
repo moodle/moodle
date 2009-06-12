@@ -81,7 +81,7 @@ abstract class user_selector_base {
      * You must be able to clone a userselector by doing new get_class($us)($us->get_name(), $us->get_options());
      */
     public function __construct($name, $options = array()) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         // Initialise member variables from constructor arguments.
         $this->name = $name;
@@ -105,8 +105,10 @@ abstract class user_selector_base {
         $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
 
         // Required JavaScript code.
-        require_js(array('yui_yahoo', 'yui_event', 'yui_json', 'yui_connection', 'yui_datasource'));
-        require_js('user/selector/script.js');
+        $PAGE->requires->yui_lib('json');
+        $PAGE->requires->yui_lib('connection');
+        $PAGE->requires->yui_lib('datasource');
+        $PAGE->requires->js('user/selector/script.js');
     }
 
     /**
@@ -181,6 +183,8 @@ abstract class user_selector_base {
      * @return mixed if $return is true, returns the HTML as a string, otherwise returns nothing.
      */
     public function display($return = false) {
+        global $PAGE;
+
         // Get the list of requested users.
         $search = optional_param($this->name . '_searchtext', '', PARAM_RAW);
         if (optional_param($this->name . '_clearbutton', false, PARAM_BOOL)) {
@@ -220,7 +224,8 @@ abstract class user_selector_base {
             $output .= $this->option_checkbox('autoselectunique', $this->autoselectunique, get_string('userselectorautoselectunique'));
             $output .= $this->option_checkbox('searchanywhere', $this->searchanywhere, get_string('userselectorsearchanywhere'));
             $output .= print_collapsible_region_end(true);
-            $output .= print_js_call('new user_selector_options_tracker', array(), true);
+
+            $PAGE->requires->js_function_call('new user_selector_options_tracker');
             user_selector_base::$searchoptionsoutput = true;
         }
         $output .= "</div>\n</div>\n\n";
@@ -621,7 +626,7 @@ abstract class user_selector_base {
      * @return any HTML needed here.
      */
     protected function initialise_javascript($search) {
-        global $USER;
+        global $USER, $PAGE;
         $output = '';
 
         // Put the options into the session, to allow search.php to respond to the ajax requests.
@@ -630,7 +635,7 @@ abstract class user_selector_base {
         $USER->userselectors[$hash] = $options;
 
         // Initialise the selector.
-        $output .= print_js_call('new user_selector', array($this->name, $hash, $this->extrafields,
+        $PAGE->requires->js_function_call('new user_selector', array($this->name, $hash, $this->extrafields,
                 $search, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
                 get_string('nomatchingusers', '', '%%SEARCHTERM%%'), get_string('none')), true);
 

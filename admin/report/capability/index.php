@@ -38,8 +38,9 @@ if (empty($cleanedroleids)) {
 }
 
 // Include the required JavaScript.
-require_js(array('yui_yahoo','yui_event'));
-require_js('admin/report/capability/script.js');
+$PAGE->requires->yui_lib('event');
+$PAGE->requires->js('admin/report/capability/script.js');
+$PAGE->requires->js_function_call('capability_report.cap_filter_init', array(get_string('search')));
 
 // Log.
 add_to_log(SITEID, "admin", "report capability", "report/capability/index.php?capability=$capability", $capability);
@@ -77,7 +78,6 @@ choose_from_menu($capabilitychoices, 'capability', $capability, 'choose', '', ''
 echo '<p><label for="menuroles"> ' . get_string('roleslabel', 'report_capability') . '</label></p>';
 choose_from_menu($rolechoices, 'roles[]', $selectedroleids, '', '', '', false, false, 0, '', true, true);
 echo '<p><input type="submit" id="settingssubmit" value="' . get_string('getreport', 'report_capability') . '" /></p>';
-print_js_call('capability_report.cap_filter_init', array(get_string('search')));
 echo '</form>';
 print_box_end();
 

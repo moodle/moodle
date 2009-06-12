@@ -119,7 +119,7 @@
             $efile = get_file_url($filename, null, 'questionfile');
             echo '<p><div class="boxaligncenter">' .
                     get_string('yourfileshoulddownload', 'question', $efile) . '</div></p>';
-            print_delayed_js_call(1, 'document.location.replace', array($efile));
+            $PAGE->requires->js_function_call('document.location.replace', array($efile))->after_delay(1);
         }
 
         print_continue('edit.php?' . $thispageurl->get_query_string());

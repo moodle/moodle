@@ -1721,6 +1721,7 @@ function repository_setup_default_plugins() {
     }
     return true;
 }
+
 /**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
@@ -1885,18 +1886,19 @@ EOD;
         $lang['popup']     = get_string('popup', 'repository');
         $lang['upload']    = get_string('upload', 'repository').'...';
         $lang['uploading'] = get_string('uploading', 'repository');
-        // fp_lang includes language strings
-        $js .= print_js_config($lang, 'fp_lang', true);
+        $lang = json_encode($lang);
 
         $options = array();
         $context = get_system_context();
         $options['contextid'] = $context->id;
+        $options = json_encode($options);
         // fp_config includes filepicker options
-        $js .= print_js_config($options, 'fp_config', true);
 
         $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
         $js .= <<<EOD
 <script type="text/javascript">
+var fp_lang = $lang;
+var fp_config = $options;
 file_extensions.image = $image_file_ext;
 file_extensions.media = $video_file_ext;
 </script>

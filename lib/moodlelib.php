@@ -8433,7 +8433,7 @@ function moodle_request_shutdown() {
  * @return string Javascript code
  */
 function message_popup_window() {
-    global $USER, $DB;
+    global $USER, $DB, $PAGE;
 
     $popuplimit = 30;     // Minimum seconds between popups
 
@@ -8446,9 +8446,8 @@ function message_popup_window() {
                 if (get_user_preferences('message_showmessagewindow', 1) == 1) {
                     if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
                         $USER->message_lastpopup = time();
-                        return print_js_call('openpopup', array('/message/index.php', 'message',
-                                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500',
-                                0), true);
+                        $PAGE->requires->js_function_call('openpopup', array('/message/index.php', 'message',
+                                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0));
                     }
                 }
             }
