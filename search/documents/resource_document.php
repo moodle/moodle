@@ -318,6 +318,7 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
 
     $course = $DB->get_record('course', array('id' => $r->course));
     $course_context = get_context_instance(CONTEXT_COURSE, $r->course);
+    $course = $DB->get_record('course', array('id' => $r->course));
 
     //check if course is visible
     if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $course_context)) {

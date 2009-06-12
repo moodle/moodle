@@ -260,9 +260,9 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     global $CFG, $DB;
     
     // get the wiki object and all related stuff
-    $page = $DB->get_record('wiki_pages', array('id' => $id));
-    $entry = $DB->get_record('wiki_entries', array('id' => $page->wiki));
-    $course = $DB->get_record('course', array('id' => $entry->course));
+    $page = $DB->get_record('wiki_pages', array('id' => $this_id));
+    $wiki = $DB->get_record('wiki', array('id' => $page->wiki));
+    $course = $DB->get_record('course', array('id' => $wiki->course));
     $context = $DB->get_record('context', array('id' => $context_id));
     $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
 
