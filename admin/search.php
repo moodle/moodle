@@ -8,6 +8,8 @@ require_once($CFG->libdir.'/adminlib.php');
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_course($SITE);
+
 $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
 $statusmsg = '';
@@ -58,6 +60,6 @@ if ($resultshtml != '') {
 echo '</fieldset>';
 echo '</form>';
 
-print_footer();
+admin_externalpage_print_footer();
 
 ?>
