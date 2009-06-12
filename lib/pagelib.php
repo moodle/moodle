@@ -97,6 +97,8 @@ class moodle_page {
 
     protected $_blocks = null;
 
+    protected $_requires = null;
+
     protected $_blockseditingcap = 'moodle/site:manageblocks';
 
     protected $_othereditingcaps = array();
@@ -289,6 +291,19 @@ class moodle_page {
             $this->_blocks = new $classname($this);
         }
         return $this->_blocks;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->blocks syntax. @see __get().
+     * @return blocks_manager the blocks manager object for this page.
+     */
+    public function get_requires() {
+        global $CFG;
+        if (is_null($this->_requires)) {
+            $this->_requires = new page_requirements_manager();
+            setup_core_javascript($this->_requires);
+        }
+        return $this->_requires;
     }
 
     /**

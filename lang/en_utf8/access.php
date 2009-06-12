@@ -21,6 +21,7 @@ $string['sitemap'] = 'Site map';
 $string['skipa'] = 'Skip $a';
 $string['skipblock'] = 'Skip block';
 $string['skipnavigation'] = 'Skip navigation';
+$string['skipto'] = 'Skip to $a';
 $string['tabledata'] = 'Data table, $a';
 $string['tablelayout'] = 'Layout table, $a';
 $string['tocontent'] = 'Skip to main content';

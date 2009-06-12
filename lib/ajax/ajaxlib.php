@@ -1,7 +1,1105 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
- * Library functions for using AJAX with Moodle.
+ * Library functions to facilitate the use of JavaScript in Moodle.
+ *
+ * @package   moodlecore
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+/**
+ * Initialise a page_requirements_manager with the bits of JavaScript that every
+ * Moodle page needs.
+ *
+ * @param page_requirements_manager $requires The page_requirements_manager to initialise.
+ */
+function setup_core_javascript(page_requirements_manager $requires) {
+    global $CFG;
+
+    // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
+    // Otherwise, in some situations, users will get warnings about insecure content
+    // on sercure pages from their web browser.
+
+    $config = array(
+        'wwwroot' => $CFG->httpswwwroot, // Yes, really. See above.
+        'pixpath' => $CFG->pixpath,
+        'modpixpath' => $CFG->modpixpath,
+        'sesskey' => sesskey(),
+    );
+    if (debugging('', DEBUG_DEVELOPER)) {
+        $config['developerdebug'] = true;
+    }
+    $requires->data_for_js('moodle_cfg', $config)->in_head();
+
+    // Note that, as a short-cut, the code 
+    // $js = "document.body.className += ' jsenabled';\n";
+    // is hard-coded in @see{page_requirements_manager::get_top_of_body_code}.
+}
+
+
+/**
+ * This class tracks all the things that are needed by the current page.
+ *
+ * Normally, the only instance of this  class you will need to work with is the
+ * one accessible via $PAGE->requires.
+ *
+ * Typical useage would be
+ *     $PAGE->requires->css('mod/mymod/styles.css');
+ *     $PAGE->requires->js('mod/mymod/script.js');
+ *     $PAGE->requires->js('mod/mymod/small_but_urgent.js')->in_head();
+ *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class page_requirements_manager {
+    const WHEN_IN_HEAD = 0;
+    const WHEN_TOP_OF_BODY = 10;
+    const WHEN_AT_END = 20;
+    const WHEN_ON_DOM_READY = 30;
+
+    protected $linkedrequiremets = array();
+    protected $stringsforjs = array();
+    protected $requiredjscode = array();
+
+    protected $variablesinitialised = array('mstr' => 1); // 'mstr' is special. See string_for_js.
+
+    protected $headdone = false;
+    protected $topofbodydone = false;
+
+    /**
+     * Ensure that the specified script file is linked to from this page. By default
+     * the link is put at the end of the page, since this gives best load performance.
+     *
+     * Even if a particular script is requested more than once, it will only be linked
+     * to once.
+     *
+     * @param $jsfile The path to the .js file, relative to $CFG->dirroot / $CFG->wwwroot.
+     *      No leading slash. For example 'mod/mymod/customscripts.js';
+     * @param boolean $fullurl This parameter is intended for internal use only.
+     *      (If true, $jsfile is treaded as a full URL, not relative $CFG->wwwroot.)
+     * @return required_js A required_js object. This allows you to control when the
+     *      link to the script is output by calling methods like ->asap() or
+     *      ->in_head().
+     */
+    public function js($jsfile, $fullurl = false) {
+        global $CFG;
+        if (!$fullurl) {
+            if (!file_exists($CFG->dirroot . '/' . $jsfile)) {
+                throw new coding_exception('Attept to require a JavaScript file that does not exist.', $jsfile);
+            }
+            $url = $CFG->httpswwwroot . '/' . $jsfile;
+        } else {
+            $url = $jsfile;
+        }
+        if (!isset($this->linkedrequiremets[$url])) {
+            $this->linkedrequiremets[$url] = new required_js($this, $url);
+        }
+        return $this->linkedrequiremets[$url];
+    }
+
+    /**
+     * Ensure that the specified YUI library file, and all its required dependancies,
+     * are linked to from this page. By default the link is put at the end of the
+     * page, since this gives best load performance. Optional dependencies are not
+     * loaded automatically - if you want them you will need to load them first with
+     * other calls to this method.
+     *
+     * If the YUI library you ask for requires one or more CSS files, and if
+     * &lt;head> has already been printed, then an exception will be thrown.
+     *
+     * Even if a particular library is requested more than once (perhaps as a dependancy
+     * of other libraries) it will only be linked to once.
+     *
+     * @param $libname the name of the YUI library you require. For example 'autocomplete'.
+     * @return required_yui_lib A requried_yui_lib object. This allows you to control when the
+     *      link to the script is output by calling methods like ->asap() or
+     *      ->in_head().
+     */
+    public function yui_lib($libname) {
+        $key = 'yui:' . $libname;
+        if (!isset($this->linkedrequiremets[$key])) {
+            $this->linkedrequiremets[$key] = new required_yui_lib($this, $libname);
+        }
+        return $this->linkedrequiremets[$key];
+    }
+
+    /**
+     * Ensure that the specified CSS file is linked to from this page. Because
+     * stylesheet links must go in the &lt;head> part of the HTML, you must call
+     * this function before get_head_code is called. That normally means before
+     * the call to print_header. If you call it when it is too late, an exception
+     * will be thrown.
+     *
+     * Even if a particular style sheet is requested more than once, it will only
+     * be linked to once.
+     *
+     * @param string $stylesheet The path to the .js file, relative to
+     *      $CFG->dirroot / $CFG->wwwroot. No leading slash. For example
+     *      'mod/mymod/styles.css';
+     * @param boolean $fullurl This parameter is intended for internal use only.
+     *      (If true, $stylesheet is treaded as a full URL, not relative $CFG->wwwroot.)
+     */
+    public function css($stylesheet, $fullurl = false) {
+        global $CFG;
+
+        if ($this->headdone) {
+            throw new coding_exception('Cannot require a CSS file after <head> has been printed.', $stylesheet);
+        }
+        if (!$fullurl) {
+            if (!file_exists($CFG->dirroot . '/' . $stylesheet)) {
+                throw new coding_exception('Attept to require a CSS file that does not exist.', $stylesheet);
+            }
+            $url = $CFG->httpswwwroot . '/' . $stylesheet;
+        } else {
+            $url = $stylesheet;
+        }
+        if (!isset($this->linkedrequiremets[$url])) {
+            $this->linkedrequiremets[$url] = new required_css($this, $url);
+        }
+    }
+
+    /**
+     * Ensure that a skip link to a given target is printed at the top of the &lt;body>.
+     * You must call this function before get_top_of_body_code, (if not, an exception
+     * will be thrown). That normally means you must call this before the call to print_header.
+     *
+     * If you ask for a particular skip link to be printed, it is then your responsibility
+     * to ensure that the appropraite &lt;a name="..."> tag is printed in the body of the
+     * page, so that the skip link goes somewhere.
+     *
+     * Even if a particular skip link is requested more than once, only one copy of it will be output.
+     *
+     * @param $target the name of anchor this link should go to. For example 'maincontent'.
+     * @param $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
+     */
+    public function skip_link_to($target, $linktext) {
+        if (!isset($this->linkedrequiremets[$target])) {
+            $this->linkedrequiremets[$target] = new required_skip_link($this, $target, $linktext);
+        }
+    }
+
+    /**
+     * Ensure that the specified JavaScript function is called from an inline script
+     * somewhere on this page. By default the call will be put in a script tag at the
+     * end of the page, since this gives best page-load performance.
+     *
+     * If you request that a particular function is called several times, then
+     * that is what will happen (unlike linking to a CSS or JS file, where only
+     * one link will be output).
+     *
+     * @param string $function the name of the JavaScritp function to call. Can
+     *      be a compound name like 'YAHOO.util.Event.addListener'.
+     * @param array $arguments and array of arguments to be passed to the function.
+     *      When generating the function call, this will be escaped using json_encode,
+     *      so passing objects and arrays should work.
+     * @return required_js_function_call A required_js_function_call object.
+     *      This allows you to control when the link to the script is output by
+     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body() or
+     *      ->on_dom_ready() methods.
+     */
+    public function js_function_call($function, $arguments = array()) {
+        $requirement = new required_js_function_call($this, $function, $arguments);
+        $this->requiredjscode[] = $requirement;
+        return $requirement;
+    }
+
+    /**
+     * Make a language string available to JavaScript. All the strings will be
+     * available in a mstr object in the global namespace. So, for example,
+     * after a call to $PAGE->requires->string_for_js('course', 'moodle');
+     * then the JavaScript variable mstr.moodle.course will be 'Course', or the
+     * equivalent in the current language.
+     *
+     * The arguments to this function are just like the arguments to get_string
+     * except that $module is not optional, and there are limitations on how you
+     * use $a. Because each string is only stored once in the JavaScript (based
+     * on $identifier and $module) you cannot get the same string with two different
+     * values of $a. If you try, an exception will be thrown.
+     *
+     * If you do need the same string expanded with different $a values, then
+     * the solution is to put them in your own data structure (e.g. and array)
+     * that you pass to JavaScript with @see{data_for_js}.
+     *
+     * @param string $identifier the desired string.
+     * @param string $module the language file to look in.
+     * @param mixed $a any extra data to add into the string (optional).
+     */
+    public function string_for_js($identifier, $module, $a = NULL) {
+        $string = get_string($identifier, $module, $a);
+        if (!$module) {
+            $module = 'moodle';
+        }
+        if (isset($this->stringsforjs[$module][$identifier]) && $this->stringsforjs[$module][$identifier] != $string) {
+            throw new coding_exception("Attempt to re-define already required string '$identifier' " .
+                    "from lang file '$module'. Did you already ask for it with a different \$a?");
+        }
+        $this->stringsforjs[$module][$identifier] = $string;
+    }
+
+    /**
+     * Make some data from PHP available to JavaScript code. For example, if you call
+     *      $PAGE->requires->data_for_js('mydata', array('name' => 'Moodle'));
+     * then in JavsScript mydata.name will be 'Moodle'.
+     *
+     * You cannot call this function more than once with the same variable name
+     * (if you try, it will throw an exception). Your code should prepare all the
+     * date you want, and then pass it to this method. There is no way to change
+     * the value associated with a particular variable later.
+     *
+     * @param string $variable the the name of the JavaScript variable to assign the data to.
+     *      Will probably work if you use a compound name like 'mybuttons.button[1]', but this
+     *      should be considered an experimental feature.
+     * @param mixed $data The data to pass to JavaScript. This will be escaped using json_encode,
+     *      so passing objects and arrays should work.
+     * @return required_data_for_js A required_data_for_js object.
+     *      This allows you to control when the link to the script is output by
+     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body() or
+     *      ->on_dom_ready() methods.
+     */
+    public function data_for_js($variable, $data) {
+        if (isset($this->variablesinitialised[$variable])) {
+            throw new coding_exception("A variable called '" . $variable .
+                    "' has already been passed ot JavaScript. You cannot overwrite it.");
+        }
+        $requirement = new required_data_for_js($this, $variable, $data);
+        $this->requiredjscode[] = $requirement;
+        $this->variablesinitialised[$variable] = 1;
+        return $requirement;
+    }
+
+    /**
+     * Get the code for the linked resources that need to appear in a particular place.
+     * @param $when one of the WHEN_... constants.
+     * @return string the HTML that should be output in that place.
+     */
+    protected function get_linked_resources_code($when) {
+        $output = '';
+        foreach ($this->linkedrequiremets as $requirement) {
+            if (!$requirement->is_done() && $requirement->get_when() == $when) {
+                $output .= $requirement->get_html();
+                $requirement->mark_done();
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Get the code for the linked resources that need to appear in a particular place.
+     * @param $when one of the WHEN_... constants.
+     * @return string the javascript that should be output in that place.
+     */
+    protected function get_javascript_code($when, $indent = '') {
+        $output = '';
+        foreach ($this->requiredjscode as $requirement) {
+            if (!$requirement->is_done() && $requirement->get_when() == $when) {
+                $output .= $indent . $requirement->get_js_code();
+                $requirement->mark_done();
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Generate any HTML that needs to go inside the &lt;head> tag.
+     *
+     * @return string the HTML code to to inside the &lt;head> tag.
+     */
+    public function get_head_code() {
+        $output = $this->get_linked_resources_code(self::WHEN_IN_HEAD);
+        $js = $this->get_javascript_code(self::WHEN_IN_HEAD);
+        $output .= ajax_generate_script_tag($js);
+        $this->headdone = true;
+        return $output;
+    }
+
+    /**
+     * Generate any HTML that needs to go at the start of the &lt;body> tag.
+     *
+     * @return string the HTML code to go at the start of the &lt;body> tag.
+     */
+    public function get_top_of_body_code() {
+        $output = $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY);
+        $js = "document.body.className += ' jsenabled';\n";
+        $js .= $this->get_javascript_code(self::WHEN_TOP_OF_BODY);
+        $output .= ajax_generate_script_tag($js);
+        $this->topofbodydone = true;
+        return $output;
+    }
+
+    /**
+     * Generate any HTML that needs to go at the end of the page.
+     *
+     * @return string the HTML code to to at the end of the page.
+     */
+    public function get_end_code() {
+        $output = $this->get_linked_resources_code(self::WHEN_AT_END);
+
+        array_unshift($this->requiredjscode, new required_data_for_js($this, 'mstr', $this->stringsforjs));
+        $js = $this->get_javascript_code(self::WHEN_AT_END);
+
+        $ondomreadyjs = $this->get_javascript_code(self::WHEN_ON_DOM_READY, '    ');
+        if ($ondomreadyjs) {
+            $js .= "YAHOO.util.Event.onDOMReady(function() {\n" . $ondomreadyjs . "});\n";
+        }
+
+        $output .= ajax_generate_script_tag($js);
+
+        return $output;
+    }
+
+    /**
+     * Have we already output the code in the <lt;head> tag?
+     *
+     * @return boolean
+     */
+    public function is_head_done() {
+        return $this->headdone;
+    }
+
+    /**
+     * Have we already output the code at the start of the <lt;body> tag?
+     *
+     * @return boolean
+     */
+    public function is_top_of_body_done() {
+        return $this->topofbodydone;
+    }
+}
+
+
+/**
+ * This is the base class for all sorts of requirements. just to factor out some
+ * common code.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class requirement_base {
+    protected $manager;
+    protected $when;
+    protected $done = false;
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created
+     * directly. Client code should create them via a page_requirements_manager
+     * method like ->js(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     */
+    protected function __construct(page_requirements_manager $manager) {
+        $this->manager = $manager;
+    }
+
+    /**
+     * Mark that this requirement has been satisfied (that is, that the HTML
+     * returned by @see{get_html} has been output.
+     * @return boolean has this requirement been satisfied yet? That is, has
+     *      that the HTML returned by @see{get_html} has been output already.
+     */
+    public function is_done() {
+        return $this->done;
+    }
+
+    /**
+     * Mark that this requirement has been satisfied (that is, that the HTML
+     * returned by @see{get_html} has been output.
+     */
+    public function mark_done() {
+        $this->done = true;
+    }
+
+    /**
+     * Where on the page the HTML this requirement is meant to go.
+     * @return integer One of the page_requirements_manager::WHEN_... constants.
+     */
+    public function get_when() {
+        return $this->when;
+    }
+}
+
+/**
+ * This class represents something that must be output somewhere in the HTML.
+ *
+ * Examples include links to JavaScript or CSS files. However, it should not
+ * necessarily be output immediately, we may have to wait for an appropriate time.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class linked_requirement extends requirement_base {
+    protected $url;
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created
+     * directly. Client code should create them via a page_requirements_manager
+     * method like ->js(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $url The URL of the thing we are linking to.
+     */
+    protected function __construct(page_requirements_manager $manager, $url) {
+        parent::__construct($manager);
+        $this->url = $url;
+    }
+
+    /**
+     * @return string the HTML needed to satisfy this requirement.
+     */
+    abstract public function get_html();
+}
+
+
+/**
+ * A subclass of @see{linked_requirement} to represent a requried JavaScript file.
+ *
+ * You should not create instances of this class directly. Instead you should
+ * work with a @see{page_requirements_manager} - and probably the only
+ * page_requirements_manager you will ever need is the one at $PAGE->requires.
+ *
+ * The methods ->asap, ->in_head and at_top_of_body() are indented to be used
+ * as a fluid API, so you can say things like
+ *     $PAGE->requires->js('mod/mymod/script.js')->in_head();
+ *
+ * However, by default JavaScript files are included at the end of the HTML.
+ * This is recommended practice because it means that the web browser will only
+ * start loading the javascript files after the rest of the page is loaded, and
+ * that gives the best performance for users.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_js extends linked_requirement {
+    /**
+     * Constructor. Normally instances of this class should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->js(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $url The URL of the JavaScript file we are linking to.
+     */
+    public function __construct(page_requirements_manager $manager, $url) {
+        parent::__construct($manager, $url);
+        $this->when = page_requirements_manager::WHEN_AT_END;
+    }
+
+    public function get_html() {
+        return '<script type="text/javascript"  src="' . $this->url . '"></script>' . "\n";
+    }
+
+    /**
+     * Indicate that the link to this JavaScript file should be output as soon as
+     * possible. That is, if this requirement has already been output, this method
+     * does nothing. Otherwise, if the &lt;head> tag has not yet been printed, the link
+     * to this script will be put in &lt;head>. Otherwise, this method returns a
+     * fragment of HTML that the caller is responsible for outputting as soon as
+     * possible. In fact, it is recommended that you only call this function from
+     * an echo statement, like:
+     *     echo $PAGE->requires->js(...)->asap();
+     *
+     * @return string The HTML required to include this JavaScript file. The caller
+     * is responsible for outputting this HTML promptly.
+     */
+    public function asap() {
+        if ($this->is_done()) {
+            return;
+        }
+        if (!$this->manager->is_head_done()) {
+            $this->in_head();
+            return '';
+        }
+        $ouput = $this->get_html();
+        $this->mark_done();
+        return $ouput;
+    }
+
+    /**
+     * Indicate that the link to this JavaScript file should be output in the
+     * &lt;head> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function in_head() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
+            return;
+        }
+        if ($this->manager->is_head_done()) {
+            throw new coding_exception('Too late to ask for a JavaScript file to be linked to from &lt;head>.');
+        }
+        $this->when = page_requirements_manager::WHEN_IN_HEAD;
+    }
+
+    /**
+     * Indicate that the link to this JavaScript file should be output at the top
+     * of the &lt;body> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function at_top_of_body() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
+            return;
+        }
+        if ($this->manager->is_top_of_body_done()) {
+            throw new coding_exception('Too late to ask for a JavaScript file to be linked to from the top of &lt;body>.');
+        }
+        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
+    }
+}
+
+
+/**
+ * A subclass of @see{linked_requirement} to represent a requried YUI library.
+ *
+ * You should not create instances of this class directly. Instead you should
+ * work with a @see{page_requirements_manager} - and probably the only
+ * page_requirements_manager you will ever need is the one at $PAGE->requires.
+ *
+ * The methods ->asap, ->in_head and at_top_of_body() are indented to be used
+ * as a fluid API, so you can say things like
+ *     $PAGE->requires->yui_lib('autocomplete')->in_head();
+ *
+ * This class (with the help of @see{ajax_resolve_yui_lib}) knows about the
+ * dependancies between the different YUI libraries, and will include all the
+ * other libraries required by the one you ask for. It also knows which YUI
+ * libraries require css files. If the library you ask for requires CSS files,
+ * then you should ask for it before &lt;head> is output, or an exception will
+ * be thrown.
+ *
+ * By default JavaScript files are included at the end of the HTML.
+ * This is recommended practice because it means that the web browser will only
+ * start loading the javascript files after the rest of the page is loaded, and
+ * that gives the best performance for users.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_yui_lib extends linked_requirement {
+    protected $jss = array();
+    protected $cssurls;
+
+    /**
+     * Constructor. Normally instances of this class should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->yui_lib(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $libname The name of the YUI library you want. See the array
+     * defined in @see{ajax_resolve_yui_lib} for a list of known libraries.
+     */
+    public function __construct(page_requirements_manager $manager, $libname) {
+        parent::__construct($manager, '');
+        $this->when = page_requirements_manager::WHEN_AT_END;
+
+        list($jsurls, $this->cssurls) = ajax_resolve_yui_lib($libname);
+        foreach ($jsurls as $jsurl) {
+            $this->jss[] = $manager->js($jsurl, true);
+        }
+        foreach ($this->cssurls as $cssurl) {
+            $manager->css($cssurl, true);
+        }
+        if (!empty($this->cssurls)) {
+            global $PAGE;
+            $page->add_body_class('yui-skin-sam');
+        }
+    }
+
+    public function get_html() {
+        // Since we create a required_js for each of our files, that will generate the HTML.
+        return '';
+    }
+
+    /**
+     * Indicate that the link to this YUI library file should be output as soon as
+     * possible. The comment above @see{required_js::asap} applies to this method too.
+     *
+     * @return string The HTML required to include this JavaScript file. The caller
+     * is responsible for outputting this HTML promptly. For example, a good way to
+     * call this method is like
+     *     echo $PAGE->requires->yui_lib(...)->asap();
+     */
+    public function asap() {
+        if ($this->is_done()) {
+            return;
+        }
+
+        if (!$this->manager->is_head_done()) {
+            $this->in_head();
+            return '';
+        }
+
+        $ouput = '';
+        foreach ($this->jss as $requiredjs) {
+            $ouput .= $requiredjs->immediately();
+        }
+        $this->mark_done();
+        return $ouput;
+    }
+
+    /**
+     * Indicate that the links to this  YUI library should be output in the
+     * &lt;head> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function in_head() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
+            return;
+        }
+
+        if ($this->manager->is_head_done()) {
+            throw new coding_exception('Too late to ask for a YUI library to be linked to from &lt;head>.');
+        }
+
+        $this->when = page_requirements_manager::WHEN_IN_HEAD;
+        foreach ($this->jss as $requiredjs) {
+            $ouput .= $requiredjs->in_head();
+        }
+    }
+
+    /**
+     * Indicate that the links to this YUI library should be output in the
+     * &lt;head> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function at_top_of_body() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
+            return;
+        }
+
+        if ($this->manager->is_top_of_body_done()) {
+            throw new coding_exception('Too late to ask for a YUI library to be linked to from the top of &lt;body>.');
+        }
+
+        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
+        foreach ($this->jss as $requiredjs) {
+            $ouput .= $requiredjs->at_top_of_body();
+        }
+    }
+}
+
+
+/**
+ * A subclass of @see{linked_requirement} to represent a required CSS file.
+ * Of course, all links to CSS files must go in the &lt;head section of the HTML.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_css extends linked_requirement {
+    /**
+     * Constructor. Normally instances of this class should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->css(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $url The URL of the CSS file we are linking to.
+     */
+    public function __construct(page_requirements_manager $manager, $url) {
+        parent::__construct($manager, $url);
+        $this->when = page_requirements_manager::WHEN_IN_HEAD;
+    }
+
+    public function get_html() {
+        return '<link rel="stylesheet" type="text/css" href="' . $this->url . '" />' . "\n";;
+    }
+}
+
+
+/**
+ * A subclass of @see{linked_requirement} to represent a skip link.
+ * A skip link is a concept from accessibility. You have some links like
+ * 'Skip to main content' linking to an #maincontent anchor, at the start of the
+ * &lt;body> tag, so that users using assistive technologies like screen readers
+ * can easily get to the main content without having to work their way through
+ * any navigation, blocks, etc. that comes before it in the HTML.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_skip_link extends linked_requirement {
+    protected $linktext;
+
+    /**
+     * Constructor. Normally instances of this class should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->yui_lib(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $target the name of the anchor in the page we are linking to.
+     * @param string $linktext the test to use for the link.
+     */
+    public function __construct(page_requirements_manager $manager, $target, $linktext) {
+        parent::__construct($manager, $target);
+        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
+        $this->linktext = $linktext;
+    }
+
+    public function get_html() {
+        return '<a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a>\n";
+    }
+}
+
+
+/**
+ * This is the base class for requirements that are JavaScript code.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class required_js_code extends requirement_base {
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created
+     * directly. Client code should create them via a page_requirements_manager
+     * method like ->js(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     */
+    protected function __construct(page_requirements_manager $manager) {
+        parent::__construct($manager);
+        $this->when = page_requirements_manager::WHEN_AT_END;
+    }
+
+    /**
+     * @return string the JavaScript code needed to satisfy this requirement.
+     */
+    abstract public function get_js_code();
+
+   /**
+     * Indicate that the link to this JavaScript file should be output as soon as
+     * possible. That is, if this requirement has already been output, this method
+     * does nothing. Otherwise, if the &lt;head> tag has not yet been printed, the link
+     * to this script will be put in &lt;head>. Otherwise, this method returns a
+     * fragment of HTML that the caller is responsible for outputting as soon as
+     * possible. In fact, it is recommended that you only call this function from
+     * an echo statement, like:
+     *     echo $PAGE->requires->js(...)->asap();
+     *
+     * @return string The HTML required to include this JavaScript file. The caller
+     * is responsible for outputting this HTML promptly.
+     */
+    public function asap() {
+        if ($this->is_done()) {
+            return;
+        }
+        if (!$this->manager->is_head_done()) {
+            $this->in_head();
+            return '';
+        }
+        $js = $this->get_js_code();
+        $output = ajax_generate_script_tag($js);
+        $this->mark_done();
+        return $output;
+    }
+
+    /**
+     * Indicate that the link to this JavaScript file should be output in the
+     * &lt;head> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function in_head() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_IN_HEAD) {
+            return;
+        }
+        if ($this->manager->is_head_done()) {
+            throw new coding_exception('Too late to ask for some JavaScript code to be output in &lt;head>.');
+        }
+        $this->when = page_requirements_manager::WHEN_IN_HEAD;
+    }
+
+    /**
+     * Indicate that the link to this JavaScript file should be output at the top
+     * of the &lt;body> section of the HTML. If it too late for this request to be
+     * satisfied, an exception is thrown.
+     */
+    public function at_top_of_body() {
+        if ($this->is_done() || $this->when <= page_requirements_manager::WHEN_TOP_OF_BODY) {
+            return;
+        }
+        if ($this->manager->is_top_of_body_done()) {
+            throw new coding_exception('Too late to ask for some JavaScript code to be output at the top of &lt;body>.');
+        }
+        $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
+    }
+}
+
+
+/**
+ * This class represents a JavaScript function that must be called from the HTML
+ * page. By default the call will be made at the end of the page, but you can
+ * chage that using the ->asap, ->in_head, etc. methods.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_js_function_call extends required_js_code {
+    protected $function;
+    protected $arguments;
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->js_function_call(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $function the name of the JavaScritp function to call.
+     *      Can be a compound name like 'YAHOO.util.Event.addListener'.
+     * @param array $arguments and array of arguments to be passed to the function.
+     *      When generating the function call, this will be escaped using json_encode,
+     *      so passing objects and arrays should work.
+     */
+    public function __construct(page_requirements_manager $manager, $function, $arguments) {
+        parent::__construct($manager);
+        $this->function = $function;
+        $this->arguments = $arguments;
+    }
+
+    public function get_js_code() {
+        $quotedargs = array();
+        foreach ($this->arguments as $arg) {
+            $quotedargs[] = json_encode($arg);
+        }
+        return $this->function . '(' . implode(', ', $quotedargs) . ");\n";
+    }
+
+    /**
+     * Indicate that this function should be called in YUI's onDomReady event.
+     *
+     * Not that this is probably not necessary most of the time. Just having the
+     * function call at the end of the HTML should normally be sufficient.
+     */
+    public function on_dom_ready() {
+        if ($this->is_done() || $this->when < page_requirements_manager::WHEN_AT_END) {
+            return;
+        }
+        $this->manager->yui_lib('event');
+        $this->when = page_requirements_manager::WHEN_ON_DOM_READY;
+    }
+}
+
+
+/**
+ * This class represents some data from PHP that needs to be made available in a
+ * global JavaScript variable. By default the data will be output at the end of
+ * the page, but you can chage that using the ->asap, ->in_head, etc. methods.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class required_data_for_js extends required_js_code {
+    protected $variable;
+    protected $data;
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created
+     * directly. Client code should create them via the page_requirements_manager
+     * method ->data_for_js(...).
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $variable the the name of the JavaScript variable to assign the data to.
+     *      Will probably work if you use a compound name like 'mybuttons.button[1]', but this
+     *      should be considered an experimental feature.
+     * @param mixed $data The data to pass to JavaScript. This will be escaped using json_encode,
+     *      so passing objects and arrays should work.
+     */
+    public function __construct(page_requirements_manager $manager, $variable, $data) {
+        parent::__construct($manager);
+        $this->variable = $variable;
+        $this->data = json_encode($data);
+        // json_encode immediately, so that if $data is an object (and therefore was
+        // passed in by reference) we get the data at the time the call was made, and
+        // not whatever the data happened to be when this is output.
+    }
+
+    public function get_js_code() {
+        $prefix = 'var ';
+        if (strpos($this->variable, '.') || strpos($this->variable, '[')) {
+            $prefix = '';
+        }
+        return $prefix . $this->variable . ' = ' . $this->data . ";\n";
+    }
+}
+
+
+/**
+ * Generate a script tag containing the the specified code.
+ *
+ * @param string $js the JavaScript code
+ * @return string HTML, the code wrapped in <script> tags.
+ */
+function ajax_generate_script_tag($js) {
+    return '<script type="text/javascript">' . "\n//<![CDATA[\n" .
+            $js . "//]]>\n</script>\n";
+}
+
+
+/**
+ * Given the name of a YUI library, return a list of the .js and .css files that
+ * it requries.
+ *
+ * This method takes note of the $CFG->useexternalyui setting.
+ *
+ * If $CFG->debug is set to DEBUG_DEVELOPER then this method will return links to
+ * the -debug version of the YUI files, otherwise it will return links to the -min versions.
+ *
+ * @param string $libname the name of a YUI library, for example 'autocomplete'.
+ * @return array with two elementes. The first is an array of the JavaScript URLs
+ *      that must be loaded to make this library work, in the order they should be
+ *      loaded. The second element is a (possibly empty) list of CSS files that
+ *      need to be loaded.
+ */
+function ajax_resolve_yui_lib($libname) {
+    global $CFG;
+
+    // Note, we always use yahoo-dom-event, even if we are only asked for part of it.
+    // because another part of the code may later ask for other bits. It is easier, and
+    // not very inefficient, just to always use (and get browsers to cache) the combined file.
+    static $translatelist = array(
+        'yahoo' => 'yahoo-dom-event',
+        'animation' => array('yahoo-dom-event', 'animation'),
+        'autocomplete' => array(
+                'js' => array('yahoo-dom-event', 'datasource', 'autocomplete'),
+                'css' => array('autocomplete/assets/skins/sam/autocomplete.css')),
+        'button' => array(
+                'js' => array('yahoo-dom-event', 'element', 'button'),
+                'css' => array('button/assets/skins/sam/button.css')),
+        'calendar' => array(
+                'js' => array('yahoo-dom-event', 'calendar'),
+                'css' => array('calendar/assets/skins/sam/calendar.css')),
+        'carousel' => array(
+                'js' => array('yahoo-dom-event', 'element', 'carousel'),
+                'css' => array('carousel/assets/skins/sam/carousel.css')),
+        'charts' => array('yahoo-dom-event', 'element', 'datasource', 'json', 'charts'),
+        'colorpicker' => array(
+                'js' => array('utilities', 'slider', 'colorpicker'),
+                'css' => array('colorpicker/assets/skins/sam/colorpicker.css')),
+        'connection' => array('yahoo-dom-event', 'connection'),
+        'container' => array(
+                'js' => array('yahoo-dom-event', 'container'),
+                'css' => array('container/assets/skins/sam/container.css')),
+        'cookie' => array('yahoo-dom-event', 'cookie'),
+        'datasource' => array('yahoo-dom-event', 'datasource'),
+        'datatable' => array(
+                'js' => array('yahoo-dom-event', 'element', 'datasource', 'datatable'),
+                'css' => array('datatable/assets/skins/sam/datatable.css')),
+        'dom' => 'yahoo-dom-event',
+        'dom-event' => 'yahoo-dom-event',
+        'dragdrop' => array('yahoo-dom-event', 'dragdrop'),
+        'editor' => array(
+                'js' => array('yahoo-dom-event', 'element', 'container', 'menu', 'button', 'editor'),
+                'css' => array('assets/skins/sam/skin.css')),
+        'element' => array('yahoo-dom-event', 'element'),
+        'event' => 'yahoo-dom-event',
+        'get' => array('yahoo-dom-event', 'get'),
+        'history' => array('yahoo-dom-event', 'history'),
+        'imagecropper' => array(
+                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
+                'css' => array('assets/skins/sam/resize.css', 'assets/skins/sam/imagecropper.css')),
+        'imageloader' => array('yahoo-dom-event', 'imageloader'),
+        'json' => array('yahoo-dom-event', 'json/json'),
+        'layout' => array(
+                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
+                'css' => array('reset-fonts-grids/reset-fonts-grids.css', 'assets/skins/sam/layout.css')),
+        'logger' => array(
+                'js' => array('yahoo-dom-event', 'logger'),
+                'css' => array('logger/assets/skins/sam/logger.css')),
+        'menu' => array(
+                'js' => array('yahoo-dom-event', 'container', 'menu'),
+                'css' => array('menu/assets/skins/sam/menu.css')),
+        'paginator' => array(
+                'js' => array('yahoo-dom-event', 'element', 'paginator'),
+                'css' => array('paginator/assets/skins/sam/paginator.css')),
+        'profiler' => array('yahoo-dom-event', 'profiler'),
+        'profilerviewer' => array('yuiloader-dom-event', 'element', 'profiler', 'profilerviewer'),
+        'resize' => array(
+                'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'resize'),
+                'css' => array('assets/skins/sam/resize.css')),
+        'selector' => array('yahoo-dom-event', 'selector'),
+        'simpleeditor' => array(
+                'js' => array('yahoo-dom-event', 'element', 'container', 'simpleeditor'),
+                'css' => array('assets/skins/sam/skin.css')),
+        'slider' => array('yahoo-dom-event', 'gragdrop', 'slider'),
+        'stylesheet' => array('yahoo-dom-event', 'stylesheet'),
+        'tabview' => array(
+                'js' => array('yahoo-dom-event', 'element', 'tabview'),
+                'css' => array('assets/skins/sam/skin.css')),
+        'treeview' => array(
+                'js' => array('yahoo-dom-event', 'treeviewed'),
+                'css' => array('treeview/assets/skins/sam/treeview.css')),
+        'uploader' => array('yahoo-dom-event', 'element', 'uploader'),
+        'utilities' => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
+        'yuiloader' => 'yuiloader',
+        'yuitest' => array(
+                'js' => array('yahoo-dom-event', 'logger', 'yuitest'),
+                'css' => array('logger/assets/logger.css', 'yuitest/assets/testlogger.css')),
+    );
+    if (!isset($translatelist[$libname])) {
+        throw new coding_exception('Unknown YUI library ' . $libname);
+    }
+
+    $data = $translatelist[$libname];
+    if (!is_array($data)) {
+        $jsnames = array($data);
+        $cssfiles = array();
+    } else if (isset($data['js']) && isset($data['css'])) {
+        $jsnames = $data['js'];
+        $cssfiles = $data['css'];
+    } else {
+        $jsnames = $data;
+        $cssfiles = array();
+    }
+
+    $debugging = debugging('', DEBUG_DEVELOPER);
+    if ($debugging) {
+        $suffix = '-debug.js';
+    } else {
+        $suffix = '-min.js';
+    }
+    $libpath = $CFG->httpswwwroot . '/lib/yui/';
+
+    $externalyui = !empty($CFG->useexternalyui);
+    if ($externalyui) {
+        include($CFG->libdir.'/yui/version.php'); // Sets $yuiversion.
+        $libpath = 'http://yui.yahooapis.com/' . $yuiversion . '/build/';
+    }
+
+    $jsurls = array();
+    foreach ($jsnames as $js) {
+        if ($js == 'yahoo-dom-event') {
+            if ($debugging) {
+                $jsurls[] = $libpath . 'yahoo/yahoo' . $suffix;
+                $jsurls[] = $libpath . 'dom/dom' . $suffix;
+                $jsurls[] = $libpath . 'event/event' . $suffix;
+            } else {
+                $jsurls[] = $jsurls[] = $libpath . $js . '/' . $js . '.js';
+            }
+        } else {
+            $jsurls[] = $libpath . $js . '/' . $js . $suffix;
+        }
+    }
+
+    $cssurls = array();
+    foreach ($cssfiles as $css) {
+        $cssurls[] = $libpath . $css;
+    }
+
+    return array($jsurls, $cssurls);
+}
 
 /**
  * Get the path to a JavaScript library.
