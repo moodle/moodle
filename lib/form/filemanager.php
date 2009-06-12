@@ -182,7 +182,8 @@ EOD;
 var selected_file = null;
 var rm_cb = {
     success: function(o) {
-        if(o.responseText && o.responseText == 200){
+        if(o.responseText){
+            repository_client.files[o.responseText]--;
             selected_file.parentNode.removeChild(selected_file);
         }
     }
@@ -192,7 +193,7 @@ function rm_file(id, name, context) {
         var trans = YAHOO.util.Connect.asyncRequest('POST',
             '{$CFG->httpswwwroot}/repository/ws.php?action=delete&itemid='+id,
                 rm_cb,
-                'title='+name
+                'title='+name+'&client_id=$client_id'
                 );
         selected_file = context.parentNode;
     }
@@ -213,8 +214,8 @@ function callpicker(el_id, client_id, itemid) {
     var el=document.getElementById(el_id);
     var params = {};
     params.env = 'filemanager';
-    params.maxbytes = $this->_options['maxbytes'];
-    params.maxfiles = $this->_options['maxfiles'];
+    params.maxbytes = {$this->_options['maxbytes']};
+    params.maxfiles = {$this->_options['maxfiles']};
     params.itemid = itemid;
     params.target = el;
     params.callback = fp_callback;
@@ -228,7 +229,7 @@ function callpicker(el_id, client_id, itemid) {
 .btnaddfile{display:none}
 </style>
 <a name="nonjsfp"></a>
-<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
+<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&amp;itemid={$draftitemid}&amp;ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
 </noscript>
 EOD;
             $CFG->filemanagerjsloaded = true;

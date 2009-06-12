@@ -563,6 +563,14 @@ repository_client.buildtree = function(client_id, node, level) {
     }
 }
 repository_client.select_file = function(oldname, url, icon, client_id, repo_id) {
+    if (repository_client.files[client_id] == undefined) {
+        repository_client.files[client_id] = 0;
+    }
+    if (repository_client.files[client_id] >= repository_client.fp[client_id].maxfiles)
+    {
+        alert('Only '+repository_client.fp[client_id].maxfiles+' files are allowed!');
+        return false;
+    }
     var thumbnail = document.getElementById('fp-grid-panel-'+client_id);
     if(thumbnail){
         thumbnail.style.display = 'none';
@@ -822,6 +830,9 @@ repository_client.view_as_icons = function(client_id, data) {
     container.appendChild(panel);
     repository_client.print_footer(client_id);
 }
+repository_client.check_maxfiles = function(num) {
+
+}
 repository_client.print_footer = function(client_id) {
     var fs = this.fp[client_id].fs;
     var panel = document.getElementById('panel-'+client_id);
@@ -954,6 +965,11 @@ repository_client.download_cb = {
          if(data && data.e) {
              panel.get('element').innerHTML = data.e;
              return;
+         }
+         if(repository_client.files[data.client_id]==undefined) {
+             repository_client.files[data.client_id] = 0;
+         } else {
+             repository_client.files[data.client_id]++;
          }
          repository_client.end(data.client_id, data);
     }
@@ -1122,6 +1138,7 @@ success: function(o) {
     dlg.show();
 }
 }
+repository_client.files = {};
 var mdl_in_array = function(el, arr) {
     for(var i = 0, l = arr.length; i < l; i++) {
         if(arr[i] == el) {
@@ -1169,5 +1186,10 @@ function open_filepicker(id, params) {
     } else {
         r.accepted_types = '*';
     }
+    if (!params.maxfiles) {
+        // unlimited
+        params.maxfiles = -1;
+    }
+    r.maxfiles = params.maxfiles;
     return r;
 }

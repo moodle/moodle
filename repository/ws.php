@@ -46,7 +46,7 @@
                 $fs = get_file_storage();
                 if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
                     if($result = $file->delete()) {
-                        echo 200;
+                        echo $client_id;
                     } else {
                         echo '';
                     }
