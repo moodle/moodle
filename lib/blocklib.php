@@ -779,9 +779,9 @@ function blocks_get_missing(&$page, &$blockmanager) {
  * but which should not be there according to blocks_name_allowed_in_format.
  *
  * @todo Write/Fix this function. Currently returns immediatly
- * @param $page a page object.
+ * @param $course
  */
-function blocks_remove_inappropriate($page) {
+function blocks_remove_inappropriate($course) {
     // TODO
     return;
     $blockmanager = blocks_get_by_page($page);

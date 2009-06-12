@@ -3447,8 +3447,7 @@ function update_course($data) {
         fix_course_sortorder();
 
         // Test for and remove blocks which aren't appropriate anymore
-        $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
-        blocks_remove_inappropriate($page);
+        blocks_remove_inappropriate($course);
 
         // Save any custom role names.
         save_local_role_names($course->id, $data);
