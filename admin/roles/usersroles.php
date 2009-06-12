@@ -191,7 +191,7 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
         if (has_capability('moodle/role:assign', $context)) {
             $raurl = $assignurl . '?contextid=' . $ra->contextid . '&amp;roleid=' .
                     $ra->roleid . '&amp;removeselect[]=' . $ra->userid;
-            $churl = $checkurl . '?contextid=' . $ra->contextid . '&reportuser=' . $ra->userid;
+            $churl = $checkurl . '?contextid=' . $ra->contextid . '&amp;reportuser=' . $ra->userid;
             if ($context->contextlevel == CONTEXT_USER) {
                 $raurl .= '&amp;userid=' . $context->instanceid;
                 $churl .= '&amp;userid=' . $context->instanceid;
