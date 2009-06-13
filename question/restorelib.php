@@ -965,9 +965,7 @@
                 if ($questiontext != $question->questiontext || $generalfeedback != $question->generalfeedback) {
                     $question->questiontext = $questiontext;
                     $question->generalfeedback = $generalfeedback;
-                    if (!$DB->update_record('question', $question)) {
-                        $status = false;
-                    }
+                    $DB->update_record('question', $question);
                 }
 
                 // Do some output.
@@ -1007,9 +1005,7 @@
                     unset($answer->qtype);
                     $answer->feedback = $feedback;
                     $answer->answer = $answertext;
-                    if (!$DB->update_record('question_answers', $answer)) {
-                        $status = false;
-                    }
+                    $DB->update_record('question_answers', $answer);
                 }
 
                 // Do some output.

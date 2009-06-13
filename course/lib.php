@@ -2708,9 +2708,7 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
     if ($mod->section != $section->id) {
         $mod->section = $section->id;
-        if (!$DB->update_record("course_modules", $mod)) {
-            return false;
-        }
+        $DB->update_record("course_modules", $mod);
         // if moving to a hidden section then hide module
         if (!$section->visible) {
             set_coursemodule_visible($mod->id, 0);
@@ -3191,9 +3189,7 @@ function move_courses($courseids, $categoryid) {
                 $course->category  = $categoryid;
                 $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
 
-                if (!$DB->update_record('course', $course)) {
-                    notify("An error occurred - course not moved!");
-                }
+                $DB->update_record('course', $course);
 
                 $context   = get_context_instance(CONTEXT_COURSE, $course->id);
                 $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);

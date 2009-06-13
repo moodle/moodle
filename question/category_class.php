@@ -358,9 +358,7 @@ class question_category_object {
             print_error('unknowcategory');
         }
         /// Send the children categories to live with their grandparent
-        if (!$DB->set_field("question_categories", "parent", $category->parent, array("parent" => $category->id))) {
-            print_error('cannotupdatesubcate', 'question');
-        }
+        $DB->set_field("question_categories", "parent", $category->parent, array("parent" => $category->id));
 
         /// Finally delete the category itself
         $DB->delete_records("question_categories", array("id" => $category->id));
@@ -414,14 +412,11 @@ class question_category_object {
         $cat->info = $newinfo;
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
-        if (!$categoryid=$DB->insert_record("question_categories", $cat)) {
-            print_error('cannotinsertquestioncate', 'question', '', $newcategory);
+        $categoryid = $DB->insert_record("question_categories", $cat);
+        if ($return) {
+            return $categoryid;
         } else {
-            if($return){
-                return $categoryid;
-            }else{
-                redirect($this->pageurl->out());//always redirect after successful action
-            }
+            redirect($this->pageurl->out());//always redirect after successful action
         }
     }
 
@@ -462,9 +457,7 @@ class question_category_object {
         $cat->info = $newinfo;
         $cat->parent = $parentid;
         // We don't change $cat->contextid here, if necessary we redirect to contextmove.php later.
-        if (!$DB->update_record('question_categories', $cat)) {
-            print_error('cannotupdatecate', 'question', $this->pageurl->out(), $newname);
-        }
+        $DB->update_record('question_categories', $cat);
 
         // If the category name has changed, rename any random questions in that category.
         if ($oldcat->name != $cat->name) {

@@ -41,10 +41,7 @@ class question_match_qtype extends default_questiontype {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!$DB->update_record("question_match_sub", $subquestion)) {
-                        $result->error = "Could not insert match subquestion! (id=$subquestion->id)";
-                        return $result;
-                    }
+                    $DB->update_record("question_match_sub", $subquestion);
                 } else {
                     $subquestion = new stdClass;
                     // Determine a unique random code
@@ -55,10 +52,7 @@ class question_match_qtype extends default_questiontype {
                     $subquestion->question = $question->id;
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!$subquestion->id = $DB->insert_record("question_match_sub", $subquestion)) {
-                        $result->error = "Could not insert match subquestion!";
-                        return $result;
-                    }
+                    $subquestion->id = $DB->insert_record("question_match_sub", $subquestion);
                 }
                 $subquestions[] = $subquestion->id;
             }
@@ -77,19 +71,13 @@ class question_match_qtype extends default_questiontype {
         if ($options = $DB->get_record("question_match", array("question" => $question->id))) {
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!$DB->update_record("question_match", $options)) {
-                $result->error = "Could not update match options! (id=$options->id)";
-                return $result;
-            }
+            $DB->update_record("question_match", $options);
         } else {
             unset($options);
             $options->question = $question->id;
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!$DB->insert_record("question_match", $options)) {
-                $result->error = "Could not insert match options!";
-                return $result;
-            }
+            $DB->insert_record("question_match", $options);
         }
 
         if (!empty($result->notice)) {
@@ -700,9 +688,7 @@ class question_match_qtype extends default_questiontype {
                 $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);
                 if ($questiontext != $subquestion->questiontext) {
                     $subquestion->questiontext = $questiontext;
-                    if (!$DB->update_record('question_match_sub', $subquestion)) {
-                        $status = false;
-                    }
+                    $DB->update_record('question_match_sub', $subquestion);
                 }
 
                 // Do some output.
@@ -746,10 +732,7 @@ class question_match_qtype extends default_questiontype {
                 $subquestionchanged = false;
                 $subquestion->questiontext = question_replace_file_links_in_html($subquestion->questiontext, $fromcourseid, $tocourseid, $url, $destination, $subquestionchanged);
                 if ($subquestionchanged){//need to update rec in db
-                    if (!$DB->update_record('question_match_sub', $subquestion)) {
-                        print_error('Couldn\'t update \'question_match_sub\' record '.$subquestion->id);
-                    }
-
+                    $DB->update_record('question_match_sub', $subquestion);
                 }
             }
         }

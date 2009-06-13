@@ -131,7 +131,6 @@ $string['cannotupdatepasswordonextauth'] = 'Failed to update password on externa
 $string['cannotupdateprofile'] = 'Error updating user record';
 $string['cannotupdaterss'] = 'Cannot update RSS';
 $string['cannotupdatesecret'] = 'Error resetting user secret string';
-$string['cannotupdatesubcate'] = 'Could not update a child category!';
 $string['cannotupdatesubcourse'] = 'Could not update a child course!';
 $string['cannotuploadfile'] = 'Error processing upload file';
 $string['cannotunassignrolefrom'] = 'Cannot unassign this user from role id: $a';

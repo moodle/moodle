@@ -44,9 +44,7 @@ if(count($actions)!=2) {
     print_error('invalidpageval', 'wiki');
 }
 $pagename=$actions[1];
-if(!$DB->delete_records('wiki_locks', array('pagename'=>$pagename, 'wikiid'=>$wiki->id))) {
-    print_error('cannotdeletelockrecored', 'wiki');
-}
+$DB->delete_records('wiki_locks', array('pagename'=>$pagename, 'wikiid'=>$wiki->id));
 
 redirect("view.php?id=$id&page=".urlencode($page));
 ?>

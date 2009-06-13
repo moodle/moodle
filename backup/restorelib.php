@@ -102,9 +102,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $coursesummary = restore_decode_content_links_worker($coursesummary, $restore);
         if ($coursesummary != $course->summary) {
             $course->summary = $coursesummary;
-            if (!$DB->update_record('course', $course)) {
-                $status = false;
-            }
+            $DB->update_record('course', $course);
         }
         if (!defined('RESTORE_SILENTLY')) {
             echo '</li>';
@@ -120,9 +118,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $sectionsummary = restore_decode_content_links_worker($section->summary, $restore);
                 if ($sectionsummary != $section->summary) {
                     $section->summary = $sectionsummary;
-                    if (!$DB->update_record('course_sections', $section)) {
-                        $status = false;
-                    }
+                    $DB->update_record('course_sections', $section);
                 }
             }
             if (!defined('RESTORE_SILENTLY')) {

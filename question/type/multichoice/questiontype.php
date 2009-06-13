@@ -69,20 +69,14 @@ class question_multichoice_qtype extends default_questiontype {
                     $answer->answer     = $dataanswer;
                     $answer->fraction   = $question->fraction[$key];
                     $answer->feedback   = $question->feedback[$key];
-                    if (!$DB->update_record("question_answers", $answer)) {
-                        $result->error = "Could not update quiz answer! (id=$answer->id)";
-                        return $result;
-                    }
+                    $DB->update_record("question_answers", $answer);
                 } else {
                     unset($answer);
                     $answer->answer   = $dataanswer;
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer! ";
-                        return $result;
-                    }
+                    $answer->id = $DB->insert_record("question_answers", $answer);
                 }
                 $answers[] = $answer->id;
 
@@ -114,15 +108,9 @@ class question_multichoice_qtype extends default_questiontype {
         $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
         $options->incorrectfeedback = trim($question->incorrectfeedback);
         if ($update) {
-            if (!$DB->update_record("question_multichoice", $options)) {
-                $result->error = "Could not update quiz multichoice options! (id=$options->id)";
-                return $result;
-            }
+            $DB->update_record("question_multichoice", $options)
         } else {
-            if (!$DB->insert_record("question_multichoice", $options)) {
-                $result->error = "Could not insert quiz multichoice options!";
-                return $result;
-            }
+            $DB->insert_record("question_multichoice", $options);
         }
 
         // delete old answer records
@@ -600,9 +588,7 @@ class question_multichoice_qtype extends default_questiontype {
                     $subquestion->correctfeedback = $correctfeedback;
                     $subquestion->partiallycorrectfeedback = $partiallycorrectfeedback;
                     $subquestion->incorrectfeedback = $incorrectfeedback;
-                    if (!$DB->update_record('question_multichoice', $multichoice)) {
-                        $status = false;
-                    }
+                    $DB->update_record('question_multichoice', $multichoice);
                 }
 
                 // Do some output.
@@ -684,17 +670,13 @@ class question_multichoice_qtype extends default_questiontype {
         $newoptions->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         $newoptions->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         if ($optionschanged){
-            if (!$DB->update_record('question_multichoice', $newoptions)) {
-                print_error('Couldn\'t update \'question_multichoice\' record '.$newoptions->id);
-            }
+            $DB->update_record('question_multichoice', $newoptions);
         }
         $answerchanged = false;
         foreach ($question->options->answers as $answer) {
             $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
             if ($answerchanged){
-                if (!$DB->update_record('question_answers', $answer)){
-                    print_error('Couldn\'t update \'question_answers\' record '.$answer->id);
-                }
+                $DB->update_record('question_answers', $answer);
             }
         }
     }

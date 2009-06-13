@@ -141,9 +141,7 @@ if ($act == 'updfeed') {
     }
     $dataobject->url = $url;
 
-    if (!$DB->update_record('block_rss_client', $dataobject)) {
-        print_error('updatersserror', 'error', '', $rssid);
-    }
+    $DB->update_record('block_rss_client', $dataobject);
 
     $message .= '<br />'. get_string('feedupdated', 'block_rss_client');
     redirect($referrer, $message);
@@ -200,9 +198,7 @@ if ($act == 'updfeed') {
         if (!empty($rss->channel['title'])) {
             $dataobject->title = $rss->channel['title'];
         }
-        if (!$DB->update_record('block_rss_client', $dataobject)) {
-            print_error('updatersserror', 'error', '', $rssid);
-        }
+        $DB->update_record('block_rss_client', $dataobject);
         $message .= '<br />'. get_string('feedadded', 'block_rss_client');
     }
     redirect($referrer, $message);

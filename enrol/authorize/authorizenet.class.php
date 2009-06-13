@@ -297,9 +297,7 @@ class AuthorizeNet
                             $order->status = AN_STATUS_UNDERREVIEW;
                         }
 
-                        if (!$DB->update_record('enrol_authorize', $order)) {
-                            message_to_admin("Error while trying to update data in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
-                        }
+                        $DB->update_record('enrol_authorize', $order);
                     }
                     break;
 

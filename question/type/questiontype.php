@@ -335,9 +335,7 @@ class default_questiontype {
         /// Question already exists, update.
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
-            if (!$DB->update_record('question', $question)) {
-                print_error('cannotupdatequestion', 'question');
-            }
+            $DB->update_record('question', $question);
 
         } else {
         /// New question.
@@ -347,9 +345,7 @@ class default_questiontype {
             $question->modifiedby = $USER->id;
             $question->timecreated = time();
             $question->timemodified = time();
-            if (!$question->id = $DB->insert_record('question', $question)) {
-                print_error('cannotinsertquestion', 'question');
-            }
+            $question->id = $DB->insert_record('question', $question);
         }
 
         // Now to save all the answers and type-specific options
@@ -376,9 +372,7 @@ class default_questiontype {
         }
 
         // Give the question a unique version stamp determined by question_hash()
-        if (!$DB->set_field('question', 'version', question_hash($question), array('id' => $question->id))) {
-            print_error('cannotupdatequestionver', 'question');
-        }
+        $DB->set_field('question', 'version', question_hash($question), array('id' => $question->id));
 
         return $question;
     }
@@ -1591,9 +1585,7 @@ class default_questiontype {
 
     /// If anything has changed, update it in the database.
         if ($updateqrec){
-            if (!$DB->update_record('question', $question)){
-                print_error('cannotupdatequestion', 'question');
-            }
+            $DB->update_record('question', $question);
         }
 
 
@@ -1610,9 +1602,7 @@ class default_questiontype {
                 $answer->feedback = question_replace_file_links_in_html($answer->feedback, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
             /// If anything has changed, update it in the database.
                 if ($answerchanged){
-                    if (!$DB->update_record('question_answers', $answer)){
-                        print_error('cannotupdatequestion', 'question');
-                    }
+                    $DB->update_record('question_answers', $answer);
                 }
             }
         }

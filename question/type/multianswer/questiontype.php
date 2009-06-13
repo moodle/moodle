@@ -153,16 +153,9 @@ class embedded_cloze_qtype extends default_questiontype {
             $multianswer->sequence = implode(',', $sequence);
             if ($oldid = $DB->get_field('question_multianswer', 'id', array('question' => $question->id))) {
                 $multianswer->id = $oldid;
-                if (!$DB->update_record("question_multianswer", $multianswer)) {
-                    $result->error = "Could not update cloze question options! " .
-                            "(id=$multianswer->id)";
-                    return $result;
-                }
+                $DB->update_record("question_multianswer", $multianswer);
             } else {
-                if (!$DB->insert_record("question_multianswer", $multianswer)) {
-                    $result->error = "Could not insert cloze question options!";
-                    return $result;
-                }
+                $DB->insert_record("question_multianswer", $multianswer);
             }
         }
     }

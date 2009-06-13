@@ -54,15 +54,9 @@ class question_randomsamatch_qtype extends question_match_qtype {
 
         if ($existing = $DB->get_record("question_randomsamatch", array("question" => $options->question))) {
             $options->id = $existing->id;
-            if (!$DB->update_record("question_randomsamatch", $options)) {
-                $result->error = "Could not update quiz randomsamatch options!";
-                return $result;
-            }
+            $DB->update_record("question_randomsamatch", $options);
         } else {
-            if (!$DB->insert_record("question_randomsamatch", $options)) {
-                $result->error = "Could not insert quiz randomsamatch options!";
-                return $result;
-            }
+            $DB->insert_record("question_randomsamatch", $options);
         }
         return true;
     }

@@ -262,28 +262,20 @@ class question_calculated_qtype extends default_questiontype {
                }
             }
             if (  $todo=='create'){
-                if (!$datasetdef->id = $DB->insert_record( 'question_dataset_definitions', $datasetdef)) {
-                    print_error('cannotcreatedataset', 'question', '', $defid);
-                }
+                $datasetdef->id = $DB->insert_record( 'question_dataset_definitions', $datasetdef);
            }
            // Create relation to the dataset:
            $questiondataset = new stdClass;
            $questiondataset->question = $question->id;
            $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!$DB->insert_record('question_datasets', $questiondataset)) {
-                print_error("cannotcreaterelation", 'question', '',
-                        array($dataset->name, $todo));
-            }
+            $DB->insert_record('question_datasets', $questiondataset);
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
                     $datasetitem = new stdClass;
                     $datasetitem->definition=$datasetdef->id ;
                     $datasetitem->itemnumber = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
-                    if (!$DB->insert_record('question_dataset_items', $datasetitem)) {
-                        print_error('cannotinsertitem', 'question', '',
-                                array($item->itemnumber, $item->value, $datasetdef->name));
-                    }
+                    $DB->insert_record('question_dataset_items', $datasetitem);
                 }
             }
         }
@@ -959,13 +951,9 @@ class question_calculated_qtype extends default_questiontype {
             if ($fromform->itemid[$i]) {
                 // Reuse any previously used record
                 $addeditem->id = $fromform->itemid[$i];
-                if (!$DB->update_record('question_dataset_items', $addeditem)) {
-                    print_error('cannotupdateitem', 'question');
-                }
+                $DB->update_record('question_dataset_items', $addeditem);
             } else {
-                if (!$DB->insert_record('question_dataset_items', $addeditem)) {
-                    print_error('cannotinsert', 'question');
-                }
+                $DB->insert_record('question_dataset_items', $addeditem);
             }
 
             $i++;
@@ -1004,9 +992,7 @@ class question_calculated_qtype extends default_questiontype {
 		                        $datasetitem->definition = $datasetdef->id ;
 		                        $datasetitem->itemnumber = $numberadded;
 		                    		$datasetitem->value = $this->generate_dataset_item($datasetdef->options);
-						                if (!$DB->update_record('question_dataset_items', $datasetitem)) {
-						                    print_error('cannotupdateitem', 'question');
-						                }
+						                $DB->update_record('question_dataset_items', $datasetitem);
 					              }
 				              //if not regenerate do nothing as there is already a record
                     } else {
@@ -1018,9 +1004,7 @@ class question_calculated_qtype extends default_questiontype {
                         } else {
                             $datasetitem->value = '';
                         }
-                        if (!$DB->insert_record('question_dataset_items', $datasetitem)) {
-                            print_error('cannotinsert', 'question');
-                        }
+                        $DB->insert_record('question_dataset_items', $datasetitem);
                     }
                 }//for number added
             }// datasetsdefs end
@@ -1041,10 +1025,7 @@ class question_calculated_qtype extends default_questiontype {
             foreach ($datasetdefs as $datasetdef) {
                 if ($datasetdef->itemcount == $maxnumber) {
                     $datasetdef->itemcount= $newmaxnumber ;
-                    if (!$DB->update_record('question_dataset_definitions',
-                                       $datasetdef)) {
-                         print_error('cannotupdatecount', 'question');
-                    }
+                    $DB->update_record('question_dataset_definitions', $datasetdef);
                 }
             }
        }
@@ -1311,9 +1292,7 @@ class question_calculated_qtype extends default_questiontype {
                 continue;
             }
 
-            if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
-                print_error("cannotcreatedataset", 'question', '', $defid);
-            }
+            $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
 
             if (0 != $datasetdef->category) {
                 // We need to look for already existing
@@ -1339,9 +1318,7 @@ class question_calculated_qtype extends default_questiontype {
             $questiondataset = new stdClass;
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!$DB->insert_record('question_datasets', $questiondataset)) {
-                print_error('cannotcreaterelation', 'question', '', $name);
-            }
+            $DB->insert_record('question_datasets', $questiondataset);
             unset($datasetdefinitions[$defid]);
         }
 
@@ -1384,19 +1361,15 @@ class question_calculated_qtype extends default_questiontype {
                    $olddatasetid = $datasetdef->id ;
                    $olditemcount = $datasetdef->itemcount ;
                    $datasetdef->itemcount =0;
-                   if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
-                        print_error('cannotcreatedataset', 'question', '', $defid);
-                   }
+                   $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
                    //copy the dataitems
                    $olditems = $this->get_database_dataset_items($olddatasetid);
                    if (count($olditems) > 0 ) {
                         $itemcount = 0;
                         foreach($olditems as $item ){
                             $item->definition = $datasetdef->id;
-                        if (!$DB->insert_record('question_dataset_items', $item)) {
-                            print_error('cannotinsertitem', 'question', '', array($item->itemnumber, $item->value, $datasetdef->name));
-                        }
-                        $itemcount++;
+                            $DB->insert_record('question_dataset_items', $item);
+                            $itemcount++;
                         }
                         //update item count
                         $datasetdef->itemcount =$itemcount;
@@ -1408,16 +1381,12 @@ class question_calculated_qtype extends default_questiontype {
                 $questiondataset = new stdClass;
                 $questiondataset->question = $form->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;
-                if (!$DB->insert_record('question_datasets', $questiondataset)) {
-                    print_error('cannotcreaterelation', 'question', '', $name);
-                }
+                $DB->insert_record('question_datasets', $questiondataset);
                 unset($datasetdefinitions[$defid]);
                 continue;
             }// end of datasetdefs from the initial question
             // really new one code similar to save_dataset_definitions()
-            if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
-                print_error('cannotcreatedataset', 'question', '', $defid);
-            }
+            $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
 
             if (0 != $datasetdef->category) {
                 // We need to look for already existing
@@ -1444,9 +1413,7 @@ class question_calculated_qtype extends default_questiontype {
             $questiondataset = new stdClass;
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!$DB->insert_record('question_datasets', $questiondataset)) {
-                print_error('cannotcreaterelation', 'question', '', $name);
-            }
+            $DB->insert_record('question_datasets', $questiondataset);
             unset($datasetdefinitions[$defid]);
         }
 

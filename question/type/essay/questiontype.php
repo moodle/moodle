@@ -33,15 +33,9 @@ class question_essay_qtype extends default_questiontype {
         $answer->feedback = $question->feedback;
         $answer->fraction = $question->fraction;
         if ($update) {
-            if (!$DB->update_record("question_answers", $answer)) {
-                $result = new stdClass;
-                $result->error = "Could not update quiz answer!";
-            }
+            $DB->update_record("question_answers", $answer);
         } else {
-            if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
-                $result = new stdClass;
-                $result->error = "Could not insert quiz answer!";
-            }
+            $answer->id = $DB->insert_record("question_answers", $answer);
         }
         return $result;
     }

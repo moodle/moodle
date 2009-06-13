@@ -2051,9 +2051,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
             return array(false,$lock);
         } else {
             // Not locked any more. Get rid of the old lock record.
-            if(!$DB->delete_records('wiki_locks', array('pagename'=>$pagename,'wikiid'=>$wikiid))) {
-                print_error('cannotdeletelockrecored', 'wiki');
-            }
+            $DB->delete_records('wiki_locks', array('pagename'=>$pagename,'wikiid'=>$wikiid));
         }
     }
 
@@ -2066,9 +2064,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
         $newlock->lockedseen=$newlock->lockedsince;
         $newlock->wikiid=$wikiid;
         $newlock->pagename=$pagename;
-        if(!$lockid=$DB->insert_record('wiki_locks',$newlock)) {
-            print_error('cannotinsertlockrecored', 'wiki');
-        }
+        $lockid = $DB->insert_record('wiki_locks',$newlock);
     }
 
     // Store lock information in session so we can clear it later
@@ -2105,9 +2101,7 @@ function wiki_release_lock($wikiid,$pagename) {
     if(array_key_exists($key,$_SESSION[SESSION_WIKI_LOCKS])) {
         $lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
         unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
-        if (!$DB->delete_records('wiki_locks', array('id'=>$lockid))) {
-            print_error('cannotdeletelockrecored', 'wiki');
-        }
+        $DB->delete_records('wiki_locks', array('id'=>$lockid));
     }
 }
 

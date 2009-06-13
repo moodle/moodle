@@ -29,20 +29,14 @@ class question_truefalse_qtype extends default_questiontype {
             $true->answer   = get_string("true", "quiz");
             $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
-            if (!$DB->update_record("question_answers", $true)) {
-                $result->error = "Could not update quiz answer \"true\")!";
-                return $result;
-            }
+            $DB->update_record("question_answers", $true);
         } else {
             unset($true);
             $true->answer   = get_string("true", "quiz");
             $true->question = $question->id;
             $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
-            if (!$true->id = $DB->insert_record("question_answers", $true)) {
-                $result->error = "Could not insert quiz answer \"true\")!";
-                return $result;
-            }
+            $true->id = $DB->insert_record("question_answers", $true);
         }
 
         // Save answer 'False'
@@ -50,20 +44,14 @@ class question_truefalse_qtype extends default_questiontype {
             $false->answer   = get_string("false", "quiz");
             $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
-            if (!$DB->update_record("question_answers", $false)) {
-                $result->error = "Could not insert quiz answer \"false\")!";
-                return $result;
-            }
+            $DB->update_record("question_answers", $false);
         } else {
             unset($false);
             $false->answer   = get_string("false", "quiz");
             $false->question = $question->id;
             $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
-            if (!$false->id = $DB->insert_record("question_answers", $false)) {
-                $result->error = "Could not insert quiz answer \"false\")!";
-                return $result;
-            }
+            $false->id = $DB->insert_record("question_answers", $false);
         }
 
         // delete any leftover old answer records (there couldn't really be any, but who knows)
@@ -79,19 +67,13 @@ class question_truefalse_qtype extends default_questiontype {
             // But we'll do it anyway, just for robustness
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!$DB->update_record("question_truefalse", $options)) {
-                $result->error = "Could not update quiz truefalse options! (id=$options->id)";
-                return $result;
-            }
+            $DB->update_record("question_truefalse", $options);
         } else {
             unset($options);
             $options->question    = $question->id;
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!$DB->insert_record("question_truefalse", $options)) {
-                $result->error = "Could not insert quiz truefalse options!";
-                return $result;
-            }
+            $DB->insert_record("question_truefalse", $options);
         }
         return true;
     }

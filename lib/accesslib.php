@@ -3036,9 +3036,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $ra->timemodified = $timemodified;
         $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
-        if (!$DB->update_record('role_assignments', $ra)) {
-            return false;
-        }
+        $DB->update_record('role_assignments', $ra);
     }
 
 /// mark context as dirty - modules might use has_capability() in xxx_role_assing()

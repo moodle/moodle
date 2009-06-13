@@ -179,13 +179,9 @@
         list($usql, $params) = $DB->get_in_or_equal(explode(',', $cattomove->categorylist));
         $params = array_merge(array($contextto->id), $params);
 
-        if (!$DB->execute("UPDATE {question_categories} SET contextid = ? WHERE id $usql", $params)){
-            print_error('cannotmovefromto', 'question', $onerrorurl, array($newname, $contexttostring));
-        }
+        $DB->execute("UPDATE {question_categories} SET contextid = ? WHERE id $usql", $params);
         //finally set the new parent id
-        if (!$DB->update_record("question_categories", $cat)) {
-            print_error('cannotupdatecate', 'question', $onerrorurl, $updatename);
-        }
+        $DB->update_record("question_categories", $cat);
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');
         redirect($CFG->wwwroot."/question/category.php?".$thispageurl->get_query_string(array('cat'=>"{$cattomove->id},{$contextto->id}")));
     }

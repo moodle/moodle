@@ -58,20 +58,14 @@ class question_shortanswer_qtype extends default_questiontype {
                 $answer->answer   = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = $question->feedback[$key];
-                if (!$DB->update_record("question_answers", $answer)) {
-                    $result->error = "Could not update quiz answer! (id=$answer->id)";
-                    return $result;
-                }
+                $DB->update_record("question_answers", $answer);
             } else {    // This is a completely new answer
                 $answer = new stdClass;
                 $answer->answer   = trim($dataanswer);
                 $answer->question = $question->id;
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = $question->feedback[$key];
-                if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
-                    $result->error = "Could not insert quiz answer!";
-                    return $result;
-                }
+                $answer->id = $DB->insert_record("question_answers", $answer);
             }
             $answers[] = $answer->id;
             if ($question->fraction[$key] > $maxfraction) {

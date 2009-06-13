@@ -1355,9 +1355,7 @@ function save_question_session($question, $state) {
             $session->manualcomment = $session->manualcomment;
         }
         $session->flagged = !empty($state->newflaggedstate);
-        if (!$DB->update_record('question_sessions', $session)) {
-            return false;
-        }
+        $DB->update_record('question_sessions', $session);
     }
 
     unset($state->answer);
@@ -1975,9 +1973,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     if ($grade !== '' && (abs($state->last_graded->grade - $grade) > 0.002 || $state->last_graded->event != QUESTION_EVENTMANUALGRADE)) {
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
-        if (!$DB->update_record('quiz_attempts', $attempt)) {
-            return get_string('errorupdatingattempt', 'question', $attempt);
-        }
+        $DB->update_record('quiz_attempts', $attempt);
 
         // We want to update existing state (rather than creating new one) if it
         // was itself created by a manual grading event.

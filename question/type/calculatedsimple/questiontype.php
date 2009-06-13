@@ -142,16 +142,12 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 unset($datasetdefinitions[$defid]);
                 continue;
             }
-            if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
-                print_error("cannotcreatedataset", 'question', '', $defid);
-            }
+            $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
             $datasetdefs[]= clone($datasetdef);
             $questiondataset = new stdClass;
             $questiondataset->question = $question->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!$DB->insert_record('question_datasets', $questiondataset)) {
-                print_error('cannotcreaterelation', 'question', '', $name);
-            }
+            $DB->insert_record('question_datasets', $questiondataset);
             unset($datasetdefinitions[$defid]);
         }
         // Remove local obsolete datasets as well as relations
@@ -177,13 +173,9 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             if (empty($question->makecopy) && $question->itemid[$i]) {
                 // Reuse any previously used record
                 $addeditem->id = $question->itemid[$i];
-                if (!$DB->update_record('question_dataset_items', $addeditem)) {
-                    print_error('cannotupdateitem', 'question');
-                }
+                $DB->update_record('question_dataset_items', $addeditem);
             } else {
-                if (!$DB->insert_record('question_dataset_items', $addeditem)) {
-                    print_error('cannotinsert', 'question');
-                }
+                $DB->insert_record('question_dataset_items', $addeditem);
             }
             $i++;
         }
@@ -200,11 +192,9 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
          }   
         // Report any problems.
         //convert to calculated
-        if(!empty($question->makecopy) && !empty($question->convert) ){
-        	        if (!$DB->set_field('question', 'qtype', 'calculated', array('id'=> $question->id))) {
-        	        	print_error('cannotupdateitem', 'question');
-        	        }
-    }
+        if(!empty($question->makecopy) && !empty($question->convert)) {
+            $DB->set_field('question', 'qtype', 'calculated', array('id'=> $question->id));
+        }
         if (!empty($result->notice)) {
             return $result;
         }

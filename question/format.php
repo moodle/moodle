@@ -313,9 +313,7 @@ class qformat_default {
             $question->createdby = $USER->id;
             $question->timecreated = time();
 
-            if (!$question->id = $DB->insert_record("question", $question)) {
-                print_error('cannotinsert','quiz');
-            }
+            $question->id = $DB->insert_record("question", $question);
 
             $this->questionids[] = $question->id;
 

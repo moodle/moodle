@@ -139,10 +139,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                         $newcourse = new object;
                         $newcourse->id = $course->id;
                         $newcourse->marker = $value;
-                        if (!$DB->update_record('course', $newcourse)) {
-                            error_log('AJAX commands.php: Failed to update course marker for course '.$newcourse->id);
-                            die;
-                        }
+                        $DB->update_record('course', $newcourse);
                         break;
                 }
                 break;
