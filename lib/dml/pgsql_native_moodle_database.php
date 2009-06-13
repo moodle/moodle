@@ -83,7 +83,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_name() {
-        return get_string('nativepgsql', 'install'); // TODO: localise
+        return get_string('nativepgsql', 'install');
     }
 
     /**
@@ -101,7 +101,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return string
      */
     public function get_configuration_hints() {
-        return get_string('databasesettingssub_postgres7', 'install'); // TODO: improve
+        return get_string('databasesettingssub_postgres7', 'install');
     }
 
     /**
@@ -360,7 +360,6 @@ class pgsql_native_moodle_database extends moodle_database {
             $matches = null;
 
             if ($rawcolumn->type === 'varchar') {
-                //TODO add some basic enum support here
                 $info->type          = 'varchar';
                 $info->meta_type     = 'C';
                 $info->max_length    = $rawcolumn->atttypmod - 4;
@@ -1089,7 +1088,7 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     public function get_session_lock($rowid) {
-        // TODO: there is a potential locking problem for database running
+        // NOTE: there is a potential locking problem for database running
         //       multiple instances of moodle, we could try to use pg_advisory_lock(int, int),
         //       luckily there is not a big chance that they would collide
         if (!$this->session_lock_supported()) {

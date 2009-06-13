@@ -44,7 +44,6 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool success
      * @throws dml_exception if error
      */
-    /// TODO: Decide if this method should go to DDL instead of being here
     public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
         $driverstatus = $this->driver_installed();
 
