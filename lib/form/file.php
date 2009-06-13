@@ -14,6 +14,9 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_file($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::HTML_QuickForm_file($elementName, $elementLabel, $attributes);
+    }
     /**
      * set html for help button
      *

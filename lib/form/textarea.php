@@ -20,6 +20,10 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
      * @var string
      */
     var $_helpbutton='';
+    function MoodleQuickForm_textarea($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::HTML_QuickForm_textarea($elementName, $elementLabel, $attributes);
+    }
+
     /**
      * set html for help button
      *

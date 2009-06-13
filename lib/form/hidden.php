@@ -14,6 +14,11 @@ class MoodleQuickForm_hidden extends HTML_QuickForm_hidden{
      * @var string
      */
     var $_helpbutton='';
+
+    function MoodleQuickForm_hidden($elementName=null, $value='', $attributes=null) {
+        parent::HTML_QuickForm_hidden($elementName, $value, $attributes);
+    }
+
     /**
      * set html for help button
      *

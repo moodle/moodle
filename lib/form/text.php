@@ -15,6 +15,11 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
      */
     var $_helpbutton='';
     var $_hiddenLabel=false;
+
+    function MoodleQuickForm_text($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
+    }
+
     function setHiddenLabel($hiddenLabel){
         $this->_hiddenLabel = $hiddenLabel;
     }

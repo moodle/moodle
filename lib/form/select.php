@@ -15,6 +15,10 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
      */
     var $_helpbutton='';
     var $_hiddenLabel=false;
+
+    function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
+    }
     function setHiddenLabel($hiddenLabel){
         $this->_hiddenLabel = $hiddenLabel;
     }
