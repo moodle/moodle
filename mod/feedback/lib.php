@@ -728,14 +728,13 @@ function feedback_get_complete_users($cm, $group = false) {
     $wheregroup = '';
     if($group) {
         $fromgroup = ', {groups_members} g';
-        $wheregroup = ' AND g.id = ? AND g.userid = c.userid';
+        $wheregroup = ' AND g.groupid = ? AND g.userid = c.userid';
         $params[] = $group;
     }
     $sql = 'SELECT u.* FROM {user} u, {feedback_completed} c'.$fromgroup.'
               WHERE u.id = c.userid AND c.feedback = ?
               '.$wheregroup.'
               ORDER BY u.lastname';
-    
     return $DB->get_records_sql($sql, $params);
 }
 

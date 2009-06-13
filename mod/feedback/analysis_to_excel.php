@@ -66,9 +66,7 @@
 
     $filename = "feedback.xls";
     
-    //get the groupid for this module
-    //get the groupid
-    $mygroupid = $SESSION->feedback->lstgroupid;
+    $mygroupid = groups_get_activity_group($cm);
 
     // Creating a workbook
     $workbook = new EasyWorkbook("-");

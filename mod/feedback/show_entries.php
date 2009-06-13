@@ -16,19 +16,10 @@
     ////////////////////////////////////////////////////////
     $id = required_param('id', PARAM_INT);
     $userid = optional_param('userid', false, PARAM_INT);
-    $lstgroupid = optional_param('lstgroupid', -2, PARAM_INT); //groupid (choosen from dropdownlist)
     $do_show = required_param('do_show', PARAM_ALPHA);
     // $SESSION->feedback->current_tab = $do_show;
     $current_tab = $do_show;
 
-    //check, whether a group is selected
-    if($lstgroupid == -1) {
-        $SESSION->feedback->lstgroupid = false;
-    }else {
-        if((!isset($SESSION->feedback->lstgroupid)) || $lstgroupid != -2)
-            $SESSION->feedback->lstgroupid = $lstgroupid;
-    }
-    
     ////////////////////////////////////////////////////////
     //get the objects
     ////////////////////////////////////////////////////////
@@ -51,15 +42,6 @@
         }
     }
     
-    if(isset($SESSION->feedback->lstgroupid)) {
-        if($tmpgroup = groups_get_group($SESSION->feedback->lstgroupid)) {
-            if($tmpgroup->courseid != $course->id) {
-                $SESSION->feedback->lstgroupid = false;
-            }
-        }else {
-            $SESSION->feedback->lstgroupid = false;
-        }
-    }
     $capabilities = feedback_load_capabilities($cm->id);
 
     require_login($course->id, true, $cm);
@@ -111,21 +93,13 @@
             //get the effective groupmode of this course and module
             $groupmode = groupmode($course, $cm);
             
+            $groupselect = groups_print_activity_menu($cm, 'show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
+            $mygroupid = groups_get_activity_group($cm);
+            
             //get students in conjunction with groupmode
             if($groupmode > 0) {
-                if($SESSION->feedback->lstgroupid == -2) {
-                    if(has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-                        $mygroupid = false;
-                        $SESSION->feedback->lstgroupid = false;
-                    }else{
-                        if($mygroupid = mygroupid($course->id)) {
-                            $mygroupid = $mygroupid[0]; //get the first groupid
-                        }
-                    }
-                }else {
-                    $mygroupid = $SESSION->feedback->lstgroupid;
-                }
-                if($mygroupid) {
+
+                if($mygroupid > 0) {
                     $students = feedback_get_complete_users($cm, $mygroupid);
                 } else {
                     $students = feedback_get_complete_users($cm);
@@ -133,8 +107,6 @@
             }else {
                 $students = feedback_get_complete_users($cm);
             }
-
-            $mygroupid=isset($mygroupid)?$mygroupid:NULL;
 
             $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
             if($feedback->course == SITEID){
@@ -154,19 +126,8 @@
             //print the list of students
             // print_simple_box_start('center', '80%');
             print_box_start('generalbox boxaligncenter boxwidthwide');
-
-            //available group modes (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
-            $feedbackgroups = groups_get_all_groups($course->id);
-            //if(is_array($feedbackgroups) && $groupmode != SEPARATEGROUPS){
-            if(is_array($feedbackgroups) && $groupmode > 0){
-                require_once('choose_group_form.php');
-                //the use_template-form
-                $choose_group_form = new feedback_choose_group_form();
-                $choose_group_form->set_feedbackdata(array('groups'=>$feedbackgroups, 'mygroupid'=>$mygroupid));
-                $choose_group_form->set_form_elements();
-                $choose_group_form->set_data(array('id'=>$id, 'lstgroupid'=>$SESSION->feedback->lstgroupid, 'do_show'=>$do_show));
-                $choose_group_form->display();
-            }
+            echo isset($groupselect) ? $groupselect : '';
+            echo '<div class="clearer"></div>';
             echo '<div class="mdl-align"><table><tr><td width="400">';
             if (!$students) {
                 if($courseid != SITEID){
@@ -174,7 +135,7 @@
                 }
             } else{
                 echo print_string('non_anonymous_entries', 'feedback');
-                echo ' ('.$DB->count_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)).')<hr />';
+                echo ' ('.count($students).')<hr />';
 
                 foreach ($students as $student){
                     $completedCount = $DB->count_records('feedback_completed', array('userid'=>$student->id, 'feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));

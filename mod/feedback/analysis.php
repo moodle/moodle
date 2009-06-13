@@ -16,15 +16,6 @@
 
     $id = required_param('id', PARAM_INT);  //the POST dominated the GET
     $courseid = optional_param('courseid', false, PARAM_INT);
-    $lstgroupid = optional_param('lstgroupid', -2, PARAM_INT); //groupid (aus der Listbox gewaehlt)
-
-    //check, whether a group is selected
-    if($lstgroupid == -1) {
-        $SESSION->feedback->lstgroupid = false;
-    }else {
-        if((!isset($SESSION->feedback->lstgroupid)) || $lstgroupid != -2)
-            $SESSION->feedback->lstgroupid = $lstgroupid;
-    }
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -40,15 +31,6 @@
         }
     }
 
-    if(isset($SESSION->feedback->lstgroupid)) {
-        if($tmpgroup = groups_get_group($SESSION->feedback->lstgroupid)) {
-            if($tmpgroup->courseid != $course->id) {
-                $SESSION->feedback->lstgroupid = false;
-            }
-        }else {
-            $SESSION->feedback->lstgroupid = false;
-        }
-    }
     $capabilities = feedback_load_capabilities($cm->id);
 
     if($course->id == SITEID) {
@@ -94,24 +76,13 @@
     print_box_start('generalbox boxaligncenter boxwidthwide');
 
     //get the groupid
-    //lstgroupid is the choosen id
-    $mygroupid = $SESSION->feedback->lstgroupid;
+    $groupselect = groups_print_activity_menu($cm, 'analysis.php?id=' . $cm->id.'&do_show=analysis', true);
+    $mygroupid = groups_get_activity_group($cm);
 
     if( $capabilities->viewreports ) {
 
-        //available group modes (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
-        $feedbackgroups = groups_get_all_groups($course->id);
-        //get the effective groupmode of this course and module
-        $groupmode = groupmode($course, $cm);
-        if(is_array($feedbackgroups) && $groupmode > 0){
-            require_once('choose_group_form.php');
-            //the use_template-form
-            $choose_group_form = new feedback_choose_group_form();
-            $choose_group_form->set_feedbackdata(array('groups'=>$feedbackgroups, 'mygroupid'=>$mygroupid));
-            $choose_group_form->set_form_elements();
-            $choose_group_form->set_data(array('id'=>$id, 'lstgroupid'=>$SESSION->feedback->lstgroupid));
-            $choose_group_form->display();
-        }
+        echo isset($groupselect) ? $groupselect : '';
+        echo '<div class="clearer"></div>';
 
         //button "export to excel"
         //echo '<div class="mdl-align">';
