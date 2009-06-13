@@ -19,6 +19,8 @@
 /**
  * General adodb database driver.
  *
+ * TODO: delete before branching 2.0
+ *
  * @package    moodlecore
  * @subpackage DML
  * @copyright  2008 Petr Skoda (http://skodak.org)
