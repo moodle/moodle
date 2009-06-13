@@ -7036,8 +7036,9 @@ function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
  * @return string|bool Depending on $return
  */
 function print_backtrace($callers, $plaintext=false, $return=false) {
-    global $CFG;
-
+    // do not use $CFG->dirroot because it might not be available in desctructors
+    $dirroot = dirname(dirname(__FILE__));
+ 
     if (empty($callers)) {
         if ($return) {
             return '';
@@ -7052,10 +7053,10 @@ function print_backtrace($callers, $plaintext=false, $return=false) {
             $caller['line'] = '?'; // probably call_user_func()
         }
         if (!isset($caller['file'])) {
-            $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()
+            $caller['file'] = 'unknownfile'; // probably call_user_func()
         }
         $from .= $plaintext ? '* ' : '<li>';
-        $from .= 'line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
+        $from .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
         if (isset($caller['function'])) {
             $from .= ': call to ';
             if (isset($caller['class'])) {
