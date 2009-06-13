@@ -372,13 +372,21 @@ abstract class moodle_database {
         if (!$this->get_debug()) {
             return;
         }
-        //TODO: detect CLI mode and skip s() ;-)
-        echo "<hr />\n";
-        echo s($sql)."\n";
-        if (!is_null($params)) {
-            echo "[".s(var_export($params, true))."]\n";
+        if (CLI_SCRIPT) {
+            echo "--------------------------------\n";
+            echo $sql."\n";
+            if (!is_null($params)) {
+                echo "[".var_export($params, true)."]\n";
+            }
+            echo "--------------------------------\n";
+        } else {
+            echo "<hr />\n";
+            echo s($sql)."\n";
+            if (!is_null($params)) {
+                echo "[".s(var_export($params, true))."]\n";
+            }
+            echo "<hr />\n";
         }
-        echo "<hr />\n";
     }
 
     /**
@@ -735,7 +743,7 @@ abstract class moodle_database {
      * @param bool $state
      */
     public function set_logging($state) {
-        // TODO: adodb sql logging shares one table without prefix per db - this is no longer acceptable :-(
+        // adodb sql logging shares one table without prefix per db - this is no longer acceptable :-(
         // we must create one table shared by all drivers
     }
 
