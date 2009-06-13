@@ -173,9 +173,7 @@ class assignment_online extends assignment_base {
         $update->data2        = $data->format;
         $update->timemodified = time();
 
-        if (!$DB->update_record('assignment_submissions', $update)) {
-            return false;
-        }
+        $DB->update_record('assignment_submissions', $update);
 
         $submission = $this->get_submission($USER->id);
         $this->update_grade($submission);

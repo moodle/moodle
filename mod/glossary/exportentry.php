@@ -89,9 +89,7 @@
         $entry->glossaryid       = $mainglossary->id;
         $entry->sourceglossaryid = $glossary->id;
 
-        if (!$DB->update_record('glossary_entries', $entry)) {
-            print_error('cantexportentry', 'glossary');
-        }
+        $DB->update_record('glossary_entries', $entry);
 
         // move attachments too
         $fs = get_file_storage();

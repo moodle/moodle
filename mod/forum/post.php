@@ -576,9 +576,7 @@
             if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
                 $forum->intro = $updatepost->message;
                 $forum->timemodified = time();
-                if (!$DB->update_record("forum", $forum)) {
-                    print_error("couldnotupdate", "forum", $errordestination);
-                }
+                $DB->update_record("forum", $forum);
             }
 
             $timemessage = 2;

@@ -498,9 +498,7 @@ class assignment_base {
         $assignment->id = $assignment->instance;
         $assignment->courseid = $assignment->course;
 
-        if (!$DB->update_record('assignment', $assignment)) {
-            return false;
-        }
+        $DB->update_record('assignment', $assignment);
 
         if ($assignment->timedue) {
             $event = new object();
@@ -658,14 +656,10 @@ class assignment_base {
                             if (!isset($submission->submissioncomment)) {
                                 $submission->submissioncomment = '';
                             }
-                            if (!$sid = $DB->insert_record('assignment_submissions', $submission)) {
-                                return false;
-                            }
+                            $sid = $DB->insert_record('assignment_submissions', $submission);
                             $submission->id = $sid;
                         } else {
-                            if (!$DB->update_record('assignment_submissions', $submission)) {
-                                return false;
-                            }
+                            $DB->update_record('assignment_submissions', $submission);
                         }
 
                         // triger grade event

@@ -172,9 +172,6 @@ if ($act == 'updfeed') {
     }
 
     $rssid = $DB->insert_record('block_rss_client', $dataobject);
-    if (!$rssid) {
-        print_error('updatersserror', 'error', '', $url);
-    }
 
     // By capturing the output from fetch_rss this way
     // error messages do not display and clutter up the moodle interface

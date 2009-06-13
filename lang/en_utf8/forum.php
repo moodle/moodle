@@ -38,7 +38,6 @@ $string['cannotadddiscussionall'] = 'You do not have permission to add a new dis
 $string['cannotaddsubscriber'] = 'Could not add subscriber with id $a to this forum!';
 $string['cannotcreateinstanceforteacher'] = 'Could not create new course module instance for the teacher forum';
 $string['cannotcreatediscussion'] = 'Could not create new discussion';
-$string['cannotconvertteachertogeneral'] = 'Could not change forum from type teacher to type general';
 $string['cannotdeleteforummodule'] = 'You can not delete the forum module.';
 $string['cannotdeletepost'] = 'You can\'t delete this post!';
 $string['cannoteditposts'] = 'You can\'t edit other people\'s posts!';

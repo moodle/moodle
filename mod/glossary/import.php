@@ -271,24 +271,15 @@
                                 $category = new object();
                                 $category->name = $newcat->name;
                                 $category->glossaryid = $glossary->id;
-                                if ( !$category->id = $DB->insert_record("glossary_categories",$category)) {
-                                    // add to exception report (can't insert category)
-                                    $rejections .= "<tr><td>&nbsp;<strong>" . get_string("category","glossary") . ":</strong>$newcat->name</td>" .
-                                                   "<td>" . get_string("cantinsertcat","glossary"). "</td></tr>";
-                                } else {
-                                    $importedcats++;
-                                }
+                                $category->id = $DB->insert_record("glossary_categories",$category);
+                                $importedcats++;
                             }
                             if ( $category ) {
                                 // inserting the new relation
                                 $entrycat = new opbject();
                                 $entrycat->entryid    = $newentry->id;
                                 $entrycat->categoryid = $category->id;
-                                if ( !$DB->insert_record("glossary_entries_categories",$entrycat) ) {
-                                    // add to exception report (can't insert relation)
-                                    $rejections .= "<tr><td>&nbsp;<strong>" . get_string("category","glossary") . ":</strong>$newcat->name</td>" .
-                                                   "<td>" . get_string("cantinsertrel","glossary"). "</td></tr>";
-                                }
+                                $DB->insert_record("glossary_entries_categories",$entrycat);
                             }
                         }
                     }

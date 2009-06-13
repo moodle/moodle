@@ -201,10 +201,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function update_field() {
         global $DB;
 
-        if (!$DB->update_record('data_fields', $this->field)) {
-            notify('updating of new field failed!');
-            return false;
-        }
+        $DB->update_record('data_fields', $this->field);
         return true;
     }
 
@@ -550,11 +547,8 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $newdata = new object();
             $newdata->id = $data->id;
             $newdata->{$template} = $str;
-            if (!$DB->update_record('data', $newdata)) {
-                notify('Error updating template');
-            } else {
-                $data->{$template} = $str;
-            }
+            $DB->update_record('data', $newdata);
+            $data->{$template} = $str;
         }
 
         return $str;

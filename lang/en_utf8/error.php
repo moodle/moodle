@@ -464,7 +464,6 @@ $string['usernotupdatedadmin'] = 'Cannot update admin accounts';
 $string['usernotupdatederror'] = 'User not updated - error';
 $string['usernotupdatednotexists'] = 'User not updated - does not exist';
 $string['userselectortoomany'] = 'user_selector got more than one selected user, even though multiselect is false.';
-$string['updatersserror'] = 'There was an error trying to update RSS feed with id: $a';
 $string['upgraderunning'] = 'Site is being upgraded, please retry later.';
 $string['younotteacher'] = 'You are not a teacher!';
 $string['wrongcall'] = 'This script is called wrongly';

@@ -168,9 +168,7 @@
                             $rec->id = $data->id;
                             $rec->defaultsort = 0;
                             $rec->defaultsortdir = 0;
-                            if (!$DB->update_record('data', $rec)) {
-                                print_error('updatingerror', 'data');
-                            }
+                            $DB->update_record('data', $rec);
                         }
 
                         add_to_log($course->id, 'data', 'fields delete',
@@ -203,11 +201,8 @@
                 $rec->defaultsort = $defaultsort;
                 $rec->defaultsortdir = $defaultsortdir;
 
-                if ($DB->update_record('data', $rec)) {
-                    redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('changessaved'), 2);
-                } else {
-                    print_error('updatingerror', 'data');
-                }
+                $DB->update_record('data', $rec);
+                redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('changessaved'), 2);
                 exit;
             }
             break;

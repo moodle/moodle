@@ -23,7 +23,6 @@ $string['attachment'] = 'Attachment';
 $string['author'] = 'author';
 $string['authorview'] = 'Browse by Author';
 $string['back'] = 'Back';
-$string['cantexportentry'] = 'Could not export the entry to the main glossary';
 $string['cantinsertcat'] = 'Can\'t insert category';
 $string['cantinsertrec'] = 'Can\'t insert record';
 $string['cantinsertrel'] = 'Can\'t insert relation category-entry';

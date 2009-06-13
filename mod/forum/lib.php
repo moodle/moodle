@@ -4519,9 +4519,7 @@ function forum_update_post($post, $mform, &$message) {
 
     $post->modified = time();
 
-    if (!$DB->update_record('forum_posts', $post)) {
-        return false;
-    }
+    $DB->update_record('forum_posts', $post);
 
     $discussion->timemodified = $post->modified; // last modified tracking
     $discussion->usermodified = $post->userid;   // last modified tracking
@@ -4534,9 +4532,7 @@ function forum_update_post($post, $mform, &$message) {
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
-    if (!$DB->update_record('forum_discussions', $discussion)) {
-        return false;
-    }
+    $DB->update_record('forum_discussions', $discussion);
 
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
@@ -7684,9 +7680,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
 
             // Change the forum type to general.
             $forum->type = 'general';
-            if (!$DB->update_record('forum', $forum)) {
-                print_error('cannotconvertteachertogeneral', 'forum');
-            }
+            $DB->update_record('forum', $forum);
 
             $context = get_context_instance(CONTEXT_MODULE, $cmid);
 

@@ -132,9 +132,7 @@ function feedback_update_instance($feedback) {
     }
 
     //save the feedback into the db
-    if (!$DB->update_record("feedback", $feedback)) {
-        return false;
-    }
+    $DB->update_record("feedback", $feedback);
 
     //create or update the new events
     feedback_set_events($feedback);

@@ -140,10 +140,7 @@ class data_field_picture extends data_field_base {
 
         // Get the old field data so that we can check whether the thumbnail dimensions have changed
         $oldfield = $DB->get_record('data_fields', array('id'=>$this->field->id));
-        if (!$DB->update_record('data_fields', $this->field)) {
-            notify('updating of new field failed!');
-            return false;
-        }
+        $DB->update_record('data_fields', $this->field);
 
         // Have the thumbnail dimensions changed?
         if ($oldfield && ($oldfield->param4 != $this->field->param4 || $oldfield->param5 != $this->field->param5)) {
