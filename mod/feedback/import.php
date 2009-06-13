@@ -248,10 +248,7 @@
             }
             $newitem->required = intval($item['@']['REQUIRED']);
             $newitem->position = $position;
-            if (!$DB->insert_record('feedback_item', $newitem)) {
-                $error->stat = false;
-                $error->msg[] = 'item ('.$newitem->name.') not imported';
-            }
+            $DB->insert_record('feedback_item', $newitem);
         }
         return $error;
     }

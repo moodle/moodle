@@ -1058,9 +1058,7 @@ function quiz_after_add_or_update($quiz) {
         $feedback->feedbacktext = $quiz->feedbacktext[$i];
         $feedback->mingrade = $quiz->feedbackboundaries[$i];
         $feedback->maxgrade = $quiz->feedbackboundaries[$i - 1];
-        if (!$DB->insert_record('quiz_feedback', $feedback, false)) {
-            return "Could not save quiz feedback.";
-        }
+        $DB->insert_record('quiz_feedback', $feedback, false);
     }
 
     // Update the events relating to this quiz.

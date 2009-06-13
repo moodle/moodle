@@ -1335,9 +1335,7 @@ function save_question_session($question, $state) {
         $session->sumpenalty = $state->sumpenalty;
         $session->manualcomment = $state->manualcomment;
         $session->flagged = !empty($state->newflaggedstate);
-        if (!$DB->insert_record('question_sessions', $session)) {
-            return false;
-        }
+        $DB->insert_record('question_sessions', $session);
     } else {
         $session->newest = $state->id;
         if (question_state_is_graded($state) or $state->event == QUESTION_EVENTOPEN) {

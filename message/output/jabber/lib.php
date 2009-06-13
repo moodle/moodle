@@ -42,8 +42,6 @@ function jabber_install(){
 
     $provider = new object();
     $provider->name  = 'jabber';
-    if (!$DB->insert_record('message_processors', $provider)) {
-        $return = false;
-    }
+    $DB->insert_record('message_processors', $provider);
     return $result;
 }

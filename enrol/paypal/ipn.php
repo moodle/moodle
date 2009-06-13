@@ -167,9 +167,7 @@
 
             // ALL CLEAR !
 
-            if (!$DB->insert_record("enrol_paypal", $data)) {       // Insert a transaction record
-                message_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
-            }
+            $DB->insert_record("enrol_paypal", $data);
 
             if (!enrol_into_course($course, $user, 'paypal')) {
                 message_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);

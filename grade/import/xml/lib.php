@@ -110,12 +110,7 @@ function import_xml_grades($text, $course, &$error) {
             }
 
             // insert this grade into a temp table
-            if (!$DB->insert_record('grade_import_values', $newgrade)) {
-                $status = false;
-                // could not insert into temp table
-                $error = get_string('importfailed', 'grades');
-                break;
-            }
+            $DB->insert_record('grade_import_values', $newgrade);
         }
 
     } else {

@@ -1265,13 +1265,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
 
                     // Add record
-                    if(!$DB->insert_record('course_modules_completion',$data)) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo "<p>Failed to insert completion data record.</p>";
-                        }
-                        $status=false;
-                        continue;
-                    }
+                    $DB->insert_record('course_modules_completion',$data);
                 }
             }
 
@@ -1306,13 +1300,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     // Grade id is not converted (convert later)
 
                     // Add record
-                    if(!$DB->insert_record('course_modules_availability',$data)) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo "<p>Failed to insert availability data record.</p>";
-                        }
-                        $status=false;
-                        continue;
-                    }
+                    $DB->insert_record('course_modules_availability',$data);
                 }
             }
         } else {
@@ -3565,9 +3553,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //The structure is equal to the db, so insert the groups_members
             if ($DB->record_exists("groups_members", array('groupid'=>$group_member->groupid, 'userid'=>$group_member->userid))) {
                 // user already member
-            } else if (!$DB->insert_record ("groups_members", $group_member)) {
-                $status = false;
-                continue;
+            } else {
+                $DB->insert_record ("groups_members", $group_member);
             }
 
             //Do some output
@@ -3689,9 +3676,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $gro_member->groupid    = $group->new_id;
                 $gro_member->groupingid = $grouping->new_id;
                 if (!$DB->get_record('groupings_groups', array('groupid'=>$gro_member->groupid, 'groupingid'=>$gro_member->groupingid))) {
-                    if (!$DB->insert_record('groupings_groups', $gro_member)) {
-                        $status = false;
-                    }
+                    $DB->insert_record('groupings_groups', $gro_member);
                 }
             }
         }

@@ -52,8 +52,8 @@
         $sql = "SELECT id, feedbackid
                   FROM {feedback_sitecourse_map}
                  WHERE feedbackid = ? AND courseid = ?";
-        if (!$DB->get_records_sql($sql, array($map->feedbackid, $map->courseid)) && !$DB->insert_record('feedback_sitecourse_map', $map)) {
-            print_error('cannotmapfeedback', 'feedback');
+        if (!$DB->get_records_sql($sql, array($map->feedbackid, $map->courseid))) {
+            $DB->insert_record('feedback_sitecourse_map', $map);
         }
     }
     

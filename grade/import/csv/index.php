@@ -447,13 +447,7 @@ if ($formdata = $mform->get_data()) {
                     $newgrade->importcode = $importcode;
                     $newgrade->userid     = $studentid;
                     $newgrade->importer   = $USER->id;
-                    if (!$DB->insert_record('grade_import_values', $newgrade)) {
-                        // could not insert into temporary table
-                        $status = false;
-                        import_cleanup($importcode);
-                        notify(get_string('importfailed', 'grades'));
-                        break 2;
-                    }
+                    $DB->insert_record('grade_import_values', $newgrade);
                 }
             }
 

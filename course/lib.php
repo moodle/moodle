@@ -1155,9 +1155,7 @@ function course_set_display($courseid, $display=0) {
         $record->userid = $USER->id;
         $record->course = $courseid;
         $record->display = $display;
-        if (!$DB->insert_record("course_display", $record)) {
-            notify("Could not save your course display!");
-        }
+        $DB->insert_record("course_display", $record);
     }
 
     return $USER->display[$courseid] = $display;  // Note: = not ==

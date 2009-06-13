@@ -508,9 +508,7 @@
             $branch->flag = $branchflag;
             $branch->timeseen = time();
         
-            if (!$DB->insert_record("lesson_branch", $branch)) {
-                print_error("Error: could not insert row into lesson_branch table");
-            }
+            $DB->insert_record("lesson_branch", $branch);
 
             //  this is called when jumping to random from a branch table
             if($newpageid == LESSON_UNSEENBRANCHPAGE) {

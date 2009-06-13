@@ -42,9 +42,7 @@ function popup_install(){
 
     $provider = new object();
     $provider->name  = 'popup';
-    if (!$DB->insert_record('message_processors', $provider)) {
-        $return = false;
-    }
+    $DB->insert_record('message_processors', $provider);
     return $result;
 }
 

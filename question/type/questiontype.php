@@ -1688,11 +1688,7 @@ class default_questiontype {
             foreach ($extraquestionfields as $field) {
                 $record->$field = backup_todb($recordinfo['#'][strtoupper($field)]['0']['#']);
             }
-            if (!$DB->insert_record($questionextensiontable, $record)) {
-                echo "Can't insert record in $questionextensiontable when restoring " .
-                                $this->name() . ' question id ' . $question;
-                $status = false;
-            }
+            $DB->insert_record($questionextensiontable, $record);
         }
         //TODO restore extra data in answers
         return $status;

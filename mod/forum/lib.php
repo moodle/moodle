@@ -573,9 +573,7 @@ function forum_cron() {
                     $queue->discussionid = $discussion->id;
                     $queue->postid       = $post->id;
                     $queue->timemodified = $post->created;
-                    if (!$DB->insert_record('forum_queue', $queue)) {
-                        mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
-                    }
+                    $DB->insert_record('forum_queue', $queue);
                     continue;
                 }
 

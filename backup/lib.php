@@ -366,9 +366,7 @@
             $rec->new_id = ($new_id === null? 0 : $new_id);
             $rec->info = $info_to_save;
 
-            if (!$DB->insert_record('backup_ids', $rec, false)) {
-                $status = false;
-            }
+            $DB->insert_record('backup_ids', $rec, false);
         }
         return $status;
     }

@@ -41,8 +41,6 @@ function email_install(){
 
     $provider = new object();
     $provider->name  = 'email';
-    if (!$DB->insert_record('message_processors', $provider)) {
-        $return = false;
-    }
+    $DB->insert_record('message_processors', $provider);
     return $result;
 }

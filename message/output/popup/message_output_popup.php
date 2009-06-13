@@ -54,9 +54,7 @@ class message_output_popup extends message_output{
         $procmessage->unreadmessageid = $message->id;
         $procmessage->processorid     = $processor->id;
 
-        if ( !$DB->insert_record('message_working', $procmessage) ) {
-            return false;
-        }
+        $DB->insert_record('message_working', $procmessage);
 
         //should only save this message for later delivery
         return true;
