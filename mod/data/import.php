@@ -128,9 +128,7 @@
                         $content = new object();
                         $content->recordid = $recordid;
                         $content->fieldid = $field->id;
-                        if (! $DB->insert_record('data_content', $content)) {
-                            print_error('cannotinsertrecord', '', '', $recordid);
-                        }
+                        $DB->insert_record('data_content', $content);
                     }
                     // Fill data_content with the values imported from the CSV file:
                     foreach ($record as $key => $value) {

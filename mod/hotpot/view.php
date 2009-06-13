@@ -145,9 +145,6 @@
                 add_to_log($course->id, "hotpot", "view", "view.php?id=$cm->id", "$hotpot->id", "$cm->id");
 
                 $attemptid = hotpot_add_attempt($hotpot->id);
-                if (! is_numeric($attemptid)) {
-                    print_error('cannotinsertattempt', 'hotpot', '', $DB->get_last_error());
-                }
             }
             $hp->adjust_media_urls();
             if (empty($frameset)) {

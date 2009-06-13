@@ -387,9 +387,7 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
         $rating -> userid = backup_todb($rat_info['#']['USERID']['0']['#']);
         $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
 
-        if (! $DB->insert_record ("data_ratings",$rating)) {
-            $status = false;
-        }
+        $DB->insert_record("data_ratings", $rating);
     }
     return $status;
 }
@@ -414,10 +412,7 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
         $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
         $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
         $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
-        if (! $DB->insert_record ("data_comments",$comment)) {
-            $status = false;
-        }
-
+        $DB->insert_record("data_comments", $comment);
     }
     return $status;
 

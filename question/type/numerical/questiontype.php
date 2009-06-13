@@ -207,10 +207,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
-                if (! $DB->insert_record('question_numerical_units', $units[$i])) {
-                    $result->error = 'Unable to save unit ' . $units[$i]->unit . ' to the Databse';
-                    return $result;
-                }
+                $DB->insert_record('question_numerical_units', $units[$i]);
             }
         }
         unset($question->multiplier, $question->unit);

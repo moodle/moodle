@@ -210,18 +210,14 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session)) {
-                print_error('databaseerror', 'mnet');
-            }
+            $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session);
         } else {
             $mnet_session->useragent = sha1($_SERVER['HTTP_USER_AGENT']);
             $mnet_session->token = $this->generate_token();
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (false == $DB->update_record('mnet_session', $mnet_session)) {
-                print_error('databaseerror', 'mnet');
-            }
+            $DB->update_record('mnet_session', $mnet_session);
         }
 
         // construct the redirection URL
@@ -299,9 +295,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 print_error('nolocaluser', 'mnet');
             }
             $remoteuser->mnethostid = $remotehost->id;
-            if (! $DB->insert_record('user', $remoteuser)) {
-                print_error('databaseerror', 'mnet');
-            }
+            $DB->insert_record('user', $remoteuser);
             $firsttime = true;
             if (! $localuser = $DB->get_record('user', array('username'=>$remoteuser->username, 'mnethostid'=>$remotehost->id))) {
                 print_error('nolocaluser', 'mnet');
@@ -390,9 +384,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time();
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session)) {
-                print_error('databaseerror', 'mnet');
-            }
+            $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session);
         } else {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $DB->update_record('mnet_session', $mnet_session);

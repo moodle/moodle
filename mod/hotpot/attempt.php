@@ -81,18 +81,12 @@
             unset ($attempt->id);
             $attempt->id = $DB->insert_record("hotpot_attempts", $attempt);
 
-            if (empty($attempt->id)) {
-                print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
-            }
-
             // add attempt details record, if necessary
             if (!empty($attempt->details)) {
                 $details = new object();
                 $details->attempt = $attempt->id;
                 $details->details = $attempt->details;
-                if (! $DB->insert_record("hotpot_details", $details, false)) {
-                    print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
-                }
+                $DB->insert_record("hotpot_details", $details, false);
             }
         } else {
             // remove previous responses for this attempt, if required
@@ -131,9 +125,7 @@
             $details = new object();
             $details->attempt = $attempt->id;
             $details->details = $attempt->details;
-            if (! $DB->insert_record("hotpot_details", $details)) {
-                print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
-            }
+            $DB->insert_record("hotpot_details", $details);
         }
     }
 
