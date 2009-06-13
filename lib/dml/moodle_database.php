@@ -101,6 +101,10 @@ abstract class moodle_database {
     protected $last_type;
     /** @var string last extra info */
     protected $last_extrainfo;
+    /** @var float last time in seconds with milisocond precision */
+    protected $last_time;
+    /** @var bool flag indicating loggin of query in progress, prevents infinite loops */
+    private $loggingquery = false;
 
     /** @var bool true if db used for db sessions */
     protected $used_for_db_sessions = false;
@@ -303,10 +307,14 @@ abstract class moodle_database {
      * @return void
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        if ($this->loggingquery) {
+            return;
+        }
         $this->last_sql       = $sql;
         $this->last_params    = $params;
         $this->last_type      = $type;
         $this->last_extrainfo = $extrainfo;
+        $this->last_time      = microtime(true);
 
         switch ($type) {
             case SQL_QUERY_SELECT:
@@ -328,20 +336,58 @@ abstract class moodle_database {
      * @return void
      */
     protected function query_end($result) {
-        if ($result !== false) {
+        if ($this->loggingquery) {
             return;
         }
+        // remember current info, log querie may alter it
+        $type   = $this->last_type;
+        $sql    = $this->last_sql;
+        $params = $this->last_params;
+        $time   = microtime(true) - $this->last_time;
+
+        if ($result !== false) {
+            $this->query_log($type, $sql, $params, $time, false);
+            return;
+        }
+
+        $error = $this->get_last_error();
+        $this->query_log($type, $sql, $params, $time, $error);
 
         switch ($this->last_type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
-                throw new dml_read_exception($this->get_last_error(), $this->last_sql, $this->last_params);
+                throw new dml_read_exception($error, $sql, $params);
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
-                throw new dml_write_exception($this->get_last_error(), $this->last_sql, $this->last_params);
+                throw new dml_write_exception($error, $sql, $params);
             case SQL_QUERY_STRUCTURE:
                 $this->get_manager(); // includes ddl exceptions classes ;-)
-                throw new ddl_change_structure_exception($this->get_last_error(), $this->last_sql);
+                throw new ddl_change_structure_exception($error, $sql);
+        }
+    }
+
+    /**
+     * Log database query if requested
+     * @param int $type constant
+     * @param string $sql
+     * @param array $params
+     * @param float time in seconds
+     * @param mixed string error or false if not error
+     * @return void
+     */
+    public function query_log($type, $sql, $params, $time, $error=false) {
+        $logall    = !empty($this->dboptions['logall']);
+        $logslow   = !empty($this->dboptions['logslow']) ? $this->dboptions['logslow'] : false;
+        $logerrors = !empty($this->dboptions['logerrors']);
+        $iserror   = ($error !== false);
+
+        if ($logall or ($logslow and ($logslow < ($time+0.00001))) or ($iserror and $logerrors)) {
+            $this->loggingquery = true;
+            try {
+                //TODO: add db tables for logging and support for error_log()
+            } catch (Exception $ignored) {
+            }
+            $this->loggingquery = false;
         }
     }
 
@@ -1775,6 +1821,14 @@ abstract class moodle_database {
     }
 
 /// transactions
+    /**
+     * Returns true if transaction in progress
+     * @return bool
+     */
+    function is_transaction_started() {
+        return $this->intransaction;
+    }
+
     /**
      * on DBs that support it, switch to transaction mode and begin a transaction
      * you'll need to ensure you call commit_sql() or your changes *will* be lost.
