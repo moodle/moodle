@@ -568,9 +568,7 @@
             if (isset($USER->modattempts[$lesson->id])) {
                 $attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
             }
-            if (!$newattemptid = $DB->insert_record("lesson_attempts", $attempt)) {
-                print_error("Continue: attempt not inserted");
-            }
+            $newattemptid = $DB->insert_record("lesson_attempts", $attempt);
             // "number of attempts remaining" message if $lesson->maxattempts > 1
             // displaying of message(s) is at the end of page for more ergonomic display
             if (!$correctanswer and ($newpageid == 0)) {

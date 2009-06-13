@@ -236,18 +236,12 @@ class generator {
             $user->lang        = $CFG->lang;
             $user->timemodified= time();
 
-            if (!$user->id = $DB->insert_record("user", $user)) {
-                $this->verbose("Error inserting a user in the database! Aborting the script!");
-                if (!$this->get('ignore_errors')) {
-                    die();
-                }
-            } else {
-                $users_count++;
-                $users[] = $user->id;
-                $next_user_id = $user->id + 1;
-                $this->verbose("Inserted $user->firstname $user->lastname into DB "
-                    ."(username=$user->username, password=password).");
-            }
+            $user->id = $DB->insert_record("user", $user);
+            $users_count++;
+            $users[] = $user->id;
+            $next_user_id = $user->id + 1;
+            $this->verbose("Inserted $user->firstname $user->lastname into DB "
+                ."(username=$user->username, password=password).");
         }
 
         if (!$this->get('quiet')) {

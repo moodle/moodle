@@ -73,9 +73,7 @@ function scorm_add_instance($scorm, $mform=null) {
     }
     $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
-    if (!$id = $DB->insert_record('scorm', $scorm)) {
-        return false;
-    }
+    $id = $DB->insert_record('scorm', $scorm);
 
 /// update course module record - from now on this instance properly exists and all function may be used
     $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));

@@ -674,10 +674,7 @@ function lesson_save_question_options($question) {
                     $answer->grade = $question->fraction[$key] * 100;
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
-                        $result->error = "Could not insert shortanswer quiz answer!";
-                        return $result;
-                    }
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
                         $maxfraction = $question->fraction[$key];
@@ -714,10 +711,7 @@ function lesson_save_question_options($question) {
                     $answer->answer   = $min.":".$max;
                     // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
-                        $result->error = "Could not insert numerical quiz answer!";
-                        return $result;
-                    }
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
                     
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
@@ -749,10 +743,7 @@ function lesson_save_question_options($question) {
             if (isset($question->feedbacktrue)) {
                 $answer->response = $question->feedbacktrue;
             }
-            if (!$true->id = $DB->insert_record("lesson_answers", $answer)) {
-                $result->error = "Could not insert quiz answer \"true\")!";
-                return $result;
-            }
+            $true->id = $DB->insert_record("lesson_answers", $answer);
 
             // the lie    
             $answer = new stdClass;
@@ -767,10 +758,7 @@ function lesson_save_question_options($question) {
             if (isset($question->feedbackfalse)) {
                 $answer->response = $question->feedbackfalse;
             }
-            if (!$false->id = $DB->insert_record("lesson_answers", $answer)) {
-                $result->error = "Could not insert quiz answer \"false\")!";
-                return $result;
-            }
+            $false->id = $DB->insert_record("lesson_answers", $answer);
 
           break;
 
@@ -803,10 +791,7 @@ function lesson_save_question_options($question) {
                     // end Replace
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
-                        $result->error = "Could not insert multichoice quiz answer! ";
-                        return $result;
-                    }
+                    $answer->id = $DB->insert_record("lesson_answers", $answer);
                     // for Sanity checks
                     if ($question->fraction[$key] > 0) {                 
                         $totalfraction += $question->fraction[$key];
@@ -853,10 +838,7 @@ function lesson_save_question_options($question) {
                         // first answer contains the correct answer jump
                         $answer->jumpto = LESSON_NEXTPAGE;
                     }
-                    if (!$subquestion->id = $DB->insert_record("lesson_answers", $answer)) {
-                        $result->error = "Could not insert quiz match subquestion!";
-                        return $result;
-                    }
+                    $subquestion->id = $DB->insert_record("lesson_answers", $answer);
                     $subquestions[] = $subquestion->id;
                     $i++;
                 }

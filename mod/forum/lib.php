@@ -78,9 +78,7 @@ function forum_add_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    if (!$forum->id = $DB->insert_record('forum', $forum)) {
-        return false;
-    }
+    $forum->id = $DB->insert_record('forum', $forum);
 
     if ($forum->type == 'single') {  // Create related discussion.
         $discussion = new object();
@@ -4480,9 +4478,7 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->userid     = $USER->id;
     $post->attachment = "";
 
-    if (! $post->id = $DB->insert_record("forum_posts", $post)) {
-        return false;
-    }
+    $post->id = $DB->insert_record("forum_posts", $post);
     $message = file_save_draft_area_files($post->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $message);
     $DB->set_field('forum_posts', 'message', $message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
@@ -4583,9 +4579,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $post->course        = $forum->course; // speedup
     $post->mailnow       = $discussion->mailnow;
 
-    if (! $post->id = $DB->insert_record("forum_posts", $post) ) {
-        return 0;
-    }
+    $post->id = $DB->insert_record("forum_posts", $post);
 
     $text = file_save_draft_area_files($discussion->itemid, $context->id, 'forum_post', $post->id, array('subdirs'=>true), $post->message);
     $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
@@ -4597,17 +4591,10 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $discussion->usermodified = $post->userid;
     $discussion->userid       = $USER->id;
 
-    if (! $post->discussion = $DB->insert_record("forum_discussions", $discussion) ) {
-        $DB->delete_records("forum_posts", array("id"=>$post->id));
-        return 0;
-    }
+    $post->discussion = $DB->insert_record("forum_discussions", $discussion);
 
     // Finally, set the pointer on the post.
-    if (! $DB->set_field("forum_posts", "discussion", $post->discussion, array("id"=>$post->id))) {
-        $DB->delete_records("forum_posts", array("id"=>$post->id));
-        $DB->delete_records("forum_discussions", array("id"=>$post->discussion));
-        return 0;
-    }
+    $DB->set_field("forum_posts", "discussion", $post->discussion, array("id"=>$post->id));
 
     if (!empty($cm->id)) {
         forum_add_attachment($post, $forum, $cm, $mform, $message);

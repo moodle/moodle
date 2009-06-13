@@ -96,9 +96,7 @@ function feedback_add_instance($feedback) {
     }
 
     //saving the feedback in db
-    if (!$feedbackid = $DB->insert_record("feedback", $feedback)) {
-        return false;
-    }
+    $feedbackid = $DB->insert_record("feedback", $feedback);
 
     $feedback->id = $feedbackid;
 
@@ -1603,9 +1601,7 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
     $completed->timemodified       = $timemodified;
     $completed->anonymous_response = $data['anonymous_response'];
 
-    if (!$completedid = $DB->insert_record('feedback_completed'.$tmpstr, $completed)) {
-        return false;
-    }
+    $completedid = $DB->insert_record('feedback_completed'.$tmpstr, $completed);
 
     $completed = $DB->get_record('feedback_completed'.$tmpstr, array('id'=>$completedid));
 
@@ -1629,9 +1625,7 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
             //the kind of values can be absolutely different so we run create_value directly by the item-class
             $value->value = $itemobj->create_value($data[$key]);
 
-            if (!$DB->insert_record('feedback_value'.$tmpstr, $value)) {
-                $errcount++;
-            }
+            $DB->insert_record('feedback_value'.$tmpstr, $value);
         }
     }
 

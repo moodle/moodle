@@ -95,9 +95,7 @@ quiz_delete_previews($quiz, $USER->id);
 $attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(), $quizobj->is_preview_user());
 
 /// Save the attempt in the database.
-if (!$attempt->id = $DB->insert_record('quiz_attempts', $attempt)) {
-    quiz_error($quiz, 'newattemptfail');
-}
+$attempt->id = $DB->insert_record('quiz_attempts', $attempt);
 
 /// Log the new attempt.
 if ($attempt->preview) {

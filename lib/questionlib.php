@@ -782,9 +782,7 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
         $newcategory->info = get_string('questionsrescuedfrominfo', 'question', $oldplace);
         $newcategory->sortorder = 999;
         $newcategory->stamp = make_unique_id_code();
-        if (!$newcategory->id = $DB->insert_record('question_categories', $newcategory)) {
-            return false;
-        }
+        $newcategory->id = $DB->insert_record('question_categories', $newcategory);
     }
 
     // Move any remaining questions to the 'saved' category.
@@ -1322,11 +1320,7 @@ function save_question_session($question, $state) {
     if (!empty($state->update)) { // this forces the old state record to be overwritten
         $DB->update_record('question_states', $state);
     } else {
-        if (!$state->id = $DB->insert_record('question_states', $state)) {
-            unset($state->id);
-            unset($state->answer);
-            return false;
-        }
+        $state->id = $DB->insert_record('question_states', $state);
     }
 
     // create or update the session

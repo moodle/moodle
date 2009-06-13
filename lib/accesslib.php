@@ -2319,11 +2319,9 @@ function get_system_context($cache=true) {
         $context->path         = NULL; //not known before insert
 
         try {
-            if (!$context->id = $DB->insert_record('context', $context)) {
-            // can not create context yet, sorry
-                return null;
-            }
+            $context->id = $DB->insert_record('context', $context);
         } catch (dml_exception $e) {
+            // can not create context yet, sorry
             return null;
         }
     }
@@ -3021,9 +3019,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $ra->timemodified = $timemodified;
         $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
-        if (!$ra->id = $DB->insert_record('role_assignments', $ra)) {
-            return false;
-        }
+        $ra->id = $DB->insert_record('role_assignments', $ra);
 
     } else {                      // We already have one, just update it
         $ra->id = $ra->id;

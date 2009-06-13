@@ -177,9 +177,7 @@
             $thissection->section = $section;
             $thissection->summary  = '';
             $thissection->visible  = 1;
-            if (!$thissection->id = $DB->insert_record('course_sections', $thissection)) {
-                notify('Error inserting new topic!');
-            }
+            $thissection->id = $DB->insert_record('course_sections', $thissection);
         }
 
         $showsection = (has_capability('moodle/course:viewhiddensections', $context) or $thissection->visible or !$course->hiddensections);

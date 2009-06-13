@@ -6637,9 +6637,7 @@ function endecrypt ($pwd, $data, $case) {
 
     $event->timemodified = time();
 
-    if (!$event->id = $DB->insert_record('event', $event)) {
-        return false;
-    }
+    $event->id = $DB->insert_record('event', $event);
 
     if (!empty($CFG->calendar)) { // call the add_event function of the selected calendar
         if (file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {

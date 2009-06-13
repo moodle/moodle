@@ -866,9 +866,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $blockinstance->pagetype = PAGE_COURSE_VIEW;
                         $blockinstance->position = $blockposition;
                         $blockinstance->weight   = $blockweight;
-                        if(!$status = $DB->insert_record('block_instance', $blockinstance)) {
-                            $status = false;
-                        }
+                        $DB->insert_record('block_instance', $blockinstance);
                         ++$blockweight;
                     }
                 }
@@ -3626,10 +3624,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                 } else {
                     //The structure is equal to the db, so insert the grouping
-                    if (!$newid = $DB->insert_record('groupings', $gro)) {
-                        $status = false;
-                        continue;
-                    }
+                    $newid = $DB->insert_record('groupings', $gro);
                 }
 
                 //We have the newid, update backup_ids

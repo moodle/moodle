@@ -313,12 +313,7 @@ if ($formdata = $mform->get_data()) {
                             $newgradeitem->importer   = $USER->id;
 
                             // failed to insert into new grade item buffer
-                            if (!$newgradeitems[$key] = $DB->insert_record('grade_import_newitem', $newgradeitem)) {
-                                $status = false;
-                                import_cleanup($importcode);
-                                notify(get_string('importfailed', 'grades'));
-                                break 3;
-                            }
+                            $newgradeitems[$key] = $DB->insert_record('grade_import_newitem', $newgradeitem);
                             // add this to grade_import_newitem table
                             // add the new id to $newgradeitem[$key]
                         }

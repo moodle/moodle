@@ -380,9 +380,7 @@
             $newdiscussion->timestart    = $discussion->timestart;
             $newdiscussion->timeend      = $discussion->timeend;
 
-            if (!$newid = $DB->insert_record('forum_discussions', $newdiscussion)) {
-                print_error('cannotcreatediscussion', 'forum');
-            }
+            $newid = $DB->insert_record('forum_discussions', $newdiscussion);
 
             $newpost = new object();
             $newpost->id      = $post->id;

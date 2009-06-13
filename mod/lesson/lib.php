@@ -45,9 +45,7 @@ function lesson_add_instance($lesson) {
 
     lesson_process_pre_save($lesson);
 
-    if (!$lesson->id = $DB->insert_record("lesson", $lesson)) {
-        return false; // bad
-    }
+    $lesson->id = $DB->insert_record("lesson", $lesson);
 
     lesson_process_post_save($lesson);
 

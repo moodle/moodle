@@ -308,10 +308,7 @@ class AuthorizeNet
                         $extra->status = AN_STATUS_CREDIT;
                         $extra->transid = $transid;
                         $extra->settletime = self::getsettletime(time());
-                        if (! $extra->id = $DB->insert_record('enrol_authorize_refunds', $extra)) {
-                            unset($extra->id);
-                            message_to_admin("Error while trying to insert data into table enrol_authorize_refunds. Please add manually this record:", $extra);
-                        }
+                        $extra->id = $DB->insert_record('enrol_authorize_refunds', $extra);
                     }
                     break;
 

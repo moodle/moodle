@@ -184,10 +184,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             return false;
         }
 
-        if (!$this->field->id = $DB->insert_record('data_fields',$this->field)){
-            notify('Insertion of new field failed!');
-            return false;
-        }
+        $this->field->id = $DB->insert_record('data_fields',$this->field);
         return true;
     }
 
@@ -843,9 +840,7 @@ function data_add_instance($data) {
 
     $data->timemodified = time();
 
-    if (! $data->id = $DB->insert_record('data', $data)) {
-        return false;
-    }
+    $data->id = $DB->insert_record('data', $data);
 
     data_grade_item_update($data);
 

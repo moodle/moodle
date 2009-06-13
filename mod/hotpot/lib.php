@@ -2566,9 +2566,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
         $question->md5key = md5($question->name);
         if (!$question->id = $DB->get_field('hotpot_questions', 'id', array('hotpot'=>$attempt->hotpot, 'md5key'=>$question->md5key, 'name'=>$question->name))) {
             // add question record
-            if (!$question->id = $DB->insert_record('hotpot_questions', $question)) {
-                print_error('cannotaddquestionrecord', 'hotpot', $next_url);
-            }
+            $question->id = $DB->insert_record('hotpot_questions', $question);
         }
 
         if ($DB->record_exists('hotpot_responses', array('attempt'=>$attempt->id, 'question'=>$question->id))) {
@@ -2591,9 +2589,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
             $response->question = $question->id;
 
             // add response record
-            if(!$response->id = $DB->insert_record('hotpot_responses', $response)) {
-                print_error('cannotaddresprecord', 'hotpot', $next_url);
-            }
+            $response->id = $DB->insert_record('hotpot_responses', $response);
 
             // we can stop looping now
             $looping = false;
@@ -2762,10 +2758,7 @@ function hotpot_string_id($str) {
             $record->md5key = $md5key;
 
             // try and add the new string record
-            if (!$id = $DB->insert_record('hotpot_strings', $record)) {
-                global $DB;
-                print_error('cannotaddstrrecord', 'hotpot');
-            }
+            $id = $DB->insert_record('hotpot_strings', $record);
         }
     }
     return $id;
