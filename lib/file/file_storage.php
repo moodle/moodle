@@ -473,10 +473,7 @@ class file_storage {
             $directory = $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
             // update the existing directory with the new data
             $newrecord->id = $directory->get_id();
-            if (!$DB->update_record('files', $newrecord)) {
-                throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
-                                                         $newrecord->filepath, $newrecord->filename);
-            }
+            $DB->update_record('files', $newrecord);
             return new stored_file($this, $newrecord);
         }
 
