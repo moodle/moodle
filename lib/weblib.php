@@ -5728,7 +5728,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
             if ($debuginfo) {
                 debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
             } else {
-                notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+                notify('Stack trace:'.print_backtrace($backtrace, true, true), 'notifytiny');
             }
         }
         exit(1); // general error code
@@ -5776,7 +5776,7 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
             if ($debuginfo) {
                 debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
             } else {
-                notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+                notify('Stack trace:'.print_backtrace($backtrace, false, true), 'notifytiny');
             }
         }
     }
@@ -5845,7 +5845,7 @@ function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo
         if ($debuginfo) {
             debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
         } else if ($backtrace) {
-            notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+            notify('Stack trace:'.print_backtrace($backtrace, false, true), 'notifytiny');
         }
     }
 
@@ -7009,7 +7009,7 @@ function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
             if (!$backtrace) {
                 $backtrace = debug_backtrace();
             }
-            $from = print_backtrace($backtrace, true);
+            $from = print_backtrace($backtrace, CLI_SCRIPT, true);
             if (!isset($CFG->debugdisplay)) {
                 $CFG->debugdisplay = ini_get_bool('display_errors');
             }
@@ -7035,7 +7035,7 @@ function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
  * @param bool $return return as string or print
  * @return string|bool Depending on $return
  */
-function print_backtrace($callers, $return=false) {
+function print_backtrace($callers, $plaintext=false, $return=false) {
     global $CFG;
 
     if (empty($callers)) {
@@ -7046,7 +7046,7 @@ function print_backtrace($callers, $return=false) {
         }
     }
 
-    $from = '<ul style="text-align: left">';
+    $from = $plaintext ? '' : '<ul style="text-align: left">';
     foreach ($callers as $caller) {
         if (!isset($caller['line'])) {
             $caller['line'] = '?'; // probably call_user_func()
@@ -7054,7 +7054,8 @@ function print_backtrace($callers, $return=false) {
         if (!isset($caller['file'])) {
             $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()
         }
-        $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
+        $from .= $plaintext ? '* ' : '<li>';
+        $from .= 'line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
         if (isset($caller['function'])) {
             $from .= ': call to ';
             if (isset($caller['class'])) {
@@ -7064,9 +7065,9 @@ function print_backtrace($callers, $return=false) {
         } else if (isset($caller['exception'])) {
             $from .= ': '.$caller['exception'].' thrown';
         }
-        $from .= '</li>';
+        $from .= $plaintext ? "\n" : '</li>';
     }
-    $from .= '</ul>';
+    $from .= $plaintext ? '' : '</ul>';
 
     if ($return) {
         return $from;

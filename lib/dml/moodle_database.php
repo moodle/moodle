@@ -282,8 +282,8 @@ abstract class moodle_database {
      */
     public function dispose() {
         if ($this->intransaction) {
-            // unfortunately we can not access global $CFG any more and can not print debug 
-            error_log('Active database transaction detected when disposing database!');  
+            // unfortunately we can not access global $CFG any more and can not print debug
+            error_log('Active database transaction detected when disposing database!');
         }
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it
@@ -339,21 +339,24 @@ abstract class moodle_database {
         if ($this->loggingquery) {
             return;
         }
-        // remember current info, log querie may alter it
+        if ($result !== false) {
+            $this->query_log();
+            // free memory
+            $this->last_sql    = null;
+            $this->last_params = null;
+            return;
+        }
+
+        // remember current info, log queries may alter it
         $type   = $this->last_type;
         $sql    = $this->last_sql;
         $params = $this->last_params;
         $time   = microtime(true) - $this->last_time;
+        $error  = $this->get_last_error();
 
-        if ($result !== false) {
-            $this->query_log($type, $sql, $params, $time, false);
-            return;
-        }
+        $this->query_log($error);
 
-        $error = $this->get_last_error();
-        $this->query_log($type, $sql, $params, $time, $error);
-
-        switch ($this->last_type) {
+        switch ($type) {
             case SQL_QUERY_SELECT:
             case SQL_QUERY_AUX:
                 throw new dml_read_exception($error, $sql, $params);
@@ -367,24 +370,40 @@ abstract class moodle_database {
     }
 
     /**
-     * Log database query if requested
-     * @param int $type constant
-     * @param string $sql
-     * @param array $params
-     * @param float time in seconds
+     * Log ast database query if requested
      * @param mixed string error or false if not error
      * @return void
      */
-    public function query_log($type, $sql, $params, $time, $error=false) {
+    public function query_log($error=false) {
         $logall    = !empty($this->dboptions['logall']);
         $logslow   = !empty($this->dboptions['logslow']) ? $this->dboptions['logslow'] : false;
         $logerrors = !empty($this->dboptions['logerrors']);
         $iserror   = ($error !== false);
 
+        $time = microtime(true) - $this->last_time;
+
         if ($logall or ($logslow and ($logslow < ($time+0.00001))) or ($iserror and $logerrors)) {
             $this->loggingquery = true;
             try {
-                //TODO: add db tables for logging and support for error_log()
+                $backtrace = debug_backtrace();
+                if ($backtrace) {
+                    //remove query_log()
+                    array_shift($backtrace);
+                }
+                if ($backtrace) {
+                    //remove query_end()
+                    array_shift($backtrace);
+                }
+                $log = new object();
+                $log->qtype      = $this->last_type;
+                $log->sqltext    = $this->last_sql;
+                $log->sqlparams  = var_export((array)$this->last_params, true);
+                $log->error      = (int)$iserror;
+                $log->info       = $iserror ? $error : null;
+                $log->backtrace  = print_backtrace($backtrace, true, true);
+                $log->exectime   = $time;
+                $log->timelogged = time();
+                $this->insert_record('log_queries', $log);
             } catch (Exception $ignored) {
             }
             $this->loggingquery = false;

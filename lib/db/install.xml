@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20090602" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090613" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -378,7 +378,7 @@
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified" COMMENT="Mainly to help deletion of expired records from cron" PREVIOUS="md5key"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="log" COMMENT="Every action is logged as far as possible" PREVIOUS="cache_text" NEXT="log_display">
+    <TABLE NAME="log" COMMENT="Every action is logged as far as possible" PREVIOUS="cache_text" NEXT="log_queries">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
@@ -402,7 +402,23 @@
         <INDEX NAME="cmid" UNIQUE="false" FIELDS="cmid" PREVIOUS="userid-course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="log_display" COMMENT="For a particular module/action, specifies a moodle table/field" PREVIOUS="log" NEXT="message">
+    <TABLE NAME="log_queries" COMMENT="Logged database queries." PREVIOUS="log" NEXT="log_display">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="qtype"/>
+        <FIELD NAME="qtype" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="query type constant" PREVIOUS="id" NEXT="sqltext"/>
+        <FIELD NAME="sqltext" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="query sql" PREVIOUS="qtype" NEXT="sqlparams"/>
+        <FIELD NAME="sqlparams" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="query parameters" PREVIOUS="sqltext" NEXT="error"/>
+        <FIELD NAME="error" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="is error" PREVIOUS="sqlparams" NEXT="info"/>
+        <FIELD NAME="info" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="detailed info such as error text" PREVIOUS="error" NEXT="backtrace"/>
+        <FIELD NAME="backtrace" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="php execution trace" PREVIOUS="info" NEXT="exectime"/>
+        <FIELD NAME="exectime" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" COMMENT="query execution time in seconds as float" PREVIOUS="backtrace" NEXT="timelogged"/>
+        <FIELD NAME="timelogged" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="timestamp when log info stored into db" PREVIOUS="exectime"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="log_display" COMMENT="For a particular module/action, specifies a moodle table/field" PREVIOUS="log_queries" NEXT="message">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="module"/>
         <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="action"/>

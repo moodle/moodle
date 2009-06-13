@@ -7,7 +7,7 @@ function xmldb_main_install() {
     global $CFG, $DB, $SITE;
 
 /// make sure system context exists
-    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $syscontext = get_system_context(false);
     if ($syscontext->id != 1) {
         throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected system context id created!');
     }

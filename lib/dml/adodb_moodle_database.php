@@ -130,6 +130,11 @@ abstract class adodb_moodle_database extends moodle_database {
         }
     }
 
+    public function query_log($error=false) {
+        // no logging for obsoleted adodb - it would require a lot more fixing
+        return;
+    }
+
     /**
      * Returns database server info array
      * @return array
