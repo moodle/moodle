@@ -108,7 +108,7 @@ class question_multichoice_qtype extends default_questiontype {
         $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
         $options->incorrectfeedback = trim($question->incorrectfeedback);
         if ($update) {
-            $DB->update_record("question_multichoice", $options)
+            $DB->update_record("question_multichoice", $options);
         } else {
             $DB->insert_record("question_multichoice", $options);
         }
