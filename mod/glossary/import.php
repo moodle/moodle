@@ -163,13 +163,9 @@
                     //We get the section's visible field status
                     $visible = $DB->get_field("course_sections", "visible", array("id"=>$sectionid));
 
-                    if (! $DB->set_field("course_modules", "visible", $visible, array("id"=>$mod->coursemodule))) {
-                        print_error('cannotupdatemod', '', '', $mod->coursemodule);
-                    }
+                    $DB->set_field("course_modules", "visible", $visible, array("id"=>$mod->coursemodule));
+                    $DB->set_field("course_modules", "section", $sectionid, array("id"=>$mod->coursemodule));
 
-                    if (! $DB->set_field("course_modules", "section", $sectionid, array("id"=>$mod->coursemodule))) {
-                        print_error('cannotupdatemod', '', '', $mod->coursemodule);
-                    }
                     add_to_log($course->id, "course", "add mod",
                                "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
                                "$mod->modulename $mod->instance");

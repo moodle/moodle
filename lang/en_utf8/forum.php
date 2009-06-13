@@ -44,7 +44,6 @@ $string['cannoteditposts'] = 'You can\'t edit other people\'s posts!';
 $string['cannotsubscribe'] = 'Sorry, but you must be a group member to subscribe.';
 $string['cannotsplit'] = 'Discussions from this forum cannot be split';
 $string['cannotunsubscribe'] = 'Could not unsubscribe you from that forum';
-$string['cannotupdatecoursemoudle'] = 'Could not update course module with section id';
 $string['cannotupdatepost'] = 'You can not update this post';
 $string['cannotremovesubscriber'] = 'Could not remove subscriber with id $a from this forum!';
 $string['cannotreply'] = 'You cannot reply to this post';

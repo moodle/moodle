@@ -157,9 +157,7 @@
                             $attempt->details = $DB->get_field('hotpot_details', 'details', array('attempt'=>$attempt->id));
                             if ($attempt->details) {
                                 hotpot_add_attempt_details($attempt);
-                                if (! $DB->update_record('hotpot_attempts', $attempt)) {
-                                    print_error('cannotupdateattempt', 'hotpot', $next_url, $DB->get_last_error());
-                                }
+                                $DB->update_record('hotpot_attempts', $attempt);
                             }
                             $attemptcount++;
                         }

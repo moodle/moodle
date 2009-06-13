@@ -733,9 +733,7 @@ function resource_renamefiles($course, $wdir, $oldname, $name) {
                 $updates = true;
                 $status .= "<li><a href=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->cmid\" target=\"_blank\">$resource->name</a>: $resource->reference ==> $r->reference</li>";
                 if (!empty($CFG->resource_autofilerename)) {
-                    if (!$DB->update_record('resource', $r)) {
-                        print_error('cannotupdate', 'resource');
-                    }
+                    $DB->update_record('resource', $r);
                 }
             }
         }

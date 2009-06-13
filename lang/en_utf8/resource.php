@@ -9,7 +9,6 @@ $string['autofilerename'] = 'Update link if file renamed';
 $string['back'] = 'Back';
 $string['blockdeletingfile'] = 'Block deleting of referenced files';
 $string['browserepository'] = 'Browse repository';
-$string['cannotupdate'] = 'Cannot update resource.';
 $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['chooseparameter'] = 'Choose parameter';

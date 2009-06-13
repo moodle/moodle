@@ -614,19 +614,13 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
-        if (!$DB->update_record('quiz_grades', $grade)) {
-            notify('Could not update best grade');
-            return false;
-        }
+        $DB->update_record('quiz_grades', $grade);
     } else {
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
-        if (!$DB->insert_record('quiz_grades', $grade)) {
-            notify('Could not insert new best grade');
-            return false;
-        }
+        $DB->insert_record('quiz_grades', $grade);
     }
 
     quiz_update_grades($quiz, $userid);

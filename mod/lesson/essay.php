@@ -112,9 +112,7 @@
 
                 $attempt->useranswer = serialize($essayinfo);
 
-                if (!$DB->update_record('lesson_attempts', $attempt)) {
-                    print_error('cannotupdateessayscore', 'lesson');
-                }
+                $DB->update_record('lesson_attempts', $attempt);
                 
                 // Get grade information
                 $grade = current($grades);
@@ -123,14 +121,11 @@
                 // Set and update
                 $updategrade->id = $grade->id;
                 $updategrade->grade = $gradeinfo->grade;
-                if($DB->update_record('lesson_grades', $updategrade)) {
-                    // Log it
-                    add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
-                    
-                    lesson_set_message(get_string('changessaved'), 'notifysuccess');
-                } else {
-                    lesson_set_message(get_string('updatefailed', 'lesson'));
-                }
+                $DB->update_record('lesson_grades', $updategrade);
+                // Log it
+                add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
+                
+                lesson_set_message(get_string('changessaved'), 'notifysuccess');
 
                 // update central gradebook
                 lesson_update_grades($lesson, $grade->userid);

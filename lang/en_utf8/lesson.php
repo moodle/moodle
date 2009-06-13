@@ -35,7 +35,6 @@ $string['branchtable'] = 'Branch Table';
 $string['cannotfindanswer'] = 'Cannot find answer';
 $string['cannotfindattempt'] = 'Error: could not find attempt';
 $string['cannotfindessay'] = 'Error: could not find essay';
-$string['cannotupdateessayscore'] = 'Could not update essay score';
 $string['cannotfindfirstpage'] = 'Could not find first page';
 $string['cannotfindfirstgrade'] = 'Error: could not find grades';
 $string['cannotfindgrade'] = 'Could not find Grade Records';

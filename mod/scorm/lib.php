@@ -192,9 +192,7 @@ function scorm_update_instance($scorm, $mform=null) {
     }
     $scorm->grademethod  = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
-    if (!$DB->update_record('scorm', $scorm)) {
-        return false;
-    }
+    $DB->update_record('scorm', $scorm);
 
     $scorm = $DB->get_record('scorm', array('id'=>$scorm->id));
 

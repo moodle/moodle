@@ -7672,9 +7672,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
                 if (!$sectionid = add_mod_to_section($mod)) {
                     print_error('cannotaddteacherforumto', 'forum');
                 } else {
-                    if (!$DB->set_field('course_modules', 'section', $sectionid, array('id' => $cmid))) {
-                        print_error('cannotupdatecoursemoudle', 'forum');
-                    }
+                    $DB->set_field('course_modules', 'section', $sectionid, array('id' => $cmid));
                 }
             }
 

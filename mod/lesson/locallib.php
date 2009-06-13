@@ -875,15 +875,9 @@ function lesson_save_question_options($question) {
             $options->choose = $question->choose;
             if ($existing = $DB->get_record("quiz_randomsamatch", array("question" => $options->question))) {
                 $options->id = $existing->id;
-                if (!$DB->update_record("quiz_randomsamatch", $options)) {
-                    $result->error = "Could not update quiz randomsamatch options!";
-                    return $result;
-                }
+                $DB->update_record("quiz_randomsamatch", $options);
             } else {
-                if (!$DB->insert_record("quiz_randomsamatch", $options)) {
-                    $result->error = "Could not insert quiz randomsamatch options!";
-                    return $result;
-                }
+                $DB->insert_record("quiz_randomsamatch", $options);
             }
         break;
 
@@ -907,10 +901,7 @@ function lesson_save_question_options($question) {
                         $result->error = "Could not update multianswer alternatives! (id=$multianswer->id)";
                         return $result;
                     }
-                    if (!$DB->update_record("quiz_multianswers", $multianswer)) {
-                        $result->error = "Could not update quiz multianswer! (id=$multianswer->id)";
-                        return $result;
-                    }
+                    $DB->update_record("quiz_multianswers", $multianswer);
                 } else {    // This is a completely new answer
                     $multianswer = new stdClass;
                     $multianswer->question = $question->id;
@@ -925,10 +916,7 @@ function lesson_save_question_options($question) {
                         $result->error = "Could not insert multianswer alternatives! (questionid=$question->id)";
                         return $result;
                     }
-                    if (!$DB->insert_record("quiz_multianswers", $multianswer)) {
-                        $result->error = "Could not insert quiz multianswer!";
-                        return $result;
-                    }
+                    $DB->insert_record("quiz_multianswers", $multianswer);
                 }
             }
         break;

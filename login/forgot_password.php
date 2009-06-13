@@ -62,9 +62,7 @@ if ($p_secret !== false) {
 
         // Clear secret so that it can not be used again
         $user->secret = '';
-        if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
-            print_error('cannotupdatesecret');
-        }
+        $DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id));
 
         reset_login_count();
 
@@ -118,9 +116,7 @@ if ($mform->is_cancelled()) {
 
             // set 'secret' string
             $user->secret = random_string(15);
-            if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
-                print_error('cannotupdatesecret');
-            }
+            $DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id));
 
             if (!send_password_change_confirmation_email($user)) {
                 print_error('cannotmailconfirm');

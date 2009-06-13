@@ -939,9 +939,8 @@ function hotpot_update_chain(&$hotpot) {
                 }
 
                 // update $thishotpot, if required
-                if ($require_update && !$DB->update_record("hotpot", $thishotpot)) {
-                    print_error('cannotupdatemod', '',
-                            'view.php?id='.$hotpot->course, $hotpot->modulename);
+                if ($require_update) {
+                    $DB->update_record("hotpot", $thishotpot);
                 }
             }
         } // end foreach $ids

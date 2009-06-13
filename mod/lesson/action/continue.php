@@ -40,9 +40,7 @@
         }
         
         $timer->lessontime = time();
-        if (!$DB->update_record("lesson_timer", $timer)) {
-            print_error("Error: could not update lesson_timer table");
-        }
+        $DB->update_record("lesson_timer", $timer);
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)

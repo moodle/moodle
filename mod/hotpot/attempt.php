@@ -111,9 +111,7 @@
     $attempt->details = $attempt->details;
 
     // update the attempt record
-    if (! $DB->update_record("hotpot_attempts", $attempt)) {
-        print_error('cannotupdateattempt', 'hotpot', $next_url, $DB->get_last_error());
-    }
+    $DB->update_record("hotpot_attempts", $attempt);
 
     // update grades for this user
     hotpot_update_grades($hotpot, $attempt->userid);

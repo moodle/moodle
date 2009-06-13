@@ -605,9 +605,8 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         if (($chatuser->course != $course->id) or ($chatuser->userid != $USER->id)) {
             return false;
         }
-        if (!$DB->update_record('chat_users', $chatuser)) {
-            return false;
-        }
+        $DB->update_record('chat_users', $chatuser);
+
     } else {
         $chatuser = new object();
         $chatuser->chatid   = $chatid;
@@ -631,9 +630,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         }
 
 
-        if (!$DB->insert_record('chat_users', $chatuser)) {
-            return false;
-        }
+        $DB->insert_record('chat_users', $chatuser);
 
         if ($version == 'sockets') {
             // do not send 'enter' message, chatd will do it

@@ -373,12 +373,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $localuser->mnethostid = $remotepeer->id;
 
-        $bool = $DB->update_record('user', $localuser);
-        if (!$bool) {
-            // TODO: Jonathan to clean up mess
-            // Actually, this should never happen (modulo race conditions) - ML
-            print_error("cannotupdateuser");
-        }
+        $DB->update_record('user', $localuser);
 
         // set up the session
         $mnet_session = $DB->get_record('mnet_session',

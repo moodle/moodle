@@ -16,7 +16,6 @@ $string['cannotaddresprecord'] = 'Could not add response record';
 $string['cannotaddstrrecord'] = 'Could not add string record';
 $string['cannotfindmethod'] = 'Template block expand method not found: ($a)';
 $stirng['cannotinsertattempt'] = 'Could not insert attempt record: $a';
-$string['cannotupdateattempt'] = 'Could not update attempt record: $a';
 $string['checks'] = 'Checks';
 $string['clickreporting'] = 'Enable click reporting';
 $string['clues'] = 'Clues';

@@ -162,9 +162,7 @@
                         }
                         $oldcontent = $DB->get_record('data_content', array('fieldid'=>$field->id, 'recordid'=>$recordid));
                         $content->id = $oldcontent->id;
-                        if (! $DB->update_record('data_content', $content)) {
-                            print_error('cannotupdaterecord', '', '', $recordid);
-                        }
+                        $DB->update_record('data_content', $content);
                     }
                     $recordsadded++;
                     print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
