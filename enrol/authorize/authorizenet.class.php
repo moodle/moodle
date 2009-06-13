@@ -323,9 +323,7 @@ class AuthorizeNet
                             unset($order->paymentmethod);
                         }
                         $order->status = AN_STATUS_VOID;
-                        if (! $DB->update_record($tableupdate, $order)) {
-                            message_to_admin("Error while trying to update data in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
-                        }
+                        $DB->update_record($tableupdate, $order);
                     }
                     break;
             }

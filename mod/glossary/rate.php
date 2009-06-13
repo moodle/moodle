@@ -88,9 +88,7 @@
                 } else if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
-                    if (! $DB->update_record("glossary_ratings", $oldrating)) {
-                        print_error('cannotinsertrate', 'error', '', (object)array('id'=>$entry->id, 'rating'=>$rating));
-                    }
+                    $DB->update_record("glossary_ratings", $oldrating);
                     glossary_update_grades($glossary, $entry->userid);
                 }
 
@@ -101,9 +99,7 @@
                 $newrating->entryid = $entry->id;
                 $newrating->rating  = $rating;
 
-                if (! $DB->insert_record("glossary_ratings", $newrating)) {
-                    print_error('cannotinsertrate', 'error', '', (object)array('id'=>$entry->id, 'rating'=>$rating));
-                }
+                $DB->insert_record("glossary_ratings", $newrating);
                 glossary_update_grades($glossary, $entry->userid);
             }
         }

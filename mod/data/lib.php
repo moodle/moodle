@@ -873,9 +873,7 @@ function data_update_instance($data) {
         $data->notification = 0;
     }
 
-    if (! $DB->update_record('data', $data)) {
-        return false;
-    }
+    $DB->update_record('data', $data);
 
     data_grade_item_update($data);
 

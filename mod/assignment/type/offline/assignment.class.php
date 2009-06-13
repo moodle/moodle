@@ -85,9 +85,7 @@ class assignment_offline extends assignment_base {
                 $submission->timemodified = time();
             }
 
-            if (! $DB->update_record('assignment_submissions', $submission)) {
-                return false;
-            }
+            $DB->update_record('assignment_submissions', $submission);
 
             // triger grade event
             $this->update_grade($submission);

@@ -81,9 +81,7 @@
             $newrating->userid   = $USER->id;
             $newrating->recordid = $record->id;
             $newrating->rating   = $rating;
-            if (! $DB->insert_record('data_ratings', $newrating)) {
-                print_error('cannotinsertrate', 'error', '', (object)array('id'=>$record->id, 'rating'=>$rating));
-            }
+            $DB->insert_record('data_ratings', $newrating);
             data_update_grades($data, $record->userid);
         }
     }

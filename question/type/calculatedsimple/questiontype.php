@@ -61,15 +61,9 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    if (! $DB->update_record("question_answers", $answer)) {
-                        $result->error = get_string('errorupdatinganswer','question',$answer->id);
-                        return $result;
-                    }
+                    $DB->update_record("question_answers", $answer);
                 } else { // This is a completely new answer
-                    if (! $answer->id = $DB->insert_record("question_answers", $answer)) {
-                        $result->error = get_string('errorinsertinganswer','question');
-                        return $result;
-                    }
+                    $answer->id = $DB->insert_record("question_answers", $answer);
                 }
 
                 // Set up the options object
@@ -85,18 +79,9 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
                 // Save options
                 if (isset($options->id)) { // reusing existing record
-                    if (! $DB->update_record('question_calculated', $options)) {
-                        $mess->name = $this->name();
-                        $mess->id = $options->id ;
-                        $result->error = get_string('errorupdatingoptions','question',$mess);
-                    //    $result->error = "Could not update question calculated options! (id=$options->id)";
-                        return $result;
-                    }
+                    $DB->update_record('question_calculated', $options);
                 } else { // new options
-                    if (! $DB->insert_record('question_calculated', $options)) {
-                        $result->error = "Could not insert question  calculated options!";
-                        return $result;
-                    }
+                    $DB->insert_record('question_calculated', $options);
                 }
             }
         }

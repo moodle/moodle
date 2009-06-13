@@ -90,9 +90,7 @@
                 $newrating->post   = $post->id;
                 $newrating->rating = $rating;
 
-                if (! $DB->insert_record('forum_ratings', $newrating)) {
-                    print_error('cannotinsertrate', 'error', '', (object)array('id'=>$postid, 'rating'=>$rating));
-                }
+                $DB->insert_record('forum_ratings', $newrating);
                 forum_update_grades($forum, $post->userid);
             }
         }
