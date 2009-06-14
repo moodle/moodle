@@ -5,15 +5,6 @@ retrieving revision 1.1
 diff -u -r1.1 Popup.js
 --- lib/editor/tinymce/Popup.js 17 May 2009 07:37:42 -0000  1.1
 +++ lib/editor/tinymce/Popup.js 17 May 2009 08:05:08 -0000
-@@ -2,7 +2,7 @@
-  * $Id$
-  *
-  * @author Moxiecode
-- * @copyright Copyright � 2004-2008, Moxiecode Systems AB, All rights reserved.
-+ * @copyright Copyright � 2004-2008, Moxiecode Systems AB, All rights reserved.
-  */
- 
- // Some global instances
 @@ -167,6 +167,7 @@
      * when you open the window it will load the <plugin url>/langs/<code>_dlg.js lang pack file.
      */

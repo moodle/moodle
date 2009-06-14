@@ -26,4 +26,4 @@
 
 $plugin->version  = 2009051600;
 $plugin->requires = 2009051200;
-$module->release  = 'v3.2.3.1-01';
+$module->release  = 'v3.2.4.1-01';

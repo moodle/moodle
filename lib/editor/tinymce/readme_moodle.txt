@@ -1,4 +1,4 @@
-Description of TinyMCE v3.2.3.1 library integration in Moodle
+Description of TinyMCE v3.2.4.1 library integration in Moodle
 =========================================================================================
 
 Copyright: (c) 2004-2008, Moxiecode Systems AB, All rights reserved.
@@ -27,7 +27,7 @@ Added:
 
 Modified:
  * Popup.js --> compressed into tiny_mce_popup.js (extra/patches/tinymce_strings.patch)
- * tiny_mce_src.js --> compressend into tiny_mce.js (extra/patches/tinymce_strings.patch)
+ * tiny_mce_src.js --> compressed into tiny_mce.js (extra/patches/tinymce_strings.patch)
  * plugins/media/js/media.js (extra/patches/tinymce_plugin_media.patch)
 
 Removed:
@@ -36,5 +36,3 @@ Removed:
 TODO:
  * reimplement spellchecker support in plugins/spellchecker/*
 
-
-$Id$
