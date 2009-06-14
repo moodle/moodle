@@ -1,32 +1,33 @@
-<?php // $Id$
+<?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will save the changes performed to the name and comment of
-/// one table
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class will save changes in table name and/or comments
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_table_save extends XMLDBAction {
 
     /**
@@ -78,6 +79,8 @@ class edit_table_save extends XMLDBAction {
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = $comment;
 
+        $dbdir =& $XMLDB->dbdirs[$dirpath];
+
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();
         $table =& $structure->getTable($tableparam);
@@ -127,10 +130,27 @@ class edit_table_save extends XMLDBAction {
                 $next->setPrevious($name);
                 $next->setChanged(true);
             }
+        /// Table has changed
+            $table->setChanged(true);
         }
 
     /// Set comment
-        $table->setComment($comment);
+        if ($table->getComment() != $comment) {
+            $table->setComment($comment);
+        /// Table has changed
+            $table->setChanged(true);
+        }
+
+    /// Recalculate the hash
+        $structure->calculateHash(true);
+
+    /// If the hash has changed from the original one, change the version
+    /// and mark the structure as changed
+        $origstructure =& $dbdir->xml_file->getStructure();
+        if ($structure->getHash() != $origstructure->getHash()) {
+            $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
+            $structure->setChanged(true);
+        }
 
     /// Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
