@@ -53,8 +53,8 @@ class textarea_texteditor extends texteditor {
         return 'form-textarea-legacy';
     }
 
-    public function header_js() {
-        return '';
+    public function use_editor($elementid=null) {
+        return;
     }    
 }
 

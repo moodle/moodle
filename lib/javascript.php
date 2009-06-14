@@ -62,16 +62,3 @@ if (!empty($focus)) {
 ?>
 //]]>
 </script>
-<?php
-    // editors integrations
-    //TODO: optimize loading of editors
-    if (empty($CFG->texteditors)) {
-        $CFG->texteditors = 'tinymce,textarea';
-    }
-    $activeeditors = explode(',', $CFG->texteditors);
-    foreach ($activeeditors as $editor) {
-        if ($editor = get_texteditor($editor)) {
-            echo $editor->header_js();
-        }
-    }
-?>

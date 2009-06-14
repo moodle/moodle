@@ -156,10 +156,10 @@ abstract class texteditor {
     public abstract function get_legacy_textarea_class();
 
     /**
-     * Returns js script statements needed in html head.
-     * @return string
+     * Add required JS needed for editor
+     * @return void
      */
-    public abstract function header_js();
+    public abstract function use_editor($elementid=null);
 }
 
 

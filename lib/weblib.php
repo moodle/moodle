@@ -4965,6 +4965,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     if ($usehtmleditor) {
         $editor = get_preferred_texteditor(FORMAT_HTML);
         $editorclass = $editor->get_legacy_textarea_class();
+        $editor->use_editor($id);
     } else {
         $editorclass = '';
     }

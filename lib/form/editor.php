@@ -137,6 +137,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
         $editorclass = $editor->get_editor_element_class();
+        $editor->use_editor($id);
 
         $str .= '<div><textarea class="'.$editorclass.'" id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
         $str .= s($text);
