@@ -19,7 +19,7 @@
 /**
  * Functions used by gradebook plugins and reports.
  *
- * @package   moodle-core
+ * @package   moodlecore
  * @copyright 2009 Petr Skoda and Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
