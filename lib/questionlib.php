@@ -2126,11 +2126,11 @@ function question_init_qenginejs_script() {
  * @return string some HTML code that can go inside the head tag.
  */
 function get_html_head_contributions($questionlist, &$questions, &$states) {
-    global $CFG, $QTYPES;
+    global $CFG, $PAGE, $QTYPES;
 
     // The question engine's own JavaScript.
-    require_js(array('yui_yahoo','yui_event', 'yui_connection'));
-    require_js('question/qengine.js');
+    $PAGE->requires->yui_lib('connection');
+    $PAGE->requires->js('question/qengine.js');
 
     // An inline script to record various lang strings, etc. that qengine.js needs.
     $contributions = array(question_init_qenginejs_script());

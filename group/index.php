@@ -13,8 +13,8 @@ require_once('lib.php');
 
 ini_set('include_path', $CFG->libdir.'/pear'.PATH_SEPARATOR.ini_get('include_path'));
 
-require_js(array('yui_yahoo', 'yui_dom', 'yui_utilities', 'yui_connection'));
-require_js('group/clientlib.js');
+$PAGE->requires->yui_lib('connection');
+$PAGE->requires->js('group/clientlib.js');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
@@ -24,14 +24,7 @@ $action   = groups_param_action();
 if ($groupid) {
     $groupids=array($groupid);
 } else {
-    $groupids=array();
-    if (isset($_REQUEST['groups'])) {
-        foreach ($_REQUEST['groups'] as $groupid) {
-            if ($groupid = clean_param($groupid, PARAM_INT)) {
-                $groupids[]=$groupid;
-            }
-        }
-    }
+    $groupids = optional_param('groups', array(), PARAM_INT);
 }
 $singlegroup=count($groupids) == 1;
 
@@ -259,12 +252,10 @@ echo '</div>'."\n";
 echo '</form>'."\n";
 
 if (ajaxenabled()) {
-    echo '<script type="text/javascript">'."\n";
-    echo '//<![CDATA['."\n";
-    echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
-    echo 'var membersCombo = new UpdatableMembersCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
-    echo '//]]>'."\n";
-    echo '</script>'."\n";
+    $PAGE->requires->js_function_call('var groupsCombo = new UpdatableGroupsCombo',
+            array($CFG->httpswwwroot, $course->id));
+    $PAGE->requires->js_function_call('var membersCombo = new UpdatableMembersCombo',
+            array($CFG->httpswwwroot, $course->id));
 }
 
 print_footer($course);

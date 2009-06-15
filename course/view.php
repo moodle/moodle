@@ -249,7 +249,7 @@
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.
-        require_js('lib/ajax/ajaxcourse.js');
+        $PAGE->requires->js('lib/ajax/ajaxcourse.js');
 
         $COURSE->javascriptportal->print_javascript($course->id);
     }

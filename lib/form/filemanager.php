@@ -206,7 +206,6 @@ function fp_callback(obj) {
     list.innerHTML += html;
 }
 function callpicker(el_id, client_id, itemid) {
-    document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
     picker.id = 'file-picker-'+client_id;
     picker.className = 'file-picker';

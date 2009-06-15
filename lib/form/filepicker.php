@@ -97,7 +97,6 @@ function updatefile(client_id, obj) {
     document.getElementById('repo_info_'+client_id).innerHTML = obj['file'];
 }
 function callpicker(client_id, id) {
-    document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
     picker.id = 'file-picker-'+client_id;
     picker.className = 'file-picker';

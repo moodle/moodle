@@ -2111,7 +2111,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   public
     * @return   void
     */
-    function renderHeader(&$header)    {
+    function renderHeader(&$header) {
+        global $PAGE;
         $name = $header->getName();
 
         $id = empty($name) ? '' : ' id="' . $name . '"';
@@ -2137,7 +2138,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         if (isset($this->_advancedElements[$name])){
-            require_js(array('yui_yahoo', 'yui_event'));
+            $PAGE->requires->yui_lib('event');
             // this is tricky - the first submit button on form is "clicked" if user presses enter
             // we do not want to "submit" using advanced button if javascript active
             $button_nojs = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="submit" />';

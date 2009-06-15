@@ -154,7 +154,6 @@ function mce_saveOnSubmit(id) {
 
 function mce_moodlefilemanager(field_name, url, type, win) {
     var client_id = id2clientid[tinyMCE.selectedInstance.editorId];
-    document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
     picker.className = "file-picker";
     picker.id = 'file-picker-'+client_id;

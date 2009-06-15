@@ -86,12 +86,10 @@ if($csv) {
     $navlinks = array();
     $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
     $navlinks[] = array('name' => $strcompletion, 'link' => null, 'type' => 'misc');
-    if($svgcleverness) {
-        require_js(array('yui_yahoo','yui_event','yui_dom'));
-    }
     print_header($strcompletion,$course->fullname,build_navigation($navlinks));
     if($svgcleverness) {
-        require_js('course/report/progress/textrotate.js');
+        $PAGE->requires->yui_lib('event');
+        $PAGE->requires->js('course/report/progress/textrotate.js');
     }
 
     // Handle groups (if enabled)

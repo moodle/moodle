@@ -45,7 +45,6 @@ var repository_client = (function(){
                 onclick: {fn: repository_client.view_as_list, obj:client_id}};
             var btn_icons = {label: fp_lang.thumbview, value: 't',
                 onclick: {fn: repository_client.view_as_icons, obj:client_id}};
-            document.body.className += ' yui-skin-sam';
             var el = document.createElement('DIV');
             el.id = 'file-picker-'+client_id;
             el.className = 'file-picker';
