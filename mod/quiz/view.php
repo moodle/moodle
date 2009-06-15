@@ -70,7 +70,7 @@
     if ($accessmanager->securewindow_required($canpreview)) {
         $bodytags = 'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"';
     }
-    require_js(array('yui_yahoo', 'yui_event'));
+    $PAGE->requires->yui_lib('event');
 
     // Note: MDL-19010 there will be further changes to printing header and blocks.
     // The code will be much nicer than this eventually.

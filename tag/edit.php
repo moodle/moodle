@@ -4,7 +4,8 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
 
-require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_autocomplete'));
+$PAGE->requires->yui_lib('animation');
+$PAGE->requires->yui_lib('autocomplete');
 
 require_login();
 

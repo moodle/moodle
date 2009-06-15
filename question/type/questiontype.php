@@ -800,22 +800,22 @@ class default_questiontype {
     // Used by the following function, so that it only returns results once per quiz page.
     private $htmlheadalreadydone = false;
     /**
-     * If this question type requires extra CSS or JavaScript to function,
-     * then this method will return an array of <link ...> tags that reference
-     * those stylesheets. This function will also call require_js()
-     * from ajaxlib.php, to get any necessary JavaScript linked in too.
+     * Hook to allow question types to include required JavaScrip or CSS on pages
+     * where they are going to be printed.
      *
-     * Remember that there may be more than one question of this type on a page.
-     * try to avoid including JS and CSS more than once.
+     * If this question type requires extra CSS or JavaScript to function,
+     * then this method, which will be called before print_header on any page
+     * where this question is going to be printed, is a chance to call
+     * $PAGE->requires->js, $PAGE->requiers->css, and so on.
      *
      * The two parameters match the first two parameters of print_question.
      *
      * @param object $question The question object.
      * @param object $state    The state object.
      *
-     * @return an array of bits of HTML to add to the head of pages where
-     * this question is print_question-ed in the body. The array should use
-     * integer array keys, which have no significance.
+     * @return array Deprecated. An array of bits of HTML to add to the head of
+     * pages where this question is print_question-ed in the body. The array
+     * should use integer array keys, which have no significance.
      */
     function get_html_head_contributions(&$question, &$state) {
         // We only do this once for this question type, no matter how often this
@@ -829,7 +829,7 @@ class default_questiontype {
         // script.js or script.php that exist in the plugin folder.
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
-        return $this->find_standard_scripts_and_css();
+        $this->find_standard_scripts_and_css();
     }
 
     /**
@@ -845,7 +845,7 @@ class default_questiontype {
         // script.js or script.php that exist in the plugin folder.
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
-        return $this->find_standard_scripts_and_css();
+        $this->find_standard_scripts_and_css();
     }
 
     /**
@@ -857,29 +857,24 @@ class default_questiontype {
      * @return array as required by get_html_head_contributions or get_editing_head_contributions.
      */
     protected function find_standard_scripts_and_css() {
+        global $PAGE;
+
         $plugindir = $this->plugin_dir();
-        $baseurl = $this->plugin_baseurl();
+        $plugindirrel = 'question/type/' . $this->name();
 
         if (file_exists($plugindir . '/script.js')) {
-            require_js($baseurl . '/script.js');
+            $PAGE->requires->js($plugindirrel . '/script.js');
         }
         if (file_exists($plugindir . '/script.php')) {
-            require_js($baseurl . '/script.php');
+            $PAGE->requires->js($plugindirrel . '/script.php');
         }
 
-        $stylesheets = array();
         if (file_exists($plugindir . '/styles.css')) {
-            $stylesheets[] = 'styles.css';
+            $PAGE->requires->css($plugindirrel . '/styles.css');
         }
         if (file_exists($plugindir . '/styles.php')) {
-            $stylesheets[] = 'styles.php';
+            $PAGE->requires->css($plugindirrel . '/styles.php');
         }
-        $contributions = array();
-        foreach ($stylesheets as $stylesheet) {
-            $contributions[] = '<link rel="stylesheet" type="text/css" href="' .
-                    $baseurl . '/' . $stylesheet . '" />';
-        }
-        return $contributions;
     }
 
     /**

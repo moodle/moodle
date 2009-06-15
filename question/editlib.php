@@ -140,8 +140,6 @@ abstract class question_bank_column_base {
     public function __construct(question_bank_view $qbank) {
         $this->qbank = $qbank;
         $this->init();
-        require_js(array('yui_yahoo','yui_event'));
-        require_js('question/qbank.js');
     }
 
     /**
@@ -811,7 +809,7 @@ class question_bank_view {
         $this->init_columns($this->wanted_columns());
         $this->init_sort();
 
-        $PAGE->requires->yui_lib('dom-event');
+        $PAGE->requires->yui_lib('container');
     }
 
     protected function wanted_columns() {
@@ -1099,10 +1097,13 @@ class question_bank_view {
      */
     public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
+        global $PAGE;
 
         if ($this->process_actions_needing_ui()) {
             return;
         }
+
+        $PAGE->requires->js('question/qbank.js');
 
         // Category selection form
         print_heading(get_string('questionbank', 'question'), '', 2);
@@ -1904,13 +1905,14 @@ function print_qtype_to_add_option($qtype, $localizedname) {
  * @param boolean $disabled if true, the button will be disabled.
  */
 function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
-    global $CFG;
+    global $CFG, $PAGE;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
     print_single_button($CFG->wwwroot . '/question/addquestion.php', $params,
             $caption,'get', '', false, $tooltip, $disabled);
     helpbutton('types', get_string('createnewquestion', 'question'), 'question');
-    require_js(array('yui_yahoo','yui_dom','yui_event', 'yui_dragdrop', 'yui_container'));
+    $PAGE->requires->yui_lib('dragdrop');
+    $PAGE->requires->yui_lib('container');
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
         print_choose_qtype_to_add_form(array());

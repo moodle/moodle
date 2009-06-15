@@ -242,7 +242,7 @@ function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_siz
  */
 function coursetag_get_jscript($coursetagdivs = '') {
 
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     $tabscript = '';
     if ($coursetagdivs) {
@@ -291,7 +291,7 @@ EOT;
         //]]>
     </script>';
 
-    require_js('blocks/tags/coursetags.js');
+    $PAGE->requires->js('blocks/tags/coursetags.js');
 
     return $str;
 }

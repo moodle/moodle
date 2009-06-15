@@ -2112,18 +2112,19 @@ function question_init_qenginejs_script() {
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 /**
- * Get the HTML that needs to be included in the head tag when the
- * questions in $questionlist are printed in the gives states.
+ * Give the questions in $questionlist a chance to request the CSS or JavaScript
+ * they need, before the header is printed.
  *
- * @global object
- * @global array
+ * If your code is going to call the print_question function, it must call this
+ * funciton before print_header.
+ *
  * @param array $questionlist a list of questionids of the questions what will appear on this page.
  * @param array $questions an array of question objects, whose keys are question ids.
  *      Must contain all the questions in $questionlist
  * @param array $states an array of question state objects, whose keys are question ids.
  *      Must contain the state of all the questions in $questionlist
  *
- * @return string some HTML code that can go inside the head tag.
+ * @return string Deprecated. Some HTML code that can go inside the head tag.
  */
 function get_html_head_contributions($questionlist, &$questions, &$states) {
     global $CFG, $PAGE, $QTYPES;
@@ -2133,30 +2134,34 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
     $PAGE->requires->js('question/qengine.js');
 
     // An inline script to record various lang strings, etc. that qengine.js needs.
-    $contributions = array(question_init_qenginejs_script());
+    $contributions = array();
 
     // Anything that questions on this page need.
     foreach ($questionlist as $questionid) {
         $question = $questions[$questionid];
-        $contributions = array_merge($contributions,
-                $QTYPES[$question->qtype]->get_html_head_contributions(
-                $question, $states[$questionid]));
+        $newcontributions = $QTYPES[$question->qtype]->
+                get_html_head_contributions($question, $states[$questionid]);
+        if (!empty($newcontributions)) {
+            $contributions = array_merge($contributions, $newcontributions);
+        }
     }
 
     return implode("\n", array_unique($contributions));
 }
 
 /**
- * Like @see{get_html_head_contributions} but for the editing page
+ * Like {@link get_html_head_contributions()} but for the editing page
  * question/question.php.
  *
- * @global array
  * @param $question A question object. Only $question->qtype is used.
- * @return string some HTML code that can go inside the head tag.
+ * @return string Deprecated. Some HTML code that can go inside the head tag.
  */
 function get_editing_head_contributions($question) {
     global $QTYPES;
     $contributions = $QTYPES[$question->qtype]->get_editing_head_contributions();
+    if (empty($contributions)) {
+        $contributions = array();
+    }
     return implode("\n", array_unique($contributions));
 }
 
@@ -3001,5 +3006,3 @@ function question_get_toggleflag_checksum($attemptid, $questionid, $sessionid, $
     }
     return md5($attemptid . "_" . $user->secret . "_" . $questionid . "_" . $sessionid);
 }
-
-?>

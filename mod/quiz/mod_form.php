@@ -37,7 +37,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $CFG, $DB, $PAGE;
         $quizconfig = get_config('quiz');
         $mform    =& $this->_form;
 
@@ -111,8 +111,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (!empty($this->_cm)) {
             $pagegroup[] = &$mform->createElement('checkbox', 'repaginatenow', '', get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
             $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
-            require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
-            require_js('mod/quiz/edit.js');
+            $PAGE->requires->yui_lib('event');
+            $PAGE->requires->js('mod/quiz/edit.js');
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp', get_string('newpage', 'quiz'), null, false);

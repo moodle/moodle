@@ -72,7 +72,7 @@
     }
 
 /// Print the page header
-    require_js('mod/quiz/quiz.js');
+    $PAGE->requires->js('mod/quiz/quiz.js');
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);

@@ -11,7 +11,7 @@ if (empty($CFG->enableportfolios)) {
 }
 
 require_once($CFG->libdir.'/portfoliolib.php');
-require_js(array('yui_yahoo', 'yui_dom'));
+$PAGE->requires->yui_lib('dom');
 $id = required_param('id', PARAM_INT);
 
 require_login();

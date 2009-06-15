@@ -1,4 +1,6 @@
-<?php require_js(array('yui_yahoo','yui_dom','yui_event','yui_animation')); ?>
+<?php
+
+$PAGE->requires->yui_lib('animation')->in_head(); ?>
 
 <!--[if IE 7]>
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpsthemewww ?>/lines/styles_ie7.css" />

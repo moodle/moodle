@@ -192,7 +192,7 @@ class resource_file extends resource_base {
     * @param    CFG     global object
     */
     function display() {
-        global $CFG, $THEME, $USER;
+        global $CFG, $THEME, $USER, $PAGE;
 
     /// Set up generic stuff first, including checking for access
         parent::display();
@@ -387,10 +387,7 @@ class resource_file extends resource_base {
         /// display the resource into a object tag
             if ($resource->options == "objectframe") {
             ///Yahoo javascript libaries for updating embedded object size
-                require_js(array('yui_utilities'));
-                require_js(array('yui_container'));
-                require_js(array('yui_dom-event'));
-                require_js(array('yui_dom'));
+                $PAGE->requires->yui_lib('container');
 
             ///Moodle Header and navigation bar
                 $navigation = build_navigation($this->navlinks, $cm);

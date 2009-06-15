@@ -50,7 +50,8 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 require_once($CFG->dirroot . '/question/category_class.php');
-require_js(array('yui_yahoo', 'yui_dom-event', 'yui_container', 'yui_dragdrop'));
+$PAGE->requires->yui_lib('container');
+$PAGE->requires->yui_lib('dragdrop');
 
 /**
  * Callback function called from question_list() function

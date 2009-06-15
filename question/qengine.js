@@ -1,5 +1,5 @@
 // This script, and the YUI libraries that it needs, are inluded by
-// the require_js calls in get_html_head_contributions in lib/questionlib.php.
+// the $PAGE->requires->js calls in get_html_head_contributions in lib/questionlib.php.
 
 question_flag_changer = {
     flag_state_listeners: new Object(),
