@@ -1082,7 +1082,7 @@ function ajax_resolve_yui_lib($libname) {
                 'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'resize', 'imagecropper'),
                 'css' => array('assets/skins/sam/resize.css', 'assets/skins/sam/imagecropper.css')),
         'imageloader' => array('yahoo-dom-event', 'imageloader'),
-        'json' => array('yahoo-dom-event', 'json/json'),
+        'json' => array('yahoo-dom-event', 'json'),
         'layout' => array(
                 'js' => array('yahoo-dom-event', 'dragdrop', 'element', 'layout'),
                 'css' => array('reset-fonts-grids/reset-fonts-grids.css', 'assets/skins/sam/layout.css')),
@@ -1110,7 +1110,7 @@ function ajax_resolve_yui_lib($libname) {
                 'js' => array('yahoo-dom-event', 'element', 'tabview'),
                 'css' => array('assets/skins/sam/skin.css')),
         'treeview' => array(
-                'js' => array('yahoo-dom-event', 'treeviewed'),
+                'js' => array('yahoo-dom-event', 'treeview'),
                 'css' => array('treeview/assets/skins/sam/treeview.css')),
         'uploader' => array('yahoo-dom-event', 'element', 'uploader'),
         'utilities' => array('yahoo-dom-event', 'connection', 'animation', 'dragdrop', 'element', 'get'),
