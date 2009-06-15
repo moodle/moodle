@@ -185,7 +185,7 @@ function mediaplugin_filter_flv_callback($link) {
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url.'",
     width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
-    allowscriptaccess:"never", quality: "high" };
+    allowscriptaccess:"never", quality: "high", allowfullscreen: "true" };
   UFO.create(FO, "'.$id.'");
 //]]>
 </script>';
