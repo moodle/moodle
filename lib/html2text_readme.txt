@@ -12,13 +12,12 @@ Modifications
 
 by using this code:
 
-  utf8_encode(html_entity_decode($string));
+  $tl=textlib_get_instance();
+  $text = $tl->entities_to_utf8($text, true);
 
 instead of:
 
-  html_entity_decode($string, ENT_COMPAT, 'UTF-8');
-
-(see http://nz.php.net/manual/en/function.html-entity-decode.php#89483)
+  $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
 
 
 2- fixed error in preg_replace_callback on php4
