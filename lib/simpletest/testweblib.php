@@ -42,17 +42,17 @@ class web_test extends UnitTestCase {
     }
 
     function test_format_text_email() {
-        $this->assertEqual('This is a test',
+        $this->assertEqual("\n\nThis is a TEST",
             format_text_email('<p>This is a <strong>test</strong></p>',FORMAT_HTML));
-        $this->assertEqual('This is a test',
+        $this->assertEqual("\n\nThis is a TEST",
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
-        $this->assertEqual('& so is this',
-            format_text_email('<p>&amp; so is this</p>',FORMAT_HTML));
+        $this->assertEqual("& so is this",
+            format_text_email('&amp; so is this',FORMAT_HTML));
         $tl = textlib_get_instance();
-        $this->assertEqual('Two bullets: '.$tl->code2utf8(8226).' '.$tl->code2utf8(8226),
-            format_text_email('<p>Two bullets: &#x2022; &#8226;</p>',FORMAT_HTML));
+        $this->assertEqual('Two bullets: '.$tl->code2utf8(8226).' *',
+            format_text_email('Two bullets: &#x2022; &#8226;',FORMAT_HTML));
         $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
-            format_text_email('<p>&#x7fd2;&#x7FD2;</p>',FORMAT_HTML));
+            format_text_email('&#x7fd2;&#x7FD2;',FORMAT_HTML));
     }
 
     function test_highlight() {
