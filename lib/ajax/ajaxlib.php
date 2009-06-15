@@ -26,8 +26,8 @@
 
 
 /**
- * Initialise a page_requirements_manager with the bits of JavaScript that every
- * Moodle page needs.
+ * Initialise a {@link page_requirements_manager} with the bits of JavaScript that every
+ * Moodle page should have.
  *
  * @param page_requirements_manager $requires The page_requirements_manager to initialise.
  */
@@ -55,7 +55,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
 
     // Note that, as a short-cut, the code 
     // $js = "document.body.className += ' jsenabled';\n";
-    // is hard-coded in @see{page_requirements_manager::get_top_of_body_code}.
+    // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
 }
 
 
@@ -72,6 +72,10 @@ function setup_core_javascript(page_requirements_manager $requires) {
  *     $PAGE->requires->js('mod/mymod/small_but_urgent.js')->in_head();
  *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
  * </pre>
+ *
+ * There are some natural restrictions on some methods. For example, {@link css()}
+ * can only be called before the <head> tag is output. See the comments on the
+ * individual methods for details.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -92,8 +96,9 @@ class page_requirements_manager {
     protected $topofbodydone = false;
 
     /**
-     * Ensure that the specified script file is linked to from this page. By default
-     * the link is put at the end of the page, since this gives best load performance.
+     * Ensure that the specified JavaScript file is linked to from this page.
+     *
+     * By default the link is put at the end of the page, since this gives best page-load performance.
      *
      * Even if a particular script is requested more than once, it will only be linked
      * to once.
@@ -106,9 +111,9 @@ class page_requirements_manager {
      *      do this. This really should only be done in exceptional circumstances. This
      *      may change in the future without warning.
      *      (If true, $jsfile is treaded as a full URL, not relative $CFG->wwwroot.)
-     * @return required_js A required_js object. This allows you to control when the
-     *      link to the script is output by calling methods like ->asap() or
-     *      ->in_head().
+     * @return required_js The required_js object. This allows you to control when the
+     *      link to the script is output by calling methods like {@link required_js::asap()} or
+     *      {@link required_js::in_head()}.
      */
     public function js($jsfile, $fullurl = false) {
         global $CFG;
@@ -128,23 +133,24 @@ class page_requirements_manager {
 
     /**
      * Ensure that the specified YUI library file, and all its required dependancies,
-     * are linked to from this page. By default the link is put at the end of the
-     * page, since this gives best load performance. Optional dependencies are not
-     * loaded automatically - if you want them you will need to load them first with
-     * other calls to this method.
+     * are linked to from this page.
+     *
+     * By default the link is put at the end of the page, since this gives best page-load
+     * performance. Optional dependencies are not loaded automatically - if you want
+     * them you will need to load them first with other calls to this method.
      *
      * If the YUI library you ask for requires one or more CSS files, and if
-     * &lt;head> has already been printed, then an exception will be thrown.
+     * <head> has already been printed, then an exception will be thrown.
      * Therefore, you are strongly advised to request all the YUI libraries you
-     * will need before the call to print_header.
+     * will need before output is started.
      *
      * Even if a particular library is requested more than once (perhaps as a dependancy
      * of other libraries) it will only be linked to once.
      *
      * @param $libname the name of the YUI library you require. For example 'autocomplete'.
      * @return required_yui_lib A requried_yui_lib object. This allows you to control when the
-     *      link to the script is output by calling methods like ->asap() or
-     *      ->in_head().
+     *      link to the script is output by calling methods like {@link required_yui_lib::asap()} or
+     *      {@link required_yui_lib::in_head()}.
      */
     public function yui_lib($libname) {
         $key = 'yui:' . $libname;
@@ -155,9 +161,10 @@ class page_requirements_manager {
     }
 
     /**
-     * Ensure that the specified CSS file is linked to from this page. Because
-     * stylesheet links must go in the &lt;head> part of the HTML, you must call
-     * this function before get_head_code is called. That normally means before
+     * Ensure that the specified CSS file is linked to from this page.
+     *
+     * Because stylesheet links must go in the <head> part of the HTML, you must call
+     * this function before {@link get_head_code()} is called. That normally means before
      * the call to print_header. If you call it when it is too late, an exception
      * will be thrown.
      *
@@ -190,12 +197,13 @@ class page_requirements_manager {
     }
 
     /**
-     * Ensure that a skip link to a given target is printed at the top of the &lt;body>.
-     * You must call this function before get_top_of_body_code, (if not, an exception
+     * Ensure that a skip link to a given target is printed at the top of the <body>.
+     *
+     * You must call this function before {@link get_top_of_body_code()}, (if not, an exception
      * will be thrown). That normally means you must call this before the call to print_header.
      *
      * If you ask for a particular skip link to be printed, it is then your responsibility
-     * to ensure that the appropraite &lt;a name="..."> tag is printed in the body of the
+     * to ensure that the appropraite <a name="..."> tag is printed in the body of the
      * page, so that the skip link goes somewhere.
      *
      * Even if a particular skip link is requested more than once, only one copy of it will be output.
@@ -211,7 +219,9 @@ class page_requirements_manager {
 
     /**
      * Ensure that the specified JavaScript function is called from an inline script
-     * somewhere on this page. By default the call will be put in a script tag at the
+     * somewhere on this page.
+     *
+     * By default the call will be put in a script tag at the
      * end of the page, since this gives best page-load performance.
      *
      * If you request that a particular function is called several times, then
@@ -224,10 +234,12 @@ class page_requirements_manager {
      * @param array $arguments and array of arguments to be passed to the function.
      *      When generating the function call, this will be escaped using json_encode,
      *      so passing objects and arrays should work.
-     * @return required_js_function_call A required_js_function_call object.
+     * @return required_js_function_call The required_js_function_call object.
      *      This allows you to control when the link to the script is output by
-     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body(),
-     *      ->on_dom_ready() or ->after_delay() methods.
+     *      calling methods like {@link required_js_function_call::in_head()},
+     *      {@link required_js_function_call::at_top_of_body()},
+     *      {@link required_js_function_call::on_dom_ready()} or
+     *      {@link required_js_function_call::after_delay()} methods.
      */
     public function js_function_call($function, $arguments = array()) {
         $requirement = new required_js_function_call($this, $function, $arguments);
@@ -236,9 +248,10 @@ class page_requirements_manager {
     }
 
     /**
-     * Make a language string available to JavaScript. All the strings will be
-     * available in a mstr object in the global namespace. So, for example,
-     * after a call to $PAGE->requires->string_for_js('course', 'moodle');
+     * Make a language string available to JavaScript.
+     * 
+     * All the strings will be available in a mstr object in the global namespace.
+     * So, for example, after a call to $PAGE->requires->string_for_js('course', 'moodle');
      * then the JavaScript variable mstr.moodle.course will be 'Course', or the
      * equivalent in the current language.
      *
@@ -250,7 +263,7 @@ class page_requirements_manager {
      *
      * If you do need the same string expanded with different $a values, then
      * the solution is to put them in your own data structure (e.g. and array)
-     * that you pass to JavaScript with @see{data_for_js}.
+     * that you pass to JavaScript with {@link data_for_js()}.
      *
      * @param string $identifier the desired string.
      * @param string $module the language file to look in.
@@ -259,7 +272,7 @@ class page_requirements_manager {
     public function string_for_js($identifier, $module, $a = NULL) {
         $string = get_string($identifier, $module, $a);
         if (!$module) {
-            $module = 'moodle';
+            throw new coding_exception('The $module parameter is required for page_requirements_manager::string_for_js.');
         }
         if (isset($this->stringsforjs[$module][$identifier]) && $this->stringsforjs[$module][$identifier] != $string) {
             throw new coding_exception("Attempt to re-define already required string '$identifier' " .
@@ -269,8 +282,12 @@ class page_requirements_manager {
     }
 
     /**
-     * Make some data from PHP available to JavaScript code. For example, if you call
+     * Make some data from PHP available to JavaScript code.
+     * 
+     * For example, if you call
+     * <pre>
      *      $PAGE->requires->data_for_js('mydata', array('name' => 'Moodle'));
+     * </pre>
      * then in JavsScript mydata.name will be 'Moodle'.
      *
      * You cannot call this function more than once with the same variable name
@@ -283,10 +300,11 @@ class page_requirements_manager {
      *      should be considered an experimental feature.
      * @param mixed $data The data to pass to JavaScript. This will be escaped using json_encode,
      *      so passing objects and arrays should work.
-     * @return required_data_for_js A required_data_for_js object.
+     * @return required_data_for_js The required_data_for_js object.
      *      This allows you to control when the link to the script is output by
-     *      calling methods like ->asap(), ->in_head(), ->at_top_of_body() or
-     *      ->on_dom_ready() methods.
+     *      calling methods like {@link required_data_for_js::asap()},
+     *      {@link required_data_for_js::in_head()} or
+     *      {@link required_data_for_js::at_top_of_body() methods.
      */
     public function data_for_js($variable, $data) {
         if (isset($this->variablesinitialised[$variable])) {
@@ -316,7 +334,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Get the code for the linked resources that need to appear in a particular place.
+     * Get the inline JavaScript code that need to appear in a particular place.
      * @param $when one of the WHEN_... constants.
      * @return string the javascript that should be output in that place.
      */
@@ -332,9 +350,12 @@ class page_requirements_manager {
     }
 
     /**
-     * Generate any HTML that needs to go inside the &lt;head> tag.
+     * Generate any HTML that needs to go inside the <head> tag.
      *
-     * @return string the HTML code to to inside the &lt;head> tag.
+     * Normally, this method is called automatically by the code that prints the
+     * <head> tag. You should not normally need to call it in your own code.
+     *
+     * @return string the HTML code to to inside the <head> tag.
      */
     public function get_head_code() {
         setup_core_javascript($this);
@@ -346,9 +367,12 @@ class page_requirements_manager {
     }
 
     /**
-     * Generate any HTML that needs to go at the start of the &lt;body> tag.
+     * Generate any HTML that needs to go at the start of the <body> tag.
      *
-     * @return string the HTML code to go at the start of the &lt;body> tag.
+     * Normally, this method is called automatically by the code that prints the
+     * <head> tag. You should not normally need to call it in your own code.
+     *
+     * @return string the HTML code to go at the start of the <body> tag.
      */
     public function get_top_of_body_code() {
         $output = $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY);
@@ -361,6 +385,9 @@ class page_requirements_manager {
 
     /**
      * Generate any HTML that needs to go at the end of the page.
+     *
+     * Normally, this method is called automatically by the code that prints the
+     * page footer. You should not normally need to call it in your own code.
      *
      * @return string the HTML code to to at the end of the page.
      */
@@ -384,18 +411,14 @@ class page_requirements_manager {
     }
 
     /**
-     * Have we already output the code in the <lt;head> tag?
-     *
-     * @return boolean
+     * @return boolean Have we already output the code in the <head> tag?
      */
     public function is_head_done() {
         return $this->headdone;
     }
 
     /**
-     * Have we already output the code at the start of the <lt;body> tag?
-     *
-     * @return boolean
+     * @return boolean Have we already output the code at the start of the <body> tag?
      */
     public function is_top_of_body_done() {
         return $this->topofbodydone;
@@ -428,9 +451,9 @@ abstract class requirement_base {
 
     /**
      * Mark that this requirement has been satisfied (that is, that the HTML
-     * returned by @see{get_html} has been output.
+     * returned by {@link get_html()} has been output.
      * @return boolean has this requirement been satisfied yet? That is, has
-     *      that the HTML returned by @see{get_html} has been output already.
+     *      that the HTML returned by {@link get_html()} has been output already.
      */
     public function is_done() {
         return $this->done;
@@ -438,7 +461,7 @@ abstract class requirement_base {
 
     /**
      * Mark that this requirement has been satisfied (that is, that the HTML
-     * returned by @see{get_html} has been output.
+     * returned by {@link get_html()} has been output.
      */
     public function mark_done() {
         $this->done = true;
@@ -446,7 +469,7 @@ abstract class requirement_base {
 
     /**
      * Where on the page the HTML this requirement is meant to go.
-     * @return integer One of the page_requirements_manager::WHEN_... constants.
+     * @return integer One of the {@link page_requirements_manager}::WHEN_... constants.
      */
     public function get_when() {
         return $this->when;
@@ -486,14 +509,14 @@ abstract class linked_requirement extends requirement_base {
 
 
 /**
- * A subclass of @see{linked_requirement} to represent a requried JavaScript file.
+ * A subclass of {@link linked_requirement} to represent a requried JavaScript file.
  *
  * You should not create instances of this class directly. Instead you should
- * work with a @see{page_requirements_manager} - and probably the only
+ * work with a {@link page_requirements_manager} - and probably the only
  * page_requirements_manager you will ever need is the one at $PAGE->requires.
  *
- * The methods ->asap, ->in_head and at_top_of_body() are indented to be used
- * as a fluid API, so you can say things like
+ * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
+ * are indented to be used as a fluid API, so you can say things like
  *     $PAGE->requires->js('mod/mymod/script.js')->in_head();
  *
  * However, by default JavaScript files are included at the end of the HTML.
@@ -508,7 +531,7 @@ class required_js extends linked_requirement {
     /**
      * Constructor. Normally instances of this class should not be created
      * directly. Client code should create them via the page_requirements_manager
-     * method ->js(...).
+     * method {@link page_requirements_manager::js()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $url The URL of the JavaScript file we are linking to.
@@ -525,12 +548,14 @@ class required_js extends linked_requirement {
     /**
      * Indicate that the link to this JavaScript file should be output as soon as
      * possible. That is, if this requirement has already been output, this method
-     * does nothing. Otherwise, if the &lt;head> tag has not yet been printed, the link
-     * to this script will be put in &lt;head>. Otherwise, this method returns a
+     * does nothing. Otherwise, if the <head> tag has not yet been printed, the link
+     * to this script will be put in <head>. Otherwise, this method returns a
      * fragment of HTML that the caller is responsible for outputting as soon as
      * possible. In fact, it is recommended that you only call this function from
      * an echo statement, like:
+     * <pre>
      *     echo $PAGE->requires->js(...)->asap();
+     * </pre>
      *
      * @return string The HTML required to include this JavaScript file. The caller
      * is responsible for outputting this HTML promptly.
@@ -550,7 +575,7 @@ class required_js extends linked_requirement {
 
     /**
      * Indicate that the link to this JavaScript file should be output in the
-     * &lt;head> section of the HTML. If it too late for this request to be
+     * <head> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function in_head() {
@@ -565,7 +590,7 @@ class required_js extends linked_requirement {
 
     /**
      * Indicate that the link to this JavaScript file should be output at the top
-     * of the &lt;body> section of the HTML. If it too late for this request to be
+     * of the <body> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function at_top_of_body() {
@@ -581,21 +606,21 @@ class required_js extends linked_requirement {
 
 
 /**
- * A subclass of @see{linked_requirement} to represent a requried YUI library.
+ * A subclass of {@link linked_requirement} to represent a requried YUI library.
  *
  * You should not create instances of this class directly. Instead you should
- * work with a @see{page_requirements_manager} - and probably the only
+ * work with a {@link page_requirements_manager} - and probably the only
  * page_requirements_manager you will ever need is the one at $PAGE->requires.
  *
- * The methods ->asap, ->in_head and at_top_of_body() are indented to be used
- * as a fluid API, so you can say things like
+ * The methods {@link asap()}, {@link in_head()} and {@link at_top_of_body()}
+ * are indented to be used as a fluid API, so you can say things like
  *     $PAGE->requires->yui_lib('autocomplete')->in_head();
  *
- * This class (with the help of @see{ajax_resolve_yui_lib}) knows about the
+ * This class (with the help of {@link ajax_resolve_yui_lib()}) knows about the
  * dependancies between the different YUI libraries, and will include all the
  * other libraries required by the one you ask for. It also knows which YUI
  * libraries require css files. If the library you ask for requires CSS files,
- * then you should ask for it before &lt;head> is output, or an exception will
+ * then you should ask for it before <head> is output, or an exception will
  * be thrown.
  *
  * By default JavaScript files are included at the end of the HTML.
@@ -612,11 +637,11 @@ class required_yui_lib extends linked_requirement {
     /**
      * Constructor. Normally instances of this class should not be created
      * directly. Client code should create them via the page_requirements_manager
-     * method ->yui_lib(...).
+     * method {@link page_requirements_manager::yui_lib()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $libname The name of the YUI library you want. See the array
-     * defined in @see{ajax_resolve_yui_lib} for a list of known libraries.
+     * defined in {@link ajax_resolve_yui_lib()} for a list of known libraries.
      */
     public function __construct(page_requirements_manager $manager, $libname) {
         parent::__construct($manager, '');
@@ -638,12 +663,14 @@ class required_yui_lib extends linked_requirement {
 
     /**
      * Indicate that the link to this YUI library file should be output as soon as
-     * possible. The comment above @see{required_js::asap} applies to this method too.
+     * possible. The comment above {@link required_js::asap()} applies to this method too.
      *
      * @return string The HTML required to include this JavaScript file. The caller
      * is responsible for outputting this HTML promptly. For example, a good way to
      * call this method is like
+     * <pre>
      *     echo $PAGE->requires->yui_lib(...)->asap();
+     * </pre>
      */
     public function asap() {
         if ($this->is_done()) {
@@ -665,7 +692,7 @@ class required_yui_lib extends linked_requirement {
 
     /**
      * Indicate that the links to this  YUI library should be output in the
-     * &lt;head> section of the HTML. If it too late for this request to be
+     * <head> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function in_head() {
@@ -685,7 +712,7 @@ class required_yui_lib extends linked_requirement {
 
     /**
      * Indicate that the links to this YUI library should be output in the
-     * &lt;head> section of the HTML. If it too late for this request to be
+     * <head> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function at_top_of_body() {
@@ -706,17 +733,17 @@ class required_yui_lib extends linked_requirement {
 
 
 /**
- * A subclass of @see{linked_requirement} to represent a required CSS file.
- * Of course, all links to CSS files must go in the &lt;head section of the HTML.
+ * A subclass of {@link linked_requirement} to represent a required CSS file.
+ * Of course, all links to CSS files must go in the <head> section of the HTML.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class required_css extends linked_requirement {
     /**
-     * Constructor. Normally instances of this class should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method ->css(...).
+     * Constructor. Normally instances of this class should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::css()}
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $url The URL of the CSS file we are linking to.
@@ -733,10 +760,10 @@ class required_css extends linked_requirement {
 
 
 /**
- * A subclass of @see{linked_requirement} to represent a skip link.
+ * A subclass of {@link linked_requirement} to represent a skip link.
  * A skip link is a concept from accessibility. You have some links like
  * 'Skip to main content' linking to an #maincontent anchor, at the start of the
- * &lt;body> tag, so that users using assistive technologies like screen readers
+ * <body> tag, so that users using assistive technologies like screen readers
  * can easily get to the main content without having to work their way through
  * any navigation, blocks, etc. that comes before it in the HTML.
  *
@@ -747,9 +774,9 @@ class required_skip_link extends linked_requirement {
     protected $linktext;
 
     /**
-     * Constructor. Normally instances of this class should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method ->yui_lib(...).
+     * Constructor. Normally instances of this class should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::yui_lib()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $target the name of the anchor in the page we are linking to.
@@ -776,10 +803,7 @@ class required_skip_link extends linked_requirement {
 abstract class required_js_code extends requirement_base {
 
     /**
-     * Constructor. Normally the class and its subclasses should not be created
-     * directly. Client code should create them via a page_requirements_manager
-     * method like ->js(...).
-     *
+     * Constructor.
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      */
     protected function __construct(page_requirements_manager $manager) {
@@ -795,12 +819,14 @@ abstract class required_js_code extends requirement_base {
    /**
      * Indicate that the link to this JavaScript file should be output as soon as
      * possible. That is, if this requirement has already been output, this method
-     * does nothing. Otherwise, if the &lt;head> tag has not yet been printed, the link
-     * to this script will be put in &lt;head>. Otherwise, this method returns a
+     * does nothing. Otherwise, if the <head> tag has not yet been printed, the link
+     * to this script will be put in <head>. Otherwise, this method returns a
      * fragment of HTML that the caller is responsible for outputting as soon as
      * possible. In fact, it is recommended that you only call this function from
      * an echo statement, like:
+     * <pre>
      *     echo $PAGE->requires->js(...)->asap();
+     * </pre>
      *
      * @return string The HTML required to include this JavaScript file. The caller
      * is responsible for outputting this HTML promptly.
@@ -821,7 +847,7 @@ abstract class required_js_code extends requirement_base {
 
     /**
      * Indicate that the link to this JavaScript file should be output in the
-     * &lt;head> section of the HTML. If it too late for this request to be
+     * <head> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function in_head() {
@@ -836,7 +862,7 @@ abstract class required_js_code extends requirement_base {
 
     /**
      * Indicate that the link to this JavaScript file should be output at the top
-     * of the &lt;body> section of the HTML. If it too late for this request to be
+     * of the <body> section of the HTML. If it too late for this request to be
      * satisfied, an exception is thrown.
      */
     public function at_top_of_body() {
@@ -854,7 +880,7 @@ abstract class required_js_code extends requirement_base {
 /**
  * This class represents a JavaScript function that must be called from the HTML
  * page. By default the call will be made at the end of the page, but you can
- * chage that using the ->asap, ->in_head, etc. methods.
+ * chage that using the {@link asap()}, {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -865,9 +891,9 @@ class required_js_function_call extends required_js_code {
     protected $delay = 0;
 
     /**
-     * Constructor. Normally the class and its subclasses should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method ->js_function_call(...).
+     * Constructor. Normally instances of this class should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::js_function_call()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $function the name of the JavaScritp function to call.
@@ -927,7 +953,7 @@ class required_js_function_call extends required_js_code {
 /**
  * This class represents some data from PHP that needs to be made available in a
  * global JavaScript variable. By default the data will be output at the end of
- * the page, but you can chage that using the ->asap, ->in_head, etc. methods.
+ * the page, but you can chage that using the {@link asap()}, {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -937,9 +963,9 @@ class required_data_for_js extends required_js_code {
     protected $data;
 
     /**
-     * Constructor. Normally the class and its subclasses should not be created
-     * directly. Client code should create them via the page_requirements_manager
-     * method ->data_for_js(...).
+     * Constructor. Normally the class and its subclasses should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::data_for_js()}.
      *
      * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
      * @param string $variable the the name of the JavaScript variable to assign the data to.

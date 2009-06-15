@@ -26,6 +26,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 /**
  * $PAGE is a central store of information about the current page we are
  * generating in response to the user's request. It does not do very much itself
@@ -37,6 +38,8 @@
  * @subpackage pages
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
