@@ -66,10 +66,12 @@ function setup_core_javascript(page_requirements_manager $requires) {
  * one accessible via $PAGE->requires.
  *
  * Typical useage would be
+ * <pre>
  *     $PAGE->requires->css('mod/mymod/styles.css');
  *     $PAGE->requires->js('mod/mymod/script.js');
  *     $PAGE->requires->js('mod/mymod/small_but_urgent.js')->in_head();
  *     $PAGE->requires->js_function_call('init_mymod', array($data))->on_dom_ready();
+ * </pre>
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -162,7 +164,7 @@ class page_requirements_manager {
      * Even if a particular style sheet is requested more than once, it will only
      * be linked to once.
      *
-     * @param string $stylesheet The path to the .js file, relative to
+     * @param string $stylesheet The path to the .css file, relative to
      *      $CFG->dirroot / $CFG->wwwroot. No leading slash. For example
      *      'mod/mymod/styles.css';
      * @param boolean $fullurl This parameter is intended for internal use only.
