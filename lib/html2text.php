@@ -30,6 +30,7 @@
  *                                                                       *
  *************************************************************************/
 
+require_once "$CFG->libdir/textlib.class.php";
 
 /**
  *  Takes HTML and converts it to formatted, plain text.
@@ -471,7 +472,8 @@ class html2text
         $text = preg_replace_callback($this->callback_search, array(&$this, '_preg_callback'), $text);
 
         // Replace known html entities
-        $text = utf8_encode(html_entity_decode($text));
+        $tl=textlib_get_instance();
+        $text = $tl->entities_to_utf8($text, true);
 
         // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)
         $text = preg_replace('/&[^&;]+;/i', '', $text); 
