@@ -115,7 +115,15 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 $reportname = get_string('modulename', 'gradereport_grader');
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
-require_js(array('yui_yahoo', 'yui_dom', 'yui_event', 'yui_container', 'yui_connection', 'yui_dragdrop', 'yui_element', 'yui_json'));
+
+$PAGE->requires->yui_lib('event')->in_head(); // TODO change the JS so we can remove the ->in_head()
+$PAGE->requires->yui_lib('json')->in_head();
+$PAGE->requires->yui_lib('connection')->in_head();
+$PAGE->requires->yui_lib('dragdrop')->in_head();
+$PAGE->requires->yui_lib('element')->in_head();
+$PAGE->requires->yui_lib('container')->in_head();
+$PAGE->requires->js('grade/report/grader/functions.js')->in_head();
+
 if ($report->get_pref('enableajax')) {
     $report = new grade_report_grader_ajax($courseid, $gpr, $context, $page, $sortitemid);
 }
@@ -164,8 +172,7 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-$reporthtml = '<script src="functions.js" type="text/javascript"></script>';
-$reporthtml .= '<div class="gradeparent">';
+$reporthtml = '<div class="gradeparent">';
 $reporthtml .= $report->get_studentnameshtml();
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_iconshtml();
@@ -230,8 +237,6 @@ function init() {
     });
 
     YAHOO.graderreport.panelEl.render(table);
-
-    document.body.className += ' yui-skin-sam';
 
 }
 
