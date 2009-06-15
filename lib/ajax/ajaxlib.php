@@ -79,6 +79,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class page_requirements_manager {
     const WHEN_IN_HEAD = 0;
@@ -432,6 +433,7 @@ class page_requirements_manager {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 abstract class requirement_base {
     protected $manager;
@@ -484,6 +486,7 @@ abstract class requirement_base {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 abstract class linked_requirement extends requirement_base {
     protected $url;
@@ -526,6 +529,7 @@ abstract class linked_requirement extends requirement_base {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_js extends linked_requirement {
     /**
@@ -630,6 +634,7 @@ class required_js extends linked_requirement {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_yui_lib extends linked_requirement {
     protected $jss = array();
@@ -738,6 +743,7 @@ class required_yui_lib extends linked_requirement {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_css extends linked_requirement {
     /**
@@ -769,6 +775,7 @@ class required_css extends linked_requirement {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_skip_link extends linked_requirement {
     protected $linktext;
@@ -799,6 +806,7 @@ class required_skip_link extends linked_requirement {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 abstract class required_js_code extends requirement_base {
 
@@ -884,6 +892,7 @@ abstract class required_js_code extends requirement_base {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_js_function_call extends required_js_code {
     protected $function;
@@ -957,6 +966,7 @@ class required_js_function_call extends required_js_code {
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class required_data_for_js extends required_js_code {
     protected $variable;

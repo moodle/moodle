@@ -21,7 +21,6 @@
  * of information about the page we are building up to send back to the user.
  *
  * @package   moodlecore
- * @subpackage pages
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,15 +28,16 @@
 
 /**
  * $PAGE is a central store of information about the current page we are
- * generating in response to the user's request. It does not do very much itself
+ * generating in response to the user's request.
+ *
+ * It does not do very much itself
  * except keep track of information, however, it serves as the access point to
  * some more significant components like $PAGE->theme, $PAGE->requires,
  * $PAGE->blocks, etc.
  *
- * @package   moodlecore
- * @subpackage pages
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  *
  * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
  */
