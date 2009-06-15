@@ -438,27 +438,37 @@
            "url" => "",
 #          "self" => "this",
            "this" => EWIKI_SCRIPT,  # better was absolute _URL to ewiki wrapper
-           "jump" => "",
-       "ErfurtWiki" => "http://erfurtwiki.sourceforge.net/?id=",
-       "InterWiki" => "InterWikiSearch",
-       "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
-       "Wiki" => "WardsWiki",
-       "WardsWiki" => "http://www.c2.com/cgi/wiki?",
-       "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
-       "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
-       "MeatBall" => "MeatballWiki",
-       "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
-       "UseMod"       => "http://www.usemod.com/cgi-bin/wiki.pl?",
-       "PhpWiki" => "http://phpwiki.sourceforge.net/phpwiki/index.php3?",
-       "LinuxWiki" => "http://linuxwiki.de/",
-       "OpenWiki" => "http://openwiki.com/?",
-       "Tavi" => "http://andstuff.org/tavi/",
-       "TWiki" => "http://twiki.sourceforge.net/cgi-bin/view/",
-       "MoinMoin" => "http://www.purl.net/wiki/moin/",
-       "Google" => "http://google.com/search?q=",
-       "ISBN" => "http://www.amazon.com/exec/obidos/ISBN=",
-       "icq" => "http://www.icq.com/",
+           "jump" => ""
     ));
+    // BEGIN MOODLE CHANGES - disable interwiki liks by default
+    // can be enabled with $CFG->wiki_allow_interwiki = true . MDL-19460
+    global $CFG;
+    if (!empty($CFG->wiki_allow_interwiki)) {
+       $ewiki_config["interwiki"] = @array_merge(
+           $ewiki_config["interwiki"],
+           array (
+               "ErfurtWiki" => "http://erfurtwiki.sourceforge.net/?id=",
+               "InterWiki" => "InterWikiSearch",
+               "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
+               "Wiki" => "WardsWiki",
+               "WardsWiki" => "http://www.c2.com/cgi/wiki?",
+               "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
+               "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
+               "MeatBall" => "MeatballWiki",
+               "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
+               "UseMod"       => "http://www.usemod.com/cgi-bin/wiki.pl?",
+               "PhpWiki" => "http://phpwiki.sourceforge.net/phpwiki/index.php3?",
+               "LinuxWiki" => "http://linuxwiki.de/",
+               "OpenWiki" => "http://openwiki.com/?",
+               "Tavi" => "http://andstuff.org/tavi/",
+               "TWiki" => "http://twiki.sourceforge.net/cgi-bin/view/",
+               "MoinMoin" => "http://www.purl.net/wiki/moin/",
+               "Google" => "http://google.com/search?q=",
+               "ISBN" => "http://www.amazon.com/exec/obidos/ISBN=",
+               "icq" => "http://www.icq.com/"
+    ));
+    }
+    // END MOODLE CHANGES
 
 
 
