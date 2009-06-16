@@ -1,8 +1,10 @@
 <?php
 
 //== Custom Moodle strings that are not part of upstream TinyMCE ==
+$string['dragmath:dragmath_desc'] = 'Inser equation';
+$string['dragmath:dragmath_javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from $a.';
+$string['dragmath:dragmath_title'] = 'DragMath Equation Editor';
 $string['modulename'] = 'TinyMCE HTML editor';
-
 
 // == TinyMCE upstream lang strings from all plugins ==
 $string['advanced:address'] = 'Address';
