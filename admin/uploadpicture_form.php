@@ -4,7 +4,6 @@
     class admin_uploadpicture_form extends moodleform {
         function definition (){
             global $CFG, $USER;
-            global $userfields;
     
             $mform =& $this->_form;
     
@@ -14,11 +13,11 @@
     
             $mform->addElement('file', 'userpicturesfile', get_string('file'), 'size="40"');
             $mform->addRule('userpicturesfile', null, 'required');
-    
-            $choices = $userfields;
+
+            $choices =& $this->_customdata;
             $mform->addElement('select', 'userfield', get_string('uploadpicture_userfield', 'admin'), $choices);
             $mform->setType('userfield', PARAM_INT);
-    
+
             $choices = array( 0 => get_string('no'), 1 => get_string('yes') );
             $mform->addElement('select', 'overwritepicture', get_string('uploadpicture_overwrite', 'admin'), $choices);
             $mform->setType('overwritepicture', PARAM_INT);

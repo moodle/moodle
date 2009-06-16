@@ -61,7 +61,7 @@ $overwritepicture = optional_param('overwritepicture', 0, PARAM_BOOL);
 admin_externalpage_print_header();
 print_heading_with_help($struploadpictures, 'uploadpictures');
 
-$mform = new admin_uploadpicture_form();
+$mform = new admin_uploadpicture_form(null, $userfields);
 if ($formdata = $mform->get_data()) {
     if (!array_key_exists($userfield, $userfields)) {
         notify(get_string('uploadpicture_baduserfield','admin'));
