@@ -32,7 +32,7 @@ require_course_login($id);
 	To use this page you need a Java-enabled browser. 
 	Download the latest Java plug-in from 
 	<a href="http://www.java.com">Java.com</a>
-</applet >
+</applet>
 <form name="form" action="">
 	<div>
 	<button type="button" onclick="return DragMathDialog.insert();">Insert</button>
