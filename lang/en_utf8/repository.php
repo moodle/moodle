@@ -105,3 +105,4 @@ $string['updown'] = 'Display order';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
 $string['wrongcontext'] = 'You cannot access to this context';
+$string['xhtmlerror'] = 'You are probably using XHTML strict header, some YUI Component doesn\'t work in this mode, please turn it off in moodle';

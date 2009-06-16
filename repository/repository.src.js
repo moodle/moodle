@@ -338,7 +338,9 @@ repository_client.print_login = function(id, data) {
                 field_id = ' id="'+login[k].id+'"';
             }
             if (login[k].label) {
-                str += '<td align="right"><label'+label_id+'>'+login[k].label+'</label>&nbsp;</td>';
+                str += '<td align="right"><label'+label_id+'>'+login[k].label+'</label> </td>';
+            } else {
+                str += '<td></td>';
             }
             if(login[k].value) {
                 field_value = ' value="'+login[k].value+'"';
@@ -370,7 +372,11 @@ repository_client.print_login = function(id, data) {
         }
     }
     str += '</div>';
-    panel.get('element').innerHTML = str;
+    try {
+        panel.get('element').innerHTML = str;
+    } catch(e) {
+        alert(e.toString()+fp_lang.xhtml);
+    }
     cached_id=id;
     cached_repo_id=data.repo_id;
 }
@@ -445,20 +451,20 @@ repository_client.search = function(id, repo_id) {
 repository_client.loading = function(id, type, name) {
     var panel = new YAHOO.util.Element('panel-'+id);
     panel.get('element').innerHTML = '';
-    var content = document.createElement('div');
-    content.style.textAlign='center';
-    var para = document.createElement('P');
-    var img = document.createElement('IMG');
+    var str = '<div style="text-align:center">';
     if(type=='load') {
-        img.src = moodle_cfg.pixpath+'/i/loading.gif';
-        para.innerHTML = fp_lang.loading;
+        str += '<img src="'+moodle_cfg.pixpath+'/i/loading.gif" />';
+        str += '<p>'+fp_lang.loading+'</p>';
     }else{
-        img.src = moodle_cfg.pixpath+'/i/progressbar.gif';
-        para.innerHTML = fp_lang.copying+' <strong>'+name+'</strong>';
+        str += '<img src="'+moodle_cfg.pixpath+'/i/progressbar.gif" />';
+        str += '<p>'+fp_lang.copying+' <strong>'+name+'</strong></p>';
     }
-    content.appendChild(para);
-    content.appendChild(img);
-    panel.get('element').appendChild(content);
+    str += '</div>';
+    try {
+        panel.get('element').innerHTML = str;
+    } catch(e) {
+        alert('sadjfjsalfkj '+ e.toString());
+    }
 }
 repository_client.view_as_list = function(client_id, data) {
     if (typeof client_id == 'object') {
@@ -604,7 +610,7 @@ repository_client.paging = function(client_id, id) {
     this.fp[client_id].view_staus = 0;
     var fs = this.fp[client_id].fs;
     if(fs.pages) {
-        str += '<div class="fp-paging" id="paging-'+id+'-"'+client_id+'>';
+        str += '<div class="fp-paging" id="paging-'+id+'-'+client_id+'">';
         if(!fs.search_result){
             var action = 'req';
         } else {
@@ -848,9 +854,12 @@ repository_client.print_footer = function(client_id) {
         return;
     }
     if(!fs.nosearch) {
+        var img = document.createElement('img');
+        img.src = moodle_cfg.pixpath+'/a/search.png';
         var search = document.createElement('A');
         search.href = '###';
-        search.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/search.png" /> '+fp_lang.search;
+        search.appendChild(document.createTextNode(fp_lang.search));
+        oDiv.appendChild(img);
         oDiv.appendChild(search);
         search.onclick = function() {
             repository_client.search_form(client_id, fs.repo_id);
@@ -858,9 +867,12 @@ repository_client.print_footer = function(client_id) {
     }
     // weather we use cache for this instance, this button will reload listing anyway
     if(!fs.norefresh) {
+        var img = document.createElement('img');
+        img.src = moodle_cfg.pixpath+'/a/refresh.png';
         var ccache = document.createElement('A');
-        ccache.href = '###';
-        ccache.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/refresh.png" /> '+fp_lang.refresh;
+        ccache.href = "###";
+        ccache.appendChild(document.createTextNode(fp_lang.refresh));
+        oDiv.appendChild(img);
         oDiv.appendChild(ccache);
         ccache.onclick = function() {
             var params = [];

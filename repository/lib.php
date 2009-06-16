@@ -1733,7 +1733,7 @@ function repository_setup_default_plugins() {
  * @return array
  */
 function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returnvalue = '*') {
-    global $CFG, $USER;
+    global $CFG, $USER, $PAGE;
 
     $ft = new file_type_to_ext();
     $image_file_ext = json_encode($ft->get_file_ext(array('image')));
@@ -1799,7 +1799,7 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 .fp-login-form{text-align:center}
 .fp-searchbar{float:right}
 .fp-viewbar{width:300px;float:left}
-.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center;margin: 3px}
+.fp-toolbar{padding: .8em;background: #FFFFCC;text-align:center;margin: 3px}
 .fp-toolbar a{padding: 0 .5em}
 .fp-list{list-style-type:none;padding:0;float:left;width:100%;margin:0;}
 .fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
@@ -1829,21 +1829,20 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 </style>
 <![endif]-->
 EOD;
-
+        $PAGE->requires->yui_lib('yahoo');
+        $PAGE->requires->yui_lib('dom');
+        $PAGE->requires->yui_lib('element');
+        $PAGE->requires->yui_lib('event');
+        $PAGE->requires->yui_lib('json');
+        $PAGE->requires->yui_lib('treeview');
+        $PAGE->requires->yui_lib('dragdrop');
+        $PAGE->requires->yui_lib('container');
+        $PAGE->requires->yui_lib('resize');
+        $PAGE->requires->yui_lib('layout');
+        $PAGE->requires->yui_lib('connection');
+        $PAGE->requires->yui_lib('button');
+        $PAGE->requires->yui_lib('selector');
         require_js(array(
-            'yui_yahoo',
-            'yui_dom',
-            'yui_event',
-            'yui_element',
-            'yui_treeview',
-            'yui_dragdrop',
-            'yui_container',
-            'yui_resize',
-            'yui_layout',
-            'yui_connection',
-            'yui_json',
-            'yui_button',
-            'yui_selector',
             'repository/repository.src.js'
         ));
         $lang = array();
@@ -1886,6 +1885,7 @@ EOD;
         $lang['popup']     = get_string('popup', 'repository');
         $lang['upload']    = get_string('upload', 'repository').'...';
         $lang['uploading'] = get_string('uploading', 'repository');
+        $lang['xhtml']     = get_string('xhtmlerror', 'repository');
         $lang = json_encode($lang);
 
         $options = array();
