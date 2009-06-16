@@ -1,17 +1,11 @@
 <?php
 
-#################################################################################
-##
-## $Id$
-##
-#################################################################################
+require("../../../../../config.php");
 
-    require("../../../../../config.php");
+$id = optional_param('id', SITEID, PARAM_INT);
 
-    $id = optional_param('id', SITEID, PARAM_INT);
-
-    require_course_login($id);
-    @header('Content-Type: text/html; charset=utf-8');
+require_course_login($id);
+@header('Content-Type: text/html; charset=utf-8');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -30,16 +24,16 @@
 	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet' ?>" 
 	code="Display/MainApplet.class" 
 	archive="Project.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" 
-	width=540 height=300
+	width="540" height="300"
 >
-	<param name=language value="en">
-	<param name=outputFormat value="Latex">
-	<param name=showOutputToolBar value="false">
+	<param name="language" value="en" />
+	<param name="outputFormat" value="Latex" />
+	<param name="showOutputToolBar" value="false" />
 	To use this page you need a Java-enabled browser. 
 	Download the latest Java plug-in from 
-	<a> href="http://www.java.com">Java.com</a>
+	<a href="http://www.java.com">Java.com</a>
 </applet >
-<form name="form">
+<form name="form" action="">
 	<div>
 	<button type="button" onclick="return DragMathDialog.insert();">Insert</button>
 	<button type="button" onclick="return tinyMCEPopup.close();">Cancel</button>
