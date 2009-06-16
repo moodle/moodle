@@ -27,9 +27,9 @@
 
 <applet 
 	name="dragmath" 
-	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet/classes' ?>" 
+	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet' ?>" 
 	code="Display/MainApplet.class" 
-	archive="Project.jar,AbsoluteLayout.jar,swing-layout-1.0.jar,jdom.jar,jep.jar" 
+	archive="Project.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" 
 	width=540 height=300
 >
 	<param name=language value="en">

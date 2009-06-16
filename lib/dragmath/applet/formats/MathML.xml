@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Syntax>
+    <name AutoBrackets="false">MathML</name>
+    
+    <Initial> 
+        <output1><![CDATA[ <math xmlns="http://www.w3.org/1998/Math/MathML"> ]]></output1>
+        <output2><![CDATA[</math>]]></output2>
+    </Initial>
+    <Text>
+        <output1><![CDATA[<mtext>]]></output1>
+        <output2><![CDATA[</mtext>]]></output2>
+    </Text>
+    <Variable>
+        <output1><![CDATA[<mi>]]></output1>
+        <output2><![CDATA[</mi>]]></output2>
+    </Variable>
+    <RealNumber>
+        <output1><![CDATA[<mn>]]></output1>
+        <output2><![CDATA[</mn>]]></output2>
+    </RealNumber>
+    
+    
+    
+    <!--  Nary Operators   -->
+    <Add>
+        <output><![CDATA[<mo> &plus; </mo>]]></output>           
+    </Add>
+    <Multiply>
+        <output><![CDATA[<mo> &sdot; </mo>]]></output>
+    </Multiply>  
+    <Multiply2>
+        <output><![CDATA[<mo> &times; </mo>]]></output>
+    </Multiply2>
+    <Equals>
+        <output><![CDATA[<mo> &equals; </mo>]]></output>
+    </Equals>
+    <Union>
+        <output><![CDATA[<mo> &Union; </mo>]]></output>
+    </Union>
+    <Intersection>
+        <output><![CDATA[<mo> &Intersection; </mo>]]></output>
+    </Intersection>
+    <Comma>
+        <output><![CDATA[<mo> &comma; </mo>]]></output>
+    </Comma>
+    <Equiv>
+        <output><![CDATA[ <mo> &equiv; </mo>]]></output>
+    </Equiv>
+    
+    
+    
+    <!--  Functions   -->
+    <UMinus>
+        <output1><![CDATA[<mo> &minus; </mo]]></output1>
+        <output2></output2>
+    </UMinus>   
+    <Factorial brackets="false">
+        <output1><![CDATA[<mrow>]]></output1>
+        <output2><![CDATA[<mo>!</mo></mrow>]]></output2>
+    </Factorial>
+    <NaturalLogarithm>
+        <output1><![CDATA[<mi> ln </mi>]]></output1>
+        <output2></output2>
+    </NaturalLogarithm>
+    <Logarithm>
+        <output1><![CDATA[<mi> log </mi>]]></output1>
+        <output2></output2>
+    </Logarithm>
+    <Sine>
+        <output1><![CDATA[<mi> sin </mi>]]></output1>
+        <output2></output2>
+    </Sine>
+    <Cosine>
+        <output1><![CDATA[<mi> cos </mi>]]></output1>
+        <output2></output2>
+    </Cosine>
+    <Tangent>
+        <output1><![CDATA[<mi> tan </mi>]]></output1>
+        <output2></output2>
+    </Tangent>
+    <ArcSine>
+        <output1><![CDATA[ <msup> <mrow><mi>sin</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcSine>
+    <ArcCosine>
+        <output1><![CDATA[ <msup> <mrow><mi>cos</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcCosine>
+    <ArcTangent>
+        <output1><![CDATA[ <msup> <mrow><mi>tan</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcTangent>
+    <SineH>
+        <output1><![CDATA[<mi> sinh </mi>]]></output1>
+        <output2></output2>
+    </SineH>
+    <CosineH>
+        <output1><![CDATA[<mi> cosh </mi>]]></output1>
+        <output2></output2>
+    </CosineH>
+    <TanH>
+        <output1><![CDATA[<mi> tanh </mi>]]></output1>
+        <output2></output2>
+    </TanH>
+    <ArcSineH>
+        <output1><![CDATA[ <msup> <mrow><mi>sinh</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcSineH>
+    <ArcCosineH>
+        <output1><![CDATA[ <msup> <mrow><mi>cosh</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcCosineH>
+    <ArcTanH>
+        <output1><![CDATA[ <msup> <mrow><mi>tanh</mi></mrow><mrow><mn>-1</mn></mrow></msup> ]]></output1>
+        <output2></output2>
+    </ArcTanH>
+    <SquareRoot brackets="false">
+        <output1><![CDATA[<msqrt> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> </msqrt>]]></output2>
+    </SquareRoot>
+    <Exp brackets="false">
+        <output1><![CDATA[ <msup> <mrow><mtext>e</mtext></mrow> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> </msup>]]></output2>
+    </Exp>
+    <Max>
+        <output1><![CDATA[<mi> max </mi>]]></output1>
+        <output2></output2>
+    </Max>
+    <Min>
+        <output1><![CDATA[<mi> min </mi>]]></output1>
+        <output2></output2>
+    </Min>
+    <Determinant>
+        <output1><![CDATA[<mi> det </mi>]]></output1>
+        <output2></output2>
+    </Determinant>
+    <Trace>
+        <output1><![CDATA[<mi> trace </mi>]]></output1>
+        <output2></output2>
+    </Trace>
+    
+    
+    
+    <!--  Binary Operators   -->
+    <NotEqual>
+        <output1></output1>
+        <output2><![CDATA[<mo> &ne; </mo>]]></output2>
+        <output3></output3>
+    </NotEqual>
+    <PlusMinus>
+        <output1></output1>
+        <output2><![CDATA[<mo> &PlusMinus; </mo>]]></output2>
+        <output3></output3>
+    </PlusMinus>
+    <Assignment>
+        <output1></output1>
+        <output2><![CDATA[<mo> &Assign; </mo>]]></output2>
+        <output3></output3>
+    </Assignment>
+    <Subtract>
+        <output1></output1>
+        <output2><![CDATA[<mo> &minus; </mo>]]></output2>
+        <output3></output3>
+    </Subtract>
+    <Divide brackets="false">
+        <output1><![CDATA[<mfrac> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mfrac>]]></output3>
+    </Divide>
+    <Divide2>       
+        <output1></output1>
+        <output2><![CDATA[<mo> &divide; </mo>]]></output2>
+        <output3></output3>
+    </Divide2>
+    <LessThan>
+        <output1></output1>
+        <output2><![CDATA[<mo> &lt; </mo>]]></output2>
+        <output3></output3>
+    </LessThan>   
+    <GreaterThan>
+        <output1></output1>
+        <output2><![CDATA[<mo> &gt; </mo>]]></output2>
+        <output3></output3>
+    </GreaterThan>  
+    <LTEQ>
+        <output1></output1>
+        <output2><![CDATA[<mo> &leq; </mo>]]></output2>
+        <output3></output3>
+    </LTEQ> 
+    <GTEQ>
+        <output1></output1>
+        <output2><![CDATA[<mo> &geq; </mo>]]></output2>
+        <output3></output3>
+    </GTEQ> 
+    <Subset>
+        <output1></output1>
+        <output2><![CDATA[<mo> &subset; </mo>]]></output2>
+        <output3></output3>
+    </Subset>  
+    <SubsetEq>
+        <output1></output1>
+        <output2><![CDATA[<mo> &subseteq; </mo>]]></output2>
+        <output3></output3>
+    </SubsetEq>  
+    <NSubset>
+        <output1></output1>
+        <output2><![CDATA[<mo> &nsub; </mo>  ]]></output2>
+        <output3></output3>
+    </NSubset> 
+    <NSubsetEq>
+        <output1></output1>
+        <output2><![CDATA[<mo> &nsubseteq; </mo>]]></output2>
+        <output3></output3>
+    </NSubsetEq> 
+    <Power>
+        <output1><![CDATA[<msup> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </msup>]]></output3>
+    </Power>
+    <Subscript>
+        <output1><![CDATA[<msub> <mrow>]]></output1>
+        <output2><![CDATA[ </mrow> <mrow> ]]></output2>
+        <output3><![CDATA[ </mrow> </msub>]]></output3>
+    </Subscript> 
+    <NthRoot brackets="false">
+        <output1><![CDATA[<mroot> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mroot>]]></output3>
+    </NthRoot>  
+    <Function>
+        <output1><![CDATA[<mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mfenced> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mfenced>]]></output3>
+    </Function>
+    
+    
+    <!--  Nary Functions   -->
+    <Integral>
+        <output1><![CDATA[<mrow><mo>&int;</mo> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mo>&DifferentialD;</mo> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mrow>]]></output3>
+    </Integral>
+    <Differential order="1,0">
+        <output1><![CDATA[<mrow> <mfrac> <mrow><mo>&DifferentialD;</mo></mrow> <mrow><mo>&DifferentialD;</mo>]]></output1>
+        <output2><![CDATA[</mrow> </mfrac> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mrow>]]></output3>
+    </Differential>
+    <PartialDifferential order="1,0">
+        <output1><![CDATA[<mrow> <mfrac> <mrow><mo>&part;</mo></mrow> <mrow><mo>&part;</mo>]]></output1>
+        <output2><![CDATA[</mrow> </mfrac> <mrow>]]></output2>
+        <output3><![CDATA[</mrow> </mrow>]]></output3>
+    </PartialDifferential>
+    <Sum order="1,2,3,0">
+        <output1><![CDATA[<mrow> <munderover> <mo>&sum;</mo> <mrow>]]></output1>
+        <output2><![CDATA[ <mo> &equals; </mo>]]></output2>
+        <output3><![CDATA[</mrow> <mrow>]]></output3>
+        <output4><![CDATA[</mrow> </munderover> <mrow>]]></output4>
+        <output5><![CDATA[</mrow> </mrow>]]></output5>
+    </Sum>
+    <Product order="1,2,3,0">
+        <output1><![CDATA[<mrow> <munderover> <mo>&prod;</mo> <mrow>]]></output1>
+        <output2><![CDATA[<mo> &equals; </mo>]]></output2>
+        <output3><![CDATA[</mrow> <mrow>]]></output3>
+        <output4><![CDATA[</mrow> </munderover> <mrow>]]></output4>
+        <output5><![CDATA[</mrow> </mrow>]]></output5>
+    </Product>
+    <Limit order="1,2,0">
+        <output1><![CDATA[<mrow> <munder> <mrow> <mi>lim</mi> </mrow> <mrow>]]></output1>
+        <output2><![CDATA[ <mo>&rarr;</mo> ]]></output2>
+        <output3><![CDATA[</mrow> </munder> <mrow>]]></output3>
+        <output4><![CDATA[</mrow> </mrow>]]></output4>
+    </Limit>
+    <Evaluate>
+        <output1></output1>
+        <output2><![CDATA[<msub> <mrow> <mi>|</mi> </mrow> <mrow>]]></output2>
+        <output3><![CDATA[ <mo> &equals; </mo>]]></output3>
+        <output4><![CDATA[ </mrow> </msub>]]></output4>
+    </Evaluate>
+    <DefiniteIntegral order="2,3,0,1">
+        <output1><![CDATA[<mrow> <msubsup> <mo>&int;</mo> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> <mrow>]]></output2>
+        <output3><![CDATA[</mrow>  </msubsup> <mrow>]]></output3>
+        <output4><![CDATA[</mrow> <mo>&DifferentialD;</mo> <mrow>]]></output4>
+        <output5><![CDATA[</mrow> </mrow>]]></output5>
+    </DefiniteIntegral>
+    <LeftArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &larr; </mo>]]></output2>
+        <output3></output3>
+    </LeftArrow> 
+    <RightArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &rarr; </mo>]]></output2>
+        <output3></output3>
+    </RightArrow> 
+    <UpArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &uarr; </mo>]]></output2>
+        <output3></output3>
+    </UpArrow> 
+    <DownArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &darr; </mo>]]></output2>
+        <output3></output3>
+    </DownArrow> 
+    <LeftDblArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &lArr; </mo>]]></output2>
+        <output3></output3>
+    </LeftDblArrow> 
+    <RightDblArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &rArr; </mo>]]></output2>
+        <output3></output3>
+    </RightDblArrow> 
+    <LeftRightArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &harr; </mo>]]></output2>
+        <output3></output3>
+    </LeftRightArrow> 
+    <LeftRightDblArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &hArr; </mo>]]></output2>
+        <output3></output3>
+    </LeftRightDblArrow>   
+    <NorthEastArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &nearr; </mo>]]></output2>
+        <output3></output3>
+    </NorthEastArrow>		
+    <SouthEastArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &searr; </mo>]]></output2>
+        <output3></output3>
+    </SouthEastArrow>	  
+    <NorthWestArrow>        
+        <output1></output1>
+        <output2><![CDATA[ <mo> &nwarr; </mo>]]></output2>
+        <output3></output3>
+    </NorthWestArrow>	   
+    <SouthWestArrow>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &swarr; </mo>]]></output2>
+        <output3></output3>
+    </SouthWestArrow>     
+    
+    <Exists>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &exist; </mo>]]></output2>
+        <output3></output3>
+    </Exists>
+    <ForAll>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &forall; </mo>]]></output2>
+        <output3></output3>
+    </ForAll>
+    <IsIn>        
+        <output1></output1>
+        <output2><![CDATA[ <mo> &isin; </mo>]]></output2>
+        <output3></output3>
+    </IsIn>
+    <NotExists>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &nexists; </mo>]]></output2>
+        <output3></output3>
+    </NotExists>
+    <NotIn>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &notin; </mo>]]></output2>
+        <output3></output3>
+    </NotIn>
+    <SimEq>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &simeq; </mo>]]></output2>
+        <output3></output3>
+    </SimEq>
+    <Or>       
+        <output1></output1>
+        <output2><![CDATA[ <mo> &or; </mo>]]></output2>
+        <output3></output3>
+    </Or>
+    <And>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &and; </mo>]]></output2>
+        <output3></output3>
+    </And>
+    <Not>
+        <output1></output1>
+        <output2><![CDATA[ <mo> &not; </mo>]]></output2>
+        <output3></output3>
+    </Not>
+    
+    
+    
+    <!--  Grouping   -->
+    <BracketsRnd>
+        <output1><![CDATA[<mfenced> <mrow>]]></output1>
+        <output2><![CDATA[</mrow> </mfenced>]]></output2>
+    </BracketsRnd>
+    <BracketsCurl>
+        <output1><![CDATA[<mfenced open="{" close="}"><mrow>]]></output1>
+        <output2><![CDATA[</mrow></mfenced>]]></output2>
+    </BracketsCurl>
+    <BracketsSq>
+        <output1><![CDATA[<mfenced open="[" close="]"><mrow>]]></output1>
+        <output2><![CDATA[</mrow></mfenced>]]></output2>
+    </BracketsSq>
+    <Abs>
+        <output1><![CDATA[<mfenced open="|" close="|"><mrow>]]></output1>
+        <output2><![CDATA[</mrow></mfenced>]]></output2>
+    </Abs>
+    
+    
+    
+    <!--  Matrix   -->
+    <Matrix>
+        <matrixStart><![CDATA[<mfenced open="[" close="]"><mtable>]]></matrixStart>
+        <rowStart><![CDATA[<mtr>]]></rowStart>
+        <elementStart><![CDATA[<mtd>]]></elementStart>
+        <elementEnd><![CDATA[</mtd>]]></elementEnd>
+        <elementSeparator></elementSeparator>
+        <rowEnd><![CDATA[</mtr>]]></rowEnd>
+        <rowSeparator></rowSeparator>
+        <matrixEnd><![CDATA[</mtable></mfenced>]]></matrixEnd>
+    </Matrix>
+    
+    
+    
+    <!--  Symbols   -->
+    <Infinity>
+        <output><![CDATA[<mi> &infin; </mi>]]></output>
+    </Infinity>
+
+    
+    <Γ>
+        <output> <![CDATA[<mi> &Gamma; </mi>]]> </output>
+    </Γ>
+    <Δ>
+        <output> <![CDATA[<mi> &Delta; </mi>]]> </output>
+    </Δ>
+    <Θ>
+        <output> <![CDATA[<mi> &Theta; </mi>]]> </output>
+    </Θ>
+    <Λ>
+        <output> <![CDATA[<mi> &Lambda; </mi>]]> </output>
+    </Λ>
+    <Ξ>
+        <output> <![CDATA[<mi> &Xi; </mi>]]> </output>
+    </Ξ>
+    <Π>
+        <output> <![CDATA[<mi> &Pi; </mi>]]> </output>
+    </Π>
+    <Σ>
+        <output> <![CDATA[<mi> &Sigma; </mi>]]> </output>
+    </Σ>
+    <Υ>
+        <output> <![CDATA[<mi> &Upsilon; </mi>]]> </output>
+    </Υ>
+    <Φ>
+        <output> <![CDATA[<mi> &Phi; </mi>]]> </output>
+    </Φ>
+    <Ψ>
+        <output> <![CDATA[<mi> &Psi; </mi>]]> </output>
+    </Ψ>
+    <Ω>
+        <output> <![CDATA[<mi> &Omega; </mi>]]> </output>
+    </Ω>
+    
+    
+    <α>
+        <output> <![CDATA[<mi> &alpha; </mi>]]> </output>
+    </α>
+    <β>
+        <output> <![CDATA[<mi> &beta; </mi>]]> </output>
+    </β>
+    <γ>
+        <output> <![CDATA[<mi> &gamma; </mi>]]> </output>
+    </γ>
+    <δ>
+        <output> <![CDATA[<mi> &delta; </mi>]]> </output>
+    </δ>
+    <ε>
+        <output> <![CDATA[<mi> &epsi; </mi>]]> </output>
+    </ε>
+    <ζ>
+        <output> <![CDATA[<mi> &zeta; </mi>]]> </output>
+    </ζ>
+    <η>
+        <output> <![CDATA[<mi> &eta; </mi>]]> </output>
+    </η>
+    <θ>
+        <output> <![CDATA[<mi> &theta; </mi>]]> </output>
+    </θ>
+    <ι>
+        <output> <![CDATA[<mi> &iota; </mi>]]> </output>
+    </ι>
+    <κ>
+        <output> <![CDATA[<mi> &kappa; </mi>]]> </output>
+    </κ>
+    <λ>
+        <output> <![CDATA[<mi> &lambda; </mi>]]> </output>
+    </λ>
+    <μ>
+        <output> <![CDATA[<mi> &mu; </mi>]]> </output>
+    </μ>
+    <ν>
+        <output> <![CDATA[<mi> &nu; </mi>]]> </output>
+    </ν>
+    <ξ>
+        <output> <![CDATA[<mi> &xi; </mi>]]> </output>
+    </ξ>
+    <π>
+        <output> <![CDATA[<mi> &pi; </mi>]]> </output>
+    </π>
+    <ρ>
+        <output> <![CDATA[<mi> &rho; </mi>]]> </output>
+    </ρ>
+    <σ>
+        <output> <![CDATA[<mi> &sigma; </mi>]]> </output>
+    </σ>
+    <τ>
+        <output> <![CDATA[<mi> &tau; </mi>]]> </output>
+    </τ>
+    <υ>
+        <output> <![CDATA[<mi> &upsilon; </mi>]]> </output>
+    </υ>
+    <φ>
+        <output> <![CDATA[<mi> &phi; </mi>]]> </output>
+    </φ>
+    <χ>
+        <output> <![CDATA[<mi> &chi; </mi>]]> </output>
+    </χ>
+    <ψ>
+        <output> <![CDATA[<mi> &psi; </mi>]]> </output>
+    </ψ> 
+    <ω>
+        <output> <![CDATA[<mi> &omega; </mi>]]> </output>
+    </ω>
+</Syntax>

@@ -1,9 +1,10 @@
-Description of DragMath 0.7.7 library import into Moodle
+Description of DragMath 0.7.8 library import into Moodle
 
 Removed:
  * demo*
 
+TODO:
+ * find out the license status, we need this to be compatible with GPL 3 or remove from distribution!
+
 
 skodak
-
-$Id$
