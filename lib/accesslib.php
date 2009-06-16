@@ -1332,7 +1332,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
  * We do _not_ delve deeper than courses because the number of
  * overrides at the module/block levels is HUGE.
  *
- * [ra]   => [/path/] = array(roleid, roleid)
+ * [ra]   => [/path/][]=roleid
  * [rdef] => [/path/:roleid][capability]=permission
  * [loaded] => array('/path', '/path')
  *
@@ -1345,9 +1345,9 @@ function get_user_access_sitewide($userid) {
     global $CFG, $DB;
 
     /* Get in 3 cheap DB queries...
-     * - role assignments - with role_caps
+     * - role assignments
      * - relevant role caps
-     *   - above this user's RAs
+     *   - above and within this user's RAs
      *   - below this user's RAs - limited to course level
      */
 
@@ -1356,33 +1356,21 @@ function get_user_access_sitewide($userid) {
     $accessdata['rdef']   = array();
     $accessdata['loaded'] = array();
 
-    $sitectx = get_system_context();
-    $base = '/'.$sitectx->id;
-
     //
-    // Role assignments - and any rolecaps directly linked
-    // because it's cheap to read rolecaps here over many
-    // RAs
+    // Role assignments
     //
-    $sql = "SELECT ctx.path, ra.roleid, rc.capability, rc.permission
+    $sql = "SELECT ctx.path, ra.roleid
               FROM {role_assignments} ra
-              JOIN {context} ctx
-                   ON ra.contextid=ctx.id
-              LEFT OUTER JOIN {role_capabilities} rc
-                   ON (rc.roleid=ra.roleid AND rc.contextid=ra.contextid)
-             WHERE ra.userid = ? AND ctx.contextlevel <= ".CONTEXT_COURSE."
-          ORDER BY ctx.depth, ctx.path, ra.roleid";
+              JOIN {context} ctx ON ctx.id=ra.contextid
+             WHERE ra.userid = ? AND ctx.contextlevel <= ".CONTEXT_COURSE;
     $params = array($userid);
     $rs = $DB->get_recordset_sql($sql, $params);
+
     //
     // raparents collects paths & roles we need to walk up
     // the parenthood to build the rdef
     //
-    // the array will bulk up a bit with dups
-    // which we'll later clear up
-    //
     $raparents = array();
-    $lastseen  = '';
     if ($rs) {
         foreach ($rs as $ra) {
             // RAs leafs are arrays to support multi
@@ -1390,27 +1378,15 @@ function get_user_access_sitewide($userid) {
             if (!isset($accessdata['ra'][$ra->path])) {
                 $accessdata['ra'][$ra->path] = array();
             }
-            // only add if is not a repeat caused
-            // by capability join...
-            // (this check is cheaper than in_array())
-            if ($lastseen !== $ra->path.':'.$ra->roleid) {
-                $lastseen = $ra->path.':'.$ra->roleid;
-                array_push($accessdata['ra'][$ra->path], $ra->roleid);
-                $parentids = explode('/', $ra->path);
-                array_shift($parentids); // drop empty leading "context"
-                array_pop($parentids);   // drop _this_ context
+            array_push($accessdata['ra'][$ra->path], $ra->roleid);
 
-                if (isset($raparents[$ra->roleid])) {
-                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
-                                                          $parentids);
-                } else {
-                    $raparents[$ra->roleid] = $parentids;
-                }
-            }
-            // Always add the roleded
-            if (!empty($ra->capability)) {
-                $k = "{$ra->path}:{$ra->roleid}";
-                $accessdata['rdef'][$k][$ra->capability] = $ra->permission;
+            // Concatenate as string the whole path (all related context)
+            // for this role. This is damn faster than using array_merge()
+            // Will unique them later
+            if (isset($raparents[$ra->roleid])) {
+                $raparents[$ra->roleid] .= $ra->path;
+            } else {
+                $raparents[$ra->roleid] = $ra->path;
             }
         }
         unset($ra);
@@ -1419,29 +1395,33 @@ function get_user_access_sitewide($userid) {
 
     // Walk up the tree to grab all the roledefs
     // of interest to our user...
+    //
     // NOTE: we use a series of IN clauses here - which
     // might explode on huge sites with very convoluted nesting of
     // categories... - extremely unlikely that the number of categories
     // and roletypes is so large that we hit the limits of IN()
-    $clauses = array();
+    $clauses = '';
     $cparams = array();
-    foreach ($raparents as $roleid=>$contexts) {
-        $contexts = implode(',', array_unique($contexts));
+    foreach ($raparents as $roleid=>$strcontexts) {
+        $contexts = implode(',', array_unique(explode('/', trim($strcontexts, '/'))));
         if ($contexts ==! '') {
-            $clauses[] = "(roleid=? AND contextid IN ($contexts))";
+            if ($clauses) {
+                $clauses .= ' OR ';
+            }
+            $clauses .= "(roleid=? AND contextid IN ($contexts))";
             $cparams[] = $roleid;
         }
     }
-    $clauses = implode(" OR ", $clauses);
+
     if ($clauses !== '') {
         $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
                 FROM {role_capabilities} rc
                 JOIN {context} ctx
                   ON rc.contextid=ctx.id
-                WHERE $clauses
-                ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
-        $rs = $DB->get_recordset_sql($sql, $cparams);
+                WHERE $clauses";
+
         unset($clauses);
+        $rs = $DB->get_recordset_sql($sql, $cparams);
 
         if ($rs) {
             foreach ($rs as $rd) {
