@@ -85,7 +85,7 @@ function mc_init_editors() {
         theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,|,fullscreen",
         theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
-        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emotions,image,advhr,nonbreaking,charmap",
+        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emotions,image,dragmath,advhr,nonbreaking,charmap",
         theme_advanced_buttons3_add: "|,table,insertlayer,styleprops,visualchars,|,code,preview",
         theme_advanced_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings",
         theme_advanced_resize_horizontal: true,
