@@ -305,7 +305,7 @@ class page_requirements_manager {
      *      This allows you to control when the link to the script is output by
      *      calling methods like {@link required_data_for_js::asap()},
      *      {@link required_data_for_js::in_head()} or
-     *      {@link required_data_for_js::at_top_of_body() methods.
+     *      {@link required_data_for_js::at_top_of_body()} methods.
      */
     public function data_for_js($variable, $data) {
         if (isset($this->variablesinitialised[$variable])) {
