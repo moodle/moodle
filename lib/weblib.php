@@ -2721,7 +2721,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
                 //1.8 theme compatibility
                 $output .= "\n</div>"; // content div
             }
-            $output .= "\n</div>\n</body>\n</html>"; // close page div started in header
+            $output .= '\n</div>\n' . $PAGE->requires->get_end_code() . '</body>\n</html>'; // close page div started in header
             if ($return) {
                 return $output;
             } else {
@@ -3157,6 +3157,8 @@ function theme_setup($theme = '', $params=NULL) {
 /// Load up the theme config
     $THEME = NULL;   // Just to be sure
     include($CFG->themedir .'/'. $theme .'/config.php');  // Main config for current theme
+    $THEME->name = $theme;
+    $THEME->dir = $CFG->themedir .'/'. $theme;
 
 /// Put together the parameters
     if (!$params) {
