@@ -199,9 +199,9 @@ function get_referer($stripquery=true) {
  * @global string
  * @return mixed String, or false if the global variables needed are not set
  */
- function me() {
-     global $ME;
-     return $ME;
+function me() {
+    global $ME;
+    return $ME;
 }
 
 /**
@@ -7583,7 +7583,7 @@ class html_list_progress_trace extends moodle_progress_trace {
  * @param string $authtype plugin type
  * @return string
  */
-function auth_get_plugin_title ($authtype) {
+function auth_get_plugin_title($authtype) {
     $authtitle = get_string("auth_{$authtype}title", "auth");
     if ($authtitle == "[[auth_{$authtype}title]]") {
         $authtitle = get_string("auth_{$authtype}title", "auth_{$authtype}");
