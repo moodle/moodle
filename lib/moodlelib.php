@@ -6305,7 +6305,11 @@ function address_in_subnet($addr, $subnetstr) {
             if ($mask === '' || $mask > 32) {
                 $mask = 32;
             }
-            $mask = 0xffffffff << (32 - $mask);
+            // When $mask is zero, PHP's integer arithmetic gives us a mask
+            // of 255.255.255.255 instead of 0.0.0.0, so special case it
+            if ($mask != 0) {
+                $mask = 0xffffffff << (32 - $mask);
+            }
             $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
         } else if (strpos($subnet, '-') !== false)  {/// type 3
             $subnetparts = explode('.', $subnet);
