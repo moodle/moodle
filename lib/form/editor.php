@@ -161,18 +161,18 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             }
             $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
 
+            if (empty($COURSE->context)) {
+                $ctx = get_context_instance(CONTEXT_SYSTEM);
+            } else {
+                $ctx = $COURSE->context;
+            }
         /// embedded image files - TODO: hide on the fly when switching editors
             $str .= '<div id="'.$id.'_filemanager">';
-            $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes";
+            $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=embedded&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id;
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
 
         require_once($CFG->dirroot.'/repository/lib.php');
-        if (empty($COURSE->context)) {
-            $ctx = get_context_instance(CONTEXT_SYSTEM);
-        } else {
-            $ctx = $COURSE->context;
-        }
         $client_id = uniqid();
         $ret = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
 
