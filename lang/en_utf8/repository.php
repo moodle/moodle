@@ -1,7 +1,7 @@
 <?php //$Id$
 $string['accessiblefilepicker']='Accessible file picker';
 $string['activerepository'] = 'Active repository plugins';
-$string['add'] = 'Add';
+$string['add'] = 'Add...';
 $string['addplugin'] = 'Add a repository plugin';
 $string['activaterep'] = 'Active repositories';
 $string['areabackup'] = 'Backups';
@@ -104,5 +104,6 @@ $string['typenotvisible'] = 'Type not visible';
 $string['updown'] = 'Display order';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
+$string['uploadsucc'] = 'The file has been uploaded successfully';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using XHTML strict header, some YUI Component doesn\'t work in this mode, please turn it off in moodle';

@@ -62,6 +62,9 @@ if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
 //$PAGE->set_course($context);
 
 switch ($action) {
+case 'upload':
+    redirect($url, get_string('uploadsucc','repository'));
+    break;
 case 'deletedraft':
     if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
         print_error('wrongcontextid', 'error');
@@ -85,9 +88,11 @@ case 'sign':
         $list = $repo->get_listing($req_path);
         $dynload = !empty($list['dynload'])?true:false;
         if (!empty($list['upload'])) {
-            echo '<form method="post" style="display:inline">';
-            echo '<label>'.$list['upload']['label'].'</label>';
+            echo '<form action="'.$url.'" method="post" enctype="multipart/form-data" style="display:inline">';
+            echo '<label>'.$list['upload']['label'].': </label>';
             echo '<input type="file" name="repo_upload_file" /><br />';
+            echo '<input type="hidden" name="action" value="upload" /><br />';
+            echo '<input type="hidden" name="repo_id" value="'.$repo_id.'" /><br />';
             echo '<input type="submit" value="'.get_string('upload', 'repository').'" />';
             echo '</form>';
         } else {
@@ -194,6 +199,17 @@ case 'confirm':
     echo '</form>';
     print_footer('empty');
     break;
+case 'plugins':
+    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
+    print_header();
+    echo '<div><ul>';
+    foreach($repos as $repo) {
+        $info = $repo->get_meta();
+        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&action=list&repo_id='.$info->id.'">'.$info->name.'</a></li>';
+    }
+    echo '</ul></div>';
+    break;
 default:
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
     $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
@@ -201,7 +217,6 @@ default:
     $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $files = $fs->get_area_files($context->id, 'user_draft', $itemid);
-    echo '<h2>'.get_string('attachedfiles', 'repository').'</h2>';
     if (empty($files)) {
         echo get_string('nofilesattached', 'repository');
     } else {
@@ -215,13 +230,7 @@ default:
         }
         echo '</ul>';
     }
-    echo '<h2>'.get_string('plugin', 'repository').'</h2>';
-    echo '<div><ul>';
-    foreach($repos as $repo) {
-        $info = $repo->get_meta();
-        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&action=list&repo_id='.$info->id.'">'.$info->name.'</a></li>';
-    }
-    echo '</ul></div>';
+    echo '<div><a href="'.$url.'&action=plugins">'.get_string('add', 'repository').'</a></div>';
     print_footer('empty');
     break;
 }

@@ -19,7 +19,7 @@ class repository_upload extends repository {
      * @param array $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $SESSION, $action, $CFG;
+        global $_FILES, $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
         $itemid = optional_param('itemid', '', PARAM_INT);
         if($action=='upload'){

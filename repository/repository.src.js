@@ -571,7 +571,8 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     if (repository_client.files[client_id] == undefined) {
         repository_client.files[client_id] = 0;
     }
-    if (repository_client.files[client_id] >= repository_client.fp[client_id].maxfiles)
+    if (repository_client.files[client_id] >= repository_client.fp[client_id].maxfiles && 
+            repository_client.fp[client_id].maxfiles != -1)
     {
         alert('Only '+repository_client.fp[client_id].maxfiles+' files are allowed!');
         return false;
