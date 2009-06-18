@@ -109,8 +109,8 @@ class repository_flickr_public extends repository {
      * @param boolean $ajax
      * @return array
      */
-    public function print_login($ajax = true) {
-        if ($ajax) {
+    public function print_login() {
+        if ($this->options['ajax']) {
             $ret = array();
             $fulltext = new stdclass;
             $fulltext->label = get_string('fulltext', 'repository_flickr_public').': ';
@@ -153,6 +153,36 @@ class repository_flickr_public extends repository {
             $ret['login_btn_label'] = get_string('search');
             $ret['login_btn_action'] = 'search';
             return $ret;
+        } else {
+            echo '<table>';
+            echo '<tr><td><label>'.get_string('fulltext', 'repository_flickr_public').'</label></td>';
+            echo '<td><input type="text" name="flickr_fulltext" /></td></tr>';
+            echo '<tr><td><label>'.get_string('tag', 'repository_flickr_public').'</label></td>';
+            echo '<td><input type="text" name="flickr_tag" /></td></tr>';
+            echo '<tr><td><label>'.get_string('username', 'repository_flickr_public').'</label></td>';
+            echo '<td><input type="text" name="flickr_account" /></td></tr>';
+
+            echo '<tr><td><label>'.get_string('license', 'repository_flickr_public').'</label></td>';
+            echo '<td>';
+            echo '<input type="radio" name="flickr_license" value="all" /> '.get_string('all', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="1" /> '.get_string('by-nc-sa', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="2" /> '.get_string('by-nc', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="3" /> '.get_string('by-nc-nd', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="4" /> '.get_string('by', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="5" /> '.get_string('by-sa', 'repository_flickr_public');
+            echo '<br />';
+            echo '<input type="radio" name="flickr_license" value="6" /> '.get_string('by-nd', 'repository_flickr_public');
+            echo '</td></tr>';
+
+            echo '</table>';
+
+            echo '<input type="hidden" name="action" value="search" />';
+            echo '<input type="submit" value="Search" />';
         }
     }
 

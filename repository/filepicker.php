@@ -80,6 +80,46 @@ case 'deletedraft':
     }
     exit;
     break;
+case 'search':
+    try {
+        $search_result = $repo->search($search_text);
+        $search_result['search_result'] = true;
+        $search_result['repo_id'] = $repo_id;
+        echo '<table>';
+        foreach ($search_result['list'] as $item) {
+            echo '<tr>';
+            echo '<td><img src="'.$item['thumbnail'].'" />';
+            echo '</td><td>';
+            if (!empty($item['url'])) {
+                echo '<a href="'.$item['url'].'" target="_blank">'.$item['title'].'</a>';
+            } else {
+                echo $item['title'];
+            }
+            echo '</td>';
+            echo '<td>';
+            if (!isset($item['children'])) {
+                echo '<form method="post">';
+                echo '<input type="hidden" name="file" value="'.$item['source'].'"/>';
+                echo '<input type="hidden" name="action" value="confirm"/>';
+                echo '<input type="hidden" name="title" value="'.$item['title'].'"/>';
+                echo '<input type="hidden" name="icon" value="'.$item['thumbnail'].'"/>';
+                echo '<input type="submit" value="'.get_string('select','repository').'" />';
+                echo '</form>';
+            } else {
+                echo '<form method="post">';
+                echo '<input type="hidden" name="p" value="'.$item['path'].'"/>';
+                echo '<input type="submit" value="'.get_string('enter', 'repository').'" />';
+                echo '</form>';
+            }
+            echo '</td>';
+            echo '<td width="100px" align="center">';
+            echo '</td>';
+            echo '</td></tr>';
+        }
+        echo '</table>';
+    } catch (repository_exception $e) {
+    }
+    break;
 case 'list':
 case 'sign':
     print_header();
@@ -141,9 +181,9 @@ case 'sign':
         }
     } else {
         echo '<form method="post">';
-        $repo->print_login();
         echo '<input type="hidden" name="action" value="sign" />';
         echo '<input type="hidden" name="repo_id" value="'.$repo_id.'" />';
+        $repo->print_login();
         echo '</form>';
     }
     print_footer('empty');
