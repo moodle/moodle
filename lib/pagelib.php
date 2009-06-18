@@ -40,6 +40,7 @@
  * @since Moodle 2.0
  *
  * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
+ * @property-read xhtml_container_stack $opencontainers Tracks open XHTML tags. Helps us generate well-formed XML, even in the face of errors.
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
@@ -105,6 +106,8 @@ class moodle_page {
     protected $_blockseditingcap = 'moodle/site:manageblocks';
 
     protected $_othereditingcaps = array();
+
+    protected $_opencontainers = null;
 
     /**
      * This is simply to improve backwards compatability. If old code relies on
@@ -297,8 +300,8 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->blocks syntax. @see __get().
-     * @return blocks_manager the blocks manager object for this page.
+     * Please do not call this method directly, use the ->requires syntax. @see __get().
+     * @return page_requirements_manager tracks the JavaScript, CSS files, etc. required by this page.
      */
     public function get_requires() {
         global $CFG;
@@ -306,6 +309,18 @@ class moodle_page {
             $this->_requires = new page_requirements_manager();
         }
         return $this->_requires;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->opencontainers syntax. @see __get().
+     * @return xhtml_container_stack Tracks the open XHTML tags on this page.
+     */
+    public function get_opencontainers() {
+        global $CFG;
+        if (is_null($this->_opencontainers)) {
+            $this->_opencontainers = new xhtml_container_stack();
+        }
+        return $this->_opencontainers;
     }
 
     /**
