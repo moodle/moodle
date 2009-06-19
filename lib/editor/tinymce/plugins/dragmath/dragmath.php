@@ -46,7 +46,7 @@ if (!file_exists("$CFG->dirroot/lib/dragmath/applet/lang/$lang.xml")) {
 	width="540" height="300"
 >
 	<param name="language" value="<?php echo $lang; ?>" />
-	<param name="outputFormat" value="Latex" />
+	<param name="outputFormat" value="MoodleTex" />
 	<param name="showOutputToolBar" value="false" />
     <?php print_string('dragmath:dragmath_javaneeded', 'editor_tinymce', '<a href="http://www.java.com">Java.com</a>')?>
 </applet>
