@@ -32,37 +32,35 @@ $itemid      = optional_param('itemid', '',        PARAM_INT);
 $icon        = optional_param('icon', '',          PARAM_RAW);
 $action      = optional_param('action', '',        PARAM_ALPHA);
 $ctx_id      = optional_param('ctx_id', SITEID,    PARAM_INT);    // context ID
-$repo_id     = optional_param('repo_id', 1,        PARAM_INT);    // repository ID
+$repo_id     = optional_param('repo_id', 0,        PARAM_INT);    // repository ID
 $req_path    = optional_param('p', '',             PARAM_RAW);          // path
+$page        = optional_param('page', '',         PARAM_RAW);
 $callback    = optional_param('callback', '',      PARAM_CLEANHTML);
 $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 
 // init repository plugin
 $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
        'WHERE i.id=? AND i.typeid=r.id';
-if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-    print_error('invalidrepositoryid', 'repository');
-} else {
+if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     $type = $repository->type;
+    if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
+        require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
+        $classname = 'repository_' . $type;
+        try {
+            $repo = new $classname($repo_id, $ctx_id, array('ajax'=>false, 'name'=>$repository->name, 'client_id'=>$client_id));
+        } catch (repository_exception $e){
+            print_error('pluginerror', 'repository');
+        }
+    } else {
+        print_error('invalidplugin', 'repository');
+    }
 }
 $url = $CFG->httpswwwroot."/repository/filepicker.php?ctx_id=$ctx_id&itemid=$itemid";
-
-if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
-    require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
-    $classname = 'repository_' . $type;
-    try {
-        $repo = new $classname($repo_id, $ctx_id, array('ajax'=>false, 'name'=>$repository->name, 'client_id'=>$client_id));
-    } catch (repository_exception $e){
-        print_error('pluginerror', 'repository');
-    }
-} else {
-    print_error('invalidplugin', 'repository');
-}
-//$context = get_context_instance_by_id($ctx_id);
-//$PAGE->set_course($context);
+$home_url = $url.'&action=embedded';
 
 switch ($action) {
 case 'upload':
+    // The uploaded file has been processed in plugin construct function
     redirect($url, get_string('uploadsucc','repository'));
     break;
 case 'deletedraft':
@@ -73,7 +71,7 @@ case 'deletedraft':
     $fs = get_file_storage();
     if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
         if($result = $file->delete()) {
-            header("Location: $CFG->httpswwwroot/repository/filepicker.php?action=embedded&itemid=$itemid&ctx_id=$ctx_id");
+            header("Location: {$home_url}");
         } else {
             print_error('cannotdelete', 'repository');
         }
@@ -81,10 +79,16 @@ case 'deletedraft':
     exit;
     break;
 case 'search':
+    echo "<div><a href='{$home_url}'>".get_string('back', 'repository')."</a></div>";
     try {
         $search_result = $repo->search($search_text);
         $search_result['search_result'] = true;
         $search_result['repo_id'] = $repo_id;
+
+        // TODO: need a better solution
+        print_paging_bar($search_result['total'], $search_result['page']-1,
+            $search_result['perpage'], "{$url}&action=list&repo_id={$repo_id}&");
+
         echo '<table>';
         foreach ($search_result['list'] as $item) {
             echo '<tr>';
@@ -97,24 +101,15 @@ case 'search':
             }
             echo '</td>';
             echo '<td>';
-            if (!isset($item['children'])) {
-                echo '<form method="post">';
-                echo '<input type="hidden" name="file" value="'.$item['source'].'"/>';
-                echo '<input type="hidden" name="action" value="confirm"/>';
-                echo '<input type="hidden" name="title" value="'.$item['title'].'"/>';
-                echo '<input type="hidden" name="icon" value="'.$item['thumbnail'].'"/>';
-                echo '<input type="submit" value="'.get_string('select','repository').'" />';
-                echo '</form>';
-            } else {
-                echo '<form method="post">';
-                echo '<input type="hidden" name="p" value="'.$item['path'].'"/>';
-                echo '<input type="submit" value="'.get_string('enter', 'repository').'" />';
-                echo '</form>';
-            }
+            echo '<form method="post">';
+            echo '<input type="hidden" name="file" value="'.$item['source'].'"/>';
+            echo '<input type="hidden" name="action" value="confirm"/>';
+            echo '<input type="hidden" name="title" value="'.$item['title'].'"/>';
+            echo '<input type="hidden" name="icon" value="'.$item['thumbnail'].'"/>';
+            echo '<input type="submit" value="'.get_string('select','repository').'" />';
+            echo '</form>';
             echo '</td>';
-            echo '<td width="100px" align="center">';
-            echo '</td>';
-            echo '</td></tr>';
+            echo '</tr>';
         }
         echo '</table>';
     } catch (repository_exception $e) {
@@ -123,9 +118,9 @@ case 'search':
 case 'list':
 case 'sign':
     print_header();
-    echo "<div><a href='$CFG->httpswwwroot/repository/filepicker.php?action=embedded&itemid=$itemid&ctx_id=$ctx_id'>".get_string('back', 'repository')."</a></div>";
+    echo "<div><a href='{$home_url}'>".get_string('back', 'repository')."</a></div>";
     if ($repo->check_login()) {
-        $list = $repo->get_listing($req_path);
+        $list = $repo->get_listing($req_path, $page);
         $dynload = !empty($list['dynload'])?true:false;
         if (!empty($list['upload'])) {
             echo '<form action="'.$url.'" method="post" enctype="multipart/form-data" style="display:inline">';
@@ -145,6 +140,13 @@ case 'sign':
                     echo '</form>';
                     echo '<strong> / </strong>';
                 }
+            }
+            if (!empty($list['page'])) {
+                // TODO: need a better solution
+                print_paging_bar($list['total'], $list['page']-1,
+                    $list['perpage'], $CFG->httpswwwroot
+                    .'/repository/filepicker.php?action=list&itemid='
+                    .$itemid.'&ctx_id='.$ctx_id.'&repo_id='.$repo_id.'&', 'page', false, false, 1);
             }
             echo '<table>';
             foreach ($list['list'] as $item) {
@@ -173,9 +175,7 @@ case 'sign':
                     echo '</form>';
                 }
                 echo '</td>';
-                echo '<td width="100px" align="center">';
-                echo '</td>';
-                echo '</td></tr>';
+                echo '</tr>';
             }
             echo '</table>';
         }
@@ -190,33 +190,13 @@ case 'sign':
     break;
 case 'download':
     $filepath = $repo->get_file($file, $title, $itemid);
-    if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
-        // youtube plugin return a url instead a file path
-        $url = $filepath;
-        echo json_encode(array(
-                    /* File picker need to know this is a link
-                     * in order to attach title to url
-                     */
-                    'type'=>'link',
-                    'client_id'=>$client_id,
-                    'url'=>$url,
-                    'id'=>$url,
-                    'file'=>$url
-                    )
-                );
-    } else if (is_array($filepath)) {
-        // file api don't have real file path, so we need more file api specific info for "local" plugin
-        $fileinfo = $filepath;
-        $info = array();
-        $info['file'] = $fileinfo['title'];
-        $info['id'] = $itemid;
-        $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-        echo json_encode($info);
-    } else {
+    if (!empty($filepath)) {
         // normal file path name
         $info = repository::move_to_filepool($filepath, $title, $itemid);
         //echo json_encode($info);
         redirect($url, get_string('downloadsucc','repository'));
+    } else {
+        print_error('cannotdownload', 'repository');
     }
 
     break;

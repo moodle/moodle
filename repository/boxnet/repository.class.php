@@ -216,6 +216,7 @@ class repository_boxnet extends repository {
             echo '<td><input type="password" name="boxpassword" /></td></tr>';
             echo '<input type="hidden" name="ticket" value="'.$t['ticket'].'" />';
             echo '</table>';
+            echo '<input type="submit" value="Enter" />';
         }
     }
 

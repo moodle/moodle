@@ -149,6 +149,8 @@ class repository_flickr extends repository {
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
+        $ret['total'] = $photos['total'];
+        $ret['perpage'] = $photos['perpage'];
         if($page <= $ret['pages']) {
             $ret['page'] = $page;
         } else {
@@ -210,14 +212,6 @@ class repository_flickr extends repository {
             'extras'=>'original_format'
             ));
         return $this->build_list($photos, $page);
-    }
-
-    /**
-     *
-     * @return <type>
-     */
-    public function print_listing() {
-        return false;
     }
 
     /**

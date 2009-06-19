@@ -247,6 +247,8 @@ class repository_flickr_public extends repository {
             }
         }
         $ret = array();
+        $ret['total'] = $photos['total'];
+        $ret['perpage'] = $photos['perpage'];
         if (empty($photos)) {
             $ret['list'] = array();
             return $ret;
@@ -316,14 +318,6 @@ class repository_flickr_public extends repository {
      *
      * @return <type>
      */
-    public function print_listing() {
-        return false;
-    }
-
-    /**
-     *
-     * @return <type>
-     */
     public function print_search() {
         $str = '';
         $str .= '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
@@ -336,10 +330,10 @@ class repository_flickr_public extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $photo_id
-     * @param <type> $file
-     * @return <type>
+     * @global object $CFG
+     * @param string $photo_id
+     * @param string $file
+     * @return string
      */
     public function get_file($photo_id, $file = '') {
         global $CFG;
