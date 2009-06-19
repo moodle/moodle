@@ -2191,6 +2191,66 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009061600);
     }
 
+    if ($result && $oldversion < 2009061702) {
+        // standardizing plugin names
+        if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'quizreport_%'")) {
+            foreach ($configs as $config) {
+                $config->plugin = str_replace('quizreport_', 'quiz_', $config->plugin);
+                $DB->update_record('config_plugins', $config);
+            }
+        }
+        unset($configs);
+        upgrade_main_savepoint($result, 2009061702);
+    }
+
+    if ($result && $oldversion < 2009061703) {
+        // standardizing plugin names
+        if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'assignment_type_%'")) {
+            foreach ($configs as $config) {
+                $config->plugin = str_replace('assignment_type_', 'assignment_', $config->plugin);
+                $DB->update_record('config_plugins', $config);
+            }
+        }
+        unset($configs);
+        upgrade_main_savepoint($result, 2009061703);
+    }
+
+    if ($result && $oldversion < 2009061704) {
+        // change component string in capability records to new "_" format 
+        if ($caps = $DB->get_records('capabilities')) {
+            foreach ($caps as $cap) {
+                $cap->component = str_replace('/', '_', $cap->component);
+                $DB->update_record('capabilities', $cap);
+            }
+        }
+        unset($caps);
+        upgrade_main_savepoint($result, 2009061704);
+    }
+
+    if ($result && $oldversion < 2009061705) {
+        // change component string in events_handlers records to new "_" format 
+        if ($handlers = $DB->get_records('events_handlers')) {
+            foreach ($handlers as $handler) {
+                $handler->handlermodule = str_replace('/', '_', $handler->handlermodule);
+                $DB->update_record('events_handlers', $handler);
+            }
+        }
+        unset($handlers);
+        upgrade_main_savepoint($result, 2009061705);
+    }
+
+    if ($result && $oldversion < 2009061706) {
+        // change component string in message_providers records to new "_" format 
+        if ($mps = $DB->get_records('message_providers')) {
+            foreach ($mps as $mp) {
+                $mp->component = str_replace('/', '_', $mp->component);
+                $DB->update_record('message_providers', $cap);
+            }
+        }
+        unset($caps);
+        upgrade_main_savepoint($result, 2009061706);
+    }
+    
     return $result;
 }
 

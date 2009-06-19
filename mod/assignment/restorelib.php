@@ -81,7 +81,7 @@
             // skip restore of plugins that are not installed
             static $plugins;
             if (!isset($plugins)) {
-                $plugins = get_list_of_plugins('mod/assignment/type');
+                $plugins = array_keys(get_plugin_list('assignment'));
             }
 
             if (!in_array($assignment->assignmenttype, $plugins)) {

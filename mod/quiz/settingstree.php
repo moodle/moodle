@@ -13,9 +13,9 @@ require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
 $reportsbyname = array();
-if ($reports = get_list_of_plugins('mod/quiz/report')) {
-    foreach ($reports as $report) {
-        if (file_exists($CFG->dirroot . "/mod/quiz/report/$report/settings.php")) {
+if ($reports = get_plugin_list('quiz')) {
+    foreach ($reports as $report => $reportdir) {
+        if (file_exists("$reportdir/settings.php")) {
             $strreportname = get_string($report . 'report', 'quiz_'.$report);
             // Deal with reports which are lacking the language string
             if ($strreportname[0] == '[') {

@@ -34,8 +34,8 @@
 
     unset($options);
 
-    $modules = get_list_of_plugins("enrol");
-    foreach ($modules as $module) {
+    $modules = get_plugin_list('enrol');
+    foreach ($modules as $module => $enroldir) {
         $options[$module] = get_string("enrolname", "enrol_$module");
     }
     asort($options);

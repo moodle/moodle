@@ -105,7 +105,7 @@ function get_texteditor($editorname) {
  */
 function get_available_editors() {
     $editors = array();
-    foreach (get_list_of_plugins('lib/editor') as $editorname) {
+    foreach (get_plugin_list('editor') as $editorname => $dir) {
         $editors[$editorname] = get_string('modulename', 'editor_'.$editorname);
     }
     return $editors;

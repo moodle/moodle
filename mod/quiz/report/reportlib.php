@@ -355,7 +355,7 @@ function quiz_report_list($context){
     }
     $reports = $DB->get_records('quiz_report', null, 'displayorder DESC', 'name, capability');
 
-    $reportdirs = get_list_of_plugins("mod/quiz/report");
+    $reportdirs = get_plugin_list("quiz");
     //order the reports tab in descending order of displayorder
     $reportcaps = array();
     if ($reports){
@@ -367,7 +367,7 @@ function quiz_report_list($context){
     }
 
     //add any other reports on the end
-    foreach ($reportdirs as $reportname) {
+    foreach ($reportdirs as $reportname => $reportdir) {
         if (!isset($reportcaps[$reportname])) {
             $reportcaps[$reportname]= null;
         }

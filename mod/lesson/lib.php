@@ -811,5 +811,3 @@ function lesson_supports($feature) {
         default: return null;
     }
 }
-
-?>

@@ -314,6 +314,8 @@ define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
 
 /** True if module supports intro editor */
 define('FEATURE_MOD_INTRO', 'mod_intro');
+/** True if module supports subplugins */
+define('FEATURE_MOD_SUBPLUGINS', 'mod_subplugins');
 /** True if module has default completion */
 define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
@@ -3882,10 +3884,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
     $strdeleted = get_string('deleted');
 
 /// Clean up course formats (iterate through all formats in the even the course format was ever changed)
-    $formats = get_list_of_plugins('course/format');
-    foreach ($formats as $format) {
+    $formats = get_plugin_list('format');
+    foreach ($formats as $format=>$formatdir) {
         $formatdelete = $format.'_course_format_delete_course';
-        $formatlib    = "$CFG->dirroot/course/format/$format/lib.php";
+        $formatlib    = "$formatdir/lib.php";
         if (file_exists($formatlib)) {
             include_once($formatlib);
             if (function_exists($formatdelete)) {
@@ -3945,10 +3947,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
     } else {
         print_error('nomodules', 'debug');
     }
-
-/// Give local code a chance to delete its references to this course.
-    require_once($CFG->libdir.'/locallib.php');
-    notify_local_delete_course($courseid, $showfeedback);
 
 /// Delete course blocks
     blocks_delete_all_for_context($context->id);
@@ -5692,29 +5690,12 @@ class string_manager {
             $dirroot . '/lang/' => '',
             $dataroot . '/lang/' => '',
         );
-        $this->searchplacesbyplugintype = array(
-            'assignment_' => array('mod/assignment/type'),
-            'auth_' => array('auth'),
-            'block_' => array('blocks'),
-            'datafield_' => array('mod/data/field'),
-            'datapreset_' => array('mod/data/preset'),
-            'enrol_' => array('enrol'),
-            'filter_' => array('filter'),
-            'format_' => array('course/format'),
-            'editor_' => array('lib/editor'),
-            'quiz_' => array('mod/quiz/report'),
-            'qtype_' => array('question/type'),
-            'qformat_' => array('question/format'),
-            'report_' => array($admin.'/report', 'course/report'),
-            'repository_'=>array('repository'),
-            'resource_' => array('mod/resource/type'),
-            'gradereport_' => array('grade/report'),
-            'gradeimport_' => array('grade/import'),
-            'gradeexport_' => array('grade/export'),
-            'profilefield_' => array('user/profile/field'),
-            'portfolio_' => array('portfolio/type'),
-            '' => array('mod')
-        );
+        $this->searchplacesbyplugintype = array(''=>array('mod'));
+        $plugintypes = get_plugin_types(false);
+        foreach ($plugintypes as $plugintype => $dir) {
+            $this->searchplacesbyplugintype[$plugintype.'_'] = array($dir);
+        }
+        unset($this->searchplacesbyplugintype['mod_']);
         $this->restore_extra_locations_from_session();
         if ($runninginstaller) {
             $stringnames = file($dirroot . '/install/stringnames.txt');
@@ -5822,14 +5803,10 @@ class string_manager {
             foreach ($locations as $location => $ignored) {
                 $locations[$location] = $module . '/';
             }
-            if ($module == 'local') {
-                $locations[$this->dirroot . '/local/lang/'] = 'local/';
-            } else {
-                list($type, $plugin) = $this->parse_module_name($module);
-                if (isset($this->searchplacesbyplugintype[$type])) {
-                    foreach ($this->searchplacesbyplugintype[$type] as $location) {
-                        $locations[$this->dirroot . "/$location/$plugin/lang/"] = $plugin . '/';
-                    }
+            list($type, $plugin) = $this->parse_module_name($module);
+            if (isset($this->searchplacesbyplugintype[$type])) {
+                foreach ($this->searchplacesbyplugintype[$type] as $location) {
+                    $locations[$this->dirroot . "/$location/$plugin/lang/"] = $plugin . '/';
                 }
             }
         }
@@ -6371,7 +6348,7 @@ function get_list_of_themes() {
     if (!empty($CFG->themelist)) {       // use admin's list of themes
         $themelist = explode(',', $CFG->themelist);
     } else {
-        $themelist = get_list_of_plugins("theme");
+        $themelist = array_keys(get_plugin_list("theme"));
     }
 
     foreach ($themelist as $key => $theme) {
@@ -6759,33 +6736,196 @@ function show_event($event) {
 /// ENVIRONMENT CHECKING  ////////////////////////////////////////////////////////////
 
 /**
- * Lists plugin directories within some directory
+ * Return exact path to plugin directory
+ * @param string $plugintype type of plugin
+ * @param string $name name of the plugin
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return directory path, full or relative to dirroot
+ */
+function get_plugin_directory($plugintype, $name, $fullpaths=true) {
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    $types = get_plugin_types($fullpaths);
+    if (!array_key_exists($plugintype, $types)) {
+        return null;
+    }
+    $name = clean_param($name, PARAM_SAFEDIR); // just in case ;-)
+
+    return $types[$plugintype].'/'.$name;
+}
+
+/**
+ * Return exact path to plugin directory,
+ * this method support "simpletest_" prefix designed for unit testing.
+ * @param string $component name such as 'moodle', 'mod_forum' or special simpletest value
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return directory path, full or relative to dirroot
+ */
+function get_component_directory($component, $fullpaths=true) {
+    global $CFG;
+
+    $simpletest = false;
+    if (strpos($component, 'simpletest_') === 0) {
+        $subdir = substr($component, strlen('simpletest_'));
+        return $subdir;
+    }
+    if ($component == 'moodle') {
+        $path = ($fullpaths ? $CFG->libdir : 'lib');
+    } else {
+        list($type, $plugin) = explode('_', $component, 2);
+        $path = get_plugin_directory($type, $plugin, $fullpaths);
+    }        
+
+    return $path;
+}
+
+/**
+ * Lists all plugin types
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return array Array of strings - name=>location
+ */
+function get_plugin_types($fullpaths=true) {
+    global $CFG;
+
+    static $info     = null;
+    static $fullinfo = null;
+
+    if (!$info) {
+        $info = array('mod'           => 'mod',
+                      'auth'          => 'auth',
+                      'enrol'         => 'enrol',
+                      'message'       => 'message/output',
+                      'block'         => 'blocks',
+                      'filter'        => 'filter',
+                      'editor'        => 'lib/editor',
+                      'format'        => 'course/format',
+                      'import'        => 'course/import',
+                      'profilefield'  => 'user/profile/field',
+                      'report'        => $CFG->admin.'/report',
+                      'coursereport'  => 'course/report', // must be after system reports
+                      'gradeexport'   => 'grade/export',
+                      'gradeimport'   => 'grade/import',
+                      'gradereport'   => 'grade/report',
+                      'repository'    => 'repository',
+                      'portfolio'     => 'portfolio/type',
+                      'qtype'         => 'question/type',
+                      'qformat'       => 'question/format');
+/*
+        $mods = get_plugin_list('mod');
+        foreach ($mods as $mod => $moddir) {
+            if (!$subplugins = plugin_supports('mod', $mod, FEATURE_MOD_SUBPLUGINS, false)) {
+                continue;
+            }
+            foreach ($subplugins as $subtype=>$dir) {
+                $info[$subtype] = $dir;
+            }
+        }
+*/
+        // do not include themes if in non-standard location
+        if ($CFG->themedir === $CFG->dirroot.'/theme') {
+            $info['theme'] = 'theme';
+        }
+
+        // local is always last
+        $info['local'] = 'local';
+
+        $fullinfo = array();
+        foreach ($info as $type => $dir) {
+            $fullinfo[$type] = $CFG->dirroot.'/'.$dir;
+        }
+        $fullinfo['theme'] = $CFG->themedir;
+    }
+
+    return ($fullpaths ? $fullinfo : $info);
+}
+
+/**
+ * Simplified version of get_list_of_plugins()
+ * @param string $plugintype type of plugin
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return array name=>fulllocation pairs of plugins of given type
+ */
+function get_plugin_list($plugintype, $fullpaths=true) {
+    global $CFG;
+
+    $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db');
+
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    if ($plugintype === 'mod') {
+        // mod is eán exception because we have to call this function from get_plugin_types()
+        $fulldir = $CFG->dirroot.'/mod';
+        $dir = $fullpaths ? $fulldir : 'mod';
+
+    } else {
+        $fulltypes = get_plugin_types(true);
+        $types     = get_plugin_types($fullpaths);
+        if (!array_key_exists($plugintype, $types)) {
+            return array();
+        }
+        $fulldir = $fulltypes[$plugintype];
+        $dir     = $types[$plugintype];
+        if (!file_exists($fulldir)) {
+            return array();
+        }
+    }
+
+    $result = array();
+
+    $items = new DirectoryIterator($fulldir);
+    foreach ($items as $item) {
+        if ($item->isDot() or !$item->isDir()) {
+            continue;
+        }
+        $pluginname = $item->getFilename();
+        if (in_array($pluginname, $ignored)) {
+            continue;
+        }
+        if ($pluginname !== clean_param($pluginname, PARAM_SAFEDIR)) {
+            // better ignore plugins with problematic names here
+            continue;
+        }
+        $result[$pluginname] = $dir.'/'.$pluginname;
+    }
+
+    ksort($result);
+    return $result;
+}
+
+/**
+ * Lists plugin-like directories within specified directory
  *
- * @global object
- * @param string $plugin dir under we'll look for plugins (defaults to 'mod')
+ * This function was originally used for standar Moodle plugins, please use
+ * new get_plugin_list() now.
+ *
+ * This function is used for general directory listing and backwards compability. 
+ *
+ * @param string $directory relatice directory from root
  * @param string $exclude dir name to exclude from the list (defaults to none)
  * @param string $basedir full path to the base dir where $plugin resides (defaults to $CFG->dirroot)
- * @return array Array of plugins found under the requested parameters
+ * @return array Sorted array of directory names found under the requested parameters
  */
-function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
+function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     global $CFG;
 
     $plugins = array();
 
     if (empty($basedir)) {
-
-        # This switch allows us to use the appropiate theme directory - and potentialy alternatives for other plugins
-        switch ($plugin) {
-        case "theme":
-            $basedir = $CFG->themedir;
-            break;
-
-        default:
-            $basedir = $CFG->dirroot .'/'. $plugin;
+        // This switch allows us to use the appropiate theme directory - and potentialy alternatives for other plugins
+        switch ($directory) {
+            case "theme":
+                $basedir = $CFG->themedir;
+                break;
+            default:
+                $basedir = $CFG->dirroot .'/'. $directory;
         }
 
     } else {
-        $basedir = $basedir .'/'. $plugin;
+        $basedir = $basedir .'/'. $directory;
     }
 
     if (file_exists($basedir) && filetype($basedir) == 'dir') {
@@ -7121,19 +7261,17 @@ function moodle_needs_upgrading() {
         if ($version > $CFG->version) {
             return true;
         }
-        if ($mods = get_list_of_plugins('mod')) {
-            foreach ($mods as $mod) {
-                $fullmod = $CFG->dirroot .'/mod/'. $mod;
-                $module = new object();
-                if (!is_readable($fullmod .'/version.php')) {
-                    notify('Module "'. $mod .'" is not readable - check permissions');
-                    continue;
-                }
-                include_once($fullmod .'/version.php');  # defines $module with version etc
-                if ($currmodule = $DB->get_record('modules', array('name'=>$mod))) {
-                    if ($module->version > $currmodule->version) {
-                        return true;
-                    }
+        $mods = get_plugin_list('mod');
+        foreach ($mods as $mod => $fullmod) {
+            $module = new object();
+            if (!is_readable($fullmod .'/version.php')) {
+                notify('Module "'. $mod .'" is not readable - check permissions');
+                continue;
+            }
+            include_once($fullmod .'/version.php');  # defines $module with version etc
+            if ($currmodule = $DB->get_record('modules', array('name'=>$mod))) {
+                if ($module->version > $currmodule->version) {
+                    return true;
                 }
             }
         }

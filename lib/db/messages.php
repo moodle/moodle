@@ -36,11 +36,9 @@ $messageproviders = array (
 /// Important errors that an admin ought to know about
     'errors' => array (
          'capability'  => 'moodle/site:config'
-    )
+    ),
 
+    'instantmessage' => array (
+    ),
+    
 );
-
-
-
-
-?>

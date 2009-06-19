@@ -21,10 +21,10 @@
     $navigation = build_navigation($navlinks);
     print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, $navigation);
 
-    $directories = get_list_of_plugins('course/report');
+    $reports = get_plugin_list('report');
 
-    foreach ($directories as $directory) {
-        $pluginfile = $CFG->dirroot.'/course/report/'.$directory.'/mod.php';
+    foreach ($reports as $report => $reportdirectory) {
+        $pluginfile = $reportdirectory.'/mod.php';
         if (file_exists($pluginfile)) {
             ob_start();
             include($pluginfile);  // Fragment for listing

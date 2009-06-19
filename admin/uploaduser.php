@@ -159,7 +159,8 @@ if ($formdata = $mform->is_cancelled()) {
 
     $allowedauths   = uu_allowed_auths();
     $allowedauths   = array_keys($allowedauths);
-    $availableauths = get_list_of_plugins('auth');
+    $availableauths = get_plugin_list('auth');
+    $availableauths = array_keys($availableauths);
 
     $allowedroles = uu_allowed_roles(true);
     foreach ($allowedroles as $rid=>$rname) {

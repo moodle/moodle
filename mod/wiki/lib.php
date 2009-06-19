@@ -24,11 +24,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** @global int $wiki_CONSTANT */
-$wiki_CONSTANT = 7;     /// for example
-/** @global object $site */
-$site = get_site();
 /** @global array $WIKI_TYPES */
+global $WIKI_TYPES;
 $WIKI_TYPES = array ('teacher' =>   get_string('defaultcourseteacher'),
                      'group' =>     get_string('groups',"wiki"),
                      'student' =>   get_string('defaultcoursestudent') );

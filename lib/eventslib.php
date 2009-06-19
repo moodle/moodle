@@ -36,44 +36,7 @@
  * @return array of capabilities or empty array if not exists
  */
 function events_load_def($component) {
-    global $CFG;
-
-    if ($component == 'moodle') {
-        $defpath = $CFG->libdir.'/db/events.php';
-
-    } else if ($component == 'unittest') {
-        $defpath = $CFG->libdir.'/simpletest/fixtures/events.php';
-
-    } else {
-        $compparts = explode('/', $component);
-
-        if ($compparts[0] == 'block') {
-            // Blocks are an exception. Blocks directory is 'blocks', and not
-            // 'block'. So we need to jump through hoops.
-            $defpath = $CFG->dirroot.'/blocks/'.$compparts[1].'/db/events.php';
-
-        } else if ($compparts[0] == 'format') {
-            // Similar to the above, course formats are 'format' while they
-            // are stored in 'course/format'.
-            $defpath = $CFG->dirroot.'/course/format/'.$compparts[1].'/db/events.php';
-
-        } else if ($compparts[0] == 'editor') {
-            $defpath = $CFG->dirroot.'/lib/editor/'.$compparts[1].'/db/events.php';
-
-        } else if ($compparts[0] == 'gradeimport') {
-            $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/events.php';  
-        
-        } else if ($compparts[0] == 'gradeexport') {
-            $defpath = $CFG->dirroot.'/grade/export/'.$compparts[1].'/db/events.php'; 
-        
-        } else if ($compparts[0] == 'gradereport') {
-            $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/events.php'; 
-        } else if ($compparts[0] == 'portfolio'){
-            $defpath = $CFG->dirroot.'/portfolio/type/'.$compparts[1].'/db/events.php';
-        } else {
-            $defpath = $CFG->dirroot.'/'.$component.'/db/events.php';
-        }
-    }
+    $defpath = get_component_directory($component).'/db/events.php';
 
     $handlers = array();
 
@@ -121,7 +84,7 @@ function events_get_cached($component) {
  * the database.
  *
  * @global object
- * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return boolean
  */
 function events_update_definition($component='moodle') {

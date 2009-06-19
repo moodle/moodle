@@ -258,20 +258,30 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
 
 /// Now add reports
 
-foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
-    $settings_path = "$CFG->dirroot/$CFG->admin/report/$plugin/settings.php";
+foreach (get_plugin_list('report') as $plugin => $plugindir) {
+    $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
         include($settings_path);
         continue;
     }
 
-    $index_path = "$CFG->dirroot/$CFG->admin/report/$plugin/index.php";
+    $index_path = "$plugindir/index.php";
     if (!file_exists($index_path)) {
         continue;
     }
     // old style 3rd party plugin without settings.php
-    $www_path = "$CFG->dirroot/$CFG->admin/report/$plugin/index.php";
+    $www_path = "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php";
     $reportname = get_string($plugin, 'report_' . $plugin);
     $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, $www_path, 'moodle/site:viewreports'));
 }
 
+
+/// Add all local plugins - must be always last!
+
+foreach (get_plugin_list('local') as $plugin => $plugindir) {
+    $settings_path = "$plugindir/settings.php";
+    if (file_exists($settings_path)) {
+        include($settings_path);
+        continue;
+    }
+}

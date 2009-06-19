@@ -494,10 +494,10 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     // report plugins with its special structure
 
     // Get all installed reports
-    if ($reports = get_list_of_plugins('grade/report', 'CVS')) {
+    if ($reports = get_plugin_list('gradereport')) {
 
         // Remove ones we can't see
-        foreach ($reports as $key => $plugin) {
+        foreach ($reports as $plugin => $unused) {
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
                 unset($reports[$key]);
             }
@@ -507,7 +507,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     $reportnames = array();
 
     if (!empty($reports)) {
-        foreach ($reports as $plugin) {
+        foreach ($reports as $plugin => $plugindir) {
             $pluginstr = get_string('modulename', 'gradereport_'.$plugin);
             $url = $url_prefix.'report/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'report' and $active_plugin == $plugin ) {
@@ -516,7 +516,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             $reportnames[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
 
             // Add link to preferences tab if such a page exists
-            if (file_exists($CFG->dirroot . '/grade/report/'.$plugin.'/preferences.php')) {
+            if (file_exists($plugindir.'/preferences.php')) {
                 $pref_url = $url_prefix.'report/'.$plugin.'/preferences.php?id='.$courseid;
                 $plugin_info['preferences'][$plugin] = new grade_plugin_info($plugin, $pref_url, $pluginstr);
             }
@@ -631,8 +631,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
 
     // standard import plugins
-    if ($imports = get_list_of_plugins('grade/import', 'CVS')) { // Get all installed import plugins
-        foreach ($imports as $key => $plugin) { // Remove ones we can't see
+    if ($imports = get_plugin_list('gradeimport')) { // Get all installed import plugins
+        foreach ($imports as $plugin => $plugindir) { // Remove ones we can't see
             if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
                 unset($imports[$key]);
             }
@@ -656,7 +656,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
 
     // standard export plugins
-    if ($exports = get_list_of_plugins('grade/export', 'CVS')) { // Get all installed export plugins
+    if ($exports = get_plugin_list('gradeexport')) { // Get all installed export plugins
         foreach ($exports as $key => $plugin) { // Remove ones we can't see
             if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
                 unset($exports[$key]);
@@ -665,7 +665,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
     $exportnames = array();
     if (!empty($exports)) {
-        foreach ($exports as $plugin) {
+        foreach ($exports as $plugin => $plugindir) {
             $pluginstr = get_string('modulename', 'gradeexport_'.$plugin);
             $url = $url_prefix.'export/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'export' and $active_plugin == $plugin ) {

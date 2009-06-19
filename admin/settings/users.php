@@ -36,22 +36,22 @@ if ($hassiteconfig
     $ADMIN->add('authsettings', $temp);
 
 
-    if ($auths = get_list_of_plugins('auth')) {
+    if ($auths = get_plugin_list('auth')) {
         $authsenabled = get_enabled_auth_plugins();
         $authbyname = array();
 
-        foreach ($auths as $auth) {
+        foreach ($auths as $auth => $authdir) {
             $strauthname = auth_get_plugin_title($auth);
             $authbyname[$strauthname] = $auth;
         }
         ksort($authbyname);
 
         foreach ($authbyname as $strauthname=>$authname) {
-            if (file_exists($CFG->dirroot.'/auth/'.$authname.'/settings.php')) {
+            if (file_exists($authdir.'/settings.php')) {
                 // do not show disabled auths in tree, keep only settings link on manage page
                 $settings = new admin_settingpage('authsetting'.$authname, $strauthname, 'moodle/site:config', !in_array($authname, $authsenabled));
                 if ($ADMIN->fulltree) {
-                    include($CFG->dirroot.'/auth/'.$authname.'/settings.php');
+                    include($authdir.'/settings.php');
                 }
                 // TODO: finish implementation of common settings - locking, etc.
                 $ADMIN->add('authsettings', $settings);

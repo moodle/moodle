@@ -201,15 +201,12 @@ class XMLDBAction {
      * @param xmldb_structure structure object containing all the info
      * @return string PHP code to be used to stabilish a savepoint
      */
-    function upgrade_savepoint_php ($structure) {
+    function upgrade_savepoint_php($structure) {
 
         $path = $structure->getPath();
 
     /// Trim "db" from path
         $path = dirname($path);
-
-    /// Get all the available plugin types
-        $plugintypes = get_plugin_types();
 
     /// Get pluginname, plugindir and plugintype
         $pluginname = basename($path);
@@ -217,7 +214,10 @@ class XMLDBAction {
             $plugindir = 'lib';
             $plugintype = 'lib';
         } else { /// rest of plugins
+            //TODO: this is not nice and may fail, plugintype should be passed around somehow instead
+            $plugintypes = get_plugin_types(false);
             $plugindir = dirname($path);
+            $plugindir = str_replace('\\', '/', $plugindir);
             $plugintype = array_search($plugindir, $plugintypes);
         }
 

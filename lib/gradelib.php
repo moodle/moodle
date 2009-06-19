@@ -1044,16 +1044,14 @@ function grade_grab_course_grades($courseid, $modname=null) {
         return;
     }
 
-    if (!$mods = get_list_of_plugins('mod') ) {
+    if (!$mods = get_plugin_list('mod') ) {
         print_error('nomodules', 'debug');
     }
 
-    foreach ($mods as $mod) {
+    foreach ($mods as $mod => $fullmod) {
         if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
             continue;
         }
-
-        $fullmod = $CFG->dirroot.'/mod/'.$mod;
 
         // include the module lib once
         if (file_exists($fullmod.'/lib.php')) {

@@ -25,16 +25,19 @@
  * Graph size
  * @global int $SURVEY_GHEIGHT
  */
+global $SURVEY_GHEIGHT;
 $SURVEY_GHEIGHT = 500;
 /**
  * Graph size
  * @global int $SURVEY_GWIDTH
  */
+global $SURVEY_GWIDTH;
 $SURVEY_GWIDTH  = 900;
 /**
  * Question Type
  * @global array $SURVEY_QTYPE
  */
+global $SURVEY_QTYPE;
 $SURVEY_QTYPE = array (
         "-3" => "Virtual Actual and Preferred",
         "-2" => "Virtual Preferred",

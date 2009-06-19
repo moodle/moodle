@@ -30,9 +30,11 @@ $CFG->chat_ajax_debug  = false;
 $CFG->chat_use_cache   = false;
 
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
+global $CHAT_HTMLHEAD;
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
 
 // The HTML head for the message window to start with (with js scrolling)
+global $CHAT_HTMLHEAD_JS;
 $CHAT_HTMLHEAD_JS = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html><head><script type="text/javascript">
@@ -49,15 +51,19 @@ move();
 </head>
 <body onBlur="scroll_active = true" onFocus="scroll_active = false">
 EOD;
+global $CHAT_HTMLHEAD_JS;
 $CHAT_HTMLHEAD_JS .= padding(200);
 
 // The HTML code for standard empty pages (e.g. if a user was kicked out)
+global $CHAT_HTMLHEAD_OUT;
 $CHAT_HTMLHEAD_OUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>You are out!</title></head><body></body></html>";
 
 // The HTML head for the message input page
+global $CHAT_HTMLHEAD_MSGINPUT;
 $CHAT_HTMLHEAD_MSGINPUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title></head><body>";
 
 // The HTML code for the message input page, with JavaScript
+global $CHAT_HTMLHEAD_MSGINPUT_JS;
 $CHAT_HTMLHEAD_MSGINPUT_JS = <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
@@ -78,6 +84,7 @@ $CHAT_HTMLHEAD_MSGINPUT_JS = <<<EOD
 EOD;
 
 // Dummy data that gets output to the browser as needed, in order to make it show output
+global $CHAT_DUMMY_DATA;
 $CHAT_DUMMY_DATA = padding(200);
 
 /**
@@ -1164,4 +1171,3 @@ function chat_supports($feature) {
         default: return null;
     }
 }
-

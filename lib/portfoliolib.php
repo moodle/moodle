@@ -669,11 +669,11 @@ function portfolio_plugin_sanity_check($plugins=null) {
     if (is_string($plugins)) {
        $plugins = array($plugins);
     } else if (empty($plugins)) {
-        $plugins = get_list_of_plugins('portfolio/type');
+        $plugins = get_plugin_list('portfolio');
     }
 
     $insane = array();
-    foreach ($plugins as $plugin) {
+    foreach ($plugins as $plugin => $dir) {
         if ($result = portfolio_static_function($plugin, 'plugin_sanity_check')) {
             $insane[$plugin] = $result;
         }

@@ -24,39 +24,23 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** NO_MOODLE_COOKIES = true */
     define('NO_MOODLE_COOKIES', true);
-    /** NO_UPGRADE_CHECK = true */
     define('NO_UPGRADE_CHECK', true);
 
     include('../config.php');
 
     $output = "// Javascript from Moodle modules\n";
 
-    if ($mods = get_list_of_plugins('mod')) {
-        foreach ($mods as $mod) {
-            if (is_readable($CFG->dirroot.'/mod/'.$mod.'/javascript.php')) {
-                $output .= file_get_contents($CFG->dirroot.'/mod/'.$mod.'/javascript.php');
+    $plugintypes = array('mod', 'filter', 'block');
+    foreach ($plugintypes as $plugintype) {
+        if ($mods = get_plugin_list($plugintype)) {
+            foreach ($mods as $mod => $moddir) {
+                if (is_readable($moddir.'/javascript.php')) {
+                    $output .= file_get_contents($moddir.'/javascript.php');
+                }
             }
         }
     }
-
-    if ($filters = get_list_of_plugins('filter')) {
-        foreach ($filters as $filter) {
-            if (is_readable($CFG->dirroot.'/filter/'.$filter.'/javascript.php')) {
-                $output .= file_get_contents($CFG->dirroot.'/filter/'.$filter.'/javascript.php');
-            }
-        }
-    }
-
-    if ($blocks = get_list_of_plugins('blocks')) {
-        foreach ($blocks as $block) {
-            if (is_readable($CFG->dirroot.'/blocks/'.$block.'/javascript.php')) {
-                $output .= file_get_contents($CFG->dirroot.'/blocks/'.$block.'/javascript.php');
-            }
-        }
-    }
-
 
     $lifetime = '86400';
 
@@ -68,5 +52,3 @@
     @header('Pragma: ');
 
     echo $output;
-
-?>

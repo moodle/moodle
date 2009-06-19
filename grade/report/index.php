@@ -34,11 +34,12 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 /// find all accessible reports
-if ($reports = get_list_of_plugins('grade/report', 'CVS')) {     // Get all installed reports
-    foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
-        if (!has_capability('gradereport/'.$plugin.':view', $context)) {
-            unset($reports[$key]);
-        }
+$reports = get_plugin_list('gradereport');     // Get all installed reports
+$reports = array_keys($reports);
+
+foreach ($reports as $plugin => $plugindir) {                      // Remove ones we can't see
+    if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+        unset($reports[$key]);
     }
 }
 
@@ -75,4 +76,3 @@ if (empty($last)) {
 //redirect to last or guessed report
 redirect($CFG->wwwroot.'/grade/report/'.$last.'/index.php?id='.$course->id);
 
-?>

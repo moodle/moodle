@@ -199,38 +199,6 @@ function get_used_table_names() {
 }
 
 /**
- * Lists all plugin types
- *
- * @global object
- * @return array Array of strings - name=>location
- */
-function get_plugin_types() {
-    global $CFG;
-
-    return array('mod'           => 'mod',
-                 'qtype'         => 'question/type',
-                 'block'         => 'blocks',
-                 'auth'          => 'auth',
-                 'enrol'         => 'enrol',
-                 'format'        => 'course/format',
-                 'editor'        => 'lib/editor',
-                 'gradeexport'   => 'grade/export',
-                 'gradeimport'   => 'grade/import',
-                 'gradereport'   => 'grade/report',
-                 'message'       => 'message/output',
-                 'coursereport'  => 'course/report',
-                 'report'        => $CFG->admin.'/report',
-                 'portfolio'     => 'portfolio/type',
-                 'repository'    => 'repository',
-
-        // following types a very ugly hacks - we should not make exceptions like this - all plugins should be equal;
-        // these plugins may cause problems such as when wanting to uninstall them
-                 'quizreport'      => 'mod/quiz/report',
-                 'assignment_type' => 'mod/assignment/type',
-                );
-}
-
-/**
  * Returns list of all directories where we expect install.xml files
  *
  * @global object
@@ -245,19 +213,13 @@ function get_db_directories() {
     $dbdirs[] = $CFG->libdir.'/db';
 
 /// Then, all the ones defined by get_plugin_types()
-    if ($plugintypes = get_plugin_types()) {
-        foreach ($plugintypes as $plugintype => $pluginbasedir) {
-            if ($plugins = get_list_of_plugins($pluginbasedir, 'db')) {
-                foreach ($plugins as $plugin) {
-                    $dbdirs[] = $CFG->dirroot . '/' . $pluginbasedir . '/' . $plugin . '/db';
-                }
+    $plugintypes = get_plugin_types();
+    foreach ($plugintypes as $plugintype => $pluginbasedir) {
+        if ($plugins = get_plugin_list($plugintype)) {
+            foreach ($plugins as $plugin => $plugindir) {
+                $dbdirs[] = $plugindir.'/db';
             }
         }
-    }
-
-/// Local database changes, if the local folder exists.
-    if (file_exists($CFG->dirroot . '/local')) {
-        $dbdirs[] = $CFG->dirroot.'/local/db';
     }
 
     return $dbdirs;
@@ -4125,8 +4087,8 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
         }
         $this->choices = array();
 
-        if ($plugins = get_list_of_plugins('grade/export')) {
-            foreach($plugins as $plugin) {
+        if ($plugins = get_plugin_list('gradeexport')) {
+            foreach($plugins as $plugin => $unused) {
                 $this->choices[$plugin] = get_string('modulename', 'gradeexport_'.$plugin);
             }
         }
@@ -4301,9 +4263,9 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
         global $CFG;
         require_once($CFG->libdir.'/gradelib.php');
 
-        foreach (get_list_of_plugins('grade/report') as $plugin) {
-            if (file_exists($CFG->dirroot.'/grade/report/'.$plugin.'/lib.php')) {
-                require_once($CFG->dirroot.'/grade/report/'.$plugin.'/lib.php');
+        foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
+            if (file_exists($plugindir.'/lib.php')) {
+                require_once($plugindir.'/lib.php');
                 $functionname = 'grade_report_'.$plugin.'_profilereport';
                 if (function_exists($functionname)) {
                     $this->choices[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
@@ -4457,9 +4419,9 @@ class admin_enrolment_page extends admin_externalpage {
 
         $found = false;
 
-        if ($modules = get_list_of_plugins('enrol')) {
+        if ($modules = get_plugin_list('enrol')) {
             $textlib = textlib_get_instance();
-            foreach ($modules as $plugin) {
+            foreach ($modules as $plugin => $dir) {
                 if (strpos($plugin, $query) !== false) {
                     $found = true;
                     break;
@@ -4655,8 +4617,8 @@ class admin_setting_manageauths extends admin_setting {
         }
 
         $textlib = textlib_get_instance();
-        $authsavailable = get_list_of_plugins('auth');
-        foreach ($authsavailable as $auth) {
+        $authsavailable = get_plugin_list('auth');
+        foreach ($authsavailable as $auth => $dir) {
             if (strpos($auth, $query) !== false) {
                 return true;
             }
@@ -4687,7 +4649,7 @@ class admin_setting_manageauths extends admin_setting {
                                  'up', 'down', 'none'));
         $txt->updown = "$txt->up/$txt->down";
 
-        $authsavailable = get_list_of_plugins('auth');
+        $authsavailable = get_plugin_list('auth');
         get_enabled_auth_plugins(true); // fix the list of enabled auths
         if (empty($CFG->auth)) {
             $authsenabled = array();
@@ -4710,7 +4672,7 @@ class admin_setting_manageauths extends admin_setting {
             }
         }
 
-        foreach ($authsavailable as $auth) {
+        foreach ($authsavailable as $auth => $dir) {
             if (array_key_exists($auth, $displayauths)) {
                 continue; //already in the list
             }
@@ -5081,8 +5043,8 @@ class admin_setting_manageportfolio extends admin_setting {
         }
 
         $textlib = textlib_get_instance();
-        $portfolios= get_list_of_plugins('portfolio/type');
-        foreach ($portfolios as $p) {
+        $portfolios = get_plugin_list('portfolio');
+        foreach ($portfolios as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 return true;
             }
@@ -5112,7 +5074,8 @@ class admin_setting_manageportfolio extends admin_setting {
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'portfolio');
 
-        $plugins = get_list_of_plugins('portfolio/type');
+        $plugins = get_plugin_list('portfolio');
+        $plugins = array_keys($plugins);
         $instances = portfolio_instances(false, false);
         $alreadyplugins = array();
 
@@ -5417,10 +5380,6 @@ function admin_get_root($reload=false, $requirefulltree=true) {
             require($file);
         }
         require($CFG->dirroot.'/'.$CFG->admin.'/settings/plugins.php');
-
-        if (file_exists($CFG->dirroot.'/local/settings.php')) {
-            require($CFG->dirroot.'/local/settings.php');
-        }
 
         $ADMIN->loaded = true;
     }
@@ -5882,9 +5841,9 @@ function print_plugin_tables() {
     $plugins_installed['filter'] = array();
 
     $plugins_ondisk = array();
-    $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
-    $plugins_ondisk['blocks'] = get_list_of_plugins('blocks', 'db');
-    $plugins_ondisk['filter'] = get_list_of_plugins('filter', 'db');
+    $plugins_ondisk['mod']    = array_keys(get_plugin_list('mod'));
+    $plugins_ondisk['blocks'] = array_keys(get_plugin_list('block'));
+    $plugins_ondisk['filter'] = array_keys(get_plugin_list('filter'));
 
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
@@ -6048,8 +6007,8 @@ class admin_setting_managerepository extends admin_setting {
         }
 
         $textlib = textlib_get_instance();
-        $repositories= get_list_of_plugins('repository');
-        foreach ($repositories as $p) {
+        $repositories= get_plugin_list('repository');
+        foreach ($repositories as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 return true;
             }
@@ -6080,7 +6039,7 @@ class admin_setting_managerepository extends admin_setting {
         $updownstr = get_string('updown', 'repository');
         $hiddenstr = get_string('hiddenshow', 'repository');
         $deletestr = get_string('delete');
-        $plugins = get_list_of_plugins('repository');
+        $plugins = get_plugin_list('repository');
         $instances = repository::get_types();
         $instancesnumber = count($instances);
         $alreadyplugins = array();
@@ -6161,7 +6120,7 @@ class admin_setting_managerepository extends admin_setting {
         $instancehtml .= get_string('addplugin', 'repository');
         $instancehtml .= '</h3><ul>';
         $addable = 0;
-        foreach ($plugins as $p) {
+        foreach ($plugins as $p=>$dir) {
             if (!in_array($p, $alreadyplugins)) {
                 $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey='
                     .sesskey().'&amp;new='.$p.'">'.get_string('add', 'repository')

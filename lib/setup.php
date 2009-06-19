@@ -187,6 +187,11 @@ global $SCRIPT;
 
     $CFG->libdir   = $CFG->dirroot .'/lib';
 
+    if (!isset($CFG->themedir)) {
+        $CFG->themedir = $CFG->dirroot.'/theme';
+        $CFG->themewww = $CFG->wwwroot.'/theme';
+    }
+
     require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 /// Time to start counting
@@ -509,10 +514,6 @@ global $SCRIPT;
 
 /// Load up theme variables (colours etc)
 
-    if (!isset($CFG->themedir)) {
-        $CFG->themedir = $CFG->dirroot.'/theme';
-        $CFG->themewww = $CFG->wwwroot.'/theme';
-    }
     $CFG->httpsthemewww = $CFG->themewww;
 
     if (isset($_GET['theme'])) {

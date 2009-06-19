@@ -83,10 +83,9 @@ die;die;die;
 
 
 /// upgrade all plugins types
-    $upgradedplugins = false;
     $plugintypes = get_plugin_types();
-    foreach ($plugintypes as $type=>$location) {
-        $upgradedplugins = upgrade_plugins($type, $location) || $upgradedplugins;
+    foreach ($plugintypes as $type => $location) {
+        upgrade_plugins($type);
     }
 
 /// Check for changes to RPC functions
@@ -94,11 +93,6 @@ die;die;die;
         require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
         upgrade_RPC_functions($return_url);  // Return here afterwards
     }
-
-/// Check for local database customisations
-/// first old *.php update and then the new upgrade.php script
-    require_once("$CFG->dirroot/lib/locallib.php");
-    upgrade_local_db($return_url);  // Return here afterwards
 
 /// just make sure upgrade logging is properly terminated
     upgrade_finished();

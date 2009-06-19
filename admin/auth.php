@@ -19,9 +19,6 @@ $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
 $action = optional_param('action', '', PARAM_ACTION);
 $auth   = optional_param('auth', '', PARAM_SAFEDIR);
 
-// get currently installed and enabled auth plugins
-$authsavailable = get_list_of_plugins('auth');
-
 get_enabled_auth_plugins(true); // fix the list of enabled auths
 if (empty($CFG->auth)) {
     $authsenabled = array();

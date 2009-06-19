@@ -21,8 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** @global int $COLUMN_HEIGHT */
-$COLUMN_HEIGHT = 300;
+/** @global int $CHOICE_COLUMN_HEIGHT */
+global $CHOICE_COLUMN_HEIGHT;
+$CHOICE_COLUMN_HEIGHT = 300;
 
 define('CHOICE_PUBLISH_ANONYMOUS', '0');
 define('CHOICE_PUBLISH_NAMES',     '1');
@@ -36,16 +37,19 @@ define('CHOICE_DISPLAY_HORIZONTAL',  '0');
 define('CHOICE_DISPLAY_VERTICAL',    '1');
 
 /** @global array $CHOICE_PUBLISH */
+global $CHOICE_PUBLISH;
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
                          CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
 
 /** @global array $CHOICE_SHOWRESULTS */
+global $CHOICE_SHOWRESULTS;
 $CHOICE_SHOWRESULTS = array (CHOICE_SHOWRESULTS_NOT          => get_string('publishnot', 'choice'),
                          CHOICE_SHOWRESULTS_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
                          CHOICE_SHOWRESULTS_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
                          CHOICE_SHOWRESULTS_ALWAYS       => get_string('publishalways', 'choice'));
 
 /** @global array $CHOICE_DISPLAY */
+global $CHOICE_DISPLAY;
 $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
                          CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
 
@@ -406,7 +410,7 @@ function choice_show_reportlink($user, $cm) {
  * @return void Output is echo'd
  */
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
-    global $CFG, $COLUMN_HEIGHT, $FULLSCRIPT;
+    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT;
 
     print_heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
@@ -593,7 +597,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
 
             if ($choice->showunanswered) {
                 if ($maxcolumn) {
-                    $height = $COLUMN_HEIGHT * ((float)$column[0] / (float)$maxcolumn);
+                    $height = $CHOICE_COLUMN_HEIGHT * ((float)$column[0] / (float)$maxcolumn);
                 }
                 echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col0 data\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
@@ -602,7 +606,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             $count = 1;
             foreach ($choice->option as $optionid => $optiontext) {
                 if ($maxcolumn) {
-                    $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
+                    $height = $CHOICE_COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
                 echo "<td style=\"vertical-align:bottom\" align=\"center\" class=\"col$count data\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
@@ -913,4 +917,3 @@ function choice_supports($feature) {
         default: return null;
     }
 }
-?>

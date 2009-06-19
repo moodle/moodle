@@ -224,4 +224,3 @@ function label_supports($feature) {
     }
 }
 
-?>

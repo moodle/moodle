@@ -2677,9 +2677,10 @@ function data_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
+        case FEATURE_MOD_SUBPLUGINS:          return array('datafield'=>'mod/data/field', 'datapreset'=>'mod/data/preset');
 
         default: return null;
-            }
+    }
 }
 /**
  * @global object
@@ -3210,4 +3211,3 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         return array($formats, $includedfiles);
     }
 }
-?>

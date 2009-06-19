@@ -118,7 +118,7 @@ function message_send_handler($eventdata){
 
 /**
  * This code updates the message_providers table with the current set of providers
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return boolean
  */
 function message_update_providers($component='moodle') {
@@ -210,46 +210,13 @@ function message_get_providers_from_db($component) {
 /**
  * Loads the messages definitions for the component (from file). If no
  * messages are defined for the component, we simply return an empty array.
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return array of message providerss or empty array if not exists
  *
  * INTERNAL - to be used from messagelib only
  */
 function message_get_providers_from_file($component) {
-    global $CFG;
-
-    if ($component == 'moodle') {
-        $defpath = $CFG->libdir.'/db/messages.php';
-
-    } else if ($component == 'unittest') {
-        $defpath = $CFG->libdir.'/simpletest/fixtures/messages.php';
-
-    } else {
-        $compparts = explode('/', $component);
-
-        if ($compparts[0] == 'block') {
-            // Blocks are an exception. Blocks directory is 'blocks', and not
-            // 'block'. So we need to jump through hoops.
-            $defpath = $CFG->dirroot.'/blocks/'.$compparts[1].'/db/messages.php';
-
-        } else if ($compparts[0] == 'format') {
-            // Similar to the above, course formats are 'format' while they
-            // are stored in 'course/format'.
-            $defpath = $CFG->dirroot.'/course/format/'.$compparts[1].'/db/messages.php';
-
-        } else if ($compparts[0] == 'gradeimport') {
-            $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/messages.php';  
-        
-        } else if ($compparts[0] == 'gradeexport') {
-            $defpath = $CFG->dirroot.'/grade/export/'.$compparts[1].'/db/messages.php'; 
-        
-        } else if ($compparts[0] == 'gradereport') {
-            $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/messages.php'; 
-        
-        } else {
-            $defpath = $CFG->dirroot.'/'.$component.'/db/messages.php';
-        }
-    }
+    $defpath = get_component_directory($component).'/db/messages.php';
 
     $messageproviders = array();
 

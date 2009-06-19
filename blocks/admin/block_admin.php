@@ -62,9 +62,9 @@ class block_admin extends block_list {
             if (has_capability('moodle/grade:viewall', $context)) {
                 $reportavailable = true;
             } else if (!empty($course->showgrades)) {
-                if ($reports = get_list_of_plugins('grade/report')) {     // Get all installed reports
+                if ($reports = get_plugin_list('gradereport')) {     // Get all installed reports
                     arsort($reports); // user is last, we want to test it first
-                    foreach ($reports as $plugin) {
+                    foreach ($reports as $plugin => $plugindir) {
                         if (has_capability('gradereport/'.$plugin.':view', $context)) {
                             //stop when the first visible plugin is found
                             $reportavailable = true;

@@ -2156,9 +2156,9 @@ function assignment_cron () {
     global $CFG, $USER, $DB;
 
     /// first execute all crons in plugins
-    if ($plugins = get_list_of_plugins('mod/assignment/type')) {
-        foreach ($plugins as $plugin) {
-            require_once("$CFG->dirroot/mod/assignment/type/$plugin/assignment.class.php");
+    if ($plugins = get_plugin_list('assignment')) {
+        foreach ($plugins as $plugin=>$dir) {
+            require_once("$dir/assignment.class.php");
             $assignmentclass = "assignment_$plugin";
             $ass = new $assignmentclass();
             $ass->cron();
@@ -2966,8 +2966,8 @@ function assignment_get_coursemodule_info($coursemodule) {
  */
 function assignment_types() {
     $types = array();
-    $names = get_list_of_plugins('mod/assignment/type');
-    foreach ($names as $name) {
+    $names = get_plugin_list('assignment');
+    foreach ($names as $name=>$dir) {
         $types[$name] = get_string('type'.$name, 'assignment');
     }
     asort($types);
@@ -3137,7 +3137,8 @@ function assignment_get_types() {
     }
 
     /// Drop-in extra assignment types
-    $assignmenttypes = get_list_of_plugins('mod/assignment/type');
+    $assignmenttypes = get_plugin_list('assignment');
+    $assignmenttypes = array_keys($assignmenttypes);
     foreach ($assignmenttypes as $assignmenttype) {
         if (!empty($CFG->{'assignment_hide_'.$assignmenttype})) {  // Not wanted
             continue;
@@ -3197,8 +3198,8 @@ function assignment_reset_userdata($data) {
 
     $status = array();
 
-    foreach (get_list_of_plugins('mod/assignment/type') as $type) {
-        require_once("$CFG->dirroot/mod/assignment/type/$type/assignment.class.php");
+    foreach (get_plugin_list('mod/assignment/type') as $type=>$dir) {
+        require_once("$dir/assignment.class.php");
         $assignmentclass = "assignment_$type";
         $ass = new $assignmentclass();
         $status = array_merge($status, $ass->reset_userdata($data));
@@ -3342,6 +3343,7 @@ function assignment_supports($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
+        case FEATURE_MOD_SUBPLUGINS:          return array('assignment'=>'mod/assignment/type'); // to be hopefully removed in 2.0
 
         default: return null;
     }

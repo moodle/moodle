@@ -44,6 +44,7 @@ define ("HOTPOT_TEXTSOURCE_SPECIFIC", "3");
 define("HOTPOT_LOCATION_COURSEFILES", "0");
 define("HOTPOT_LOCATION_SITEFILES",   "1");
 
+global $HOTPOT_LOCATION;
 $HOTPOT_LOCATION = array (
     HOTPOT_LOCATION_COURSEFILES => get_string("coursefiles"),
     HOTPOT_LOCATION_SITEFILES   => get_string("sitefiles"),
@@ -59,6 +60,7 @@ define("HOTPOT_OUTPUTFORMAT_V6_PLUS", "15");
 define("HOTPOT_OUTPUTFORMAT_FLASH",   "20");
 define("HOTPOT_OUTPUTFORMAT_MOBILE",  "30");
 
+global $HOTPOT_OUTPUTFORMAT;
 $HOTPOT_OUTPUTFORMAT = array (
     HOTPOT_OUTPUTFORMAT_BEST    => get_string("outputformat_best", "hotpot"),
     HOTPOT_OUTPUTFORMAT_V6_PLUS => get_string("outputformat_v6_plus", "hotpot"),
@@ -70,6 +72,7 @@ $HOTPOT_OUTPUTFORMAT = array (
     HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
     HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
 );
+global $HOTPOT_OUTPUTFORMAT_DIR;
 $HOTPOT_OUTPUTFORMAT_DIR = array (
     HOTPOT_OUTPUTFORMAT_V6_PLUS => 'v6',
     HOTPOT_OUTPUTFORMAT_V6      => 'v6',
@@ -96,6 +99,7 @@ define("HOTPOT_NAVIGATION_BUTTONS", "4");
 define("HOTPOT_NAVIGATION_GIVEUP",  "5");
 define("HOTPOT_NAVIGATION_NONE",    "6");
 
+global $HOTPOT_NAVIGATION;
 $HOTPOT_NAVIGATION = array (
     HOTPOT_NAVIGATION_BAR     => get_string("navigation_bar", "hotpot"),
     HOTPOT_NAVIGATION_FRAME   => get_string("navigation_frame", "hotpot"),
@@ -114,6 +118,7 @@ define("HOTPOT_JQUIZ",  "6");
 define("HOTPOT_TEXTOYS_RHUBARB",   "7");
 define("HOTPOT_TEXTOYS_SEQUITUR",  "8");
 
+global $HOTPOT_QUIZTYPE;
 $HOTPOT_QUIZTYPE = array(
     HOTPOT_JCB    => 'JCB',
     HOTPOT_JCLOZE => 'JCloze',
@@ -135,6 +140,7 @@ define("HOTPOT_GRADEMETHOD_AVERAGE", "2");
 define("HOTPOT_GRADEMETHOD_FIRST",   "3");
 define("HOTPOT_GRADEMETHOD_LAST",    "4");
 
+global $HOTPOT_GRADEMETHOD;
 $HOTPOT_GRADEMETHOD = array (
     HOTPOT_GRADEMETHOD_HIGHEST => get_string("gradehighest", "quiz"),
     HOTPOT_GRADEMETHOD_AVERAGE => get_string("gradeaverage", "quiz"),
@@ -147,6 +153,7 @@ define("HOTPOT_STATUS_TIMEDOUT",   "2");
 define("HOTPOT_STATUS_ABANDONED",  "3");
 define("HOTPOT_STATUS_COMPLETED",  "4");
 
+global $HOTPOT_STATUS;
 $HOTPOT_STATUS = array (
     HOTPOT_STATUS_INPROGRESS => get_string("inprogress", "hotpot"),
     HOTPOT_STATUS_TIMEDOUT   => get_string("timedout",   "hotpot"),
@@ -160,6 +167,7 @@ define("HOTPOT_FEEDBACK_FORMMAIL", "2");
 define("HOTPOT_FEEDBACK_MOODLEFORUM", "3");
 define("HOTPOT_FEEDBACK_MOODLEMESSAGING", "4");
 
+global $HOTPOT_FEEDBACK;
 $HOTPOT_FEEDBACK = array (
     HOTPOT_FEEDBACK_NONE => get_string("feedbacknone", "hotpot"),
     HOTPOT_FEEDBACK_WEBPAGE => get_string("feedbackwebpage",  "hotpot"),
@@ -2974,4 +2982,3 @@ function hotpot_reset_course_form_definition(&$mform) {
 function hotpot_reset_course_form_defaults($course) {
     return array('reset_hotpot_deleteallattempts' => 1);
 }
-?>

@@ -38,9 +38,11 @@ define('FEEDBACK_RESETFORM_RESET', 'feedback_reset_data_');
 define('FEEDBACK_RESETFORM_DROP', 'feedback_drop_feedback_');
 define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
 
+global $feedback_names; // not nice 
 $feedback_names = feedback_load_feedback_items('mod/feedback/item');
 
-//initialize the feedback-Session
+//initialize the feedback-Session - not nice at all!!
+global $SESSION;
 if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
     $SESSION->feedback = new object();
 }
@@ -2312,4 +2314,3 @@ function feedback_encode_target_url($url) {
         return $url;
     }
 }
-?>

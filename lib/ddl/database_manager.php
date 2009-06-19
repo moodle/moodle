@@ -1002,7 +1002,7 @@ class database_manager {
             unset($dbtables[$tablename]);
         }
 
-        // look for unsupported tables - local custom tables should be in /local/db/install.xml ;-)
+        // look for unsupported tables - local custom tables should be in /local/xxxx/db/install.xml ;-)
         // if there is no prefix, we can not say if tale is ours :-(
         if ($this->generator->prefix !== '') {
             foreach ($dbtables as $tablename=>$unused) {

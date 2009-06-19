@@ -51,9 +51,9 @@
 
     admin_externalpage_print_header();
 
-    $modules = get_list_of_plugins("enrol");
+    $modules = get_plugin_list('enrol');
     $options = array();
-    foreach ($modules as $module) {
+    foreach ($modules as $module => $moduledir) {
         $options[$module] = get_string("enrolname", "enrol_$module");
     }
     asort($options);
@@ -71,12 +71,11 @@
     $table->width = '700';
     $table->data = array();
 
-    $modules = get_list_of_plugins("enrol");
     $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
-    foreach ($modules as $module) {
+    foreach ($modules as $module => $moduledir) {
 
         // skip if directory is empty
-        if (!file_exists("$CFG->dirroot/enrol/$module/enrol.php")) {
+        if (!file_exists("$moduledir/enrol.php")) {
             continue;
         }
 

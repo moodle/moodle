@@ -37,11 +37,11 @@
 
     print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, $navigation);
 
-    $directories = get_list_of_plugins('course/import');
+    $imports = get_plugin_list('import');
 
-    foreach ($directories as $directory) {
+    foreach ($imports as $import => $importdir) {
         echo '<div class="plugin">';
-        include_once($CFG->dirroot.'/course/import/'.$directory.'/mod.php');
+        include($importdir.'/mod.php');
         echo '</div>';
     }
 

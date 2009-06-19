@@ -56,7 +56,7 @@
 
     print_heading($strthemes);
 
-    $themes = get_list_of_plugins("theme");
+    $themes = get_plugin_list("theme");
     $sesskey = sesskey();
 
     echo "<table style=\"margin-left:auto;margin-right:auto;\" cellpadding=\"7\" cellspacing=\"5\">\n";
@@ -68,15 +68,15 @@
 
     $original_theme = fullclone($THEME);
 
-    foreach ($themes as $theme) {
+    foreach ($themes as $theme => $themedir) {
 
         unset($THEME);
 
-        if (!file_exists($CFG->themedir.'/'.$theme.'/config.php')) {   // bad folder
+        if (!file_exists($themedir.'/config.php')) {   // bad folder
             continue;
         }
 
-        include($CFG->themedir.'/'.$theme.'/config.php');
+        include($themedir.'/config.php');
 
         $readme = '';
         $screenshot = '';

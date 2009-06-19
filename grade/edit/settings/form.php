@@ -100,10 +100,10 @@ class course_settings_form extends moodleform {
         $types = array('report', 'export', 'import');
 
         foreach($types as $type) {
-            foreach (get_list_of_plugins('grade/'.$type) as $plugin) {
+            foreach (get_plugin_list('grade'.$type) as $plugin => $plugindir) {
              // Include all the settings commands for this plugin if there are any
-                if (file_exists($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php')) {
-                    require_once($CFG->dirroot.'/grade/'.$type.'/'.$plugin.'/lib.php');
+                if (file_exists($plugindir.'/lib.php')) {
+                    require_once($plugindir.'/lib.php');
                     $functionname = 'grade_'.$type.'_'.$plugin.'_settings_definition';
                     if (function_exists($functionname)) {
                         $mform->addElement('header', 'grade_'.$type.$plugin, get_string('modulename', 'grade'.$type.'_'.$plugin, NULL));

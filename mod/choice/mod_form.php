@@ -86,7 +86,7 @@ class mod_choice_mod_form extends moodleform_mod {
 
 
 //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements($features);
+        $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
         $this->add_action_buttons();
     }

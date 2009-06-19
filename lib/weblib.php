@@ -3029,41 +3029,37 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     if ($themename == 'standard') {          // Add any standard styles included in any modules
         if (!empty($THEME->modsheets)) {     // Search for styles.php within activity modules
-            if ($mods = get_list_of_plugins('mod')) {
-                foreach ($mods as $mod) {
-                    if (file_exists($CFG->dirroot.'/mod/'.$mod.'/styles.php')) {
-                        $files[] = array($CFG->dirroot, '/mod/'.$mod.'/styles.php');
-                    }
+            $mods = get_plugin_list('mod');
+            foreach ($mods as $mod => $moddir) {
+                if (file_exists($moddir.'/styles.php')) {
+                    $files[] = array($moddir.'/styles.php');
                 }
             }
         }
 
         if (!empty($THEME->blocksheets)) {     // Search for styles.php within block modules
-            if ($mods = get_list_of_plugins('blocks')) {
-                foreach ($mods as $mod) {
-                    if (file_exists($CFG->dirroot.'/blocks/'.$mod.'/styles.php')) {
-                        $files[] = array($CFG->dirroot, '/blocks/'.$mod.'/styles.php');
-                    }
+            $mods = get_plugin_list('blocks');
+            foreach ($mods as $mod => $moddir) {
+                if (file_exists($moddir.'/styles.php')) {
+                    $files[] = array($moddir.'/styles.php');
                 }
             }
         }
 
         if (!isset($THEME->courseformatsheets) || $THEME->courseformatsheets) { // Search for styles.php in course formats
-            if ($mods = get_list_of_plugins('format','',$CFG->dirroot.'/course')) {
-                foreach ($mods as $mod) {
-                    if (file_exists($CFG->dirroot.'/course/format/'.$mod.'/styles.php')) {
-                        $files[] = array($CFG->dirroot, '/course/format/'.$mod.'/styles.php');
-                    }
+            $mods = get_plugin_list('format');
+            foreach ($mods as $mod => $moddir) {
+                if (file_exists($moddir.'/styles.php')) {
+                    $files[] = array($moddir.'/styles.php');
                 }
             }
         }
 
         if (!isset($THEME->gradereportsheets) || $THEME->gradereportsheets) { // Search for styles.php in grade reports
-            if ($reports = get_list_of_plugins('grade/report')) {
-                foreach ($reports as $report) {
-                    if (file_exists($CFG->dirroot.'/grade/report/'.$report.'/styles.php')) {
-                        $files[] = array($CFG->dirroot, '/grade/report/'.$report.'/styles.php');
-                    }
+            $reports = get_plugin_list('gradereport');
+            foreach ($reports as $report => $reportdir) {
+                if (file_exists($reportdir.'/styles.php')) {
+                    $files[] = array($reportdir.'/styles.php');
                 }
             }
         }

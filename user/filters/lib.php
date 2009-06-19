@@ -115,9 +115,9 @@ class user_filtering {
             case 'lastaccess':  return new user_filter_date('lastaccess', get_string('lastaccess'), $advanced, 'lastaccess');
             case 'lastlogin':   return new user_filter_date('lastlogin', get_string('lastlogin'), $advanced, 'lastlogin');
             case 'auth':
-                $plugins = get_list_of_plugins('auth');
+                $plugins = get_plugin_list('auth');
                 $choices = array();
-                foreach ($plugins as $auth) {
+                foreach ($plugins as $auth => $unused) {
                     $choices[$auth] = auth_get_plugin_title ($auth);
                 }
                 return new user_filter_simpleselect('auth', get_string('authentication'), $advanced, 'auth', $choices);

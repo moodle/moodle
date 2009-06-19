@@ -166,10 +166,10 @@ require_once("$CFG->dirroot/question/type/questiontype.php");
 // Load the questiontype.php file for each question type
 // These files in turn call question_register_questiontype()
 // with a new instance of each qtype class.
-$qtypenames = get_list_of_plugins('question/type');
-foreach($qtypenames as $qtypename) {
+$qtypenames = get_plugin_list('qtype');
+foreach($qtypenames as $qtypename => $qdir) {
     // Instanciates all plug-in question types
-    $qtypefilepath= "$CFG->dirroot/question/type/$qtypename/questiontype.php";
+    $qtypefilepath= "$qdir/questiontype.php";
 
     // echo "Loading $qtypename<br/>"; // Uncomment for debugging
     if (is_readable($qtypefilepath)) {
@@ -2590,14 +2590,14 @@ function question_categorylist($categoryid) {
 function get_import_export_formats( $type ) {
 
     global $CFG;
-    $fileformats = get_list_of_plugins("question/format");
+    $fileformats = get_plugin_list("qformat");
 
     $fileformatname=array();
     require_once( "{$CFG->dirroot}/question/format.php" );
-    foreach ($fileformats as $key => $fileformat) {
-        $format_file = $CFG->dirroot . "/question/format/$fileformat/format.php";
-        if (file_exists( $format_file ) ) {
-            require_once( $format_file );
+    foreach ($fileformats as $fileformat=>$fdir) {
+        $format_file = "$fdir/format.php";
+        if (file_exists($format_file) ) {
+            require_once($format_file);
         }
         else {
             continue;

@@ -65,7 +65,8 @@
 
     //Check name of module
     if (!$isblog) {
-        $mods = get_list_of_plugins('mod');
+        $mods = get_plugin_list('mod');
+        $mods = array_keys($mods);
         if (!in_array(strtolower($modulename), $mods)) {
             rss_not_found();
         }

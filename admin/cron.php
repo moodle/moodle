@@ -183,9 +183,9 @@
     // report includes cron.php with function report_reportname_cron() if it wishes
     // to be cronned. It is up to cron.php to handle e.g. if it only needs to
     // actually do anything occasionally.
-    $reports = get_list_of_plugins($CFG->admin.'/report');
-    foreach($reports as $report) {
-        $cronfile = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$report.'/cron.php';
+    $reports = get_plugin_list('report');
+    foreach($reports as $report => $reportdir) {
+        $cronfile = $reportdir.'/cron.php';
         if (file_exists($cronfile)) {
             require_once($cronfile);
             $cronfunction = 'report_'.$report.'_cron';
@@ -506,10 +506,10 @@
     }
 
     // run gradebook import/export/report cron
-    if ($gradeimports = get_list_of_plugins('grade/import')) {
-        foreach ($gradeimports as $gradeimport) {           
-            if (file_exists($CFG->dirroot.'/grade/import/'.$gradeimport.'/lib.php')) {
-                require_once($CFG->dirroot.'/grade/import/'.$gradeimport.'/lib.php');
+    if ($gradeimports = get_plugin_list('gradeimport')) {
+        foreach ($gradeimports as $gradeimport => $plugindir) {           
+            if (file_exists($plugindir.'/lib.php')) {
+                require_once($plugindir.'/lib.php');
                 $cron_function = 'grade_import_'.$gradeimport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook import function $cron_function ...", '');
@@ -519,10 +519,10 @@
         }      
     }
 
-    if ($gradeexports = get_list_of_plugins('grade/export')) {
-        foreach ($gradeexports as $gradeexport) {           
-            if (file_exists($CFG->dirroot.'/grade/export/'.$gradeexport.'/lib.php')) {
-                require_once($CFG->dirroot.'/grade/export/'.$gradeexport.'/lib.php');
+    if ($gradeexports = get_plugin_list('gradeexport')) {
+        foreach ($gradeexports as $gradeexport => $plugindir) {           
+            if (file_exists($plugindir.'/lib.php')) {
+                require_once($plugindir.'/lib.php');
                 $cron_function = 'grade_export_'.$gradeexport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook export function $cron_function ...", '');
@@ -532,10 +532,10 @@
         }
     }
 
-    if ($gradereports = get_list_of_plugins('grade/report')) {
-        foreach ($gradereports as $gradereport) {           
-            if (file_exists($CFG->dirroot.'/grade/report/'.$gradereport.'/lib.php')) {
-                require_once($CFG->dirroot.'/grade/report/'.$gradereport.'/lib.php');
+    if ($gradereports = get_plugin_list('gradereport')) {
+        foreach ($gradereports as $gradereport => $plugindir) {           
+            if (file_exists($plugindir.'/lib.php')) {
+                require_once($plugindir.'/lib.php');
                 $cron_function = 'grade_report_'.$gradereport.'_cron';                                    
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook report function $cron_function ...", '');
@@ -550,10 +550,13 @@
     $fs->cron();
 
     // run any customized cronjobs, if any
-    // looking for functions in lib/local/cron.php
-    if (file_exists($CFG->dirroot.'/local/cron.php')) {
-        mtrace('Processing customized cron script ...', '');
-        include_once($CFG->dirroot.'/local/cron.php');
+    if ($locals = get_plugin_list('local')) {
+        mtrace('Processing customized cron scripts ...', '');
+        foreach ($locals as $local => $localdir) {
+            if (file_exists("$localdir/cron.php")) {
+                include("$localdir/cron.php");
+            }
+        }
         mtrace('done.');
     }
 

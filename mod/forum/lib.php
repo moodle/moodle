@@ -8172,5 +8172,3 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         return get_string('modulename', 'forum');
     }
 }
-
-?>

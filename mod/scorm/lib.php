@@ -916,4 +916,3 @@ function scorm_supports($feature) {
         default: return null;
     }
 }
-

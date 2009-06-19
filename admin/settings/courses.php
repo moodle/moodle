@@ -17,9 +17,9 @@ if ($hassiteconfig
 /// NOTE: these settings must be applied after all other settings because they depend on them
     ///main course settings
     $temp = new admin_settingpage('coursesettings', get_string('coursesettings'));
-    $courseformats = get_list_of_plugins('course/format');
+    $courseformats = get_plugin_list('format');
     $formcourseformats = array();
-    foreach ($courseformats as $courseformat) {
+    foreach ($courseformats as $courseformat => $courseformatdir) {
         $formcourseformats["$courseformat"] = get_string("format$courseformat","format_$courseformat");
         if ($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
             $formcourseformats["$courseformat"] = get_string("format$courseformat");
