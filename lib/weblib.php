@@ -2721,7 +2721,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
                 //1.8 theme compatibility
                 $output .= "\n</div>"; // content div
             }
-            $output .= '\n</div>\n' . $PAGE->requires->get_end_code() . '</body>\n</html>'; // close page div started in header
+            $output .= "\n</div>\n" . $PAGE->requires->get_end_code() . "</body>\n</html>"; // close page div started in header
             if ($return) {
                 return $output;
             } else {
