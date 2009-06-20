@@ -2080,7 +2080,10 @@ function get_import_export_formats( $type ) {
         if ($provided) {
             $formatname = get_string($fileformat, 'quiz');
             if ($formatname == "[[$fileformat]]") {
-                $formatname = $fileformat;  // Just use the raw folder name
+                $formatname = get_string($fileformat, 'qformat_'.$fileformat);
+                if ($formatname == "[[$fileformat]]") {
+                    $formatname = $fileformat;  // Just use the raw folder name
+                }
             }
             $fileformatnames[$fileformat] = $formatname;
         }
