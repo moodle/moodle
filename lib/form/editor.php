@@ -6,11 +6,11 @@ require_once('HTML/QuickForm/element.php');
 //  * locking
 //  * freezing
 //  * ajax format conversion
-//  * better area files handling
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0,
+                                   'context'=>null, 'noclean'=>0, 'trusttext'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
@@ -24,6 +24,9 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+        }
+        if (!$this->_options['context']) {
+            $this->_options['context'] = get_context_instance(CONTEXT_SYSTEM);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
     }
@@ -136,10 +139,10 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
 
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
-        $editorclass = $editor->get_editor_element_class();
-        $editor->use_editor($id);
+        $editor->use_editor($id, $this->_options);
+        $ctx = $this->_options['context'];
 
-        $str .= '<div><textarea class="'.$editorclass.'" id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
+        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="15" cols="80">';
         $str .= s($text);
         $str .= '</textarea></div>';
 
@@ -160,12 +163,6 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
                 $draftitemid = $this->_values['itemid'];
             }
             $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
-
-            if (empty($COURSE->context)) {
-                $ctx = get_context_instance(CONTEXT_SYSTEM);
-            } else {
-                $ctx = $COURSE->context;
-            }
         /// embedded image files - TODO: hide on the fly when switching editors
             $str .= '<div id="'.$id.'_filemanager">';
             $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=embedded&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id;

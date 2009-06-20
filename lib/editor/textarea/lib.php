@@ -45,17 +45,9 @@ class textarea_texteditor extends texteditor {
         return true;
     }
 
-    public function get_editor_element_class() {
-        return 'form-textarea-simple';
-    }
-    
-    public function get_legacy_textarea_class() {
-        return 'form-textarea-legacy';
-    }
-
-    public function use_editor($elementid=null) {
+    public function use_editor($elementid, array $options=null) {
         return;
-    }    
+    }
 }
 
 

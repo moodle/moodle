@@ -144,22 +144,12 @@ abstract class texteditor {
     public abstract function supports_repositories();
 
     /**
-     * Returns textarea class in formslib editor element
-     * @return string
-     */
-    public abstract function get_editor_element_class();
-
-    /**
-     * Returns textarea class for legacy text editor
-     * @return string
-     */
-    public abstract function get_legacy_textarea_class();
-
-    /**
      * Add required JS needed for editor
+     * @param string $elementid id of text area to be converted to editor
+     * @param array $options
      * @return void
      */
-    public abstract function use_editor($elementid=null);
+    public abstract function use_editor($elementid, array $options=null);
 }
 
 

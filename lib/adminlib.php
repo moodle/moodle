@@ -1595,11 +1595,10 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
         }
 
         $editor = get_preferred_texteditor(FORMAT_HTML);
-        $editorclass = $editor->get_legacy_textarea_class();
-        $editor->use_editor($this->get_id());
+        $editor->use_editor($this->get_id(), array('noclean'=>true));
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-textarea"><textarea class="'.$editorclass.'" rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
+                '<div class="form-textarea"><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
                 $this->description, true, '', $defaultinfo, $query);
     }
 }

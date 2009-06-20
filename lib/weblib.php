@@ -4962,13 +4962,12 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
         $editor = get_preferred_texteditor(FORMAT_HTML);
-        $editorclass = $editor->get_legacy_textarea_class();
-        $editor->use_editor($id);
+        $editor->use_editor($id, array('legacy'=>true));
     } else {
         $editorclass = '';
     }
 
-    $str .= "\n".'<textarea class="form-textarea '.$editorclass.'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
+    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
