@@ -55,8 +55,8 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
         print_error('invalidplugin', 'repository');
     }
 }
-$url = $CFG->httpswwwroot."/repository/filepicker.php?ctx_id=$ctx_id&itemid=$itemid";
-$home_url = $url.'&action=embedded';
+$url = $CFG->httpswwwroot."/repository/filepicker.php?ctx_id=$ctx_id&amp;itemid=$itemid";
+$home_url = $url.'&amp;action=embedded';
 
 switch ($action) {
 case 'upload':
@@ -226,7 +226,7 @@ case 'plugins':
     echo '<div><ul>';
     foreach($repos as $repo) {
         $info = $repo->get_meta();
-        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&action=list&repo_id='.$info->id.'">'.$info->name.'</a></li>';
+        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&amp;action=list&repo_id='.$info->id.'">'.$info->name.'</a></li>';
     }
     echo '</ul></div>';
     break;
@@ -245,12 +245,12 @@ default:
             if ($file->get_filename()!='.') {
                 $drafturl = $CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename();
                 echo '<li><a href="'.$drafturl.'">'.$file->get_filename().'</a> ';
-                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&itemid='.$itemid.'&ctx_id='.$ctx_id.'&title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
+                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&ctx_id='.$ctx_id.'&title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
             }
         }
         echo '</ul>';
     }
-    echo '<div><a href="'.$url.'&action=plugins">'.get_string('add', 'repository').'</a></div>';
+    echo '<div><a href="'.$url.'&amp;action=plugins">'.get_string('add', 'repository').'</a></div>';
     print_footer('empty');
     break;
 }
