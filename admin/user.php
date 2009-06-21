@@ -36,7 +36,7 @@
         $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
     }
 
-    admin_externalpage_print_header();
+    $returnurl = "$CFG->wwwroot/$CFG->admin/user.php";
 
     if ($confirmuser and confirm_sesskey()) {
         if (!$user = $DB->get_record('user', array('id'=>$confirmuser))) {
@@ -48,9 +48,10 @@
         $result = $auth->user_confirm($user->username, $user->secret);
 
         if ($result == AUTH_CONFIRM_OK or $result == AUTH_CONFIRM_ALREADY) {
-            notify(get_string('userconfirmed', '', fullname($user, true)) );
+            redirect($returnurl);
         } else {
-            notify(get_string('usernotconfirmed', '', fullname($user, true)));
+            admin_externalpage_print_header();
+            redirect($returnurl, get_string('usernotconfirmed', '', fullname($user, true)));
         }
 
     } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
@@ -68,6 +69,7 @@
         }
 
         if ($confirm != md5($delete)) {
+            admin_externalpage_print_header();
             $fullname = fullname($user, true);
             print_heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
@@ -76,11 +78,13 @@
             die;
         } else if (data_submitted() and !$user->deleted) {
             if (delete_user($user)) {
-                notify(get_string('deletedactivity', '', fullname($user, true)) );
+                session_gc(); // remove stale sessions
+                redirect($returnurl);
             } else {
-                notify(get_string('deletednot', '', fullname($user, true)));
+                session_gc(); // remove stale sessions
+                admin_externalpage_print_header();
+                notify($returnurl, get_string('deletednot', '', fullname($user, true)));
             }
-            session_gc(); // remove stale sessions
         }
     } else if ($acl and confirm_sesskey()) {
         if (!has_capability('moodle/user:delete', $sitecontext)) {
@@ -109,14 +113,13 @@
             $DB->update_record('mnet_sso_access_control', $aclrecord);
         }
         $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
-        notify("MNET access control list updated: username '$user->username' from host '"
-                . $mnethosts[$user->mnethostid]->name
-                . "' access now set to '$accessctrl'.");
+        redirect($returnurl);
     }
 
     // create the user filter form
     $ufiltering = new user_filtering();
-
+    admin_externalpage_print_header();
+    
     // Carry on with the user listing
 
     $columns = array("firstname", "lastname", "email", "city", "country", "lastaccess");
