@@ -212,6 +212,49 @@ class file_storage {
     }
 
     /**
+     * Returns array based tree structure of area files
+     * @param int $contextid
+     * @param string $filearea
+     * @param int $itemid
+     * @return array each dir represented by dirname, subdirs, files and dirfile array elements
+     */
+    public function get_area_tree($contextid, $filearea, $itemid) {
+        $result = array('dirname'=>'', 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
+        $files = $this->get_area_files($contextid, $filearea, $itemid, $sort="itemid, filepath, filename", true);
+        // first create directory structure
+        foreach ($files as $hash=>$dir) {
+            if (!$dir->is_directory()) {
+                continue;
+            }
+            unset($files[$hash]);
+            if ($dir->get_filepath() === '/') {
+                $result['dirfile'] = $dir;
+                continue;
+            }
+            $parts = explode('/', trim($dir->get_filepath(),'/'));
+            $pointer =& $result;
+            foreach ($parts as $part) {
+                if (!isset($pointer['subdirs'][$part])) {
+                    $pointer['subdirs'][$part] = array('dirname'=>$part, 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
+                }
+                $pointer =& $pointer['subdirs'][$part];
+            }
+            $pointer['dirfile'] = $dir;
+            unset($pointer);
+        }
+        foreach ($files as $hash=>$file) {
+            $parts = explode('/', trim($file->get_filepath(),'/'));
+            $pointer =& $result;
+            foreach ($parts as $part) {
+                $pointer =& $pointer['subdirs'][$part];
+            }
+            $pointer['files'][$file->get_filename()] = $file;
+            unset($pointer);
+        }
+        return $result;
+    }
+
+    /**
      * Returns all files and otionally directories
      * @param int $contextid
      * @param string $filearea
