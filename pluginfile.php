@@ -50,7 +50,9 @@ if (count($args) == 0) { // always at least user id
 $contextid = (int)array_shift($args);
 $filearea = array_shift($args);
 
-$context = get_context_instance_by_id($contextid);
+if (!$context = get_context_instance_by_id($contextid)) {
+    send_file_not_found();
+}
 $fs = get_file_storage();
 
 
