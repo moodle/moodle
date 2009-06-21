@@ -553,6 +553,22 @@ function clean_param($param, $type) {
 }
 
 /**
+ * Return true if given value is integer or string with integer value
+ *
+ * @param mixed $value String or Int
+ * @return bool true if number, false if not
+ */
+function is_number($value) {
+    if (is_int($value)) {
+        return true;
+    } else if (is_string($value)) {
+        return ((string)(int)$value) === $value;
+    } else {
+        return false;
+    }
+}
+
+/**
  * This function is useful for testing whether something you got back from
  * the HTML editor actually contains anything. Sometimes the HTML editor
  * appear to be empty, but actually you get back a <br> tag or something.
@@ -6302,14 +6318,19 @@ function address_in_subnet($addr, $subnetstr) {
         $subnet = trim($subnet);
         if (strpos($subnet, '/') !== false) { /// type 1
             list($ip, $mask) = explode('/', $subnet);
-            if ($mask === '' || $mask > 32) {
-                $mask = 32;
+            if (!is_number($mask) || $mask < 0 || $mask > 32) {
+                continue;
             }
-            // When $mask is zero, PHP's integer arithmetic gives us a mask
-            // of 255.255.255.255 instead of 0.0.0.0, so special case it
-            if ($mask != 0) {
-                $mask = 0xffffffff << (32 - $mask);
+            if ($mask == 0) {
+                return true;
             }
+            if ($mask == 32) {
+                if ($ip === $addr) {
+                    return true;
+                }
+                continue;
+            }
+            $mask = 0xffffffff << (32 - $mask);
             $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
         } else if (strpos($subnet, '-') !== false)  {/// type 3
             $subnetparts = explode('.', $subnet);
