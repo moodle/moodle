@@ -40,8 +40,8 @@ require_once($CFG->libdir . '/moodlelib.php');
  * Test subclass that makes all the protected methods we want to test pubic.
  */
 class testable_string_manager extends string_manager {
-    public function __construct($dirroot, $dataroot, $admin, $runninginstaller) {
-        parent::__construct($dirroot, $dataroot, $admin, $runninginstaller);
+    public function __construct($dirroot, $dataroot, $runninginstaller) {
+        parent::__construct($dirroot, $dataroot, $runninginstaller);
     }
     public function locations_to_search($module) {
         return parent::locations_to_search($module);
@@ -76,7 +76,7 @@ class string_manager_test extends UnitTestCase {
         }
         $this->basedir = $CFG->dataroot . '/' . $this->workspace . '/';
         $this->stringmanager = new testable_string_manager($this->basedir . 'moodle',
-                $this->basedir . 'moodledata', 'adminpath', false);
+                $this->basedir . 'moodledata', false);
         make_upload_directory($this->workspace . '/' . 'moodle');
         make_upload_directory($this->workspace . '/' . 'moodledata');
     }
@@ -149,16 +149,16 @@ class string_manager_test extends UnitTestCase {
         $this->assertEqual($this->stringmanager->locations_to_search('local'), array(
             $this->basedir . 'moodle/lang/' => 'local/',
             $this->basedir . 'moodledata/lang/' => 'local/',
-            $this->basedir . 'moodle/local/lang/' => 'local/',
+            $this->basedir . 'moodle/mod/local/lang/' => 'local/',
         ));
     }
 
     public function test_locations_to_search_report() {
+        global $CFG;
         $this->assertEqual($this->stringmanager->locations_to_search('report_super'), array(
             $this->basedir . 'moodle/lang/' => 'report_super/',
             $this->basedir . 'moodledata/lang/' => 'report_super/',
-            $this->basedir . 'moodle/adminpath/report/super/lang/' => 'super/',
-            $this->basedir . 'moodle/course/report/super/lang/' => 'super/',
+            $this->basedir . 'moodle/' . $CFG->admin . '/report/super/lang/' => 'super/',
         ));
     }
 
@@ -178,7 +178,7 @@ class string_manager_test extends UnitTestCase {
         // custom plugin type from session without us having to re-register it.
         // This is required to make help files work.
         $newstringmanager = new testable_string_manager($this->basedir . 'moodle',
-                $this->basedir . 'moodledata', 'adminpath', false);
+                $this->basedir . 'moodledata', false);
         $this->assertEqual($newstringmanager->locations_to_search('mymodreport_test'), array(
             $this->basedir . 'moodle/lang/' => 'mymodreport_test/',
             $this->basedir . 'moodledata/lang/' => 'mymodreport_test/',

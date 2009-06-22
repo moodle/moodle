@@ -5667,7 +5667,7 @@ class string_manager {
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
             global $CFG;
-            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot, $CFG->admin, isset($CFG->running_installer));
+            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot, isset($CFG->running_installer));
             // Uncomment the followign line to log every call to get_string
             // to a file in $CFG->dataroot/temp/getstringlog/...
             // self::$singletoninstance->start_logging();
@@ -5684,7 +5684,7 @@ class string_manager {
     * @param string $admin path to the admin directory
     * @param bool $runninginstaller
     */
-    protected function __construct($dirroot, $dataroot, $admin, $runninginstaller) {
+    protected function __construct($dirroot, $dataroot, $runninginstaller) {
         $this->dirroot = $dirroot;
         $this->corelocations = array(
             $dirroot . '/lang/' => '',
