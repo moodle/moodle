@@ -250,7 +250,7 @@ default:
         }
         echo '</ul>';
     }
-    echo '<div><a href="'.$url.'&amp;action=plugins">'.get_string('add', 'repository').'</a></div>';
+    echo '<div><a href="'.$url.'&amp;action=plugins">'.get_string('addfile', 'repository').'</a></div>';
     print_footer('empty');
     break;
 }

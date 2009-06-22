@@ -1,7 +1,8 @@
 <?php //$Id$
 $string['accessiblefilepicker']='Accessible file picker';
 $string['activerepository'] = 'Active repository plugins';
-$string['add'] = 'Add...';
+$string['add'] = 'Add';
+$string['addfile'] = 'Add...';
 $string['addplugin'] = 'Add a repository plugin';
 $string['activaterep'] = 'Active repositories';
 $string['areabackup'] = 'Backups';
@@ -16,6 +17,7 @@ $string['attachedfiles'] = 'Attached files';
 $string['back'] = '&lt; Back';
 $string['cacheexpire'] = 'Cache expire';
 $string['cachecleared'] = 'Cached files are removed';
+$string['cannotaccessparentwin'] = 'If parent window is on HTTPS, then we are not allowed to access window.opener object, so we cannot refresh the repository for you automatically, but we already got your session, just go back to file picker and select the repository again, it should work now.';
 $string['cannotdelete'] = 'Cannot delete this file.';
 $string['cannotdownload'] = 'Cannot download this file';
 $string['cannotinitplugin'] = 'Call plugin_init failed';
@@ -81,6 +83,7 @@ $string['preview'] = 'Preview';
 $string['popup'] = 'Click "Login" button to login';
 $string['readonlyinstance'] = 'You cannot edit/delete a read-only instance';
 $string['refresh'] = 'Refresh';
+$string['refreshnonjsfilepicker'] = 'Please clos this window and refresh non-javascript file picker';
 $string['removed'] = 'Repository removed';
 $string['repository'] = 'Repository';
 $string['repositorycourse'] = 'Course repositories';

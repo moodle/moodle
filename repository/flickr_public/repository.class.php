@@ -182,7 +182,7 @@ class repository_flickr_public extends repository {
             echo '</table>';
 
             echo '<input type="hidden" name="action" value="search" />';
-            echo '<input type="submit" value="Search" />';
+            echo '<input type="submit" value="'.get_string('search', 'repository').'" />';
         }
     }
 

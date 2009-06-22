@@ -89,7 +89,7 @@ class repository_local extends repository {
             $context  = get_system_context();
             // append draft files directory
             $node = array(
-                'title' => 'Current use files',
+                'title' => get_string('currentusefiles', 'repository_local'),
                 'size' => 0,
                 'date' => '',
                 'path' => 'draft',

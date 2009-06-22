@@ -133,7 +133,7 @@ class repository_flickr extends repository {
             $ret['login'] = array($popup_btn);
             return $ret;
         } else {
-            echo '<a target="_blank" href="'.$this->flickr->auth().'">Login</a>';
+            echo '<a target="_blank" href="'.$this->flickr->auth().'">'.get_string('login', 'repository').'</a>';
         }
     }
 
