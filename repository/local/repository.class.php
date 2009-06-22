@@ -50,6 +50,28 @@ class repository_local extends repository {
         $ret = array();
         $ret['dynload'] = true;
         $list = array();
+
+        // list draft files
+        if ($encodedpath == 'draft') {
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $files = $fs->get_area_files($context->id, 'user_draft');
+            foreach ($files as $file) {
+                if ($file->get_filename()!='.') {
+                    $node = array(
+                        'title' => $file->get_filename(),
+                        'size' => 0,
+                        'date' => '',
+                        'source'=> $file->get_id(),
+                        'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
+                    );
+                    $list[] = $node;
+                }
+            }
+            $ret['list'] = $list;
+            return $ret;
+        }
+
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
@@ -75,27 +97,6 @@ class repository_local extends repository {
                 'thumbnail' => $CFG->wwwroot .'/pix/f/folder-32.png'
             );
             $list[] = $node;
-        }
-
-        // list draft files
-        if ($encodedpath == 'draft') {
-            $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
-            $files = $fs->get_area_files($context->id, 'user_draft');
-            foreach ($files as $file) {
-                if ($file->get_filename()!='.') {
-                    $node = array(
-                        'title' => $file->get_filename(),
-                        'size' => 0,
-                        'date' => '',
-                        'source'=> $file->get_id(),
-                        'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
-                    );
-                    $list[] = $node;
-                }
-            }
-            $ret['list'] = $list;
-            return $ret;
         }
 
         try {
