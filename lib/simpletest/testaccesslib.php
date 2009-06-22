@@ -72,8 +72,8 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
         assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
         update_capabilities('moodle');
-        update_capabilities('mod/forum');
-        update_capabilities('mod/quiz');
+        update_capabilities('mod_forum');
+        update_capabilities('mod_quiz');
 
         // Create some nested contexts. instanceid does not matter for this. Just
         // ensure we don't violate any unique keys by using an unlikely number.
