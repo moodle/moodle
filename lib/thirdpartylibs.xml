@@ -190,6 +190,13 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
+    <location>pear/XML/Parser</location>
+    <name>Pear_XML_Parser</name>
+    <license>BSD</license>
+    <version>1.3.2</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <license>LGPL</license>
