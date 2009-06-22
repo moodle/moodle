@@ -6538,16 +6538,12 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     //Accessibility: skip block link, with title-text (or $block_id) to differentiate links.
     static $block_id = 0;
     $block_id++;
-    if (empty($heading)) {
-        $skip_text = get_string('skipblock', 'access').' '.$block_id;
-    }
-    else {
-        $skip_text = get_string('skipa', 'access', strip_tags($title));
-    }
+    $skip_text = get_string('skipa', 'access', strip_tags($title));
     $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block">'.$skip_text.'</a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
 
-    if (! empty($heading)) {
+    $strip_title = strip_tags($title);
+    if (! empty($strip_title)) {
         echo $skip_link;
     }
     //ELSE: a single link on a page "Skip block 4" is too confusing - ignore.
