@@ -252,6 +252,7 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
         $fakecontext = new stdClass;
         $fakecontext->id = $syscontext->id + 1;
+        $fakecontext->contextlevel = CONTEXT_COURSECAT;
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
