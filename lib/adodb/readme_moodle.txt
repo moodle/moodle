@@ -21,6 +21,11 @@ Our changes:
        in the MetaColumns() function. MDL-14215.
        Reported to ADOdb at: http://phplens.com/lens/lensforum/msgs.php?id=17383
        Once fixed by adodb guys, we'll return to their official distro.
+ * drivers/adodb-mssql.inc.php, drivers/adodb-oci8.inc.php (qstr) and
+       adodb.inc.php (addq and qstr) - fixed wrong "undo magic quotes" that was
+       ignoring "magic_quotes_sybase" and leading to wrongly escaped contents. MDL-19452
+       Reported privately to John Lim, will be added to upstream soon. Once fixed
+       we'll return to their official distro.
 
 skodak, iarenaza, moodler, stronk7
 
