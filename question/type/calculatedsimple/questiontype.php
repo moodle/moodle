@@ -332,7 +332,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
   //  list($options, $selected) = $this->dataset_optionsa($form, $name);
 
         foreach ($options as $key => $whatever) {
-            if (!ereg('^1-', $key) && $key != '0') {
+            if (!preg_match('~^1-~', $key) && $key != '0') {
                 unset($options[$key]);
             }
         }

@@ -39,6 +39,7 @@ class web_test extends UnitTestCase {
 
     function test_s() {
           $this->assertEqual(s("This Breaks \" Strict"), "This Breaks &quot; Strict");
+          $this->assertEqual(s("This Breaks <a>\" Strict</a>"), "This Breaks &lt;a&gt;&quot; Strict&lt;/a&gt;");
     }
 
     function test_format_text_email() {
@@ -65,6 +66,11 @@ class web_test extends UnitTestCase {
         $this->assertEqual(highlight('-good', 'This is good'), 'This is good');
         $this->assertEqual(highlight('+good', 'This is goodness'), 'This is goodness');
         $this->assertEqual(highlight('good', 'This is goodness'), 'This is <span class="highlight">good</span>ness');
+    }
+
+    function test_replace_ampersands() { 
+        $this->assertEqual(replace_ampersands_not_followed_by_entity("This & that &nbsp;"), "This &amp; that &nbsp;");
+        $this->assertEqual(replace_ampersands_not_followed_by_entity("This &nbsp that &nbsp;"), "This &amp;nbsp that &nbsp;");
     }
 }
 ?>

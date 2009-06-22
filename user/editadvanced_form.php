@@ -134,7 +134,7 @@ class user_editadvanced_form extends moodleform {
                 $err['username'] = get_string('usernamelowercase');
             } else {
                 if (empty($CFG->extendedusernamechars)) {
-                    $string = eregi_replace("[^(-\.[:alnum:])]", '', $usernew->username);
+                    $string = preg_replace("/[^(-\.[:alnum:])]/i", '', $usernew->username);
                     if ($usernew->username !== $string) {
                         $err['username'] = get_string('alphanumerical');
                     }

@@ -176,7 +176,7 @@
                 $printnr = '';
             }
             $itemobj->print_analysed($item, $printnr, $mygroupid, $coursefilter);
-            if (eregi('rated$', $item->typ)) {
+            if (preg_match('/rated$/i', $item->typ)) {
                  echo '<tr><td colspan="2"><a href="#" onclick="setcourseitemfilter('.$item->id.',\''.$item->typ.'\'); return false;">'.
                     get_string('sort_by_course', 'feedback').'</a></td></tr>'; 
             }

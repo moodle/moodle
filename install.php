@@ -25,13 +25,13 @@
  */
 
 if (isset($_REQUEST['lang'])) {
-    $lang = eregi_replace('[^A-Za-z0-9_-]', '', $_REQUEST['lang']);
+    $lang = preg_replace('/[^A-Za-z0-9_-]/i', '', $_REQUEST['lang']);
 } else {
     $lang = 'en_utf8';
 }
 
 if (isset($_REQUEST['admin'])) {
-    $admin = eregi_replace('[^A-Za-z0-9_-]', '', $_REQUEST['admin']);
+    $admin = preg_replace('/[^A-Za-z0-9_-]/i', '', $_REQUEST['admin']);
 } else {
     $admin = 'admin';
 }

@@ -161,7 +161,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $this->datasetdefs[$def]->calcmax = $calcmax[$key] ;
                 $this->datasetdefs[$def]->calclength = $calclength[$key] ;
                 //then compare with new values
-                if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$', $this->datasetdefs[$def]->options, $regs)) {
+                if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~', $this->datasetdefs[$def]->options, $regs)) {
                    if( $this->datasetdefs[$def]->calcmin != $regs[2]||
                     $this->datasetdefs[$def]->calcmax != $regs[3] ||
                     $this->datasetdefs[$def]->calclength != $regs[4]){
@@ -667,7 +667,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             foreach ($possibledatasets as $name => $value) {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
-        while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+        while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];

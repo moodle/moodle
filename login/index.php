@@ -95,7 +95,7 @@
         $frm->username = trim(moodle_strtolower($frm->username));
 
         if (is_enabled_auth('none') && empty($CFG->extendedusernamechars)) {
-            $string = eregi_replace("[^(-\.[:alnum:])]", "", $frm->username);
+            $string = preg_replace("~[^(-\.[:alnum:])]~i", "", $frm->username);
             if (strcmp($frm->username, $string)) {
                 $errormsg = get_string('username').': '.get_string("alphanumerical");
                 $errorcode = 2;

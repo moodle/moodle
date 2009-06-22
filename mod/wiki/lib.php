@@ -1920,7 +1920,7 @@ function wiki_admin_checklinks($pagetocheck) {
      }
 
      /// Remove old Notices
-     $content = eregi_replace(' µµ__~\['.get_string("offline","wiki").'\]__µµ ','', $content);
+     $content = preg_replace('/ µµ__~\['.get_string("offline","wiki").'\]__µµ /i','', $content);
 
      #-- replace dead links
      foreach ($badlinks as $href) {

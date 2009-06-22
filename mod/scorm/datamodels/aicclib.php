@@ -302,7 +302,7 @@ function scorm_parse_aicc($scorm) {
                             }
                             if (isset($element->core_vendor)) {
                                 $scodata->name = 'datafromlms';
-                                $scodata->value = eregi_replace('<cr>', "\r\n", $element->core_vendor);
+                                $scodata->value = preg_replace('/<cr>/i', "\r\n", $element->core_vendor);
                                 $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                         }

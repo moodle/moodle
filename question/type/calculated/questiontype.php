@@ -267,7 +267,7 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
-        if (!ereg('^dataset([0-9]+)[^-]*-(.*)$',
+        if (!preg_match('~^dataset([0-9]+)[^-]*-(.*)$~',
                 $state->responses[''], $regs)) {
             notify ("Wrongly formatted raw response answer " .
                    "{$state->responses['']}! Could not restore session for " .
@@ -647,7 +647,7 @@ class question_calculated_qtype extends default_questiontype {
         //evaluate the equations i.e {=5+4)
         $qtext = "";
         $qtextremaining = $numericalquestion->questiontext ;
-        while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+        while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
@@ -766,7 +766,7 @@ class question_calculated_qtype extends default_questiontype {
     function custom_generator_set_data($datasetdefs, $formdata){
         $idx = 1;
         foreach ($datasetdefs as $datasetdef){
-            if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$', $datasetdef->options, $regs)) {
+            if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~', $datasetdef->options, $regs)) {
                 $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
                 $formdata["calcdistribution[$idx]"] = $regs[1];
                 $formdata["calcmin[$idx]"] = $regs[2];
@@ -779,7 +779,7 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function custom_generator_tools($datasetdef) {
-        if (ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
+        if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~',
                 $datasetdef->options, $regs)) {
             $defid = "$datasetdef->type-$datasetdef->category-$datasetdef->name";
             for ($i = 0 ; $i<10 ; ++$i) {
@@ -1012,7 +1012,7 @@ class question_calculated_qtype extends default_questiontype {
        }
     }
     function generate_dataset_item($options) {
-        if (!ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
+        if (!preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~',
                 $options, $regs)) {
             // Unknown options...
             return false;
@@ -1122,7 +1122,7 @@ class question_calculated_qtype extends default_questiontype {
   //  list($options, $selected) = $this->dataset_optionsa($form, $name);
 
         foreach ($options as $key => $whatever) {
-            if (!ereg('^1-', $key) && $key != '0') {
+            if (!preg_match('~^1-~', $key) && $key != '0') {
                 unset($options[$key]);
             }
         }
@@ -1495,7 +1495,7 @@ class question_calculated_qtype extends default_questiontype {
     /// Returns the possible dataset names found in the text as an array
     /// The array has the dataset name for both key and value
         $datasetnames = array();
-        while (ereg('\\{([[:alpha:]][^>} <{"\']*)\\}', $text, $regs)) {
+        while (preg_match('~\\{([[:alpha:]][^>} <{"\']*)\\}~', $text, $regs)) {
             $datasetnames[$regs[1]] = $regs[1];
             $text = str_replace($regs[0], '', $text);
         }
@@ -1781,7 +1781,7 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
         if ($answerlength) {
             /* Try to include missing zeros at the end */
 
-            if (ereg('^(.*\\.)(.*)$', $calculated->answer, $regs)) {
+            if (preg_match('~^(.*\\.)(.*)$~', $calculated->answer, $regs)) {
                 $calculated->answer = $regs[1] . substr(
                         $regs[2] . '00000000000000000000000000000000000000000x',
                         0, $answerlength)
@@ -1841,7 +1841,7 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
                 $calculated->answer = $sign.$answer.$unit;
             } else {
                 // Could be an idea to add some zeros here
-                $answer .= (ereg('^[0-9]*$', $answer) ? '.' : '')
+                $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
                         . '00000000000000000000000000000000000000000x';
                 $oklen = $answerlength + ($p10 < 1 ? 2-$p10 : 1);
                 $calculated->answer = $sign.substr($answer, 0, $oklen).$unit;
@@ -1862,7 +1862,7 @@ function qtype_calculated_find_formula_errors($formula) {
 /// Returns false if everything is alright.
 /// Otherwise it constructs an error message
     // Strip away dataset names
-    while (ereg('\\{[[:alpha:]][^>} <{"\']*\\}', $formula, $regs)) {
+    while (preg_match('~\\{[[:alpha:]][^>} <{"\']*\\}~', $formula, $regs)) {
         $formula = str_replace($regs[0], '1', $formula);
     }
 
@@ -1873,7 +1873,7 @@ function qtype_calculated_find_formula_errors($formula) {
     $operatorornumber = "[$safeoperatorchar.0-9eE]";
 
 
-    while (ereg("(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)",
+    while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
             $formula, $regs)) {
 
         switch ($regs[2]) {
@@ -1936,11 +1936,11 @@ function qtype_calculated_find_formula_errors($formula) {
             $formula = str_replace($regs[0], $regs[1] . '1', $formula);
         } else {
             // The function call starts the formula
-            $formula = ereg_replace("^$regs[2]\\([^)]*\\)", '1', $formula);
+            $formula = preg_replace("~^$regs[2]\\([^)]*\\)~", '1', $formula);
         }
     }
 
-    if (ereg("[^$safeoperatorchar.0-9eE]+", $formula, $regs)) {
+    if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
         return get_string('illegalformulasyntax', 'quiz', $regs[0]);
     } else {
         // Formula just might be valid

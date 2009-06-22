@@ -1639,7 +1639,8 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     }
 
     // First replace all ampersands not followed by html entity code
-    $string = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
+    // Regular expression moved to its own method for easier unit testing
+    $string = replace_ampersands_not_followed_by_entity($string);
 
     if (!empty($CFG->filterall) && $CFG->version >= 2009040600) { // Avoid errors during the upgrade to the new system.
         $context = $PAGE->context;
@@ -1662,6 +1663,18 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     $strcache[$md5] = $string;
 
     return $string;
+}
+
+/**
+ * Given a string, performs a negative lookahead looking for any ampersand character
+ * that is not followed by a proper HTML entity. If any is found, it is replaced
+ * by &amp;. The string is then returned.
+ *
+ * @param string $string
+ * @return string
+ */
+function replace_ampersands_not_followed_by_entity($string) {
+    return preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
 }
 
 /**
@@ -1690,7 +1703,7 @@ function format_text_email($text, $format) {
             $text = wiki_to_html($text);
         /// This expression turns links into something nice in a text format. (Russell Jungwirth)
         /// From: http://php.net/manual/en/function.eregi-replace.php and simplified
-            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [ \\2 ]', $text);
+            $text = preg_replace('~(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)~i','$3 [ $2 ]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
@@ -1701,7 +1714,7 @@ function format_text_email($text, $format) {
         case FORMAT_MOODLE:
         case FORMAT_MARKDOWN:
         default:
-            $text = eregi_replace('(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)','\\3 [ \\2 ]', $text);
+            $text = preg_replace('~(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)~i','$3 [ $2 ]', $text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
     }
@@ -1861,8 +1874,8 @@ function clean_text($text, $format=FORMAT_MOODLE) {
             }
 
         /// Remove potential script events - some extra protection for undiscovered bugs in our code
-            $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
-            $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
+            $text = preg_replace("~([^a-z])language([[:space:]]*)=~i", "$1Xlanguage=", $text);
+            $text = preg_replace("~([^a-z])on([a-z]+)([[:space:]]*)=~i", "$1Xon$2=", $text);
 
             return $text;
     }
@@ -2105,11 +2118,11 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
     global $CFG;
 
 /// Remove any whitespace that may be between HTML tags
-    $text = eregi_replace(">([[:space:]]+)<", "><", $text);
+    $text = preg_replace("~>([[:space:]]+)<~i", "><", $text);
 
 /// Remove any returns that precede or follow HTML tags
-    $text = eregi_replace("([\n\r])<", " <", $text);
-    $text = eregi_replace(">([\n\r])", "> ", $text);
+    $text = preg_replace("~([\n\r])<~i", " <", $text);
+    $text = preg_replace("~>([\n\r])~i", "> ", $text);
 
     convert_urls_into_links($text);
 
@@ -2172,11 +2185,11 @@ function html_to_text($html) {
  */
 function convert_urls_into_links(&$text) {
 /// Make lone URLs into links.   eg http://moodle.com/
-    $text = eregi_replace("([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
+    $text = preg_replace("~([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])~i",
                           "\\1<a href=\"\\2://\\3\\4\" target=\"_blank\">\\2://\\3\\4</a>", $text);
 
 /// eg www.moodle.com
-    $text = eregi_replace("([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])",
+    $text = preg_replace("~([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])~i",
                           "\\1<a href=\"http://www.\\2\\3\" target=\"_blank\">www.\\2\\3</a>", $text);
 }
 

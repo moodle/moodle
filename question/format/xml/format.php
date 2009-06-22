@@ -930,7 +930,7 @@ class qformat_xml extends qformat_default {
             foreach($question->options->questions as $question) {
                 $thispattern = addslashes("{#".$a_count."}"); // TODO: fix this addslashes
                 $thisreplace = $question->questiontext;
-                $expout=ereg_replace($thispattern, $thisreplace, $expout );
+                $expout=preg_replace("~$thispattern~", $thisreplace, $expout );
                 $a_count++;
             }
         break;

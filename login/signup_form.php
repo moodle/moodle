@@ -65,7 +65,7 @@ class login_signup_form extends moodleform {
 
         if (signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
-            $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth'))); 
+            $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth')));
         }
 
         profile_signup_fields($mform);
@@ -99,7 +99,7 @@ class login_signup_form extends moodleform {
             $errors['username'] = get_string('usernameexists');
         } else {
             if (empty($CFG->extendedusernamechars)) {
-                $string = eregi_replace("[^(-\.[:alnum:])]", '', $data['username']);
+                $string = preg_replace("~[^(-\.[:alnum:])]~i", '', $data['username']);
                 if (strcmp($data['username'], $string)) {
                     $errors['username'] = get_string('alphanumerical');
                 }

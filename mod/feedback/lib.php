@@ -1613,7 +1613,7 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
     $errcount = 0;
     foreach($keys as $key){
         //ensure the keys are what we want
-        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){
+        if(preg_match('/([a-z0-9]{1,})_([0-9]{1,})/i',$key)){
             $value = new object();
             $itemnr = explode('_', $key);
             $value->item = intval($itemnr[1]);
@@ -1659,7 +1659,7 @@ function feedback_update_values($data, $completed, $tmp = false) {
     $keys = array_keys($data);
     foreach($keys as $key){
         //ensure the keys are what we want
-        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){
+        if(preg_match('/([a-z0-9]{1,})_([0-9]{1,})/i',$key)){
             //build the new value to update([id], item, completed, value)
             $itemnr = explode('_', $key);
             $newvalue = new object();

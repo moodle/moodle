@@ -66,12 +66,12 @@ $returnurl = $CFG->wwwroot.'/'.$CFG->admin.'/uploaduser.php';
 $bulknurl  = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 // array of all valid fields for validation
-$STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email', 
-        'city', 'country', 'lang', 'auth', 'timezone', 'mailformat', 
-        'maildisplay', 'maildigest', 'htmleditor', 'ajax', 'autosubscribe', 
-        'mnethostid', 'institution', 'department', 'idnumber', 'skype', 
-        'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address', 
-        'url', 'description', 'oldusername', 'emailstop', 'deleted',  
+$STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
+        'city', 'country', 'lang', 'auth', 'timezone', 'mailformat',
+        'maildisplay', 'maildigest', 'htmleditor', 'ajax', 'autosubscribe',
+        'mnethostid', 'institution', 'department', 'idnumber', 'skype',
+        'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address',
+        'url', 'description', 'oldusername', 'emailstop', 'deleted',
         'password');
 
 $PRF_FIELDS = array();
@@ -262,7 +262,7 @@ if ($formdata = $mform->is_cancelled()) {
         // normalize username
         $user->username = $textlib->strtolower($user->username);
         if (empty($CFG->extendedusernamechars)) {
-            $user->username = eregi_replace('[^(-\.[:alnum:])]', '', $user->username);
+            $user->username = preg_replace('/[^(-\.[:alnum:])]/i', '', $user->username);
         }
         if (empty($user->username)) {
             $upt->track('status', get_string('missingfield', 'error', 'username'), 'error');

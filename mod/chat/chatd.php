@@ -995,7 +995,7 @@ while(true) {
                     continue;
                 }
 
-                if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*) HTTP', $data, $info)) {
+                if(!preg_match('/win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*) HTTP/', $data, $info)) {
                     // Malformed data
                     $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
                     $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
@@ -1021,7 +1021,7 @@ while(true) {
                     break;
                     case 'beep':
                         $type = CHAT_SIDEKICK_BEEP;
-                        if(!ereg('beep=([^&]*)[& ]', $data, $info)) {
+                        if(!preg_match('/beep=([^&]*)[& ]/', $data, $info)) {
                             $DAEMON->trace('Beep sidekick did not contain a valid userid', E_USER_WARNING);
                             $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
                             continue;
@@ -1032,7 +1032,7 @@ while(true) {
                     break;
                     case 'message':
                         $type = CHAT_SIDEKICK_MESSAGE;
-                        if(!ereg('chat_message=([^&]*)[& ]chat_msgidnr=([^&]*)[& ]', $data, $info)) {
+                        if(!preg_match('/chat_message=([^&]*)[& ]chat_msgidnr=([^&]*)[& ]/', $data, $info)) {
                             $DAEMON->trace('Message sidekick did not contain a valid message', E_USER_WARNING);
                             $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
                             continue;

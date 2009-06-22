@@ -448,19 +448,19 @@ function clean_param($param, $type) {
             return (float)$param;  // Convert to float
 
         case PARAM_ALPHA:        // Remove everything not a-z
-            return eregi_replace('[^a-zA-Z]', '', $param);
+            return preg_replace('/[^a-zA-Z]/i', '', $param);
 
         case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z_- (originally allowed "/" too)
-            return eregi_replace('[^a-zA-Z_-]', '', $param);
+            return preg_replace('/[^a-zA-Z_-]/i', '', $param);
 
         case PARAM_ALPHANUM:     // Remove everything not a-zA-Z0-9
-            return eregi_replace('[^A-Za-z0-9]', '', $param);
+            return preg_replace('/[^A-Za-z0-9]/i', '', $param);
 
         case PARAM_ALPHANUMEXT:     // Remove everything not a-zA-Z0-9_-
-            return eregi_replace('[^A-Za-z0-9_-]', '', $param);
+            return preg_replace('/[^A-Za-z0-9_-]/i', '', $param);
 
         case PARAM_SEQUENCE:     // Remove everything not 0-9,
-            return eregi_replace('[^0-9,]', '', $param);
+            return preg_replace('/[^0-9,]/i', '', $param);
 
         case PARAM_BOOL:         // Convert to 1 or 0
             $tempstr = strtolower($param);
@@ -480,14 +480,14 @@ function clean_param($param, $type) {
             return clean_param(strip_tags($param, '<lang><span>'), PARAM_CLEAN);
 
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
-            return eregi_replace('[^a-zA-Z0-9_-]', '', $param);
+            return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
         case PARAM_SAFEPATH:     // Remove everything not a-zA-Z0-9/_-
-            return eregi_replace('[^a-zA-Z0-9/_-]', '', $param);
+            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param); 
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
-            $param = ereg_replace('[[:cntrl:]]|[&<>"`\|\':\\/]', '', $param);
-            $param = ereg_replace('\.\.+', '', $param);
+            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\/]~', '', $param);
+            $param = preg_replace('~\.\.+~', '', $param);
             if ($param === '.') {
                 $param = '';
             }
@@ -495,10 +495,10 @@ function clean_param($param, $type) {
 
         case PARAM_PATH:         // Strip all suspicious characters from file path
             $param = str_replace('\\', '/', $param);
-            $param = ereg_replace('[[:cntrl:]]|[&<>"`\|\':]', '', $param);
-            $param = ereg_replace('\.\.+', '', $param);
-            $param = ereg_replace('//+', '/', $param);
-            return ereg_replace('/(\./)+', '/', $param);
+            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':]~', '', $param);
+            $param = preg_replace('~\.\.+~', '', $param);
+            $param = preg_replace('~//+~', '/', $param);
+            return preg_replace('~/(\./)+~', '/', $param);
 
         case PARAM_HOST:         // allow FQDN or IPv4 dotted quad
             $param = preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
@@ -604,7 +604,7 @@ function clean_param($param, $type) {
             //problem, so remove *all* backslash.
             //$param = str_replace('\\', '', $param);
             //remove some nasties
-            $param = ereg_replace('[[:cntrl:]]|[<>`]', '', $param);
+            $param = preg_replace('~[[:cntrl:]]|[<>`]~', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
@@ -4540,7 +4540,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 
     if ($attachment && $attachname) {
-        if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
+        if (preg_match( "~\\.\\.~" ,$attachment )) {    // Security check for ".." in dir path
             $mail->AddAddress($supportuser->email, fullname($supportuser, true) );
             $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
@@ -5058,7 +5058,7 @@ function make_mod_upload_directory($courseid) {
 function make_user_directory($userid, $test=false) {
     global $CFG;
 
-    if (is_bool($userid) || $userid < 0 || !ereg('^[0-9]{1,10}$', $userid) || $userid > 2147483647) {
+    if (is_bool($userid) || $userid < 0 || !preg_match('/^[0-9]{1,10}$/', $userid) || $userid > 2147483647) {
         if (!$test) {
             notify("Given userid was not a valid integer! (" . gettype($userid) . " $userid)");
         }
@@ -7550,7 +7550,7 @@ function count_letters($string) {
     $textlib = textlib_get_instance();
 
     $string = strip_tags($string); // Tags are out now
-    $string = ereg_replace('[[:space:]]*','',$string); //Whitespace are out now
+    $string = preg_replace('/[[:space:]]*/','',$string); //Whitespace are out now
 
     return $textlib->strlen($string);
 }

@@ -465,15 +465,15 @@ class MethodTable
                 $word0 = strtolower($word0);
                 $word1 = strtolower($word1);
                 
-                $wordBase0 = ereg_replace('^[&$]+','',$word0);
-                $wordBase1 = ereg_replace('^[&$]+','',$word1);
-                $startBase = strtolower(ereg_replace('^[&$]+','',$start));
+                $wordBase0 = preg_replace('/^[&$]+/','',$word0);
+                $wordBase1 = preg_replace('/^[&$]+/','',$word1);
+                $startBase = strtolower(preg_replace('/^[&$]+/','',$start));
 
                 if ($wordBase0 == $startBase) {
                     $type = str_replace(array('(',')'),'', $word1);
                 } elseif($wordBase1 == $startBase) {
                     $type = str_replace(array('(',')'),'', $word0);
-                } elseif( ereg('(^[&$]+)|(\()([a-z0-9]+)(\)$)', $word0, $regs) ) {
+                } elseif( preg_match('/(^[&$]+)|(\()([a-z0-9]+)(\)$)/', $word0, $regs) ) {
                     $tail = str_ireplace($word0, '', $end);
                     $type = $regs[3];
                 } else {
@@ -535,7 +535,7 @@ class MethodTable
         $comment = str_replace("*/", "", $comment);
         $comment = str_replace("*", "", $comment);
         $comment = str_replace("\n", "\\n", trim($comment));
-        $comment = eregi_replace("[\r\t\n ]+", " ", trim($comment));
+        $comment = preg_replace("/[\r\t\n ]+/i", " ", trim($comment));
         $comment = str_replace("\"", "\\\"", $comment);
         return $comment;
     }
