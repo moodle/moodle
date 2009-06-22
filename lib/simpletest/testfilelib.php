@@ -49,7 +49,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
      */
     public function setup() {
         parent::setUp();
-        $tables = array('block_instance', 'cache_flags', 'capabilities', 'context', 'context_temp',
+        $tables = array('block_instances', 'cache_flags', 'capabilities', 'context', 'context_temp',
                         'course', 'course_modules', 'course_categories', 'course_sections','files',
                         'grade_items', 'grade_categories', 'groups', 'groups_members',
                         'modules', 'role', 'role_names', 'role_context_levels', 'role_assignments',
@@ -85,7 +85,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
         assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
         update_capabilities('moodle');
-        update_capabilities('mod/forum');
+        update_capabilities('mod_forum');
         
         $contexts = $this->load_test_data('context',
                 array('contextlevel', 'instanceid', 'path', 'depth'), array(
@@ -133,12 +133,8 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         $this->user->firstname = 'TestUser';
         $this->user->lastname = 'TestUser';
         $this->user->email = 'fakeemail@fake.org';
-        try {
-            $this->user->id = create_user($this->user);
-        } catch (moodle_exception $e) {
-            // Most likely the result of an aborted unit test: the test user was not correctly deleted
-            $this->user->id = $DB->get_field('user', 'id', array('username' => $this->user->username));
-        }
+        $this->user->id = create_user($this->user);
+
         // Assign user to course
         // role_assign(5, $this->user->id, 0, get_context_instance(CONTEXT_COURSE, $this->course->id)->id);
 
