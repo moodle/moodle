@@ -228,14 +228,8 @@
     // print_box_end();
   
     if ($typ!='label') {
-        echo <<<EOD
-        <script language="javascript">
-        var item = document.getElementById("id_itemname");
-        if(item){
-            item.focus();
-        }
-        </script>
-EOD;
+        $PAGE->requires->js('mod/feedback/feedback.js');
+        $PAGE->requires->js_function_call('set_item_focus', Array('id_itemname'));
     } 
 
     /// Finish the page

@@ -84,15 +84,8 @@
     //print the list with anonymous completeds
     // print_simple_box_start("center");
     print_box_start('generalbox boxaligncenter boxwidthwide');
+    $PAGE->requires->js('mod/feedback/feedback.js');
 ?>
-    <script type="text/javascript">
-        function feedbackGo2delete(form)
-        {
-            form.action = "<?php echo $CFG->wwwroot;?>/mod/feedback/delete_completed.php";
-            form.submit();
-        }
-    </script>
-
     <div class="mdl-align">
     <form name="frm" action="<?php echo me();?>" method="post">
         <table>
