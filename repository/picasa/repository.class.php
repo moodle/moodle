@@ -43,16 +43,19 @@ class repository_picasa extends repository {
         return false;
     }
 
-    public function print_login($ajax = true){ 
+    public function print_login(){ 
         global $CFG;
-        if($ajax){
+        $returnurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$this->id;
+        $authurl = google_authsub::login_url($returnurl, google_picasa::REALM);
+        if($this->options['ajax']){
             $ret = array(); 
             $popup_btn = new stdclass; 
             $popup_btn->type = 'popup'; 
-            $returnurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$this->id;
-            $popup_btn->url = google_authsub::login_url($returnurl, google_picasa::REALM);
+            $popup_btn->url = $authurl;
             $ret['login'] = array($popup_btn); 
             return $ret; 
+        } else {
+            echo '<a target="_blank" href="'.$authurl.'">Login</a>';
         }
     }
 
