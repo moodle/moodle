@@ -1282,13 +1282,18 @@ SELECT /*+ RULE */ distinct b.column_name
 			}
 			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
 		}
+// moodle change start - see readme_moodle.txt
 		
-		// undo magic quotes for "
-		$s = str_replace('\\"','"',$s);
-		
-		$s = str_replace('\\\\','\\',$s);
-		return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
-		
+		// undo magic quotes for " unless sybase is on
+		$sybase = ini_get('magic_quotes_sybase');
+		if (!$sybase) {
+			$s = str_replace('\\"','"',$s);
+			$s = str_replace('\\\\','\\',$s);
+			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
+		} else {
+			return "'".$s."'";
+		}
+// moodle change end - see readme_moodle.txt
 	}
 	
 }
