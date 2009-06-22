@@ -176,19 +176,44 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
  * @param int $strlen the width to use for string fields.
  */
 function load_test_table($tablename, $data, $db = null, $strlen = 255) {
+    global $CFG;
     $colnames = array_shift($data);
     $coldefs = array();
     foreach (array_combine($colnames, $data[0]) as $colname => $value) {
         if ($colname == 'id') {
-            $type = 'SERIAL';
+            switch ($CFG->dbfamily) {
+                case 'mssql':
+                    $type = 'INTEGER IDENTITY(1,1)';
+                    break;
+                case 'oracle':
+                    $type = 'INTEGER';
+                    break;
+                default:
+                    $type = 'SERIAL';
+            }
         } else if (is_int($value)) {
             $type = 'INTEGER DEFAULT 57082'; // 0xdefa
+            if ($CFG->dbfamily == 'mssql') {
+                $type = 'INTEGER NULL DEFAULT 57082';
+            } 
         } else {
             $type = "VARCHAR($strlen) DEFAULT 'Default'";
+            if ($CFG->dbfamily == 'mssql') {
+                $type = "VARCHAR($strlen) NULL DEFAULT 'Default'";
+            } else if ($CFG->dbfamily == 'oracle') {
+                $type = "VARCHAR2($strlen) DEFAULT 'Default'";
+            }
         }
         $coldefs[] = "$colname $type";
     }
     _private_execute_sql("CREATE TABLE $tablename (" . join(',', $coldefs) . ');', $db);
+
+    if ($CFG->dbfamily == 'oracle') {
+        $sql = "CREATE SEQUENCE {$tablename}_id_seq;";
+        _private_execute_sql($sql, $db);
+        $sql = "CREATE OR REPLACE TRIGGER {$tablename}_id_trg BEFORE INSERT ON $tablename FOR EACH ROW BEGIN IF :new.id IS NULL THEN SELECT {$tablename}_ID_SEQ.nextval INTO :new.id FROM dual; END IF; END; ";
+        _private_execute_sql($sql, $db);
+    }
 
     array_unshift($data, $colnames);
     load_test_data($tablename, $data, $db);
@@ -211,12 +236,18 @@ function load_test_data($tablename, $data, $localdb = null) {
     if (null == $localdb) {
         global $db;
         $localdb = $db;
-    }    
+    }
     $colnames = array_shift($data);
     $idcol = array_search('id', $colnames);
     $maxid = -1;
     foreach ($data as $row) {
+        $savedcolnames = $colnames;
+        $savedrow      = $row;
+        unset($colnames[0]);
+        unset($row[0]);
         _private_execute_sql($localdb->GetInsertSQL($tablename, array_combine($colnames, $row)), $localdb);
+        $colnames = $savedcolnames;
+        $row      = $savedrow;
         if ($idcol !== false && $row[$idcol] > $maxid) {
             $maxid = $row[$idcol];
         }
@@ -291,12 +322,16 @@ function make_test_table_like_real_one($tablename, $realprefix, $testprefix, $db
 function remove_test_table($tablename, $db, $cascade = false) {
     global $CFG;
     _private_execute_sql('DROP TABLE ' . $tablename . ($cascade ? ' CASCADE' : '') . ';', $db);
-    
+
     if ($CFG->dbfamily == 'postgres') {
         $rs = $db->Execute("SELECT relname FROM pg_class WHERE relname = '{$tablename}_id_seq' AND relkind = 'S';");
         if ($rs && !rs_EOF($rs)) {
             _private_execute_sql("DROP SEQUENCE {$tablename}_id_seq;", $db);
         }
+    }
+
+    if ($CFG->dbfamily == 'oracle') {
+       _private_execute_sql("DROP SEQUENCE {$tablename}_id_seq;", $db);
     }
 }
 
@@ -348,9 +383,14 @@ function _private_has_id_column($table, $db) {
 
 function _private_execute_sql($sql, $localdb = null) {
 
+    global $CFG;
+
     if (null == $localdb) {
         global $db;
         $localdb = $db;
+    }
+    if ($CFG->dbfamily == 'oracle') {
+        $sql = trim($sql, ';');
     }
     if (!$rs = $localdb->Execute($sql)) {
         echo '<p>SQL ERROR: ', $localdb->ErrorMsg(), ". STATEMENT: $sql</p>";
