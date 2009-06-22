@@ -61,6 +61,8 @@ class moodle_page_test extends UnitTestCase {
         global $COURSE;
         $this->originalcourse = $COURSE;
         $this->testpage = new testable_moodle_page();
+        $this->testpage->blocks->add_regions(array('side-pre', 'side-post'));
+        $this->testpage->blocks->set_default_region('side-post');
     }
 
     public function tearDown() {
