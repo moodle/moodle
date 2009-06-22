@@ -541,7 +541,7 @@ class generator {
                         $module->section = $section->id;
                         $module->coursemodule = add_course_module($module);
                         $module->section = $i;
-                        
+
                         if (function_exists($add_instance_function)) {
                             $this->verbose("Calling module function $add_instance_function");
                             $module->instance = $add_instance_function($module, '');
@@ -567,7 +567,7 @@ class generator {
                         if (empty($modules_array[$moduledata->name])) {
                             $modules_array[$moduledata->name] = array();
                         }
-                        
+
                         // TODO Find out why some $module_record end up empty here... (particularly quizzes)
                         if (!empty($module_record->instance)) {
                             $modules_array[$moduledata->name][] = $module_record;
@@ -1168,9 +1168,9 @@ class generator_cli extends generator {
     private function _arguments($argv) {
         $_ARG = array();
         foreach ($argv as $arg) {
-            if (ereg('--?([^=]+)=(.*)',$arg,$reg)) {
+            if (preg_match('/--?([^=]+)=(.*)/',$arg,$reg)) {
                 $_ARG[$reg[1]] = $reg[2];
-            } elseif(ereg('-([a-zA-Z0-9]+)',$arg,$reg)) {
+            } elseif(preg_match('/-([a-zA-Z0-9]+)/',$arg,$reg)) {
                $_ARG[$reg[1]] = 'true';
             }
         }
@@ -1220,6 +1220,10 @@ class generator_web extends generator {
     public function __destroy() {
         print_footer();
     }
+}
+
+class generator_silent extends generator {
+
 }
 
 function generator_generate_data($settings) {
@@ -1293,11 +1297,13 @@ class generator_form extends moodleform {
 if (isset($argv) && isset($argc)) {
     $generator = new generator_cli($argv, $argc);
     $generator->generate_data();
-} else {
+} elseif (strstr($_SERVER['REQUEST_URI'], 'generator.php')) {
     $generator = new generator_web();
     $generator->setup();
     $generator->display();
     $generator->generate_data();
+} else {
+    $generator = new generator_silent();
 }
 
 ?>
