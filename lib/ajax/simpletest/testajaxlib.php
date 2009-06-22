@@ -320,6 +320,15 @@ class page_requirements_manager_test extends ajaxlib_unit_test_base {
         $this->assertContains($html, $CFG->httpswwwroot . '/' . $jsfile);
     }
 
+    public function test_requiring_js_with_argument() {
+        global $CFG;
+        $jsfile = 'lib/javascript-static.js?d=434'; // Just needs to be a JS file that exists.
+        $this->requires->js($jsfile);
+
+        $html = $this->requires->get_end_code();
+        $this->assertContains($html, $CFG->httpswwwroot . '/' . $jsfile);
+    }
+
     public function test_nonexistant_js_throws_exception() {
         $cssfile = 'js/file/that/does/not/exist.js';
 

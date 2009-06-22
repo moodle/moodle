@@ -119,7 +119,8 @@ class page_requirements_manager {
     public function js($jsfile, $fullurl = false) {
         global $CFG;
         if (!$fullurl) {
-            if (!file_exists($CFG->dirroot . '/' . $jsfile)) {
+            // strtok is used to trim off any GET string arguments before looking for the file
+            if (!file_exists($CFG->dirroot . '/' . strtok($jsfile, '?'))) {
                 throw new coding_exception('Attept to require a JavaScript file that does not exist.', $jsfile);
             }
             $url = $CFG->httpswwwroot . '/' . $jsfile;
