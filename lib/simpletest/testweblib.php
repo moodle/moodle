@@ -72,5 +72,28 @@ class web_test extends UnitTestCase {
         $this->assertEqual(replace_ampersands_not_followed_by_entity("This & that &nbsp;"), "This &amp; that &nbsp;");
         $this->assertEqual(replace_ampersands_not_followed_by_entity("This &nbsp that &nbsp;"), "This &amp;nbsp that &nbsp;");
     }
+
+    function test_strip_links() {
+        $this->assertEqual(strip_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link');
+    }
+
+    function test_wikify_links() {
+        $this->assertEqual(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
+    }
+
+    function test_fix_non_standard_entities() {
+        $this->assertEqual(fix_non_standard_entities('&#x00A3&#0228'), '&#x00A3;&#0228;');
+        $this->assertEqual(fix_non_standard_entities('&#x00A3;&#0228;'), '&#x00A3;&#0228;');
+    }
+
+    function test_convert_urls_into_links() {
+        $string = "visit http://www.moodle.org";
+        convert_urls_into_links($string);
+        $this->assertEqual($string, 'visit <a href="http://www.moodle.org">http://www.moodle.org</a>');
+        
+        $string = "visit www.moodle.org";
+        convert_urls_into_links($string);
+        $this->assertEqual($string, 'visit <a href="http://www.moodle.org">www.moodle.org</a>');
+    }
 }
 ?>

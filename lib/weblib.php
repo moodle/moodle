@@ -1654,7 +1654,7 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
     } else {
         // Otherwise strip just links if that is required (default)
         if ($striplinks) {  //strip links in string
-            $string = preg_replace('/(<a\s[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+            $string = strip_links($string);
         }
         $string = clean_text($string);
     }
@@ -1675,6 +1675,38 @@ function format_string($string, $striplinks=true, $courseid=NULL ) {
  */
 function replace_ampersands_not_followed_by_entity($string) {
     return preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
+}
+
+/**
+ * Given a string, replaces all <a>.*</a> by .* and returns the string.
+ * 
+ * @param string $string
+ * @return string
+ */
+function strip_links($string) {
+    return preg_replace('/(<a\s[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+}
+
+/**
+ * This expression turns links into something nice in a text format. (Russell Jungwirth)
+ *
+ * @param string $string
+ * @return string
+ */
+function wikify_links($string) {
+    return preg_replace('~(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)~i','$3 [ $2 ]', $string);
+}
+
+/**
+ * Replaces non-standard HTML entities
+ * 
+ * @param string $string
+ * @return string
+ */
+function fix_non_standard_entities($string) {
+    $text = preg_replace('/(&#[0-9]+)(;?)/', '$1;', $string);
+    $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', '$1;', $text); 
+    return $text;
 }
 
 /**
@@ -1701,9 +1733,7 @@ function format_text_email($text, $format) {
 
         case FORMAT_WIKI:
             $text = wiki_to_html($text);
-        /// This expression turns links into something nice in a text format. (Russell Jungwirth)
-        /// From: http://php.net/manual/en/function.eregi-replace.php and simplified
-            $text = preg_replace('~(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)~i','$3 [ $2 ]', $text);
+            $text = wikify_links($text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
 
@@ -1714,7 +1744,7 @@ function format_text_email($text, $format) {
         case FORMAT_MOODLE:
         case FORMAT_MARKDOWN:
         default:
-            $text = preg_replace('~(<a [^<]*href=["|\']?([^ "\']*)["|\']?[^>]*>([^<]*)</a>)~i','$3 [ $2 ]', $text);
+            $text = wikify_links($text);
             return strtr(strip_tags($text), array_flip(get_html_translation_table(HTML_ENTITIES)));
             break;
     }
@@ -1859,8 +1889,7 @@ function clean_text($text, $format=FORMAT_MOODLE) {
                 $text = purify_html($text);
             } else {
             /// Fix non standard entity notations
-                $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
-                $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
+                $text = fix_non_standard_entities($text);
 
             /// Remove tags that are not allowed
                 $text = strip_tags($text, $ALLOWED_TAGS);
@@ -2186,11 +2215,11 @@ function html_to_text($html) {
 function convert_urls_into_links(&$text) {
 /// Make lone URLs into links.   eg http://moodle.com/
     $text = preg_replace("~([[:space:]]|^|\(|\[)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])~i",
-                          "\\1<a href=\"\\2://\\3\\4\" target=\"_blank\">\\2://\\3\\4</a>", $text);
+                          '$1<a href="$2://$3$4">$2://$3$4</a>', $text);
 
 /// eg www.moodle.com
     $text = preg_replace("~([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?/&=])~i",
-                          "\\1<a href=\"http://www.\\2\\3\" target=\"_blank\">www.\\2\\3</a>", $text);
+                          '$1<a href="http://www.$2$3">www.$2$3</a>', $text);
 }
 
 /**
