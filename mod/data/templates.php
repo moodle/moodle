@@ -78,24 +78,10 @@
     $bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
     $bodytag .= '" ';
 
-    // Javascript to insert the field tags into the textarea.
-    $meta = '<script type="text/javascript">'."\n";
-    $meta .= '//<![CDATA['."\n";
-    $meta .= 'function insert_field_tags(selectlist) {';
-    $meta .= '  if (typeof(currEditor) != \'undefined\' && currEditor._editMode == \'wysiwyg\') {';
-        // HTMLArea-specific
-    $meta .= '     currEditor.insertHTML(selectlist.options[selectlist.selectedIndex].value); '; 
-    $meta .= '  } else {';
-        // For inserting when in HTMLArea code view or for normal textareas
-    $meta .= '     insertAtCursor(currTextarea, selectlist.options[selectlist.selectedIndex].value);';   
-    $meta .= '  }'."\n";
-    $meta .= '}'."\n";
-    $meta .= '//]]>'."\n";
-    $meta .= '</script>'."\n";
-    
+    $PAGE->requires->js('mod/data/data.js');
     $navigation = build_navigation('', $cm);
     print_header_simple($data->name, '', $navigation,
-                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
+                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', $bodytag);
 
     print_heading(format_string($data->name));

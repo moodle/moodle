@@ -273,7 +273,7 @@
         $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
     }
     if ($data->jstemplate) {
-        $meta .= '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/data/js.php?d='.$data->id.'"></script>';
+        $PAGE->requires->js('mod/data/js.php?d='.$data->id)->in_head();
     }
 
 /// Print the page header

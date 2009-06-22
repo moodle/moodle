@@ -1305,7 +1305,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
  * @return void
  */
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1381,37 +1381,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     else {
         $checked = '';
     }
-    print '
-
-        <script type="text/javascript">
-        //<![CDATA[
-        <!-- Start
-        // javascript for hiding/displaying advanced search form
-
-        function showHideAdvSearch(checked) {
-            var divs = document.getElementsByTagName(\'div\');
-            for(i=0;i<divs.length;i++) {
-                if(divs[i].id.match(\'data_adv_form\')) {
-                    if(checked) {
-                        divs[i].style.display = \'inline\';
-                    }
-                    else {
-                        divs[i].style.display = \'none\';
-                    }
-                }
-                else if (divs[i].id.match(\'reg_search\')) {
-                    if (!checked) {
-                        divs[i].style.display = \'inline\';
-                    }
-                    else {
-                        divs[i].style.display = \'none\';
-                    }
-                }
-            }
-        }
-        //  End -->
-        //]]>
-        </script>';
+    $PAGE->requires->js('mod/data/data.js');
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="hidden" name="filter" value="1" />';
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
