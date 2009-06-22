@@ -605,6 +605,9 @@ class TestSuite {
                     // Do not execute this test because $CFG->unittestprefix is not set, but it will be required.
                     continue;
                 }
+                if ($currenttl = @ini_get('max_execution_time')) {
+                    @ini_set('max_execution_time', $currenttl);
+                }
                 // moodle hack end
                 $test = &new $class();
                 $test->run($reporter);
