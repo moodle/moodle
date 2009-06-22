@@ -15,7 +15,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/simpletestlib/web_tester.php');
 require_once($CFG->libdir . '/dmllib.php');
 
-class datalib_test extends prefix_changing_test_case {
+class dmllib_test extends prefix_changing_test_case {
     var $table = 'table';
     var $data = array(
             array('id',   'textfield', 'numberfield'),
@@ -327,6 +327,33 @@ class datalib_test extends prefix_changing_test_case {
         $obj->textfield = 'new entry';
         $obj->numberfield = 123;
         $this->assertFalse(insert_record('nonexistant_table', $obj), 'Insert into nonexistant table');
+
+    }
+
+//test insert / retrieval of information containing backslashes, single and double quotes combinations
+    function test_backslashes_and_quotes() {
+
+        $teststrings = array(
+                'backslashes and quotes alone (even): "" \'\' \\\\',
+                'backslashes and quotes alone (odd): """ \'\'\' \\\\\\',
+                'backslashes and quotes seqences (even): \\"\\" \\\'\\\'',
+                'backslashes and quotes seqences (odd): \\"\\"\\" \\\'\\\'\\\'');
+        foreach ($teststrings as $teststrig) {
+            // insert the test string
+            $obj = new stdClass;
+            $obj->textfield = 'insert ' . $teststrig;
+            $recid = insert_record($this->table, addslashes_recursive($obj));
+            // retrieve it with get_record and test
+            $rec = get_record($this->table, 'id', $recid);
+            $this->assertEqual($rec->textfield, $obj->textfield);
+            // update it
+            $rec->textfield = 'update ' . $teststrig;
+            update_record($this->table, addslashes_recursive($rec));
+            // retrieve it with get field and test
+            $textfield_db = get_field($this->table, 'textfield', 'id', $recid);
+            $this->assertEqual($textfield_db, $rec->textfield);
+        }
+
 
     }
 }
