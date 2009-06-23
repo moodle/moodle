@@ -13,6 +13,8 @@ require_once($CFG->libdir . '/adminlib.php');
 class ddl_test extends UnitTestCase {
     private $tables = array();
     private $tdb;
+    public  static $includecoverage = array('lib/ddl');
+    public  static $excludecoverage = array('lib/ddl/simpletest');
 
     public function setUp() {
         global $CFG, $DB, $UNITTEST;

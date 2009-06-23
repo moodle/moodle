@@ -43,6 +43,8 @@ require_once($CFG->libdir . '/moodlelib.php');
 
 class moodlelib_test extends UnitTestCase {
 
+    public  static $includecoverage = array('lib/moodlelib.php');
+
     var $user_agents = array(
             'MSIE' => array(
                 '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),
