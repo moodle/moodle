@@ -4,6 +4,8 @@
 
 $string['all'] = 'ALL';
 $string['addconfigprefix'] = 'Add prefix to config file';
+$string['codecoverageanalysis'] = 'Perform code coverage analysis.';
+$string['codecoveragedisabled'] = 'Cannot enable code coverage in this server (missing xdebug extension).';
 $string['confignonwritable'] = 'The file config.php is not writeable by the web server. Either change its permissions, or edit it with the appropriate user account, and add the following line before the closing php tag: <br />
 \$CFG->unittestprefix = \'tst_\' // Change tst_ to a prefix of your choice, different from \$CFG->prefix';
 $string['deletingnoninsertedrecord'] = 'Trying to delete a record that was not inserted by these unit tests (id $a->id in table $a->table).';
