@@ -5,7 +5,7 @@ Moodle Trademark License
 The name Moodle™ is a registered trademark of the Moodle Trust.
 
 A key part of the business model that allows us to produce and 
-distribute Moodle as compltely free open source software is that 
+distribute Moodle as completely Free open source software is that 
 we restrict the commercial use of the Moodle trademark to those 
 who have contracted to support Moodle development (Moodle Partners).
 
