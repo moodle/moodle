@@ -107,7 +107,7 @@ class grade_report_user extends grade_report {
         $this->switch = grade_get_setting($this->courseid, 'aggregationposition', $CFG->grade_aggregationposition);
 
         // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, false, $this->switch, false, true);
+        $this->gtree = new grade_tree($this->courseid, false, $this->switch, false, !$CFG->enableoutcomes);
 
         // Determine the number of rows and indentation
         $this->maxdepth = 1;
