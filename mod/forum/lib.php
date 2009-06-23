@@ -4891,6 +4891,7 @@ function forum_post_subscription($post, $forum) {
  *
  * @global object
  * @global object
+ * @global object
  * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
  * @param object $context the context object for this forum.
  * @param array $messages text used for the link in its various states
@@ -4904,7 +4905,7 @@ function forum_post_subscription($post, $forum) {
  * @return string
  */
 function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true, $backtoindex=false, $subscribed_forums=null) {
-    global $CFG, $USER;
+    global $CFG, $USER, $PAGE;
     $defaultmessages = array(
         'subscribed' => get_string('unsubscribe', 'forum'),
         'unsubscribed' => get_string('subscribe', 'forum'),
@@ -4944,17 +4945,9 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         $link = '';
 
         if ($fakelink) {
-            $link .= <<<EOD
-<script type="text/javascript">
-//<![CDATA[
-var subs_link = document.getElementById("subscriptionlink");
-if(subs_link){
-    subs_link.innerHTML = "<a title=\"$linktitle\" href='$CFG->wwwroot/mod/forum/subscribe.php?id={$forum->id}{$backtoindexlink}'>$linktext<\/a>";
-}
-//]]>
-</script>
-<noscript>
-EOD;
+            $PAGE->requires->js('mod/forum/forum.js');
+            $PAGE->requires->js_function_call('forum_produce_subscribe_link', Array($forum->id, $backtoindexlink, $linktext, $linktitle));
+            $link = "<noscript>";
         }
         $options ['id'] = $forum->id;
         $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php',
@@ -4973,13 +4966,14 @@ EOD;
  *
  * @global object
  * @global object
+ * @global object
  * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
  * @param array $messages
  * @param bool $fakelink
  * @return string
  */
 function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
-    global $CFG, $USER;
+    global $CFG, $USER, $PAGE;
 
     static $strnotrackforum, $strtrackforum;
 
@@ -5006,12 +5000,8 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
 
     $link = '';
     if ($fakelink) {
-        $link .= '<script type="text/javascript">';
-        $link .= '//<![CDATA['."\n";
-        $link .= 'document.getElementById("trackinglink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
-           '/mod/forum/settracking.php?id=' . $forum->id . '\">' . $linktext . '<\/a>";'."\n";
-        $link .= '//]]>'."\n";
-        $link .= '</script>';
+        $PAGE->requires->js('mod/forum/forum.js');
+        $PAGE->requires->js_function_call('forum_produce_tracking_link', Array($forum->id, $linktext, $linktitle));
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';
     }
@@ -7126,7 +7116,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
 
     // if possible, avoid expensive
     // queries
-    if (empty($CFG->forum_trackreadposts)) {
+    if (empty($CFG->forum_trackreadposts)) {    
         return false;
     }
 
