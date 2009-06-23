@@ -769,14 +769,13 @@ class dml_test extends UnitTestCase {
         $CFG->debugdisplay = true;
         ob_start(); // hide debug warning
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {".$tablename."}", null);
-        $CFG->debug = $olddebug;         // Restore original debug settings
         ob_end_clean();
-        $CFG->debugdisplay = $olddisplay;
         $debuginfo = ob_get_contents();
+        $CFG->debug = $olddebug;         // Restore original debug settings
+        $CFG->debugdisplay = $olddisplay;
 
         $this->assertEqual(3, count($records));
         $this->assertFalse($debuginfo === '');
-        print_object($debuginfo);
     }
 
     public function test_get_records_menu() {
