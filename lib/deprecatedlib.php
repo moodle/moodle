@@ -1719,3 +1719,19 @@ function require_js($lib) {
         echo $PAGE->requires->js($lib)->asap();
     }
 }
+
+/**
+ * Makes an upload directory for a particular module.
+ *
+ * This funciton has been deprecated by the file API changes in Moodle 2.0.
+ *
+ * @deprecated
+ * @param int $courseid The id of the course in question - maps to id field of 'course' table.
+ * @return string|false Returns full path to directory if successful, false if not
+ */
+function make_mod_upload_directory($courseid) {
+    global $CFG;
+    debugging('make_mod_upload_directory has been deprecated by the file API changes in Moodle 2.0.', DEBUG_DEVELOPER);
+    return make_upload_directory($courseid .'/'. $CFG->moddata);
+}
+

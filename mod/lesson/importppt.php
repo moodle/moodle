@@ -190,7 +190,6 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
     $extratedpages = array();
     
     // directory for images
-    make_mod_upload_directory($courseid); // make sure moddata is made
     make_upload_directory($courseid.'/moddata/'.$modname, false);  // we store our images in a subfolder in here 
     
     $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/'.$modname;

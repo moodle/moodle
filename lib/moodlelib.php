@@ -5024,30 +5024,6 @@ function get_file_packer($mimetype='application/zip') {
 }
 
 /**
- * Makes an upload directory for a particular module.
- *
- * @global object
- * @param int $courseid The id of the course in question - maps to id field of 'course' table.
- * @return string|false Returns full path to directory if successful, false if not
- */
-function make_mod_upload_directory($courseid) {
-    global $CFG;
-
-    if (! $moddata = make_upload_directory($courseid .'/'. $CFG->moddata)) {
-        return false;
-    }
-
-    $strreadme = get_string('readme');
-
-    if (file_exists($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt')) {
-        copy($CFG->dirroot .'/lang/'. $CFG->lang .'/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
-    } else {
-        copy($CFG->dirroot .'/lang/en_utf8/docs/module_files.txt', $moddata .'/'. $strreadme .'.txt');
-    }
-    return $moddata;
-}
-
-/**
  * Makes a directory for a particular user.
  *
  * @global object
