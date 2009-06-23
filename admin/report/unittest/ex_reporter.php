@@ -33,6 +33,8 @@ class ExHtmlReporter extends HtmlReporter {
 
     var $strseparator;
 
+    var $timestart;
+
     /**
      * Constructor.
      *
@@ -163,6 +165,7 @@ class ExHtmlReporter extends HtmlReporter {
      * Output anything that should appear above all the test output.
      */
     function paintHeader($test_name) {
+        $this->timestart = time();
         // We do this the moodle way instead.
     }
 
@@ -187,7 +190,8 @@ class ExHtmlReporter extends HtmlReporter {
         echo '</div>';
 
         echo '<div class="performanceinfo">',
-                $this->get_string('runat', date('<b>d-m-Y H:i T</b>')),
+                $this->get_string('runat', userdate($this->timestart)), ' ',
+                $this->get_string('timetakes', format_time(time() - $this->timestart)), ' ',
                 $this->get_string('version', SimpleTestOptions::getVersion()),
                 '</div>';
     }

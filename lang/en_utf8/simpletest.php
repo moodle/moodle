@@ -41,6 +41,7 @@ $string['testdboperations'] = 'Test Database operations';
 $string['testtablesneedupgrade'] = 'The test DB tables need to be upgraded. Do you wish to proceed with the upgrade now?';
 $string['testtablesok'] = 'The test DB tables were successfully installed.';
 $string['testtablescsvfileunwritable'] = 'The test tables CSV file is not writable ($a->filename)';
+$string['timetakes'] = 'Time taken: $a.';
 $string['thorough'] = 'Run a thorough test (may be slow).';
 $string['updatingnoninsertedrecord'] = 'Trying to update a record that was not inserted by these unit tests (id $a->id in table $a->table).';
 $string['uncaughtexception'] = 'Uncaught exception [{$a->getMessage()}] in [{$a->getFile()}:{$a->getLine()}] TESTS ABORTED.';
