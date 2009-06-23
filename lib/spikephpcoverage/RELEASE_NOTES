@@ -1,0 +1,29 @@
+################################################################################
+#  $Id$
+#  
+#  Copyright(c) 2004-2006, SpikeSource Inc. All Rights Reserved.
+#  Licensed under the Open Software License version 2.1
+#  (See http://www.spikesource.com/license.html)
+################################################################################
+
+===============================
+Spike PHPCoverage Release Notes
+===============================
+
+Version 0.8.2
+===================
+
+ * Known Issues
+ --------------
+   1. Incorrect execution frequency
+      The code coverage execution frequency for some of the PHP lines may
+      not be correct. Xdebug has changed its implementation to only return 1
+      for executed lines. Currently, there is no time frame for fixing this issue in 
+      Spike PHPCoverage.
+
+   2. It takes a long time to generate code coverage report for large sized 
+      applications.
+
+   3. The "--cov-data-file" option in cli/driver.php has been changed to 
+      "--cov-data-files" and accepts a comma-separated list of coverage recording
+      xml files. It will then generate a report after merging the data.

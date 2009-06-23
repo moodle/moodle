@@ -1,0 +1,53 @@
+################################################################################
+#  $Id$
+#  
+#  Copyright(c) 2004-2006, SpikeSource Inc. All Rights Reserved.
+#  Licensed under the Open Software License version 2.1
+#  (See http://www.spikesource.com/license.html)
+################################################################################
+
+===========================
+  Spike PHPCoverage 0.8.2 
+===========================
+
+1. Introduction
+===============
+
+  Spike PHPCoverage is an open-source tool for measuring and reporting code 
+  coverage provided by the test suite of a PHP application. 
+  Spike PHPCoverage can instrument and record the line coverage information 
+  for any PHP script at runtime.
+
+  Spike PHPCoverage also provides an extensible reporting mechanism with a 
+  standard HTML report implemented out of the box. The default report 
+  displays the summary information about the code coverage for an application 
+  and also shows the detailed information about a file including which 
+  lines were actually executed and with what frequency. It is possible 
+  to specify the directories and files that should be included and/or 
+  excluded from a coverage measurement. Screen shots of the summary and 
+  detailed line coverage reports are available at 
+  http://www.spikesource.com/projects/phpcoverage/screenshots.php
+
+  Spike PHPCoverage works on PHP 5.0 and newer and uses XDebug Zend Extension 
+  for gathering the coverage data.
+
+
+2. Requirements
+===============
+
+  * PHP 5.0 or newer
+  * Xdebug Zend Extension configured with PHP (Binaries for 32-bit Linux and Windows included.)
+  * XML_Parser PEAR module version 1.2.5 or newer (Included)
+  * Web browser to view the coverage report
+
+3. Frequently Asked Questions
+=============================
+  See http://developer.spikesource.com/wiki/index.php/Projects:phpcoverageFAQ for latest FAQs.
+
+4. API Documentation
+====================
+
+  Spike PHPCoverage API Documentation is available with this distribution under the 'doc'
+  directory. A latest version is also available online at 
+  http://www.spikesource.com/projects/phpcoverage/doc/index.html
+

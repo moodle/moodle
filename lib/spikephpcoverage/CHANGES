@@ -1,0 +1,125 @@
+################################################################################
+#  $Id$
+#  
+#  Copyright(c) 2004-2006, SpikeSource Inc. All Rights Reserved.
+#  Licensed under the Open Software License version 2.1
+#  (See http://www.spikesource.com/license.html)
+################################################################################
+
+===============================
+Spike PHPCoverage Change Logs
+===============================
+
+Version 0.8.2
+===================
+ * Fixed PHP Parser code to be much more smarter. Patch provided 
+   by Marc_a <http://developer.spikesource.com/forums/viewtopic.php?t=761>
+ * Fixed bug 34 that included files with unspecified extensions in the 
+   coverage report.
+
+Version 0.8.0
+===================
+ * Added ability to combine several remote recordings into a single coverage report.
+   This feature will make it easier for anyone to run a multiple set of tests on a
+   PHP web site and combine the recordings into a single report. The remote code coverage
+   sample has been updated with a sample use case.
+ * Shipping a stripped down version of XML_Parser PEAR module along with the source.
+ * Shipping xdebug binaries along with PHPCoverage distro.
+ * PHPCoverage installation is now much simpler.
+ * Several bugs fixed - especially in the report generation area.
+
+Version 0.6.6
+=============
+
+This is a special release that only involves a change of licensing policy
+ for Spike PHPCoverage. Spike PHPCoverage has been dual-licensed under 
+ origial Open Software License (OSL) and an additional GNU Lesser General
+ Public License (LGPL). Users are free to choose any license they see fit
+ for their use between these two. There are no additional bug fixes or 
+ enhancement in this release.
+
+Version 0.6.5
+=============
+ This is mainly an bug fix and enhancement release. The most important 
+ new feature in this release is the substancial performance improvement
+ in the code. While some more improvements are possible, this release should
+ reduce the memory consumption and increase the speed of PHPCoverage by a 
+ significant amount.
+
+ * Corrected location of __PHPCOVERAGE_HOME
+ * Changed ":" to PATH_SEPARATOR.
+ * Fixed problems with incorrect spellings in parser.
+ * Added options to pass in include paths and exclude paths.
+ * [Bug: 3737] Corrected the options passing.
+ * [Bug: 3738] Not all options are required for all actions.
+ * Added options to print report summary to console
+ * [Bug: 3803] Fixed paths so that Windows drive letter case does not make a 
+   difference.
+ * Added parsing of local xml file. This means that the driver.php can be 
+    used for generating a report from a local code coverage reading. This should
+    make the report generation faster by obviating the need of downloading the 
+    data file from web server.
+ * [Bug: 4582] Code coverage not recorded if the application exits abnormally 
+   by calling die() or exit().
+ * Added error logging with multiple log levels.
+ * Changes to the phpcoverage bottom half ensure that the coverage object 
+   is retrieved even if the code is executed repeatedly.
+ * Extension inc is also treated as a php extension
+ * Removed all echo and error_log statements to be replaced with logging 
+   function calls.
+ * Added a config file for common properties
+ * Temporary directory is now OS-aware - this makes passing a tmp directory during 'init' optional.
+ * PHPCoverage home is deduced wherever possible from the location of that file.
+ * Removed most of the errors that shown when error level is set to E_ALL
+ * Several performance enhancements
+   * Changed getCoverageXml() implementation to dump the coverage xml data 
+     chunk-by-chunk to the response stream.
+   * Changed XMLParser invocation to pass a URL (or file name) instead of a 
+     huge XML string.
+   * Updated sample accordingly.
+   * Changed several foreach statements to use references instead of copying
+   * Added unset in some places to release memory as fast as possible.
+
+
+Version 0.6.4
+=============
+
+ 1. This is mainly a bug fix release. Fixed followings bugs:
+  * Incorrect line type if the line is a continuation (2478)
+    For lines that are continuation of a previous line, PHPCoverage gives incorrect
+    line type. This includes lines starting without a . in the beginning.
+  * Variable declarations with private, protected, public, and var are marked as executable but not covered. (3280)
+    Variable declarations starting with private, protected, public, and var are
+    marked as executable when an assignment is involved. But they are never marked
+    as executed. These should be discounted from the code coverage recording.
+  * For completeness sake, we need to document the installation instructions for XML_Parser. (3299)
+  * It would be helpful to have command line interface to the various parts of codeCoverageMain.php (init, report, cleanup) (3300)
+    Added the script contributed by Ed Espino <eespino@spikesource.com> as cli/driver.php. Some more parameters added.
+  * The report title should be displayed in the reports header (3302)
+    In addition to updating the report html <title> (HtmlCoverageReporter), it would
+    be helpful to display it in the generated html report as well.
+  * It would be helpful to display the total number of instrumented files in the report header. (3303)
+  * It is possible to instrument a file twice. (3304)
+    If this is performed, PHPCoverage will be broken as the PHPcoverage php files
+    are instrumented.
+  * There should be a way to exclude a file list from being instrumented. (3305)
+    Added exclude files options -e <file1,file2,...> to cli/instrument.php
+  * RemoteCoverageRecorder.php does not define xmlBody before use (line 112) (3306)
+    The error is displayed when "error_reporting" is set to 'E_ALL'.
+  * Not able to rename instrumented tmp file. (3330)
+    PHPCoverage on Windows XP isn't able to overwrite the original web app source
+    file with the instrumented version.
+
+Version 0.6.2
+=============
+
+ 1. Added support on Windows (Thanks to Rowan Hick for testing and verification.)
+ 2. Restriction on which files to instrument has been removed. Now, all files in an application can (and should) be instrumented.
+ 3. Added simple local and remote samples for set-up verification after installation.
+
+Version 0.6
+===========
+ 1. Introduced remote coverage measurement.
+ 2. Improved report look and feel.
+ 3. Made reporting mechanism extensible.
+ 4. User can specify their own style sheets to change report look and feel.
