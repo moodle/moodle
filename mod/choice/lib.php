@@ -399,6 +399,7 @@ function choice_show_reportlink($user, $cm) {
  * @global object
  * @global int
  * @global string
+ * @global object
  * @uses CONTEXT_MODULE
  * @uses CHOICE_PUBLISH_NAMES
  * @uses CHOICE_PUBLISH_ANONYMOUS
@@ -410,7 +411,7 @@ function choice_show_reportlink($user, $cm) {
  * @return void Output is echo'd
  */
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
-    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT;
+    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE;
 
     print_heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
@@ -548,7 +549,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<noscript id="noscriptmenuaction" style="display: inline;">';
                 echo '<div>';
                 echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-                echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+                $PAGE->requires->js_function_call('hide_item', Array('noscriptmenuaction'));
                 echo '</td><td></td></tr>';
             }
 

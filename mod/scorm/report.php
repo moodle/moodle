@@ -205,7 +205,7 @@
                     echo '<noscript id="noscriptmenuaction" style="display: inline;">';
                     echo '<div>';
                     echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
-                    echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
+                    $PAGE->requires->js_function_call('hide_item', Array('noscriptmenuaction'));
                     echo '</form>';
                 } else {
                     print_table($table);
