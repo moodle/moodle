@@ -1735,3 +1735,14 @@ function make_mod_upload_directory($courseid) {
     return make_upload_directory($courseid .'/'. $CFG->moddata);
 }
 
+/**
+ * Prints some red text using echo
+ *
+ * @deprecated
+ * @param string $error The text to be displayed in red
+ */
+function formerr($error) {
+    global $OUTPUT;
+    echo $OUTPUT->error_text($error);
+}
+

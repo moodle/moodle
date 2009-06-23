@@ -30,4 +30,46 @@ class simpletestlib_test extends FakeDBUnitTestCase {
     }
 }
 
+
+/**
+ * Unit tests for the ContainsTagWithAttribute_test class.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsTagWithAttribute_test extends UnitTestCase {
+    function test_simple() {
+        $expectation = new ContainsTagWithAttribute('span', 'class', 'error');
+        $this->assertTrue($expectation->test('<span class="error">message</span>'));
+    }
+
+    function test_other_attrs() {
+        $expectation = new ContainsTagWithAttribute('span', 'class', 'error');
+        $this->assertTrue($expectation->test('<span     otherattr="thingy"   class  =  "error"  otherattr="thingy">message</span>'));
+    }
+
+    function test_fails() {
+        $expectation = new ContainsTagWithAttribute('span', 'class', 'error');
+        $this->assertFalse($expectation->test('<span class="mismatch">message</span>'));
+    }
+}
+
+/**
+ * Unit tests for the ContainsTagWithAttribute_test class.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsTagWithContents_test extends UnitTestCase {
+    function test_simple() {
+        $expectation = new ContainsTagWithContents('span', 'message');
+        $this->assertTrue($expectation->test('<span class="error">message</span>'));
+    }
+
+    function test_no_end() {
+        $expectation = new ContainsTagWithContents('span', 'message');
+        $this->assertFalse($expectation->test('<span class="error">message'));
+    }
+}
+
 ?>

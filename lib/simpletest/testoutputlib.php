@@ -773,3 +773,44 @@ class template_renderer_test extends UnitTestCase {
         $this->assertEqual('</div>', $html);
     }
 }
+
+
+/**
+ * Unit tests for the moodle_core_renderer class.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class moodle_core_renderer_test extends UnitTestCase {
+    protected $containerstack;
+    protected $renderer;
+
+    public function setUp() {
+        parent::setUp();
+        $this->containerstack = new xhtml_container_stack();
+        $this->renderer = new moodle_core_renderer($this->containerstack);
+    }
+
+    public function test_select_menu_simple() {
+        $selectmenu = moodle_select_menu::make(array(10 => 'ten', 'c2' => 'two'), 'mymenu');
+        $html = $this->renderer->select_menu($selectmenu);
+        $this->assert(new ContainsTagWithAttribute('select', 'class', 'menumymenu select'), $html);
+        $this->assert(new ContainsTagWithAttribute('select', 'name', 'mymenu'), $html);
+        $this->assert(new ContainsTagWithAttribute('select', 'id', 'menumymenu'), $html);
+        $this->assert(new ContainsTagWithContents('option', 'ten'), $html);
+        $this->assert(new ContainsTagWithAttribute('option', 'value', '10'), $html);
+        $this->assert(new ContainsTagWithContents('option', 'two'), $html);
+        $this->assert(new ContainsTagWithAttribute('option', 'value', 'c2'), $html);
+    }
+
+    public function test_error_text() {
+        $html = $this->renderer->error_text('message');
+        $this->assert(new ContainsTagWithContents('span', 'message'), $html);
+        $this->assert(new ContainsTagWithAttribute('span', 'class', 'error'), $html);
+    }
+
+    public function test_error_text_blank() {
+        $html = $this->renderer->error_text('');
+        $this->assertEqual('', $html);
+    }
+}

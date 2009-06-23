@@ -1280,18 +1280,6 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 
 
 /**
- * Prints some red text using echo
- *
- * @param string $error The text to be displayed in red
- */
-function formerr($error) {
-
-    if (!empty($error)) {
-        echo '<span class="error">'. $error .'</span>';
-    }
-}
-
-/**
  * Validates an email to make sure it makes sense.
  *
  * @param string $address The email address to validate.

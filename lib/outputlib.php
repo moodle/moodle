@@ -335,6 +335,8 @@ class template_renderer_factory extends renderer_factory_base {
  *
  * Tracks the xhtml_container_stack to use, which is passed in in the constructor.
  *
+ * Also has methods to facilitate generating HTML output.
+ *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
@@ -349,6 +351,36 @@ class moodle_renderer_base {
      */
     public function __construct($containerstack) {
         $this->containerstack = $containerstack;
+    }
+
+    protected function output_tag($tagname, $attributes, $contents) {
+        return $this->output_start_tag($tagname, $attributes) . $contents .
+                $this->output_end_tag($tagname);
+    }
+    protected function output_start_tag($tagname, $attributes) {
+        return '<' . $tagname . $this->output_attributes($attributes) . '>';
+    }
+    protected function output_end_tag($tagname) {
+        return '</' . $tagname . '>';
+    }
+    protected function output_empty_tag($tagname, $attributes) {
+        return '<' . $tagname . $this->output_attributes($attributes) . ' />';
+    }
+
+    protected function output_attribute($name, $value) {
+        if ($value || is_numeric($value)) { // We want 0 to be output.
+            return ' ' . $name . '="' . $value . '"';
+        }
+    }
+    protected function output_attributes($attributes) {
+        $output = '';
+        foreach ($attributes as $name => $value) {
+            $output .= $this->output_attribute($name, $value);
+        }
+        return $output;
+    }
+    protected function output_class_attribute($classes) {
+        return $this->output_attribute('class', implode(' ', $classes));
     }
 }
 
@@ -626,8 +658,289 @@ class xhtml_container_stack {
  * @since     Moodle 2.0
  */
 class moodle_core_renderer extends moodle_renderer_base {
+    public function link_to_popup_window() {
+        
+    }
 
-    // TODO
+    public function button_to_popup_window() {
+        
+    }
+
+    public function close_window_button($buttontext = null, $reloadopener = false) {
+        if (empty($buttontext)) {
+            $buttontext = get_string('closewindow');
+        }
+        // TODO
+    }
+
+    public function close_window($delay = 0, $reloadopener = false) {
+        // TODO
+    }
+
+    /**
+     * Output a <select> menu.
+     *
+     * You can either call this function with a single moodle_select_menu argument
+     * or, with a list of parameters, in which case those parameters are sent to
+     * the moodle_select_menu constructor.
+     *
+     * @param moodle_select_menu $selectmenu a moodle_select_menu that describes
+     *      the select menu you want output.
+     * @return string the HTML for the <select>
+     */
+    public function select_menu($selectmenu) {
+        $selectmenu = clone($selectmenu);
+        $selectmenu->prepare();
+
+        if ($selectmenu->nothinglabel) {
+            $selectmenu->options = array($selectmenu->nothingvalue => $selectmenu->nothinglabel) +
+                    $selectmenu->options;
+        }
+
+        if (empty($selectmenu->id)) {
+            $selectmenu->id = 'menu' . str_replace(array('[', ']'), '', $selectmenu->name);
+        }
+
+        $attributes = array(
+            'name' => $selectmenu->name,
+            'id' => $selectmenu->id,
+            'class' => $selectmenu->get_classes_string(),
+            'onchange' => $selectmenu->script,
+        );
+        if ($selectmenu->disabled) {
+            $attributes['disabled'] = 'disabled';
+        }
+        if ($selectmenu->tabindex) {
+            $attributes['tabindex'] = $tabindex;
+        }
+
+        if ($selectmenu->listbox) {
+            if (is_integer($selectmenu->listbox)) {
+                $size = $selectmenu->listbox;
+            } else {
+                $size = min($selectmenu->maxautosize, count($selectmenu->options));
+            }
+            $attributes['size'] = $size;
+            if ($selectmenu->multiple) {
+                $attributes['multiple'] = 'multiple';
+            }
+        }
+
+        $html = $this->output_start_tag('select', $attributes) . "\n";
+        foreach ($selectmenu->options as $value => $label) {
+            $attributes = array('value' => $value);
+            if ((string)$value == (string)$selectmenu->selectedvalue ||
+                    (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
+                $attributes['selected'] = 'selected';
+            }
+            $html .= '    ' . $this->output_tag('option', $attributes, s($label)) . "\n";
+        }
+        $html .= $this->output_end_tag('select') . "\n";
+
+        return $html;
+    }
+
+    // TODO choose_from_menu_nested
+
+    // TODO choose_from_radio
+
+    /**
+     * Output an error message. By default wraps the error message in <span class="error">.
+     * If the error message is blank, nothing is output.
+     * @param $message the error message.
+     * @return string the HTML to output.
+     */
+    public function error_text($message) {
+        if (empty($message)) {
+            return '';
+        }
+        return $this->output_tag('span', array('class' => 'error'), $message);
+    }
+}
+
+
+/**
+ * Base class for classes representing HTML elements, like moodle_select_menu.
+ *
+ * Handles the id and class attribues.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_html_component {
+    /**
+     * @var string value to use for the id attribute of this HTML tag.
+     */
+    public $id = '';
+    /**
+     * @var array class names to add to this HTML element.
+     */
+    public $classes = array();
+
+    /**
+     * Ensure some class names are an array.
+     * @param mixed $classes either an array of class names or a space-separated
+     *      string containing class names.
+     * @return array the class names as an array.
+     */
+    public static function clean_clases($classes) {
+        if (is_array($classes)) {
+            return $classes;
+        } else {
+            return explode(' '. trim($classes));
+        }
+    }
+
+    /**
+     * Set the class name array.
+     * @param mixed $classes either an array of class names or a space-separated
+     *      string containing class names.
+     */
+    public function set_classes($classes) {
+        $this->classes = self::clean_clases($classes);
+    }
+
+    /**
+     * Add a class name to the class names array.
+     * @param string $class the new class name to add.
+     */
+    public function add_class($class) {
+        $this->classes[] = $class;
+    }
+
+    /**
+     * Add a whole lot of class names to the class names array.
+     * @param mixed $classes either an array of class names or a space-separated
+     *      string containing class names.
+     */
+    public function add_classes($classes) {
+        $this->classes += self::clean_clases($classes);
+    }
+
+    /**
+     * Get the class names as a string.
+     * @return string the class names as a space-separated string. Ready to be put in the class="" attribute.
+     */
+    public function get_classes_string() {
+        return implode(' ', $this->classes);
+    }
+
+    /**
+     * Perform any cleanup or final processing that should be done before an
+     * instance of this class is output.
+     */
+    public function prepare() {
+        $this->classes = array_unique(self::clean_clases($this->classes));
+    }
+}
+
+
+/**
+ * This class hold all the information required to describe a <select> menu that
+ * will be printed by {@link moodle_core_renderer::select_menu()}. (Or by an overrides
+ * version of that method in a subclass.)
+ *
+ * All the fields that are not set by the constructor have sensible defaults, so
+ * you only need to set the properties where you want non-default behaviour.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_select_menu extends moodle_html_component {
+    /**
+     * @var array the choices to show in the menu. An array $value => $label.
+     */
+    public $options;
+    /**
+     * @var string the name of this form control. That is, the name of the GET/POST
+     * variable that will be set if this select is submmitted as part of a form.
+     */
+    public $name;
+    /**
+     * @var string the option to select initially. Should match one
+     * of the $options array keys. Default none.
+     */
+    public $selectedvalue;
+    /**
+     * @var string The label for the 'nothing is selected' option.
+     * Defaults to get_string('choosedots').
+     * Set this to '' if you do not want a 'nothing is selected' option.
+     */
+    public $nothinglabel = null;
+    /**
+     * @var string The value returned by the 'nothing is selected' option. Defaults to 0.
+     */
+    public $nothingvalue = 0;
+    /**
+     * @var boolean set this to true if you want the control to appear disabled.
+     */
+    public $disabled = false;
+    /**
+     * @var integer if non-zero, sets the tabindex attribute on the <select> element. Default 0.
+     */
+    public $tabindex = 0;
+    /**
+     * @var mixed Defaults to false, which means display the select as a dropdown menu.
+     * If true, display this select as a list box whose size is chosen automatically.
+     * If an integer, display as list box of that size.
+     */
+    public $listbox = false;
+    /**
+     * @var integer if you are using $listbox === true to get an automatically
+     * sized list box, the size of the list box will be the number of options,
+     * or this number, whichever is smaller.
+     */
+    public $maxautosize = 10;
+    /**
+     * @var boolean if true, allow multiple selection. Only used if $listbox is true.
+     */
+    public $multiple = false;
+    /**
+     * @deprecated
+     * @var string JavaScript to add as an onchange attribute. Do not use this.
+     * Use the YUI even library instead.
+     */
+    public $script = '';
+
+    /* @see lib/moodle_html_component#prepare() */
+    public function prepare() {
+        if (empty($this->id)) {
+            $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
+        }
+        if (empty($this->classes)) {
+            $this->set_classes(array('menu' . str_replace(array('[', ']'), '', $this->name)));
+        }
+        $this->add_class('select');
+        parent::prepare();
+    }
+
+    /**
+     * This is a shortcut for making a simple select menu. It lets you specify
+     * the options, name and selected option in one line of code.
+     * @param array $options used to initialise {@link $options}.
+     * @param string $name used to initialise {@link $name}.
+     * @param string $selected  used to initialise {@link $selected}.
+     * @return moodle_select_menu A moodle_select_menu object with the three common fields initialised.
+     */
+    public static function make($options, $name, $selected = '') {
+        $menu = new moodle_select_menu();
+        $menu->options = $options;
+        $menu->name = $name;
+        $menu->selectedvalue = $selected;
+        return $menu;
+    }
+
+    /**
+     * This is a shortcut for making a yes/no select menu.
+     * @param string $name used to initialise {@link $name}.
+     * @param string $selected  used to initialise {@link $selected}.
+     * @return moodle_select_menu A menu initialised with yes/no options.
+     */
+    public static function make_yes_no($name, $selected) {
+        return self::make(array(0 => get_string('no'), 1 => get_string('yes')), $name, $selected);
+    }
 }
 
 

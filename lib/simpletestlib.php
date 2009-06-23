@@ -135,6 +135,7 @@ class ArraysHaveSameValuesExpectation extends SimpleExpectation {
     }
 }
 
+
 /**
  * An Expectation that compares to objects, and ensures that for every field in the
  * expected object, there is a key of the same name in the actual object, with
@@ -185,6 +186,72 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
                 implode(', ', $mismatches) . ').';
     }
 }
+
+
+/**
+ * An Expectation that looks to see whether some HMTL contains a tag with a certain attribute.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsTagWithAttribute extends SimpleExpectation {
+    const ATTRSREGEX = '(?:\s+\w+\s*=\s*["\'][^"\'>]*["\'])*';
+
+    protected $tag;
+    protected $attribute;
+    protected $value;
+
+    function __construct($tag, $attribute, $value, $message = '%s') {
+        $this->SimpleExpectation($message);
+        $this->tag = $tag;
+        $this->attribute = $attribute;
+        $this->value = $value;
+    }
+
+    function test($html) {
+        $regex = '/<' . preg_quote($this->tag) . self::ATTRSREGEX .
+                '(?:\s+' . preg_quote($this->attribute) . '\s*=\s*["\']' . preg_quote($this->value) . '["\'])' .
+                self::ATTRSREGEX . '\s*>/';
+        return preg_match($regex, $html);
+    }
+
+    function testMessage($html) {
+        return 'Content [' . $html . '] does not contain the tag [' .
+                $this->tag . '] with attribute [' . $this->attribute . '="' . $this->value . '"].';
+    }
+}
+
+
+/**
+ * An Expectation that looks to see whether some HMTL contains a tag with a certain text inside it.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsTagWithContents extends SimpleExpectation {
+    const ATTRSREGEX = '(?:\s+\w+\s*=\s*["\'][^"\'>]*["\'])*';
+
+    protected $tag;
+    protected $content;
+
+    function __construct($tag, $content, $message = '%s') {
+        $this->SimpleExpectation($message);
+        $this->tag = $tag;
+        $this->content = $content;
+    }
+
+    function test($html) {
+        $regex = '/<' . preg_quote($this->tag) . self::ATTRSREGEX . '\s*>' . preg_quote($this->content) .
+                '<\/' . preg_quote($this->tag) . '>/';
+        return preg_match($regex, $html);
+    }
+
+    function testMessage($html) {
+        return 'Content [' . $html . '] does not contain the tag [' .
+                $this->tag . '] with contents [' . $this->content . '].';
+    }
+}
+
 
 /**
  * This class lets you write unit tests that access a separate set of test
@@ -418,6 +485,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
         $this->testdb->delete_records_list($table, 'id', $ids);
     }
 }
+
 
 /**
  * @package moodlecore
