@@ -12,6 +12,8 @@ class dml_test extends UnitTestCase {
     private $tables = array();
     private $tdb;
     private $data;
+    public  static $includecoverage = array('lib/dml');
+    public  static $excludecoverage = array('lib/dml/simpletest');
 
     function setUp() {
         global $CFG, $DB, $UNITTEST;
@@ -737,6 +739,7 @@ class dml_test extends UnitTestCase {
     }
 
     public function test_get_records_sql() {
+        global $CFG;
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -759,13 +762,21 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
 
+        // Awful test, requires debug enabled and sent to browser. Let's do that and restore after test
+        $olddebug   = $CFG->debug;       // Save current debug settings
+        $olddisplay = $CFG->debugdisplay;
+        $CFG->debug = DEBUG_DEVELOPER;
+        $CFG->debugdisplay = true;
         ob_start(); // hide debug warning
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {".$tablename."}", null);
-        $debuginfo = ob_get_contents();
+        $CFG->debug = $olddebug;         // Restore original debug settings
         ob_end_clean();
+        $CFG->debugdisplay = $olddisplay;
+        $debuginfo = ob_get_contents();
 
         $this->assertEqual(3, count($records));
         $this->assertFalse($debuginfo === '');
+        print_object($debuginfo);
     }
 
     public function test_get_records_menu() {
