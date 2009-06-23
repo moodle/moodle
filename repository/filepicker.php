@@ -87,7 +87,7 @@ case 'search':
 
         // TODO: need a better solution
         print_paging_bar($search_result['total'], $search_result['page']-1,
-            $search_result['perpage'], "{$url}&action=list&repo_id={$repo_id}&");
+            $search_result['perpage'], "{$url}&amp;search_paging=1&amp;action=search&amp;repo_id={$repo_id}&amp;", 'p');
 
         echo '<table>';
         foreach ($search_result['list'] as $item) {
@@ -145,8 +145,8 @@ case 'sign':
                 // TODO: need a better solution
                 print_paging_bar($list['total'], $list['page']-1,
                     $list['perpage'], $CFG->httpswwwroot
-                    .'/repository/filepicker.php?action=list&itemid='
-                    .$itemid.'&ctx_id='.$ctx_id.'&repo_id='.$repo_id.'&', 'page', false, false, 1);
+                    .'/repository/filepicker.php?action=list&amp;itemid='
+                    .$itemid.'&amp;ctx_id='.$ctx_id.'&amp;repo_id='.$repo_id.'&amp;', 'page', false, false, 1);
             }
             echo '<table>';
             foreach ($list['list'] as $item) {
@@ -226,7 +226,7 @@ case 'plugins':
     echo '<div><ul>';
     foreach($repos as $repo) {
         $info = $repo->get_meta();
-        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&amp;action=list&repo_id='.$info->id.'">'.$info->name.'</a></li>';
+        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&amp;action=list&amp;repo_id='.$info->id.'">'.$info->name.'</a></li>';
     }
     echo '</ul></div>';
     break;
@@ -245,7 +245,7 @@ default:
             if ($file->get_filename()!='.') {
                 $drafturl = $CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename();
                 echo '<li><a href="'.$drafturl.'">'.$file->get_filename().'</a> ';
-                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&ctx_id='.$ctx_id.'&title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
+                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&amp;ctx_id='.$ctx_id.'&amp;title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
             }
         }
         echo '</ul>';
