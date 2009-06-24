@@ -531,7 +531,7 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $this->rowcount = 0;
-        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+        $fixedstudents = $this->is_fixed_students();
 
         if (!$fixedstudents) {
             $strsortasc   = $this->get_lang_string('sortasc', 'grades');
@@ -703,7 +703,7 @@ class grade_report_grader extends grade_report {
         $numusers      = count($this->users);
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
-        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+        $fixedstudents = $this->is_fixed_students();
 
         // Preload scale objects for items with a scaleid
         $scales_list = array();
@@ -943,7 +943,7 @@ class grade_report_grader extends grade_report {
 
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
-        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+        $fixedstudents = $this->is_fixed_students();
 
         $strsortasc   = $this->get_lang_string('sortasc', 'grades');
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
@@ -1075,7 +1075,7 @@ class grade_report_grader extends grade_report {
     public function get_endhtml() {
         global $CFG, $USER;
 
-        $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+        $fixedstudents = $this->is_fixed_students();
 
         if ($fixedstudents) {
             return "</tbody></table></div>";
@@ -1173,7 +1173,7 @@ class grade_report_grader extends grade_report {
 
             $ungraded_counts = $DB->get_records_sql($SQL, $params);
 
-            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            $fixedstudents = $this->is_fixed_students();
             if (!$fixedstudents) {
                 $colspan='';
                 if ($this->get_pref('showuseridnumber')) {
@@ -1263,7 +1263,7 @@ class grade_report_grader extends grade_report {
             $columncount=0;
             $rangehtml = '<tr class="range r'.$this->rowcount++.' heading">';
 
-            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            $fixedstudents = $this->is_fixed_students();
             if (!$fixedstudents) {
                 $colspan='';
                 if ($this->get_pref('showuseridnumber')) {
@@ -1303,7 +1303,7 @@ class grade_report_grader extends grade_report {
 
             $iconshtml = '<tr class="controls">';
 
-            $fixedstudents = empty($USER->screenreader) && $CFG->grade_report_fixedstudents;
+            $fixedstudents = $this->is_fixed_students();
             $showuseridnumber = $this->get_pref('showuseridnumber');
 
             $colspan = '';
@@ -1453,6 +1453,23 @@ class grade_report_grader extends grade_report {
         }
 
         return true;
+    }
+    
+    /**
+     * Returns whether or not to display fixed students column.
+     * Includes a browser check, because IE6 doesn't support the scrollbar.
+     *
+     * @return bool
+     */
+    public function is_fixed_students() {
+        global $USER, $CFG;
+        return empty($USER->screenreader) && $CFG->grade_report_fixedstudents && 
+            (check_browser_version('MSIE', '7.0') || 
+             check_browser_version('Firefox', '2.0') ||
+             check_browser_version('Gecko', '2006010100') ||
+             check_browser_version('Camino', '1.0') ||
+             check_browser_version('Opera', '6.0') ||
+             check_browser_version('Safari', '2.0')); 
     }
 }
 ?>
