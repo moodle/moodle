@@ -111,7 +111,7 @@ function _recaptcha_http_post($host, $path, $data, $port = 80, $https=false) {
  * @return string - The HTML to be embedded in the user's form.
  */
 function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     $recaptchatype = optional_param('recaptcha', 'image', PARAM_TEXT);
 
@@ -143,7 +143,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
     $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
 
-    $page->requires->js($server . '/challenge?k=' . $pubkey . $errorpart, true);
+    $return = $PAGE->requires->js($server . '/challenge?k=' . $pubkey . $errorpart, true)->asap();
     $return .= '<noscript>
         <div id="recaptcha_widget_noscript">
         <div id="recaptcha_image_noscript"><img src="' . $image_url . '" alt="reCAPTCHA"/></div>';
