@@ -112,6 +112,30 @@ function get_available_editors() {
 }
 
 /**
+ * Setup all JS and CSS needed for editors.
+ * @return void
+ */
+function editors_head_setup() {
+    global $CFG;
+
+    if (empty($CFG->texteditors)) {
+        $CFG->texteditors = 'tinymce,textarea';
+    }
+    $active = explode(',', $CFG->texteditors);
+
+    foreach ($active as $editorname) {
+        if (!$editor = get_texteditor($editorname)) {
+            continue;
+        }
+        if (!$editor->supported_by_browser()) {
+            // bad luck, this editor is not compatible
+            continue;
+        }
+        $editor->head_setup();
+    }
+}
+
+/**
  * Base abstract text editor class.
  *
  * @copyright  2009 Petr Skoda {@link http://skodak.org}
@@ -150,6 +174,13 @@ abstract class texteditor {
      * @return void
      */
     public abstract function use_editor($elementid, array $options=null);
+
+    /**
+     * Setup all JS and CSS needed for editor.
+     * @return void
+     */
+    public function head_setup() {
+    }
 }
 
 

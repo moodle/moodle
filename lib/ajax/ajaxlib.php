@@ -658,7 +658,9 @@ class required_yui_lib extends linked_requirement {
             $this->jss[] = $manager->js($jsurl, true);
         }
         foreach ($cssurls as $cssurl) {
-            //$manager->css($cssurl, true);
+            // this might be a bit problematic because it requires yui to be
+            // requested before print_header() - this was not required in 1.9.x
+            $manager->css($cssurl, true);
         }
     }
 

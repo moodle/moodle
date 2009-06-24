@@ -15,6 +15,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
+        require_once("$CFG->dirroot/repository/lib.php");
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -29,6 +30,9 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $this->_options['context'] = get_context_instance(CONTEXT_SYSTEM);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+
+        repository_head_setup();
+        editors_head_setup();
     }
 
     function setName($name) {
@@ -171,9 +175,9 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         require_once($CFG->dirroot.'/repository/lib.php');
         $client_id = uniqid();
-        $ret = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
+        $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
 
-        $str .= $ret['css'].$ret['js'];
+        $str .= $repojs;
         $str .= <<<EOD
 <script type="text/javascript">
 id2clientid['$id'] = '$client_id';

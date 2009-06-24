@@ -51,11 +51,15 @@ class tinymce_texteditor extends texteditor {
         return true;
     }
 
-    public function use_editor($elementid, array $options=null) {
+    public function head_setup() {
         global $CFG, $PAGE;
-
+        require_once("$CFG->dirroot/repository/lib.php");
         $PAGE->requires->js('/lib/editor/tinymce/tiny_mce_src.js');
         $PAGE->requires->js('/lib/editor/tinymce/extra/tinymce_utils.js');
+    }
+    
+    public function use_editor($elementid, array $options=null) {
+        global $PAGE;
         $PAGE->requires->js_function_call('mce_init_editor', array($elementid, $this->get_init_params($elementid, $options)));
     }
 

@@ -1,4 +1,3 @@
-// $Id$
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 //       Don't modify this file unless you know how it works             //
@@ -9,8 +8,10 @@
  * methods you can call it directly without creating an instance.
  * If you are going to create a file picker, you need create an instance
  * repo = new repository_client();
- 
  */
+
+var id2clientid = {};
+var id2itemid   = {};
 
 var repository_listing = {};
 var cached_client_id = {};

@@ -193,6 +193,8 @@ class resource_file extends resource_base {
     */
     function display() {
         global $CFG, $THEME, $USER, $PAGE;
+    ///Yahoo javascript libaries for updating embedded object size
+        $PAGE->requires->yui_lib('container');
 
     /// Set up generic stuff first, including checking for access
         parent::display();
@@ -386,8 +388,6 @@ class resource_file extends resource_base {
         if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame"  || $resource->options == "objectframe") and empty($USER->screenreader)) {
         /// display the resource into a object tag
             if ($resource->options == "objectframe") {
-            ///Yahoo javascript libaries for updating embedded object size
-                $PAGE->requires->yui_lib('container');
 
             ///Moodle Header and navigation bar
                 $navigation = build_navigation($this->navlinks, $cm);

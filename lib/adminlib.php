@@ -1578,6 +1578,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
         $this->rows = $rows;
         $this->cols = $cols;
         parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype);
+        editors_head_setup();
     }
     /**
      * Returns an XHTML string for the editor
@@ -2985,6 +2986,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
      */
     public function __construct() {
         parent::__construct('summary', get_string('frontpagedescription'), get_string('frontpagedescriptionhelp'), NULL);
+        editors_head_setup();
     }
 
     /**

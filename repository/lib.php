@@ -1,5 +1,4 @@
 <?php
- // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -1723,6 +1722,35 @@ function repository_setup_default_plugins() {
 }
 
 /**
+ * Loads
+ * @return void
+ */
+function repository_head_setup() {
+    global $PAGE;
+
+    $PAGE->requires->yui_lib('yahoo');
+    $PAGE->requires->yui_lib('dom');
+    $PAGE->requires->yui_lib('element');
+    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->yui_lib('json');
+    $PAGE->requires->yui_lib('treeview');
+    $PAGE->requires->yui_lib('dragdrop');
+    $PAGE->requires->yui_lib('container');
+    $PAGE->requires->yui_lib('resize');
+    $PAGE->requires->yui_lib('layout');
+    $PAGE->requires->yui_lib('connection');
+    $PAGE->requires->yui_lib('button');
+    $PAGE->requires->yui_lib('selector');
+
+    //TODO: remove the ->in_head() once we refactor the inline script tags in repo code
+    $PAGE->requires->js('repository/repository.src.js')->in_head();
+
+    //TODO: remove following after we moe the content of file
+    //      proper place (==themes)
+    $PAGE->requires->css('repository/repository.css');
+}
+
+/**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
  * @global object $USER
@@ -1740,111 +1768,8 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
     $video_file_ext = json_encode($ft->get_file_ext(array('video')));
     $accepted_file_ext = json_encode($ft->get_file_ext($accepted_filetypes));
 
-    $css = '';
     $js  = '';
     if (!isset($CFG->filepickerjsloaded)) {
-        $css .= <<<EOD
-<style type="text/css">
-@import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
-@import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
-@import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
-@import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
-@import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
-</style>
-<style type="text/css">
-/* Copyright (c) 2006 Yahoo! Inc. All rights reserved. */
-/* copy from yui/examples/treeview/assets/css/folders/tree.css */
-/* first or middle sibling, no children */
-.ygtvtn { background: url($CFG->pixpath/y/tn.gif) 0 0 no-repeat; width:17px; height:22px; }
-/* first or middle sibling, collapsable */
-.ygtvtm { background: url($CFG->pixpath/y/tm.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* first or middle sibling, collapsable, hover */
-.ygtvtmh { background: url($CFG->pixpath/y/tmh.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* first or middle sibling, expandable */
-.ygtvtp { background: url($CFG->pixpath/y/tp.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* first or middle sibling, expandable, hover */
-.ygtvtph { background: url($CFG->pixpath/y/tph.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* last sibling, no children */
-.ygtvln { background: url($CFG->pixpath/y/ln.gif) 0 0 no-repeat; width:17px; height:22px; }
-/* Last sibling, collapsable */
-.ygtvlm { background: url($CFG->pixpath/y/lm.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* Last sibling, collapsable, hover */
-.ygtvlmh { background: url($CFG->pixpath/y/lmh.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* Last sibling, expandable */
-.ygtvlp { background: url($CFG->pixpath/y/lp.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* Last sibling, expandable, hover */
-.ygtvlph { background: url($CFG->pixpath/y/lph.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
-/* Loading icon */
-.ygtvloading { background: url($CFG->pixpath/y/loading.gif) 0 0 no-repeat; width:16px; height:22px; }
-/* the style for the empty cells that are used for rendering the depth 
- * of the node */
-.ygtvdepthcell { background: url($CFG->pixpath/y/vline.gif) 0 0 no-repeat; width:17px; height:22px; }
-.ygtvblankdepthcell { width:17px; height:22px; }
-/* the style of the div around each node */
-.ygtvitem { }  
-.ygtvitem  table{ margin-bottom:0; }
-.ygtvitem  td { border:none;padding:0; } 
-/* the style of the div around each node's collection of children */
-.ygtvchildren { }  
-* html .ygtvchildren { height:1%; }  
-/* the style of the text label in ygTextNode */
-.ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover { margin-left:2px; text-decoration: none; }
-
-
-.file-picker{font-size:12px;}
-.file-picker strong{background:#FFFFCC}
-.file-picker a{color: #336699}
-.file-picker a:hover{background:#003366;color:white}
-.fp-panel{padding:0;margin:0; text-align:left;}
-.fp-login-form{text-align:center}
-.fp-searchbar{float:right}
-.fp-viewbar{width:300px;float:left}
-.fp-toolbar{padding: .8em;background: #FFFFCC;text-align:center;margin: 3px}
-.fp-toolbar a{padding: 0 .5em}
-.fp-list{list-style-type:none;padding:0;float:left;width:100%;margin:0;}
-.fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
-.fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
-.fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
-.fp-pathbar a{padding: .4em;}
-.fp-rename-form{text-align:center}
-.fp-rename-form p{margin: 1em;}
-.fp-upload-form{margin: 2em 0;text-align:center}
-.fp-upload-btn a{cursor: default;background: white;border:1px solid gray;color:black;padding: .5em}
-.fp-upload-btn a:hover {background: grey;color:white}
-.fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
-.fp-paging a{padding: .5em;border: 1px solid #CCC}
-.fp-paging a.cur_page{border: 1px solid blue}
-.fp-popup{text-align:center}
-.fp-grid{float:left;text-align:center;}
-.fp-grid div{overflow: hidden}
-.fp-grid p{margin:0;padding:0;background: #FFFFCC}
-.fp-grid .label{height:48px;text-align:center}
-.fp-grid span{color:gray}
-</style>
-
-<!--[if IE 6]>
-<style type="text/css">
-/* Fix for IE6 */
-.yui-skin-sam .yui-panel .hd{}
-</style>
-<![endif]-->
-EOD;
-        $PAGE->requires->yui_lib('yahoo');
-        $PAGE->requires->yui_lib('dom');
-        $PAGE->requires->yui_lib('element');
-        $PAGE->requires->yui_lib('event');
-        $PAGE->requires->yui_lib('json');
-        $PAGE->requires->yui_lib('treeview');
-        $PAGE->requires->yui_lib('dragdrop');
-        $PAGE->requires->yui_lib('container');
-        $PAGE->requires->yui_lib('resize');
-        $PAGE->requires->yui_lib('layout');
-        $PAGE->requires->yui_lib('connection');
-        $PAGE->requires->yui_lib('button');
-        $PAGE->requires->yui_lib('selector');
-        require_js(array(
-            'repository/repository.src.js'
-        ));
         $lang = array();
         $lang['title'] = get_string('title', 'repository');
         $lang['preview'] = get_string('preview', 'repository');
@@ -1931,5 +1856,5 @@ EOD;
     $js .= "\r\n";
     $js .= "</script>";
 
-    return array('css'=>$css, 'js'=>$js);
+    return $js;
 }

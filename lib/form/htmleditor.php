@@ -36,6 +36,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
             $this->_type='textarea';
         }
         $this->_canUseHtmlEditor = $this->_options['canUseHtmlEditor'];
+
+        editors_head_setup();
     }
     /**
      * set html for help button

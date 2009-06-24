@@ -9,6 +9,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
+        require_once("$CFG->dirroot/repository/lib.php");
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -20,6 +21,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+
+        repository_head_setup();
     }
 
     function setName($name) {
@@ -162,15 +165,14 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         }
 
         $client_id = uniqid();
-        $repo_info = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
+        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
 
         $html = $this->_get_draftfiles($draftitemid, $client_id);
         $accessiblefp = get_string('accessiblefilepicker', 'repository');
 
         $str = $this->_getTabs();
         $str .= $html;
-        $str .= $repo_info['css'];
-        $str .= $repo_info['js'];
+        $str .= $repojs;
         $str .= <<<EOD
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
 <a href="###" id="btnadd-{$client_id}" style="display:none" class="btnaddfile" onclick="return callpicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
