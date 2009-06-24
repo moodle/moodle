@@ -14,7 +14,9 @@ class mod_forum_post_form extends moodleform {
         $coursecontext = $this->_customdata['coursecontext'];
         $modcontext    = $this->_customdata['modcontext'];
         $forum         = $this->_customdata['forum'];
-        $post          = $this->_customdata['post']; // hack alert
+        $post          = $this->_customdata['post'];
+        // TODO: add max files and max size support
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusted'=>trusttext_trusted($modcontext), 'context'=>$modcontext);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_data
@@ -23,7 +25,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, array('maxfiles' => EDITOR_UNLIMITED_FILES));
+        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, $editoroptions);
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
