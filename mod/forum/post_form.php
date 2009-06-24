@@ -16,7 +16,7 @@ class mod_forum_post_form extends moodleform {
         $forum         = $this->_customdata['forum'];
         $post          = $this->_customdata['post'];
         // TODO: add max files and max size support
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusted'=>trusttext_trusted($modcontext), 'context'=>$modcontext);
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$modcontext);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_data
@@ -138,4 +138,4 @@ class mod_forum_post_form extends moodleform {
     }
 
 }
-?>
+

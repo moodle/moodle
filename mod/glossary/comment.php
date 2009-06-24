@@ -52,7 +52,7 @@ function glossary_comment_add() {
         print_error('nopermissiontocomment');
     }
 
-    $commentoptions = array('trusttext'=>true, 'maxfiles'=>0);
+    $commentoptions = array('trusttext'=>true, 'maxfiles'=>0, 'context'=>$context);
 
     $comment = new object();
     $comment->id      = null;
@@ -233,4 +233,4 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
 /// print original glossary entry for any comment action (add, update, delete)
     glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
 }
-?>
+

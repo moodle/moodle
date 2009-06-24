@@ -8,7 +8,7 @@ class mod_glossary_comment_form extends moodleform {
 
         $current        = $this->_customdata['current'];
         $commentoptions = $this->_customdata['commentoptions'];
-        
+
         // visible elements
         $mform->addElement('editor', 'entrycomment_editor', get_string('comment', 'glossary'), null, $commentoptions);
         $mform->addRule('entrycomment_editor', get_string('required'), 'required', null, 'client');
@@ -32,4 +32,3 @@ class mod_glossary_comment_form extends moodleform {
         $this->set_data($current);
     }
 }
-?>

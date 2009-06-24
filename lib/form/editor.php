@@ -10,7 +10,7 @@ require_once('HTML/QuickForm/element.php');
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
     protected $_helpbutton = '';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0,
-                                   'context'=>null, 'noclean'=>0, 'trusted'=>0);
+                                   'context'=>null, 'noclean'=>0, 'trusttext'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
@@ -29,6 +29,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         if (!$this->_options['context']) {
             $this->_options['context'] = get_context_instance(CONTEXT_SYSTEM);
         }
+        $this->_options['trusted'] = trusttext_trusted($this->_options['context']);
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
 
         repository_head_setup();
