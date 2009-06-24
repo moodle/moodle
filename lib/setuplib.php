@@ -353,6 +353,21 @@ function init_performance_info() {
 }
 
 /**
+ * Indicates whether we are in the middle of the initial Moodle install.
+ *
+ * Very occasionally it is necessary avoid running certain bits of code before the
+ * Moodle installation has completed. The installed flag is set in admin/index.php
+ * after Moodle core and all the plugins have been installed, but just before
+ * the person doing the initial install is asked to choose the admin password.
+ *
+ * @return boolean true if the initial install is not complete.
+ */
+function during_initial_install() {
+    global $CFG;
+    return empty($CFG->rolesactive);
+}
+
+/**
  * Function to raise the memory limit to a new value.
  * Will respect the memory limit if it is higher, thus allowing
  * settings in php.ini, apache conf or command line switches

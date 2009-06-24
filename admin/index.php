@@ -244,9 +244,10 @@ if ($release <> $CFG->release) {  // Update the release version
 // upgrade all plugins and other parts
 upgrade_noncore(true);
 
-// indicate that this site is fully configured except the admin password
-if (empty($CFG->rolesactive)) {
-    set_config('rolesactive', 1);
+// If this is the first install, indicate that this site is fully configured
+// except the admin password
+if (during_initial_install()) {
+    set_config('rolesactive', 1); // after this, during_initial_install will return false.
     set_config('adminsetuppending', 1);
     // we neeed this redirect to setup proper session
     upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");

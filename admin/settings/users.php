@@ -82,7 +82,7 @@ if ($hassiteconfig
     // "userpolicies" settingpage
     $temp = new admin_settingpage('userpolicies', get_string('userpolicies', 'admin'));
     if ($ADMIN->fulltree) {
-        if (!empty($CFG->rolesactive)) {
+        if (!during_initial_install()) {
             $context = get_context_instance(CONTEXT_SYSTEM);
             if (!$guestrole = get_guest_role()) {
                 $guestrole->id = 0;
@@ -138,7 +138,7 @@ if ($hassiteconfig
 
         $temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
 
-        if (!empty($CFG->rolesactive)) {
+        if (!during_initial_install()) {
             $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
                           get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $allroles));
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
@@ -147,7 +147,7 @@ if ($hassiteconfig
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));
 
-        if (!empty($CFG->rolesactive)) {
+        if (!during_initial_install()) {
             $temp->add(new admin_setting_configmultiselect('nonmetacoursesyncroleids', get_string('nonmetacoursesyncroleids', 'admin'),
                       get_string('confignonmetacoursesyncroleids', 'admin'), array(), $allroles));
         }

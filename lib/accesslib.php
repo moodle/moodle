@@ -453,7 +453,7 @@ function get_guest_role() {
 function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     global $USER, $CFG, $DB, $SCRIPT, $ACCESSLIB_PRIVATE;
 
-    if (empty($CFG->rolesactive)) {
+    if (during_initial_install()) {
         if ($SCRIPT === "/$CFG->admin/index.php" or $SCRIPT === "/$CFG->admin/cliupgrade.php") {
             // we are in an installer - roles can not work yet
             return true;
@@ -1768,7 +1768,7 @@ function load_all_capabilities() {
     global $USER, $CFG, $ACCESSLIB_PRIVATE;
 
     // roles not installed yet - we are in the middle of installation
-    if (empty($CFG->rolesactive)) {
+    if (during_initial_install()) {
         return;
     }
 
@@ -6207,7 +6207,7 @@ function get_dirty_contexts($time) {
 function mark_context_dirty($path) {
     global $CFG, $ACCESSLIB_PRIVATE;
 
-    if (empty($CFG->rolesactive)) {
+    if (during_initial_install()) {
         return;
     }
 

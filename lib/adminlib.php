@@ -1260,7 +1260,7 @@ abstract class admin_setting {
 
         // log change
         $log = new object();
-        $log->userid       = empty($CFG->rolesactive) ? 0 :$USER->id; // 0 as user id during install
+        $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
         $log->timemodified = time();
         $log->plugin       = $this->plugin;
         $log->name         = $name;
@@ -3713,7 +3713,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
      */
     public function load_choices() {
         global $CFG, $DB;
-        if (empty($CFG->rolesactive)) {
+        if (during_initial_install()) {
             return false;
         }
         if (is_array($this->choices)) {
@@ -3738,7 +3738,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
     public function get_defaultsetting() {
         global $CFG;
 
-        if (empty($CFG->rolesactive)) {
+        if (during_initial_install()) {
             return null;
         }
         $result = array();

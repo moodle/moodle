@@ -64,7 +64,7 @@ class mnet_environment {
 
         // We don't generate keys on install/upgrade because we want the USER
         // record to have an email address, city and country already.
-        if (empty($CFG->rolesactive)) return true;
+        if (during_initial_install()) return true;
         if ($CFG->mnet_dispatcher_mode == 'off') return true;
         if (!extension_loaded("openssl")) return true;
         if (!empty($this->keypair)) return true;

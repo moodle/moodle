@@ -608,7 +608,7 @@ class moodle_page {
     protected function starting_output() {
         global $SITE, $CFG;
 
-        if (empty($CFG->rolesactive)) {
+        if (during_initial_install()) {
             $this->_course = new stdClass;
             $this->_course->id = 1;
             moodle_setlocale();

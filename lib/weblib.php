@@ -3688,13 +3688,13 @@ function build_navigation($extranavlinks, $cm = null) {
     // Work out whether we should be showing the activity (e.g. Forums) link.
     // Note: build_navigation() is called from many places --
     // install & upgrade for example -- where we cannot count on the
-    // roles infrastructure to be defined. Hence the $CFG->rolesactive check.
+    // roles infrastructure to be defined. Hence the during_initial_install() check.
     if (!isset($CFG->hideactivitytypenavlink)) {
         $CFG->hideactivitytypenavlink = 0;
     }
     if ($CFG->hideactivitytypenavlink == 2) {
         $hideactivitylink = true;
-    } else if ($CFG->hideactivitytypenavlink == 1 && $CFG->rolesactive &&
+    } else if ($CFG->hideactivitytypenavlink == 1 && !during_initial_install() &&
             !empty($COURSE->id) && $COURSE->id != SITEID) {
         if (!isset($COURSE->context)) {
             $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
@@ -6931,7 +6931,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 function page_doc_link($text='', $iconpath='') {
     global $CFG, $PAGE;
 
-    if (empty($CFG->docroot) || empty($CFG->rolesactive)) {
+    if (empty($CFG->docroot) || during_initial_install()) {
         return '';
     }
     if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
