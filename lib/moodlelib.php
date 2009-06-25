@@ -5492,10 +5492,6 @@ function clean_filename($string) {
 /**
  * Returns the code for the current language
  *
- * @global object
- * @global object
- * @global object
- * @global object
  * @return string
  */
 function current_language() {
@@ -5587,17 +5583,24 @@ function print_string($identifier, $module='', $a=NULL) {
 /**
  * Singleton class for managing the search for language strings.
  *
- * Not that performance of this class is important. If you decide to change
- * this class, please use the lib/simpletest/getstringperformancetester.php
- * script to make sure your changes do not cause a performance problem.
+ * Most code should not use this class directly. Instead you should use the
+ * {@link get_string()} function.
+ *
+ * Notes for develpers
+ * ===================
+ *
+ * Performance of this class is important. If you decide to change this class,
+ * please use the lib/simpletest/getstringperformancetester.php script to make
+ * sure your changes do not cause a performance problem.
+ *
+ * In some cases (for example _print_early_error) get_string gets called very
+ * early on during Moodle's self-initialisation. Think very carefully before
+ * relying on the normal Moodle libraries here.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */
 class string_manager {
-    /**
-    * @var array
-    */
     private $parentlangs = array('en_utf8' => NULL);
     private $searchpathsformodule = array();
     private $strings = array();
@@ -5612,26 +5615,11 @@ class string_manager {
                 'thischarset' => 1, 'thisdirection' => 1, 'thislanguage' => 1,
                 'strftimedatetimeshort' => 1, 'thousandssep' => 1);
     private $searchplacesbyplugintype;
-    /**
-    * @var string
-    */
     private $dirroot;
-    /**
-    * @var array
-    */
     private $corelocations;
     private $installstrings = NULL;
-    /**
-    * @var string
-    */
     private $parentlangfile = 'langconfig.php';
-    /**
-    * @var bool
-    */
     private $logtofile = false;
-    /**
-    * @var object
-    */
     private static $singletoninstance = NULL;
 
     /**
@@ -5672,53 +5660,11 @@ class string_manager {
             $this->searchplacesbyplugintype[$plugintype.'_'] = array($dir);
         }
         unset($this->searchplacesbyplugintype['mod_']);
-        $this->restore_extra_locations_from_session();
         if ($runninginstaller) {
             $stringnames = file($dirroot . '/install/stringnames.txt');
             $this->installstrings = array_map('trim', $stringnames);
             $this->parentlangfile = 'installer.php';
         }
-    }
-
-    /**
-     * Load extra language locations if set in $SESSION
-     *
-     * @global object
-     */
-    protected function restore_extra_locations_from_session() {
-        global $SESSION;
-        if (!empty($SESSION->extralangsearchlocations)) {
-            foreach ($SESSION->extralangsearchlocations as $plugintype => $path) {
-                $this->register_plugin_type($plugintype, $path);
-            }
-        }
-    }
-
-    /**
-     * Register a new type of plugin with the string_manager class. 
-     *
-     * A typical usage might be
-     * string_manager::instance()->register_plugin_type('mymodreport', 'mod/mymod/report');
-     * This should never be needed for standard plugin types. It is intended for third-party
-     * plugins that in turn want to register a sub-plugin type.
-     *
-     * @global object
-     * @param string $plugintype a new type of plugin
-     * @param string $path the path where plugins of this type live.
-     */
-    public function register_plugin_type($plugintype, $path) {
-        global $SESSION;
-        $key = $plugintype . '_';
-        if (isset($this->searchplacesbyplugintype[$key]) && $path == reset($this->searchplacesbyplugintype[$key])) {
-            // Nothing to do.
-            return;
-        }
-        $this->searchplacesbyplugintype[$key] = array($path);
-        // We store all registered extra plugin types in the session in order to
-        // allow links to help files to work. I cannot think of a better way to
-        // make this information available to help.php. Putting it in the URL
-        // would be insecure.
-        $SESSION->extralangsearchlocations[$plugintype] = $path;
     }
 
     /**

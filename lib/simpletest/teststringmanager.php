@@ -162,30 +162,6 @@ class string_manager_test extends UnitTestCase {
         ));
     }
 
-    public function test_register_plugin_type() {
-        $this->stringmanager->register_plugin_type('mymodreport', 'mod/mymod/report');
-        $this->assertEqual($this->stringmanager->locations_to_search('mymodreport_test'), array(
-            $this->basedir . 'moodle/lang/' => 'mymodreport_test/',
-            $this->basedir . 'moodledata/lang/' => 'mymodreport_test/',
-            $this->basedir . 'moodle/mod/mymod/report/test/lang/' => 'test/',
-        ));
-    }
-
-    public function test_register_plugin_type_session_usage() {
-        $this->stringmanager->register_plugin_type('mymodreport', 'mod/mymod/report');
-
-        // Create a new string_manager to see if it picks up the 'mymodreport'
-        // custom plugin type from session without us having to re-register it.
-        // This is required to make help files work.
-        $newstringmanager = new testable_string_manager($this->basedir . 'moodle',
-                $this->basedir . 'moodledata', false);
-        $this->assertEqual($newstringmanager->locations_to_search('mymodreport_test'), array(
-            $this->basedir . 'moodle/lang/' => 'mymodreport_test/',
-            $this->basedir . 'moodledata/lang/' => 'mymodreport_test/',
-            $this->basedir . 'moodle/mod/mymod/report/test/lang/' => 'test/',
-        ));
-    }
-
     public function test_parse_module_name_module() {
         $this->assertEqual($this->stringmanager->parse_module_name('forum'),
                 array('', 'forum'));
