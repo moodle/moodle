@@ -594,7 +594,6 @@ class FakeDBUnitTestCase extends UnitTestCase {
         } else {
             $a = new stdClass();
             $a->filename = $this->pkfile;
-            debug_print_backtrace();
             throw new moodle_exception('testtablescsvfilemissing', 'simpletest', '', $a);
             return false;
         }
@@ -805,7 +804,6 @@ class UnitTestDB {
             $a = new stdClass();
             $a->id = $dataobject->id;
             $a->table = $table;
-            debug_print_backtrace();
             throw new moodle_exception('updatingnoninsertedrecord', 'simpletest', '', $a);
         } else {
             return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
@@ -847,7 +845,6 @@ class UnitTestDB {
         if ($proceed_with_delete) {
             return UnitTestDB::$DB->delete_records($table, $conditions);
         } else {
-            debug_print_backtrace();
             throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
         }
     }
@@ -881,7 +878,6 @@ class UnitTestDB {
         if ($proceed_with_delete) {
             return UnitTestDB::$DB->delete_records_select($table, $select, $params);
         } else {
-            debug_print_backtrace();
             throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
         }
     }
@@ -908,7 +904,7 @@ class UnitTestDB {
 
     public function get_field($table, $return, array $conditions) {
         if (!is_array($conditions)) {
-            debug_print_backtrace();
+            throw new coding_exception('$conditions is not an array.');
         }
         return UnitTestDB::$DB->get_field($table, $return, $conditions);
     }
