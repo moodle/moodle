@@ -332,6 +332,61 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
         global $CFG;
         parent::__construct($heading, '', $CFG->dataroot . '/codecoverage/' . $dir);
     }
+
+    /**
+     * Writes one row in the index.html table to display filename
+     * and coverage recording.
+     *
+     * Overrided to transform names and links to shorter format
+     *
+     * @param $fileLink link to html details file.
+     * @param $realFile path to real PHP file.
+     * @param $fileCoverage Coverage recording for that file.
+     * @return string HTML code for a single row.
+     * @access protected
+     */
+    protected function writeIndexFileTableRow($fileLink, $realFile, $fileCoverage) {
+
+        global $CFG;
+
+        $fileLink = str_replace($CFG->dirroot, '', $fileLink);
+        $realFile = str_replace($CFG->dirroot, '', $realFile);
+
+        return parent::writeIndexFileTableRow($fileLink, $realFile, $fileCoverage);;
+    }
+
+    /**
+     * Mark a source code file based on the coverage data gathered
+     *
+     * Overrided to transform names and links to shorter format
+     *
+     * @param $phpFile Name of the actual source file
+     * @param $fileLink Link to the html mark-up file for the $phpFile
+     * @param &$coverageLines Coverage recording for $phpFile
+     * @return boolean FALSE on failure
+     * @access protected
+     */
+    protected function markFile($phpFile, $fileLink, &$coverageLines) {
+        global $CFG;
+
+        $fileLink = str_replace($CFG->dirroot, '', $fileLink);
+
+        return parent::markFile($phpFile, $fileLink, $coverageLines);
+    }
+
+
+    /**
+     * Update the grand totals
+     *
+     * Overrided to avoid the call to recordFileCoverageInfo()
+     * because it has been already executed by writeIndexFile() and
+     * cause files to be duplicated in the fileCoverage property
+     */
+    protected function updateGrandTotals(&$coverageCounts) {
+        $this->grandTotalLines += $coverageCounts['total'];
+        $this->grandTotalCoveredLines += $coverageCounts['covered'];
+        $this->grandTotalUncoveredLines += $coverageCounts['uncovered'];
+    }
 }
 
 
