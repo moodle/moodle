@@ -3062,7 +3062,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             $mods = get_plugin_list('mod');
             foreach ($mods as $mod => $moddir) {
                 if (file_exists($moddir.'/styles.php')) {
-                    $files[] = array($moddir.'/styles.php');
+                    $files[] = array($moddir, 'styles.php');
                 }
             }
         }
@@ -3071,7 +3071,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             $mods = get_plugin_list('blocks');
             foreach ($mods as $mod => $moddir) {
                 if (file_exists($moddir.'/styles.php')) {
-                    $files[] = array($moddir.'/styles.php');
+                    $files[] = array($moddir, 'styles.php');
                 }
             }
         }
@@ -3080,7 +3080,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             $mods = get_plugin_list('format');
             foreach ($mods as $mod => $moddir) {
                 if (file_exists($moddir.'/styles.php')) {
-                    $files[] = array($moddir.'/styles.php');
+                    $files[] = array($moddir, 'styles.php');
                 }
             }
         }
@@ -3089,14 +3089,14 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             $reports = get_plugin_list('gradereport');
             foreach ($reports as $report => $reportdir) {
                 if (file_exists($reportdir.'/styles.php')) {
-                    $files[] = array($reportdir.'/styles.php');
+                    $files[] = array($reportdir, 'styles.php');
                 }
             }
         }
 
         if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
             if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
-                $files[] = array($CFG->dirroot, '/lang/'.$lang.'/styles.php');
+                $files[] = array($CFG->dirroot, 'lang/'.$lang.'/styles.php');
             }
         }
     }
