@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once('../lib/filelib.php');
     require_once('lib.php');
+    require_login();
 
 /// Parameters
     $page  = optional_param('page', '', PARAM_RAW);           // page
@@ -120,6 +121,8 @@
         // If Moodle is working on HTTPS mode, then we are not allowed to access
         // parent window, in this case, we need to alert user to refresh the repository
         // manually.
+        $strhttpsbug = get_string('cannotaccessparentwin', 'repository');
+        $strrefreshnonjs = get_string('refreshnonjsfilepicker', 'repository');
         $js  =<<<EOD
 <html><head>
 <script type="text/javascript">
@@ -127,12 +130,12 @@ if(window.opener){
     window.opener.repository_callback($repo_id);
     window.close();
 } else {
-    alert("If parent window is on HTTPS, then we are not allowed to access window.opener object, so we cannot refresh the repository for you automatically, but we already got your session, just go back to file picker and select the repository again, it should work now.");
+    alert("{$strhttpsbug }");
 }
 </script>
 <body>
 <noscript>
-Close this window and refresh file picker.
+{$strrefreshnonjs}
 </noscript>
 </body>
 </html>
@@ -178,7 +181,7 @@ EOD;
             echo json_encode($logout);
             break;
         case 'searchform':
-            $search_form['form'] = $repo->print_search();
+            $search_form['form'] = $repo->print_search($client_id);
             $search_form['client_id'] = $client_id;
             echo json_encode($search_form);
             break;

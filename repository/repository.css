@@ -66,6 +66,9 @@
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
 .fp-grid .label{height:48px;text-align:center}
 .fp-grid span{color:gray}
+.fp-error {padding: 2em 0; margin: 3em 5px;text-align:center;background: #FFBBBB}
+/* file picker search dialog */
+div.bd{text-align:left}
 
 
 /* TODO: Fix IE6 somehow

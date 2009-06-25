@@ -22,6 +22,7 @@ class repository_picasa extends repository {
             $gauth = new google_authsub(false, $googletoken); // will throw exception if fails
             google_picasa::set_sesskey($gauth->get_sessiontoken(), $USER->id);
         }
+        $this->check_login();
     }
 
     public function check_login() {

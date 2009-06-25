@@ -263,7 +263,7 @@ repository_client.req_cb = {
          repo.viewbar.set('disabled', false);
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
          if(data && data.e) {
-             panel.get('element').innerHTML = data.e;
+             panel.get('element').innerHTML = '<div class="fp-error">'+data.e+'</div>';
              return;
          }
          // save data
@@ -339,7 +339,7 @@ repository_client.print_login = function(id, data) {
                 field_id = ' id="'+login[k].id+'"';
             }
             if (login[k].label) {
-                str += '<td align="right"><label'+label_id+'>'+login[k].label+'</label> </td>';
+                str += '<td align="right" valign="top"><label'+label_id+'>'+login[k].label+'</label> </td>';
             } else {
                 str += '<td></td>';
             }
@@ -834,6 +834,9 @@ repository_client.view_as_icons = function(client_id, data) {
         }
         count++;
     }
+    if (list.length == 0) {
+        panel.innerHTML = '<div class="fp-error">'+fp_lang.emptylist+'</div>';
+    }
     container.appendChild(panel);
     repository_client.print_footer(client_id);
 }
@@ -1099,23 +1102,23 @@ success: function(o) {
      var fp = repository_client.fp[data.client_id];
      if(el) {
          el.innerHTML = '';
-     } else {
-         var el = document.createElement('DIV');
-         el.id = 'fp-search-dlg';
+         el.parentNode.removeChild(el);
      }
-     var div1 = document.createElement('DIV');
-     div1.className = 'hd';
-     div1.innerHTML = fp_lang.searching+"\"" + repository_listing[data.client_id][fp.fs.repo_id].name + '"';
-     var div2 = document.createElement('DIV');
-     div2.className = 'bd';
+     var el = document.createElement('DIV');
+     el.id = 'fp-search-dlg';
+     var dlg_title = document.createElement('DIV');
+     dlg_title.className = 'hd';
+     dlg_title.innerHTML = fp_lang.searching+"\"" + repository_listing[data.client_id][fp.fs.repo_id].name + '"';
+     var dlg_body = document.createElement('DIV');
+     dlg_body.className = 'bd';
      var sform = document.createElement('FORM');
      sform.method = 'POST';
      sform.id = "fp-search-form";
      sform.action = moodle_cfg.wwwroot+'/repository/ws.php?action=search';
      sform.innerHTML = data['form'];
-     div2.appendChild(sform);
-     el.appendChild(div1);
-     el.appendChild(div2);
+     dlg_body.appendChild(sform);
+     el.appendChild(dlg_title);
+     el.appendChild(dlg_body);
      document.body.appendChild(el);
      var dlg_handler = function() {
          var client_id=dlg_handler.client_id;
@@ -1144,7 +1147,7 @@ success: function(o) {
             handler: dlg_handler,
             isDefault:true
         },
-        {text:fp_lang.cancel,handler:function(){this.cancel()}}
+        {text:fp_lang.cancel,handler:function(){this.destroy()}}
         ]
     });
     dlg.render();

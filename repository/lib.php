@@ -1482,7 +1482,7 @@ abstract class repository {
      * Show the search screen, if required
      * @return null
      */
-    public function print_search() {
+    public function print_search($client_id) {
         $str = '';
         $str .= '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
         $str .= '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
@@ -1783,6 +1783,7 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
         $lang['download']  = get_string('downloadsucc', 'repository');
         $lang['date']      = get_string('date', 'repository').': ';
         $lang['error']     = get_string('error', 'repository');
+        $lang['emptylist'] = get_string('emptylist', 'repository');
         $lang['filenotnull'] = get_string('filenotnull', 'repository');
         $lang['federatedsearch'] = get_string('federatedsearch', 'repository');
         $lang['help']      = get_string('help');

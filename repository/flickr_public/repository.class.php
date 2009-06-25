@@ -208,6 +208,7 @@ class repository_flickr_public extends repository {
      */
     public function search($search_text) {
         global $SESSION;
+        $ret = array();
         if (!empty($this->flickr_account)) {
             $people = $this->flickr->people_findByEmail($this->flickr_account);
             $this->nsid = $people['nsid'];
@@ -218,6 +219,11 @@ class repository_flickr_public extends repository {
         }
         if (empty($this->nsid)) {
             $this->nsid = null;
+            // user specify a flickr account, but it is not valid
+            if (!empty($this->flickr_account) or !empty($SESSION->{$this->sess_account})) {
+                $ret['e'] = get_string('invalidemail', 'repository_flickr_public');
+                return $ret;
+            }
         }
         $is_paging = optional_param('search_paging', '', PARAM_RAW);
         if (!empty($is_paging)) {
@@ -270,7 +276,6 @@ class repository_flickr_public extends repository {
                 )
             );
         }
-        $ret = array();
         $ret['total'] = $photos['total'];
         $ret['perpage'] = $photos['perpage'];
         if (empty($photos)) {
@@ -326,8 +331,10 @@ class repository_flickr_public extends repository {
                     $format = 'jpg';
                 }
                 $format = '.'.$format;
-                // append extensions to the files
                 if (substr($p['title'], strlen($p['title'])-strlen($format)) != $format) {
+                    // append author id
+                    $p['title'] .= '-'.$p['owner'];
+                    // append file extension
                     $p['title'] .= $format; 
                 }
                 $ret['list'][] = array('title'=>$p['title'], 'source'=>$p['id'],
@@ -375,6 +382,10 @@ class repository_flickr_public extends repository {
         $c = new curl;
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
 
+        $watermark = get_config('flickr_public', 'watermark');
+        if (!empty($watermark)) {
+            // process watermark
+        }
         return $path;
     }
 
@@ -405,8 +416,13 @@ class repository_flickr_public extends repository {
             $api_key = '';
         }
         $strrequired = get_string('required');
+
+        $mform->addElement('checkbox', 'watermark', get_string('watermark', 'repository_flickr_public'));
+
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr_public'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+
+
         $mform->addElement('static', null, '',  get_string('information','repository_flickr_public'));
     }
 
@@ -415,7 +431,7 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     public static function get_type_option_names() {
-        return array('api_key');
+        return array('api_key', 'watermark');
     }
 
     /**

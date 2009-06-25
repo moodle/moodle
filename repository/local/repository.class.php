@@ -49,6 +49,7 @@ class repository_local extends repository {
         global $CFG, $USER;
         $ret = array();
         $ret['dynload'] = true;
+        $ret['nosearch'] = true;
         $list = array();
 
         // list draft files
