@@ -3137,8 +3137,7 @@ function assignment_get_types() {
     }
 
     /// Drop-in extra assignment types
-    $assignmenttypes = get_plugin_list('assignment');
-    $assignmenttypes = array_keys($assignmenttypes);
+    $assignmenttypes = get_list_of_plugins('mod/assignment/type');
     foreach ($assignmenttypes as $assignmenttype) {
         if (!empty($CFG->{'assignment_hide_'.$assignmenttype})) {  // Not wanted
             continue;
