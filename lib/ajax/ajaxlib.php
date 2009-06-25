@@ -573,9 +573,9 @@ class required_js extends linked_requirement {
             $this->in_head();
             return '';
         }
-        $ouput = $this->get_html();
+        $output = $this->get_html();
         $this->mark_done();
-        return $ouput;
+        return $output;
     }
 
     /**
@@ -690,12 +690,12 @@ class required_yui_lib extends linked_requirement {
             return '';
         }
 
-        $ouput = '';
+        $output = '';
         foreach ($this->jss as $requiredjs) {
-            $ouput .= $requiredjs->asap();
+            $output .= $requiredjs->asap();
         }
         $this->mark_done();
-        return $ouput;
+        return $output;
     }
 
     /**
@@ -734,7 +734,7 @@ class required_yui_lib extends linked_requirement {
 
         $this->when = page_requirements_manager::WHEN_TOP_OF_BODY;
         foreach ($this->jss as $requiredjs) {
-            $ouput .= $requiredjs->at_top_of_body();
+            $output .= $requiredjs->at_top_of_body();
         }
     }
 }
@@ -1160,7 +1160,7 @@ function ajax_resolve_yui_lib($libname) {
                 $jsurls[] = $libpath . 'dom/dom' . $suffix;
                 $jsurls[] = $libpath . 'event/event' . $suffix;
             } else {
-                $jsurls[] = $jsurls[] = $libpath . $js . '/' . $js . '.js';
+                $jsurls[] = $libpath . $js . '/' . $js . '.js';
             }
         } else {
             $jsurls[] = $libpath . $js . '/' . $js . $suffix;
