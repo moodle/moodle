@@ -246,16 +246,13 @@
  * @todo Document this function
  */
 function forum_print_big_search_form($course) {
-    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto;
+    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $PAGE;
 
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
     print_simple_box_start("center");
 
-    echo "<script type=\"text/javascript\">\n";
-    echo "var timefromitems = ['fromday','frommonth','fromyear','fromhour', 'fromminute'];\n";
-    echo "var timetoitems = ['today','tomonth','toyear','tohour','tominute'];\n";
-    echo "</script>\n";
+    echo $PAGE->requires->js('mod/forum/forum.js')->asap();
 
     echo '<form id="searchform" action="search.php" method="get">';
     echo '<table cellpadding="10" class="searchbox" id="form">';

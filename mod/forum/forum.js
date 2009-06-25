@@ -1,3 +1,6 @@
+var timefromitems = ['fromday','frommonth','fromyear','fromhour', 'fromminute'];
+var timetoitems = ['today','tomonth','toyear','tohour','tominute'];
+
 function forum_produce_subscribe_link(forumid, backtoindex, ltext, ltitle) {
     var elementid = "subscriptionlink";
     var subs_link = document.getElementById(elementid);
