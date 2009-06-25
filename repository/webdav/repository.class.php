@@ -14,32 +14,32 @@ class repository_webdav extends repository {
         parent::__construct($repositoryid, $context, $options);
         // set up webdav client
         $this->wd = new webdav_client();
-        if (empty($this->webdav_server)) {
+        if (empty($this->options['webdav_server'])) {
             return;
         }
-        if (empty($this->webdav_type)) {
-            $this->webdav_type = '';
+        if (empty($this->options['webdav_type'])) {
+            $this->options['webdav_type'] = '';
         } else {
-            $this->webdav_type = 'ssl://';
+            $this->options['webdav_type'] = 'ssl://';
         }
-        $this->wd->set_server($this->webdav_server);
-        if (empty($this->webdav_port)) {
-            if (empty($this->webdav_type)) {
+        $this->wd->set_server($this->options['webdav_server']);
+        if (empty($this->options['webdav_port'])) {
+            if (empty($this->options['webdav_type'])) {
                 $this->wd->set_port(80);
             } else {
                 $this->wd->set_port(443);
             }
             $port = '';
         } else {
-            $this->wd->set_port($this->webdav_port);
-            $port = ':'.$this->webdav_port;
+            $this->wd->set_port($this->options['webdav_port']);
+            $port = ':'.$this->options['webdav_port'];
         }
-        $this->webdav_host = $this->webdav_type.$this->webdav_server.$port;
-        if(!empty($this->webdav_user)){
-            $this->wd->set_user($this->webdav_user);
+        $this->webdav_host = $this->options['webdav_type'].$this->options['webdav_server'].$port;
+        if(!empty($this->options['webdav_user'])){
+            $this->wd->set_user($this->options['webdav_user']);
         }
-        if(!empty($this->webdav_password)) {
-            $this->wd->set_pass($this->webdav_password);
+        if(!empty($this->options['webdav_password'])) {
+            $this->wd->set_pass($this->options['webdav_password']);
         }
         $this->wd->set_protocol(1);
         $this->wd->set_debug(false);
@@ -78,7 +78,7 @@ class repository_webdav extends repository {
             $path = '/';
             $dir = $this->wd->ls($path);
         } else {
-            if (empty($this->webdav_type)) {
+            if (empty($this->options['webdav_type'])) {
                 $partern = '#http://'.$this->webdav_host.'/#';
             } else {
                 $partern = '#http://'.$this->webdav_type.$this->webdav_host.'/#';
