@@ -55,11 +55,14 @@
 
     $stractual = get_string("actual", "survey");
     $stractualclass = get_string("actualclass", "survey");
-    $stractualstudent = get_string("actualstudent", "survey", fullname($user));
-
+    
     $strpreferred = get_string("preferred", "survey");
     $strpreferredclass = get_string("preferredclass", "survey");
-    $strpreferredstudent = get_string("preferredstudent", "survey", fullname($user));
+
+    if ($sid || isset($user)) {
+        $stractualstudent = get_string("actualstudent", "survey", fullname($user));
+        $strpreferredstudent = get_string("preferredstudent", "survey", fullname($user));
+    }
 
     $virtualscales = false; //set default value for case clauses
 
