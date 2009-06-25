@@ -201,7 +201,7 @@
             $table->align[] = 'center';
             $table->size[] = '';
         }
-        $table->head[] = get_string('timecompleted', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
+        $table->head[] = get_string('timecompleted', 'quiz');
         $table->align[] = 'left';
         $table->size[] = '';
         if ($markcolumn) {
