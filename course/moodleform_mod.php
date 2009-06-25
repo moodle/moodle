@@ -44,11 +44,19 @@ class moodleform_mod extends moodleform {
      * @var string name of module
      */
     protected $_modname;
+    /** current context, course or module depends if already exists*/
+    protected $context;
 
-    function moodleform_mod($instance, $section, $cm) {
+    function moodleform_mod($instance, $section, $cm, $course) {
         $this->_instance = $instance;
         $this->_section = $section;
         $this->_cm = $cm;
+        if ($this->_cm) {
+            $this->context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+        } else {
+            $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
+        }
+        
         // Guess module name
         $matches = array();
         if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
@@ -581,7 +589,7 @@ class moodleform_mod extends moodleform {
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
 
-        $mform->addElement('editor', 'introeditor', $label, null, array('maxfiles'=>EDITOR_UNLIMITED_FILES));
+        $mform->addElement('editor', 'introeditor', $label, null, array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->context));
         $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
         if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
