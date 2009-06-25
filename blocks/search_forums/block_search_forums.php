@@ -7,7 +7,7 @@ class block_search_forums extends block_base {
     }
 
     function get_content() {
-        global $CFG, $THEME;
+        global $CFG;
 
         if($this->content !== NULL) {
             return $this->content;

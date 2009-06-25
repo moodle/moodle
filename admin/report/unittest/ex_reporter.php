@@ -41,8 +41,6 @@ class ExHtmlReporter extends HtmlReporter {
      * @param bool $showpasses Whether this reporter should output anything for passes.
      */
     function ExHtmlReporter($showpasses) {
-        global $CFG, $THEME;
-
         $this->HtmlReporter();
         $this->showpasses = $showpasses;
 

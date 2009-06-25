@@ -19,7 +19,7 @@ class block_mnet_hosts extends block_list {
     }
 
     function get_content() {
-        global $THEME, $CFG, $USER, $DB;
+        global $CFG, $USER, $DB;
 
         // only for logged in users!
         if (!isloggedin() || isguest()) {

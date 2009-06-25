@@ -76,7 +76,7 @@ function module_specific_buttons($cmid, $cmoptions) {
  * (which is called from showbank())
  */
 function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmoptions) {
-    global $THEME, $QTYPES;
+    global $QTYPES;
     $out = '';
     $catcontext = get_context_instance_by_id($category->contextid);
     if (has_capability('moodle/question:useall', $catcontext)) {

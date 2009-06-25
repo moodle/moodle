@@ -13,7 +13,7 @@ class block_course_list extends block_list {
     }
 
     function get_content() {
-        global $THEME, $CFG, $USER, $DB;
+        global $CFG, $USER, $DB;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -109,7 +109,7 @@ class block_course_list extends block_list {
     }
 
     function get_remote_courses() {
-        global $THEME, $CFG, $USER;
+        global $CFG, $USER;
 
         if (!is_enabled_auth('mnet')) {
             // no need to query anything remote related
