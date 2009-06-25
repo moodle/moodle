@@ -84,7 +84,7 @@ class ExHtmlReporter extends HtmlReporter {
     function _paintPassFail($passorfail, $message, $rawmessage=false) {
         global $FULLME, $CFG;
 
-        print_simple_box_start('', '100%', '', 5, $passorfail . ' generalbox');
+        print_box_start($passorfail . ' generalbox ');
         $url = $this->_htmlEntities($this->_stripParameterFromUrl($FULLME, 'path'));
         echo '<b class="', $passorfail, '">', $this->get_string($passorfail), '</b>: ';
         $breadcrumb = $this->getTestList();
@@ -100,7 +100,7 @@ class ExHtmlReporter extends HtmlReporter {
         echo "<a href=\"{$url}path=$folder$file\" title=\"$this->strrunonlyfile\">$file</a>";
         echo $this->strseparator, implode($this->strseparator, $breadcrumb);
         echo '<br />', ($rawmessage ? $message : $this->_htmlEntities($message)), "\n\n";
-        print_simple_box_end();
+        print_box_end();
         flush();
     }
 
