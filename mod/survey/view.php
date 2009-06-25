@@ -158,48 +158,22 @@
         exit;
     }
 
-?>
-
-<br />
-<script type="text/javascript">
-<!--
-function checkform() {
-
-    var error=false;
-
-    with (document.getElementById('surveyform')) {
-    <?php
-       if (!empty($checklist)) {
-           foreach ($checklist as $question => $default) {
-               echo "  if (".$question."[".$default."].checked) error=true;\n";
-           }
+    $checkarray = Array('questions'=>Array());
+    if (!empty($checklist)) {
+       foreach ($checklist as $question => $default) {
+           $checkarray['questions'][] = Array('question'=>$question, 'default'=>$default);
        }
-    ?>
     }
+    $PAGE->requires->js('mod/survey/survey.js');
+    $PAGE->requires->data_for_js('surveycheck', $checkarray);
+    $PAGE->requires->string_for_js('questionsnotanswered', 'survey');
+    $PAGE->requires->js_function_call('survey_attach_onsubmit');
 
-    if (error) {
-        alert("<?php print_string("questionsnotanswered", "survey") ?>");
-    } else {
-        document.getElementById('surveyform').submit();
-    }
-}
+    echo '<br />';
+    echo '<input type="submit" value="'.get_string("clicktocontinue", "survey").'" />';
+    echo '</div>';
+    echo "</form>";
 
-<?php echo "document.write('<input type=\"button\" value=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
-
-// END -->    
-</script>
-
-<noscript>
-    <!-- Without Javascript, no checking is done -->
-    <div>
-    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>" />
-    </div>
-</noscript>
-
-<?php
-   echo '</div>';
-   echo "</form>";
-
-   print_footer($course);
+    print_footer($course);
 
 ?>
