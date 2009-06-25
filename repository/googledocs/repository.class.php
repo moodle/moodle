@@ -22,6 +22,7 @@ class repository_googledocs extends repository {
             $gauth = new google_authsub(false, $googletoken); // will throw exception if fails
             google_docs::set_sesskey($gauth->get_sessiontoken(), $USER->id);
         }
+        $this->check_login();
     }
 
     public function check_login() {
