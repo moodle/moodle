@@ -4295,6 +4295,10 @@ body#mod-forum-search .introcontent {
   text-align: left;
 }
 
+body.jsenabled .jshidewhenenabled {
+  display:none;
+}
+
 /***
  *** Modules: Quiz
  ***/

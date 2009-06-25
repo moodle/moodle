@@ -1765,25 +1765,21 @@ function lesson_print_mediafile_block($cmid, $lesson) {
  * @return void
  **/
 function lesson_print_clock_block($cmid, $lesson, $timer) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
     // Display for timed lessons and for students only
     if($lesson->timed and !has_capability('mod/lesson:manage', $context) and !empty($timer)) {
-        $content  = '<script type="text/javascript" charset="utf-8">'."\n";
-        $content .= "<!--\n";
-        $content .= '    var starttime  = '.$timer->starttime.";\n";
-        $content .= '    var servertime = '.time().";\n";
-        $content .= '    var testlength = '.($lesson->maxtime * 60).";\n";
-        $content .= '    document.write(\'<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/lesson/timer.js" charset="utf-8"><\/script>\');'."\n";
-        $content .= "    window.onload = function () { show_clock(); };\n";
-        $content .= "// -->\n";
-        $content .= "</script>\n";
-        $content .= "<noscript>\n";
+
+        $clocksettings = Array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
+        $content = $PAGE->requires->data_for_js('clocksettings', $clocksettings)->asap();
+        $content .= $PAGE->requires->js('mod/lesson/timer.js')->asap();
+        $content .= $PAGE->requires->js_function_call('show_clock')->asap();
+        $content .= '<div class="jshidewhenenabled">';
         $content .= lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."\n";
-        $content .= "</noscript>\n";
-    
+        $content .= '</div>';
+
         print_side_block(get_string('timeremaining', 'lesson'), $content, NULL, NULL, '', array('class' => 'clock'), get_string('timeremaining', 'lesson'));
     }
 }
