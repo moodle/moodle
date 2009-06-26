@@ -103,7 +103,7 @@ if (!empty($tests)) {
 }
 
 // Print the form for adjusting options.
-print_simple_box_start('center', '70%');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="post" action="dbtest.php">';
 echo '<div>';
 print_heading("Run functional database tests"); // TODO: localise
@@ -137,7 +137,7 @@ where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname,
 echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
 echo '</div>';
 echo '</form>';
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 // Footer.
 admin_externalpage_print_footer();

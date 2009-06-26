@@ -100,7 +100,7 @@ if (!is_null($path)) {
     $formheader = get_string('rununittests', $langfile);
 }
 // Print the form for adjusting options.
-print_box_start('generalbox boxwidthwide boxaligncenter');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 print_heading($formheader);
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
@@ -118,9 +118,9 @@ echo '</p>';
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';
-print_box_end();
+echo $OUTPUT->box_end();
 
-print_box_start('generalbox boxwidthwide boxaligncenter');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 if (true) {
     echo "<p>Fake test tables are disabled for now, sorry</p>"; // DO NOT LOCALISE!!! to be removed soon
 
@@ -128,7 +128,7 @@ if (true) {
     print_heading(get_string('testdboperations', 'simpletest'));
     // TODO: localise
     echo '<p>Please add $CFG->unittestprefix="tst_"; or some other unique test table prefix if you want to execute all tests';
-    
+
 } else {
     print_heading(get_string('testdboperations', 'simpletest'));
     echo '<p>'.get_string('unittestprefixsetting', 'simpletest', $CFG).'</p>';
@@ -140,7 +140,7 @@ if (true) {
     echo '</fieldset>';
     echo '</form>';
 }
-print_box_end();
+echo $OUTPUT->box_end();
 
 
 // Footer.
