@@ -9,35 +9,16 @@
         if (confirm_sesskey()) {
             set_user_preference('resource_localpath', $pathname);
         }
-        ?>
-        <script type="text/javascript">
-        //<![CDATA[
-        window.close();
-        //]]>
-        </script>
-        <?php
+        echo $PAGE->requires->js_function_call('window.close')->asap();
         exit;
     }
 
     print_header(get_string('localfilechoose', 'resource'));
 
     print_simple_box(get_string('localfilepath', 'resource', $CFG->wwwroot.'/user/edit.php?course='.SITEID), 'center');
+    $PAGE->requires->js('mod/resource/type/file/file.js');
 
     ?>
-    <script type="text/javascript">
-    //<![CDATA[
-    function set_value(txt) {
-        if (txt.indexOf('/') > -1) {
-            txt = txt.substring(0,txt.lastIndexOf('/'));
-        } else if (txt.indexOf('\\') > -1) {
-            txt = txt.substring(0,txt.lastIndexOf('\\'));
-        }
-        getElementById('myform').pathname.value = txt;
-        getElementById('myform').submit();
-    }
-    //]]>
-    </script>
-    
     <br />
     <div class="mdl-align form">
     <form id="myform" action="localpath.php" method="post">
@@ -46,7 +27,7 @@
     <input type="hidden" name="pathname" value="" />
     <input type="file" size="60" name="myfile" /><br />
     <input type="button" value="<?php print_string('localfileselect','resource') ?>" 
-           onClick="return set_value(getElementById('myform').myfile.value)">
+           onClick="return local_path_set_value(document.getElementById('myform').myfile.value)">
     <input type="button" value="<?php print_string('cancel') ?>" 
            onClick="window.close()">
     </fieldset>

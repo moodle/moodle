@@ -357,11 +357,7 @@ class resource_file extends resource_base {
             print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
-            echo "\n<script type=\"text/javascript\">";
-            echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
-            echo "\n-->\n";
-            echo '</script>';
+            $PAGE->requires->js_function_call('openpopup', Array("/mod/resource/view.php?inpopup=true&id={$cm->id}","resource{$resource->id}",$resource->popup));
 
             if (trim(strip_tags($resource->intro))) {
                 print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
@@ -415,39 +411,21 @@ class resource_file extends resource_base {
                             alt : <a href="' . $fullurl . '">' . $fullurl . '</a>
                           </object></p>';
                 }
-            ///add some javascript in order to fit this object tag into the browser window
-                echo '<script type="text/javascript">
-                         //<![CDATA[
-                         function resizeEmbeddedHtml() {
-                             //calculate new embedded html height size
-                        ';
+
                 if (!empty($resource->intro)) {
-                    echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 230;
-                        ';
+                    $viewportheight = 230;
+                } else {
+                    $viewportheight = 120;
                 }
-                else {
-                    echo'    objectheight =  YAHOO.util.Dom.getViewportHeight() - 120;
-                        ';
-                }
-                echo '       //the object tag cannot be smaller than a human readable size
-                             if (objectheight < 200) {
-                                 objectheight = 200;
-                             }
-                             //resize the embedded html object
-                             YAHOO.util.Dom.setStyle("embeddedhtml", "height", objectheight+"px");
-                             YAHOO.util.Dom.setStyle("embeddedhtml", "width", "100%");
-                         }
-                         resizeEmbeddedHtml();
-                         YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
-                         //]]>
-                      </script>
-                ';
+                ///add some javascript in order to fit this object tag into the browser window
+                $PAGE->requires->js('mod/resource/type/file/file.js');
+                $PAGE->requires->js_function_call('file_resource_init', Array($viewportheight));
 
             ///print the intro
                 if (!empty($resource->intro)) {
                     print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
                 }
-                echo "</body></html>";
+                print_footer();
                 exit;
             } else {
             /// display the resource into a frame tag
@@ -522,7 +500,6 @@ class resource_file extends resource_base {
                          'font=Arial&fontColour=FF33FF&buffer=10&waitForPlay=no&autoPlay=yes';
                 }
                 $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
-                $c = htmlentities($c);
                 $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
                 $cleanurl = addslashes_js($fullurl);
 
@@ -531,14 +508,18 @@ class resource_file extends resource_base {
 
                 echo '<div class="resourcecontent resourcemp3">';
 
-                echo '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'"></span>'.
-                     '<script type="text/javascript">'."\n".
-                     '//<![CDATA['."\n".
-                       'var FO = { movie:"'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$cleanurl.'",'."\n".
-                         'width:"600", height:"70", majorversion:"6", build:"40", flashvars:"'.$c.'", quality: "high" };'."\n".
-                       'UFO.create(FO, "'.$id.'");'."\n".
-                     '//]]>'."\n".
-                     '</script>'."\n";
+                echo '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'"></span>';
+                $args = Array();
+                $args['movie'] = $CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$cleanurl;
+                $args['width'] = 600;
+                $args['height'] = 70;
+                $args['majorversion'] = 6;
+                $args['build'] = 40;
+                $args['flashvars'] = $c;
+                $args['quality'] = 'high';
+                echo $PAGE->requires->js('mod/resource/type/file/file.js')->asap();
+                echo $PAGE->requires->data_for_js('FO', $args)->asap();
+                echo $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
                 echo '<noscript>';
 
@@ -562,14 +543,19 @@ class resource_file extends resource_base {
 
                 echo '<div class="resourcecontent resourceflv">';
 
-                echo '<span class="mediaplugin mediaplugin_flv" id="'.$id.'"></span>'.
-                     '<script type="text/javascript">'."\n".
-                     '//<![CDATA['."\n".
-                       'var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$cleanurl.'",'."\n".
-                         'width:"600", height:"400", majorversion:"6", build:"40", allowscriptaccess:"never", allowfullscreen:"true", quality: "high" };'."\n".
-                       'UFO.create(FO, "'.$id.'");'."\n".
-                     '//]]>'."\n".
-                     '</script>'."\n";
+                echo '<span class="mediaplugin mediaplugin_flv" id="'.$id.'"></span>';
+                $args = Array();
+                $args['movie'] = $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$cleanurl;
+                $args['width'] = 600;
+                $args['height'] = 400;
+                $args['majorversion'] = 6;
+                $args['build'] = 40;
+                $args['allowscriptaccess'] = 'never';
+                $args['allowfullscreen'] = 'true';
+                $args['quality'] = 'high';
+                echo $PAGE->requires->js('mod/resource/type/file/file.js')->asap();
+                echo $PAGE->requires->data_for_js('FO', $args)->asap();
+                echo $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
                 echo '<noscript>';
 
