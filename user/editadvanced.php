@@ -65,6 +65,8 @@
         die;
     }
 
+    $PAGE->requires->yui_lib('event')->in_head();
+
     //load user preferences
     useredit_load_preferences($user);
 
