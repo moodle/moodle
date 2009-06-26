@@ -61,6 +61,8 @@ class testable_string_manager extends string_manager {
 }
 
 class string_manager_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/moodlelib.php');
     protected $originallang;
     protected $workspace = 'temp/get_string_fixtures'; // Path inside $CFG->dataroot where we work.
     protected $basedir;

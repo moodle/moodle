@@ -39,6 +39,7 @@ require_once($CFG->libdir . '/blocklib.php');
 
 /** Test-specific subclass to make some protected things public. */
 class testable_block_manager extends block_manager {
+
     public function mark_loaded() {
         $this->birecordsbyregion = array();
     }
@@ -58,6 +59,7 @@ class block_ablocktype extends block_base {
  * Test functions that don't need to touch the database.
  */
 class moodle_block_manager_test extends UnitTestCase {
+    public  static $includecoverage = array('lib/pagelib.php', 'lib/blocklib.php');
     protected $testpage;
     protected $blockmanager;
 

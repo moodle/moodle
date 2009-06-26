@@ -14,6 +14,8 @@ require_once($CFG->libdir . '/mathslib.php');
  */
 class mathsslib_test extends UnitTestCase {
 
+    public static $includecoverage = array('lib/mathslib.php');
+
     /**
      * Tests the basic formula evaluation
      */

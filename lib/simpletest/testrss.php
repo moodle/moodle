@@ -14,6 +14,7 @@ require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
 class moodlesimplepie_test extends UnitTestCase {
 
+    public static $includecoverage = array('lib/simplepie/moodle_simplepie.php');
     var $testurl = 'http://download.moodle.org/unittest/rsstest.xml';
 
     function test_getfeed(){

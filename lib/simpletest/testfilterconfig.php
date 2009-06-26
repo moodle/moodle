@@ -42,6 +42,7 @@ require_once($CFG->libdir . '/filterlib.php');
  */
 class filter_active_global_test extends UnitTestCaseUsingDatabase {
     private $syscontextid;
+    public static $includecoverage = array('lib/filterlib.php');
 
     public function setUp() {
         parent::setUp();

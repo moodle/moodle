@@ -43,7 +43,7 @@ require_once($CFG->libdir . '/moodlelib.php');
 
 class moodlelib_test extends UnitTestCase {
 
-    public  static $includecoverage = array('lib/moodlelib.php');
+    public static $includecoverage = array('lib/moodlelib.php');
 
     var $user_agents = array(
             'MSIE' => array(

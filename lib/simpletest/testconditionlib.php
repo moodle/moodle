@@ -6,6 +6,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/lib/conditionlib.php');
 
 class conditionlib_test extends FakeDBUnitTestCase {
+    public static $includecoverage = array('lib/conditionlib.php');
     var $oldcfg;
 
     public function setUp() {

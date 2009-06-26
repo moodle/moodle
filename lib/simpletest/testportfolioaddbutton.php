@@ -39,6 +39,8 @@ require_once($CFG->libdir . '/portfoliolib.php');
 
 class portfoliolibaddbutton_test extends FakeDBUnitTestCase {
 
+    public static $includecoverage = array('lib/portfoliolib.php');
+
     function test_set_formats() {
 
         $button = new portfolio_add_button();

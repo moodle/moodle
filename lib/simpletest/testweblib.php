@@ -14,6 +14,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 class web_test extends UnitTestCase {
 
+    public static $includecoverage = array('lib/weblib.php');
+
     function setUp() {
     }
 

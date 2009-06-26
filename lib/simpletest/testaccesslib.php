@@ -13,6 +13,9 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 class accesslib_test extends UnitTestCaseUsingDatabase {
+
+    public static $includecoverage = array('lib/accesslib.php');
+
     function test_get_parent_contexts() {
         $context = get_context_instance(CONTEXT_SYSTEM);
         $this->assertEqual(get_parent_contexts($context), array());

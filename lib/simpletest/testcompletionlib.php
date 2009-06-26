@@ -88,6 +88,8 @@ class TimeModifiedExpectation extends SimpleExpectation {
 }
 
 class completionlib_test extends FakeDBUnitTestCase {
+
+    public static $includecoverage = array('lib/completionlib.php');
     var $realdb,$realcfg,$realsession,$realuser;
 
     function setUp() {        

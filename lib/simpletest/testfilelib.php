@@ -43,6 +43,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
     protected $coursecat;
     protected $user;
     protected $module;
+    public static $includecoverage = array('lib/filelib.php');
 
     /**
      * Setup the DB fixture data

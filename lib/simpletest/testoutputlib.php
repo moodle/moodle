@@ -96,6 +96,9 @@ class moodle_test_renderer extends moodle_core_renderer {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer_factory_base_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputlib.php');
+
     public function test_get_calls_create() {
         // Set up.
         $factory = new testable_renderer_factory();

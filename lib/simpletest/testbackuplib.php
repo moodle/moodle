@@ -39,6 +39,8 @@ require_once($CFG->dirroot . '/backup/backuplib.php');
 
 class backuplib_test extends UnitTestCase {
 
+    public  static $includecoverage = array('backup/backuplib.php');
+
 }
 
 ?>

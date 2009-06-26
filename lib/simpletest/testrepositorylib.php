@@ -48,6 +48,8 @@ foreach ($repository_plugins as $plugin) {
 
 class repositorylib_test extends FakeDBUnitTestCase {
 
+    public static $includecoverage = array('repository/lib.php');
+
     function setup() {
         parent::setup();
     }

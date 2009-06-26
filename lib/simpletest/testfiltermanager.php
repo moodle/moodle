@@ -38,6 +38,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/filterlib.php');
 
 class testable_filter_manager extends filter_manager {
+
     public function __construct() {
         parent::__construct();
     }
@@ -53,6 +54,7 @@ class testable_filter_manager extends filter_manager {
  * Test functions that affect filter_active table with contextid = $syscontextid.
  */
 class filter_manager_test extends UnitTestCase {
+    public static $includecoverage = array('lib/filterlib.php');
     protected $filtermanager;
     protected $olddirroot;
 

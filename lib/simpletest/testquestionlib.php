@@ -38,6 +38,9 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/questionlib.php');
 
 class questionlib_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/questionlib.php');
+
     function test_question_sort_qtype_array() {
         $config = new stdClass();
         $config->multichoice_sortorder = '1';

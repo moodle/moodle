@@ -56,6 +56,7 @@ class testable_moodle_page extends moodle_page {
 class moodle_page_test extends UnitTestCase {
     protected $testpage;
     protected $originalcourse;
+    public static $includecoverage = array('lib/pagelib.php', 'lib/blocklib.php');
 
     public function setUp() {
         global $COURSE;
