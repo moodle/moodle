@@ -832,6 +832,9 @@ body#grade-index .grades .header {
   font-size: 0.9em;
 }
 
+.tag_cloud .s0 {
+  font-size: 0.8em;
+}
 
 /***
  *** User
