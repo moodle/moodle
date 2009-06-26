@@ -16,3 +16,11 @@ function forum_produce_tracking_link(forumid, ltext, ltitle) {
         subs_link.innerHTML = "<a title="+ltitle+" href='"+moodle_cfg.wwwroot+"/mod/forum/settracking.php?id="+forumid+"'>"+ltext+"<\/a>";
     }
 }
+
+function lockoptions_timetoitems() {
+    lockoptions('searchform','timefromrestrict', timefromitems);
+}
+
+function lockoptions_timefromitems() {
+    lockoptions('searchform','timetorestrict', timetoitems);
+}

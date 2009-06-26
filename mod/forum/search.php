@@ -351,10 +351,8 @@ function forum_print_big_search_form($course) {
     echo '</table>';
     echo '</form>';
 
-    echo "<script type=\"text/javascript\">";
-    echo "lockoptions('searchform','timefromrestrict', timefromitems);";
-    echo "lockoptions('searchform','timetorestrict', timetoitems);";
-    echo "</script>\n";
+    echo $PAGE->requires->js_function_call('lockoptions_timetoitems')->asap();
+    echo $PAGE->requires->js_function_call('lockoptions_timefromitems')->asap();
 
     print_simple_box_end();
 }
