@@ -12,7 +12,7 @@
 /** */
 require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/simpletestlib.php');
+require_once($CFG->libdir.'/simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
@@ -22,9 +22,10 @@ error_reporting($CFG->debug);
 raise_memory_limit('256M');
 
 // page parameters
-$path                    = optional_param('path', null, PARAM_PATH);
-$showpasses              = optional_param('showpasses', false, PARAM_BOOL);
-$showsearch              = optional_param('showsearch', false, PARAM_BOOL);
+$path         = optional_param('path', null, PARAM_PATH);
+$showpasses   = optional_param('showpasses', false, PARAM_BOOL);
+$codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
+$showsearch   = optional_param('showsearch', false, PARAM_BOOL);
 
 admin_externalpage_setup('reportsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
 
@@ -46,7 +47,7 @@ if (!is_null($path)) {
     unset($origxmlstrictheaders);
 
     // Create the group of tests.
-    $test = new AutoGroupTest($showsearch);
+    $test = new autogroup_test_coverage($showsearch, true, $codecoverage, 'Moodle Unit Tests Code Coverage Report', 'unittest');
 
     // OU specific. We use the _nonproject folder for stuff we want to
     // keep in CVS, but which is not really relevant. It does no harm
@@ -88,6 +89,7 @@ if (!is_null($path)) {
             $title = get_string('moodleunittests', $langfile, $displaypath);
         }
         print_heading($title);
+        set_time_limit(300); // 5 mins
         $test->run($reporter);
     }
 
@@ -104,6 +106,11 @@ echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
+if (moodle_coverage_recorder::can_run_codecoverage()) {
+    echo '<p>'; print_checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')); echo '</p>';
+} else {
+    echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
+}
 echo '<p>';
     echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';

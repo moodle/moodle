@@ -7,12 +7,13 @@
 /** */
 require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/simpletestlib.php');
+require_once($CFG->libdir.'/simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-$showpasses = optional_param('showpasses', 0, PARAM_BOOL);
-$selected   = optional_param('selected', array(), PARAM_INT);
+$showpasses   = optional_param('showpasses', false, PARAM_BOOL);
+$codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
+$selected     = optional_param('selected', array(), PARAM_INT);
 
 // Print the header and check access.
 admin_externalpage_setup('reportdbtest');
@@ -67,6 +68,9 @@ if (!empty($tests)) {
     @ob_implicit_flush(true);
     while(@ob_end_flush());
 
+    $covreporter = new moodle_coverage_reporter('Functional DB Tests Code Coverage Report', 'dbtest');
+    $covrecorder = new moodle_coverage_recorder($covreporter);
+
     foreach ($tests as $i=>$database) {
         $dbinfo = $dbinfos[$i];
 
@@ -75,7 +79,8 @@ if (!empty($tests)) {
         print_heading('Running tests on: '.$dbinfo['name'], '', 3); // TODO: localise
 
         // Create the group of tests.
-        $test = new AutoGroupTest(false, true);
+        $test = new autogroup_test_coverage(false, true, $codecoverage);
+
 
         $test->addTestFile($CFG->libdir.'/dml/simpletest/testdml.php');
         $test->addTestFile($CFG->libdir.'/ddl/simpletest/testddl.php');
@@ -83,12 +88,16 @@ if (!empty($tests)) {
         // Make the reporter, which is what displays the results.
         $reporter = new ExHtmlReporter($showpasses);
 
-        set_time_limit(300);
-        $test->run($reporter);
+        set_time_limit(300); // 5 mins per DB should be enough
+        $test->run_with_external_coverage($reporter, $covrecorder);
 
         unset($UNITTEST->func_test_db);
 
         echo '<hr />';
+    }
+    if ($codecoverage) {
+        $covrecorder->generate_report();
+        moodle_coverage_reporter::print_summary_info('dbtest');
     }
 
 }
@@ -99,6 +108,11 @@ echo '<form method="post" action="dbtest.php">';
 echo '<div>';
 print_heading("Run functional database tests"); // TODO: localise
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')); echo '</p>';
+if (moodle_coverage_recorder::can_run_codecoverage()) {
+    echo '<p>'; print_checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')); echo '</p>';
+} else {
+    echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
+}
 echo '<p><strong>'."Databases:".'</strong>';
 echo '<ul>';
 foreach ($dbinfos as $i=>$dbinfo) {
