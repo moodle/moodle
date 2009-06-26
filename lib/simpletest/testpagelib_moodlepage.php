@@ -169,9 +169,6 @@ class moodle_page_test extends UnitTestCase {
         $this->testpage->set_state(moodle_page::STATE_IN_BODY);
         $this->assertEqual(moodle_page::STATE_IN_BODY, $this->testpage->state);
 
-        $this->testpage->set_state(moodle_page::STATE_PRINTING_FOOTER);
-        $this->assertEqual(moodle_page::STATE_PRINTING_FOOTER, $this->testpage->state);
-
         $this->testpage->set_state(moodle_page::STATE_DONE);
         $this->assertEqual(moodle_page::STATE_DONE, $this->testpage->state);
     }
