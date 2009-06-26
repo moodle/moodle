@@ -57,54 +57,18 @@
         print_error('errornousers', 'chat');
     }
 
-    ob_start();
-    ?>
-    <script type="text/javascript">
-    //<![CDATA[
-    var timer = null
-    var f = 1; //seconds
-    var uidles = new Array(<?php echo count($chatusers) ?>);
-    <?php
-        $i = 0;
-        foreach ($chatusers as $chatuser) {
-            echo "uidles[$i] = 'uidle{$chatuser->id}';\n";
-            $i++;
-        }
-    ?>
-
-    function stop() {
-        clearTimeout(timer)
+    $uidles = Array();
+    $i = 0;
+    foreach ($chatusers as $chatuser) {
+        $uidles[$i] = 'uidle{$chatuser->id}';
+        $i++;
     }
-
-    function start() {
-        timer = setTimeout("update()", f*1000);
-    }
-
-    function update() {
-        for(i=0; i<uidles.length; i++) {
-            el = document.getElementById(uidles[i]);
-            if (el != null) {
-                parts = el.innerHTML.split(":");
-                time = f + (parseInt(parts[0], 10)*60) + parseInt(parts[1], 10);
-                min = Math.floor(time/60);
-                sec = time % 60;
-                el.innerHTML = ((min < 10) ? "0" : "") + min + ":" + ((sec < 10) ? "0" : "") + sec;
-            }
-        }
-        timer = setTimeout("update()", f*1000);
-    }
-    //]]>
-    </script>
-    <?php
-
-
-    /// Print headers
-    $meta = ob_get_clean();
-
+    $PAGE->requires->data_for_js('uidles', $uidles)->in_head();
+    $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
 
     // Use ob to support Keep-Alive
     ob_start();
-    print_header('', '', '', '', $meta, false, '', '', false, 'onload="start()" onunload="stop()"');
+    print_header('', '', '', '', '', false, '', '', false, 'onload="start()" onunload="stop()"');
 
 
     /// Print user panel body

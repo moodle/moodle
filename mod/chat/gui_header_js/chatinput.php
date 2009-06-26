@@ -31,7 +31,7 @@
 
     //Setup course, lang and theme
     $PAGE->set_course($course);
-    $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js');
+    $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
 
     print_header('', '', '', 'input_chat_message', '', false);
 
