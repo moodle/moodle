@@ -28,10 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// TODO: implement safe and simple file server to dataroot/coverage
-/// TODO: serialize summary in reporter (to render it inline)
 /// TODO: provide one helper function to show links from test page to coverage report
-/// TODO: use dirroot-based names/links in the report
+/// TODO: add missing lang strings
 
 /**
  * Includes
@@ -141,6 +139,7 @@ class autogroup_test_coverage extends AutoGroupTest {
             parent::run($simpletestreporter);
             $covrecorder->stop_instrumentation();
             $covrecorder->generate_report();
+            moodle_coverage_reporter::print_summary_info(basename($this->coveragedir));
         } else {
             // Testing without coverage
             parent::run($simpletestreporter);
@@ -386,6 +385,91 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
         $this->grandTotalLines += $coverageCounts['total'];
         $this->grandTotalCoveredLines += $coverageCounts['covered'];
         $this->grandTotalUncoveredLines += $coverageCounts['uncovered'];
+    }
+
+    /**
+     * Generate the static report
+     *
+     * Overrided to generate the serialised object to be displayed inline
+     * with the test results.
+     *
+     * @param &$data  Reference to Coverage Data
+     */
+    public function generateReport(&$data) {
+        parent::generateReport($data);
+
+        // head data
+        $data = new object();
+        $data->time   = time();
+        $data->title  = $this->heading;
+        $data->output = $this->outputDir;
+
+        // summary data
+        $data->totalfiles       = $this->grandTotalFiles;
+        $data->totalln          = $this->grandTotalLines;
+        $data->totalcoveredln   = $this->grandTotalCoveredLines;
+        $data->totaluncoveredln = $this->grandTotalUncoveredLines;
+        $data->totalpercentage  = $this->getGrandCodeCoveragePercentage();
+
+        // file details data
+        $data->coveragedetails = $this->fileCoverage;
+
+        // save serialised object
+        file_put_contents($data->output . '/codecoverage.ser', serialize($data));
+    }
+
+    /**
+     * Return the html contents for the summary for the last execution of the
+     * given test type
+     *
+     * @param string $type of the test to return last execution summary (dbtest|unittest)
+     * @return string html contents of the summary
+     */
+    static public function get_summary_info($type) {
+        global $CFG;
+
+        $serfilepath = $CFG->dataroot . '/codecoverage/' . $type . '/codecoverage.ser';
+        if (file_exists($serfilepath) && is_readable($serfilepath)) {
+            if ($data = unserialize(file_get_contents($serfilepath))) {
+                // return one table with all the totals (we avoid individual file results here)
+                $result = '';
+                $table = new object();
+                $table->align = array('right', 'left');
+                $table->tablealign = 'center';
+                $table->class = 'codecoveragetable';
+                $table->id = 'codecoveragetable_' . $type;
+                $table->rowclass = array('label', 'value');
+                $table->data = array(
+                        array(get_string('date')                           , userdate($data->time)),
+                        array(get_string('files')                          , format_float($data->totalfiles, 0)),
+                        array(get_string('totallines', 'simpletest')       , format_float($data->totalfiles, 0)),
+                        array(get_string('executablelines', 'simpletest')  , format_float($data->totalcoveredln + $data->totaluncoveredln, 0)),
+                        array(get_string('coveredlines', 'simpletest')     , format_float($data->totalcoveredln, 0)),
+                        array(get_string('uncoveredlines', 'simpletest')   , format_float($data->totaluncoveredln, 0)),
+                        array(get_string('coveredpercentage', 'simpletest'), format_float($data->totalpercentage, 2) . '%')
+                );
+
+                $result .= print_heading($data->title, 'center', 3, 'main codecoverageheading', true);
+                $result .= print_heading('<a href="' . $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html"' .
+                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>',
+                                   'center', 4, 'main codecoveragelink', true);
+                $result .= print_table($table, true);
+
+                return print_simple_box($result, 'center', '70%', '', 5, 'generalbox codecoveragebox', '', true);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Print the html contents for the summary for the last execution of the
+     * given test type
+     *
+     * @param string $type of the test to return last execution summary (dbtest|unittest)
+     * @return string html contents of the summary
+     */
+    static public function print_summary_info($type) {
+        echo self::get_summary_info($type);
     }
 }
 
