@@ -442,7 +442,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $table->data = array(
                         array(get_string('date')                           , userdate($data->time)),
                         array(get_string('files')                          , format_float($data->totalfiles, 0)),
-                        array(get_string('totallines', 'simpletest')       , format_float($data->totallines, 0)),
+                        array(get_string('totallines', 'simpletest')       , format_float($data->totalln, 0)),
                         array(get_string('executablelines', 'simpletest')  , format_float($data->totalcoveredln + $data->totaluncoveredln, 0)),
                         array(get_string('coveredlines', 'simpletest')     , format_float($data->totalcoveredln, 0)),
                         array(get_string('uncoveredlines', 'simpletest')   , format_float($data->totaluncoveredln, 0)),
