@@ -29,7 +29,6 @@
  */
 
 /// TODO: provide one helper function to show links from test page to coverage report
-/// TODO: add missing lang strings
 
 /**
  * Includes
@@ -449,9 +448,10 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                         array(get_string('coveredpercentage', 'simpletest'), format_float($data->totalpercentage, 2) . '%')
                 );
 
-                $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading', true);
-                $result .= $OUTPUT->heading('<a href="' . $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html"' .
-                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>', 4, 'main codecoveragelink', true);
+                $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
+                $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading');
+                $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
+                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>', 4, 'main codecoveragelink');
                 $result .= print_table($table, true);
 
                 return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
