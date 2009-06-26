@@ -153,7 +153,8 @@ if (!core_tables_exist()) {
 
     $strdatabasesetup = get_string('databasesetup');
     $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
-    print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
+    upgrade_get_javascript();
+    print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
 
     if (!$DB->setup_is_unicodedb()) {
         if (!$DB->change_db_encoding()) {

@@ -2072,7 +2072,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
 
     if ($meta) {
         throw new coding_exception('The $meta parameter to print_header is no longer supported. '.
-                'You should be able to do weverything you want with $PAGE->requires and other such mechanisms.');
+                'You should be able to do everything you want with $PAGE->requires and other such mechanisms.');
     }
     if ($usexml) {
         throw new coding_exception('The $usexml parameter to print_header is no longer supported.');

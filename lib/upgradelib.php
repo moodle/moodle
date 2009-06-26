@@ -751,9 +751,10 @@ function upgrade_started($preinstall=false) {
         if (!CLI_SCRIPT and !$PAGE->headerprinted) {
             $strupgrade  = get_string('upgradingversion', 'admin');
 
+            upgrade_get_javascript();
             print_header($strupgrade.' - Moodle '.$CFG->target_release, $strupgrade,
                 build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
-                upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
+                '', false, '&nbsp;', '&nbsp;');
         }
 
         ignore_user_abort(true);
@@ -895,8 +896,10 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
  * @global object
  */
 function upgrade_get_javascript() {
-    global $CFG;
-    return '<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/scroll_to_page_end.js"></script>';
+    global $PAGE;
+    $PAGE->requires->js('lib/javascript-static.js')->at_top_of_body();
+    $PAGE->requires->js_function_call('repeatedly_scroll_to_end')->at_top_of_body();
+    $PAGE->requires->js_function_call('cancel_scroll_to_end')->after_delay(1);
 }
 
 

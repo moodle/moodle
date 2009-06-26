@@ -54,9 +54,6 @@ die;die;die;
             }
     }
 
-    echo upgrade_get_javascript();
-
-
 /// return to original debugging level
 
     $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
