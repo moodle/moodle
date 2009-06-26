@@ -144,7 +144,7 @@ function upgrade_main_savepoint($result, $version, $allowabort=true) {
     global $CFG;
 
     if (!$result) {
-        throw new upgrade_exception('moodle core', $version);
+        throw new upgrade_exception(null, $version);
     }
 
     if ($CFG->version >= $version) {
@@ -180,7 +180,7 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
     global $DB;
 
     if (!$result) {
-        throw new upgrade_exception("mod/$modname", $version);
+        throw new upgrade_exception("mod_$modname", $version);
     }
 
     if (!$module = $DB->get_record('modules', array('name'=>$modname))) {
@@ -189,11 +189,11 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
 
     if ($module->version >= $version) {
         // something really wrong is going on in upgrade script
-        throw new downgrade_exception("mod/$modname", $module->version, $version);
+        throw new downgrade_exception("mod_$modname", $module->version, $version);
     }
     $module->version = $version;
     $DB->update_record('modules', $module);
-    upgrade_log(UPGRADE_LOG_NORMAL, "mod/$modname", 'Upgrade savepoint reached');
+    upgrade_log(UPGRADE_LOG_NORMAL, "mod_$modname", 'Upgrade savepoint reached');
 
     // reset upgrade timeout to default
     upgrade_set_timeout();
@@ -220,7 +220,7 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
     global $DB;
 
     if (!$result) {
-        throw new upgrade_exception("blocks/$blockname", $version);
+        throw new upgrade_exception("block_$blockname", $version);
     }
 
     if (!$block = $DB->get_record('block', array('name'=>$blockname))) {
@@ -229,11 +229,11 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
 
     if ($block->version >= $version) {
         // something really wrong is going on in upgrade script
-        throw new downgrade_exception("blocks/$blockname", $block->version, $version);
+        throw new downgrade_exception("block_$blockname", $block->version, $version);
     }
     $block->version = $version;
     $DB->update_record('block', $block);
-    upgrade_log(UPGRADE_LOG_NORMAL, "blocks/$blockname", 'Upgrade savepoint reached');
+    upgrade_log(UPGRADE_LOG_NORMAL, "block_$blockname", 'Upgrade savepoint reached');
 
     // reset upgrade timeout to default
     upgrade_set_timeout();
