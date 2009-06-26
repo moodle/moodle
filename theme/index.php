@@ -31,15 +31,15 @@
             print_heading(get_string("themesaved"));
 
             if (file_exists("$choose/README.html")) {
-                print_simple_box_start("center");
+                print_box_start();
                 readfile("$choose/README.html");
-                print_simple_box_end();
+                print_box_end();
 
             } else if (file_exists("$choose/README.txt")) {
-                print_simple_box_start("center");
+                print_box_start("center");
                 $file = file("$choose/README.txt");
                 echo format_text(implode('', $file), FORMAT_MOODLE);
-                print_simple_box_end();
+                print_box_end();
             }
             
             print_continue("$CFG->wwwroot/");
