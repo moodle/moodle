@@ -38,6 +38,7 @@ require_once($CFG->libdir . '/ajax/ajaxlib.php');
  */
 abstract class ajaxlib_unit_test_base extends UnitTestCase {
     protected $requires;
+    public  static $includecoverage = array('lib/ajax/ajaxlib.php');
 
     public function setUp() {
         parent::setUp();

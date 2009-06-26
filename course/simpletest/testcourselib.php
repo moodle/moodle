@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 
 class courselib_test extends UnitTestCase {
     var $realDB;
+    public  static $includecoverage = array('course/lib.php');
 
     function setUp() {
         global $DB;

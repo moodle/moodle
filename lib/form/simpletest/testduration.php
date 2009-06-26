@@ -38,6 +38,7 @@ require_once($CFG->libdir . '/form/duration.php');
  */
 class duration_form_element_test extends UnitTestCase {
     private $element;
+    public  static $includecoverage = array('lib/form/duration.php');
 
     function setUp() {
         $this->element = new MoodleQuickForm_duration();

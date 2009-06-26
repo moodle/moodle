@@ -44,6 +44,7 @@ class gradereportlib_test extends FakeDBUnitTestCase {
     var $courseid = 1;
     var $context = null;
     var $report = null;
+    public  static $includecoverage = array('grade/report/lib.php');
 
     function setUp() {
         $this->report = new grade_report($this->courseid, $this->context);

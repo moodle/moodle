@@ -53,6 +53,7 @@ class group_external_test extends UnitTestCase {
     var $categoryid;
     var $roleid;
     var $context;
+    public  static $includecoverage = array('user/lib.php');
 
     function setUp() {
         global $DB;
