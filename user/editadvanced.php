@@ -200,7 +200,7 @@
         $strprimaryadminsetup = get_string('primaryadminsetup');
         $navigation = build_navigation(array(array('name'=>$strprimaryadminsetup, 'link'=>null, 'type'=>'misc')));
         print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
-        print_simple_box(get_string('configintroadmin', 'admin'), 'center', '50%');
+        print_box(get_string('configintroadmin', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
         echo '<br />';
     } else {
         $streditmyprofile = get_string('editmyprofile');
