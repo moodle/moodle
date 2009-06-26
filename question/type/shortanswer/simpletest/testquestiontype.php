@@ -15,6 +15,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/question/type/questiontype.php');
 
 class question_shortanswer_qtype_test extends UnitTestCase {
+    public static $includecoverage = array('question/type/questiontype.php', 'question/type/shortanswer/questiontype.php');
     var $qtype;
 
     function setUp() {

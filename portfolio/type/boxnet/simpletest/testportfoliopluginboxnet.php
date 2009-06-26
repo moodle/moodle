@@ -7,6 +7,7 @@ Mock::generate('boxclient', 'mock_boxclient');
 Mock::generatePartial('portfolio_plugin_boxnet', 'mock_boxnetplugin', array('ensure_ticket', 'ensure_account_tree'));
 
 class testPortfolioPluginBoxnet extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/type/boxnet/lib.php');
     public function setUp() {
         global $DB;
 

@@ -15,6 +15,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 class question_numerical_qtype_test extends UnitTestCase {
+    public static $includecoverage = array('question/type/questiontype.php', 'question/type/numerical/questiontype.php');
     var $tolerance = 0.00000001;
     var $qtype;
 

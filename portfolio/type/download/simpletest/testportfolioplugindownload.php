@@ -7,6 +7,7 @@ Mock::generatePartial('portfolio_plugin_download', 'mock_downloadplugin', array(
 
 
 class testPortfolioPluginDownload extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/type/download/lib.php');
     public function setUp() {
         parent::setUp();
         $this->plugin = &new mock_boxnetplugin($this);
