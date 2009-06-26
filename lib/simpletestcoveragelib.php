@@ -28,8 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// TODO: provide one helper function to show links from test page to coverage report
-
 /**
  * Includes
  */
@@ -451,7 +449,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
                 $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading');
                 $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
-                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>', 4, 'main codecoveragelink');
+                                   ' title="">' . get_string('codecoveragecompletereport', 'simpletest') . '</a>', 4, 'main codecoveragelink');
                 $result .= print_table($table, true);
 
                 return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
@@ -469,6 +467,50 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
      */
     static public function print_summary_info($type) {
         echo self::get_summary_info($type);
+    }
+
+    /**
+     * Return the html code needed to browse latest code coverage complete report of the
+     * given test type
+     *
+     * @param string $type of the test to return last execution summary (dbtest|unittest)
+     * @return string html contents of the summary
+     */
+    static public function get_link_to_latest($type) {
+        global $CFG, $OUTPUT;
+
+        $serfilepath = $CFG->dataroot . '/codecoverage/' . $type . '/codecoverage.ser';
+        if (file_exists($serfilepath) && is_readable($serfilepath)) {
+            if ($data = unserialize(file_get_contents($serfilepath))) {
+                $info = new object();
+                $info->date       = userdate($data->time);
+                $info->files      = format_float($data->totalfiles, 0);
+                $info->percentage = format_float($data->totalpercentage, 2) . '%';
+
+                $strlatestreport  = get_string('codecoveragelatestreport', 'simpletest');
+                $strlatestdetails = get_string('codecoveragelatestdetails', 'simpletest', $info);
+
+                // return one link to latest complete report
+                $result = '';
+                $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
+                $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
+                    ' title="">' . $strlatestreport . '</a>', 3, 'main codecoveragelink');
+                $result .= $OUTPUT->heading('<p>' . $strlatestdetails . '</p>', 4, 'main codecoveragedetails');
+                return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Print the html code needed to browse latest code coverage complete report of the
+     * given test type
+     *
+     * @param string $type of the test to return last execution summary (dbtest|unittest)
+     * @return string html contents of the summary
+     */
+    static public function print_link_to_latest($type) {
+        echo self::get_link_to_latest($type);
     }
 }
 

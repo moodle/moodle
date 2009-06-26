@@ -142,6 +142,10 @@ if (true) {
 }
 echo $OUTPUT->box_end();
 
+// Print link to latest code coverage for this report type
+if (is_null($path) || !$codecoverage) {
+    moodle_coverage_reporter::print_link_to_latest('unittest');
+}
 
 // Footer.
 admin_externalpage_print_footer();

@@ -138,6 +138,11 @@ echo '</div>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
+// Print link to latest code coverage for this report type
+if (!data_submitted() || !$codecoverage) {
+    moodle_coverage_reporter::print_link_to_latest('dbtest');
+}
+
 // Footer.
 admin_externalpage_print_footer();
 
