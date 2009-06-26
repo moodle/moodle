@@ -426,7 +426,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
      * @return string html contents of the summary
      */
     static public function get_summary_info($type) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $serfilepath = $CFG->dataroot . '/codecoverage/' . $type . '/codecoverage.ser';
         if (file_exists($serfilepath) && is_readable($serfilepath)) {
@@ -449,13 +449,12 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                         array(get_string('coveredpercentage', 'simpletest'), format_float($data->totalpercentage, 2) . '%')
                 );
 
-                $result .= print_heading($data->title, 'center', 3, 'main codecoverageheading', true);
-                $result .= print_heading('<a href="' . $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html"' .
-                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>',
-                                   'center', 4, 'main codecoveragelink', true);
+                $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading', true);
+                $result .= $OUTPUT->heading('<a href="' . $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html"' .
+                                   ' title="">(' . get_string('codecoveragecompletereport', 'simpletest') . ')</a>', 4, 'main codecoveragelink', true);
                 $result .= print_table($table, true);
 
-                return print_simple_box($result, 'center', '70%', '', 5, 'generalbox codecoveragebox', '', true);
+                return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
             }
         }
         return false;
