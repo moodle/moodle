@@ -255,6 +255,6 @@
     }
 
 
-    print_footer(NULL, $course);
+    print_footer();
 
 ?>

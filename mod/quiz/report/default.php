@@ -21,7 +21,7 @@ class quiz_default_report {
         return true;
     }
 
-    function print_header_and_tabs($cm, $course, $quiz, $reportmode="overview", $meta=""){
+    function print_header_and_tabs($cm, $course, $quiz, $reportmode="overview") {
         global $CFG;
     /// Define some strings
         $strquizzes = get_string("modulenameplural", "quiz");
@@ -30,7 +30,7 @@ class quiz_default_report {
         $navigation = build_navigation('', $cm);
         
         print_header_simple(format_string($quiz->name), "", $navigation,
-                     '', $meta, true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+                     '', '', true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
     /// Print the tabs    
         $currenttab = 'reports';
         $mode = $reportmode;

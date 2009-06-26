@@ -441,9 +441,7 @@ $strupdatemodule = has_capability('moodle/course:manageactivities',
         get_string('modulename', 'quiz')) :
         "";
 $navigation = build_navigation($pagetitle, $cm);
-$localcss = '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.
-        '/lib/yui/container/assets/container.css" />';
-print_header_simple($pagetitle, '', $navigation, "", $localcss, true,
+print_header_simple($pagetitle, '', $navigation, '', '', true,
         $questionbankmanagement.$strupdatemodule);
 //TODO: these skip links really need to be right after the opening of the body element,
 // and preferably implemented in an <ul> element. See MDL-17730.

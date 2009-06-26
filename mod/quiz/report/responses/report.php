@@ -17,7 +17,7 @@ class quiz_responses_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE, $DB, $PAGE;
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -131,9 +131,10 @@ class quiz_responses_report extends quiz_default_report {
         $table->is_downloading($download, get_string('reportresponses','quiz_responses'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
+            
             // Only print headers if not asked to download data
-            $meta = '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/quiz/report/responses/styles.css" />'."\n";
-            $this->print_header_and_tabs($cm, $course, $quiz, "responses", $meta);
+            $PAGE->requires->css('mod/quiz/report/responses/styles.css');
+            $this->print_header_and_tabs($cm, $course, $quiz, 'responses', '');
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used

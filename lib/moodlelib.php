@@ -8483,36 +8483,62 @@ function moodle_request_shutdown() {
 }
 
 /**
- * If new messages are waiting for the current user, then return
- * Javascript code to create a popup window
- *
- * @global object
- * @global object
- * @return string Javascript code
+ * This function is called when output is started. This is a chance for Moodle core
+ * to check things like whether the messages popup should be shown.
+ */
+function output_starting_hook() {
+    global $CFG, $PAGE;
+
+    // If maintenance mode is on, change the page header.
+    if (!empty($CFG->maintenance_enabled)) {
+        $PAGE->set_button('<a href="' . $CFG->wwwroot . '/' . $CFG->admin .
+                '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
+                '</a> ' . $PAGE->button);
+
+        $title = $PAGE->title;
+        if ($title) {
+            $title .= ' - ';
+        }
+        $PAGE->set_title($title . get_string('maintenancemode', 'admin'));
+    }
+
+    // Show the messaging popup, if there are messages.
+    message_popup_window();
+}
+
+/**
+ * If new messages are waiting for the current user, then load the
+ * JavaScript required to pop up the messaging window.
  */
 function message_popup_window() {
     global $USER, $DB, $PAGE;
 
-    $popuplimit = 30;     // Minimum seconds between popups
-
-    if (!defined('MESSAGE_WINDOW')) {
-        if (isset($USER->id) and !isguestuser()) {
-            if (!isset($USER->message_lastpopup)) {
-                $USER->message_lastpopup = 0;
-            }
-            if ((time() - $USER->message_lastpopup) > $popuplimit) {  /// It's been long enough
-                if (get_user_preferences('message_showmessagewindow', 1) == 1) {
-                    if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
-                        $USER->message_lastpopup = time();
-                        $PAGE->requires->js_function_call('openpopup', array('/message/index.php', 'message',
-                                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0));
-                    }
-                }
-            }
-        }
+    if (defined('MESSAGE_WINDOW') || empty($CFG->messaging)) {
+        return;
     }
 
-    return '';
+    if (!isset($USER->id) || isguestuser()) {
+        return;
+    }
+
+    if (!isset($USER->message_lastpopup)) {
+        $USER->message_lastpopup = 0;
+    }
+
+    $popuplimit = 30;     // Minimum seconds between popups
+    if ((time() - $USER->message_lastpopup) <= $popuplimit) {  /// It's been long enough
+        return;
+    }
+
+    if (!get_user_preferences('message_showmessagewindow', 1)) {
+        return;
+    }
+
+    if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
+        $USER->message_lastpopup = time();
+        $PAGE->requires->js_function_call('openpopup', array('/message/index.php', 'message',
+                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0));
+    }
 }
 
 /**

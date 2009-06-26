@@ -96,15 +96,14 @@
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
+    $PAGE->set_generaltype('home');
     $pageblocks = blocks_setup($PAGE);
     $editing = $PAGE->user_is_editing();
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                             BLOCK_L_MAX_WIDTH);
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                             BLOCK_R_MAX_WIDTH);
-    print_header($SITE->fullname, $SITE->fullname, 'home', '',
-                 '<meta name="description" content="'. strip_tags(format_text($SITE->summary, FORMAT_HTML)) .'" />',
-                 true, '', user_login_string($SITE).$langmenu);
+    print_header($SITE->fullname, $SITE->fullname, 'home', '', '', true, '', user_login_string($SITE).$langmenu);
 
 ?>
 
@@ -277,5 +276,5 @@
 
 
 <?php
-    print_footer('home');     // Please do not modify this line
+    print_footer();
 ?>

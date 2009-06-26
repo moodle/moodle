@@ -94,11 +94,19 @@ global $PAGE;
 global $COURSE;
 
 /**
- * $THEME is a global that defines the site theme.
+ * $OUTPUT is an instance of moodle_core_renderer or one of its subclasses. Use
+ * it to generate HTML for output.
  *
- * Items found in the theme record:
- *  - $THEME->cellheading - Cell colors.
- *  - $THEME->cellheading2 - Alternate cell colors.
+ * $OUTPUT is initialised when the theme is setup. That normally happens during
+ * the call to require_login, or $PAGE->set_course.
+ *
+ * @global object $OUTPUT
+ * @name $OUTPUT
+ */
+global $OUTPUT;
+
+/**
+ * $THEME is a global that defines the current theme.
  *
  * @global object $THEME
  * @name THEME
@@ -222,7 +230,8 @@ global $SCRIPT;
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
     require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI
-    require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
+    require_once($CFG->libdir .'/weblib.php');          // Functions relating to HTTP and content
+    require_once($CFG->libdir .'/outputlib.php');       // Functions for generating output
     require_once($CFG->libdir .'/dmllib.php');          // Database access
     require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions
@@ -367,6 +376,10 @@ global $SCRIPT;
         $classname = 'moodle_page';
     }
     $PAGE = new $classname();
+
+/// Create an initial $OUTPUT. This will be changes later once we know the theme.
+    setup_bootstrat_output();
+
     unset($classname);
 
 /// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions

@@ -324,6 +324,32 @@ class moodle_page_test extends UnitTestCase {
         // Validate
         $this->assertEqual('somestring', $this->testpage->subpage);
     }
+
+    public function test_set_heading() {
+        // Exercise SUT
+        $this->testpage->set_heading('a heading');
+        // Validate
+        $this->assertEqual('a heading', $this->testpage->heading);
+    }
+
+    public function test_set_title() {
+        // Exercise SUT
+        $this->testpage->set_title('a title');
+        // Validate
+        $this->assertEqual('a title', $this->testpage->title);
+    }
+
+    public function test_default_generaltype() {
+        // Exercise SUT and Validate
+        $this->assertEqual('normal', $this->testpage->generaltype);
+    }
+
+    public function test_set_generaltype() {
+        // Exercise SUT
+        $this->testpage->set_generaltype('type');
+        // Validate
+        $this->assertEqual('type', $this->testpage->generaltype);
+    }
 }
 
 /**

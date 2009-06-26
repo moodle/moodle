@@ -130,7 +130,7 @@ if ($report->get_pref('enableajax')) {
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
-    print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
+    print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
     print_heading(get_string("notingroup"));
     print_footer($course);
     exit;

@@ -92,14 +92,13 @@
 
 
 /// RSS and CSS and JS meta
-    $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
-        $meta .= '<link rel="alternate" type="application/rss+xml" ';
-        $meta .= 'title ="'. format_string($course->shortname) .': %fullname%" href="'.$rsspath.'" />';
+        $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
+                $rsspath, 'application/rss+xml');
     }
     if ($data->csstemplate) {
-        $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
+        $PAGE->requires->css('mod/data/css.php?d='.$data->id);
     }
     if ($data->jstemplate) {
         $PAGE->requires->js('mod/data/js.php?d='.$data->id)->in_head();
@@ -111,7 +110,7 @@
 
     $navigation = build_navigation('', $cm);
     print_header_simple($data->name, '', $navigation,
-                        '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
+                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');
 
 /// Check to see if groups are being used here

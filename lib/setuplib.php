@@ -135,7 +135,7 @@ function default_exception_handler($ex) {
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
 
-    $earlyerror = !isset($CFG->theme) || !isset($CFG->stylesheets);
+    $earlyerror = empty($OUTPUT);
     foreach ($backtrace as $stackframe) {
         if (isset($stackframe['function']) && $stackframe['function'] == 'print_header') {
             $earlyerror = true;
@@ -157,11 +157,190 @@ function default_exception_handler($ex) {
         $debuginfo = null;
     }
 
+    list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
+
     if ($earlyerror) {
-        _print_early_error($errorcode, $module, $a, $backtrace, $debuginfo);
+        // Error found before setup.php finished
+        _print_early_error($message, $backtrace, $debuginfo);
     } else {
-        _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo);
+        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
     }
+
+    exit(1); // General error code
+}
+
+/**
+ * Abort execution, displaying an error message.
+ *
+ * @param string $errorcode The name of the language string containing the error message.
+ *      Normally this should be in the error.php lang file.
+ * @param string $module The language file to get the error message from.
+ * @param string $link The url where the user will be prompted to continue.
+ *      If no url is provided the user will be directed to the site index page.
+ * @param object $a Extra words and phrases that might be required in the error string
+ * @return void terminates script, does not return!
+ */
+function print_error($errorcode, $module = 'error', $link = '', $a = null) {
+    global $OUTPUT, $UNITTEST;
+
+    // Errors in unit test become exceptions, so you can unit test code that might call print_error().
+    if (!empty($UNITTEST->running)) {
+        throw new moodle_exception($errorcode, $module, $link, $a);
+    }
+
+    list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
+
+    if (empty($OUTPUT)) {
+        // Error found before setup.php finished
+        _print_early_error($message);
+    } else {
+        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
+    }
+
+    exit(1); // General error code
+}
+
+/**
+ * Private method used by print_error and default_exception_handler.
+ * @param $errorcode
+ * @param $module
+ * @param $link
+ * @param $a
+ * @return array
+ */
+function prepare_error_message($errorcode, $module, $link, $a) {
+    global $CFG, $DB, $SESSION;
+
+    if ($DB) {
+        // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
+        $DB->set_debug(0);
+    }
+
+    if (empty($module) || $module == 'moodle' || $module == 'core') {
+        $module = 'error';
+    }
+    $message = get_string($errorcode, $module, $a);
+    if ($module === 'error' and strpos($message, '[[') === 0) {
+        // Search in moodle file if error specified - needed for backwards compatibility
+        $message = get_string($errorcode, 'moodle', $a);
+    }
+    $message = clean_text($message);
+
+    if (!empty($CFG->errordocroot)) {
+        $errordocroot = $CFG->errordocroot;
+    } else if (!empty($CFG->docroot)) {
+        $errordocroot = $CFG->docroot;
+    } else {
+        $errordocroot = 'http://docs.moodle.org';
+    }
+    if ($module === 'error') {
+        $modulelink = 'moodle';
+    } else {
+        $modulelink = $module;
+    }
+    $moreinfourl = $errordocroot . '/en/error/' . $modulelink . '/' . $errorcode;
+
+    if (empty($link) && !defined('ADMIN_EXT_HEADER_PRINTED')) {
+        if (!empty($SESSION->fromurl)) {
+            $link = $SESSION->fromurl;
+            unset($SESSION->fromurl);
+        } else {
+            $link = $CFG->wwwroot .'/';
+        }
+    }
+
+    return array($message, $moreinfourl, $link);
+}
+
+/**
+ * Internal function used by print_error. Do not use this directly!!
+ *
+ * Displays a fatal error before the theme is fully initialised.
+ * For example errors that occur during lib/setup.php.
+ *
+ * @param string $message
+ * @param string $link
+ * @param array $backtrace
+ * @param string $debuginfo
+ */
+function _print_early_error($message, $backtrace = null, $debuginfo = null) {
+    // In the name of protocol correctness, monitoring and performance
+    // profiling, set the appropriate error headers for machine comsumption
+    if (isset($_SERVER['SERVER_PROTOCOL'])) {
+        // Avoid it with cron.php. Note that we assume it's HTTP/1.x
+        @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    }
+
+    // better disable any caching
+    @header('Content-Type: text/html; charset=utf-8');
+    @header('Cache-Control: no-store, no-cache, must-revalidate');
+    @header('Cache-Control: post-check=0, pre-check=0', false);
+    @header('Pragma: no-cache');
+    @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+    @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+
+    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ' . get_html_lang() . '>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>' . get_string('error') . '</title>
+</head><body>
+<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
+    border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
+    width: 80%; -moz-border-radius: 20px; padding: 15px">
+' . $message . '
+</div>';
+    if (debugging('', DEBUG_DEVELOPER)) {
+        if (!empty($debuginfo)) {
+            echo '<div class="notifytiny">' . $debuginfo . '</div>';
+        }
+        if (!empty($backtrace)) {
+            echo '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
+        }
+    }
+
+    echo '</body></html>';
+}
+
+/**
+ * Formats a backtrace ready for output.
+ *
+ * @param array $callers backtrace array, as returned by debug_backtrace().
+ * @param boolean $plaintext if false, generates HTML, if true generates plain text.
+ * @return string formatted backtrace, ready for output.
+ */
+function format_backtrace($callers, $plaintext = false) {
+    // do not use $CFG->dirroot because it might not be available in desctructors
+    $dirroot = dirname(dirname(__FILE__));
+ 
+    if (empty($callers)) {
+        return '';
+    }
+
+    $from = $plaintext ? '' : '<ul style="text-align: left">';
+    foreach ($callers as $caller) {
+        if (!isset($caller['line'])) {
+            $caller['line'] = '?'; // probably call_user_func()
+        }
+        if (!isset($caller['file'])) {
+            $caller['file'] = 'unknownfile'; // probably call_user_func()
+        }
+        $from .= $plaintext ? '* ' : '<li>';
+        $from .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
+        if (isset($caller['function'])) {
+            $from .= ': call to ';
+            if (isset($caller['class'])) {
+                $from .= $caller['class'] . $caller['type'];
+            }
+            $from .= $caller['function'] . '()';
+        } else if (isset($caller['exception'])) {
+            $from .= ': '.$caller['exception'].' thrown';
+        }
+        $from .= $plaintext ? "\n" : '</li>';
+    }
+    $from .= $plaintext ? '' : '</ul>';
+
+    return $from;
 }
 
 /**

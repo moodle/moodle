@@ -39,16 +39,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  *
+ * @property-read string $generaltype the general type of page this is. For example 'normal', 'popup', 'home'.
+ *      Allows the theme to display things differently, if it wishes to.
+ * @property-read string $title the title that should go in the <head> section of the HTML of this page.
+ * @property-read string $heading the main heading that should be displayed at the top of the <body>.
+ * @property-read string $cacheable defaults to true. Set to false to stop the page being cached at all.
  * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
- * @property-read xhtml_container_stack $opencontainers Tracks open XHTML tags. Helps us generate well-formed XML, even in the face of errors.
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
     const STATE_BEFORE_HEADER = 0;
     const STATE_PRINTING_HEADER = 1;
     const STATE_IN_BODY = 2;
-    const STATE_PRINTING_FOOTER = 3;
-    const STATE_DONE = 4;
+    const STATE_DONE = 3;
     /**#@-*/
 
 /// Field declarations =========================================================
@@ -89,7 +92,13 @@ class moodle_page {
 
     protected $_bodyclasses = array();
 
+    protected $_title = '';
+
+    protected $_heading = '';
+
     protected $_pagetype = null;
+
+    protected $_generaltype = 'normal';
 
     protected $_subpage = '';
 
@@ -99,6 +108,8 @@ class moodle_page {
 
     protected $_url = null;
 
+    protected $_alternateversions = array();
+
     protected $_blocks = null;
 
     protected $_requires = null;
@@ -107,7 +118,11 @@ class moodle_page {
 
     protected $_othereditingcaps = array();
 
-    protected $_opencontainers = null;
+    protected $_cacheable = true;
+
+    protected $_focuscontrol = '';
+
+    protected $_button = '';
 
     /**
      * This is simply to improve backwards compatability. If old code relies on
@@ -122,7 +137,7 @@ class moodle_page {
 /// methods, but instead use the $PAGE->x syntax.
 
     /**
-     * Please do not call this method directly, use the ->state syntax. @see __get().
+     * Please do not call this method directly, use the ->state syntax. {@link __get()}.
      * @return integer one of the STATE_... constants. You should not normally need
      * to use this in your code. It is indended for internal use by this class
      * and its friends like print_header, to check that everything is working as
@@ -133,7 +148,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->headerprinted syntax. @see __get().
+     * Please do not call this method directly, use the ->headerprinted syntax. {@link __get()}.
      * @return boolean has the header already been printed?
      */
     public function get_headerprinted() {
@@ -141,7 +156,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->course syntax. @see __get().
+     * Please do not call this method directly, use the ->course syntax. {@link __get()}.
      *
      * @global object
      * @return object the current course that we are inside - a row from the
@@ -157,7 +172,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->cm syntax. @see __get().
+     * Please do not call this method directly, use the ->cm syntax. {@link __get()}.
      * @return object the course_module that this page belongs to. Will be null
      * if this page is not within a module. This is a full cm object, as loaded
      * by get_coursemodule_from_id or get_coursemodule_from_instance,
@@ -168,7 +183,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->activityrecord syntax. @see __get().
+     * Please do not call this method directly, use the ->activityrecord syntax. {@link __get()}.
      * @return object the row from the activities own database table (for example
      * the forum or quiz table) that this page belongs to. Will be null
      * if this page is not within a module.
@@ -181,7 +196,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->activityname syntax. @see __get().
+     * Please do not call this method directly, use the ->activityname syntax. {@link __get()}.
      * @return string|null the The type of activity we are in, for example 'forum' or 'quiz'.
      * Will be null if this page is not within a module.
      */
@@ -193,7 +208,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->category syntax. @see __get().
+     * Please do not call this method directly, use the ->category syntax. {@link __get()}.
      * @return mixed the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
@@ -207,7 +222,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->categories syntax. @see __get().
+     * Please do not call this method directly, use the ->categories syntax. {@link __get()}.
      * @return array an array of all the categories the page course belongs to,
      * starting with the immediately containing category, and working out to
      * the top-level category. This may be the empty array if we are in the
@@ -219,7 +234,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->context syntax. @see __get().
+     * Please do not call this method directly, use the ->context syntax. {@link __get()}.
      * @return object the main context to which this page belongs.
      */
     public function get_context() {
@@ -230,7 +245,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->pagetype syntax. @see __get().
+     * Please do not call this method directly, use the ->pagetype syntax. {@link __get()}.
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'. Same as the id attribute on <body>.
      */
     public function get_pagetype() {
@@ -241,7 +256,16 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->subpage syntax. @see __get().
+     * Please do not call this method directly, use the ->generaltype syntax. {@link __get()}.
+     * @return string the general type of page this is. For example 'normal', 'popup', 'home'.
+     *      Allows the theme to display things differently, if it wishes to.
+     */
+    public function get_generaltype() {
+        return $this->_generaltype;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->subpage syntax. {@link __get()}.
      * @return string|null The subpage identifier, if any.
      */
     public function get_subpage() {
@@ -249,7 +273,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->bodyclasses syntax. @see __get().
+     * Please do not call this method directly, use the ->bodyclasses syntax. {@link __get()}.
      * @return string the class names to put on the body element in the HTML.
      */
     public function get_bodyclasses() {
@@ -257,7 +281,23 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->docspath syntax. @see __get().
+     * Please do not call this method directly, use the ->title syntax. {@link __get()}.
+     * @return string the title that should go in the <head> section of the HTML of this page.
+     */
+    public function get_title() {
+        return $this->_title;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->heading syntax. {@link __get()}.
+     * @return string the main heading that should be displayed at the top of the <body>.
+     */
+    public function get_heading() {
+        return $this->_heading;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->docspath syntax. {@link __get()}.
      * @return string the path to the Moodle docs for this page.
      */
     public function get_docspath() {
@@ -269,7 +309,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->url syntax. @see __get().
+     * Please do not call this method directly, use the ->url syntax. {@link __get()}.
      * @return moodle_url the clean URL required to load the current page. (You
      * should normally use this in preference to $ME or $FULLME.)
      */
@@ -283,7 +323,15 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->blocks syntax. @see __get().
+     * The list of alternate versions of this page.
+     * @return array mime type => object with ->url and ->title.
+     */
+    public function get_alternateversions() {
+        return $this->_alternateversions;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->blocks syntax. {@link __get()}.
      * @return blocks_manager the blocks manager object for this page.
      */
     public function get_blocks() {
@@ -300,7 +348,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->requires syntax. @see __get().
+     * Please do not call this method directly, use the ->requires syntax. {@link __get()}.
      * @return page_requirements_manager tracks the JavaScript, CSS files, etc. required by this page.
      */
     public function get_requires() {
@@ -312,15 +360,27 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->opencontainers syntax. @see __get().
-     * @return xhtml_container_stack Tracks the open XHTML tags on this page.
+     * Please do not call this method directly, use the ->cacheable syntax. {@link __get()}.
+     * @return boolean can this page be cached by the user's browser.
      */
-    public function get_opencontainers() {
-        global $CFG;
-        if (is_null($this->_opencontainers)) {
-            $this->_opencontainers = new xhtml_container_stack();
-        }
-        return $this->_opencontainers;
+    public function get_cacheable() {
+        return $this->_cacheable;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->focuscontrol syntax. {@link __get()}.
+     * @return string the id of the HTML element to be focussed when the page has loaded.
+     */
+    public function get_focuscontrol() {
+        return $this->_focuscontrol;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->button syntax. {@link __get()}.
+     * @return string the HTML to go where the Turn editing on button normaly goes.
+     */
+    public function get_button() {
+        return $this->_button;
     }
 
     /**
@@ -489,6 +549,17 @@ class moodle_page {
     }
 
     /**
+     * @param string $generaltype the general type of page this is. For example 'popup', 'home'.
+     * This properly defaults to 'normal', so you only need to call this function if
+     * you want something different. The exact range of supported page types is not
+     * strictly defined, this value is just passed to the theme. However, at the moment
+     * only 'normal', 'popup' amd 'home' are used.
+     */
+    public function set_generaltype($generaltype) {
+        $this->_generaltype = $generaltype;
+    }
+
+    /**
      * If context->id and pagetype are not enough to uniquely identify this page,
      * then you can set a subpage id as well. For example, the tags page sets
      * @param string $subpage an arbitrary identifier that, along with context->id
@@ -519,6 +590,22 @@ class moodle_page {
         foreach ($classes as $class) {
             $this->add_body_class($class);
         }
+    }
+
+    /**
+     * $param string $title the title that should go in the <head> section of the HTML of this page.
+     */
+    public function set_title($title) {
+        $title = format_string($title);
+        $title = str_replace('"', '&quot;', $title);
+        $this->_title = $title;
+    }
+
+    /**
+     * $param string $heading the main heading that should be displayed at the top of the <body>.
+     */
+    public function set_heading($heading) {
+        $this->_heading = format_string($heading);
     }
 
     /**
@@ -575,6 +662,43 @@ class moodle_page {
     }
 
     /**
+     * There can be alternate versions of some pages (for example an RSS feed version).
+     * If such other version exist, call this method, and a link to the alternate
+     * version will be included in the <head> of the page.
+     *
+     * @param $title The title to give the alternate version.
+     * @param $url The URL of the alternate version.
+     * @param $mimetype The mime-type of the alternate version.
+     */
+    public function add_alternate_version($title, $url, $mimetype) {
+        if ($this->_state > self::STATE_BEFORE_HEADER) {
+            throw new coding_exception('Cannot call moodle_page::add_alternate_version after output has been started.');
+        }
+        $alt = new stdClass;
+        $alt->title = $title;
+        $alt->url = url;
+        $this->_alternateversions[$mimetype] = $alt;
+    }
+
+    /**
+     * Specify a form control should be focussed when the page has loaded.
+     *
+     * @param string $controlid the id of the HTML element to be focussed.
+     */
+    public function set_focuscontrol($controlid) {
+        $this->_focuscontrol = $controlid;
+    }
+
+    /**
+     * Specify a fragment of HTML that goes where the 'Turn editing on' button normally goes.
+     *
+     * @param string $html the HTML to display there.
+     */
+    public function set_button($html) {
+        $this->_button = $html;
+    }
+
+    /**
      * Set the capability that allows users to edit blocks on this page. Normally
      * the default of 'moodle/site:manageblocks' is used, but a few pages like
      * the My Moodle page need to use a different capability like 'moodle/my:manageblocks'.
@@ -596,6 +720,13 @@ class moodle_page {
         } else {
             $this->_othereditingcaps[] = $capability;
         }
+    }
+
+    /**
+     * @return boolean $cacheable can this page be cached by the user's browser.
+     */
+    public function set_cacheable($cacheable) {
+        $this->_cacheable = $cacheable;
     }
 
 /// Initialisation methods =====================================================

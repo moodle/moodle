@@ -2133,20 +2133,11 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
     $PAGE->requires->yui_lib('connection');
     $PAGE->requires->js('question/qengine.js');
 
-    // An inline script to record various lang strings, etc. that qengine.js needs.
-    $contributions = array();
-
     // Anything that questions on this page need.
     foreach ($questionlist as $questionid) {
         $question = $questions[$questionid];
-        $newcontributions = $QTYPES[$question->qtype]->
-                get_html_head_contributions($question, $states[$questionid]);
-        if (!empty($newcontributions)) {
-            $contributions = array_merge($contributions, $newcontributions);
-        }
+        $QTYPES[$question->qtype]->get_html_head_contributions($question, $states[$questionid]);
     }
-
-    return implode("\n", array_unique($contributions));
 }
 
 /**
@@ -2158,11 +2149,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
  */
 function get_editing_head_contributions($question) {
     global $QTYPES;
-    $contributions = $QTYPES[$question->qtype]->get_editing_head_contributions();
-    if (empty($contributions)) {
-        $contributions = array();
-    }
-    return implode("\n", array_unique($contributions));
+    $QTYPES[$question->qtype]->get_editing_head_contributions();
 }
 
 /**

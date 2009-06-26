@@ -52,7 +52,7 @@
         $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
         $navlinks[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestions, '', $navigation, '', $localcss, true, $strupdatemodule);
+        print_header_simple($streditingquestions, '', $navigation, '', '', true, $strupdatemodule);
 
         $currenttab = 'edit';
         $mode = 'questions';
@@ -64,7 +64,7 @@
         $navlinks[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
 
-        print_header_simple($streditingquestions, '', $navigation, '', $localcss);
+        print_header_simple($streditingquestions, '', $navigation, '', '');
 
         // print tabs
         $currenttab = 'questions';

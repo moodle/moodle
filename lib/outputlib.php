@@ -29,6 +29,20 @@
 
 
 /**
+ * Set up a preliminary $OUTPUT. This will be changed later once the correct theme
+ * for this page is known. Must be called after $PAGE is setup.
+ */
+function setup_bootstrat_output() {
+    global $OUTPUT, $PAGE;
+    if (CLI_SCRIPT) {
+        $OUTPUT = new cli_core_renderer(new xhtml_container_stack(), $PAGE);
+    } else {
+        $OUTPUT = new moodle_core_renderer(new xhtml_container_stack(), $PAGE);
+    }
+}
+
+
+/**
  * A renderer factory is just responsible for creating an appropriate renderer
  * for any given part of Moodle.
  *
@@ -87,6 +101,8 @@ abstract class renderer_factory_base implements renderer_factory {
     /** Used to cache renderers as they are created. */
     protected $renderers = array();
 
+    protected $opencontainers;
+
     /**
      * Constructor.
      * @param object $theme the theme we are rendering for.
@@ -95,6 +111,7 @@ abstract class renderer_factory_base implements renderer_factory {
     public function __construct($theme, $page) {
         $this->theme = $theme;
         $this->page = $page;
+        $this->opencontainers = new xhtml_container_stack();
     }
 
     /* Implement the interface method. */
@@ -164,10 +181,10 @@ class standard_renderer_factory extends renderer_factory_base {
     /* Implement the subclass method. */
     public function create_renderer($module) {
         if ($module == 'core') {
-            return new moodle_core_renderer($this->page->opencontainers);
+            return new moodle_core_renderer($this->opencontainers, $this->page);
         } else {
             $class = $this->standard_renderer_class_for_module($module);
-            return new $class($this->page->opencontainers, $this->get_renderer('core'));
+            return new $class($this->opencontainers, $this->get_renderer('core'), $this->page);
         }
     }
 }
@@ -191,7 +208,7 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
      */
     public function __construct($theme, $page) {
         parent::__construct($theme, $page);
-        $this->renderers = array('core' => new custom_corners_core_renderer($this->page->opencontainers));
+        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page));
     }
 }
 
@@ -245,9 +262,9 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
             $classname = $prefix . $module . '_renderer';
             if (class_exists($classname)) {
                 if ($module == 'core') {
-                    return new $classname($this->page->opencontainers);
+                    return new $classname($this->opencontainers, $this->page);
                 } else {
-                    return new $classname($this->page->opencontainers, $this->get_renderer('core'));
+                    return new $classname($this->opencontainers, $this->get_renderer('core'), $this->page);
                 }
             }
         }
@@ -325,7 +342,7 @@ class template_renderer_factory extends renderer_factory_base {
 
         // Create a template_renderer that copies the API of the standard renderer.
         $copiedclass = $this->standard_renderer_class_for_module($module);
-        return new template_renderer($copiedclass, $searchpaths, $this->page->opencontainers);
+        return new template_renderer($copiedclass, $searchpaths, $this->opencontainers, $this->page);
     }
 }
 
@@ -343,14 +360,18 @@ class template_renderer_factory extends renderer_factory_base {
  */
 class moodle_renderer_base {
     /** @var xhtml_container_stack the xhtml_container_stack to use. */
-    protected $containerstack;
+    protected $opencontainers;
+    /** @var moodle_page the page we are rendering for. */
+    protected $page;
 
     /**
      * Constructor
-     * @param $containerstack the xhtml_container_stack to use. 
+     * @param $opencontainers the xhtml_container_stack to use.
+     * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($containerstack) {
-        $this->containerstack = $containerstack;
+    public function __construct($opencontainers, $page) {
+        $this->opencontainers = $opencontainers;
+        $this->page = $page;
     }
 
     protected function output_tag($tagname, $attributes, $contents) {
@@ -368,6 +389,7 @@ class moodle_renderer_base {
     }
 
     protected function output_attribute($name, $value) {
+        $value = trim($value);
         if ($value || is_numeric($value)) { // We want 0 to be output.
             return ' ' . $name . '="' . $value . '"';
         }
@@ -379,8 +401,11 @@ class moodle_renderer_base {
         }
         return $output;
     }
-    protected function output_class_attribute($classes) {
-        return $this->output_attribute('class', implode(' ', $classes));
+    public static function prepare_classes($classes) {
+        if (is_array($classes)) {
+            return implode(' ', array_unique($classes));
+        }
+        return $classes;
     }
 }
 
@@ -418,10 +443,11 @@ class template_renderer extends moodle_renderer_base {
      * Constructor
      * @param string $copiedclass the name of a class whose API we should be copying.
      * @param $searchpaths a list of folders to search for templates in.
-     * @param $containerstack the xhtml_container_stack to use.
+     * @param $opencontainers the xhtml_container_stack to use.
+     * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($copiedclass, $searchpaths, $containerstack) {
-        parent::__construct($containerstack);
+    public function __construct($copiedclass, $searchpaths, $opencontainers, $page) {
+        parent::__construct($opencontainers, $page);
         $this->copiedclass = new ReflectionClass($copiedclass);
         $this->searchpaths = $searchpaths;
     }
@@ -485,7 +511,10 @@ class template_renderer extends moodle_renderer_base {
         // with the names of any variables being passed to the template.
 
         // Set up the global variables that the template may wish to access.
-        global $CFG, $PAGE, $THEME;
+        global $CFG, $THEME;
+        $PAGE = $this->page; // Also, make $PAGE and $OUTPUT point to us.
+        $OUTPUT = $this;
+        $COURSE = $this->page->course;
 
         // And the parameters from the function call.
         extract($_namedarguments);
@@ -526,7 +555,7 @@ class template_renderer extends moodle_renderer_base {
         array_unshift($arguments, self::contentstoken);
         $html = $this->process_template($template, $arguments);
         list($start, $end) = explode(self::contentstoken, $html, 2);
-        $this->containerstack->push($template, $end);
+        $this->opencontainers->push($template, $end);
         return $start;
     }
 
@@ -538,7 +567,7 @@ class template_renderer extends moodle_renderer_base {
      * @return string the HTML to be output.
      */
     protected function process_end($template, $arguments) {
-        return $this->containerstack->pop($template);
+        return $this->opencontainers->pop($template);
     }
 
     /**
@@ -571,7 +600,7 @@ class template_renderer extends moodle_renderer_base {
  */
 class xhtml_container_stack {
     /** @var array stores the list of open containers. */
-    protected $opencontainsers = array();
+    protected $opencontainers = array();
 
     /**
      * Push the close HTML for a recently opened container onto the stack.
@@ -583,7 +612,7 @@ class xhtml_container_stack {
         $container = new stdClass;
         $container->type = $type;
         $container->closehtml = $closehtml;
-        array_push($this->opencontainsers, $container);
+        array_push($this->opencontainers, $container);
     }
 
     /**
@@ -594,18 +623,26 @@ class xhtml_container_stack {
      * @return string the HTML requried to close the container.
      */
     public function pop($type) {
-        if (empty($this->opencontainsers)) {
+        if (empty($this->opencontainers)) {
             debugging('There are no more open containers. This suggests there is a nesting problem.', DEBUG_DEVELOPER);
             return;
         }
 
-        $container = array_pop($this->opencontainsers);
+        $container = array_pop($this->opencontainers);
         if ($container->type != $type) {
             debugging('The type of container to be closed (' . $container->type .
                     ') does not match the type of the next open container (' . $type .
                     '). This suggests there is a nesting problem.', DEBUG_DEVELOPER);
         }
         return $container->closehtml;
+    }
+
+    /**
+     * Return how many containers are currently open.
+     * @return integer how many containers are currently open.
+     */
+    public function count() {
+        return count($this->opencontainers);
     }
 
     /**
@@ -616,8 +653,8 @@ class xhtml_container_stack {
      */
     public function pop_all_but_last() {
         $output = '';
-        while (count($this->opencontainsers) > 1) {
-            $container = array_pop($this->opencontainsers);
+        while (count($this->opencontainers) > 1) {
+            $container = array_pop($this->opencontainers);
             $output .= $container->closehtml;
         }
         return $output;
@@ -630,7 +667,7 @@ class xhtml_container_stack {
      * debug warning. After calling this method, the instance can no longer be used.
      */
     public function discard() {
-        $this->opencontainsers = null;
+        $this->opencontainers = null;
     }
 
     /**
@@ -638,13 +675,13 @@ class xhtml_container_stack {
      * containers have been closed, output the rest with a developer debug warning.
      */
     public function __destruct() {
-        if (empty($this->opencontainsers)) {
+        if (empty($this->opencontainers)) {
             return;
         }
 
         debugging('Some containers were left open. This suggests there is a nesting problem.', DEBUG_DEVELOPER);
         echo $this->pop_all_but_last();
-        $container = array_pop($this->opencontainsers);
+        $container = array_pop($this->opencontainers);
         echo $container->closehtml;
     }
 }
@@ -658,6 +695,292 @@ class xhtml_container_stack {
  * @since     Moodle 2.0
  */
 class moodle_core_renderer extends moodle_renderer_base {
+    const PERFORMANCE_INFO_TOKEN = '%%PERFORMANCEINFO%%';
+    const END_HTML_TOKEN = '%%ENDHTML%%';
+    const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
+    protected $contenttype;
+
+    public function doctype() {
+        global $CFG;
+
+        $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n";
+        $this->contenttype = 'text/html; charset=utf-8';
+
+        if (empty($CFG->xmlstrictheaders)) {
+            return $doctype;
+        }
+
+        // We want to serve the page with an XML content type, to force well-formedness errors to be reported.
+        $prolog = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
+        if (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml') !== false) {
+            // Firefox and other browsers that can cope natively with XHTML.
+            $this->contenttype = 'application/xhtml+xml; charset=utf-8';
+
+        } else if (preg_match('/MSIE.*Windows NT/', $_SERVER['HTTP_USER_AGENT'])) {
+            // IE can't cope with application/xhtml+xml, but it will cope if we send application/xml with an XSL stylesheet.
+            $this->contenttype = 'application/xml; charset=utf-8';
+            $prolog .= '<?xml-stylesheet type="text/xsl" href="' . $CFG->httpswwwroot . '/lib/xhtml.xsl"?>' . "\n";
+
+        } else {
+            $prolog = '';
+        }
+
+        return $prolog . $doctype;
+    }
+
+    public function htmlattributes() {
+        return get_html_lang(true) . ' xmlns="http://www.w3.org/1999/xhtml"';
+    }
+
+    public function standard_head_html() {
+        global $CFG, $THEME;
+        $output = '';
+        $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
+        $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
+        if (!$this->page->cacheable) {
+            $output .= '<meta http-equiv="pragma" content="no-cache" />' . "\n";
+            $output .= '<meta http-equiv="expires" content="0" />' . "\n";
+        }
+        ob_start();
+        include($CFG->javascript);
+        $output .= ob_get_contents();
+        ob_end_clean();
+        $output .= $this->page->requires->get_head_code();
+ 
+        foreach ($this->page->alternateversions as $type => $alt) {
+            $output .= $this->output_empty_tag('link', array('rel' => 'alternate',
+                    'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
+        }
+
+        // Add the meta page from the themes if any were requested
+        // TODO kill this.
+        $PAGE = $this->page;
+        $metapage = '';
+        if (!isset($THEME->standardmetainclude) || $THEME->standardmetainclude) {
+            ob_start();
+            include_once($CFG->dirroot.'/theme/standard/meta.php');
+            $output .= ob_get_contents();
+            ob_end_clean();
+        }
+        if ($THEME->parent && (!isset($THEME->parentmetainclude) || $THEME->parentmetainclude)) {
+            if (file_exists($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php')) {
+                ob_start();
+                include_once($CFG->dirroot.'/theme/'.$THEME->parent.'/meta.php');
+                $output .= ob_get_contents();
+                ob_end_clean();
+            }
+        }
+        if (!isset($THEME->metainclude) || $THEME->metainclude) {
+            if (file_exists($CFG->dirroot.'/theme/'.current_theme().'/meta.php')) {
+                ob_start();
+                include_once($CFG->dirroot.'/theme/'.current_theme().'/meta.php');
+                $output .= ob_get_contents();
+                ob_end_clean();
+            }
+        }
+
+        return $output;
+    }
+
+    public function standard_top_of_body_html() {
+        return  $this->page->requires->get_top_of_body_code();
+    }
+
+    public function standard_footer_html() {
+        $output = self::PERFORMANCE_INFO_TOKEN;
+        if (debugging()) {
+            $output .= '<div class="validators"><ul>
+              <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
+              <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
+              <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=' . urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
+            </ul></div>';
+        }
+        return $output;
+    }
+
+    public function standard_end_of_body_html() {
+        echo self::END_HTML_TOKEN;
+    }
+
+    public function login_info() {
+        global $USER;
+        return user_login_string($this->page->course, $USER);
+    }
+
+    public function home_link() {
+        global $CFG, $SITE;
+
+        if ($this->page->pagetype == 'site-index') {
+            // Special case for site home page - please do not remove
+            return '<div class="sitelink">' .
+                   '<a title="Moodle ' . $CFG->release . '" href="http://moodle.org/">' .
+                   '<img style="width:100px;height:30px" src="' . $CFG->httpswwwroot . '/pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
+
+        } else if (!empty($CFG->target_release) && $CFG->target_release != $CFG->release) {
+            // Special case for during install/upgrade.
+            return '<div class="sitelink">'.
+                   '<a title="Moodle ' . $CFG->target_release . '" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">' .
+                   '<img style="width:100px;height:30px" src="' . $CFG->httpswwwroot . '/pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
+
+        } else if ($this->page->course->id == $SITE->id || strpos($this->page->pagetype, 'course-view') === 0) {
+            return '<div class="homelink"><a href="' . $CFG->wwwroot . '/">' .
+                    get_string('home') . '</a></div>';
+
+        } else {
+            return '<div class="homelink"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->page->course->id . '">' .
+                    format_string($this->page->course->shortname) . '</a></div>';
+        }
+    }
+
+    // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
+    public function header($navigation = '', $menu='') {
+        global $USER, $CFG;
+
+        output_starting_hook();
+        $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
+
+        // Add any stylesheets required using the horrible legacy mechanism. TODO kill this.
+        foreach ($CFG->stylesheets as $stylesheet) {
+            $this->page->requires->css($stylesheet, true);
+        }
+
+        // Find the appropriate page template, based on $this->page->generaltype.
+        $templatefile = $this->find_page_template();
+        if ($templatefile) {
+            // Render the template.
+            $template = $this->render_page_template($templatefile, $menu, $navigation);
+        } else {
+            // New style template not found, fall back to using header.html and footer.html.
+            $template = $this->handle_legacy_theme($navigation, $menu);
+        }
+
+        // Slice the template output into header and footer.
+        $cutpos = strpos($template, self::MAIN_CONTENT_TOKEN);
+        if ($cutpos === false) {
+            throw new coding_exception('Layout template ' . $templatefile .
+                    ' does not contain the string "' . self::MAIN_CONTENT_TOKEN . '".');
+        }
+        $header = substr($template, 0, $cutpos);
+        $footer = substr($template, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
+
+        send_headers($this->contenttype, $this->page->cacheable);
+        $this->opencontainers->push('header/footer', $footer);
+        $this->page->set_state(moodle_page::STATE_IN_BODY);
+        return $header . $this->skip_link_target();
+    }
+
+    protected function find_page_template() {
+        global $THEME;
+
+        // If this is a particular page type, look for a specific template.
+        $type = $this->page->generaltype;
+        if ($type != 'normal') {
+            $templatefile = $THEME->dir . '/layout-' . $type . '.php';
+            if (is_readable($templatefile)) {
+                return $templatefile;
+            }
+        }
+
+        // Otherwise look for the general template.
+        $templatefile = $THEME->dir . '/layout.php';
+        if (is_readable($templatefile)) {
+            return $templatefile;
+        }
+
+        return false;
+    }
+
+    protected function render_page_template($templatefile, $menu, $navigation) {
+        global $CFG, $SITE, $THEME, $USER;
+        // Set some pretend globals from the properties of this class.
+        $OUTPUT = $this;
+        $PAGE = $this->page;
+        $COURSE = $this->page->course;
+
+        ob_start();
+        include($templatefile);
+        $template = ob_get_contents();
+        ob_end_clean();
+        return $template;
+    }
+
+    protected function handle_legacy_theme($navigation, $menu) {
+        global $CFG, $SITE, $THEME, $USER;
+        // Set a pretend global from the properties of this class.
+        $COURSE = $this->page->course;
+
+        // Set up local variables that header.html expects.
+        $direction = $this->htmlattributes();
+        $title = $this->page->title;
+        $heading = $this->page->heading;
+        $focus = $this->page->focuscontrol;
+        $button = $this->page->button;
+        $pageid = $this->page->pagetype;
+        $pageclass = $this->page->bodyclasses;
+        $bodytags = ' class="' . $pageclass . '" id="' . $pageid . '"';
+        $home = $this->page->generaltype == 'home';
+
+        $meta = $this->standard_head_html();
+        // The next line is a nasty hack. having set $meta to standard_head_html, we have already
+        // got the contents of include($CFG->javascript). However, legacy themes are going to
+        // include($CFG->javascript) again. We want to make sure that when they do, nothing is output.
+        $CFG->javascript = $CFG->libdir . '/emptyfile.php';
+
+        // Set up local variables that footer.html expects.
+        $homelink = $this->home_link();
+        $loggedinas = $this->login_info();
+        $course = $this->page->course;
+        $performanceinfo = self::PERFORMANCE_INFO_TOKEN;
+
+        if (!$menu && $navigation) {
+            $menu = $loggedinas;
+        }
+
+        ob_start();
+        include($THEME->dir . '/header.html');
+        $this->page->requires->get_top_of_body_code();
+        echo self::MAIN_CONTENT_TOKEN;
+
+        $menu = str_replace('navmenu', 'navmenufooter', $menu);
+        include($THEME->dir . '/footer.html');
+
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $output = str_replace('</body>', self::END_HTML_TOKEN . '</body>', $output);
+
+        return $output;
+    }
+
+    public function footer() {
+        $output = '';
+        if ($this->opencontainers->count() != 1) {
+            debugging('Some HTML tags were opened in the body of the page but not closed.', DEBUG_DEVELOPER);
+            $output .= $this->opencontainers->pop_all_but_last();
+        }
+
+        $footer = $this->opencontainers->pop('header/footer');
+
+        // Provide some performance info if required
+        $performanceinfo = '';
+        if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+            $perf = get_performance_info();
+            if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
+                error_log("PERF: " . $perf['txt']);
+            }
+            if (defined('MDL_PERFTOFOOT') || debugging() || $CFG->perfdebug > 7) {
+                $performanceinfo = $perf['html'];
+            }
+        }
+        $footer = str_replace(self::PERFORMANCE_INFO_TOKEN, $performanceinfo, $footer);
+
+        $footer = str_replace(self::END_HTML_TOKEN, $this->page->requires->get_end_code(), $footer);
+
+        $this->page->set_state(moodle_page::STATE_DONE);
+
+        return $output . $footer;
+    }
+
     public function link_to_popup_window() {
         
     }
@@ -756,6 +1079,138 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
         return $this->output_tag('span', array('class' => 'error'), $message);
     }
+
+    /**
+     * Do not call this function directly.
+     *
+     * To terminate the current script with a fatal error, call the {@link print_error}
+     * function, or throw an exception. Doing either of those things will then call this
+     * funciton to display the error, before terminating the exection.
+     *
+     * @param string $message
+     * @param string $moreinfourl
+     * @param string $link
+     * @param array $backtrace
+     * @param string $debuginfo
+     * @param bool $showerrordebugwarning
+     * @return string the HTML to output.
+     */
+    public function fatal_error($message, $moreinfourl, $link, $backtrace,
+                $debuginfo = null, $showerrordebugwarning = false) {
+
+        $output = '';
+
+        if ($this->opencontainers->count() == 0) {
+            // Header not yet printed
+            @header('HTTP/1.0 404 Not Found');
+            print_header(get_string('error'));
+        } else {
+            $output .= $this->opencontainers->pop_all_but_last();
+        }
+
+        $message = '<p class="errormessage">' . $message . '</p>'.
+                '<p class="errorcode"><a href="' . $moreinfourl . '">' .
+                get_string('moreinformation') . '</a></p>';
+        $output .= $this->box($message, 'errorbox');
+
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if ($showerrordebugwarning) {
+                $output .= $this->notification('error() is a deprecated function. ' .
+                        'Please call print_error() instead of error()', 'notifytiny');
+            }
+            if (!empty($debuginfo)) {
+                $output .= $this->notification($debuginfo, 'notifytiny');
+            }
+            if (!empty($backtrace)) {
+                $output .= $this->notification('Stack trace: ' .
+                        format_backtrace($backtrace, true), 'notifytiny');
+            }
+        }
+
+        if (!empty($link)) {
+            $output .= $this->continue_button($link);
+        }
+
+        print_footer();
+
+        // Padding to encourage IE to display our error page, rather than its own.
+        $output .= str_repeat(' ', 512);
+
+        return $output;
+    }
+
+    /**
+     * Output a notification (that is, a status message about something that has
+     * just happened).
+     *
+     * @param string $message the message to print out
+     * @param string $classes normally 'notifyproblem' or 'notifysuccess'.
+     * @return string the HTML to output.
+     */
+    public function notification($message, $classes = 'notifyproblem') {
+        return $this->output_tag('div', array('class' =>
+                moodle_renderer_base::prepare_classes($classes)), clean_text($message));
+    }
+
+    /**
+     * Print a continue button that goes to a particular URL.
+     *
+     * @param string|moodle_url $link The url the button goes to.
+     * @return string the HTML to output.
+     */
+    public function continue_button($link) {
+        if (!is_a($link, 'moodle_url')) {
+            $link = new moodle_url($link);
+        }
+        return $this->output_tag('div', array('class' => 'continuebutton'),
+                print_single_button($link->out(true), $link->params(), get_string('continue'), 'get', '', true));
+    }
+
+    /**
+     * Output the place a skip link goes to.
+     * @param $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
+     * @return string the HTML to output.
+     */
+    public function skip_link_target($id = 'maincontent') {
+        return $this->output_tag('span', array('id' => $id), '');
+    }
+
+    public function heading($text, $level, $classes = 'main', $id = '') {
+        $level = (integer) $level;
+        if ($level < 1 or $level > 6) {
+            throw new coding_exception('Heading level must be an integer between 1 and 6.');
+        }
+        return $this->output_tag('h' . $level,
+                array('id' => $id, 'class' => moodle_renderer_base::prepare_classes($classes)), $text);
+    }
+
+    public function box($contents, $classes = 'generalbox', $id = '') {
+        return $this->box_start($classes, $id) . $contents . $this->box_end();
+    }
+
+    public function box_start($classes = 'generalbox', $id = '') {
+        $this->opencontainers->push('box', $this->output_end_tag('div'));
+        return $this->output_start_tag('div', array('id' => $id,
+                'class' => 'box ' . moodle_renderer_base::prepare_classes($classes)));
+    }
+
+    public function box_end() {
+        return $this->opencontainers->pop('box');
+    }
+
+    public function container($contents, $classes = '', $id = '') {
+        return $this->container_start($classes, $id) . $contents . $this->container_end();
+    }
+
+    public function container_start($classes = '', $id = '') {
+        $this->opencontainers->push('container', $this->output_end_tag('div'));
+        return $this->output_start_tag('div', array('id' => $id,
+                'class' => moodle_renderer_base::prepare_classes($classes)));
+    }
+
+    public function container_end() {
+        return $this->opencontainers->pop('container');
+    }
 }
 
 
@@ -838,7 +1293,7 @@ class moodle_html_component {
 
 /**
  * This class hold all the information required to describe a <select> menu that
- * will be printed by {@link moodle_core_renderer::select_menu()}. (Or by an overrides
+ * will be printed by {@link moodle_core_renderer::select_menu()}. (Or by an overridden
  * version of that method in a subclass.)
  *
  * All the fields that are not set by the constructor have sensible defaults, so
@@ -945,6 +1400,57 @@ class moodle_select_menu extends moodle_html_component {
 
 
 /**
+ * A renderer that generates output for commandlines scripts.
+ *
+ * The implementation of this renderer is probably incomplete.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class cli_core_renderer extends moodle_core_renderer {
+    public function header() {
+        output_starting_hook();
+        return $this->page->heading . "\n";
+    }
+
+    public function heading($text, $level, $classes = 'main', $id = '') {
+        $text .= "\n";
+        switch ($level) {
+            case 1:
+                return '=>' . $text;
+            case 2:
+                return '-->' . $text;
+            default:
+                return $text;
+        }
+    }
+
+    public function fatal_error($errorcode, $module, $a, $link, $backtrace,
+                $debuginfo = null, $showerrordebugwarning = false) {
+        $output = "!!! $message !!!\n";
+
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if (!empty($debuginfo)) {
+                $this->notification($debuginfo, 'notifytiny');
+            }
+            if (!empty($backtrace)) {
+                $this->notification('Stack trace: ' . format_backtrace($backtrace, true), 'notifytiny');
+            }
+        }
+    }
+
+    public function notification($message, $classes = 'notifyproblem') {
+        $message = clean_text($message);
+        if ($style === 'notifysuccess') {
+            return "++ $message ++\n";
+        }
+        return "!! $message !!\n";
+    }
+}
+
+
+/**
  * A renderer for the custom corner theme, and other themes based on it.
  *
  * Generates the slightly different HTML that the custom corners theme wants.
@@ -954,7 +1460,59 @@ class moodle_select_menu extends moodle_html_component {
  * @since     Moodle 2.0
  */
 class custom_corners_core_renderer extends moodle_core_renderer {
+    protected function custom_corners_divs($classes = '', $idbase = '') {
+        if (strpos($classes, 'clearfix') !== false) {
+            $clearfix = ' clearfix';
+            $classes = trim(str_replace('clearfix', '', $classes));
+        } else {
+            $clearfix = '';
+        }
 
-    // TODO
+        // Analise if we want ids for the custom corner elements
+        $id = '';
+        $idbt = '';
+        $idi1 = '';
+        $idi2 = '';
+        $idi3 = '';
+        $idbb = '';
+        if ($idbase) {
+            $id = $idbase;
+            $idbt = $idbase . '-bt';
+            $idi1 = $idbase . '-i1';
+            $idi2 = $idbase . '-i2';
+            $idi3 = $idbase . '-i3';
+            $idbb = $idbase . '-bb';
+        }
+
+        // Calculate current level
+        $level = $this->opencontainers->count();
+
+        // Create start tags.
+        $start = $this->output_start_tag('div', array('id' => $idbb, 'class' => "wrap wraplevel$level $classes")) . "\n";
+        $start .= $this->output_tag('div', array('id' => $idbt, 'class' => 'bt'), '<div>&nbsp;</div>') . "\n";
+        $start .= $this->output_start_tag('div', array('id' => $idi1, 'class' => 'i1'));
+        $start .= $this->output_start_tag('div', array('id' => $idi2, 'class' => 'i2'));
+        $start .= $this->output_start_tag('div', array('id' => $idi3, 'class' => "i3$clearfix"));
+
+        // Create end tags.
+        $end = $this->output_end_tag('div');
+        $end .= $this->output_end_tag('div');
+        $end .= $this->output_end_tag('div');
+        $end .= $this->output_tag('div', array('id' => $idbb, 'class' => 'bb'), '<div>&nbsp;</div>') . "\n";
+        $end .= $this->output_end_tag('div');
+
+        return array($start, $end);
+    }
+
+    public function box_start($classes = 'generalbox', $id = '') {
+        list($start, $end) = $this->custom_corners_divs('ccbox box ' . moodle_renderer_base::prepare_classes($classes), $id);
+        $this->opencontainers->push('box', $end);
+        return $start;
+    }
+
+    public function container_start($classes = '', $id = '') {
+        list($start, $end) = $this->custom_corners_divs(moodle_renderer_base::prepare_classes($classes), $id);
+        $this->opencontainers->push('container', $end);
+        return $start;
+    }
 }
-

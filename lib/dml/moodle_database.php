@@ -400,7 +400,7 @@ abstract class moodle_database {
                 $log->sqlparams  = var_export((array)$this->last_params, true);
                 $log->error      = (int)$iserror;
                 $log->info       = $iserror ? $error : null;
-                $log->backtrace  = print_backtrace($backtrace, true, true);
+                $log->backtrace  = format_backtrace($backtrace, true);
                 $log->exectime   = $time;
                 $log->timelogged = time();
                 $this->insert_record('log_queries', $log);

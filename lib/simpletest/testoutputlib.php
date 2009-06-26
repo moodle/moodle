@@ -50,7 +50,7 @@ class testable_renderer_factory extends renderer_factory_base {
 
     public function create_renderer($module) {
         $this->createcalls[] = $module;
-        return new moodle_core_renderer(new xhtml_container_stack());
+        return new moodle_core_renderer(new xhtml_container_stack(), null);
     }
 
     public function standard_renderer_class_for_module($module) {
@@ -63,8 +63,8 @@ class testable_renderer_factory extends renderer_factory_base {
  * Renderer class for testing.
  */
 class moodle_test_renderer extends moodle_core_renderer {
-    public function __construct($containerstack) {
-        parent::__construct($containerstack);
+    public function __construct($containerstack, $page) {
+        parent::__construct($containerstack, $page);
     }
 
     public function greeting($name = 'world') {
@@ -155,9 +155,7 @@ class standard_renderer_factory_test extends UnitTestCase {
 
     public function setUp() {
         parent::setUp();
-        $page = new stdClass;
-        $page->opencontainers = new xhtml_container_stack();
-        $this->factory = new standard_renderer_factory(null, $page);
+        $this->factory = new standard_renderer_factory(null, null);
     }
 
     public function tearDown() {
@@ -188,9 +186,7 @@ class custom_corners_renderer_factory_test extends UnitTestCase {
 
     public function setUp() {
         parent::setUp();
-        $page = new stdClass;
-        $page->opencontainers = new xhtml_container_stack();
-        $this->factory = new custom_corners_renderer_factory(null, $page);
+        $this->factory = new custom_corners_renderer_factory(null, null);
     }
 
     public function tearDown() {
@@ -246,7 +242,6 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $this->foldertocleanup = $CFG->themedir;
 
         $this->page = new stdClass;
-        $this->page->opencontainers = new xhtml_container_stack();
     }
 
     public function tearDown() {
@@ -414,7 +409,6 @@ class template_renderer_factory_test extends UnitTestCase {
         $this->foldertocleanup = $CFG->themedir;
 
         $this->page = new stdClass;
-        $this->page->opencontainers = new xhtml_container_stack();
     }
 
     public function tearDown() {
@@ -722,8 +716,10 @@ class template_renderer_test extends UnitTestCase {
         parent::setUp();
         $this->templatefolder = $CFG->dataroot . '/temp/template_renderer_fixtures/test';
         make_upload_directory('temp/template_renderer_fixtures/test');
+        $page = new stdClass;
+        $page->course = new stdClass;
         $this->renderer = new template_renderer('moodle_test_renderer',
-                array($this->templatefolder), new xhtml_container_stack());
+                array($this->templatefolder), new xhtml_container_stack(), $page);
         $this->savedtemplates = array();
     }
 
@@ -788,7 +784,7 @@ class moodle_core_renderer_test extends UnitTestCase {
     public function setUp() {
         parent::setUp();
         $this->containerstack = new xhtml_container_stack();
-        $this->renderer = new moodle_core_renderer($this->containerstack);
+        $this->renderer = new moodle_core_renderer($this->containerstack, null);
     }
 
     public function test_select_menu_simple() {

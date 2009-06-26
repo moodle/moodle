@@ -266,11 +266,11 @@
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
         $rsspath = rss_get_url($course->id, $USER->id, 'data', $data->id);
-        $meta .= '<link rel="alternate" type="application/rss+xml" ';
-        $meta .= 'title ="'. format_string($course->shortname) .': %fullname%" href="'.$rsspath.'" />';
+        $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
+                $rsspath, 'application/rss+xml');
     }
     if ($data->csstemplate) {
-        $meta .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/data/css.php?d='.$data->id.'" /> ';
+        $PAGE->requires->css('mod/data/css.php?d='.$data->id);
     }
     if ($data->jstemplate) {
         $PAGE->requires->js('mod/data/js.php?d='.$data->id)->in_head();

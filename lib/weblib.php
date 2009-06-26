@@ -2329,33 +2329,37 @@ function get_html_lang($dir = false) {
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
 
-/**
- * Return the markup for the destination of the 'Skip to main content' links.
- * Accessibility improvement for keyboard-only users.
- *
- * Used in course formats, /index.php and /course/index.php
- *
- * @return string HTML element.
- */
-function skip_main_destination() {
-    return '<span id="maincontent"></span>';
-}
-
 
 /// STANDARD WEB PAGE PARTS ///////////////////////////////////////////////////
 
 /**
+ * Send the HTTP headers that Moodle requires.
+ * @param $cacheable Can this page be cached on back?
+ */
+function send_headers($contenttype, $cacheable = true) {
+    @header('Content-Type: ' . $contenttype);
+    @header('Content-Script-Type: text/javascript');
+    @header('Content-Style-Type: text/css');
+
+    if ($cacheable) {
+        // Allow caching on "back" (but not on normal clicks)
+        @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
+        @header('Pragma: no-cache');
+        @header('Expires: ');
+    } else {
+        // Do everything we can to always prevent clients and proxies caching
+        @header('Cache-Control: no-store, no-cache, must-revalidate');
+        @header('Cache-Control: post-check=0, pre-check=0', false);
+        @header('Pragma: no-cache');
+        @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
+        @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+    }
+    @header('Accept-Ranges: none');
+}
+
+/**
  * Print a standard header
  *
- * @global object
- * @global object
- * @global object
- * @global object
- * @global string Doesnt appear to be used here
- * @global string Doesnt appear to be used here
- * @global object
- * @global object
- * @uses $_SERVER
  * @param string  $title Appears at the top of the window
  * @param string  $heading Appears at the top of the page
  * @param string  $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
@@ -2369,7 +2373,7 @@ function skip_main_destination() {
  * @param bool    $return If true, return the visible elements of the header instead of echoing them.
  * @return string|void If return=true then string else void
  */
-function print_header ($title='', $heading='', $navigation='', $focus='',
+function print_header_old($title='', $heading='', $navigation='', $focus='',
                        $meta='', $cache=true, $button='&nbsp;', $menu='',
                        $usexml=false, $bodytags='', $return=false) {
 
@@ -2604,63 +2608,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 }
 
 /**
- * Debugging aid: serve page as 'application/xhtml+xml' where possible,
- *     and substitute the XHTML strict document type.
- *     Note, requires the 'xmlns' fix in function print_header above.
- *     See:  {@link http://tracker.moodle.org/browse/MDL-7883}
- *
- * @global object
- * @uses $_SERVER
- * @param string The HTML to apply the strict header to
- * @return string The HTML with strict header
- */
-function force_strict_header($output) {
-    global $CFG;
-    $strict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-    $xsl = '/lib/xhtml.xsl';
-
-    if (!headers_sent() && !empty($CFG->xmlstrictheaders)) {   // With xml strict headers, the browser will barf
-        $ctype = 'Content-Type: ';
-        $prolog= "<?xml version='1.0' encoding='utf-8'?>\n";
-
-        if (isset($_SERVER['HTTP_ACCEPT'])
-            && false !== strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml')) {
-            //|| false !== strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') //Safari "Entity 'copy' not defined".
-            // Firefox et al.
-            $ctype .= 'application/xhtml+xml';
-            $prolog .= "<!--\n  DEBUG: $ctype \n-->\n";
-
-        } else if (file_exists($CFG->dirroot.$xsl)
-            && preg_match('/MSIE.*Windows NT/', $_SERVER['HTTP_USER_AGENT'])) {
-            // XSL hack for IE 5+ on Windows.
-            //$www_xsl = preg_replace('/(http:\/\/.+?\/).*/', '', $CFG->wwwroot) .$xsl;
-            $www_xsl = $CFG->wwwroot .$xsl;
-            $ctype .= 'application/xml';
-            $prolog .= "<?xml-stylesheet type='text/xsl' href='$www_xsl'?>\n";
-            $prolog .= "<!--\n  DEBUG: $ctype \n-->\n";
-
-        } else {
-            //ELSE: Mac/IE, old/non-XML browsers.
-            $ctype .= 'text/html';
-            $prolog = '';
-        }
-        @header($ctype.'; charset=utf-8');
-        $output = $prolog . $output;
-
-        // Test parser error-handling.
-        if (isset($_GET['error'])) {
-            $output .= "__ TEST: XML well-formed error < __\n";
-        }
-    }
-
-    $output = preg_replace('/(<!DOCTYPE.+?>)/s', $strict, $output);   // Always change the DOCTYPE to Strict 1.0
-
-    return $output;
-}
-
-
-
-/**
  * This version of print_header is simpler because the course name does not have to be
  * provided explicitly in the strings. It can be used on the site page as in courses
  * Eventually all print_header could be replaced by print_header_simple
@@ -2728,7 +2675,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  * @param boolean $return output as string
  * @return mixed string or void
  */
-function print_footer($course=NULL, $usercourse=NULL, $return=false) {
+function print_footer_old($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME, $COURSE, $SITE, $PAGE;
 
     if (defined('ADMIN_EXT_HEADER_PRINTED') and !defined('ADMIN_EXT_FOOTER_PRINTED')) {
@@ -3225,10 +3172,6 @@ function theme_setup($theme = '', $params=NULL) {
         $CFG->modpixpath = $CFG->themewww .'/'. $theme .'/pix/mod';
     }
 
-/// Header and footer paths
-    $CFG->header = $CFG->themedir .'/'. $theme .'/header.html';
-    $CFG->footer = $CFG->themedir .'/'. $theme .'/footer.html';
-
 /// Define stylesheet loading order
     $CFG->stylesheets = array();
     if ($theme != 'standard') {    /// The standard sheet is always loaded first
@@ -3286,6 +3229,10 @@ function theme_setup($theme = '', $params=NULL) {
 function user_login_string($course=NULL, $user=NULL) {
     global $USER, $CFG, $SITE, $DB;
 
+    if (during_initial_install()) {
+        return '';
+    }
+
     if (empty($user) and !empty($USER->id)) {
         $user = $USER;
     }
@@ -3335,7 +3282,31 @@ function user_login_string($course=NULL, $user=NULL) {
         $loggedinas = get_string('loggedinnot', 'moodle').
                       " (<a $CFG->frametarget href=\"$loginurl\">".get_string('login').'</a>)';
     }
-    return '<div class="logininfo">'.$loggedinas.'</div>';
+
+    $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
+
+    if (isset($SESSION->justloggedin)) {
+        unset($SESSION->justloggedin);
+        if (!empty($CFG->displayloginfailures)) {
+            if (!empty($USER->username) and $USER->username != 'guest') {
+                if ($count = count_login_failures($CFG->displayloginfailures, $USER->username, $USER->lastlogin)) {
+                    $loggedinas .= '&nbsp;<div class="loginfailures">';
+                    if (empty($count->accounts)) {
+                        $loggedinas .= get_string('failedloginattempts', '', $count);
+                    } else {
+                        $loggedinas .= get_string('failedloginattemptsall', '', $count);
+                    }
+                    if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                        $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
+                                             '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
+                    }
+                    $loggedinas .= '</div>';
+                }
+            }
+        }
+    }
+
+    return $loggedinas;
 }
 
 /**
@@ -3743,70 +3714,6 @@ function build_navigation($extranavlinks, $cm = null) {
     return(array('newnav' => true, 'navlinks' => $navigation));
 }
 
-
-/**
- * Prints a string in a specified size  (retained for backward compatibility)
- *
- * @param string $text The text to be displayed
- * @param int $size The size to set the font for text display.
- * @param bool $return If set to true output is returned rather than echoed Default false
- * @return string|void String if return is true
- */
-function print_headline($text, $size=2, $return=false) {
-    $output = print_heading($text, '', $size, true);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Prints text in a format for use in headings.
- *
- * @global string Apparently not used in this function
- * @uses CLI_SCRIPT
- * @param string $text The text to be displayed
- * @param string $align The alignment of the printed paragraph of text
- * @param int $size The size to set the font for text display.
- * @param string $class
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @param string $id The id to use in the element
- * @return string|void String if return=true nothing otherwise
- */
-function print_heading($text, $align='', $size=2, $class='main', $return=false, $id='') {
-    global $verbose;
-    if ($align) {
-        $align = ' style="text-align:'.$align.';"';
-    }
-    if ($class) {
-        $class = ' class="'.$class.'"';
-    }
-    if ($id) {
-        $id = ' id="'.$id.'"';
-    }
-    if (!CLI_SCRIPT) {
-        $output = "<h$size $align $class $id>".$text."</h$size>";
-    } else {
-        $output = $text;
-        if ($size == 1) {
-            $output = '=>'.$output;
-        } else if ($size == 2) {
-            $output = '-->'.$output;
-        }
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        if (!CLI_SCRIPT) {
-            echo $output;
-        } else {
-            echo $output."\n";
-        }
-    }
-}
-
 /**
  * Centered heading with attached help button (same title text)
  * and optional icon attached
@@ -3829,132 +3736,6 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $
     } else {
         echo $output;
     }
-}
-
-/**
- * Output a standard heading block
- *
- * @param string $heading The text to write into the heading
- * @param string $class An additional Class Attr to use for the heading
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @return string|void HTML String if return=true nothing otherwise
- */
-function print_heading_block($heading, $class='', $return=false) {
-    //Accessibility: 'headingblock' is now H1, see theme/standard/styles_*.css: ??
-    $output = '<h2 class="headingblock header '.$class.'">'.$heading.'</h2>';
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-
-/**
- * Print a link to continue on to another page.
- *
- * @global object
- * @uses $_SERVER
- * @param string $link The url to create a link to.
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @return string|void HTML String if return=true nothing otherwise
- */
-function print_continue($link, $return=false) {
-
-    global $CFG;
-
-    $output = '';
-
-    if ($link == '') {
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            $link = $_SERVER['HTTP_REFERER'];
-            $link = str_replace('&', '&amp;', $link); // make it valid XHTML
-        } else {
-            $link = $CFG->wwwroot .'/';
-        }
-    }
-
-    $options = array();
-    $linkparts = parse_url(str_replace('&amp;', '&', $link));
-    if (isset($linkparts['query'])) {
-        parse_str($linkparts['query'], $options);
-    }
-
-    $output .= '<div class="continuebutton">';
-
-    $output .= print_single_button($link, $options, get_string('continue'), 'get', $CFG->framename, true);
-    $output .= '</div>'."\n";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-
-/**
- * Print a message in a standard themed box.
- * Replaces print_simple_box (see deprecatedlib.php)
- *
- * @param string $message, the content of the box
- * @param string $classes, space-separated class names.
- * @param string $ids
- * @param boolean $return, return as string or just print it
- * @return string|void mixed string or void
- */
-function print_box($message, $classes='generalbox', $ids='', $return=false) {
-
-    $output  = print_box_start($classes, $ids, true);
-    $output .= $message;
-    $output .= print_box_end(true);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Starts a box using divs
- * Replaces print_simple_box_start (see deprecatedlib.php)
- *
- * @global object
- * @param string $classes, space-separated class names.
- * @param string $ids
- * @param boolean $return, return as string or just print it
- * @return string|void  string or void
- */
-function print_box_start($classes='generalbox', $ids='', $return=false) {
-    global $THEME;
-
-    if (strpos($classes, 'clearfix') !== false) {
-        $clearfix = true;
-        $classes = trim(str_replace('clearfix', '', $classes));
-    } else {
-        $clearfix = false;
-    }
-
-    if (!empty($THEME->customcorners)) {
-        $classes .= ' ccbox box';
-    } else {
-        $classes .= ' box';
-    }
-
-    return print_container_start($clearfix, $classes, $ids, $return);
-}
-
-/**
- * Simple function to end a box (see above)
- * Replaces print_simple_box_end (see deprecatedlib.php)
- *
- * @param boolean $return, return as string or just print it
- * @return string|void Depending on value of return
- */
-function print_box_end($return=false) {
-    return print_container_end($return);
 }
 
 /**
@@ -4043,107 +3824,6 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
  */
 function print_collapsible_region_end($return = false) {
     $output = '</div></div></div>';
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Print a message in a standard themed container.
- *
- * @param string $message, the content of the container
- * @param boolean $clearfix clear both sides
- * @param string $classes, space-separated class names.
- * @param string $idbase
- * @param boolean $return, return as string or just print it
- * @return string|void Depending on value of $return
- */
-function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
-
-    $output  = print_container_start($clearfix, $classes, $idbase, true);
-    $output .= $message;
-    $output .= print_container_end(true);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Starts a container using divs
- *
- * @global object
- * @param boolean $clearfix clear both sides
- * @param string $classes, space-separated class names.
- * @param string $idbase
- * @param boolean $return, return as string or just print it
- * @return string|void Based on value of $return
- */
-function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
-    global $THEME;
-
-    if (!isset($THEME->open_containers)) {
-        $THEME->open_containers = array();
-    }
-    $THEME->open_containers[] = $idbase;
-
-
-    if (!empty($THEME->customcorners)) {
-        $output = _print_custom_corners_start($clearfix, $classes, $idbase);
-    } else {
-        if ($idbase) {
-            $id = ' id="'.$idbase.'"';
-        } else {
-            $id = '';
-        }
-        if ($clearfix) {
-            $clearfix = ' clearfix';
-        } else {
-            $clearfix = '';
-        }
-        if ($classes or $clearfix) {
-            $class = ' class="'.$classes.$clearfix.'"';
-        } else {
-            $class = '';
-        }
-        $output = '<div'.$id.$class.'>';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Simple function to end a container (see above)
- *
- * @global object
- * @uses DEBUG_DEVELOPER
- * @param boolean $return, return as string or just print it
- * @return string|void Based on $return
- */
-function print_container_end($return=false) {
-    global $THEME;
-
-    if (empty($THEME->open_containers)) {
-        debugging('Incorrect request to end container - no more open containers.', DEBUG_DEVELOPER);
-        $idbase = '';
-    } else {
-        $idbase = array_pop($THEME->open_containers);
-    }
-
-    if (!empty($THEME->customcorners)) {
-        $output = _print_custom_corners_end($idbase);
-    } else {
-        $output = '</div>';
-    }
 
     if ($return) {
         return $output;
@@ -5682,207 +5362,6 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 }
 
 /**
- * Print an error page displaying an error message.  New method - use this for new code.
- *
- * @global object
- * @global object
- * @param string $errorcode The name of the string from error.php to print
- * @param string $module name of module
- * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
- * @param object $a Extra words and phrases that might be required in the error string
- * @return void terminates script, does not return!
- */
-function print_error($errorcode, $module='error', $link='', $a=NULL) {
-    global $CFG, $UNITTEST;
-
-    // If unittest running, throw exception instead
-    if (!empty($UNITTEST->running)) {
-        // Errors in unit test become exceptions, so you can unit test
-        // code that might call error().
-        throw new moodle_exception($errorcode, $module, $link, $a);
-    }
-
-    if (empty($module) || $module == 'moodle' || $module == 'core') {
-        $module = 'error';
-    }
-
-    if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
-        // error found before setup.php finished
-        _print_early_error($errorcode, $module, $a);
-    } else {
-        _print_normal_error($errorcode, $module, $a, $link, debug_backtrace());
-    }
-}
-
-/**
- * Internal function - do not use directly!!
- *
- * @global object
- * @global object
- * @global object
- * @global object
- * @global object
- * @param string $errorcode
- * @param string $module
- * @param string $a
- * @param string $link
- * @param array $backtrace
- * @param string $debuginfo
- * @param bool $showerrordebugwarning
- * @return void Script dies no return
- */
-function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
-    global $CFG, $SESSION, $THEME, $DB, $PAGE;
-
-    if ($DB) {
-        //if you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
-        $DB->set_debug(0);
-    }
-
-    if ($module === 'error') {
-        $modulelink = 'moodle';
-    } else {
-        $modulelink = $module;
-    }
-
-    $message = get_string($errorcode, $module, $a);
-    if ($module === 'error' and strpos($message, '[[') === 0) {
-        //search in moodle file if error specified - needed for backwards compatibility
-        $message = get_string($errorcode, 'moodle', $a);
-    }
-
-    if (CLI_SCRIPT) {
-        echo("!!! $message !!!\n");
-        if (debugging('', DEBUG_DEVELOPER)) {
-            if ($debuginfo) {
-                debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
-            } else {
-                notify('Stack trace:'.print_backtrace($backtrace, true, true), 'notifytiny');
-            }
-        }
-        exit(1); // general error code
-    }
-
-    if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
-        if ( !empty($SESSION->fromurl) ) {
-            $link = $SESSION->fromurl;
-            unset($SESSION->fromurl);
-        } else {
-            $link = $CFG->wwwroot .'/';
-        }
-    }
-
-    if (!empty($CFG->errordocroot)) {
-        $errordocroot = $CFG->errordocroot;
-    } else if (!empty($CFG->docroot)) {
-        $errordocroot = $CFG->docroot;
-    } else {
-        $errordocroot = 'http://docs.moodle.org';
-    }
-
-    if (!$PAGE->headerprinted) {
-        //header not yet printed
-        @header('HTTP/1.0 404 Not Found');
-        print_header(get_string('error'));
-    } else {
-        print_container_end_all(false, $THEME->open_header_containers);
-    }
-
-    echo '<br />';
-
-    $message = clean_text('<p class="errormessage">'.$message.'</p>'.
-               '<p class="errorcode">'.
-               '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
-                 get_string('moreinformation').'</a></p>');
-
-    print_simple_box($message, '', '', '', '', 'errorbox');
-
-    if ($showerrordebugwarning) {
-        debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
-
-    } else {
-        if (debugging('', DEBUG_DEVELOPER)) {
-            if ($debuginfo) {
-                debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
-            } else {
-                notify('Stack trace:'.print_backtrace($backtrace, false, true), 'notifytiny');
-            }
-        }
-    }
-
-    if (!empty($link)) {
-        print_continue($link);
-    }
-
-    print_footer();
-
-    for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
-        echo ' ';
-    }
-    exit(1); // general error code
-}
-
-/**
- * Internal function - do not use directly!!
- * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
- *
- * @uses $_SERVER
- * @uses DEBUG_DEVELOPER
- * @param string $errorcode
- * @param string $module
- * @param string $a
- * @param string $link
- * @param array $backtrace
- * @param string $debuginfo
- * @return void Script dies does not return
- */
-function _print_early_error($errorcode, $module, $a, $backtrace=null, $debuginfo=null) {
-    $message = get_string($errorcode, $module, $a);
-    if ($module === 'error' and strpos($message, '[[') === 0) {
-        //search in moodle file if error specified - needed for backwards compatibility
-        $message = get_string($errorcode, 'moodle', $a);
-    }
-    $message = clean_text($message);
-
-    // In the name of protocol correctness, monitoring and performance
-    // profiling, set the appropriate error headers for machine comsumption
-    if (isset($_SERVER['SERVER_PROTOCOL'])) {
-        // Avoid it with cron.php. Note that we assume it's HTTP/1.x
-        @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-    }
-
-    // better disable any caching
-    @header('Content-Type: text/html; charset=utf-8');
-    @header('Cache-Control: no-store, no-cache, must-revalidate');
-    @header('Cache-Control: post-check=0, pre-check=0', false);
-    @header('Pragma: no-cache');
-    @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
-    @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-
-    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" '.get_html_lang().'>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>'.get_string('error').'</title>
-</head><body>
-<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
-    border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
-    width: 80%; -moz-border-radius: 20px; padding: 15px">
-'.$message.'
-</div>';
-    if (debugging('', DEBUG_DEVELOPER)) {
-        if ($debuginfo) {
-            debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
-        } else if ($backtrace) {
-            notify('Stack trace:'.print_backtrace($backtrace, false, true), 'notifytiny');
-        }
-    }
-
-    echo '</body></html>';
-    exit(1); // general error code
-}
-
-/**
  * Print an error to STDOUT and exit with a non-zero code. For commandline scripts.
  * Default errorcode is 1.
  *
@@ -6285,43 +5764,6 @@ function redirect($url, $message='', $delay=-1) {
     print_footer('none');
     die;
 }
-
-/**
- * Print a bold message in an optional color.
- *
- * @global object
- * @uses CLI_SCRIPT
- * @param string $message The message to print out
- * @param string $style Optional style to display message text in
- * @param string $align Alignment option
- * @param bool $return whether to return an output string or echo now
- * @return string|bool Depending on $result 
- */
-function notify($message, $style='notifyproblem', $align='center', $return=false) {
-    global $DB;
-
-    if ($style == 'green') {
-        $style = 'notifysuccess';  // backward compatible with old color system
-    }
-
-    $message = clean_text($message);
-    if (!CLI_SCRIPT) {
-        $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
-    } else {
-        if ($style === 'notifysuccess') {
-            $output = '++'.$message.'++'."\n";
-        } else {
-            $output = '!!'.$message.'!!'."\n";
-        }
-    }
-
-    if ($return) {
-        return $output;
-    }
-
-    echo $output;
-}
-
 
 /**
  * Given an email address, this function will return an obfuscated version of it
@@ -6918,34 +6360,6 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
     return $subtree;
 }
 
-
-/**
- * Returns a string containing a link to the user documentation for the current
- * page. Also contains an icon by default. Shown to teachers and admin only.
- *
- * @global object
- * @global object
- * @param string $text The text to be displayed for the link
- * @param string $iconpath The path to the icon to be displayed
- * @return string The link to user documentation for this current page
- */
-function page_doc_link($text='', $iconpath='') {
-    global $CFG, $PAGE;
-
-    if (empty($CFG->docroot) || during_initial_install()) {
-        return '';
-    }
-    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
-        return '';
-    }
-
-    $path = $PAGE->docspath;
-    if (!$path) {
-        return '';
-    }
-    return doc_link($path, $text, $iconpath);
-}
-
 /**
  * Returns the Moodle Docs URL in the users language
  *
@@ -7021,85 +6435,32 @@ function doc_link($path='', $text='', $iconpath='') {
  * @param array $backtrace use different backtrace
  * @return bool
  */
-function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
-
+function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
     global $CFG;
 
-    if (empty($CFG->debug)) {
+    if (empty($CFG->debug) || $CFG->debug < $level) {
         return false;
     }
 
-    if ($CFG->debug >= $level) {
-        if ($message) {
-            if (!$backtrace) {
-                $backtrace = debug_backtrace();
-            }
-            $from = print_backtrace($backtrace, CLI_SCRIPT, true);
-            if (!isset($CFG->debugdisplay)) {
-                $CFG->debugdisplay = ini_get_bool('display_errors');
-            }
-            if ($CFG->debugdisplay) {
-                if (!defined('DEBUGGING_PRINTED')) {
-                    define('DEBUGGING_PRINTED', 1); // indicates we have printed something
-                }
-                notify($message . $from, 'notifytiny');
-            } else {
-                trigger_error($message . $from, E_USER_NOTICE);
-            }
-        }
-        return true;
+    if (!isset($CFG->debugdisplay)) {
+        $CFG->debugdisplay = ini_get_bool('display_errors');
     }
-    return false;
-}
 
-/**
- * Prints formatted backtrace
- *
- * @global object
- * @param array $callers backtrace array
- * @param bool $return return as string or print
- * @return string|bool Depending on $return
- */
-function print_backtrace($callers, $plaintext=false, $return=false) {
-    // do not use $CFG->dirroot because it might not be available in desctructors
-    $dirroot = dirname(dirname(__FILE__));
- 
-    if (empty($callers)) {
-        if ($return) {
-            return '';
+    if ($message) {
+        if (!$backtrace) {
+            $backtrace = debug_backtrace();
+        }
+        $from = format_backtrace($backtrace, CLI_SCRIPT);
+        if ($CFG->debugdisplay) {
+            if (!defined('DEBUGGING_PRINTED')) {
+                define('DEBUGGING_PRINTED', 1); // indicates we have printed something
+            }
+            notify($message . $from, 'notifytiny');
         } else {
-            return;
+            trigger_error($message . $from, E_USER_NOTICE);
         }
     }
-
-    $from = $plaintext ? '' : '<ul style="text-align: left">';
-    foreach ($callers as $caller) {
-        if (!isset($caller['line'])) {
-            $caller['line'] = '?'; // probably call_user_func()
-        }
-        if (!isset($caller['file'])) {
-            $caller['file'] = 'unknownfile'; // probably call_user_func()
-        }
-        $from .= $plaintext ? '* ' : '<li>';
-        $from .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
-        if (isset($caller['function'])) {
-            $from .= ': call to ';
-            if (isset($caller['class'])) {
-                $from .= $caller['class'] . $caller['type'];
-            }
-            $from .= $caller['function'] . '()';
-        } else if (isset($caller['exception'])) {
-            $from .= ': '.$caller['exception'].' thrown';
-        }
-        $from .= $plaintext ? "\n" : '</li>';
-    }
-    $from .= $plaintext ? '' : '</ul>';
-
-    if ($return) {
-        return $from;
-    } else {
-        echo $from;
-    }
+    return true;
 }
 
 /**

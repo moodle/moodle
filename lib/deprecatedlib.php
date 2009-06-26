@@ -202,6 +202,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * parameters remain.  If possible, $align, $width and $color should not be defined at all.
  * Preferably just use print_box() in weblib.php
  *
+ * @deprecated
  * @param string $message The message to display
  * @param string $align alignment of the box, not the text (default center, left, right).
  * @param string $width width of the box, including units %, for example '100%'.
@@ -242,6 +243,7 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
  * @return string|void Depending on $return
  */
 function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
+    debugging('print_simple_box(_star/_end) is deprecated. Please use $OUTPUT->box(_star/_end) instead', DEBUG_DEVELOPER);
 
     $output = '';
 
@@ -1746,3 +1748,365 @@ function formerr($error) {
     echo $OUTPUT->error_text($error);
 }
 
+/**
+ * Return the markup for the destination of the 'Skip to main content' links.
+ * Accessibility improvement for keyboard-only users.
+ *
+ * Used in course formats, /index.php and /course/index.php
+ *
+ * @deprecated use $OUTPUT->skip_link_target() in instead.
+ * @return string HTML element.
+ */
+function skip_main_destination() {
+    global $OUTPUT;
+    return $OUTPUT->skip_link_target();
+}
+
+/**
+ * Prints a string in a specified size  (retained for backward compatibility)
+ *
+ * @deprecated
+ * @param string $text The text to be displayed
+ * @param int $size The size to set the font for text display.
+ * @param bool $return If set to true output is returned rather than echoed Default false
+ * @return string|void String if return is true
+ */
+function print_headline($text, $size=2, $return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->heading($text, $size);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints text in a format for use in headings.
+ *
+ * @deprecated
+ * @param string $text The text to be displayed
+ * @param string $deprecated No longer used. (Use to do alignment.)
+ * @param int $size The size to set the font for text display.
+ * @param string $class
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @param string $id The id to use in the element
+ * @return string|void String if return=true nothing otherwise
+ */
+function print_heading($text, $deprecated = '', $size = 2, $class = 'main', $return = false, $id = '') {
+    global $OUTPUT;
+    if (!empty($deprecated)) {
+        debugging('Use of deprecated align attribute of print_heading. ' .
+                'Please do not specify styling in PHP code like that.', DEBUG_DEVELOPER);
+    }
+    $output = $OUTPUT->heading($text, $size, $class, $id);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Output a standard heading block
+ *
+ * @deprecated
+ * @param string $heading The text to write into the heading
+ * @param string $class An additional Class Attr to use for the heading
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void HTML String if return=true nothing otherwise
+ */
+function print_heading_block($heading, $class='', $return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->heading($heading, 2, 'headingblock header ' . moodle_renderer_base::prepare_classes($class));
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a message in a standard themed box.
+ * Replaces print_simple_box (see deprecatedlib.php)
+ *
+ * @deprecated
+ * @param string $message, the content of the box
+ * @param string $classes, space-separated class names.
+ * @param string $ids
+ * @param boolean $return, return as string or just print it
+ * @return string|void mixed string or void
+ */
+function print_box($message, $classes='generalbox', $ids='', $return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->box($message, $classes, $ids);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Starts a box using divs
+ * Replaces print_simple_box_start (see deprecatedlib.php)
+ *
+ * @deprecated
+ * @param string $classes, space-separated class names.
+ * @param string $ids
+ * @param boolean $return, return as string or just print it
+ * @return string|void  string or void
+ */
+function print_box_start($classes='generalbox', $ids='', $return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->box_start($classes, $ids);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Simple function to end a box (see above)
+ * Replaces print_simple_box_end (see deprecatedlib.php)
+ *
+ * @deprecated
+ * @param boolean $return, return as string or just print it
+ * @return string|void Depending on value of return
+ */
+function print_box_end($return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->box_end();
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a message in a standard themed container.
+ *
+ * @deprecated
+ * @param string $message, the content of the container
+ * @param boolean $clearfix clear both sides
+ * @param string $classes, space-separated class names.
+ * @param string $idbase
+ * @param boolean $return, return as string or just print it
+ * @return string|void Depending on value of $return
+ */
+function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
+    global $OUTPUT;
+    if ($clearfix) {
+        $classes .= ' clearfix';
+    }
+    $output = $OUTPUT->container($message, $classes, $idbase);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Starts a container using divs
+ *
+ * @deprecated
+ * @param boolean $clearfix clear both sides
+ * @param string $classes, space-separated class names.
+ * @param string $idbase
+ * @param boolean $return, return as string or just print it
+ * @return string|void Based on value of $return
+ */
+function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
+    global $OUTPUT;
+    if ($clearfix) {
+        $classes .= ' clearfix';
+    }
+    $output = $OUTPUT->container_start($classes, $idbase);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Simple function to end a container (see above)
+ *
+ * @deprecated
+ * @param boolean $return, return as string or just print it
+ * @return string|void Based on $return
+ */
+function print_container_end($return=false) {
+    global $OUTPUT;
+    $output = $OUTPUT->container_end();
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a bold message in an optional color.
+ *
+ * @deprecated use $OUTPUT->notification instead.
+ * @param string $message The message to print out
+ * @param string $style Optional style to display message text in
+ * @param string $align Alignment option
+ * @param bool $return whether to return an output string or echo now
+ * @return string|bool Depending on $result 
+ */
+function notify($message, $classes = 'notifyproblem', $align = 'center', $return = false) {
+    global $OUTPUT;
+
+    if ($classes == 'green') {
+        debugging('Use of deprecated class name "green" in notify. Please change to "notifysuccess".', DEBUG_DEVELOPER);
+        $classes = 'notifysuccess'; // Backward compatible with old color system
+    }
+
+    $output = $OUTPUT->notification($message, $classes);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a continue button that goes to a particular URL.
+ *
+ * @param string $link The url to create a link to.
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void HTML String if return=true nothing otherwise
+ */
+function print_continue($link, $return = false) {
+    global $CFG, $OUTPUT;
+
+    if ($link == '') {
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $link = $_SERVER['HTTP_REFERER'];
+            $link = str_replace('&', '&amp;', $link); // make it valid XHTML
+        } else {
+            $link = $CFG->wwwroot .'/';
+        }
+    }
+
+    $output = $OUTPUT->continue_button($link);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Returns a string containing a link to the user documentation for the current
+ * page. Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @global object
+ * @global object
+ * @param string $text The text to be displayed for the link
+ * @param string $iconpath The path to the icon to be displayed
+ * @return string The link to user documentation for this current page
+ */
+function page_doc_link($text='', $iconpath='') {
+    global $CFG, $PAGE;
+
+    if (empty($CFG->docroot) || during_initial_install()) {
+        return '';
+    }
+    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
+        return '';
+    }
+
+    $path = $PAGE->docspath;
+    if (!$path) {
+        return '';
+    }
+    return doc_link($path, $text, $iconpath);
+}
+
+/**
+ * Print a standard header
+ *
+ * @param string  $title Appears at the top of the window
+ * @param string  $heading Appears at the top of the page
+ * @param string  $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
+ * @param string  $focus Indicates form element to get cursor focus on load eg  inputform.password
+ * @param string  $meta Meta tags to be added to the header
+ * @param boolean $cache Should this page be cacheable?
+ * @param string  $button HTML code for a button (usually for module editing)
+ * @param string  $menu HTML code for a popup menu
+ * @param boolean $usexml use XML for this page
+ * @param string  $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
+ * @param bool    $return If true, return the visible elements of the header instead of echoing them.
+ * @return string|void If return=true then string else void
+ */
+function print_header($title='', $heading='', $navigation='', $focus='',
+                      $meta='', $cache=true, $button='&nbsp;', $menu='',
+                      $usexml=false, $bodytags='', $return=false) {
+    global $PAGE, $OUTPUT;
+
+    $PAGE->set_title($title);
+    $PAGE->set_heading($heading);
+    $PAGE->set_cacheable($cache);
+    $PAGE->set_focuscontrol($focus);
+    if ($button == '') {
+        $button = '&nbsp;';
+    }
+    $PAGE->set_button($button);
+
+    if ($navigation == 'home') {
+        $navigation = '';
+    }
+    if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
+        debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
+                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.", DEBUG_DEVELOPER);
+    }
+
+    // TODO $navigation
+    // TODO $menu
+
+    if ($meta) {
+        throw new coding_exception('The $meta parameter to print_header is no longer supported. '.
+                'You should be able to do weverything you want with $PAGE->requires and other such mechanisms.');
+    }
+    if ($usexml) {
+        throw new coding_exception('The $usexml parameter to print_header is no longer supported.');
+    }
+    if ($bodytags) {
+        throw new coding_exception('The $bodytags parameter to print_header is no longer supported.');
+    }
+
+    $output = $OUTPUT->header($navigation, $menu);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+function print_footer($course = NULL, $usercourse = NULL, $return = false) {
+    global $PAGE, $OUTPUT;
+    // TODO check arguments.
+    if (is_string($course)) {
+        debugging("Magic values like 'home', 'empty' passed to print_footer no longer have any effect. " .
+                'To achieve a similar effect, call $PAGE->set_generaltype before you call print_header.', DEBUG_DEVELOPER);
+    } else if (!empty($course->id) && $course->id != $PAGE->course->id) {
+        throw new coding_exception('The $course object you passed to print_footer does not match $PAGE->course.');
+    }
+    if (!is_null($usercourse)) {
+        debugging('The second parameter ($usercourse) to print_footer is no longer supported. ' .
+                '(I did not think it was being used anywhere.)', DEBUG_DEVELOPER);
+    }
+    $output = $OUTPUT->footer();
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}

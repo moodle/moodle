@@ -811,7 +811,7 @@ class grade_plugin_info {
  * @return string HTML code or nothing if $return == false
  */
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
-                               $heading = false, $return=false, $bodytags='',
+                               $heading = false, $return=false,
                                $buttons=false, $extracss=array()) {
     global $CFG, $COURSE;
     $strgrades = get_string('grades');
@@ -867,7 +867,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     }
 
     $returnval = print_header_simple($strgrades . ': ' . $stractive_type, $title, $navigation, '',
-            $bodytags, true, $buttons, navmenu($COURSE), false, '', $return);
+            '', true, $buttons, navmenu($COURSE), false, '', $return);
 
     // Guess heading if not given explicitly
     if (!$heading) {

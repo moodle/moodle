@@ -674,7 +674,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
 
     $plugin = ($plugin==='moodle') ? null : $plugin;
 
-    $backtrace = print_backtrace($backtrace, true, true);
+    $backtrace = format_backtrace($backtrace, true);
 
     $version = null;
 
