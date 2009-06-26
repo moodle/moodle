@@ -113,7 +113,7 @@ if (moodle_coverage_recorder::can_run_codecoverage()) {
 } else {
     echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
-echo '<p><strong>'."Databases:".'</strong>';
+echo '<p><strong>'."Databases:".'</strong></p>';
 echo '<ul>';
 foreach ($dbinfos as $i=>$dbinfo) {
     $name = $dbinfo['name'];
@@ -123,17 +123,16 @@ foreach ($dbinfos as $i=>$dbinfo) {
         }
         echo '<li>'; print_checkbox('selected['.$i.']', 1, intval(!empty($selected[$i])), $name); echo '</li>';
     } else {
-        echo '<li>'."$name: driver not installed".'</li'; // TODO: localise
+        echo '<li>'."$name: driver not installed".'</li>'; // TODO: localise
     }
 }
-echo '</ul></p>';
-echo '<p>External databases are configured in config.php, add lines:
+echo '</ul>';
+echo '<p>External databases are configured in config.php, add lines:</p>
 <pre>
 $CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", "test", null);
 $CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", "test", null);
 </pre>
-where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, prefix, dboptions
-</p>';
+<p>where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, prefix, dboptions</p>';
 echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
 echo '</div>';
 echo '</form>';
