@@ -157,31 +157,24 @@
     print_header($pagetitle, $course->fullname,
                  $navigation,
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
-    //if ($sco->scormtype == 'sco') {
-?>
-    <script type="text/javascript" src="request.js"></script>
-    <script type="text/javascript" src="loaddatamodel.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
-    <script type="text/javascript" src="<?php echo $CFG->wwwroot; ?>/mod/scorm/rd.js"></script>
-    <script type="text/javascript">
-    <!--
-        window.onresize = function() {
-            scorm_resize(<?php echo $scorm->width.", ".$scorm->height; ?>);
-        };
-    -->
-    </script>
-<?php
-    //}
+
+    echo $PAGE->requires->data_for_js('scormdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->asap();
+    echo $PAGE->requires->js('mod/scorm/request.js')->asap();
+    echo $PAGE->requires->js('mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->asap();
+    echo $PAGE->requires->js('mod/scorm/rd.js')->asap();
+    $PAGE->requires->js_function_call('attach_resize_event');
+
     if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
-        echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";\n//]]>\n</script>\n";
+        $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr));
     } else {
-        echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var prev="'.$CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id."\";\n//]]>\n</script>\n";
+        $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id));
     }
     if (($sco->nextid != 0) && ((!isset($sco->next)) || ($sco->next == 0))) {
         $scostr = '&scoid='.$sco->nextid;
-        echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var next="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";\n//]]>\n</script>\n";
+        $PAGE->requires->js_function_call('scorm_set_next', Array($CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr));
     } else {
-        echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var next="'.$CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id."\";\n//]]>\n</script>\n";
+        $PAGE->requires->js_function_call('scorm_set_next', Array($CFG->wwwroot.'/mod/scorm/view.php?id='.$cm->id));
     }
 ?>
     <div id="scormpage">
@@ -301,9 +294,9 @@
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
-            echo "                <script type=\"text/javascript\">scorm_resize(".$scorm->width.", ".$scorm->height.");</script>\n";
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
             echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";
+            $PAGE->requires->js_function_call('scorm_resize', Array($scorm->width, $scorm->height));
         } else {
             // Clean the name for the window as IE is fussy
             $name = preg_replace("/[^A-Za-z0-9]/", "", $scorm->name);

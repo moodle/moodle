@@ -1,7 +1,7 @@
 <?php // $Id$
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
@@ -209,25 +209,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     }
     $result->toc .= "\t</ul>\n";
     if ($scorm->hidetoc == 0) {
-        $result->toc .= '
-          <script type="text/javascript">
-          //<![CDATA[
-              function expandCollide(which,list,item) {
-                  var el = document.ids ? document.ids[list] : document.getElementById ? document.getElementById(list) : document.all[list];
-                  which = which.substring(0,(which.length));
-                  var el2 = document.ids ? document.ids[which] : document.getElementById ? document.getElementById(which) : document.all[which];
-                  if (el.style.display != "none") {
-                      el2.src = "'.$scormpixdir.'/plus.gif";
-                      el.style.display=\'none\';
-                      new cookie("hide:SCORMitem" + item, 1, 356, "/").set();
-                  } else {
-                      el2.src = "'.$scormpixdir.'/minus.gif";
-                      el.style.display=\'block\';
-                      new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
-                  }
-              }
-          //]]>
-          </script>'."\n";
+        $PAGE->requires->data_for_js('scormdata', Array('scormpixdir'=>$scormpixdir));
+        $PAGE->requires->js('mod/scorm/datamodels/scorm_datamodels.js');
     }
 
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid=';
