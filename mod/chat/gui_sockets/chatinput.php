@@ -16,30 +16,10 @@
 
     //Setup course, lang and theme
     $PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
-
-    ob_start();
-    ?>
-<script type="text/javascript">
-scroll_active = true;
-function empty_field_and_submit() {
-    var cf   = document.getElementById('sendform');
-    var inpf = document.getElementById('inputform');
-    cf.chat_msgidnr.value = parseInt(cf.chat_msgidnr.value) + 1;
-    cf.chat_message.value = inpf.chat_message.value;
-    inpf.chat_message.value='';
-    cf.submit();
-    inpf.chat_message.focus();
-    return false;
-}
-function setfocus() {
-    document.getElementsByName("chat_message")[0].focus(); 
-}
-</script>
-    <?php
-
-    $meta = ob_get_clean();
+    $PAGE->requires->js('mod/chat/gui_sockets/chat_gui_sockets.js')->in_head();
+    $PAGE->requires->js_function_call('setfocus');
     // TODO: there will be two onload in body tag, does it matter?
-    print_header('', '', '', 'inputform.chat_message', $meta, false, '&nbsp;', '', false, 'onload="setfocus();"');
+    print_header('', '', '', 'inputform.chat_message', '', false, '&nbsp;', '', false);
 
 ?>
 
