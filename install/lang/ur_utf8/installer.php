@@ -10,6 +10,7 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['availablelangs'] = 'دستیاب زبانوں کے بنڈل';
+$string['language'] = 'زبان';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'اردو';
 ?>
