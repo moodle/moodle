@@ -510,10 +510,15 @@ class template_renderer extends moodle_renderer_base {
         // local variable names used in this function, so that they do not clash
         // with the names of any variables being passed to the template.
 
-        // Set up the global variables that the template may wish to access.
-        global $CFG, $THEME;
-        $PAGE = $this->page; // Also, make $PAGE and $OUTPUT point to us.
+        global $CFG, $SITE, $THEME, $USER;
+        // The next lines are a bit tricky. The point is, here we are in a method
+        // of a renderer class, and this object may, or may not, be the the same as
+        // the global $OUTPUT object. When rendering the template, we want to use
+        // this object. However, people writing Moodle code expect the current
+        // rederer to be called $OUTPUT, not $this, so define a variable called
+        // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
         $OUTPUT = $this;
+        $PAGE = $this->page;
         $COURSE = $this->page->course;
 
         // And the parameters from the function call.
@@ -892,7 +897,12 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     protected function render_page_template($templatefile, $menu, $navigation) {
         global $CFG, $SITE, $THEME, $USER;
-        // Set some pretend globals from the properties of this class.
+        // The next lines are a bit tricky. The point is, here we are in a method
+        // of a renderer class, and this object may, or may not, be the the same as
+        // the global $OUTPUT object. When rendering the template, we want to use
+        // this object. However, people writing Moodle code expect the current
+        // rederer to be called $OUTPUT, not $this, so define a variable called
+        // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
         $OUTPUT = $this;
         $PAGE = $this->page;
         $COURSE = $this->page->course;
@@ -907,6 +917,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     protected function handle_legacy_theme($navigation, $menu) {
         global $CFG, $SITE, $THEME, $USER;
         // Set a pretend global from the properties of this class.
+        // See the comment in render_page_template for a fuller explanation.
         $COURSE = $this->page->course;
 
         // Set up local variables that header.html expects.
