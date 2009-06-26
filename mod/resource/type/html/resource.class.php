@@ -45,7 +45,7 @@ function _postprocess(&$resource) {
 
 
 function display() {
-    global $CFG;
+    global $CFG, $PAGE;
 
     $formatoptions = new object();
     $formatoptions->noclean = true;
@@ -96,11 +96,7 @@ function display() {
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                         navmenu($course, $cm));
 
-                echo "\n<script type=\"text/javascript\">";
-                echo "\n//<![CDATA[\n";
-                echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
-                echo "\n//]]>\n";
-                echo '</script>';
+                $PAGE->requires->js_function_call('openpopup', Array("/mod/resource/view.php?inpopup=true&id={$cm->id}","resource{$resource->id}",$resource->popup));
 
                 if (trim(strip_tags($resource->intro))) {
                     print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
