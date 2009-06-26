@@ -31,37 +31,9 @@
 
     //Setup course, lang and theme
     $PAGE->set_course($course);
+    $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js');
 
-    ob_start();
-    ?>
-    <script type="text/javascript">
-    //<![CDATA[
-    var waitFlag = false;
-    function empty_field_and_submit() {
-        if(waitFlag) return false;
-        waitFlag = true;
-        var input_chat_message = document.getElementById('input_chat_message');
-        document.getElementById('sendForm').chat_message.value = input_chat_message.value;
-        input_chat_message.value = '';
-        input_chat_message.className = 'wait';
-        document.getElementById('sendForm').submit();
-        enableForm();
-        return false;
-    }
-
-    function enableForm() {
-        var input_chat_message = document.getElementById('input_chat_message');
-        waitFlag = false;
-        input_chat_message.className = '';
-        input_chat_message.focus();
-    }
-
-    //]]>
-    </script>
-    <?php
-
-    $meta = ob_get_clean();
-    print_header('', '', '', 'input_chat_message', $meta, false);
+    print_header('', '', '', 'input_chat_message', '', false);
 
 ?>
     <form action="../empty.php" method="post" target="empty" id="inputForm"
