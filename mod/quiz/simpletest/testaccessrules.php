@@ -15,6 +15,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 class simple_rules_test extends UnitTestCase {
+    public static $includecoverage = array('mod/quiz/locallib.php');
     function test_num_attempts_access_rule() {
         $quiz = new stdClass;
         $quiz->attempts = 3;

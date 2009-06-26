@@ -7,6 +7,7 @@ Mock::generate('forum_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testForumPortfolioCallers extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/forum/lib.php');
     public $module_type = 'forum';
     public $modules = array();
     public $entries = array();

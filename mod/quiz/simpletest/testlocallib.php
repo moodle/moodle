@@ -14,6 +14,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 class quiz_locallib_test extends UnitTestCase {
+    public static $includecoverage = array('mod/quiz/locallib.php');
     function test_quiz_questions_in_quiz() {
         $this->assertEqual(quiz_questions_in_quiz(''), '');
         $this->assertEqual(quiz_questions_in_quiz('0'), '');

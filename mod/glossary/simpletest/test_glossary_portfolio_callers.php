@@ -9,6 +9,7 @@ Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testGlossaryPortfolioCallers extends portfoliolib_test {
 
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/glossary/lib.php');
     public $glossaries = array();
     public $entries = array();
     public $entry_caller;

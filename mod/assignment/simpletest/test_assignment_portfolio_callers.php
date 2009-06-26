@@ -7,6 +7,7 @@ Mock::generate('assignment_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testAssignmentPortfolioCallers extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/assignment/lib.php');
     public $module_type = 'assignment';
     public $modules = array();
     public $entries = array();

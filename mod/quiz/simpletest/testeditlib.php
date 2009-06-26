@@ -13,6 +13,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 
 class quiz_editlib_test extends UnitTestCase {
+    public static $includecoverage = array('mod/quiz/editlib.php');
     function test_quiz_move_question_up() {
         $this->assertEqual(quiz_move_question_up('0', 123), '0');
         $this->assertEqual(quiz_move_question_up('1,2,0', 1), '1,2,0');

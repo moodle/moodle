@@ -7,6 +7,7 @@ Mock::generate('data_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testDataPortfolioCallers extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/data/lib.php');
     public $module_type = 'data';
     public $modules = array();
     public $entries = array();

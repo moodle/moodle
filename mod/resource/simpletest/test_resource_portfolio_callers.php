@@ -7,6 +7,7 @@ Mock::generate('resource_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testResourcePortfolioCallers extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/resource/lib.php');
     public $module_type = 'resource';
     public $modules = array();
     public $entries = array();

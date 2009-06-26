@@ -21,6 +21,7 @@ require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
  * 
  * */
 class quiz_report_qstats_test extends UnitTestCase {
+    public static $includecoverage = array('mod/quiz/report/reportlib.php');
     /**
      * @var qstats object created to test class
      */

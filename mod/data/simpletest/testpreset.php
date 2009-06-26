@@ -38,6 +38,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/mod/data/lib.php');
 
 class data_preset_test extends UnitTestCase {
+    public static $includecoverage = array('mod/data/lib.php');
 
     function setUp() {
     }

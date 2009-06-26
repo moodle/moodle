@@ -7,6 +7,7 @@ Mock::generate('chat_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testChatPortfolioCallers extends portfoliolib_test {
+    public static $includecoverage = array('lib/portfoliolib.php', 'mod/chat/lib.php');
     public $module_type = 'chat';
     public $modules = array();
     public $entries = array();
