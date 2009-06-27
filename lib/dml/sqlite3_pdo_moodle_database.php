@@ -368,4 +368,16 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     public function sql_bitxor($int1, $int2) {
         return '( ~' . $this->sql_bitand($int1, $int2) . ' & ' . $this->sql_bitor($int1, $int2) . ')';
     }
+
+    /**
+     * Returns the SQL text to be used in order to perform one bitwise XOR operation
+     * between 2 integers.
+     *
+     * @param integer int1 first integer in the operation
+     * @param integer int2 second integer in the operation
+     * @return string the piece of SQL code to be used in your statement.
+     */
+    public function sql_bitxor($int1, $int2) {
+        return '( ~' . $this->sql_bitand($int1, $int2) . ' & ' . $this->sql_bitor($int1, $int2) . ')';
+    }
 }
