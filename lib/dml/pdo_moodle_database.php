@@ -83,9 +83,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * Must be called after connect (or after $dbname, $dbhost, etc. members have been set).
      * @return string driver-dependent DSN
      */
-    protected function get_dsn() {
-        return 'mysql:host='.$this->dbhost.';dbname='.$this->dbname;
-    }
+    abstract protected function get_dsn();
 
     /**
      * Returns the driver-dependent connection attributes for PDO based on members stored by connect.
@@ -185,18 +183,18 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
+        $result = true;
+        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+
         try {
-            $this->lastError = null;
-            if($this->debug) {
-                $this->debug_query($sql);
-            }
             $this->pdb->exec($sql);
             $this->reset_caches();
-            return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            return false;
+            $result = false;
         }
+        $this->query_end($result);
+        return $result;
     }
 
     public function delete_records_select($table, $select, array $params=null) {
@@ -204,7 +202,6 @@ abstract class pdo_moodle_database extends moodle_database {
         if ($select) {
             $sql .= " WHERE $select";
         }
-        $this->writes++;
         return $this->execute($sql, $params);
     }
 
@@ -227,19 +224,21 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function execute($sql, array $params=null) {
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+
+        $result = true;
+        $this->query_start($sql, $params, SQL_QUERY_UPDATE);
+
         try {
-            $this->lastError = null;
-            list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-            if($this->debug) {
-                $this->debug_query($sql, $params);
-            }
             $sth = $this->pdb->prepare($sql);
             $sth->execute($params);
-            return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            return false;
+            $result = false;
         }
+
+        $this->query_end($result);
+        return $result;
     }
 
     /**
@@ -257,32 +256,24 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return mixed an moodle_recordset object, or false if an error occured.
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+
+        $result = true;
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        $sql = $this->get_limit_clauses($sql, $limitfrom, $limitnum);
+        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+
         try {
-            $this->lastError = null;
-            list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-            $sql = $this->get_limit_clauses($sql, $limitfrom, $limitnum);
-            if($this->debug) {
-                $this->debug_query($sql, $params);
-            }
-            $this->reads++;
             $sth = $this->pdb->prepare($sql);
             $sth->execute($params);
-            return $this->create_recordset($sth);
+            $result = $this->create_recordset($sth);
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            return false;
+            $result = false;
         }
-    }
 
-    /**
-     * Returns the sql statement with clauses to append used to limit a recordset range.
-     * @param string $sql the SQL statement to limit.
-     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
-     * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
-     * @return string the SQL statement with limiting clauses
-     */
-    protected function get_limit_clauses($sql, $limitfrom=0, $limitnum=0) {
-        return $sql;
+        $this->query_end($result);
+        return $result;
     }
 
     /**
@@ -350,7 +341,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
         if ($customsequence) {
             if (!isset($params['id'])) {
-                return false;
+                throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
             $returnid = false;
         } else {
@@ -358,10 +349,8 @@ abstract class pdo_moodle_database extends moodle_database {
         }
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::insert_record_raw() no fields found.');
         }
-
-        $this->writes++;
 
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
@@ -442,13 +431,13 @@ abstract class pdo_moodle_database extends moodle_database {
             $params = (array)$params;
         }
         if (!isset($params['id'])) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() id field must be specified.');
         }
         $id = $params['id'];
         unset($params['id']);
 
         if (empty($params)) {
-            return false;
+            throw new coding_exception('moodle_database::update_record_raw() no fields found.');
         }
 
         $sets = array();
@@ -460,7 +449,6 @@ abstract class pdo_moodle_database extends moodle_database {
 
         $sets = implode(',', $sets);
         $sql = "UPDATE {{$table}} SET $sets WHERE id=?";
-        $this->writes++;
         return $this->execute($sql, $params);
     }
 
@@ -543,7 +531,6 @@ abstract class pdo_moodle_database extends moodle_database {
             }
         }
         $sql = "UPDATE {{$table}} SET $newfield $select";
-        $this->writes++;
         return $this->execute($sql, $params);
     }
 
@@ -559,35 +546,53 @@ abstract class pdo_moodle_database extends moodle_database {
         if (!parent::begin_sql()) {
             return false;
         }
+
+        $this->query_start('', NULL, SQL_QUERY_AUX);
+        $result = true;
+
         try {
             $this->pdb->beginTransaction();
-            return true;
         } catch(PDOException $ex) {
-            return false;
+            $this->lastError = $ex->getMessage();
+            $result = false;
         }
+        $this->query_end($result);
+        return $result;
     }
     public function commit_sql() {
         if (!parent::commit_sql()) {
             return false;
         }
+
+        $this->query_start('', NULL, SQL_QUERY_AUX);
+        $result = true;
+
         try {
             $this->pdb->commit();
-            return true;
         } catch(PDOException $ex) {
-            return false;
+            $this->lastError = $ex->getMessage();
+            $result = false;
         }
+        $this->query_end($result);
+        return $result;
     }
 
     public function rollback_sql() {
         if (!parent::rollback_sql()) {
             return false;
         }
+
+        $this->query_start('', NULL, SQL_QUERY_AUX);
+        $result = true;
+
         try {
             $this->pdb->rollBack();
-            return true;
         } catch(PDOException $ex) {
-            return false;
+            $this->lastError = $ex->getMessage();
+            $result = false;
         }
+        $this->query_end($result);
+        return $result;
     }
 
     /**
@@ -610,5 +615,21 @@ abstract class pdo_moodle_database extends moodle_database {
         }
 
         return $this->insert_record_raw($table, $cleaned, false, true, true);
+    }
+
+    /**
+     * Called before each db query.
+     *
+     * Overriden to ensure $this->lastErorr is reset each query
+     *
+     * @param string $sql
+     * @param array array of parameters
+     * @param int $type type of query
+     * @param mixed $extrainfo driver specific extra information
+     * @return void
+     */
+    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+        $this->lastError = null;
+        parent::query_start($sql, $params, $type, $extrainfo);
     }
 }
