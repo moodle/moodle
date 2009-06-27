@@ -57,9 +57,15 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        $driverstatus = $this->driver_installed();
+
+        if ($driverstatus !== true) {
+            throw new dml_exception('dbdriverproblem', $driverstatus);
+        }
+
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
-        try {
+        try{
             $this->pdb = new PDO($this->get_dsn(), $this->dbuser, $this->dbpass, $this->get_pdooptions());
             // generic PDO settings to match adodb's default; subclasses can change this in configure_dbconnection
             $this->pdb->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
@@ -67,6 +73,7 @@ abstract class pdo_moodle_database extends moodle_database {
             $this->configure_dbconnection();
             return true;
         } catch (PDOException $ex) {
+            throw new dml_connection_exception($ex->getMessage());
             return false;
         }
     }
