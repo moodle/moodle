@@ -2285,7 +2285,9 @@ class curl {
         if (empty($this->error)){
             return $ret;
         } else {
-            throw new moodle_exception($this->error, 'curl');
+            return $this->error;
+            // exception is not ajax friendly
+            //throw new moodle_exception($this->error, 'curl');
         }
     }
 
@@ -2416,6 +2418,9 @@ class curl {
         $options['CURLOPT_CUSTOMREQUEST'] = 'OPTIONS';
         $ret = $this->request($url, $options);
         return $ret;
+    }
+    public function get_info() {
+        return $this->info;
     }
 }
 

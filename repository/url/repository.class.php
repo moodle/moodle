@@ -21,11 +21,12 @@ class repository_url extends repository {
             // will be used to construct download form
             $this->client_id = $options['client_id'];
         }
-        $this->file_url = optional_param('download_from', '', PARAM_RAW);
+        $this->file_url = optional_param('file', '', PARAM_RAW);
     }
 
     public function get_file($url, $file = '') {
         global $CFG;
+        //$CFG->repository_no_delete = true;
         $path = $this->prepare_file($file);
         $fp = fopen($path, 'w');
         $c = new curl;
@@ -54,15 +55,8 @@ class repository_url extends repository {
             $url->type = 'text';
             $url->name = 'file';
 
-            $title = new stdclass;
-            $title->label = $strname.': ';
-            $title->id    = 'newname-'.$this->client_id;
-            $title->type = 'text';
-            $title->name = 'title';
-
-            $ret['login'] = array($url, $title);
+            $ret['login'] = array($url);
             $ret['login_btn_label'] = get_string('download', 'repository_url');
-            $ret['login_btn_action'] = 'download';
             return $ret;
         } else {
             echo <<<EOD
@@ -70,11 +64,7 @@ class repository_url extends repository {
 <tr>
 <td>{$strurl}: </td><td><input name="file" type="text" /></td>
 </tr>
-<tr>
-<td>{$strname}: </td><td><input name="title" type="text" /></td>
-</tr>
 </table>
-<input type="hidden" name="action" value="download" />
 <input type="submit" value="{$strdownload}" />
 EOD;
 
@@ -87,7 +77,61 @@ EOD;
      * @return array
      */
     public function get_listing($path='', $page='') {
-        $this->print_login();
+        global $CFG;
+        set_time_limit(0);
+        $ret = array();
+        $curl = new curl;
+        $msg = $curl->head($this->file_url);
+        $info = $curl->get_info();
+        if ($info['http_code'] != 200) {
+            $ret['e'] = $msg;
+        } else {
+            $ret['list'] = array();
+            $ret['nosearch'] = true;
+            $ret['nologin'] = true;
+            $filename = $this->guess_filename($info['url'], $info['content_type']);
+            if (strstr($info['content_type'], 'text/html') || empty($info['content_type'])) {
+                // analysis this web page, general file list
+                $ret['list'] = array();
+                $a = $curl->get($info['url']);
+                $this->analyse_page($a, $ret);
+            } else {
+                // download this file
+                $ret['list'][] = array(
+                    'title'=>$filename,
+                    'source'=>$this->file_url,
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $filename)
+                    );
+            }
+        }
+        return $ret;
+    }
+    public function analyse_page($content, &$list) {
+        global $CFG;
+        $pattern = '#src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
+        $matches = null;
+        preg_match_all($pattern, $content, $matches);
+        $matches = array_unique($matches[1]);
+        if (!empty($matches)) {
+            foreach($matches as $url) {
+                $list['list'][] = array(
+                    'title'=>$this->guess_filename($url, ''),
+                    // XXX: need to convert relative url to absolute url
+                    'source'=>$url,
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $url)
+                    );
+            }
+        }
+    }
+    public function guess_filename($url, $type) {
+        $pattern = '#\/([\w_\?\-.]+)$#';
+        $matches = null;
+        preg_match($pattern, $url, $matches);
+        if (empty($matches[1])) {
+            return $url;
+        } else {
+            return $matches[1];
+        }
     }
 
     public function get_name(){
