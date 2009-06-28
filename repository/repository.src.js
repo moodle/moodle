@@ -270,8 +270,6 @@ repository_client.req_cb = {
          repo.fs = data;
          if(!data) {
              return;
-         }else if(data.msg){
-             repository_client.print_msg(data.msg);
          }else if(data.iframe) {
              repository_client.view_iframe(data.client_id);
          }else if(data.login) {
@@ -284,7 +282,14 @@ repository_client.req_cb = {
                  repository_client.view_as_icons(data.client_id, data.list);
              }
          }
+         if (data.msg) {
+             repository_client.print_msg(data.msg, data.client_id);
+         }
      }
+}
+repository_client.print_msg = function(msg, client_id) {
+     var panel = new YAHOO.util.Element('panel-'+client_id);
+     panel.get('element').innerHTML = '<div class="fp-msg">'+msg+'</div>'+panel.get('element').innerHTML;
 }
 repository_client.view_iframe = function(client_id) {
     var fs = repository_client.fp[client_id].fs;
@@ -834,14 +839,11 @@ repository_client.view_as_icons = function(client_id, data) {
         }
         count++;
     }
-    if (list.length == 0) {
+    if (list.length == 0 && !fp.fs.upload) {
         panel.innerHTML = '<div class="fp-error">'+fp_lang.emptylist+'</div>';
     }
     container.appendChild(panel);
     repository_client.print_footer(client_id);
-}
-repository_client.check_maxfiles = function(num) {
-
 }
 repository_client.print_footer = function(client_id) {
     var fs = this.fp[client_id].fs;

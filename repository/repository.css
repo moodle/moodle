@@ -67,6 +67,7 @@
 .fp-grid .label{height:48px;text-align:center}
 .fp-grid span{color:gray}
 .fp-error {padding: 2em 0; margin: 3em 5px;text-align:center;background: #FFBBBB}
+.fp-msg {padding: 2em 0; margin: 3em 5px;text-align:center;background: green}
 /* file picker search dialog */
 div.bd{text-align:left}
 
