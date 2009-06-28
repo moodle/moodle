@@ -47,7 +47,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('rssarticles', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,0', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('percent', XMLDB_TYPE_NUMBER, '5,2', null, null, null, null);
+        $table->add_field('percent', XMLDB_TYPE_NUMBER, '5,2', null, null, null, 66.6);
         $table->add_field('warnafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('blockafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('blockperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -68,7 +68,10 @@ class ddl_test extends UnitTestCase {
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
         $table->add_field('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null);
         $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null);
+        $table->add_field('gradefloat', XMLDB_TYPE_FLOAT, '20,0', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('percentfloat', XMLDB_TYPE_FLOAT, '5,2', null, null, null, 99.9);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('course', XMLDB_INDEX_UNIQUE, array('course'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
         $this->tables[$table->getName()] = $table;
@@ -113,7 +116,10 @@ class ddl_test extends UnitTestCase {
         return $table;
     }
 
-    public function testTableExists() {
+    /**
+     * Test behaviour of table_exists()
+     */
+    public function test_table_exists() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -130,33 +136,52 @@ class ddl_test extends UnitTestCase {
 
         $this->assertFalse($result);
 
-        $this->assertFalse($dbman->table_exists('test_table0'));
-        $this->assertFalse($dbman->table_exists($table));
+        $this->assertFalse($dbman->table_exists('test_table0')); // by name
+        $this->assertFalse($dbman->table_exists($table));        // by xmldb_table
 
         // create table and test again
         $dbman->create_table($table);
 
-        $this->assertTrue($DB->get_records('test_table0') !== false);
-        $this->assertTrue($dbman->table_exists('test_table0'));
-        $this->assertTrue($dbman->table_exists($table));
+        $this->assertTrue($DB->get_records('test_table0') === array());
+        $this->assertTrue($dbman->table_exists('test_table0')); // by name
+        $this->assertTrue($dbman->table_exists($table));        // by xmldb_table
 
-        // Test giving a string
-        $this->assertFalse($dbman->table_exists('nonexistenttable'));
-        $this->assertTrue($dbman->table_exists('test_table0'));
+        // drop table and test again
+        $dbman->drop_table($table);
+
+        ob_start(); // hide debug warning
+        try {
+            $result = $DB->get_records('test_table0');
+        } catch (dml_read_exception $e) {
+            $result = false;
+        }
+        ob_end_clean();
+
+        $this->assertFalse($result);
+
+        $this->assertFalse($dbman->table_exists('test_table0')); // by name
+        $this->assertFalse($dbman->table_exists($table));        // by xmldb_table
     }
 
-    public function testCreateTable() {
+    /**
+     * Test behaviour of create_table()
+     */
+    public function test_create_table() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
-        // create table and do basic column tests
+        // create table
         $table = $this->tables['test_table1'];
 
         $dbman->create_table($table);
         $this->assertTrue($dbman->table_exists($table));
 
-        $columns = $DB->get_columns('test_table1');
+        // basic get_tables() test
+        $tables = $DB->get_tables();
+        $this->assertTrue(array_key_exists('test_table1', $tables));
 
+        // basic get_columns() tests
+        $columns = $DB->get_columns('test_table1');
         $this->assertEqual($columns['id']->meta_type, 'R');
         $this->assertEqual($columns['course']->meta_type, 'I');
         $this->assertEqual($columns['name']->meta_type, 'C');
@@ -164,90 +189,150 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['intro']->meta_type, 'X');
         $this->assertEqual($columns['avatar']->meta_type, 'B');
         $this->assertEqual($columns['grade']->meta_type, 'N');
+        $this->assertEqual($columns['percentfloat']->meta_type, 'N');
+
+        // basic get_indexes() test
+        $indexes = $DB->get_indexes('test_table1');
+        $courseindex = reset($indexes);
+        $this->assertEqual($courseindex['unique'], 1);
+        $this->assertEqual($courseindex['columns'][0], 'course');
+
+        // check sequence returns 1 for first insert
+        $rec = (object)array(
+                'course'     => 10,
+                'secondname' => 'not important',
+                'intro'      => 'not important');
+        $this->assertIdentical($DB->insert_record('test_table1', $rec), 1);
 
     }
 
-    public function testDropTable() {
+    /**
+     * Test behaviour of drop_table()
+     */
+    public function test_drop_table() {
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        // initially table doesn't exist
+        $this->assertFalse($dbman->table_exists('test_table0'));
+
+        // create table
+        $table = $this->create_deftable('test_table0');
+        $this->assertTrue($dbman->table_exists('test_table0'));
+
+        // drop by xmldb_table object
+        $dbman->drop_table($table);
+        $this->assertFalse($dbman->table_exists('test_table0'));
+
+        // basic get_tables() test
+        $tables = $DB->get_tables();
+        $this->assertFalse(array_key_exists('test_table0', $tables));
+
+        try { // columns cache must be empty, so sentence throw exception
+            $columns = $DB->get_columns('test_table0');
+        } catch (dml_read_exception $e) {
+            $columns = false;
+        }
+        $this->assertFalse($columns);
+
+        try { /// throw exception
+            $indexes = $DB->get_indexes('test_table0');
+        } catch (dml_read_exception $e) {
+            $indexes = false;
+        }
+        $this->assertFalse($indexes);
+    }
+
+    /**
+     * Test behaviour of rename_table()
+     */
+    public function test_rename_table() {
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->create_deftable('test_table1');
+
+        // check sequence returns 1 for first insert
+        $rec = (object)array(
+                'course'     => 10,
+                'secondname' => 'not important',
+                'intro'      => 'not important');
+        $this->assertIdentical($DB->insert_record('test_table1', $rec), 1);
+
+        $this->assertFalse($dbman->table_exists('test_table_cust1'));
+        $dbman->rename_table($table, 'test_table_cust1');
+        $this->assertTrue($dbman->table_exists('test_table_cust1'));
+
+        // check sequence returns 2 for second insert (after rename)
+        $rec = (object)array(
+                'course'     => 20,
+                'secondname' => 'not important',
+                'intro'      => 'not important');
+        $this->assertIdentical($DB->insert_record('test_table_cust1', $rec), 2);
+    }
+
+    /**
+     * Test behaviour of field_exists()
+     */
+    public function test_field_exists() {
         $dbman = $this->tdb->get_manager();
 
         $table = $this->create_deftable('test_table0');
 
-        $dbman->drop_table($table);
-        $this->assertFalse($dbman->table_exists('test_table0'));
-    }
-
-
-    public function testAddEnumField() {
-        $DB = $this->tdb; // do not use global $DB!
-        $dbman = $this->tdb->get_manager();
-
-        $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-
-        $enums = array('single', 'news', 'general');
-
-        /// Create a new field with complex specs (enums are good candidates)
-        $field = new xmldb_field('type1');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general', 'course');
-        $dbman->add_field($table, $field);
-        $this->assertTrue($dbman->field_exists($table, 'type1'));
-
-        $field = new xmldb_field('type2');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, null, null, 'general', 'course');
-        $dbman->add_field($table, $field);
-        $this->assertTrue($dbman->field_exists($table, 'type2'));
-
-        /// try inserting a good record
-        $record = new object();
-        $record->course = 666;
-        $record->type1 = 'news';
-        $record->type2 = NULL;
-        $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));
-
-        /// try inserting a bad record
-        $record = new object();
-        $record->course = 666;
-        $record->type1 = 'xxxxxxxx';
-        $record->type2 = 'news';
-
-        ob_start(); // hide debug warning
+        // String params
+        // Give a nonexistent table as first param (throw exception)
         try {
-            $result = $DB->insert_record('test_table_cust0', $record);
-        } catch (dml_write_exception $e) {
-            $result = false;
+            $dbman->field_exists('nonexistenttable', 'id');
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        ob_end_clean();
-        $this->assertFalse($result);
 
-        /// try inserting a bad record
-        $record = new object();
-        $record->course = 666;
-        $record->type1 = 'news';
-        $record->type2 = 'xxxx';
-        ob_start(); // hide debug warning
+        // Give a nonexistent field as second param (return false)
+        $this->assertFalse($dbman->field_exists('test_table0', 'nonexistentfield'));
+
+        // Correct string params
+        $this->assertTrue($dbman->field_exists('test_table0', 'id'));
+
+        // Object params
+        $realfield = $table->getField('id');
+
+        // Give a nonexistent table as first param (throw exception)
+        $nonexistenttable = new xmldb_table('nonexistenttable');
         try {
-            $result = $DB->insert_record('test_table_cust0', $record);
-        } catch (dml_write_exception $e) {
-            $result = false;
-        }
-        ob_end_clean();
-        $this->assertFalse($result);
-
-        $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['type1']->meta_type, 'C');
-
-        // enums field is optional
-        $result = $columns['type1']->enums;
-        if (!is_null($result)) {
-            $this->assertEqual($result, $enums);
+            $dbman->field_exists($nonexistenttable, $realfield);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof moodle_exception);
         }
 
-        /// cleanup
-        $dbman->drop_field($table, $field);
-        $dbman->drop_table($table);
+        // Give a nonexistent field as second param (return false)
+        $nonexistentfield = new xmldb_field('nonexistentfield');
+        $this->assertFalse($dbman->field_exists($table, $nonexistentfield));
+
+        // Correct object params
+        $this->assertTrue($dbman->field_exists($table, $realfield));
+
+        // Mix string and object params
+        // Correct ones
+        $this->assertTrue($dbman->field_exists($table, 'id'));
+        $this->assertTrue($dbman->field_exists('test_table0', $realfield));
+        // Non existing tables (throw exception)
+        try {
+            $this->assertFalse($dbman->field_exists($nonexistenttable, 'id'));
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof moodle_exception);
+        }
+        try {
+            $this->assertFalse($dbman->field_exists('nonexistenttable', $realfield));
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof moodle_exception);
+        }
+        // Non existing fields (return false)
+        $this->assertFalse($dbman->field_exists($table, 'nonexistentfield'));
+        $this->assertFalse($dbman->field_exists('test_table0', $nonexistentfield));
     }
 
     public function testAddNumericField() {
@@ -646,57 +731,6 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue(array_key_exists('newfieldname', $columns));
     }
 
-    public function testRenameTable() {
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->create_deftable('test_table0');
-
-        $this->assertFalse($dbman->table_exists('test_table_cust0'));
-        $dbman->rename_table($table, 'test_table_cust0');
-        $this->assertTrue($dbman->table_exists('test_table_cust0'));
-
-        $table->setName('test_table_cust0');
-        $dbman->drop_table($table);
-    }
-
-    public function testFieldExists() {
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->create_deftable('test_table0');
-        // String params
-        // Give a nonexistent table as first param
-        try {
-            $dbman->field_exists('nonexistenttable', 'id');
-            $this->assertTrue(false);
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
-        }
-
-        // Give a nonexistent field as second param
-        $this->assertFalse($dbman->field_exists('test_table0', 'nonexistentfield'));
-
-        // Correct string params
-        $this->assertTrue($dbman->field_exists('test_table0', 'id'));
-
-        // Object params
-        $realfield = $table->getField('id');
-
-        // Give a nonexistent table as first param
-        $nonexistenttable = new xmldb_table('nonexistenttable');
-        try {
-            $dbman->field_exists($nonexistenttable, $realfield);
-            $this->assertTrue(false);
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
-        }
-
-        // Give a nonexistent field as second param
-        $nonexistentfield = new xmldb_field('nonexistentfield');
-        $this->assertFalse($dbman->field_exists($table, $nonexistentfield));
-
-        // Correct string params
-        $this->assertTrue($dbman->field_exists($table, $realfield));
-    }
 
     public function testIndexExists() {
         // Skipping: this is just a test of find_index_name
