@@ -7,6 +7,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
+require_once(dirname(__FILE__).'/lib.php');
+
 class repository_url extends repository {
 
     /**
@@ -93,8 +95,8 @@ EOD;
             if (strstr($info['content_type'], 'text/html') || empty($info['content_type'])) {
                 // analysis this web page, general file list
                 $ret['list'] = array();
-                $a = $curl->get($info['url']);
-                $this->analyse_page($a, $ret);
+                $content = $curl->get($info['url']);
+                $this->analyse_page($info['url'], $content, $ret);
             } else {
                 // download this file
                 $ret['list'][] = array(
@@ -106,7 +108,7 @@ EOD;
         }
         return $ret;
     }
-    public function analyse_page($content, &$list) {
+    public function analyse_page($baseurl, $content, &$list) {
         global $CFG;
         $pattern = '#src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
         $matches = null;
@@ -116,8 +118,7 @@ EOD;
             foreach($matches as $url) {
                 $list['list'][] = array(
                     'title'=>$this->guess_filename($url, ''),
-                    // XXX: need to convert relative url to absolute url
-                    'source'=>$url,
+                    'source'=>url_to_absolute($baseurl, $url),
                     'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $url)
                     );
             }
