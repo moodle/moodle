@@ -2153,9 +2153,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $button_nojs = '<input name="'.$elementName.'" id="'.$elementName.(string)$advformcount.'" class="showadvancedbtn" value="'.$buttonlabel.'" type="submit" />';
 
             $buttonlabel = addslashes_js($buttonlabel);
-            $showtext = addslashes_js(get_string('showadvanced', 'form'));
-            $hidetext = addslashes_js(get_string('hideadvanced', 'form'));
-            $PAGE->requires->js_function_call('showAdvancedInit', Array($elementName.(string)$advformcount, $elementName, $buttonlabel, $hidetext, $showtext));
+            $PAGE->requires->string_for_js('showadvanced', 'form');
+            $PAGE->requires->string_for_js('hideadvanced', 'form');
+            $PAGE->requires->js_function_call('showAdvancedInit', Array($elementName.(string)$advformcount, $elementName, $buttonlabel));
             
             $advformcount++;
             $header_html = str_replace('{button}', $button_nojs, $header_html);
