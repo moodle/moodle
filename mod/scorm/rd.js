@@ -1,5 +1,5 @@
 <!--
-function attach_resize_event(scormwidth, scormheight) {
+function attach_resize_event() {
     YAHOO.util.Event.addListener(window, 'resize', scorm_resize);
 }
 
@@ -26,9 +26,9 @@ function scorm_get_element_style(obj, prop, cssProp) {
     return ret;
 }
 
-function scorm_resize (cwidth, cheight) {
-    var cwidth = scormdata.cwidth;
-    var cheight = scormdata.cheight;
+function scorm_resize () {
+    var cwidth = scormplayerdata.cwidth;
+    var cheight = scormplayerdata.cheight;
     var winwidth = 0, winheight = 0;
     if( typeof( window.innerWidth ) == 'number' ) {
         //Non-IE

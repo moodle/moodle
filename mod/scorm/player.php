@@ -158,7 +158,7 @@
                  $navigation,
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
 
-    echo $PAGE->requires->data_for_js('scormdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->asap();
+    echo $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->asap();
     echo $PAGE->requires->js('mod/scorm/request.js')->asap();
     echo $PAGE->requires->js('mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->asap();
     echo $PAGE->requires->js('mod/scorm/rd.js')->asap();
@@ -296,7 +296,7 @@
         if ($scorm->popup == 0) {
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
             echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";
-            $PAGE->requires->js_function_call('scorm_resize', Array($scorm->width, $scorm->height));
+            $PAGE->requires->js_function_call('scorm_resize');
         } else {
             // Clean the name for the window as IE is fussy
             $name = preg_replace("/[^A-Za-z0-9]/", "", $scorm->name);
@@ -304,34 +304,11 @@
                 $name = 'DefaultPlayerWindow';
             }
             $name = 'scorm_'.$name;
-            ?>
-                    <script type="text/javascript">
-                    //<![CDATA[
-                   scorm_resize(<?php echo $scorm->width.", ". $scorm->height; ?>);
-                        function openpopup(url,name,options,width,height) {
-                            fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
-                            windowobj = window.open(fullurl,name,options);
-                            if ((width==100) && (height==100)) {
-                                // Fullscreen
-                                windowobj.moveTo(0,0);
-                            }
-                            if (width<=100) {
-                                width = Math.round(screen.availWidth * width / 100);
-                            }
-                            if (height<=100) {
-                                height = Math.round(screen.availHeight * height / 100);
-                            }
-                            windowobj.resizeTo(width,height);
-                            windowobj.focus();
-                            return windowobj;
-                        }
 
-                        url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop ?>";
-                        width = <?php p($scorm->width) ?>;
-                        height = <?php p($scorm->height) ?>;
-                        var main = openpopup(url, "<?php p($name) ?>", "<?php p($scorm->options) ?>", width, height);
-                   //]]>
-                    </script>
+            echo $PAGE->requires->js_function_call('scorm_resize')->asap();
+            echo $PAGE->requires->js('mod/scorm/player.js')->asap();
+            echo $PAGE->requires->js_function_call('scorm_openpopup', Array("loadSCO.php?id=".$cm->id.$scoidpop, p($name), p($scorm->options), p($scorm->width), p($scorm->height)))->asap();
+            ?>
                     <noscript>
                     <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
                     </iframe>
