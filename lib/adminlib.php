@@ -5352,7 +5352,7 @@ function admin_externalpage_print_footer() {
  * @return object admin_roow object
  */
 function admin_get_root($reload=false, $requirefulltree=true) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     static $ADMIN = NULL;
 
@@ -5364,6 +5364,9 @@ function admin_get_root($reload=false, $requirefulltree=true) {
     if ($reload or ($requirefulltree and !$ADMIN->fulltree)) {
         $ADMIN->purge_children($requirefulltree);
     }
+
+    // Some parts of the tree require $CFG->pixpath.
+    $OUTPUT->initialise_deprecated_cfg_pixpath();
 
     if (!$ADMIN->loaded) {
         // we process this file first to create categories first and in correct order
