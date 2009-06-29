@@ -5654,61 +5654,40 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
 /**
  * Redirects the user to another page, after printing a notice
  *
-  * @todo '&' needs to be encoded into '&amp;' for XHTML compliance,
- *      however, this is not true for javascript. Therefore we
- *      first decode all entities in $url (since we cannot rely on)
- *      the correct input) and then encode for where it's needed
- *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
+ * This function calls the OUTPUT redirect method, echo's the output
+ * and then dies to ensure nothing else happens.
  *
- * @global object
+ * <strong>Good practice:</strong> You should call this method before starting page
+ * output by using any of the OUTPUT methods.
+ *
  * @global object
  * @global object
  * @global object
  * @uses $_COOKIE
  * @uses DEBUG_DEVELOPER
  * @uses DEBUG_ALL
- * @param string $url The url to take the user to
- * @param string $message The text message to display to the user about the redirect, if any
- * @param string $delay How long before refreshing to the new page at $url?
- * @return void Dies 
+ * @param string $url The URL to redirect to
+ * @param string $message The message to display to the user
+ * @param int $delay The delay before redirecting
+ * @return void
  */
 function redirect($url, $message='', $delay=-1) {
-    global $CFG, $THEME, $SESSION, $PAGE;
+    global $OUTPUT, $SESSION, $CFG;
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
        $url = $SESSION->sid_process_url($url);
     }
 
-    $message = clean_text($message);
-
-    $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
-    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
-    $url = str_replace('&amp;', '&', $encodedurl);
-
-/// At developer debug level. Don't redirect if errors have been printed on screen.
-/// Currenly only works in PHP 5.2+; we do not want strict PHP5 errors
-    $lasterror = error_get_last();
-    $error = defined('DEBUGGING_PRINTED') or (!empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
-    $errorprinted = debugging('', DEBUG_ALL) && $CFG->debugdisplay && $error;
-    if ($errorprinted) {
-        $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
-    }
-
-    $performanceinfo = '';
-    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
-        if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
-            $perf = get_performance_info();
-            error_log("PERF: " . $perf['txt']);
+    $usingmsg = false;
+    if ($message!=='') {
+        $usingmsg = true;
+        if ($delay===-1 || !is_numeric($delay)) {
+            $delay = 3;
         }
-    }
-
-/// when no message and header printed yet, try to redirect
-    if (empty($message) and !$PAGE->headerprinted) {
-
-        // Technically, HTTP/1.1 requires Location: header to contain
-        // the absolute path. (In practice browsers accept relative
-        // paths - but still, might as well do it properly.)
-        // This code turns relative into absolute.
+        $message = clean_text($message);
+    } else {
+        $message = 'This page should redirect. If nothing is happening please click the continue button below.';
+        $delay = 0;
         if (!preg_match('|^[a-z]+:|', $url)) {
             // Get host name http://www.wherever.com
             $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
@@ -5728,39 +5707,24 @@ function redirect($url, $message='', $delay=-1) {
                 $url = $newurl;
             }
         }
-
-        $delay = 0;
-        //try header redirection first
-        @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
-        @header('Location: '.$url);
-        //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
-        echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo $PAGE->requires->js_function_call('document.location.replace', array($url))->asap();
-        die;
     }
 
-    if ($delay == -1) {
-        $delay = 3;  // if no delay specified wait 3 seconds
-    }
-    if (!$PAGE->headerprinted) {
-        // this type of redirect might not be working in some browsers - such as lynx :-(
-        print_header('', '', '', '', $errorprinted ? '' : ('<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'));
-        $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
-    } else {
-        print_container_end_all(false, $THEME->open_header_containers);
-    }
-    echo '<div id="redirect">';
-    echo '<div id="message">' . $message . '</div>';
-    echo '<div id="continue">( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</div>';
-    echo '</div>';
-
-    if (!$errorprinted) {
-        $PAGE->requires->js_function_call('document.location.replace', array($url))->after_delay($delay);
+    $performanceinfo = '';
+    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+        if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
+            $perf = get_performance_info();
+            error_log("PERF: " . $perf['txt']);
+        }
     }
 
+    $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
+    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
+
+    $message .= '<a href="'. $encodedurl .'">'. get_string('continue') .'</a>';
+   
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
-    print_footer('none');
-    die;
+    echo $OUTPUT->redirect($encodedurl, $message, $delay);
+    die();
 }
 
 /**

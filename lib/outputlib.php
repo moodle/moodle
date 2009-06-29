@@ -743,7 +743,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
     protected $contenttype;
     protected $rendererfactory;
-
+    protected $metarefreshtag = '';
     /**
      * Constructor
      * @param $opencontainers the xhtml_container_stack to use.
@@ -805,6 +805,8 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= '<meta http-equiv="pragma" content="no-cache" />' . "\n";
             $output .= '<meta http-equiv="expires" content="0" />' . "\n";
         }
+        // This is only set by the {@link redirect()} method
+        $output .= $this->metarefreshtag;
         ob_start();
         include($CFG->javascript);
         $output .= ob_get_contents();
@@ -894,6 +896,66 @@ class moodle_core_renderer extends moodle_renderer_base {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->page->course->id . '">' .
                     format_string($this->page->course->shortname) . '</a></div>';
         }
+    }
+
+    public function has_started() {
+        if ($this->page->stated >= moodle_page::STATE_IN_BODY) {
+            return true;
+        }
+        return false;
+    }
+
+    public function redirect($encodedurl, $message, $delay, $messageclass='notifyproblem') {
+        global $CFG;
+        $url = str_replace('&amp;', '&', $encodedurl);
+
+        $disableredirect = false;
+
+        if ($delay!=0) {
+            /// At developer debug level. Don't redirect if errors have been printed on screen.
+            /// Currenly only works in PHP 5.2+; we do not want strict PHP5 errors
+            $lasterror = error_get_last();
+            $error = defined('DEBUGGING_PRINTED') or (!empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
+            $errorprinted = debugging('', DEBUG_ALL) && $CFG->debugdisplay && $error;
+            if ($errorprinted) {
+                $disableredirect= true;
+                $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
+            }
+        }
+
+        switch ($this->page->state) {
+            case moodle_page::STATE_BEFORE_HEADER :
+                // No output yet it is safe to delivery the full arsenol of redirect methods
+                if (!$disableredirect) {
+                    @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
+                    @header('Location: '.$url);
+                    $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
+                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
+                }
+                $output = $this->header();
+                $output .= $this->notification($message, $messageclass);
+                $output .= $this->footer();
+                break;
+            case moodle_page::STATE_PRINTING_HEADER :
+                // We should hopefully never get here
+                throw new coding_exception('You cannot redirect while printing the page header');
+                break;
+            case moodle_page::STATE_IN_BODY :
+                // We really shouldn't be here but we can deal with this
+                debugging("You should really redirect before you start page output");
+                if (!$disableredirect) {
+                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
+                }
+                $output = $this->opencontainers->pop_all_but_last();
+                $output .= $this->notification($message, $messageclass);
+                $output .= $this->footer();
+                break;
+            case moodle_page::STATE_DONE :
+                // Too late to be calling redirect now
+                throw new coding_exception('You cannot redirect after the entire page has been generated');
+                break;
+        }
+        return $output;
     }
 
     // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
@@ -1170,13 +1232,13 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output = '';
 
-        if ($this->opencontainers->count() == 0) {
+        if ($this->has_started()) {
+            $output .= $this->opencontainers->pop_all_but_last();
+        } else {
             // Header not yet printed
             @header('HTTP/1.0 404 Not Found');
             $this->page->set_title(get_string('error'));
             $output .= $this->header();
-        } else {
-            $output .= $this->opencontainers->pop_all_but_last();
         }
 
         $message = '<p class="errormessage">' . $message . '</p>'.
