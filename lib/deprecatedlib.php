@@ -1759,7 +1759,7 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
     public function __construct($theme, $page) {
         global $CFG;
         parent::__construct($theme, $page);
-        require_once($CFG->themedir . '/customcorners/renderers.php');
+        require_once($CFG->themedir . '/custom_corners/renderers.php');
         $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page, $this));
     }
 }
