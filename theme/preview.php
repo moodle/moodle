@@ -8,7 +8,7 @@
         $preview = 'standard';
     }
 
-    if (! $site = get_site()) {
+    if (!$site = get_site()) {
         print_error('siteisnotdefined', 'debug');
     }
 
@@ -34,10 +34,8 @@
     $navigation = build_navigation($navlinks);
     print_header("$site->shortname: $strpreview", $site->fullname, $navigation);
 
-    print_simple_box_start('center', '80%');
+    print_box_start();
     print_heading($preview);
-    print_simple_box_end();
+    print_box_end();
 
     print_footer();
-
-?>
