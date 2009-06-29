@@ -20,7 +20,7 @@ require_once($CFG->libdir.'/filelib.php');
 class mediaplugin_filter extends moodle_text_filter {
     private $eolas_fix_applied = false;
     function filter($text) {
-        global $CFG;
+        global $CFG, $PAGE;
         // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.
         // The reason is that you must always be able to refer to the original parameter that was passed.
         // For this reason, I changed $text = preg_replace(..,..,$text) into $newtext = preg.... (NICOLAS CONNAULT)
@@ -108,7 +108,7 @@ class mediaplugin_filter extends moodle_text_filter {
         }
 
         if (!$this->eolas_fix_applied) {
-            $newtext .= '<script defer="defer" src="' . $CFG->wwwroot . '/filter/mediaplugin/eolas_fix.js" type="text/javascript">// <![CDATA[ ]]></script>';
+            $PAGE->requires->js('filter/mediaplugin/eolas_fix.js');
             $this->eolas_fix_applied = true;
         }
 
@@ -120,7 +120,7 @@ class mediaplugin_filter extends moodle_text_filter {
 /// callback filter functions
 
 function mediaplugin_filter_mp3_callback($link) {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $PAGE;
 
     if (!empty($THEME->filter_mediaplugin_colors)) {
         $c = $THEME->filter_mediaplugin_colors;   // You can set this up in your theme/xxx/config.php
@@ -137,18 +137,25 @@ function mediaplugin_filter_mp3_callback($link) {
 
     $url = addslashes_js($link[1]);
 
-    return $link[0].
-'<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>
-<script type="text/javascript">
-//<![CDATA[
-  var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/mp3player.swf?src='.$url.'",
-    width:"90", height:"15", majorversion:"6", build:"40", flashvars:"'.$c.'", quality: "high" };
-  UFO.create(FO, "'.$id.'");
-//]]>
-</script>';
+    $args = Array();
+    $args['movie'] = $CFG->wwwroot.'/filter/mediaplugin/mp3player.swf?src='.$url;
+    $args['width'] = 90;
+    $args['height'] = 15;
+    $args['majorversion'] = 6;
+    $args['build'] = 40;
+    $args['flashvars'] = $c;
+    $args['quality'] = 'high';
+    $jsoutput = $PAGE->requires->js('filter/mediaplugin/mediaplugin.js')->asap();
+    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
+    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
+
+    $output = $link[0].'<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>'.$jsoutput;
+
+    return $output;
 }
 
 function mediaplugin_filter_swf_callback($link) {
+    global $PAGE;
     static $count = 0;
     $count++;
     $id = 'filter_swf_'.time().$count; //we need something unique because it might be stored in text cache
@@ -157,19 +164,25 @@ function mediaplugin_filter_swf_callback($link) {
     $height = empty($link[4]) ? '300' : $link[4];
     $url = addslashes_js($link[1]);
 
-    return $link[0].
-'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>
-<script type="text/javascript">
-//<![CDATA[
-  var FO = { movie:"'.$url.'", width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
-    allowscriptaccess:"never", quality: "high" };
-  UFO.create(FO, "'.$id.'");
-//]]>
-</script>';
+    $args = Array();
+    $args['movie'] = $url;
+    $args['width'] = $width;
+    $args['height'] = $height;
+    $args['majorversion'] = 6;
+    $args['build'] = 40;
+    $args['allowscriptaccess'] = 'never';
+    $args['quality'] = 'high';
+    $jsoutput = $PAGE->requires->js('filter/mediaplugin/mediaplugin.js')->asap();
+    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
+    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
+
+    $output = $link[0].'<span class="mediaplugin mediaplugin_swf" id="'.$id.'">('.get_string('flashanimation', 'mediaplugin').')</span>'.$jsoutput;
+
+    return $output;
 }
 
 function mediaplugin_filter_flv_callback($link) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     static $count = 0;
     $count++;
@@ -179,16 +192,22 @@ function mediaplugin_filter_flv_callback($link) {
     $height = empty($link[4]) ? '360' : $link[4];
     $url = addslashes_js($link[1]);
 
-    return $link[0].
-'<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>
-<script type="text/javascript">
-//<![CDATA[
-  var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url.'",
-    width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
-    allowscriptaccess:"never", quality: "high", allowfullscreen: "true" };
-  UFO.create(FO, "'.$id.'");
-//]]>
-</script>';
+    $args = Array();
+    $args['movie'] = $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url;
+    $args['width'] = $width;
+    $args['height'] = $height;
+    $args['majorversion'] = 6;
+    $args['build'] = 40;
+    $args['allowscriptaccess'] = 'never';
+    $args['quality'] = 'high';
+    $args['allowfullscreen'] = 'true';
+    $jsoutput = $PAGE->requires->js('filter/mediaplugin/mediaplugin.js')->asap();
+    $jsoutput .= $PAGE->requires->data_for_js('FO', $args)->asap();
+    $jsoutput .= $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
+
+    $output = $link[0].'<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>'.$jsoutput;
+
+    return $output;
 }
 
 function mediaplugin_filter_real_callback($link, $autostart=false) {
