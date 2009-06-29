@@ -249,6 +249,7 @@ repository_client.req = function(client_id, id, path, page) {
     params['ctx_id']=fp_config.contextid;
     params['client_id'] = client_id;
     params['repo_id']=id;
+    params['itemid'] = repository_client.fp[client_id].itemid;
     if (!!page) { // convert page to boolean value
         params['page']=page;
     }
@@ -781,6 +782,33 @@ repository_client.view_as_icons = function(client_id, data) {
         link.appendChild(img);
         frame.appendChild(link);
         el.appendChild(frame);
+        if (fp.fs.draftfiles && !list[k].children) {
+            var delbtn = document.createElement('A');
+            delbtn.href = '###';
+            delbtn.innerHTML = "[X]";
+            delbtn.id = 'del-id-'+String(count);
+            el.appendChild(delbtn);
+            delbtn.itemid=fp.itemid; 
+            delbtn.client_id=client_id;
+            delbtn.title=list[k].title;
+            delbtn.repo_id=fp.fs.repo_id;
+            delbtn.onclick = function() {
+                if (confirm('Sure?')) {
+                    var params = [];
+                    params['client_id'] = this.client_id;
+                    params['itemid'] = this.itemid;
+                    params['title'] = this.title;
+                    var trans = YAHOO.util.Connect.asyncRequest('POST',
+                        moodle_cfg.wwwroot+'/repository/ws.php?action=delete',
+                        this,
+                        repository_client.postdata(params)
+                        );
+                }
+            }
+            delbtn.success = function(o) {
+                repository_client.req(o.responseText, this.repo_id);
+            }
+        }
         el.appendChild(title);
         panel.appendChild(el);
         if(list[k].children) {
