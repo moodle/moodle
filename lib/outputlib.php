@@ -197,29 +197,6 @@ class standard_renderer_factory extends renderer_factory_base {
 
 
 /**
- * This is a slight variatoin on the standard_renderer_factory that uses
- * custom_corners_core_renderer instead of moodle_core_renderer.
- *
- * This generates the slightly different HTML that the custom_corners theme expects.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class custom_corners_renderer_factory extends standard_renderer_factory {
-    /**
-     * Constructor.
-     * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
-     */
-    public function __construct($theme, $page) {
-        parent::__construct($theme, $page);
-        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page, $this));
-    }
-}
-
-
-/**
  * This is a slight variation on the standard_renderer_factory used by CLI scripts.
  *
  * @copyright 2009 Tim Hunt
@@ -242,7 +219,7 @@ class cli_renderer_factory extends standard_renderer_factory {
 /**
  * This is renderer factory allows themes to override the standard renderers using
  * php code.
- * 
+ *
  * It will load any code from theme/mytheme/renderers.php and
  * theme/parenttheme/renderers.php, if then exist. Then whenever you ask for
  * a renderer for 'component', it will create a mytheme_component_renderer or a
@@ -313,7 +290,7 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
  * exists. Then, a call to $OUTPUT->greeting() will cause the template
  * /theme/yourtheme/templates/core/greeting.php to be rendered, with the variable
  * $name available. The greeting.php template might contain
- * 
+ *
  * <pre>
  * <h1>Hello <?php echo $name ?>!</h1>
  * </pre>
@@ -421,6 +398,9 @@ class moodle_renderer_base {
         }
     }
     protected function output_attributes($attributes) {
+        if (empty($attributes)) {
+            $attributes = array();
+        }
         $output = '';
         foreach ($attributes as $name => $value) {
             $output .= $this->output_attribute($name, $value);
@@ -812,7 +792,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $output .= ob_get_contents();
         ob_end_clean();
         $output .= $this->page->requires->get_head_code();
- 
+
         foreach ($this->page->alternateversions as $type => $alt) {
             $output .= $this->output_empty_tag('link', array('rel' => 'alternate',
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
@@ -1113,12 +1093,93 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $output . $footer;
     }
 
+    /**
+     * Prints a nice side block with an optional header.
+     *
+     * The content is described
+     * by a {@link block_contents} object.
+     *
+     * @param block $content HTML for the content
+     * @return string the HTML to be output.
+     */
+    function block($bc) {
+        $bc = clone($bc);
+        $bc->prepare();
+
+        $title = strip_tags($bc->title);
+        if (empty($title)) {
+            $output = '';
+            $skipdest = '';
+        } else {
+            $output = $this->output_tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'),
+                    get_string('skipa', 'access', $title));
+            $skipdest = $this->output_tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
+        }
+
+        $bc->attributes['id'] = $bc->id;
+        $bc->attributes['class'] = $bc->get_classes_string();
+        $output .= $this->output_start_tag('div', $bc->attributes);
+
+        if ($bc->heading) {
+            // Some callers pass in complete html for the heading, which may include
+            // complicated things such as the 'hide block' button; some just pass in
+            // text. If they only pass in plain text i.e. it doesn't include a
+            // <div>, then we add in standard tags that make it look like a normal
+            // page block including the h2 for accessibility
+            if (strpos($bc->heading, '</div>') === false) {
+                $bc->heading = $this->output_tag('div', array('class' => 'title'),
+                        $this->output_tag('h2', null, $bc->heading));
+            }
+
+            $output .= $this->output_tag('div', array('class' => 'header'), $bc->heading);
+        }
+
+        $output .= $this->output_start_tag('div', array('class' => 'content'));
+
+        if ($bc->content) {
+            $output .= $bc->content;
+
+        } else if ($bc->list) {
+            $row = 0;
+            $output .= $this->output_start_tag('ul', array('class' => 'list'));
+            $items = array();
+            foreach ($bc->list as $key => $string) {
+                $item = $this->output_start_tag('li', array('class' => 'r' . $row));
+                if ($bc->icons) {
+                    $item .= $this->output_tag('div', array('class' => 'icon column c0'), $bc->icons[$key]);
+                }
+                $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
+                $item .= $this->output_end_tag('li');
+                $items[] = $item;
+                $row = 1 - $row; // Flip even/odd.
+            }
+            $output .= $this->output_tag('ul', array('class' => 'list'), implode("\n", $items));
+        }
+
+        if ($bc->footer) {
+            $output .= $this->output_tag('div', array('class' => 'footer'), $bc->footer);
+        }
+
+        $output .= $this->output_end_tag('div');
+        $output .= $this->output_end_tag('div');
+        $output .= $skipdest;
+
+        if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
+            $strshow = addslashes_js(get_string('showblocka', 'access', $title));
+            $strhide = addslashes_js(get_string('hideblocka', 'access', $title));
+            $output .= $this->page->requires->js_function_call('elementCookieHide', array(
+                    $bc->id, $strshow, $strhide))->asap();
+        }
+
+        return $output;
+    }
+
     public function link_to_popup_window() {
-        
+
     }
 
     public function button_to_popup_window() {
-        
+
     }
 
     public function close_window_button($buttontext = null, $reloadopener = false) {
@@ -1344,6 +1405,21 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function container_end() {
         return $this->opencontainers->pop('container');
     }
+
+    /**
+     * At the moment we frequently have a problem with $CFG->pixpath not being
+     * initialised when it is needed. Unfortunately, there is no nice way to handle
+     * this. I think we need to replace $CFG->pixpath with something like $OUTPUT->icon(...).
+     * However, until then, we need a way to force $CFG->pixpath to be initialised,
+     * to fix the error messages, and that is what this function if for.
+     */
+    public function initialise_deprecated_cfg_pixpath() {
+        // Actually, we don't have to do anything here. Just calling any method
+        // of $OBJECT  is enough. However, if the only reason you are calling
+        // an $OUTPUT method is to get $CFG->pixpath initialised, please use this
+        // method, so we can find them and clean them up later once we have
+        // found a better replacement for $CFG->pixpath.
+    }
 }
 
 
@@ -1376,7 +1452,7 @@ class moodle_html_component {
         if (is_array($classes)) {
             return $classes;
         } else {
-            return explode(' '. trim($classes));
+            return explode(' ', trim($classes));
         }
     }
 
@@ -1533,6 +1609,63 @@ class moodle_select_menu extends moodle_html_component {
 
 
 /**
+ * This class hold all the information required to describe a Moodle block.
+ *
+ * That is, it holds all the different bits of HTML content that need to be put into the block.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class block_contents extends moodle_html_component {
+    protected static $idcounter = 1;
+    /**
+     * @param string $heading HTML for the heading. Can include full HTML or just
+     *   plain text - plain text will automatically be enclosed in the appropriate
+     *   heading tags.
+     */
+    public $heading = '';
+    /**
+     * @param string $title Plain text title, as embedded in the $heading.
+     */
+    public $title = '';
+    /**
+     * @param string $content HTML for the content
+     */
+    public $content = '';
+    /**
+     * @param array $list an alternative to $content, it you want a list of things with optional icons.
+     */
+    public $list = array();
+    /**
+     * @param array $icons optional icons for the things in $list.
+     */
+    public $icons = array();
+    /**
+     * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
+     */
+    public $footer = '';
+    /**
+     * @param array $attributes an array of attribute => value pairs that are put on the
+     * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
+     */
+    public $attributes = array();
+    /**
+     * @param integer $skipid do not set this manually. It is set automatically be the {@link prepare()} method.
+     */
+    public $skipid;
+
+    /* @see lib/moodle_html_component#prepare() */
+    public function prepare() {
+        $this->skipid = self::$idcounter;
+        self::$idcounter += 1;
+        $this->add_class('sideblock');
+        parent::prepare();
+    }
+}
+
+
+/**
  * A renderer that generates output for commandlines scripts.
  *
  * The implementation of this renderer is probably incomplete.
@@ -1582,81 +1715,3 @@ class cli_core_renderer extends moodle_core_renderer {
     }
 }
 
-
-/**
- * A renderer for the custom corner theme, and other themes based on it.
- *
- * Generates the slightly different HTML that the custom corners theme wants.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class custom_corners_core_renderer extends moodle_core_renderer {
-    protected $wraplevel = 1;
-
-    protected function custom_corners_divs($classes = '', $idbase = '') {
-        if (strpos($classes, 'clearfix') !== false) {
-            $clearfix = ' clearfix';
-            $classes = trim(str_replace('clearfix', '', $classes));
-        } else {
-            $clearfix = '';
-        }
-
-        // Analise if we want ids for the custom corner elements
-        $id = '';
-        $idbt = '';
-        $idi1 = '';
-        $idi2 = '';
-        $idi3 = '';
-        $idbb = '';
-        if ($idbase) {
-            $id = $idbase;
-            $idbt = $idbase . '-bt';
-            $idi1 = $idbase . '-i1';
-            $idi2 = $idbase . '-i2';
-            $idi3 = $idbase . '-i3';
-            $idbb = $idbase . '-bb';
-        }
-
-        // Create start tags.
-        $start = $this->output_start_tag('div', array('id' => $id, 'class' => "wrap wraplevel{$this->wraplevel} $classes")) . "\n";
-        $start .= $this->output_tag('div', array('id' => $idbt, 'class' => 'bt'), '<div>&nbsp;</div>') . "\n";
-        $start .= $this->output_start_tag('div', array('id' => $idi1, 'class' => 'i1'));
-        $start .= $this->output_start_tag('div', array('id' => $idi2, 'class' => 'i2'));
-        $start .= $this->output_start_tag('div', array('id' => $idi3, 'class' => "i3$clearfix"));
-
-        // Create end tags.
-        $end = $this->output_end_tag('div');
-        $end .= $this->output_end_tag('div');
-        $end .= $this->output_end_tag('div');
-        $end .= $this->output_tag('div', array('id' => $idbb, 'class' => 'bb'), '<div>&nbsp;</div>') . "\n";
-        $end .= $this->output_end_tag('div');
-
-        return array($start, $end);
-    }
-
-    public function box_start($classes = 'generalbox', $id = '') {
-        list($start, $end) = $this->custom_corners_divs('ccbox box ' . moodle_renderer_base::prepare_classes($classes), $id);
-        $this->opencontainers->push('box', $end);
-        $this->wraplevel += 1;
-        return $start;
-    }
-
-    public function box_end() {
-        $this->wraplevel -= 1;
-        return parent::box_end();
-    }
-
-    public function container_start($classes = '', $id = '') {
-        list($start, $end) = $this->custom_corners_divs(moodle_renderer_base::prepare_classes($classes), $id);
-        $this->opencontainers->push('container', $end);
-        $this->wraplevel += 1;
-        return $start;
-    }
-
-    public function container_end() {
-        $this->wraplevel -= 1;
-        return parent::container_end();
-    }
-}

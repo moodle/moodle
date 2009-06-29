@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -130,7 +130,7 @@ function isguest($userid=0) {
 /**
  * Get the guest user information from the database
  *
- * @todo Is object(user) a correct return type? Or is array the proper return type with a 
+ * @todo Is object(user) a correct return type? Or is array the proper return type with a
  * note that the contents include all details for a user.
  *
  * @return object(user) An associative array with the details of the guest user account.
@@ -1567,7 +1567,7 @@ function update_record($table, $dataobject) {
  * @param mixed $fields
  * @param mixed $limitfrom
  * @param mixed $limitnum
- 
+ *
  * @return void Throws an error and does nothing
  */
 function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
@@ -1727,7 +1727,7 @@ function require_js($lib) {
 /**
  * Makes an upload directory for a particular module.
  *
- * This funciton has been deprecated by the file API changes in Moodle 2.0.
+ * This function has been deprecated by the file API changes in Moodle 2.0.
  *
  * @deprecated
  * @param int $courseid The id of the course in question - maps to id field of 'course' table.
@@ -1738,6 +1738,32 @@ function make_mod_upload_directory($courseid) {
     debugging('make_mod_upload_directory has been deprecated by the file API changes in Moodle 2.0.', DEBUG_DEVELOPER);
     return make_upload_directory($courseid .'/'. $CFG->moddata);
 }
+
+
+/**
+ * This is a slight variatoin on the standard_renderer_factory that uses
+ * custom_corners_core_renderer instead of moodle_core_renderer.
+ *
+ * This generates the slightly different HTML that the custom_corners theme expects.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Required to make the old $THEME->customcorners setting work.
+ */
+class custom_corners_renderer_factory extends standard_renderer_factory {
+    /**
+     * Constructor.
+     * @param object $theme the theme we are rendering for.
+     * @param moodle_page $page the page we are doing output for.
+     */
+    public function __construct($theme, $page) {
+        global $CFG;
+        parent::__construct($theme, $page);
+        require_once($CFG->themedir . '/customcorners/renderers.php');
+        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page, $this));
+    }
+}
+
 
 /**
  * Prints some red text using echo
@@ -1959,7 +1985,7 @@ function print_container_end($return=false) {
  * @param string $style Optional style to display message text in
  * @param string $align Alignment option
  * @param bool $return whether to return an output string or echo now
- * @return string|bool Depending on $result 
+ * @return string|bool Depending on $result
  */
 function notify($message, $classes = 'notifyproblem', $align = 'center', $return = false) {
     global $OUTPUT;
@@ -2111,4 +2137,77 @@ function print_footer($course = NULL, $usercourse = NULL, $return = false) {
     } else {
         echo $output;
     }
+}
+
+/**
+ * Prints a nice side block with an optional header.  The content can either
+ * be a block of HTML or a list of text with optional icons.
+ *
+ * @todo Finish documenting this function. Show example of various attributes, etc.
+ *
+ * @static int $block_id Increments for each call to the function
+ * @param string $heading HTML for the heading. Can include full HTML or just
+ *   plain text - plain text will automatically be enclosed in the appropriate
+ *   heading tags.
+ * @param string $content HTML for the content
+ * @param array $list an alternative to $content, it you want a list of things with optional icons.
+ * @param array $icons optional icons for the things in $list.
+ * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
+ * @param array $attributes an array of attribute => value pairs that are put on the
+ * outer div of this block. If there is a class attribute ' sideblock' gets appended to it. If there isn't
+ * already a class, class='sideblock' is used.
+ * @param string $title Plain text title, as embedded in the $heading.
+ * @deprecated
+ */
+function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
+    global $OUTPUT;
+    $bc = new block_contents();
+    $bc->heading = $heading;
+    $bc->content = $content;
+    $bc->list = $list;
+    $bc->icons = $icons;
+    $bc->footer = $footer;
+    $bc->title = $title;
+
+    if (isset($attributes['id'])) {
+        $bc->id = $attributes['id'];
+        unset($attributes['id']);
+    }
+    if (isset($attributes['class'])) {
+        $bc->set_classes($attributes['class']);
+        unset($attributes['class']);
+    }
+    $bc->attributes = $attributes;
+
+    echo $OUTPUT->block($bc);
+}
+
+/**
+ * Starts a nice side block with an optional header.
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
+ * @param string $heading HTML for the heading. Can include full HTML or just
+ *   plain text - plain text will automatically be enclosed in the appropriate
+ *   heading tags.
+ * @param array $attributes HTML attributes to apply if possible
+ * @deprecated
+ */
+function print_side_block_start($heading='', $attributes = array()) {
+    throw new coding_exception('print_side_block_start has been deprecated. Please cahnge your code to use $OUTPUT->block().');
+}
+
+/**
+ * Print table ending tags for a side block box.
+ *
+ * @global object
+ * @global object
+ * @param array $attributes HTML attributes to apply if possible [id]
+ * @param string $title
+ * @deprecated
+ */
+function print_side_block_end($attributes = array(), $title='') {
+    throw new coding_exception('print_side_block_end has been deprecated. Please cahnge your code to use $OUTPUT->block().');
 }

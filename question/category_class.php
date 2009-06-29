@@ -148,7 +148,7 @@ class question_category_object {
      * Gets necessary strings and sets relevant path information
      */
     public function question_category_object($page, $pageurl, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts) {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $OUTPUT;
 
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
@@ -173,6 +173,7 @@ class question_category_object {
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
         $this->str->page           = get_string('page');
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $this->pixpath = $CFG->pixpath;
 
         $this->pageurl = $pageurl;

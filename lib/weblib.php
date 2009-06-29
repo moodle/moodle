@@ -3201,7 +3201,14 @@ function theme_setup($theme = '', $params=NULL) {
     // Support legacy themes, by setting sensible defaults for some of the new
     // properties that were introduced in Moodle 2.0.
     if (empty($THEME->rendererfactory)) {
-        $THEME->rendererfactory = 'standard_renderer_factory';
+        if (!empty($THEME->customcorners)) {
+            // $THEME->customcorners is deprecated but we provide support for it via the
+            // custom_corners_renderer_factory class in lib/deprecatedlib.php
+            debugging('$THEME->customcorners is deprecated. Please use the new $THEME->rendererfactory to control HTML generation.', DEBUG_DEVELOPER);
+            $THEME->rendererfactory = 'custom_corners_renderer_factory';
+        } else {
+            $THEME->rendererfactory = 'standard_renderer_factory';
+        }
     }
     if (empty($THEME->blockregions)) {
         $THEME->blockregions = array('side-pre', 'side-post');
@@ -5907,191 +5914,6 @@ function rebuildnolinktag($text) {
 }
 
 /**
- * Prints a nice side block with an optional header.  The content can either
- * be a block of HTML or a list of text with optional icons.
- *
- * @todo Finish documenting this function. Show example of various attributes, etc.
- *
- * @static int $block_id Increments for each call to the function
- * @param string $heading HTML for the heading. Can include full HTML or just
- *   plain text - plain text will automatically be enclosed in the appropriate
- *   heading tags.
- * @param string $content HTML for the content
- * @param array $list an alternative to $content, it you want a list of things with optional icons.
- * @param array $icons optional icons for the things in $list.
- * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
- * @param array $attributes an array of attribute => value pairs that are put on the
- * outer div of this block. If there is a class attribute ' sideblock' gets appended to it. If there isn't
- * already a class, class='sideblock' is used.
- * @param string $title Plain text title, as embedded in the $heading.
- * @return void Echo's output
- */
-function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
-
-    //Accessibility: skip block link, with title-text (or $block_id) to differentiate links.
-    static $block_id = 0;
-    $block_id++;
-    $skip_text = get_string('skipa', 'access', strip_tags($title));
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block">'.$skip_text.'</a>';
-    $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
-
-    $strip_title = strip_tags($title);
-    if (! empty($strip_title)) {
-        echo $skip_link;
-    }
-    //ELSE: a single link on a page "Skip block 4" is too confusing - ignore.
-
-    print_side_block_start($heading, $attributes);
-
-    // The content.
-    if ($content) {
-        echo $content;
-    } else {
-        if ($list) {
-            $row = 0;
-            //Accessibility: replaced unnecessary table with list, see themes/standard/styles_layout.css
-            echo "\n<ul class='list'>\n";
-            foreach ($list as $key => $string) {
-                echo '<li class="r'. $row .'">';
-                if ($icons) {
-                    echo '<div class="icon column c0">'. $icons[$key] .'</div>';
-                }
-                echo '<div class="column c1">'. $string .'</div>';
-                echo "</li>\n";
-                $row = $row ? 0:1;
-            }
-            echo "</ul>\n";
-        }
-    }
-
-    // Footer, if any.
-    if ($footer) {
-        echo '<div class="footer">'. $footer .'</div>';
-    }
-
-    print_side_block_end($attributes, $title);
-    echo $skip_dest;
-}
-
-/**
- * Starts a nice side block with an optional header.
- *
- * @todo Finish documenting this function
- *
- * @global object
- * @global object
- * @param string $heading HTML for the heading. Can include full HTML or just
- *   plain text - plain text will automatically be enclosed in the appropriate
- *   heading tags.
- * @param array $attributes HTML attributes to apply if possible
- * @return void Echo's output
- */
-function print_side_block_start($heading='', $attributes = array()) {
-
-    global $CFG, $THEME;
-
-    // If there are no special attributes, give a default CSS class
-    if (empty($attributes) || !is_array($attributes)) {
-        $attributes = array('class' => 'sideblock');
-
-    } else if(!isset($attributes['class'])) {
-        $attributes['class'] = 'sideblock';
-
-    } else if(!strpos($attributes['class'], 'sideblock')) {
-        $attributes['class'] .= ' sideblock';
-    }
-
-    // OK, the class is surely there and in addition to anything
-    // else, it's tagged as a sideblock
-
-    /*
-
-    // IE misery: if I do it this way, blocks which start hidden cannot be "unhidden"
-
-    // If there is a cookie to hide this thing, start it hidden
-    if (!empty($attributes['id']) && isset($_COOKIE['hide:'.$attributes['id']])) {
-        $attributes['class'] = 'hidden '.$attributes['class'];
-    }
-    */
-
-    $attrtext = '';
-    foreach ($attributes as $attr => $val) {
-        $attrtext .= ' '.$attr.'="'.$val.'"';
-    }
-
-    echo '<div '.$attrtext.'>';
-
-    if (!empty($THEME->customcorners)) {
-        echo '<div class="wrap">'."\n";
-    }
-    if ($heading) {
-        // Some callers pass in complete html for the heading, which may include
-        // complicated things such as the 'hide block' button; some just pass in
-        // text. If they only pass in plain text i.e. it doesn't include a
-        // <div>, then we add in standard tags that make it look like a normal
-        // page block including the h2 for accessibility
-        if(strpos($heading,'</div>')===false) {
-            $heading='<div class="title"><h2>'.$heading.'</h2></div>';
-        }
-
-        echo '<div class="header">';
-        if (!empty($THEME->customcorners)) {
-            echo '<div class="bt"><div>&nbsp;</div></div>';
-            echo '<div class="i1"><div class="i2">';
-            echo '<div class="i3">';
-        }
-        echo $heading;
-        if (!empty($THEME->customcorners)) {
-            echo '</div></div></div>';
-        }
-        echo '</div>';
-    } else {
-        if (!empty($THEME->customcorners)) {
-            echo '<div class="bt"><div>&nbsp;</div></div>';
-        }
-    }
-
-    if (!empty($THEME->customcorners)) {
-        echo '<div class="i1"><div class="i2">';
-        echo '<div class="i3">';
-    }
-    echo '<div class="content">';
-
-}
-
-
-/**
- * Print table ending tags for a side block box.
- *
- * @global object
- * @global object
- * @param array $attributes HTML attributes to apply if possible [id]
- * @param string $title
- * @return void Echo's output
- */
-function print_side_block_end($attributes = array(), $title='') {
-    global $CFG, $THEME;
-
-    echo '</div>';
-
-    if (!empty($THEME->customcorners)) {
-        echo '</div></div></div><div class="bb"><div>&nbsp;</div></div></div>';
-    }
-
-    echo '</div>';
-
-    $strshow = addslashes_js(get_string('showblocka', 'access', strip_tags($title)));
-    $strhide = addslashes_js(get_string('hideblocka', 'access', strip_tags($title)));
-
-    // IE workaround: if I do it THIS way, it works! WTF?
-    if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
-        echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].
-             '","'.$strshow.'","'.$strhide."\");\n//]]>\n".'</script>';
-    }
-
-}
-
-/**
  * @todo Remove this deprecated function when no longer used
  * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead of the .
  *
@@ -6812,7 +6634,6 @@ abstract class moodle_progress_trace {
      * Called when the processing is finished.
      */
     public function finished() {
-        
     }
 }
 

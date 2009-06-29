@@ -473,15 +473,9 @@ if ($quiz_qbanktool) {
     $bankclass = 'collapsed';
     $quizcontentsclass = 'quizwhenbankcollapsed';
 }
-print_side_block_start(get_string('questionbankcontents', 'quiz') .
-        ' <a href="' . $thispageurl->out(false, array('qbanktool' => '1')) .
-       '" id="showbankcmd">[' . get_string('show').
-       ']</a>
-       <a href="' . $thispageurl->out(false, array('qbanktool' => '0')) .
-       '" id="hidebankcmd">[' . get_string('hide').
-       ']</a>
-       ', array('class' => 'questionbankwindow ' . $bankclass));
 
+// Nasty short-term hack, becuase I am getting rid of separate print_side_block_start/end functions.
+ob_start();
 echo '<span id="questionbank"></span>';
 echo '<div class="container">';
 echo '<div id="module" class="module">';
@@ -495,7 +489,17 @@ $questionbank->display('editq',
 echo '</div>';
 echo '</div>';
 echo '</div>';
-print_side_block_end();
+$qbhtml = ob_get_contents();
+ob_end_clean();
+
+print_side_block(get_string('questionbankcontents', 'quiz') .
+        ' <a href="' . $thispageurl->out(false, array('qbanktool' => '1')) .
+       '" id="showbankcmd">[' . get_string('show').
+       ']</a>
+       <a href="' . $thispageurl->out(false, array('qbanktool' => '0')) .
+       '" id="hidebankcmd">[' . get_string('hide').
+       ']</a>
+       ', $qbhtml, null, null, '', array('class' => 'questionbankwindow ' . $bankclass));
 
 echo '<div class="quizcontents ' . $quizcontentsclass . '" id="quizcontentsblock">';
 if ($quiz->shufflequestions) {

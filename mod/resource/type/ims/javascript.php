@@ -11,6 +11,9 @@
 
 /// Let's know if we are using a customcorners theme. It implies new calculations
 /// within the resizeiframe function.
+// TODO this will no longer work. We have the more general mechanism using renderers/renderer_factories
+// to determine what HTML is output. If this JavaScript is really still necessary, then we will have
+// to find another way to handle this.
     if (!empty($THEME->customcorners)) {
         $customcorners = 'true';
     } else {
