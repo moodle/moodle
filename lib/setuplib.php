@@ -117,8 +117,13 @@ class invalid_state_exception extends moodle_exception {
 
 /**
  * Default exception handler, uncought exceptions are equivalent to using print_error()
+ *
+ * @param Exception $ex 
+ * @param boolean $isupgrade 
+ * @param string $plugin 
+ * Does not return. Terminates execution.
  */
-function default_exception_handler($ex) {
+function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
     global $CFG, $DB, $SCRIPT;
 
     // detect active db transactions, rollback and log as error
@@ -158,6 +163,14 @@ function default_exception_handler($ex) {
     }
 
     list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
+
+    if ($isupgrade) {
+        // First log upgrade error
+        upgrade_log(UPGRADE_LOG_ERROR, $plugin, 'Exception: ' . get_class($ex), $message, $backtrace);
+
+        // Always turn on debugging - admins need to know what is going on
+        $CFG->debug = DEBUG_DEVELOPER;
+    }
 
     if ($earlyerror) {
         // Error found before setup.php finished

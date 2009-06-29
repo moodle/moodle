@@ -627,33 +627,8 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 /**
  * upgrade logging functions
  */
-function upgrade_handle_exception($ex, $plugin=null) {
-    global $CFG;
-
-    if ($ex instanceof moodle_exception) {
-        $details = get_string($ex->errorcode, $ex->module, $ex->a)."<br />debugging:".$ex->debuginfo;
-    } else {
-        $details = get_string('generalexceptionmessage', 'error', $ex->getMessage());
-    }
-    $info = "Exception: ".get_class($ex);
-    $backtrace = $ex->getTrace();
-    $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
-    array_unshift($backtrace, $place);
-
-    /// first log upgrade error
-    upgrade_log(UPGRADE_LOG_ERROR, $plugin, $info, $details, $backtrace);
-
-    // always turn on debugging - admins need to know what is going on
-    $CFG->debug = DEBUG_DEVELOPER;
-
-    // now print the exception info as usually
-    if ($ex instanceof moodle_exception) {
-        _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
-    } else {
-        _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
-    }
-
-    die; // not reached
+function upgrade_handle_exception($ex, $plugin = null) {
+    default_exception_handler($ex, true, $plugin);
 }
 
 /**

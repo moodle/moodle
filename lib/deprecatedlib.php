@@ -581,7 +581,7 @@ function get_current_group($courseid, $full = false) {
  * @return void Terminates script, does not return!
  */
 function error($message, $link='') {
-    global $UNITTEST;
+    global $UNITTEST, $OUTPUT;
 
     // If unittest running, throw exception instead
     if (!empty($UNITTEST->running)) {
@@ -590,7 +590,9 @@ function error($message, $link='') {
         throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
     }
 
-    _print_normal_error('notlocalisederrormessage', 'error', $message, $link, debug_backtrace(), null, true); // show debug warning
+    list($message, $moreinfourl, $link) = prepare_error_message('notlocalisederrormessage', 'error', $link, $message);
+    $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace(), null, true); // show debug warning
+    die;
 }
 
 
