@@ -97,8 +97,10 @@ global $COURSE;
  * $OUTPUT is an instance of moodle_core_renderer or one of its subclasses. Use
  * it to generate HTML for output.
  *
- * $OUTPUT is initialised when the theme is setup. That normally happens during
- * the call to require_login, or $PAGE->set_course.
+ * $OUTPUT is initialised the first time it is used. See {@link bootstrap_renderer}
+ * for the magic that does that. After $OUTPUT has been initialised, any attempt
+ * to change something that affects the current theme ($PAGE->course, logged in use,
+ * httpsrequried ... will result in an exception.)
  *
  * @global object $OUTPUT
  * @name $OUTPUT
@@ -205,6 +207,11 @@ global $SCRIPT;
 /// Time to start counting
     init_performance_info();
 
+/// Put $OUTPUT in place, so errors can be displayed.
+    $OUTPUT = new bootstrap_renderer();
+
+/// set handler for uncought exceptions - equivalent to print_error() call
+    set_exception_handler('default_exception_handler');
 
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
@@ -248,9 +255,6 @@ global $SCRIPT;
     ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
     //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
     ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
-
-/// set handler for uncought exceptions - equivalent to print_error() call
-    set_exception_handler('default_exception_handler');
 
 /// make sure PHP is not severly misconfigured
     setup_validate_php_configuration();
@@ -346,7 +350,6 @@ global $SCRIPT;
     unset($originaldatabasedebug);
     error_reporting($CFG->debug);
 
-
 /// find out if PHP cofigured to display warnings
     if (ini_get_bool('display_errors')) {
         define('WARN_DISPLAY_ERRORS_ENABLED', true);
@@ -368,19 +371,6 @@ global $SCRIPT;
         @ini_set('display_errors', '0');
         @ini_set('log_errors', '1');
     }
-
-/// Create the $PAGE global.
-    if (!empty($CFG->moodlepageclass)) {
-        $classname = $CFG->moodlepageclass;
-    } else {
-        $classname = 'moodle_page';
-    }
-    $PAGE = new $classname();
-
-/// Create an initial $OUTPUT. This will be changes later once we know the theme.
-    setup_bootstrat_output();
-
-    unset($classname);
 
 /// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
     if (!empty($CFG->version) and $CFG->version < 2007101509) {
@@ -474,6 +464,15 @@ global $SCRIPT;
     $CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
     $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
+
+/// Create the $PAGE global.
+    if (!empty($CFG->moodlepageclass)) {
+        $classname = $CFG->moodlepageclass;
+    } else {
+        $classname = 'moodle_page';
+    }
+    $PAGE = new $classname();
+    unset($classname);
 
 /// A hack to get around magic_quotes_gpc being turned on
 /// It is strongly recommended to disable "magic_quotes_gpc"!

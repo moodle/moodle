@@ -335,14 +335,17 @@ class moodle_page {
      * @return blocks_manager the blocks manager object for this page.
      */
     public function get_blocks() {
-        global $CFG;
+        global $CFG, $THEME;
         if (is_null($this->_blocks)) {
+            initialise_theme_and_output();
             if (!empty($CFG->blockmanagerclass)) {
                 $classname = $CFG->blockmanagerclass;
             } else {
                 $classname = 'block_manager';
             }
             $this->_blocks = new $classname($this);
+            $this->_blocks->add_regions($THEME->blockregions);
+            $this->_blocks->set_default_region($THEME->defaultblockregion);
         }
         return $this->_blocks;
     }
@@ -481,7 +484,6 @@ class moodle_page {
         }
 
         moodle_setlocale();
-        theme_setup();
     }
 
     /**
@@ -743,7 +745,6 @@ class moodle_page {
             $this->_course = new stdClass;
             $this->_course->id = 1;
             moodle_setlocale();
-            theme_setup();
             return;
         }
 

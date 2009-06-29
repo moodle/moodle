@@ -3198,18 +3198,16 @@ function theme_setup($theme = '', $params=NULL) {
         $CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/rtl.css'.$paramstring;
     }
 
-    /// Set up the block regions.
-    if (!empty($THEME->blockregions)) {
-        $PAGE->blocks->add_regions($THEME->blockregions);
-    } else {
-        // Support legacy themes by supplying a sensible default.
-        $PAGE->blocks->add_regions(array('side-pre', 'side-post'));
+    // Support legacy themes, by setting sensible defaults for some of the new
+    // properties that were introduced in Moodle 2.0.
+    if (empty($THEME->rendererfactory)) {
+        $THEME->rendererfactory = 'standard_renderer_factory';
     }
-    if (!empty($THEME->defaultblockregion)) {
-        $PAGE->blocks->set_default_region($THEME->defaultblockregion);
-    } else {
-        // Support legacy themes by supplying a sensible default.
-        $PAGE->blocks->set_default_region('side-post');
+    if (empty($THEME->blockregions)) {
+        $THEME->blockregions = array('side-pre', 'side-post');
+    }
+    if (empty($THEME->defaultblockregion)) {
+        $THEME->defaultblockregion = 'side-post';
     }
 }
 

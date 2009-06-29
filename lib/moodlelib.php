@@ -249,18 +249,6 @@ define('PARAM_PERMISSION',   0x80000);
  */
 define('PAGE_COURSE_VIEW', 'course-view');
 
-/// Debug levels ///
-/** no warnings at all */
-define ('DEBUG_NONE', 0);
-/** E_ERROR | E_PARSE */
-define ('DEBUG_MINIMAL', 5);
-/** E_ERROR | E_PARSE | E_WARNING | E_NOTICE */
-define ('DEBUG_NORMAL', 15);
-/** E_ALL without E_STRICT for now, do show recoverable fatal errors */
-define ('DEBUG_ALL', 6143);
-/** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
-define ('DEBUG_DEVELOPER', 38911);
-
 /** Get remote addr constant */
 define('GETREMOTEADDR_SKIP_HTTP_CLIENT_IP', '1');
 /** Get remote addr constant */
@@ -5588,14 +5576,13 @@ function print_string($identifier, $module='', $a=NULL) {
  *
  * Notes for develpers
  * ===================
- *
  * Performance of this class is important. If you decide to change this class,
  * please use the lib/simpletest/getstringperformancetester.php script to make
  * sure your changes do not cause a performance problem.
  *
- * In some cases (for example _print_early_error) get_string gets called very
- * early on during Moodle's self-initialisation. Think very carefully before
- * relying on the normal Moodle libraries here.
+ * In some cases (for example bootstrap_renderer::early_error) get_string gets
+ * called very early on during Moodle's self-initialisation. Think very carefully
+ * before relying on the normal Moodle libraries here.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore

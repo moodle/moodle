@@ -184,4 +184,13 @@ $THEME->custompix = false;
 /// "pix/mod" directory containing all the icons 
 /// for all the activity modules.
 ////////////////////////////////////////////////////////////////////////////////
-?>
+
+
+$THEME->rendererfactory = 'custom_corners_renderer_factory';
+/// This is an advanced features that lets you control the HTML that Moodle
+/// generates. You need to specify a class that implements the renderer_factory
+/// interface. As well as the default 'standard_renderer_factory', there is
+/// also the experimental 'template_renderer_factory', or you could implement
+/// your own. For more information, please see
+/// http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
+////////////////////////////////////////////////////////////////////////////////

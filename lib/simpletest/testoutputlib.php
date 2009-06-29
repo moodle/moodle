@@ -50,7 +50,7 @@ class testable_renderer_factory extends renderer_factory_base {
 
     public function create_renderer($module) {
         $this->createcalls[] = $module;
-        return new moodle_core_renderer(new xhtml_container_stack(), null);
+        return new moodle_core_renderer(new xhtml_container_stack(), null, null);
     }
 
     public function standard_renderer_class_for_module($module) {
@@ -64,7 +64,7 @@ class testable_renderer_factory extends renderer_factory_base {
  */
 class moodle_test_renderer extends moodle_core_renderer {
     public function __construct($containerstack, $page) {
-        parent::__construct($containerstack, $page);
+        parent::__construct($containerstack, $page, null);
     }
 
     public function greeting($name = 'world') {
@@ -722,7 +722,7 @@ class template_renderer_test extends UnitTestCase {
         $page = new stdClass;
         $page->course = new stdClass;
         $this->renderer = new template_renderer('moodle_test_renderer',
-                array($this->templatefolder), new xhtml_container_stack(), $page);
+                array($this->templatefolder), new xhtml_container_stack(), $page, null);
         $this->savedtemplates = array();
     }
 
@@ -787,7 +787,7 @@ class moodle_core_renderer_test extends UnitTestCase {
     public function setUp() {
         parent::setUp();
         $this->containerstack = new xhtml_container_stack();
-        $this->renderer = new moodle_core_renderer($this->containerstack, null);
+        $this->renderer = new moodle_core_renderer($this->containerstack, null, null);
     }
 
     public function test_select_menu_simple() {

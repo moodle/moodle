@@ -28,17 +28,23 @@
  */
 
 
-/**
- * Set up a preliminary $OUTPUT. This will be changed later once the correct theme
- * for this page is known. Must be called after $PAGE is setup.
- */
-function setup_bootstrat_output() {
-    global $OUTPUT, $PAGE;
-    if (CLI_SCRIPT) {
-        $OUTPUT = new cli_core_renderer(new xhtml_container_stack(), $PAGE);
-    } else {
-        $OUTPUT = new moodle_core_renderer(new xhtml_container_stack(), $PAGE);
+function initialise_theme_and_output() {
+    global $CFG, $OUTPUT, $PAGE, $THEME;
+    if (!($OUTPUT instanceof bootstrap_renderer)) {
+        return; // Already done.
     }
+    if (!isset($CFG->theme) || empty($PAGE)) {
+        // Too soon to do anything.
+        return;
+    }
+    theme_setup();
+    if (CLI_SCRIPT) {
+        $rendererfactory = new cli_renderer_factory($THEME, $PAGE);
+    } else {
+        $classname = $THEME->rendererfactory;
+        $rendererfactory = new $classname($THEME, $PAGE);
+    }
+    $OUTPUT = $rendererfactory->get_renderer('core');
 }
 
 
@@ -181,7 +187,7 @@ class standard_renderer_factory extends renderer_factory_base {
     /* Implement the subclass method. */
     public function create_renderer($module) {
         if ($module == 'core') {
-            return new moodle_core_renderer($this->opencontainers, $this->page);
+            return new moodle_core_renderer($this->opencontainers, $this->page, $this);
         } else {
             $class = $this->standard_renderer_class_for_module($module);
             return new $class($this->opencontainers, $this->get_renderer('core'), $this->page);
@@ -208,7 +214,27 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
      */
     public function __construct($theme, $page) {
         parent::__construct($theme, $page);
-        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page));
+        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page, $this));
+    }
+}
+
+
+/**
+ * This is a slight variation on the standard_renderer_factory used by CLI scripts.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class cli_renderer_factory extends standard_renderer_factory {
+    /**
+     * Constructor.
+     * @param object $theme the theme we are rendering for.
+     * @param moodle_page $page the page we are doing output for.
+     */
+    public function __construct($theme, $page) {
+        parent::__construct($theme, $page);
+        $this->renderers = array('core' => new cli_core_renderer($this->opencontainers, $this->page, $this));
     }
 }
 
@@ -262,7 +288,7 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
             $classname = $prefix . $module . '_renderer';
             if (class_exists($classname)) {
                 if ($module == 'core') {
-                    return new $classname($this->opencontainers, $this->page);
+                    return new $classname($this->opencontainers, $this->page, $this);
                 } else {
                     return new $classname($this->opencontainers, $this->get_renderer('core'), $this->page);
                 }
@@ -342,7 +368,7 @@ class template_renderer_factory extends renderer_factory_base {
 
         // Create a template_renderer that copies the API of the standard renderer.
         $copiedclass = $this->standard_renderer_class_for_module($module);
-        return new template_renderer($copiedclass, $searchpaths, $this->opencontainers, $this->page);
+        return new template_renderer($copiedclass, $searchpaths, $this->opencontainers, $this->page, $this);
     }
 }
 
@@ -432,6 +458,7 @@ class template_renderer extends moodle_renderer_base {
     protected $copiedclass;
     /** @var array of places to search for templates. */
     protected $searchpaths;
+    protected $rendererfactory;
 
     /**
      * Magic word used when breaking apart container templates to implement
@@ -445,11 +472,22 @@ class template_renderer extends moodle_renderer_base {
      * @param $searchpaths a list of folders to search for templates in.
      * @param $opencontainers the xhtml_container_stack to use.
      * @param moodle_page $page the page we are doing output for.
+     * @param renderer_factory $rendererfactory the renderer factory that created us.
      */
-    public function __construct($copiedclass, $searchpaths, $opencontainers, $page) {
+    public function __construct($copiedclass, $searchpaths, $opencontainers, $page, $rendererfactory) {
         parent::__construct($opencontainers, $page);
         $this->copiedclass = new ReflectionClass($copiedclass);
         $this->searchpaths = $searchpaths;
+        $this->rendererfactory = $rendererfactory;
+    }
+
+    /**
+     * Get a renderer for another part of Moodle.
+     * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
+     * @return object an object implementing the requested renderer interface.
+     */
+    public function get_other_renderer($module) {
+        $this->rendererfactory->get_renderer($module);
     }
 
     /* PHP magic method implementation. */
@@ -704,6 +742,27 @@ class moodle_core_renderer extends moodle_renderer_base {
     const END_HTML_TOKEN = '%%ENDHTML%%';
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
     protected $contenttype;
+    protected $rendererfactory;
+
+    /**
+     * Constructor
+     * @param $opencontainers the xhtml_container_stack to use.
+     * @param moodle_page $page the page we are doing output for.
+     * @param renderer_factory $rendererfactory the renderer factory that created us.
+     */
+    public function __construct($opencontainers, $page, $rendererfactory) {
+        parent::__construct($opencontainers, $page);
+        $this->rendererfactory = $rendererfactory;
+    }
+
+    /**
+     * Get a renderer for another part of Moodle.
+     * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
+     * @return object an object implementing the requested renderer interface.
+     */
+    public function get_other_renderer($module) {
+        $this->rendererfactory->get_renderer($module);
+    }
 
     public function doctype() {
         global $CFG;
@@ -1114,7 +1173,8 @@ class moodle_core_renderer extends moodle_renderer_base {
         if ($this->opencontainers->count() == 0) {
             // Header not yet printed
             @header('HTTP/1.0 404 Not Found');
-            print_header(get_string('error'));
+            $this->page->set_title(get_string('error'));
+            $output .= $this->header();
         } else {
             $output .= $this->opencontainers->pop_all_but_last();
         }
@@ -1142,7 +1202,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= $this->continue_button($link);
         }
 
-        print_footer();
+        $output .= $this->footer();
 
         // Padding to encourage IE to display our error page, rather than its own.
         $output .= str_repeat(' ', 512);
@@ -1471,6 +1531,8 @@ class cli_core_renderer extends moodle_core_renderer {
  * @since     Moodle 2.0
  */
 class custom_corners_core_renderer extends moodle_core_renderer {
+    protected $wraplevel = 1;
+
     protected function custom_corners_divs($classes = '', $idbase = '') {
         if (strpos($classes, 'clearfix') !== false) {
             $clearfix = ' clearfix';
@@ -1495,11 +1557,8 @@ class custom_corners_core_renderer extends moodle_core_renderer {
             $idbb = $idbase . '-bb';
         }
 
-        // Calculate current level
-        $level = $this->opencontainers->count();
-
         // Create start tags.
-        $start = $this->output_start_tag('div', array('id' => $idbb, 'class' => "wrap wraplevel$level $classes")) . "\n";
+        $start = $this->output_start_tag('div', array('id' => $id, 'class' => "wrap wraplevel{$this->wraplevel} $classes")) . "\n";
         $start .= $this->output_tag('div', array('id' => $idbt, 'class' => 'bt'), '<div>&nbsp;</div>') . "\n";
         $start .= $this->output_start_tag('div', array('id' => $idi1, 'class' => 'i1'));
         $start .= $this->output_start_tag('div', array('id' => $idi2, 'class' => 'i2'));
@@ -1518,12 +1577,24 @@ class custom_corners_core_renderer extends moodle_core_renderer {
     public function box_start($classes = 'generalbox', $id = '') {
         list($start, $end) = $this->custom_corners_divs('ccbox box ' . moodle_renderer_base::prepare_classes($classes), $id);
         $this->opencontainers->push('box', $end);
+        $this->wraplevel += 1;
         return $start;
+    }
+
+    public function box_end() {
+        $this->wraplevel -= 1;
+        return parent::box_end();
     }
 
     public function container_start($classes = '', $id = '') {
         list($start, $end) = $this->custom_corners_divs(moodle_renderer_base::prepare_classes($classes), $id);
         $this->opencontainers->push('container', $end);
+        $this->wraplevel += 1;
         return $start;
+    }
+
+    public function container_end() {
+        $this->wraplevel -= 1;
+        return parent::container_end();
     }
 }
