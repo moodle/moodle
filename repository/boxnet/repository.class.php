@@ -154,7 +154,7 @@ class repository_boxnet extends repository {
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->auth_token.'/'.$fileids[$n],
-                            'thumbnail'=>$CFG->httpswwwroot.'/pix/f/'.mimeinfo('icon32', $v));
+                            'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $v));
                 }
             }
         }

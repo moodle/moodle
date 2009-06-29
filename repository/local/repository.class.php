@@ -64,7 +64,7 @@ class repository_local extends repository {
                         'size' => 0,
                         'date' => '',
                         'source'=> $file->get_id(),
-                        'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
+                        'thumbnail' => $CFG->pixpath .'/f/text-32.png'
                     );
                     $list[] = $node;
                 }
@@ -95,7 +95,7 @@ class repository_local extends repository {
                 'date' => '',
                 'path' => 'draft',
                 'children'=>array(),
-                'thumbnail' => $CFG->wwwroot .'/pix/f/folder-32.png'
+                'thumbnail' => $CFG->pixpath .'/f/folder-32.png'
             );
             $list[] = $node;
         }
@@ -124,7 +124,7 @@ class repository_local extends repository {
                             'date' => '',
                             'path' => $params,
                             'children'=>array(),
-                            'thumbnail' => $CFG->wwwroot .'/pix/f/folder-32.png'
+                            'thumbnail' => $CFG->pixpath .'/f/folder-32.png'
                         );
                         $list[] = $node;
                     } else {
@@ -134,7 +134,7 @@ class repository_local extends repository {
                             'size' => 0,
                             'date' => '',
                             'source'=> $params,
-                            'thumbnail' => $CFG->wwwroot .'/pix/f/text-32.png'
+                            'thumbnail' => $CFG->pixpath .'/f/text-32.png'
                         );
                         $list[] = $node;
                     }

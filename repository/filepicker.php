@@ -245,7 +245,7 @@ default:
             if ($file->get_filename()!='.') {
                 $drafturl = $CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename();
                 echo '<li><a href="'.$drafturl.'">'.$file->get_filename().'</a> ';
-                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&amp;ctx_id='.$ctx_id.'&amp;title='.$file->get_filename().'"><img src="'.$CFG->httpswwwroot.'/pix/t/delete.gif" class="iconsmall" /></a></li>';
+                echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&amp;ctx_id='.$ctx_id.'&amp;title='.$file->get_filename().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" /></a></li>';
             }
         }
         echo '</ul>';

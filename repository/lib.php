@@ -769,7 +769,7 @@ abstract class repository {
                 return array('url'=>$ret->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon'=>$CFG->httpswwwroot.'/pix/f/'.mimeinfo('icon32', $path)
+                    'icon'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $path)
                 );
             } else {
                 return null;
@@ -922,7 +922,7 @@ abstract class repository {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $CFG->httpswwwroot .'/pix/f/folder-32.png'
+                    'thumbnail' => $CFG->pixpath .'/f/folder-32.png'
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {
@@ -960,7 +960,7 @@ abstract class repository {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'thumbnail' => $CFG->httpswwwroot .'/pix/f/'. mimeinfo('icon32', $filename)
+                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $filename)
                 );
                 $filecount++;
             }
