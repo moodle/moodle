@@ -630,6 +630,9 @@ div.hide {
    width:100%;
    text-align:right;
 }
+.jsenabled .advancedbutton .showadvancedbtn {
+  display:none;
+}
 .mform div.fitem {
   clear: both;
   width: 100%;
