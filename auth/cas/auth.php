@@ -58,7 +58,7 @@ class auth_plugin_cas extends auth_plugin_base {
      */
     function user_login ($username, $password) {
 		$this->connectCAS();
-        return phpCAS::isAuthenticated() && (phpCAS::getUser() == $username);
+        return phpCAS::isAuthenticated() && (trim(moodle_strtolower(phpCAS::getUser())) == $username);
     }
     /**
      * Returns true if this authentication plugin is 'internal'.
