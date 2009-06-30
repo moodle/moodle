@@ -5607,6 +5607,7 @@ class string_manager {
     private $installstrings = NULL;
     private $parentlangfile = 'langconfig.php';
     private $logtofile = false;
+    private $showstringsource = false;
     private static $singletoninstance = NULL;
 
     /**
@@ -5618,7 +5619,8 @@ class string_manager {
     public static function instance() {
         if (is_null(self::$singletoninstance)) {
             global $CFG;
-            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot, isset($CFG->running_installer));
+            self::$singletoninstance = new self($CFG->dirroot, $CFG->dataroot,
+                    isset($CFG->running_installer), !empty($CFG->debugstringids));
             // Uncomment the followign line to log every call to get_string
             // to a file in $CFG->dataroot/temp/getstringlog/...
             // self::$singletoninstance->start_logging();
@@ -5630,12 +5632,14 @@ class string_manager {
     /**
     * string_manager construct method to instatiate this instance
     * 
-    * @param string $dirroot root directory path
-    * @param string $dataroot Path to the data root
-    * @param string $admin path to the admin directory
-    * @param bool $runninginstaller
+    * @param string $dirroot root directory path.
+    * @param string $dataroot Path to the data root.
+    * @param string $admin path to the admin directory.
+    * @param boolean $runninginstaller Set to true if we are in the installer.
+    * @param boolean $showstringsource add debug info to each string before it is
+    *       returned, to say where it came from.
     */
-    protected function __construct($dirroot, $dataroot, $runninginstaller) {
+    protected function __construct($dirroot, $dataroot, $runninginstaller, $showstringsource = false) {
         $this->dirroot = $dirroot;
         $this->corelocations = array(
             $dirroot . '/lang/' => '',
@@ -5652,6 +5656,7 @@ class string_manager {
             $this->installstrings = array_map('trim', $stringnames);
             $this->parentlangfile = 'installer.php';
         }
+        $this->showstringsource = $showstringsource;
     }
 
     /**
@@ -5962,6 +5967,9 @@ class string_manager {
                     $file = $location . $lang . $suffix . '/' . $module . '.php';
                     $result = $this->get_string_from_file($identifier, $file, $a);
                     if ($result !== false) {
+                        if ($this->showstringsource) {
+                            $result = $this->add_source_info($result, $module, $identifier, $file);
+                        }
                         return $result;
                     }
                 }
@@ -5969,6 +5977,18 @@ class string_manager {
         }
 
         return '[[' . $identifier . ']]'; // Last resort.
+    }
+
+    /**
+     * Add debug information about where this string came from.
+     */
+    protected function add_source_info($string, $module, $identifier, $file) {
+        // This should not start with '[' or we will confuse code that checks for
+        // missing language strings.
+        // It is a good idea to bracked the entire string. Sometimes on string
+        // is put inside another (For example, Default: No on the admin strings.
+        // The bracketing makes that clear.
+        return '{' . $string . ' ' . $module . '/' . $identifier . '}';
     }
 }
 
