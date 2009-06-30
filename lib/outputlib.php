@@ -879,7 +879,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     public function has_started() {
-        if ($this->page->stated >= moodle_page::STATE_IN_BODY) {
+        if ($this->page->state >= moodle_page::STATE_IN_BODY) {
             return true;
         }
         return false;
