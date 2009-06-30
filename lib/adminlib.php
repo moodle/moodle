@@ -3310,7 +3310,7 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
  */
 class admin_setting_langlist extends admin_setting_configtext {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         parent::__construct('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), '', PARAM_NOTAGS);
@@ -3336,7 +3336,7 @@ class admin_setting_langlist extends admin_setting_configtext {
  */
 class admin_settings_coursecat_select extends admin_setting_configselect {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
@@ -3365,7 +3365,7 @@ class admin_settings_coursecat_select extends admin_setting_configselect {
  */
 class admin_setting_special_backupdays extends admin_setting_configmulticheckbox2 {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         parent::__construct('backup_sche_weekdays', get_string('schedule'), get_string('backupschedulehelp'), array(), NULL);
@@ -3396,7 +3396,7 @@ class admin_setting_special_backupdays extends admin_setting_configmulticheckbox
  */
 class admin_setting_special_debug extends admin_setting_configselect {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         parent::__construct('debug', get_string('debug', 'admin'), get_string('configdebug', 'admin'), DEBUG_NONE, NULL);
@@ -3427,7 +3427,7 @@ class admin_setting_special_debug extends admin_setting_configselect {
  */
 class admin_setting_special_calendar_weekend extends admin_setting {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         $name = 'calendar_weekend';
@@ -3576,9 +3576,9 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_text_with_advanced extends admin_setting_configtext {
+class admin_setting_configtext_with_advanced extends admin_setting_configtext {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype) {
         parent::__construct($name, $visiblename, $description,
@@ -3663,9 +3663,9 @@ class admin_setting_text_with_advanced extends admin_setting_configtext {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_combo_with_advanced extends admin_setting_configselect {
+class admin_setting_configselect_with_advanced extends admin_setting_configselect {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
@@ -3750,13 +3750,13 @@ class admin_setting_combo_with_advanced extends admin_setting_configselect {
 }
 
 /**
- * Specialisation of admin_setting_combo_with_advanced for easy yes/no choices.
+ * Specialisation of admin_setting_configselect_with_advanced for easy yes/no choices.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_yesno_with_advanced extends admin_setting_combo_with_advanced {
+class admin_setting_yesno_with_advanced extends admin_setting_configselect_with_advanced {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description,
@@ -3771,7 +3771,7 @@ class admin_setting_yesno_with_advanced extends admin_setting_combo_with_advance
  */
 class admin_setting_special_gradebookroles extends admin_setting_pickroles {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         parent::__construct('gradebookroles', get_string('gradebookroles', 'admin'),
@@ -3814,7 +3814,7 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
  */
 class admin_setting_special_coursemanager extends admin_setting_pickroles {
     /**
-     * Calls parent::__consturct with specific arguments
+     * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         parent::__construct('coursemanager', get_string('coursemanager', 'admin'),

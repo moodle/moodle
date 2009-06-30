@@ -40,7 +40,7 @@ $quizsettings = new admin_settingpage('modsettingquiz', $pagetitle, 'moodle/site
 $quizsettings->add(new admin_setting_heading('quizintro', '', get_string('configintro', 'quiz')));
 
 // Time limit
-$quizsettings->add(new admin_setting_text_with_advanced('quiz/timelimit',
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/timelimit',
         get_string('timelimitsec', 'quiz'), get_string('configtimelimitsec', 'quiz'),
         array('value' => '0', 'fix' => false), PARAM_INT));
 
@@ -49,12 +49,12 @@ $options = array(get_string('unlimited'));
 for ($i = 1; $i <= QUIZ_MAX_ATTEMPT_OPTION; $i++) {
     $options[$i] = $i;
 }
-$quizsettings->add(new admin_setting_combo_with_advanced('quiz/attempts',
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/attempts',
         get_string('attemptsallowed', 'quiz'), get_string('configattemptsallowed', 'quiz'),
         array('value' => 0, 'fix' => false), $options));
 
 // Grading method.
-$quizsettings->add(new admin_setting_combo_with_advanced('quiz/grademethod',
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/grademethod',
         get_string('grademethod', 'quiz'), get_string('configgrademethod', 'quiz'),
         array('value' => QUIZ_GRADEHIGHEST, 'fix' => false), quiz_get_grading_options()));
 
@@ -74,7 +74,7 @@ $perpage[1] = get_string('aftereachquestion', 'quiz');
 for ($i = 2; $i <= QUIZ_MAX_QPP_OPTION; ++$i) {
     $perpage[$i] = get_string('afternquestions', 'quiz', $i);
 }
-$quizsettings->add(new admin_setting_combo_with_advanced('quiz/questionsperpage',
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questionsperpage',
         get_string('newpageevery', 'quiz'), get_string('confignewpageevery', 'quiz'),
         array('value' => 1, 'fix' => false), $perpage));
 
@@ -113,7 +113,7 @@ $options = array();
 for ($i = 0; $i <= QUIZ_MAX_DECIMAL_OPTION; $i++) {
     $options[$i] = $i;
 }
-$quizsettings->add(new admin_setting_combo_with_advanced('quiz/decimalpoints',
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/decimalpoints',
         get_string('decimalplaces', 'quiz'), get_string('configdecimalplaces', 'quiz'),
         array('value' => 2, 'fix' => false), $options));
 
@@ -122,25 +122,25 @@ $options = array(-1 => get_string('sameasoverall', 'quiz'));
 for ($i = 0; $i <= QUIZ_MAX_Q_DECIMAL_OPTION; $i++) {
     $options[$i] = $i;
 }
-$quizsettings->add(new admin_setting_combo_with_advanced('quiz/questiondecimalpoints',
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questiondecimalpoints',
         get_string('decimalplacesquestion', 'quiz'), get_string('configdecimalplacesquestion', 'quiz'),
         array('value' => -1, 'fix' => true), $options));
 
 // Password.
-$quizsettings->add(new admin_setting_text_with_advanced('quiz/password',
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
         get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
         array('value' => '', 'fix' => true), PARAM_TEXT));
 
 // IP restrictions.
-$quizsettings->add(new admin_setting_text_with_advanced('quiz/subnet',
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/subnet',
         get_string('requiresubnet', 'quiz'), get_string('configrequiresubnet', 'quiz'),
         array('value' => '', 'fix' => true), PARAM_TEXT));
 
 // Enforced delay between attempts.
-$quizsettings->add(new admin_setting_text_with_advanced('quiz/delay1',
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay1',
         get_string('delay1st2nd', 'quiz'), get_string('configdelay1st2nd', 'quiz'),
         array('value' => 0, 'fix' => true), PARAM_INTEGER));
-$quizsettings->add(new admin_setting_text_with_advanced('quiz/delay2',
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay2',
         get_string('delaylater', 'quiz'), get_string('configdelaylater', 'quiz'),
         array('value' => 0, 'fix' => true), PARAM_INTEGER));
 
