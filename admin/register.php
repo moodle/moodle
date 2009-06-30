@@ -59,7 +59,7 @@
     echo "<input type=\"hidden\" name=\"release\" value=\"$CFG->release\" />\n";
 
     echo '<div class="fitem">';
-    echo '<div class="fitemtitle"><label>URL</label></div>';
+    echo '<div class="fitemtitle"><label>'.get_string('url').'</label></div>';
     echo '<div class="felement ftext">'.$CFG->wwwroot.'</div>';
     echo '</div>';
 

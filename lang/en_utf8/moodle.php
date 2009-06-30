@@ -1234,8 +1234,8 @@ $string['pleaseclose'] = 'Please close this window now.';
 $string['pleasesearchmore'] = 'Please search some more';
 $string['pleaseusesearch'] = 'Please use the search';
 $string['plugincheck'] = 'Plugins check';
-$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation; 
-They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions 
+$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation;
+They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions
 before continuing with this Moodle upgrade.';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
@@ -1633,6 +1633,7 @@ $string['uploadrenamedcollision'] = 'File was renamed from $a->oldname to $a->ne
 $string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit set by the server';
 $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
+$string['url'] = 'URL';
 $string['used'] = 'Used';
 $string['usedinnplaces'] = 'Used in $a places';
 $string['usemessageform'] = 'or use the form below to send a message to the selected students';
