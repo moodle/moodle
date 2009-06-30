@@ -2873,6 +2873,20 @@ body#message-edit th {
   padding-left: 20px;
 }
 
+body.message .messagejsautorefresh {
+  display:none;
+}
+body.message .messagejsmanualrefresh {
+  display:block;
+}
+body.jsenabled .messagejsautorefresh {
+  display:block;
+}
+body.jsenabled .messagejsmanualrefresh {
+  display:none;
+}
+
+
 /***
  *** Notes
  ***/

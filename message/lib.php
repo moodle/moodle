@@ -149,11 +149,16 @@ function message_print_contacts() {
     $autorefresh = '<p align="center" class="note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
     $autorefresh = addslashes_js($autorefresh); // js escaping
 
-    echo $PAGE->requires->js_function_call('document.write', Array($autorefresh))->asap();
-    // gracefully degrade JS autorefresh
-    echo '<noscript><div class="button aligncenter">';
+    $PAGE->requires->js('message/message.js');
+    $PAGE->requires->js_function_call('refresh_page', Array(60*1000, $PAGE->url->out()));
+
+    echo '<div class="messagejsautorefresh note center">';
+    echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
+    echo '</div>';
+
+    echo '<div class="messagejsmanualrefresh aligncenter">';
     echo print_single_button('index.php', false, get_string('refresh'));
-    echo '</div></noscript>';
+    echo '</div>';
 }
 
 
@@ -957,7 +962,8 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $eventdata->fullmessage      = $message;
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml  = '';
-    $eventdata->smallmessage     = ''; 
+    $eventdata->smallmessage     = '';
+    $eventdata->timecreated     = time();
     return events_trigger('message_send', $eventdata);
 
 }
@@ -1050,7 +1056,7 @@ function message_get_popup_messages($destuserid, $fromuserid=NULL){
     
     $processor = $DB->get_record('message_processors', array('name' => 'popup'));
 
-    $messagesproc = $DB->get_records('message_working', array('processorid'=>$processor->id));
+    $messagesproc = $DB->get_records('message_working', array('processorid'=>$processor->id), 'id ASC');
 
     //for every message to process check if it's for current user and process
     $messages = array();

@@ -24,7 +24,8 @@
 
 /// Popup a window if required and quit (usually from external links).
     if ($popup) {
-        print_header();
+        $PAGE->set_generaltype('popup');
+        $OUTPUT->header();
         echo $PAGE->requires->js_function_call('openpopup', Array('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0))->asap();
         redirect("$CFG->wwwroot/", '', 0);
         exit;
@@ -51,12 +52,12 @@
 
 /// Header on this page
     if ($tab == 'contacts') {
-        print_header(get_string('messages', 'message').' - '.format_string($SITE->fullname), '', '', '', 
-                '<meta http-equiv="refresh" content="'. $CFG->message_contacts_refresh .'; url=index.php" />');
-    } else {
-        print_header(get_string('messages', 'message').' - '.format_string($SITE->fullname));
+        $PAGE->set_periodic_refresh_delay($CFG->message_contacts_refresh);
     }
 
+    $PAGE->set_generaltype('popup');
+    $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
+    echo $OUTPUT->header();
     echo '<table cellspacing="2" cellpadding="2" border="0" width="95%" class="boxaligncenter">';  
     echo '<tr>';
 
@@ -88,6 +89,6 @@
     }
 
     echo '</td> </tr> </table>';
-    print_footer('none');
+    echo $OUTPUT->footer();
 
 ?>

@@ -14,6 +14,8 @@
         print_error('disabled', 'message');
     }
 
+    $PAGE->set_title(get_string('messagehistory', 'message'));
+
 /// Script parameters
     $userid1 = required_param('user1', PARAM_INT);
     if (! $user1 = $DB->get_record("user", array("id"=>$userid1))) {  // Check it's correct
@@ -21,9 +23,9 @@
     }
 
     if ($user1->deleted) {
-        print_header();
-        print_heading(get_string('userdeleted').': '.$userid1);
-        print_footer();
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('userdeleted').': '.$userid1, 1);
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -33,9 +35,9 @@
             print_error('invaliduserid');
         }
         if ($user2->deleted) {
-            print_header();
-            print_heading(get_string('userdeleted').': '.$userid2);
-            print_footer();
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('userdeleted').': '.$userid2, 1);
+            echo $OUTPUT->footer();
             die;
         }
     } else {
@@ -48,11 +50,11 @@
 
 /// Our two users are defined - let's set up the page
 
-    print_header(get_string('messagehistory', 'message'), '', '', '', '<base target="_blank" />');
+    echo $OUTPUT->header();
 
 /// Print out a heading including the users we are looking at
 
-    print_simple_box_start('center');
+    echo $OUTPUT->box_start('center');
     echo '<table align="center" cellpadding="10"><tr>';
     echo '<td align="center">';
     echo print_user_picture($user1, SITEID, $user1->picture, 100, true, true, 'userwindow').'<br />';
@@ -67,7 +69,7 @@
     echo fullname($user2);
     echo '</td>';
     echo '</tr></table>';
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
 
 /// Get all the messages and print them
@@ -85,7 +87,7 @@
                 $current->month = $date['month'];
                 $current->year = $date['year'];
                 echo '<a name="'.$date['year'].$date['mon'].$date['mday'].'"></a>';
-                print_heading(userdate($message->timecreated, $blockdate), 'center', 4);
+                echo $OUTPUT->heading(userdate($message->timecreated, $blockdate), 4, 'center');
             }
             if ($message->useridfrom == $user1->id) {
                 echo message_format_message($message, $user1, $messagedate, $search, 'other');
@@ -94,9 +96,9 @@
             }
         }
     } else {
-        print_heading(get_string('nomessagesfound', 'message'));
+        echo $OUTPUT->heading(get_string('nomessagesfound', 'message'), 1);
     }
 
-    print_footer('none');
+    echo $OUTPUT->footer();
 
 ?>

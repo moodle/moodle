@@ -269,8 +269,6 @@
 
     echo "</form>";
 
-
-/// Finish with a footer
-    print_footer($course);
+    $OUTPUT->footer();
 
 ?>

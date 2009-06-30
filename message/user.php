@@ -49,25 +49,15 @@
         message_unblock_contact($unblockcontact);
     }
 
-    print_header('','','','','',false,'','',false,'');
+    //$PAGE->set_title('Message History');
+    $PAGE->set_generaltype('popup');
+    echo $OUTPUT->header();
     echo '<table width="100%" cellpadding="0" cellspacing="0"><tr>';
     echo '<td width="100">';
     echo print_user_picture($user, SITEID, $user->picture, true, true, true, 'userwindow').'</td>';
     echo '<td valign="middle" align="center">';
 
     echo '<div class="name">'.fullname($user).'</div>';
-
-    //echo '<br /><font size="1">';     /// Print login status of this user
-    //if ($user->lastaccess) {
-    //    if (time() - $user->lastaccess > $CFG->message_offline_time) {
-    //        echo get_string('offline', 'message').': '.format_time(time() - $user->lastaccess);
-    //    } else {
-    //        echo get_string('lastaccess').': '.get_string('ago', 'message', format_time(time() - $user->lastaccess));
-    //    }
-    //} else {
-    //    echo get_string("lastaccess").":". get_string("never");
-    //}
-    //echo '</font>';
 
     echo '<div class="commands">';
     if ($contact = $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$user->id))) {
@@ -87,6 +77,6 @@
 
     echo '</td></tr></table>';
 
-    print_footer('empty');
+    echo $OUTPUT->footer();
 
 ?>

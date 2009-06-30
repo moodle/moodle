@@ -23,9 +23,11 @@
     }
 
     if ($user->deleted) {
-        print_header();
-        print_heading(get_string('userdeleted'));
-        print_footer();
+        $PAGE->set_generaltype('popup');
+        $PAGE->set_title(get_string('discussion', 'message').': '.fullname($user));
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('userdeleted'), 1);
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -128,7 +130,10 @@
     $userfullname = fullname($user);
     $mefullname   = fullname($USER);
 
-    print_header(get_string('discussion', 'message').': '.fullname($user), '', '', 'edit-message');
+    $PAGE->set_generaltype('popup');
+    $PAGE->set_title(get_string('discussion', 'message').': '.fullname($user));
+    echo $OUTPUT->header();
+
     echo '<div class="message-discussion-noframes">';
     echo '<div id="userinfo">';
     echo print_user_picture($user, SITEID, $user->picture, 48, true, true, 'userwindow');
@@ -219,10 +224,10 @@
                 $fullname = $userfullname;
             }
 
-            if ($message->format == FORMAT_HTML){
-                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            if ($message->fullmessageformat == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->fullmessageformat, $options, 0);
             } else{
-                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+                $printmessage = format_text($message->fullmessage, $message->fullmessageformat, $options, 0);
             }
             $printmessage = '<div class="message other"><span class="author">'.$fullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
@@ -241,10 +246,10 @@
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
             
-            if ($message->format == FORMAT_HTML){
-                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            if ($message->fullmessageformat == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->fullmessageformat, $options, 0);
             } else{
-                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+                $printmessage = format_text($message->fullmessage, $message->fullmessageformat, $options, 0);
             }
             $printmessage = '<div class="message other"><span class="author">'.$mefullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
@@ -264,10 +269,10 @@
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
             
-            if ($message->format == FORMAT_HTML){
-                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            if ($message->fullmessageformat == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->fullmessageformat, $options, 0);
             } else{
-                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+                $printmessage = format_text($message->fullmessage, $message->fullmessageformat, $options, 0);
             }
             $printmessage = '<div class="message other"><span class="author">'.$userfullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
@@ -337,5 +342,5 @@
 
     echo '</div></div>';
 
-    print_footer('none');
+    echo $OUTPUT->footer();
 ?>
