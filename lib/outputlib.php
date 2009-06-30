@@ -787,6 +787,14 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
         // This is only set by the {@link redirect()} method
         $output .= $this->metarefreshtag;
+
+        // Check if a periodic refresh delay has been set and make sure we arn't
+        // already meta refreshing
+        if ($this->metarefreshtag=='' && $this->page->periodicrefreshdelay!==null) {
+            $metarefesh = '<meta http-equiv="refresh" content="%d;url=%s" />';
+            $output .= sprintf($metarefesh, $this->page->periodicrefreshdelay, $this->page->url->out());
+        }
+
         ob_start();
         include($CFG->javascript);
         $output .= ob_get_contents();
@@ -912,6 +920,8 @@ class moodle_core_renderer extends moodle_renderer_base {
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
                     $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
                 }
+                $this->page->set_generaltype('popup');
+                $this->page->set_title('redirect');
                 $output = $this->header();
                 $output .= $this->notification($message, $messageclass);
                 $output .= $this->footer();

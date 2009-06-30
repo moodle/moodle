@@ -125,6 +125,14 @@ class moodle_page {
     protected $_button = '';
 
     /**
+     * Sets the page to refresh after a given delay (in seconds) using meta refresh
+     * in {@link standard_head_html()} in outputlib.php
+     * If set to null(default) the page is not refreshed
+     * @var int|null
+     */
+    protected $_periodicrefreshdelay = null;
+
+    /**
      * This is simply to improve backwards compatability. If old code relies on
      * a page class that implements print_header, or complex logic in
      * user_allowed_editing then we stash an instance of that other class here,
@@ -384,6 +392,13 @@ class moodle_page {
      */
     public function get_button() {
         return $this->_button;
+    }
+
+    /**
+     *
+     */
+    public function get_periodicrefreshdelay() {
+        return $this->_periodicrefreshdelay;
     }
 
     /**
@@ -729,6 +744,26 @@ class moodle_page {
      */
     public function set_cacheable($cacheable) {
         $this->_cacheable = $cacheable;
+    }
+
+    /**
+     * Sets the page to periodically refresh
+     *
+     * This function must be called before $OUTPUT->header has been called or
+     * a coding exception will be thrown.
+     *
+     * @param int $delay Sets the delay before refreshing the page, if set to null
+     *                    refresh is cancelled
+     */
+    public function set_periodic_refresh_delay($delay=null) {
+        if ($this->_state > self::STATE_BEFORE_HEADER) {
+            throw new coding_exception('You cannot set a periodic refresh delay after the header has been printed');
+        }
+        if ($delay===null) {
+            $this->_periodicrefreshdelay = null;
+        } else if (is_int($delay)) {
+            $this->_periodicrefreshdelay = $delay;
+        }
     }
 
 /// Initialisation methods =====================================================
