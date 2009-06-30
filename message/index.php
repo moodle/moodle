@@ -25,7 +25,7 @@
 /// Popup a window if required and quit (usually from external links).
     if ($popup) {
         print_header();
-        echo '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
+        echo $PAGE->requires->js_function_call('openpopup', Array('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0))->asap();
         redirect("$CFG->wwwroot/", '', 0);
         exit;
     }

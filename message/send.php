@@ -15,6 +15,8 @@ if (empty($CFG->messaging)) {
 
 if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
 
+    $PAGE->requires->js('message/message.js');
+
 /// (Don't use print_header, for more speed)
 /// ehm - we have to use print_header() or else this breaks after any minor change in print_header()!
     print_header();
@@ -65,10 +67,8 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
         $message = addslashes_js($message);  // So Javascript can write it
 
     /// Then write it to our own message screen immediately
-        echo "\n<script type=\"text/javascript\">\n<!--\n";
-        echo 'parent.messages.document.write(\''.$message."\\n');\n";
-        echo 'parent.messages.scroll(1,5000000);';
-        echo "\n-->\n</script>\n\n";
+        $PAGE->requires->js_function_call('parent.messages.document.write', Array($message));
+        $PAGE->requires->js_function_call('parent.messages.scroll', Array(1,5000000));
 
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
     }
@@ -97,11 +97,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     }
     echo '<div class="noframesjslink"><a target="_parent" href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a></div>';
 
-    echo "<script type=\"text/javascript\">".
-      "\n//<![CDATA[".
-      "\ndocument.getElementById(\"edit-message\").focus();".
-      "\n//]]>".
-      "\n</script>";
+    $PAGE->requires->js_function_call('set_focus', Array('edit-message'));
 
     print_footer('empty');
 }

@@ -19,7 +19,7 @@ if (!isset($CFG->message_offline_time)) {
 
 
 function message_print_contacts() {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $PAGE;
 
     $timetoshowusers = 300; //Seconds default
     if (isset($CFG->block_online_users_timetosee)) {
@@ -149,12 +149,8 @@ function message_print_contacts() {
     $autorefresh = '<p align="center" class="note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
     $autorefresh = addslashes_js($autorefresh); // js escaping
 
+    echo $PAGE->requires->js_function_call('document.write', Array($autorefresh))->asap();
     // gracefully degrade JS autorefresh
-    echo '<script type="text/javascript">
-//<![CDATA[
-document.write("'.$autorefresh.'")
-//]]>
-</script>';
     echo '<noscript><div class="button aligncenter">';
     echo print_single_button('index.php', false, get_string('refresh'));
     echo '</div></noscript>';
