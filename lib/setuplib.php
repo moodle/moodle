@@ -155,13 +155,6 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
 
-    foreach ($backtrace as $stackframe) {
-        if (isset($stackframe['function']) && $stackframe['function'] == 'default_exception_handler') {
-            $earlyerror = true;
-            break;
-        }
-    }
-
     if ($ex instanceof moodle_exception) {
         $errorcode = $ex->errorcode;
         $module = $ex->module;
@@ -184,6 +177,18 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
 
         // Always turn on debugging - admins need to know what is going on
         $CFG->debug = DEBUG_DEVELOPER;
+    }
+
+    // If another exception is thrown when we are already handling one, or during $OUTPUT->header,
+    // and if we did not take special measures, we would just get a very cryptic message
+    // "Exception thrown without a stack frame in Unknown on line 0", rather than the true error.
+    // Therefore, we do take special measures.
+    foreach ($backtrace as $stackframe) {
+        if (isset($stackframe['function']) && isset($stackframe['type']) &&
+                $stackframe['type'] == '->' && $stackframe['function'] == 'header') {
+            echo bootstrap_renderer::early_error($message, $moreinfourl, $link, debug_backtrace());
+            exit(1); // General error code
+        }
     }
 
     echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
@@ -799,7 +804,6 @@ class bootstrap_renderer {
             $htmllang = '';
             $strerror = 'Error';
         }
-
 
         $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" ' . $htmllang . '>

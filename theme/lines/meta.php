@@ -1,6 +1,6 @@
 <?php
 
-$PAGE->requires->yui_lib('animation')->in_head(); ?>
+echo $PAGE->requires->yui_lib('animation')->asap(); ?>
 
 <!--[if IE 7]>
     <link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpsthemewww ?>/lines/styles_ie7.css" />
