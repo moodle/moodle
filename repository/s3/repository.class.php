@@ -12,7 +12,8 @@ class repository_s3 extends repository {
         $this->s = new S3($this->access_key, $this->secret_key);
     }
     public function get_listing($path = '', $page = '') {
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $list = array();
         $list['list'] = array();
         // the management interface url

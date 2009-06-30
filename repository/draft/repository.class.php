@@ -32,7 +32,8 @@ class repository_draft extends repository {
      * @return mixed
      */
     public function get_listing($path = '', $page = '') {
-        global $CFG, $USER, $itemid;
+        global $CFG, $USER, $itemid, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $ret = array();
         $ret['dynload'] = true;
         $ret['nosearch'] = true;

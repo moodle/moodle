@@ -79,8 +79,8 @@ EOD;
      * @return array
      */
     public function get_listing($path='', $page='') {
-        global $CFG;
-        set_time_limit(0);
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $ret = array();
         $curl = new curl;
         $msg = $curl->head($this->file_url);
@@ -109,7 +109,8 @@ EOD;
         return $ret;
     }
     public function analyse_page($baseurl, $content, &$list) {
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $pattern = '#src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
         $matches = null;
         preg_match_all($pattern, $content, $matches);

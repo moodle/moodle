@@ -63,7 +63,8 @@ class repository_webdav extends repository {
         return false;
     }
     public function get_listing($path='', $page = '') {
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $list = array();
         $ret  = array();
         $ret['dynload'] = true;

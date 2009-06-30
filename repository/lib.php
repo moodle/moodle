@@ -736,7 +736,8 @@ abstract class repository {
      * @return array information of file in file pool
      */
     public static function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $now = time();
         $entry = new object();
@@ -895,7 +896,8 @@ abstract class repository {
      * todo: take $search into account, and respect a threshold for dynamic loading
      */
     public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
 
         $filecount = 0;
         $children = $fileinfo->get_children();

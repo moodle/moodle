@@ -137,7 +137,8 @@ class repository_boxnet extends repository {
      * @return mixed
      */
     public function search($search_text) {
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $list = array();
         $ret  = array();
         $tree = $this->box->getAccountTree();

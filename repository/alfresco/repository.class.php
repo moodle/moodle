@@ -99,8 +99,8 @@ class repository_alfresco extends repository {
     }
 
     public function get_listing($uuid = '', $path = '') {
-        global $CFG, $SESSION;
-
+        global $CFG, $SESSION, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $ret = array();
         $ret['dynload'] = true;
         $ret['list'] = array();

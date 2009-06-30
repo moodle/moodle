@@ -128,7 +128,8 @@ class repository_mahara extends repository {
      * @return <type>
      */
     public function get_listing($path = null, $page = 1, $search = '') {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
 
         ///check that Mahara has a good version
         ///We also check that the "get file list" method has been activated (if it is not
