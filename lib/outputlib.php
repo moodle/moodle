@@ -1141,7 +1141,6 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         } else if ($bc->list) {
             $row = 0;
-            $output .= $this->output_start_tag('ul', array('class' => 'list'));
             $items = array();
             foreach ($bc->list as $key => $string) {
                 $item = $this->output_start_tag('li', array('class' => 'r' . $row));
