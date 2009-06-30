@@ -63,9 +63,9 @@ $quizsettings->add(new admin_setting_configtext('quiz/maximumgrade',
         get_string('maximumgrade'), get_string('configmaximumgrade', 'quiz'), 10, PARAM_INT));
 
 // Shuffle questions
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/shufflequestions',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shufflequestions',
         get_string('shufflequestions', 'quiz'), get_string('configshufflequestions', 'quiz'),
-        array('value' => 0, 'fix' => false)));
+        array('value' => 0, 'adv' => false)));
 
 // Questions per page
 $perpage = array();
@@ -79,24 +79,24 @@ $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questionsp
         array('value' => 1, 'fix' => false), $perpage));
 
 // Shuffle within questions
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/shuffleanswers',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shuffleanswers',
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),
-        array('value' => 1, 'fix' => false)));
+        array('value' => 1, 'adv' => false)));
 
 // Adaptive mode.
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/optionflags',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/optionflags',
         get_string('adaptive', 'quiz'), get_string('configadaptive', 'quiz'),
-        array('value' => 1, 'fix' => false)));
+        array('value' => 1, 'adv' => false)));
 
 // Apply penalties.
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/penaltyscheme',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/penaltyscheme',
         get_string('penaltyscheme', 'quiz'), get_string('configpenaltyscheme', 'quiz'),
-        array('value' => 1, 'fix' => true)));
+        array('value' => 1, 'adv' => true)));
 
 // Each attempt builds on last.
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/attemptonlast',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',
         get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
-        array('value' => 0, 'fix' => true)));
+        array('value' => 0, 'adv' => true)));
 
 // Review options.
 $quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
@@ -104,9 +104,9 @@ $quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
         array('value' => QUIZ_REVIEW_IMMEDIATELY | QUIZ_REVIEW_OPEN | QUIZ_REVIEW_CLOSED, 'fix' => false)));
 
 // Show the user's picture
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/showuserpicture',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showuserpicture',
         get_string('showuserpicture', 'quiz'), get_string('configshowuserpicture', 'quiz'),
-        array('value' => 0, 'fix' => false)));
+        array('value' => 0, 'adv' => false)));
 
 // Decimal places for overall grades.
 $options = array();
@@ -145,9 +145,9 @@ $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay2',
         array('value' => 0, 'fix' => true), PARAM_INTEGER));
 
 // 'Secure' window.
-$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/popup',
+$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/popup',
         get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
-        array('value' => 0, 'fix' => true)));
+        array('value' => 0, 'adv' => true)));
 
 /// Now, depending on whether any reports have their own settings page, add
 /// the quiz setting page to the appropriate place in the tree.

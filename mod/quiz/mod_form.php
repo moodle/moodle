@@ -66,7 +66,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     /// Time limit.
         $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'), array('optional' => true));
         $mform->setHelpButton('timelimit', array('timelimit', get_string('quiztimer','quiz'), 'quiz'));
-        $mform->setAdvanced('timelimit', $quizconfig->fix_timelimit);
+        $mform->setAdvanced('timelimit', $quizconfig->timelimit_adv);
         $mform->setDefault('timelimit', $quizconfig->timelimit);
 
     /// Number of attempts.
@@ -76,13 +76,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'attempts', get_string('attemptsallowed', 'quiz'), $attemptoptions);
         $mform->setHelpButton('attempts', array('attempts', get_string('attemptsallowed','quiz'), 'quiz'));
-        $mform->setAdvanced('attempts', $quizconfig->fix_attempts);
+        $mform->setAdvanced('attempts', $quizconfig->attempts_adv);
         $mform->setDefault('attempts', $quizconfig->attempts);
 
     /// Grading method.
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'quiz'), quiz_get_grading_options());
         $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod','quiz'), 'quiz'));
-        $mform->setAdvanced('grademethod', $quizconfig->fix_grademethod);
+        $mform->setAdvanced('grademethod', $quizconfig->grademethod_adv);
         $mform->setDefault('grademethod', $quizconfig->grademethod);
         $mform->disabledIf('grademethod', 'attempts', 'eq', 1);
 
@@ -93,7 +93,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $shuffleoptions = array(0 => get_string('asshownoneditscreen', 'quiz'), 1 => get_string('shuffledrandomly', 'quiz'));
         $mform->addElement('select', 'shufflequestions', get_string('questionorder', 'quiz'), $shuffleoptions, array('id' => 'id_shufflequestions'));
         $mform->setHelpButton('shufflequestions', array('shufflequestions', get_string('shufflequestions','quiz'), 'quiz'));
-        $mform->setAdvanced('shufflequestions', $quizconfig->fix_shufflequestions);
+        $mform->setAdvanced('shufflequestions', $quizconfig->shufflequestions_adv);
         $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
 
     /// Questions per page.
@@ -117,7 +117,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp', get_string('newpage', 'quiz'), null, false);
         $mform->setHelpButton('questionsperpagegrp', array('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz'));
-        $mform->setAdvanced('questionsperpagegrp', $quizconfig->fix_questionsperpage);
+        $mform->setAdvanced('questionsperpagegrp', $quizconfig->questionsperpage_adv);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
@@ -125,33 +125,33 @@ class mod_quiz_mod_form extends moodleform_mod {
     /// Shuffle within questions.
         $mform->addElement('selectyesno', 'shuffleanswers', get_string('shufflewithin', 'quiz'));
         $mform->setHelpButton('shuffleanswers', array('shufflewithin', get_string('shufflewithin','quiz'), 'quiz'));
-        $mform->setAdvanced('shuffleanswers', $quizconfig->fix_shuffleanswers);
+        $mform->setAdvanced('shuffleanswers', $quizconfig->shuffleanswers_adv);
         $mform->setDefault('shuffleanswers', $quizconfig->shuffleanswers);
 
     /// Adaptive mode.
         $mform->addElement('selectyesno', 'adaptive', get_string('adaptive', 'quiz'));
         $mform->setHelpButton('adaptive', array('adaptive', get_string('adaptive','quiz'), 'quiz'));
-        $mform->setAdvanced('adaptive', $quizconfig->fix_optionflags);
+        $mform->setAdvanced('adaptive', $quizconfig->optionflags_adv);
         $mform->setDefault('adaptive', $quizconfig->optionflags & QUESTION_ADAPTIVE);
 
     /// Apply penalties.
         $mform->addElement('selectyesno', 'penaltyscheme', get_string('penaltyscheme', 'quiz'));
         $mform->setHelpButton('penaltyscheme', array('penaltyscheme', get_string('penaltyscheme','quiz'), 'quiz'));
-        $mform->setAdvanced('penaltyscheme', $quizconfig->fix_penaltyscheme);
+        $mform->setAdvanced('penaltyscheme', $quizconfig->penaltyscheme_adv);
         $mform->setDefault('penaltyscheme', $quizconfig->penaltyscheme);
         $mform->disabledIf('penaltyscheme', 'adaptive', 'neq', 1);
 
     /// Each attempt builds on last.
         $mform->addElement('selectyesno', 'attemptonlast', get_string('eachattemptbuildsonthelast', 'quiz'));
         $mform->setHelpButton('attemptonlast', array('repeatattempts', get_string('eachattemptbuildsonthelast', 'quiz'), 'quiz'));
-        $mform->setAdvanced('attemptonlast', $quizconfig->fix_attemptonlast);
+        $mform->setAdvanced('attemptonlast', $quizconfig->attemptonlast_adv);
         $mform->setDefault('attemptonlast', $quizconfig->attemptonlast);
         $mform->disabledIf('attemptonlast', 'attempts', 'eq', 1);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string('reviewoptionsheading', 'quiz'));
         $mform->setHelpButton('reviewoptionshdr', array('reviewoptions', get_string('reviewoptionsheading','quiz'), 'quiz'));
-        $mform->setAdvanced('reviewoptionshdr', $quizconfig->fix_review);
+        $mform->setAdvanced('reviewoptionshdr', $quizconfig->review_adv);
 
     /// Review options.
         $immediatelyoptionsgrp=array();
@@ -206,7 +206,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     /// Show user picture.
         $mform->addElement('selectyesno', 'showuserpicture', get_string('showuserpicture', 'quiz'));
         $mform->setHelpButton('showuserpicture', array('showuserpicture', get_string('showuserpicture', 'quiz'), 'quiz'));
-        $mform->setAdvanced('showuserpicture', $quizconfig->fix_showuserpicture);
+        $mform->setAdvanced('showuserpicture', $quizconfig->showuserpicture_adv);
         $mform->setDefault('showuserpicture', $quizconfig->showuserpicture);
 
     /// Overall decimal points.
@@ -216,7 +216,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'quiz'), $options);
         $mform->setHelpButton('decimalpoints', array('decimalpoints', get_string('decimalplaces','quiz'), 'quiz'));
-        $mform->setAdvanced('decimalpoints', $quizconfig->fix_decimalpoints);
+        $mform->setAdvanced('decimalpoints', $quizconfig->decimalpoints_adv);
         $mform->setDefault('decimalpoints', $quizconfig->decimalpoints);
 
     /// Question decimal points.
@@ -226,7 +226,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'questiondecimalpoints', get_string('decimalplacesquestion', 'quiz'), $options);
         $mform->setHelpButton('questiondecimalpoints', array('decimalplacesquestion', get_string('decimalplacesquestion','quiz'), 'quiz'));
-        $mform->setAdvanced('questiondecimalpoints', $quizconfig->fix_questiondecimalpoints);
+        $mform->setAdvanced('questiondecimalpoints', $quizconfig->questiondecimalpoints_adv);
         $mform->setDefault('questiondecimalpoints', $quizconfig->questiondecimalpoints);
 
 //-------------------------------------------------------------------------------
@@ -236,26 +236,26 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('passwordunmask', 'quizpassword', get_string('requirepassword', 'quiz'));
         $mform->setType('quizpassword', PARAM_TEXT);
         $mform->setHelpButton('quizpassword', array('requirepassword', get_string('requirepassword', 'quiz'), 'quiz'));
-        $mform->setAdvanced('quizpassword', $quizconfig->fix_password);
+        $mform->setAdvanced('quizpassword', $quizconfig->password_adv);
         $mform->setDefault('quizpassword', $quizconfig->password);
 
     /// IP address.
         $mform->addElement('text', 'subnet', get_string('requiresubnet', 'quiz'));
         $mform->setType('subnet', PARAM_TEXT);
         $mform->setHelpButton('subnet', array('requiresubnet', get_string('requiresubnet', 'quiz'), 'quiz'));
-        $mform->setAdvanced('subnet', $quizconfig->fix_subnet);
+        $mform->setAdvanced('subnet', $quizconfig->subnet_adv);
         $mform->setDefault('subnet', $quizconfig->subnet);
 
     /// Enforced time delay between quiz attempts.
         $mform->addElement('duration', 'delay1', get_string('delay1st2nd', 'quiz'), array('optional' => true));
         $mform->setHelpButton('delay1', array('timedelay1', get_string('delay1st2nd', 'quiz'), 'quiz'));
-        $mform->setAdvanced('delay1', $quizconfig->fix_delay1);
+        $mform->setAdvanced('delay1', $quizconfig->delay1_adv);
         $mform->setDefault('delay1', $quizconfig->delay1);
         $mform->disabledIf('delay1', 'attempts', 'eq', 1);
 
         $mform->addElement('duration', 'delay2', get_string('delaylater', 'quiz'), array('optional' => true));
         $mform->setHelpButton('delay2', array('timedelay2', get_string('delaylater', 'quiz'), 'quiz'));
-        $mform->setAdvanced('delay2', $quizconfig->fix_delay2);
+        $mform->setAdvanced('delay2', $quizconfig->delay2_adv);
         $mform->setDefault('delay2', $quizconfig->delay2);
         $mform->disabledIf('delay2', 'attempts', 'eq', 1);
         $mform->disabledIf('delay2', 'attempts', 'eq', 2);
@@ -263,7 +263,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     /// 'Secure' window.
         $mform->addElement('selectyesno', 'popup', get_string('showinsecurepopup', 'quiz'));
         $mform->setHelpButton('popup', array('popup', get_string('showinsecurepopup', 'quiz'), 'quiz'));
-        $mform->setAdvanced('popup', $quizconfig->fix_popup);
+        $mform->setAdvanced('popup', $quizconfig->popup_adv);
         $mform->setDefault('popup', $quizconfig->popup);
 
 //-------------------------------------------------------------------------------

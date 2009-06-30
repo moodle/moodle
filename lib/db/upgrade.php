@@ -2251,6 +2251,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009061706);
     }
     
+    if ($result && $oldversion < 2009063000) {
+        // upgrade format of _with_advanced settings - quiz only
+        // note: this can be removed later, not needed for upgrades from 1.9.x
+        $quiz = get_config('quiz');
+        foreach ($quiz as $name=>$value) {
+            if (strpos($name, 'fix_') !== 0) {
+                continue;
+            }
+            $newname = substr($name,4).'_adv';
+            set_config($newname, $value, 'quiz');
+            unset_config($name, 'quiz');
+        } 
+        upgrade_main_savepoint($result, 2009063000);
+    }
+
     return $result;
 }
 

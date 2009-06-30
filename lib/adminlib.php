@@ -3572,31 +3572,36 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
 }
 
 /**
- * Text field with an advanced checkbox, that controls a additional "fix_$name" setting.
+ * Text field with an advanced checkbox, that controls a additional $name.'_adv' setting.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configtext_with_advanced extends admin_setting_configtext {
     /**
-     * Calls parent::__construct with specific arguments
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param array $defaultsetting ('value'=>string, '__construct'=>bool)
+     * @param mixed $paramtype int means PARAM_XXX type, string is a allowed format in regex
+     * @param int $size default field size
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype) {
-        parent::__construct($name, $visiblename, $description,
-                $defaultsetting, $paramtype);
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $size=null) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
     }
 
     /**
      * Loads the current setting and returns array
      *
-     * @return array Returns array value=>xx, fix=>xx
+     * @return array Returns array value=>xx, __construct=>xx
      */
     public function get_setting() {
         $value = parent::get_setting();
-        $fix = $this->config_read('fix_' . $this->name);
-        if (is_null($value) or is_null($fix)) {
+        $adv = $this->config_read($this->name.'_adv');
+        if (is_null($value) or is_null($adv)) {
             return NULL;
         }
-        return array('value' => $value, 'fix' => $fix);
+        return array('value' => $value, 'adv' => $adv);
     }
 
     /**
@@ -3609,14 +3614,8 @@ class admin_setting_configtext_with_advanced extends admin_setting_configtext {
     public function write_setting($data) {
         $error = parent::write_setting($data['value']);
         if (!$error) {
-            if (empty($data['fix'])) {
-                $ok = $this->config_write('fix_' . $this->name, 0);
-            } else {
-                $ok = $this->config_write('fix_' . $this->name, 1);
-            }
-            if (!$ok) {
-                $error = get_string('errorsetting', 'admin');
-            }
+            $value = empty($data['adv']) ? 0 : 1;
+            $this->config_write($this->name.'_adv', $value);
         }
         return $error;
     }
@@ -3638,19 +3637,19 @@ class admin_setting_configtext_with_advanced extends admin_setting_configtext {
                 $defaultinfo[] = $default['value'];
             }
         }
-        if (!empty($default['fix'])) {
+        if (!empty($default['adv'])) {
             $defaultinfo[] = get_string('advanced');
         }
         $defaultinfo = implode(', ', $defaultinfo);
 
-        $fix = !empty($data['fix']);
+        $adv = !empty($data['adv']);
         $return = '<div class="form-text defaultsnext">' .
                 '<input type="text" size="' . $this->size . '" id="' . $this->get_id() .
                 '" name="' . $this->get_full_name() . '[value]" value="' . s($data['value']) . '" />' .
                 ' <input type="checkbox" class="form-checkbox" id="' .
-                $this->get_id() . '_fix" name="' . $this->get_full_name() .
-                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
-                ' <label for="' . $this->get_id() . '_fix">' .
+                $this->get_id() . '_adv" name="' . $this->get_full_name() .
+                '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_adv">' .
                 get_string('advanced') . '</label></div>';
 
         return format_admin_setting($this, $this->visiblename, $return,
@@ -3659,7 +3658,111 @@ class admin_setting_configtext_with_advanced extends admin_setting_configtext {
 }
 
 /**
- * Dropdown menu with an advanced checkbox, that controls a additional "fix_$name" setting.
+ * Checkbox with an advanced checkbox that controls an additional $name.'_adv' config setting.
+ *
+ * @copyright 2009 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configcheckbox_with_advanced extends admin_setting_configcheckbox {
+
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param array $defaultsetting ('value'=>string, 'adv'=>bool)
+     * @param string $yes value used when checked
+     * @param string $no value used when not checked
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $yes, $no);
+    }
+
+    /**
+     * Loads the current setting and returns array
+     *
+     * @return array Returns array value=>xx, adv=>xx
+     */
+    public function get_setting() {
+        $value = parent::get_setting();
+        $adv = $this->config_read($this->name.'_adv');
+        if (is_null($value) or is_null($adv)) {
+            return NULL;
+        }
+        return array('value' => $value, 'adv' => $adv);
+    }
+
+    /**
+     * Sets the value for the setting
+     *
+     * Sets the value for the setting to either the yes or no values
+     * of the object by comparing $data to yes
+     *
+     * @param mixed $data Gets converted to str for comparison against yes value
+     * @return string empty string or error
+     */
+    public function write_setting($data) {
+        $error = parent::write_setting($data['value']);
+        if (!$error) {
+            $value = empty($data['adv']) ? 0 : 1;
+            $this->config_write($this->name.'_adv', $value);
+        }
+        return $error;
+    }
+
+    /**
+     * Returns an XHTML checkbox field and with extra advanced cehckbox
+     *
+     * @param string $data If $data matches yes then checkbox is checked
+     * @param string $query
+     * @return string XHTML field
+     */
+    public function output_html($data, $query='') {
+        $defaults = $this->get_defaultsetting();
+        $defaultinfo = array();
+        if (!is_null($defaults)) {
+            if ((string)$defaults['value'] === $this->yes) {
+                $defaultinfo[] = get_string('checkboxyes', 'admin');
+            } else {
+                $defaultinfo[] = get_string('checkboxno', 'admin');
+            }
+            if (!empty($defaults['adv'])) {
+                $defaultinfo[] = get_string('advanced');
+            }
+        }
+        $defaultinfo = implode(', ', $defaultinfo);
+
+        if ((string)$data['value'] === $this->yes) { // convert to strings before comparison
+            $checked = 'checked="checked"';
+        } else {
+            $checked = '';
+        }
+        if (!empty($data['adv'])) {
+            $advanced = 'checked="checked"';
+        } else {
+            $advanced = '';
+        }
+
+        $fullname    = $this->get_full_name();
+        $novalue     = s($this->no);
+        $yesvalue    = s($this->yes);
+        $id          = $this->get_id();
+        $stradvanced = get_string('advanced');
+        $return = <<<EOT
+<div class="form-checkbox defaultsnext" >
+<input type="hidden" name="{$fullname}[value]" value="$novalue" />
+<input type="checkbox" id="$id" name="{$fullname}[value]" value="$yesvalue" $checked />
+<input type="checkbox" class="form-checkbox" id="{$id}_adv" name="{$fullname}[adv]" value="1" $advanced />
+<label for="{$id}_adv">$stradvanced</label>
+</div>
+EOT;
+        return format_admin_setting($this, $this->visiblename, $return, $this->description,
+                                    true, '', $defaultinfo, $query);
+    }
+}
+
+/**
+ * Dropdown menu with an advanced checkbox, that controls a additional $name.'_adv' setting.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3674,15 +3777,15 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
     /**
      * Loads the current setting and returns array
      *
-     * @return array Returns array value=>xx, fix=>xx
+     * @return array Returns array value=>xx, adv=>xx
      */
     public function get_setting() {
         $value = parent::get_setting();
-        $fix = $this->config_read('fix_' . $this->name);
-        if (is_null($value) or is_null($fix)) {
+        $adv = $this->config_read($this->name.'_adv');
+        if (is_null($value) or is_null($adv)) {
             return NULL;
         }
-        return array('value' => $value, 'fix' => $fix);
+        return array('value' => $value, 'adv' => $adv);
     }
 
     /**
@@ -3695,14 +3798,8 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
     public function write_setting($data) {
         $error = parent::write_setting($data['value']);
         if (!$error) {
-            if (empty($data['fix'])) {
-                $ok = $this->config_write('fix_' . $this->name, 0);
-            } else {
-                $ok = $this->config_write('fix_' . $this->name, 1);
-            }
-            if (!$ok) {
-                $error = get_string('errorsetting', 'admin');
-            }
+            $value = empty($data['adv']) ? 0 : 1;
+            $this->config_write($this->name.'_adv', $value);
         }
         return $error;
     }
@@ -3729,7 +3826,7 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
             if (isset($this->choices[$default['value']])) {
                 $defaultinfo[] = $this->choices[$default['value']];
             }
-            if (!empty($default['fix'])) {
+            if (!empty($default['adv'])) {
                 $defaultinfo[] = get_string('advanced');
             }
             $defaultinfo = implode(', ', $defaultinfo);
@@ -3737,30 +3834,15 @@ class admin_setting_configselect_with_advanced extends admin_setting_configselec
             $defaultinfo = '';
         }
 
-        $fix = !empty($data['fix']);
+        $adv = !empty($data['adv']);
         $return = '<div class="form-select defaultsnext">' . $selecthtml .
                 ' <input type="checkbox" class="form-checkbox" id="' .
-                $this->get_id() . '_fix" name="' . $this->get_full_name() .
-                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
-                ' <label for="' . $this->get_id() . '_fix">' .
+                $this->get_id() . '_adv" name="' . $this->get_full_name() .
+                '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_adv">' .
                 get_string('advanced') . '</label></div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
-    }
-}
-
-/**
- * Specialisation of admin_setting_configselect_with_advanced for easy yes/no choices.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_yesno_with_advanced extends admin_setting_configselect_with_advanced {
-    /**
-     * Calls parent::__construct with specific arguments
-     */
-    public function __construct($name, $visiblename, $description, $defaultsetting) {
-        parent::__construct($name, $visiblename, $description,
-                $defaultsetting, array(get_string('no'), get_string('yes')));
     }
 }
 

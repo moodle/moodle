@@ -4,7 +4,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
 }
 
-// Quiz specific admin settings class.
+/**
+ * Quiz specific admin settings class.
+ */
 class admin_setting_quiz_reviewoptions extends admin_setting {
     private static $times = array(
             QUIZ_REVIEW_IMMEDIATELY => 'reviewimmediately',
@@ -37,28 +39,20 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
 
     public function get_setting() {
         $value = $this->config_read($this->name);
-        $fix = $this->config_read('fix_' . $this->name);
-        if (is_null($value) or is_null($fix)) {
+        $adv = $this->config_read($this->name.'_adv');
+        if (is_null($value) or is_null($adv)) {
             return NULL;
         }
-        return array('value' => $value, 'fix' => $fix);
+        return array('value' => $value, 'adv' => $adv);
     }
 
     public function write_setting($data) {
         if (!isset($data['value'])) {
             $data['value'] = $this->normalise_data($data);
         }
-        $ok = $this->config_write($this->name, $data['value']);
-        if ($ok) {
-            if (empty($data['fix'])) {
-                $ok = $this->config_write('fix_' . $this->name, 0);
-            } else {
-                $ok = $this->config_write('fix_' . $this->name, 1);
-            }
-        }
-        if (!$ok) {
-            return get_string('errorsetting', 'admin');
-        }
+        $this->config_write($this->name, $data['value']);
+        $value = empty($data['adv']) ? 0 : 1;
+        $this->config_write($this->name.'_adv', $value);
         return '';
     }
 
@@ -87,11 +81,11 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
         }
         $return .= "</div>\n";
 
-        $fix = !empty($data['fix']);
+        $adv = !empty($data['adv']);
         $return .= '<input type="checkbox" class="form-checkbox" id="' .
-                $this->get_id() . '_fix" name="' . $this->get_full_name() .
-                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
-                ' <label for="' . $this->get_id() . '_fix">' .
+                $this->get_id() . '_adv" name="' . $this->get_full_name() .
+                '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_adv">' .
                 get_string('advanced') . '</label> ';
 
         return format_admin_setting($this, $this->visiblename, $return,
