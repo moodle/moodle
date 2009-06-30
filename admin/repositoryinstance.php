@@ -100,8 +100,6 @@ if (!empty($edit) || !empty($new)) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
     $instance = repository::get_type_by_typename($hide);
-    var_dump($instance);
-    var_dump($hide);
     $instance->hide();
     $return = true;
 } else if (!empty($delete)) {

@@ -68,7 +68,9 @@ if (!empty($edit) || !empty($new)) {
         if ($edit) {
             $settings = array();
             foreach($configs as $config) {
-                $settings[$config] = $fromform->$config;
+                if (!empty($fromform->$config)) {
+                    $settings[$config] = $fromform->$config;
+                }
             }
              $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
             if (!empty($instanceoptionnames)) {

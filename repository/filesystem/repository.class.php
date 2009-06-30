@@ -14,12 +14,14 @@ class repository_filesystem extends repository {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->root_path = $CFG->dataroot.'/repository/';
+        $this->root_path .= ($this->options['fs_path'] . '/');
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
+                $created = mkdir($this->root_path, 0700);
                 $ret = array();
                 $ret['msg'] = get_string('invalidpath', 'repository_filesystem');
                 $ret['nosearch'] = true;
-                if ($options['ajax']) {
+                if ($options['ajax'] && !$created) {
                     echo json_encode($ret);
                     exit;
                 }
@@ -110,12 +112,27 @@ class repository_filesystem extends repository {
     }
 
     public static function get_instance_option_names() {
-        return null;
+        return array('fs_path');
     }
 
     public static function get_type_option_names() {
         return array();
     }
     public function type_config_form(&$mform) {
+    }
+    public function instance_config_form(&$mform) {
+        global $CFG;
+        $path = $CFG->dataroot . '/repository/';
+        if ($handle = opendir($path)) {
+            $fieldname = get_string('path', 'repository_filesystem');
+            while (false !== ($file = readdir($handle))) {
+                if (is_dir($path.$file) && $file != '.' && $file!= '..') {
+                    $mform->addElement('radio', 'fs_path', $fieldname, $file, $file);
+                    $fieldname = '';
+                }
+            }
+            closedir($handle);
+        }
+        $mform->addElement('static', null, '',  get_string('information','repository_filesystem'));
     }
 }
