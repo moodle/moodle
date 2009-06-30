@@ -21,7 +21,7 @@
     $navigation = build_navigation($navlinks);
     print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, $navigation);
 
-    $reports = get_plugin_list('report');
+    $reports = get_plugin_list('coursereport');
 
     foreach ($reports as $report => $reportdirectory) {
         $pluginfile = $reportdirectory.'/mod.php';
