@@ -174,7 +174,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                     array_map(create_function('$o', 'return $o->id;'),
                     get_users_by_capability($contexts[$conindex], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'))));
         }
-        // System context, specifically checking doanythign.
+        // System context, specifically checking doanything.
         $this->assert(new ArraysHaveSameValuesExpectation(
                 array($users['a']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
