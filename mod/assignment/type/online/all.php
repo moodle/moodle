@@ -55,11 +55,11 @@
     // get correct text for course type
     if ($course->format=='weeks') {
         $courseformat = $str->week;
-    }
-    elseif ($course->format=='topics') {
+
+    } else if ($course->format=='topics') {
         $courseformat = $str->topic;
-    }
-    else {
+
+    } else {
         $courseformat = '';
     }
 
@@ -90,12 +90,12 @@
             $submissiontext = $str->emptysubmission;
             if (!empty($assignment->timedue)) {
                 $submissiondate = "{$str->duedate} ".userdate( $assignment->timedue );
-            }
-            else {
+
+            } else {
                 $submissiondate = $str->duedateno;
             }
-        }
-        else {
+
+        } else {
             $submissiontext = format_text( $submission->data1, $submission->data2 );
             $submissiondate  = "{$str->submitted} ".userdate( $submission->timemodified );
         }
@@ -113,9 +113,8 @@
 
         // start to build view object
         if (!empty($courseformat)) {
-             $view->section = "$courseformat {$assignment->section}";
-        }
-        else {
+            $view->section = "$courseformat {$assignment->section}";
+        } else {
             $view->section = '';
         }
 
@@ -137,20 +136,20 @@
     print_header_simple($str->assignments, "", $navigation, "", "", true, "", navmenu($course));
 
     foreach ($views as $view) {
-        print_container_start(true,'generalbox');
+        print_container_start(true,'generalbox assignment');
 
         // info bit
-        print_container_start(true,'generalbox highlight' );
-        echo "<strong>$view->section - $view->name</strong>\n";
-        echo "$view->submitted";
-        print_container_end();
+        print_heading("$view->section - $view->name", 'left', 3);
+        if (!empty($view->submitted)) {
+            echo '<div class="reportlink">'.$view->submitted.'</div>';
+        }
 
         // description part
-        echo "<p>$view->description</p>\n";
+        echo '<div class="description">'.$view->description.'</div>';
        
         //submission part
-        print_container_start(false,'generalbox');
-        echo "<p><strong>$view->submissiondate</strong></p>\n";
+        print_container_start(false,'generalbox submission');
+        echo '<div class="submissiondate">'.$view->submissiondate.'</div>';
         echo "<p>$view->submissiontext</p>\n";
         echo "<p>$view->editlink</p>\n";
         print_container_end();
