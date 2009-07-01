@@ -216,7 +216,8 @@ function init() {
         draggable: false,
         visible: false,
         close: false,
-        preventcontextoverlap: true
+        preventcontextoverlap: true,
+        underlay: 'none'
 
     });
 
