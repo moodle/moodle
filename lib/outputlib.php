@@ -886,13 +886,42 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
     }
 
+    /**
+     * Checks if we are in the body yet or not and returns true if we are in
+     * the body, false if we havn't reached it yet
+     *
+     * @uses moodle_page::STATE_IN_BODY
+     * @return bool True for in body, false if before
+     */
     public function has_started() {
-        if ($this->page->state >= moodle_page::STATE_IN_BODY) {
-            return true;
-        }
-        return false;
+        return ($this->page->state >= moodle_page::STATE_IN_BODY);
     }
 
+    /**
+     * Redirects the user by any means possible given the current state
+     *
+     * This function should not be called directly, it should always be called using
+     * the redirect function in lib/weblib.php
+     *
+     * The redirect function should really only be called before page output has started
+     * however it will allow itself to be called during the state STATE_IN_BODY
+     *
+     * @global object
+     * @uses DEBUG_DEVELOPER
+     * @uses DEBUG_ALL
+     * @uses moodle_page::STATE_BEFORE_HEADER
+     * @uses moodle_page::STATE_PRINTING_HEADER
+     * @uses moodle_page::STATE_IN_BODY
+     * @uses moodle_page::STATE_DONE
+     * @param string $encodedurl The URL to send to encoded if required
+     * @param string $message The message to display to the user if any
+     * @param int $delay The delay before redirecting a user, if $message has been
+     *         set this is a requirement and defaults to 3, set to 0 no delay
+     * @param string $messageclass The css class to put on the message that is
+     *         being displayed to the user
+     * @return string The HTML to display to the user before dying, may contain
+     *         meta refresh, javascript refresh, and may have set header redirects
+     */
     public function redirect($encodedurl, $message, $delay, $messageclass='notifyproblem') {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);

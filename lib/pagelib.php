@@ -45,6 +45,7 @@
  * @property-read string $heading the main heading that should be displayed at the top of the <body>.
  * @property-read string $cacheable defaults to true. Set to false to stop the page being cached at all.
  * @property-read page_requirements_manager $requires Tracks resources (for example required .css and .js files) required by this page.
+ * @property-read int $periodicrefreshdelay Returns the delay in seconds to use in a meta refresh call set this by calling {@link set_periodicrefreshdelay()}
  */
 class moodle_page {
     /**#@+ Tracks the where we are in the generation of the page. */
@@ -395,7 +396,9 @@ class moodle_page {
     }
 
     /**
-     *
+     * Please do not call this method directly use the ->periodicrefreshdelay syntax
+     * {@link __get()}
+     * @return int The periodic refresh delay to use with meta refresh
      */
     public function get_periodicrefreshdelay() {
         return $this->_periodicrefreshdelay;
@@ -405,6 +408,8 @@ class moodle_page {
      * PHP overloading magic to make the $PAGE->course syntax work by redirecting
      * it to the corresponding $PAGE->get_course() method if there is one, and
      * throwing an exception if not.
+     *
+     *
      */
     public function __get($field) {
         $getmethod = 'get_' . $field;
