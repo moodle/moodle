@@ -53,6 +53,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                               'firstname' => get_string('firstname'))));
     $temp->add(new admin_setting_configcheckbox('extendedusernamechars', get_string('extendedusernamechars', 'admin'), get_string('configextendedusernamechars', 'admin'), 0));
     $temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin'), '', PARAM_RAW));
+    $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
+                                                                                                                                              4 => get_string('siteblogs','blog'),
+                                                                                                                                              1 => get_string('personalblogs','blog'),
+                                                                                                                                              0 => get_string('disableblogs','blog'))));
+    $temp->add(new admin_setting_configcheckbox('usetags', get_string('usetags','admin'),get_string('configusetags', 'admin'),'1'));
+    $temp->add(new admin_setting_configcheckbox('useassoc', get_string('useassoc','admin'),get_string('configuseassoc', 'admin'),'1'));
     $temp->add(new admin_setting_configcheckbox('keeptagnamecase', get_string('keeptagnamecase','admin'),get_string('configkeeptagnamecase', 'admin'),'1'));
 
     $temp->add(new admin_setting_configcheckbox('profilesforenrolledusersonly', get_string('profilesforenrolledusersonly','admin'),get_string('configprofilesforenrolledusersonly', 'admin'),'1'));
