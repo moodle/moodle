@@ -111,16 +111,18 @@ EOD;
     public function analyse_page($baseurl, $content, &$list) {
         global $CFG, $OUTPUT;
         $OUTPUT->initialise_deprecated_cfg_pixpath();
-        $pattern = '#src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
-        $matches = null;
-        preg_match_all($pattern, $content, $matches);
-        $matches = array_unique($matches[1]);
-        if (!empty($matches)) {
-            foreach($matches as $url) {
+        $urls = extract_html_urls($content);
+        $images = $urls['img']['src'];
+        $pattern = '#img(.+)src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
+        if (!empty($images)) {
+            foreach($images as $url) {
                 $list['list'][] = array(
                     'title'=>$this->guess_filename($url, ''),
                     'source'=>url_to_absolute($baseurl, $url),
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $url)
+                    'thumbnail'=>url_to_absolute($baseurl, $url),
+                    'thumbnail_height'=>84,
+                    'thumbnail_width'=>84
+                    //'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $url)
                     );
             }
         }
