@@ -59,7 +59,10 @@ foreach ($formats as $formatid=>$formatname) {
     $recformat = $DB->get_record('glossary_formats', array('id'=>$formatid));
     $str .= '<tr>';
     $str .= '<td>' . $formatname . '</td>';
-    $eicon = "<a title=\"".get_string("edit")."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"$donttrytousecfgpixpathwhilebuildingtheadmintree_wtfwereyouthinking/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";
+// TODO MDL-19674 We cannot refer to $CFG->pixpath here. This code is executed
+// when the structure of the admin tree is being build. $CFG->pixpath is only
+// set up once output has started.
+    $eicon = "<a title=\"".get_string("edit")."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"" . /*$CFG->pixpath*/"/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";
     if ( $recformat->visible ) {
         $vtitle = get_string("hide");
         $vicon  = "hide.gif";
@@ -67,7 +70,7 @@ foreach ($formats as $formatid=>$formatname) {
         $vtitle = get_string("show");
         $vicon  = "show.gif";
     }
-    $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible\"><img class=\"iconsmall\" src=\"$donttrytousecfgpixpathwhilebuildingtheadmintree_wtfwereyouthinking/t/".$vicon."\" alt=\"$vtitle\" /></a>";
+    $vicon = "<a title=\"".$vtitle."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible\"><img class=\"iconsmall\" src=\"" . /*$CFG->pixpath*/"/t/".$vicon."\" alt=\"$vtitle\" /></a>";
 
     $str .= '<td align="center">'.$eicon.'&nbsp;&nbsp;'.$vicon.'</td>';
     $str .= '</tr>';
