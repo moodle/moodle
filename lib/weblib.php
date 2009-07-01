@@ -5468,7 +5468,8 @@ function editorhelpbutton(){
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $OUTPUT;
+    $OUTPUT->initialise_deprecated_cfg_pixpath();
 
     //warning if ever $text parameter is used
     //$text option won't work properly because the text needs to be always cleaned and,

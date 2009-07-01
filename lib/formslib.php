@@ -1062,7 +1062,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @access   public
      */
     function MoodleQuickForm($formName, $method, $action, $target='', $attributes=null){
-        global $CFG;
+        global $CFG, $OUTPUT;
+        $OUTPUT->initialise_deprecated_cfg_pixpath();
 
         static $formcounter = 1;
 
