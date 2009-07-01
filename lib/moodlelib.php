@@ -8208,26 +8208,10 @@ function address_in_subnet($addr, $subnetstr) {
  *
  * By using this function properly, we can ensure 100% https-ized pages
  * at our entire discretion (login, forgot_password, change_password)
- *
- * @global object
- * @global bool
  */
 function httpsrequired() {
-
-    global $CFG, $HTTPSPAGEREQUIRED;
-
-    if (!empty($CFG->loginhttps)) {
-        $HTTPSPAGEREQUIRED = true;
-        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
-
-        // change theme URLs to https
-        theme_setup();
-
-    } else {
-        $CFG->httpswwwroot = $CFG->wwwroot;
-        $CFG->httpsthemewww = $CFG->themewww;
-    }
+    global $PAGE;
+    $PAGE->https_required();
 }
 
 /**

@@ -24,28 +24,8 @@
  *
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-function initialise_theme_and_output() {
-    global $CFG, $OUTPUT, $PAGE, $THEME;
-    if (!($OUTPUT instanceof bootstrap_renderer)) {
-        return; // Already done.
-    }
-    if (!isset($CFG->theme) || empty($PAGE)) {
-        // Too soon to do anything.
-        return;
-    }
-    theme_setup();
-    if (CLI_SCRIPT) {
-        $rendererfactory = new cli_renderer_factory($THEME, $PAGE);
-    } else {
-        $classname = $THEME->rendererfactory;
-        $rendererfactory = new $classname($THEME, $PAGE);
-    }
-    $OUTPUT = $rendererfactory->get_renderer('core');
-}
 
 
 /**
@@ -375,6 +355,14 @@ class moodle_renderer_base {
     public function __construct($opencontainers, $page) {
         $this->opencontainers = $opencontainers;
         $this->page = $page;
+    }
+
+    /**
+     * Have we started output yet?
+     * @return boolean true if the header has been printed.
+     */
+    public function has_started() {
+        return $this->page->state >= moodle_page::STATE_IN_BODY;
     }
 
     protected function output_tag($tagname, $attributes, $contents) {
@@ -795,19 +783,22 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= sprintf($metarefesh, $this->page->periodicrefreshdelay, $this->page->url->out());
         }
 
+        // TODO get rid of $CFG->javascript. We should be able to do everything
+        // with $PAGE->requires.
         ob_start();
         include($CFG->javascript);
         $output .= ob_get_contents();
         ob_end_clean();
         $output .= $this->page->requires->get_head_code();
 
+        // List alternate versions.
         foreach ($this->page->alternateversions as $type => $alt) {
             $output .= $this->output_empty_tag('link', array('rel' => 'alternate',
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
         }
 
         // Add the meta page from the themes if any were requested
-        // TODO kill this.
+        // TODO See if we can get rid of this.
         $PAGE = $this->page;
         $metapage = '';
         if (!isset($THEME->standardmetainclude) || $THEME->standardmetainclude) {
@@ -887,17 +878,6 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Checks if we are in the body yet or not and returns true if we are in
-     * the body, false if we havn't reached it yet
-     *
-     * @uses moodle_page::STATE_IN_BODY
-     * @return bool True for in body, false if before
-     */
-    public function has_started() {
-        return ($this->page->state >= moodle_page::STATE_IN_BODY);
-    }
-
-    /**
      * Redirects the user by any means possible given the current state
      *
      * This function should not be called directly, it should always be called using
@@ -906,13 +886,6 @@ class moodle_core_renderer extends moodle_renderer_base {
      * The redirect function should really only be called before page output has started
      * however it will allow itself to be called during the state STATE_IN_BODY
      *
-     * @global object
-     * @uses DEBUG_DEVELOPER
-     * @uses DEBUG_ALL
-     * @uses moodle_page::STATE_BEFORE_HEADER
-     * @uses moodle_page::STATE_PRINTING_HEADER
-     * @uses moodle_page::STATE_IN_BODY
-     * @uses moodle_page::STATE_DONE
      * @param string $encodedurl The URL to send to encoded if required
      * @param string $message The message to display to the user if any
      * @param int $delay The delay before redirecting a user, if $message has been
@@ -949,8 +922,6 @@ class moodle_core_renderer extends moodle_renderer_base {
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
                     $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
                 }
-                $this->page->set_generaltype('popup');
-                $this->page->set_title('redirect');
                 $output = $this->header();
                 $output .= $this->notification($message, $messageclass);
                 $output .= $this->footer();
@@ -983,11 +954,6 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         output_starting_hook();
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
-
-        // Add any stylesheets required using the horrible legacy mechanism. TODO kill this.
-        foreach ($CFG->stylesheets as $stylesheet) {
-            $this->page->requires->css($stylesheet, true);
-        }
 
         // Find the appropriate page template, based on $this->page->generaltype.
         $templatefile = $this->find_page_template();
@@ -1355,7 +1321,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             }
             if (!empty($backtrace)) {
                 $output .= $this->notification('Stack trace: ' .
-                        format_backtrace($backtrace, true), 'notifytiny');
+                        format_backtrace($backtrace), 'notifytiny');
             }
         }
 
@@ -1457,6 +1423,338 @@ class moodle_core_renderer extends moodle_renderer_base {
         // an $OUTPUT method is to get $CFG->pixpath initialised, please use this
         // method, so we can find them and clean them up later once we have
         // found a better replacement for $CFG->pixpath.
+    }
+}
+
+
+/**
+ *This class represents the configuration variables of a Moodle theme.
+ *
+ * Normally, to create an instance of this class, you should use the
+ * {@link theme_config::load()} factory method to load a themes config.php file.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class theme_config {
+    /**
+     * @var array The names of all the stylesheets from this theme that you would
+     * like included, in order.
+     */
+    public $sheets = array('styles_layout', 'styles_fonts', 'styles_color');
+
+    public $standardsheets = true;  
+
+/// This variable can be set to an array containing
+/// filenames from the *STANDARD* theme.  If the 
+/// array exists, it will be used to choose the 
+/// files to include in the standard style sheet.
+/// When false, then no files are used.
+/// When true or NON-EXISTENT, then ALL standard files are used.
+/// This parameter can be used, for example, to prevent 
+/// having to override too many classes.
+/// Note that the trailing .css should not be included
+/// eg $THEME->standardsheets = array('styles_layout','styles_fonts','styles_color');
+////////////////////////////////////////////////////////////////////////////////
+
+
+    public $parent = null;  
+
+/// This variable can be set to the name of a parent theme
+/// which you want to have included before the current theme.
+/// This can make it easy to make modifications to another 
+/// theme without having to actually change the files
+/// If this variable is empty or false then a parent theme 
+/// is not used.
+////////////////////////////////////////////////////////////////////////////////
+
+
+    public $parentsheets = false;  
+
+/// This variable can be set to an array containing
+/// filenames from a chosen *PARENT* theme.  If the 
+/// array exists, it will be used to choose the 
+/// files to include in the standard style sheet.
+/// When false, then no files are used.
+/// When true or NON-EXISTENT, then ALL standard files are used.
+/// This parameter can be used, for example, to prevent 
+/// having to override too many classes.
+/// Note that the trailing .css should not be included
+/// eg $THEME->parentsheets = array('styles_layout','styles_fonts','styles_color');
+////////////////////////////////////////////////////////////////////////////////
+
+
+    public $modsheets = true;  
+
+/// When this is enabled, then this theme will search for 
+/// files named "styles.php" inside all Activity modules and 
+/// include them.   This allows modules to provide some basic 
+/// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
+
+
+    public $blocksheets = true;  
+
+/// When this is enabled, then this theme will search for 
+/// files named "styles.php" inside all Block modules and 
+/// include them.   This allows Blocks to provide some basic 
+/// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
+
+
+    public $langsheets = false;  
+
+/// By setting this to true, then this theme will search for 
+/// a file named "styles.php" inside the current language
+/// directory.  This allows different languages to provide 
+/// different styles.
+
+
+    public $courseformatsheets = true;
+
+/// When this is enabled, this theme will search for files 
+/// named "styles.php" inside all course formats and 
+/// include them.  This allows course formats to provide 
+/// their own default styles.
+
+
+    public $metainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from this theme into the 
+/// <head></head> part of the page.
+
+
+    public $standardmetainclude = true;
+
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the standard theme into the 
+/// <head></head> part of the page.
+
+
+    public $parentmetainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the parent theme into the 
+/// <head></head> part of the page.
+
+
+    public $navmenuwidth = 50;
+
+/// You can use this to control the cutoff point for strings 
+/// in the navmenus (list of activities in popup menu etc)
+/// Default is 50 characters wide.
+
+
+    public $makenavmenulist = false;
+
+/// By setting this to true, then you will have access to a
+/// new variable in your header.html and footer.html called
+/// $navmenulist ... this contains a simple XHTML menu of 
+/// all activities in the current course, mostly useful for 
+/// creating popup navigation menus and so on.
+
+
+
+    public $resource_mp3player_colors = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
+
+/// With this you can control the colours of the "big" MP3 player 
+/// that is used for MP3 resources.
+
+
+    public $filter_mediaplugin_colors = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&waitForPlay=yes';
+
+/// ...And this controls the small embedded player
+
+
+    public $custompix = false;
+
+/// If true, then this theme must have a "pix" 
+/// subdirectory that contains copies of all 
+/// files from the moodle/pix directory, plus a
+/// "pix/mod" directory containing all the icons 
+/// for all the activity modules.
+
+
+///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
+///$THEME->larrow = '&#x25C4;' //OR '&larr;';
+///$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
+///
+/// Accessibility: Right and left arrow-like characters are
+/// used in the breadcrumb trail, course navigation menu 
+/// (previous/next activity), calendar, and search forum block.
+///
+/// If the theme does not set characters, appropriate defaults
+/// are set by (lib/weblib.php:check_theme_arrows). The suggestions
+/// above are 'silent' in a screen-reader like JAWS. Please DO NOT
+/// use &lt; &gt; &raquo; - these are confusing for blind users.
+////////////////////////////////////////////////////////////////////////////////
+
+
+    public $blockregions = array('side-pre', 'side-post');
+    public $defaultblockregion = 'side-post';
+/// Areas where blocks may appear on any page that uses this theme. For each
+/// region you list in $THEME->blockregions you must call blocks_print_group
+/// with that region id somewhere in header.html or footer.html.
+/// defaultblockregion is the region where new blocks will be added, and
+/// where any blocks in unrecognised regions will be shown. (Suppose someone
+/// added a block when anther theme was selected).
+////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @var string the name of this theme. Set automatically.
+     */
+    public $name;
+    /**
+     * @var string the folder where this themes fiels are stored. $CFG->themedir . '/' . $this->name
+     */
+    public $dir;
+
+    public $rendererfactory = 'standard_renderer_factory';
+
+    /**
+     * If you want to do custom processing on the CSS before it is output (for
+     * example, to replace certain variable names with particular values) you can
+     * give the name of a function here.
+     *
+     * There are two functions avaiable that you may wish to use (defined in lib/outputlib.php):
+     *   output_css_replacing_constants
+     *   output_css_for_css_edit
+     * If you wish to write your own function, use those two as examples, and it
+     * should be clear what you have to do.
+     *
+     * @var string the name of a function.
+     */
+    public $customcssoutputfunction = null;
+
+    /**
+     * Load the config.php file for a particular theme, and return an instance
+     * of this class. (That is, this is a factory method.)
+     *
+     * @param string $themename the name of the theme.
+     * @return theme_config an instance of this class.
+     */
+    public static function load($themename) {
+        global $CFG, $PAGE;
+
+        // We have to use the variable name $THEME (upper case) becuase that
+        // is what is used in theme config.php files.
+
+        // Set some other standard properties of the theme.
+        $THEME = new theme_config;
+        $THEME->name = $themename;
+        $THEME->dir = $CFG->themedir . '/' . $themename;
+
+        // Load up the theme config
+        $configfile = $THEME->dir . '/config.php';
+        if (!is_readable($configfile)) {
+            throw new coding_exception('Cannot use theme ' . $themename .
+                    '. The file ' . $configfile . ' does not exist or is not readable.');
+        }
+        include($configfile);
+
+        $THEME->update_legacy_information();
+
+        return $THEME;
+    }
+
+    /**
+     * Set the variable $CFG->pixpath and $CFG->modpixpath to be the right
+     * ones for this theme.
+     */
+    public function setup_cfg_paths() {
+        global $CFG;
+        if (!empty($CFG->smartpix)) {
+            if ($CFG->slasharguments) {
+                // Use this method if possible for better caching
+                $extra = '';
+            } else {
+                $extra = '?file=';
+            }
+            $CFG->pixpath = $CFG->httpswwwroot . '/pix/smartpix.php' . $extra . '/' . $this->name;
+            $CFG->modpixpath = $CFG->httpswwwroot . '/pix/smartpix.php' . $extra . '/' . $this->name . '/mod';
+
+        } else if (empty($THEME->custompix)) {
+            $CFG->pixpath = $CFG->httpswwwroot . '/pix';
+            $CFG->modpixpath = $CFG->httpswwwroot . '/mod';
+
+        } else {
+            $CFG->pixpath = $CFG->httpsthemewww . '/' . $this->name . '/pix';
+            $CFG->modpixpath = $CFG->httpsthemewww . '/' . $this->name . '/pix/mod';
+        }
+    }
+
+    /**
+     * Get the list of stylesheet URLs that need to go in the header for this theme.
+     * @return array of URLs.
+     */
+    public function get_stylesheet_urls() {
+        global $CFG;
+
+        // Put together the parameters
+        $params = '?for=' . $this->name;
+
+        // Stylesheets, in order (standard, parent, this - some of which may be the same).
+        $stylesheets = array();
+        if ($this->name != 'standard' && $this->standardsheets) {
+            $stylesheets[] = $CFG->httpsthemewww . '/standard/styles.php' . $params;
+        }
+        if (!empty($this->parent)) {
+            $stylesheets[] = $CFG->httpsthemewww . '/' . $this->parent . '/styles.php' . $params;
+        }
+
+        // Pass on the current language, if it will be needed.
+        if (!empty($this->langsheets)) {
+            $params .= '&lang=' . current_language();
+        }
+        $stylesheets[] = $CFG->httpsthemewww . '/' . $this->name . '/styles.php' . $params;
+
+        // Additional styles for right-to-left languages.
+        if (right_to_left()) {
+            $stylesheets[] = $CFG->httpsthemewww . '/standard/rtl.css';
+
+            if (!empty($this->parent) && file_exists($CFG->themedir . '/' . $this->parent . '/rtl.css')) {
+                $stylesheets[] = $CFG->httpsthemewww . '/' . $this->parent . '/rtl.css';
+            }
+
+            if (file_exists($this->dir . '/rtl.css')) {
+                $stylesheets[] = $CFG->httpsthemewww . '/' . $this->name . '/rtl.css';
+            }
+        }
+
+        return $stylesheets;
+    }
+
+    /**
+     * This methon looks a the settings that have been loaded, to see whether
+     * any legacy things are being used, and outputs warning and tries to update
+     * things to use equivalent newer settings.
+     */
+    protected function update_legacy_information() {
+        if (!empty($this->customcorners)) {
+            // $THEME->customcorners is deprecated but we provide support for it via the
+            // custom_corners_renderer_factory class in lib/deprecatedlib.php
+            debugging('$THEME->customcorners is deprecated. Please use the new $THEME->rendererfactory ' .
+                    'to control HTML generation. Please use $this->rendererfactory = \'custom_corners_renderer_factory\'; ' .
+                    'in your config.php file instead.', DEBUG_DEVELOPER);
+            $this->rendererfactory = 'custom_corners_renderer_factory';
+        }
+
+        if (!empty($this->cssconstants)) {
+            debugging('$THEME->cssconstants is deprecated. Please use ' .
+                    '$THEME->customcssoutputfunction = \'output_css_replacing_constants\'; ' .
+                    'in your config.php file instead.', DEBUG_DEVELOPER);
+            $this->customcssoutputfunction = 'output_css_replacing_constants';
+        }
+
+        if (!empty($this->CSSEdit)) {
+            debugging('$THEME->CSSEdit is deprecated. Please use ' .
+                    '$THEME->customcssoutputfunction = \'output_css_for_css_edit\'; ' .
+                    'in your config.php file instead.', DEBUG_DEVELOPER);
+            $this->customcssoutputfunction = 'output_css_for_css_edit';
+        }
     }
 }
 
@@ -1753,3 +2051,114 @@ class cli_core_renderer extends moodle_core_renderer {
     }
 }
 
+
+/**
+ * Output CSS while replacing constants/variables. See MDL-6798 for details
+ *
+ * Information from Urs Hunkler:
+ *
+ * This is an adaptation of Shaun Inman's "CSS Server-side Constants" for Moodle.
+ * http://www.shauninman.com/post/heap/2005/08/09/css_constants
+ *
+ * To use, specify $THEME->customcssoutputfunction = 'output_css_replacing_constants';
+ * in your theme's config.php file.
+ *
+ * The constant definitions are written into a separate CSS file named like
+ * constants.css and loaded first in config.php. You can use constants for any
+ * CSS properties. The constant definition looks like:
+ * <code>
+ * \@server constants {
+ *   fontColor: #3a2830;
+ *   aLink: #116699;
+ *   aVisited: #AA2200;
+ *   aHover: #779911;
+ *   pageBackground: #FFFFFF;
+ *   backgroundColor: #EEEEEE;
+ *   backgroundSideblockHeader: #a8a4e9;
+ *   fontcolorSideblockHeader: #222222;
+ *   color1: #98818b;
+ *   color2: #bd807b;
+ *   color3: #f9d1d7;
+ *   color4: #e8d4d8;
+ * }
+ * </code>
+ *
+ * The lines in the CSS files using CSS constants look like:
+ * <code>
+ * body {
+ *   font-size: 100%;
+ *   background-color: pageBackground;
+ *   color: fontColor;
+ *   font-family: 'Bitstream Vera Serif', georgia, times, serif;
+ *   margin: 0;
+ *   padding: 0;
+ * }
+ * div#page {
+ *   margin: 0 10px;
+ *   padding-top: 5px;
+ *   border-top-width: 10px;
+ *   border-top-style: solid;
+ *   border-top-color: color3;
+ * }
+ * div.clearer {
+ *   clear: both;
+ * }
+ * a:link {
+ *   color: aLink;
+ * } 
+ * </code>
+ *
+ * @param array $files an arry of the CSS fiels that need to be output.
+ */
+function output_css_replacing_constants($files) {
+    global $CFG;
+    // Get all the CSS.
+    $toreplace = array($CFG->dirroot, $CFG->themedir);
+    ob_start();
+    foreach ($files as $file) {
+        $shortname = str_replace($toreplace, '', $file);
+        echo '/******* ' . $shortname . " start *******/\n\n";
+        @include_once($file);
+        echo '/******* ' . $shortname . " end *******/\n\n";
+    }
+    $css = ob_get_contents();
+    ob_end_clean();
+
+    if (preg_match_all("/@server\s+(?:variables|constants)\s*\{\s*([^\}]+)\s*\}\s*/i", $css, $matches)) {
+        $variables = array();
+        foreach ($matches[0] as $key => $server) {
+            $css = str_replace($server, '', $css);
+            preg_match_all("/([^:\}\s]+)\s*:\s*([^;\}]+);/", $matches[1][$key], $vars);
+            foreach ($vars[1] as $var => $value) {
+                $variables[$value] = $vars[2][$var];
+            }
+        }
+        $css = str_replace(array_keys($variables), array_values($variables), $css);
+    }
+    echo $css;
+}
+
+/**
+ * This CSS output function will link to CSS files rather than including them
+ * inline.
+ *
+ * The single CSS files can then be edited and saved with interactive
+ * CSS editors like CSSEdit. Any files that have a .php extension are still included
+ * inline.
+ *
+ * @param array $files an arry of the CSS fiels that need to be output.
+ */
+function output_css_for_css_edit($files) {
+    global $CFG;
+    $toreplace = array($CFG->dirroot, $CFG->themedir);
+    foreach ($files as $file) {
+        $shortname = str_replace($toreplace, '', $file);
+        echo '/* @group ' . $shortname . " */\n\n";
+        if (strpos($file, '.css') !== false) {
+            echo '@import url("' . $file . '");'."\n\n";
+        } else {
+            @include_once($file);
+        }
+        echo "/* @end */\n\n";
+    }
+}

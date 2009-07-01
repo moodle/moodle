@@ -1,144 +1,144 @@
-<?php // $Id$
+<?php
 
-    require_once("../config.php");
-    require_once($CFG->libdir.'/adminlib.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
+/**
+ * This page prvides the Administration -> ... -> Theme selector UI.
+ */
 
-    admin_externalpage_setup('themeselector');
+require_once(dirname(__FILE__) . '/../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 
-    unset($SESSION->theme);
+$choose = optional_param('choose', '', PARAM_FILE);
 
-    $stradministration = get_string("administration");
-    $strconfiguration = get_string("configuration");
-    $strthemes = get_string("themes");
-    $strpreview = get_string("preview");
-    $strchoose = get_string("choose");
-    $strinfo = get_string("info");
-    $strtheme = get_string("theme");
-    $strthemesaved = get_string("themesaved");
-    $strscreenshot = get_string("screenshot");
-    $stroldtheme = get_string("oldtheme");
+admin_externalpage_setup('themeselector');
 
+unset($SESSION->theme);
 
-    if ($choose and confirm_sesskey()) {
-        if (!is_dir($CFG->themedir .'/'. $choose)) {
-            print_error('themenotinstall');
-        }
-        if (set_config("theme", $choose)) {
-            theme_setup($choose);
-            admin_externalpage_print_header();
-            print_heading(get_string("themesaved"));
+if ($choose and confirm_sesskey()) {
+    // The user has chosen one theme from the list of all themes, show a
+    // 'You have chosen a new theme' confirmation page.
 
-            if (file_exists("$choose/README.html")) {
-                print_box_start();
-                readfile("$choose/README.html");
-                print_box_end();
-
-            } else if (file_exists("$choose/README.txt")) {
-                print_box_start("center");
-                $file = file("$choose/README.txt");
-                echo format_text(implode('', $file), FORMAT_MOODLE);
-                print_box_end();
-            }
-            
-            print_continue("$CFG->wwwroot/");
-            
-            admin_externalpage_print_footer();
-            exit;
-        } else {
-            print_error('cannotsettheme');
-        }
+    if (!is_dir($CFG->themedir .'/'. $choose)) {
+        print_error('themenotinstall');
     }
 
-    admin_externalpage_print_header('themeselector');
+    set_config('theme', $choose);
 
+    admin_externalpage_print_header();
+    print_heading(get_string('themesaved'));
 
-    print_heading($strthemes);
+    $readmehtml = $CFG->themedir . '/' . $choose . '/README.html';
+    $readmetxt = $CFG->themedir . '/' . $choose . '/README.txt';
+    if (is_readable($readmehtml)) {
+        print_box_start();
+        readfile($readmehtml);
+        print_box_end();
 
-    $themes = get_plugin_list("theme");
-    $sesskey = sesskey();
-
-    echo "<table style=\"margin-left:auto;margin-right:auto;\" cellpadding=\"7\" cellspacing=\"5\">\n";
-
-    if (!$USER->screenreader) {
-        echo "\t<tr class=\"generaltableheader\">\n\t\t<th scope=\"col\">$strtheme</th>\n";
-        echo "\t\t<th scope=\"col\">$strinfo</th>\n\t</tr>\n";
+    } else if (is_readable($readmetxt)) {
+        print_box_start();
+        $text = file_get_contents($readmetxt);
+        echo format_text($text, FORMAT_MOODLE);
+        print_box_end();
     }
 
-    $original_theme = fullclone($THEME);
-
-    foreach ($themes as $theme => $themedir) {
-
-        unset($THEME);
-
-        if (!file_exists($themedir.'/config.php')) {   // bad folder
-            continue;
-        }
-
-        include($themedir.'/config.php');
-
-        $readme = '';
-        $screenshot = '';
-        $screenshotpath = '';
-
-        if (file_exists("$theme/README.html")) {
-            $readme =  "\t\t\t\t<li>".
-            link_to_popup_window($CFG->themewww .'/'. $theme .'/README.html', $theme, $strinfo, 400, 500, '', 'none', true)."</li>\n";
-        } else if (file_exists("$theme/README.txt")) {
-            $readme =  "\t\t\t\t<li>".
-            link_to_popup_window($CFG->themewww .'/'. $theme .'/README.txt', $theme, $strinfo, 400, 500, '', 'none', true)."</li>\n";
-        }
-        if (file_exists("$theme/screenshot.png")) {
-            $screenshotpath = "$theme/screenshot.png";
-        } else if (file_exists("$theme/screenshot.jpg")) {
-            $screenshotpath = "$theme/screenshot.jpg";
-        }
-
-        echo "\t<tr>\n";
-
-        // no point showing this if user is using screen reader
-        if (!$USER->screenreader) {
-            echo "\t\t<td align=\"center\">\n";
-            if ($screenshotpath) {
-                $screenshot = "\t\t\t\t<li><a href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>\n";
-                echo "\t\t\t<object type=\"text/html\" data=\"$screenshotpath\" height=\"200\" width=\"400\">$theme</object>\n\t\t</td>\n";
-            } else {
-                echo "\t\t\t<object type=\"text/html\" data=\"preview.php?preview=$theme\" height=\"200\" width=\"400\">$theme</object>\n\t\t</td>\n";
-            }
-        }
-
-        if ($CFG->theme == $theme) {
-            echo "\t\t" . '<td valign="top" style="border-style:solid; border-width:1px; border-color:#555555">'."\n";
-        } else {
-            echo "\t\t" . '<td valign="top">'."\n";
-        }
-
-        if (isset($THEME->sheets)) {
-            echo "\t\t\t" . '<p style="font-size:1.5em;font-weight:bold;">'.$theme.'</p>'."\n";
-        } else {
-            echo "\t\t\t" . '<p style="font-size:1.5em;font-weight:bold;color:red;">'.$theme.' (Moodle 1.4)</p>'."\n";
-        }
-
-        if ($screenshot or $readme) {
-            echo "\t\t\t<ul>\n";
-            if (!$USER->screenreader) {
-                echo "\t\t\t\t<li><a href=\"preview.php?preview=$theme\">$strpreview</a></li>\n";
-            }
-            echo $screenshot.$readme;
-            echo "\t\t\t</ul>\n";
-        }
-
-        $options = null;
-        $options['choose'] = $theme;
-        $options['sesskey'] = $sesskey;
-        echo "\t\t\t" . print_single_button('index.php', $options, $strchoose, 'get', null, true) . "\n";
-        echo "\t\t</td>\n";
-        echo "\t</tr>\n";
-    }
-    echo "</table>\n";
-
-    $THEME = $original_theme;
+    print_continue($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
 
     admin_externalpage_print_footer();
+    exit;
+}
+
+// Otherwise, show a list of themes.
+admin_externalpage_print_header('themeselector');
+print_heading(get_string('themes'));
+
+$table = new stdClass;
+$table->id = 'adminthemeselector';
+$table->head = array(get_string('theme'), get_string('info'));
+
+$themes = get_plugin_list('theme');
+$sesskey = sesskey();
+foreach ($themes as $themename => $themedir) {
+
+    // Load the theme config.
+    try {
+        $theme = theme_config::load($themename);
+    } catch (coding_exception $e) {
+        // Bad theme, just skip it for now.
+        continue;
+    }
+
+    // Build the table row, and also a list of items to go in the second cell.
+    $row = array();
+    $infoitems = array();
+
+    // Preview link.
+    $infoitems['preview'] = '<a href="preview.php?preview=' . $themename . '">' . get_string('preview') . '</a>';
+
+    // First cell (a preview) and also a link to the screenshot, if there is one.
+    $screenshotpath = '';
+    if (file_exists($theme->dir . '/screenshot.png')) {
+        $screenshotpath = $themename . '/screenshot.png';
+    } else if (file_exists($theme->dir . '/screenshot.jpg')) {
+        $screenshotpath = $themename . '/screenshot.jpg';
+    }
+    if ($screenshotpath) {
+        $infoitems['screenshot'] = '<a href="' . $CFG->themewww .'/'. $screenshotpath . '">' .
+                get_string('screenshot') . '</a>';
+    }
+
+    // Link to the themes's readme.
+    $readmeurl = '';
+    if (file_exists($theme->dir . '/README.html')) {
+        $readmeurl = $CFG->themewww .'/'. $themename .'/README.html';
+    } else if (file_exists($theme->dir . '/README.txt')) {
+        $readmeurl = $CFG->themewww .'/'. $themename .'/README.txt';
+    }
+    if ($readmeurl) {
+        $infoitems['readme'] = link_to_popup_window($readmeurl, $themename, get_string('info'), 400, 500, '', 'none', true);
+    }
+
+    // Contents of the first screenshot/preview cell.
+    if ($screenshotpath) {
+        $row[] = '<object type="text/html" data="' . $CFG->themewww .'/' . $screenshotpath .
+                '" height="200" width="400">' . $themename . '</object>';
+    } else {
+        $row[] = '<object type="text/html" data="preview.php?preview=' . $themename .
+                '" height="200" width="400">' . $themename . '</object>';
+    }
+
+    // Contents of the second cell.
+    $infocell = $OUTPUT->heading($themename, 3);
+    if ($infoitems) {
+        $infocell .= "<ul>\n<li>" . implode("</li>\n<li>", $infoitems) . "</li>\n</ul>\n";
+    }
+    if ($themename != $CFG->theme) {
+        $infocell .= print_single_button('index.php', array('choose' => $themename, 'sesskey' => $sesskey),
+                get_string('choose'), 'get', null, true);
+        
+    }
+    $row[] = $infocell;
+
+    $table->data[$themename] = $row;
+    if ($themename == $CFG->theme) {
+        $table->rowclass[$themename] = 'selectedtheme';
+    }
+}
+
+print_table($table);
+
+admin_externalpage_print_footer();
 ?>

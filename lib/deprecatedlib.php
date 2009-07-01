@@ -1766,6 +1766,55 @@ class custom_corners_renderer_factory extends standard_renderer_factory {
 
 
 /**
+ * Used to be used for setting up the theme. No longer used by core code, and
+ * should not have been used elsewhere.
+ *
+ * The theme is now automatically initialised before it is first used. If you really need
+ * to force this to happen, just reference $PAGE->theme.
+ *
+ * To force a particular theme on a particular page, you can use $PAGE->force_theme(...).
+ * However, I can't think of any valid reason to do that outside the theme selector UI.
+ *
+ * @deprecated
+ * @param string $theme The theme to use defaults to current theme
+ * @param array $params An array of parameters to use
+ */
+function theme_setup($theme = '', $params=NULL) {
+    throw new coding_exception('The function theme_setup is no longer required, and should no longer be used. ' .
+            'The current theme gets initialised automatically before it is first used.');
+}
+
+/**
+ * @deprecated use $PAGE->theme->name instead.
+ * @return string the name of the current theme.
+ */
+function current_theme() {
+    global $PAGE;
+    // TODO, uncomment this once we have eliminated all references to current_theme in core code.
+    // debugging('current_theme is deprecated, use $PAGE->theme->name instead', DEBUG_DEVELOPER);
+    return $PAGE->theme->name;
+}
+
+/**
+ * This used to be the thing that theme styles.php files used to do all the work.
+ * This is now handled differently. You should copy theme/standard/styes.php
+ * into your theme.
+ *
+ * @deprecated
+ * @param int $lastmodified Always gets set to now
+ * @param int $lifetime The max-age header setting (seconds) defaults to 300
+ * @param string $themename The name of the theme to use (optional) defaults to current theme
+ * @param string $forceconfig Force a particular theme config (optional)
+ * @param string $lang Load styles for the specified language (optional)
+ */
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
+    global $CFG, $PAGE, $THEME, $showdeprecatedstylesheetsetupwarning;
+    $showdeprecatedstylesheetsetupwarning = true;
+    include($CFG->dirroot . '/theme/styles.php');
+    exit;
+}
+
+/**
  * Prints some red text using echo
  *
  * @deprecated

@@ -329,6 +329,10 @@ class block_manager implements ArrayAccess {
             return;
         }
 
+        if (!isset($this->defaultregion)) {
+            $this->page->initialise_theme_and_output();
+        }
+
         if (is_null($includeinvisible)) {
             $includeinvisible = $this->page->user_is_editing();
         }

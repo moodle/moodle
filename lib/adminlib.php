@@ -5205,9 +5205,6 @@ function admin_get_root($reload=false, $requirefulltree=true) {
         $ADMIN->purge_children($requirefulltree);
     }
 
-    // Some parts of the tree require $CFG->pixpath.
-    $OUTPUT->initialise_deprecated_cfg_pixpath();
-
     if (!$ADMIN->loaded) {
         // we process this file first to create categories first and in correct order
         require($CFG->dirroot.'/'.$CFG->admin.'/settings/top.php');
@@ -5275,7 +5272,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
  * @return int number of changed settings
  */
 function admin_write_settings($formdata) {
-    global $CFG, $SITE, $PAGE, $DB;
+    global $CFG, $SITE, $DB;
 
     $olddbsessions = !empty($CFG->dbsessions);
     $formdata = (array)$formdata;
@@ -5314,9 +5311,12 @@ function admin_write_settings($formdata) {
         require_logout();
     }
 
-    // now update $SITE - it might have been changed
-    $SITE = $DB->get_record('course', array('id'=>$SITE->id));
-    $PAGE->set_course($SITE);
+    // Now update $SITE - just update the fields, in case other people have a
+    // a reference to it (e.g. $PAGE, $COURSE).
+    $newsite = $DB->get_record('course', array('id'=>$SITE->id));
+    foreach (get_object_vars($newsite) as $field => $value) {
+        $SITE->$field = $value;
+    }
 
     // now reload all settings - some of them might depend on the changed
     admin_get_root(true);

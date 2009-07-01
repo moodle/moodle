@@ -13,7 +13,7 @@
     $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
 
     $context = get_context_instance(CONTEXT_SYSTEM);
-    $PAGE->set_context($context);
+    $PAGE->set_course($SITE);
 
     //initialize variables
     $errormsg = '';

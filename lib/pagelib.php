@@ -125,6 +125,14 @@ class moodle_page {
 
     protected $_button = '';
 
+    protected $_theme = null;
+
+    /**
+     * Then the theme is initialsed, we save the stack trace, for use in error messages.
+     * @var array stack trace.
+     */
+    protected $_wherethemewasinitialised = null;
+
     /**
      * Sets the page to refresh after a given delay (in seconds) using meta refresh
      * in {@link standard_head_html()} in outputlib.php
@@ -346,15 +354,12 @@ class moodle_page {
     public function get_blocks() {
         global $CFG, $THEME;
         if (is_null($this->_blocks)) {
-            initialise_theme_and_output();
             if (!empty($CFG->blockmanagerclass)) {
                 $classname = $CFG->blockmanagerclass;
             } else {
                 $classname = 'block_manager';
             }
             $this->_blocks = new $classname($this);
-            $this->_blocks->add_regions($THEME->blockregions);
-            $this->_blocks->set_default_region($THEME->defaultblockregion);
         }
         return $this->_blocks;
     }
@@ -393,6 +398,17 @@ class moodle_page {
      */
     public function get_button() {
         return $this->_button;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->theme syntax. {@link __get()}.
+     * @return string the initialised theme for this page.
+     */
+    public function get_theme() {
+        if (is_null($this->_theme)) {
+            $this->initialise_theme_and_output();
+        }
+        return $this->_theme;
     }
 
     /**
@@ -482,28 +498,28 @@ class moodle_page {
      * @param object the course to set as the global course.
      */
     public function set_course($course) {
-        global $COURSE;
+        global $COURSE, $PAGE;
 
         if (empty($course->id)) {
             throw new coding_exception('$course passed to moodle_page::set_course does not look like a proper course object.');
         }
 
-        if ($this->_state > self::STATE_BEFORE_HEADER) {
-            throw new coding_exception('Cannot call moodle_page::set_course after output has been started.');
-        }
+        $this->ensure_theme_not_set();
 
         if (!empty($this->_course->id) && $this->_course->id != $course->id) {
             $this->_categories = null;
         }
 
         $this->_course = clone($course);
-        $COURSE = $this->_course;
+
+        if ($this === $PAGE) {
+            $COURSE = $this->_course;
+            moodle_setlocale();
+        }
 
         if (!$this->_context) {
             $this->set_context(get_context_instance(CONTEXT_COURSE, $this->_course->id));
         }
-
-        moodle_setlocale();
     }
 
     /**
@@ -646,6 +662,7 @@ class moodle_page {
         if (is_array($this->_categories)) {
             throw new coding_exception('Course category has already been set. You are not allowed to change it.');
         }
+        $this->ensure_theme_not_set();
         $this->set_course($SITE);
         $this->load_category($categoryid);
         $this->set_context(get_context_instance(CONTEXT_COURSECAT, $categoryid));
@@ -771,6 +788,46 @@ class moodle_page {
         }
     }
 
+    /**
+     * Force this page to use a particular theme.
+     *
+     * Please use this cautiously. It is only intended to be used by the themes selector
+     * admin page, and theme/styles.php.
+     *
+     * @param $themename the name of the theme to use.
+     */
+    public function force_theme($themename) {
+        global $PAGE, $THEME;
+        $this->ensure_theme_not_set();
+        $this->_theme = theme_config::load($themename);
+        if ($this === $PAGE) {
+            $THEME = $this->_theme;
+        }
+    }
+
+    /**
+     * This function sets the $HTTPSPAGEREQUIRED global
+     * (used in some parts of moodle to change some links)
+     * and calculate the proper wwwroot to be used
+     *
+     * By using this function properly, we can ensure 100% https-ized pages
+     * at our entire discretion (login, forgot_password, change_password)
+     */
+    public function https_required() {
+        global $CFG, $HTTPSPAGEREQUIRED;
+
+        $this->ensure_theme_not_set();
+
+        if (!empty($CFG->loginhttps)) {
+            $HTTPSPAGEREQUIRED = true;
+            $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+            $CFG->httpsthemewww = str_replace('http:', 'https:', $CFG->themewww);
+        } else {
+            $CFG->httpswwwroot = $CFG->wwwroot;
+            $CFG->httpsthemewww = $CFG->themewww;
+        }
+    }
+
 /// Initialisation methods =====================================================
 /// These set various things up in a default way.
 
@@ -794,6 +851,129 @@ class moodle_page {
 
         $this->initialise_standard_body_classes();
         $this->blocks->load_blocks();
+
+        // Add any stylesheets required using the horrible legacy mechanism.
+        if (!empty($CFG->stylesheets)) {
+            debugging('Some code on this page is using the horrible legacy mechanism $CFG->stylesheets to include links to ' .
+                    'extra stylesheets. This is deprecated. Please use $PAGE->requires->css(...) instead.', DEBUG_DEVELOPER);
+            foreach ($CFG->stylesheets as $stylesheet) {
+                $this->page->requires->css($stylesheet, true);
+            }
+        }
+
+        // Require theme stylesheets.
+        $stylesheets = $this->theme->get_stylesheet_urls();
+        foreach ($stylesheets as $stylesheet) {
+            $this->requires->css($stylesheet, true);
+        }
+    }
+
+    /**
+     * Method for use by Moodle core to set up the theme. Do not
+     * use this in your own code.
+     *
+     * Make sure the right theme for this page is loaded. Tell our
+     * blocks_manager about the theme block regions, and then, if
+     * we are $PAGE, set up the globals $THEME and $OUTPUT.
+     */
+    public function initialise_theme_and_output() {
+        global $OUTPUT, $PAGE, $SITE, $THEME;
+
+        if (!$this->_course) {
+            $this->set_course($SITE);
+        }
+
+        if (is_null($this->_theme)) {
+            $themename = $this->resolve_theme();
+            $this->_theme = theme_config::load($themename);
+        }
+
+        $this->blocks->add_regions($this->_theme->blockregions);
+        $this->blocks->set_default_region($this->_theme->defaultblockregion);
+
+        if ($this === $PAGE) {
+            $THEME = $this->_theme;
+            $this->_theme->setup_cfg_paths();
+            if (CLI_SCRIPT) {
+                $classname = 'cli_renderer_factory';
+            } else {
+                $classname = $this->_theme->rendererfactory;
+            }
+            $rendererfactory = new $classname($this->_theme, $this);
+            $OUTPUT = $rendererfactory->get_renderer('core');
+        }
+
+        $this->_wherethemewasinitialised = debug_backtrace();
+    }
+
+    /**
+     * Work out the theme this page should use.
+     *
+     * This depends on numerous $CFG settings, and the properties of this page.
+     *
+     * @return string the name of the theme that should be used on this page.
+     */
+    protected function resolve_theme() {
+        global $CFG, $USER, $SESSION;
+
+        if (empty($CFG->themeorder)) {
+            $themeorder = array('course', 'category', 'session', 'user', 'site');
+        } else {
+            $themeorder = $CFG->themeorder;
+            // Just in case, make sure we always use the site theme if nothing else matched.
+            $themeorder[] = 'site';
+        }
+
+        $mnetpeertheme = '';
+        if (isloggedin() and isset($CFG->mnet_localhost_id) and $USER->mnethostid != $CFG->mnet_localhost_id) {
+            require_once($CFG->dirroot.'/mnet/peer.php');
+            $mnetpeer = new mnet_peer();
+            $mnetpeer->set_id($USER->mnethostid);
+            if ($mnetpeer->force_theme == 1 && $mnetpeer->theme != '') {
+                $mnetpeertheme = $mnetpeer->theme;
+            }
+        }
+
+        $theme = '';
+        foreach ($themeorder as $themetype) {
+            switch ($themetype) {
+                case 'course':
+                    if (!empty($CFG->allowcoursethemes) and !empty($this->course->theme)) {
+                        return $this->course->theme;
+                    }
+
+                case 'category':
+                    if (!empty($CFG->allowcategorythemes)) {
+                        $categories = $this->categories;
+                        foreach ($categories as $category) {
+                            if (!empty($category->theme)) {
+                                return $category->theme;
+                            }
+                        }
+                    }
+
+                case 'session':
+                    if (!empty($SESSION->theme)) {
+                        return $SESSION->theme;
+                    }
+
+                case 'user':
+                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {
+                        if ($mnetpeertheme) {
+                            return $mnetpeertheme;
+                        } else {
+                            return $USER->theme;
+                        }
+                    }
+
+                case 'site':
+                    if ($mnetpeertheme) {
+                        return $mnetpeertheme;
+                    } else {
+                        return $CFG->theme;
+                    }
+            }
+        }
     }
 
     /**
@@ -835,7 +1015,7 @@ class moodle_page {
     }
 
     protected function initialise_standard_body_classes() {
-        global $CFG;
+        global $CFG, $USER;
 
         $pagetype = $this->pagetype;
         if ($pagetype == 'site-index') {
@@ -945,6 +1125,15 @@ class moodle_page {
         $categories = $DB->get_records_list('course_categories', 'id', $idstoload);
         foreach ($idstoload as $catid) {
             $this->_categories[$catid] = $categories[$catid];
+        }
+    }
+
+    protected function ensure_theme_not_set() {
+        if (!is_null($this->_theme)) {
+            throw new coding_exception('The theme has already been set up for this page ready for output. ' .
+                    'Therefore, you can no longer change the theme, or anything that might affect what ' .
+                    'the current theme is, for example, the course.',
+                    'Stack trace when the theme was set up: ' . format_backtrace($this->_wherethemewasinitialised));
         }
     }
 

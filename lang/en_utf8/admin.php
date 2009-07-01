@@ -12,6 +12,7 @@ $string['allowediplist'] = 'Allowed IP list';
 $string['allowemailaddresses'] = 'Allowed email domains';
 $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
 $string['allowrenames'] = 'Allow renames';
+$string['allowthemechangeonurl'] = 'Allow theme changes in the URL';
 $string['allowuserblockhiding'] = 'Allow users to hide blocks';
 $string['allowusermailcharset'] = 'Allow user to select character set';
 $string['allowuserswitchrolestheycantassign'] = 'Allow users without the assign roles capability to switch roles';
@@ -82,6 +83,7 @@ $string['configallowobjectembed'] = 'As a default security measure, normal users
 $string['configallowoverride'] = 'You can allow people with the roles on the left side to override some of the column roles';
 $string['configallowoverride2'] = 'Select which role(s) can be overridden by each role in the left column.<br />Note that these settings only apply to users who have either the capability moodle/role:override or the capability moodle/role:safeoverride allowed.';
 $string['configallowswitch'] = 'Select which roles a user may switch to, based on which roles they already have. In addition to an entry in this table, a user must also have the moodle/role:switchroles capability to be able to switch.<br />Note that it is only possible to switch to roles that have the moodle/course:view capability, and that do not have the moodle/site:doanything capability, so some columns in this table are disabled.';
+$string['configallowthemechangeonurl'] = 'If you turn this setting on, then the theme can by changed by adding theme={themename}&amp;sesskey={sesskey} to any Moodle URL.';
 $string['configallowunenroll'] = 'If this is set \'Yes\', then students are allowed to unenrol themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.';
 $string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowusermailcharset'] = 'Enabling this, every user in the site will be able to specify his own charset for email.';

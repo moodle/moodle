@@ -179,20 +179,46 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
         $CFG->debug = DEBUG_DEVELOPER;
     }
 
-    // If another exception is thrown when we are already handling one, or during $OUTPUT->header,
-    // and if we did not take special measures, we would just get a very cryptic message
-    // "Exception thrown without a stack frame in Unknown on line 0", rather than the true error.
-    // Therefore, we do take special measures.
-    foreach ($backtrace as $stackframe) {
-        if (isset($stackframe['function']) && isset($stackframe['type']) &&
-                $stackframe['type'] == '->' && $stackframe['function'] == 'header') {
-            echo bootstrap_renderer::early_error($message, $moreinfourl, $link, debug_backtrace());
-            exit(1); // General error code
-        }
+    if (is_stacktrace_during_output_init($backtrace)) {
+        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, $backtrace);
+    } else {
+        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
     }
 
-    echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
     exit(1); // General error code
+}
+
+/**
+ * This function encapsulates the tests for whether an exception was thrown in the middle
+ * of initialising the $OUTPUT variable and starting output.
+ *
+ * If another exception is thrown then, and if we do not take special measures,
+ * we would just get a very cryptic message "Exception thrown without a stack
+ * frame in Unknown on line 0". That makes debugging very hard, so we do take
+ * special measures in default_exception_handler, with the help of this function.
+ *
+ * @param array $backtrace the stack trace to analyse.
+ * @return boolean whether the stack trace is somewhere in output initialisation.
+ */
+function is_stacktrace_during_output_init($backtrace) {
+    $dangerouscode = array(
+        array('function' => 'header', 'type' => '->'),
+        array('class' => 'bootstrap_renderer'),
+    );
+    foreach ($backtrace as $stackframe) {
+        foreach ($dangerouscode as $pattern) {
+            $matches = true;
+            foreach ($pattern as $property => $value) {
+                if (!isset($stackframe[$property]) || $stackframe[$property] != $value) {
+                    $matches = false;
+                }
+            }
+            if ($matches) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /**
@@ -751,16 +777,21 @@ class bootstrap_renderer {
      */
     protected $initialising = false;
 
+    /**
+     * Have we started output yet?
+     * @return boolean true if the header has been printed.
+     */
+    public function has_started() {
+        return false;
+    }
+
     public function __call($method, $arguments) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
 
         // If lib/outputlib.php has been loaded, call it.
-        if (!$this->initialising && function_exists('initialise_theme_and_output')) {
-            $this->initialising = true;
-            initialise_theme_and_output(debug_backtrace());
-            if (!($OUTPUT instanceof bootstrap_renderer)) {
-                return call_user_func_array(array($OUTPUT, $method), $arguments);
-            }
+        if (!empty($PAGE)) {
+            $PAGE->initialise_theme_and_output();
+            return call_user_func_array(array($OUTPUT, $method), $arguments);
         }
 
         $this->initialising = true;
@@ -782,6 +813,8 @@ class bootstrap_renderer {
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace,
                 $debuginfo = null, $showerrordebugwarning = false) {
+        global $CFG;
+
         // In the name of protocol correctness, monitoring and performance
         // profiling, set the appropriate error headers for machine comsumption
         if (isset($_SERVER['SERVER_PROTOCOL'])) {

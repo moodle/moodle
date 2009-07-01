@@ -63,11 +63,6 @@
         }
     }
 
-    if(!empty($CFG->allowcategorythemes) && isset($category->theme)) {
-        // specifying theme here saves us some dbqs
-        theme_setup($category->theme);
-    }
-
 /// Print headings
     $numcategories = $DB->count_records('course_categories');
 

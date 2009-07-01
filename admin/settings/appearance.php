@@ -11,6 +11,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('allowuserthemes', get_string('allowuserthemes', 'admin'), get_string('configallowuserthemes', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('allowcoursethemes', 'admin'), get_string('configallowcoursethemes', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowcategorythemes',  get_string('allowcategorythemes', 'admin'), get_string('configallowcategorythemes', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('allowthemechangeonurl',  get_string('allowthemechangeonurl', 'admin'), get_string('configallowthemechangeonurl', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('showblocksonmodpages', get_string('showblocksonmodpages', 'admin'), get_string('configshowblocksonmodpages', 'admin'), 0));
     $temp->add(new admin_setting_configselect('hideactivitytypenavlink', get_string('hideactivitytypenavlink', 'admin'), get_string('confighideactivitytypenavlink', 'admin'), 0,

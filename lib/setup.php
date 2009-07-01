@@ -126,7 +126,7 @@ global $MCACHE;
  * A global to define if the page being displayed must run under HTTPS.
  *
  * Its primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
- * Its enabled only by the httpsrequired() function and used in some pages to update some URLs
+ * Its enabled only by the $PAGE->https_required() function and used in some pages to update some URLs
  *
  * @global bool $HTTPSPAGEREQUIRED
  * @name $HTTPSPAGEREQUIRED
@@ -188,19 +188,21 @@ global $SCRIPT;
     }
 
 
-/// store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
+/// Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides
     $CFG->config_php_settings = (array)$CFG;
 
-/// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
-/// inside some URLs used in HTTPSPAGEREQUIRED pages.
-    $CFG->httpswwwroot = $CFG->wwwroot;
-
+/// Set up some paths.
     $CFG->libdir   = $CFG->dirroot .'/lib';
 
     if (!isset($CFG->themedir)) {
         $CFG->themedir = $CFG->dirroot.'/theme';
         $CFG->themewww = $CFG->wwwroot.'/theme';
     }
+
+/// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
+/// inside some URLs used in HTTPSPAGEREQUIRED pages.
+    $CFG->httpswwwroot = $CFG->wwwroot;
+    $CFG->httpsthemewww = $CFG->themewww;
 
     require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
@@ -524,20 +526,18 @@ global $SCRIPT;
     $SESSION = &$_SESSION['SESSION'];
     $USER    = &$_SESSION['USER'];
 
-/// Load up theme variables (colours etc)
-
-    $CFG->httpsthemewww = $CFG->themewww;
-
-    if (isset($_GET['theme'])) {
-        if ($CFG->allowthemechangeonurl || confirm_sesskey()) {
-            $themename = clean_param($_GET['theme'], PARAM_SAFEDIR);
-            if (($themename != '') and file_exists($CFG->themedir.'/'.$themename)) {
-                $SESSION->theme = $themename;
-            }
-            unset($themename);
+/// Process theme change in the URL.
+    if (!empty($CFG->allowthemechangeonurl) && ($urlthemename = optional_param('theme', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+        try {
+            theme_config::load($urlthemename); // Makes sure the theme can be loaded without errors.
+            $SESSION->theme = $urlthemename;
+        } catch (Exception $e) {
+            debugging('Failed to set the theme from the URL.', DEBUG_DEVELOPER, $e->getTrace());
         }
     }
+    unset($urlthemename);
 
+/// Ensure a valid theme is set.
     if (!isset($CFG->theme)) {
         $CFG->theme = 'standardwhite';
     }
@@ -547,18 +547,18 @@ global $SCRIPT;
 /// in the language file.  Otherwise, if the admin hasn't specified a locale
 /// then use the one from the default language.  Otherwise (and this is the
 /// majority of cases), use the stored locale specified by admin.
-    if (isset($_GET['lang']) && ($lang = clean_param($_GET['lang'], PARAM_SAFEDIR))) {
-        if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
+    if (($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
+        if (file_exists($CFG->dataroot .'/lang/'. $lang) or
+                file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
         } else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or
-                   file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
+                file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
             $SESSION->lang = $lang.'_utf8';
         }
     }
+    unset($lang);
 
     setup_lang_from_browser();
-
-    unset($lang);
 
     if (empty($CFG->lang)) {
         if (empty($SESSION->lang)) {
