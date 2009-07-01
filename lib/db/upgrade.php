@@ -593,6 +593,40 @@ function xmldb_main_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081500);
     }
+    if ($result && $oldversion < 2008081300) {
+    /// Define table blog_association to be created
+        $table = new xmldb_table('blog_association');
+
+    /// Adding fields to table blog_association
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('blogid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+    /// Adding keys to table blog_association
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $table->add_key('blogid', XMLDB_KEY_FOREIGN, array('blogid'), 'post', array('id'));
+ 
+        if (!$dbman->table_exists($table)) {
+        /// Launch create table for blog_association
+            $dbman->create_table($table);
+        }
+
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008081300);
+    }   
+    if ($result && $oldversion < 2008081301) {
+
+    /// Changing list of values (enum) of field publishstate on table post to 'draft', 'site', 'public', 'group', 'course'
+        $table = new xmldb_table('post');
+        $field = new xmldb_field('publishstate', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('draft', 'site', 'public', 'group', 'course'), 'draft', 'attachment');
+
+    /// Launch change of list of values for field publishstate
+        $dbman->change_field_enum($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008081301);
+    }
 
     if ($result && $oldversion < 2008081501) {
         $table = new xmldb_table('question');
@@ -2264,6 +2298,15 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             unset_config($name, 'quiz');
         } 
         upgrade_main_savepoint($result, 2009063000);
+    }
+    
+    if ($result && $oldversion < 2009070100) {
+        // MDL-19677 Change $CFG->bloglevel to BLOG_SITE_LEVEL if BLOG_COURSE_LEVEL or BLOG_GROUP_LEVEL
+        $current_bloglevel = get_config(null, 'bloglevel');
+
+        if ($current_bloglevel == BLOG_GROUP_LEVEL || $current_bloglevel == BLOG_COURSE_LEVEL) {
+            set_config('bloglevel', BLOG_SITE_LEVEL);
+        }
     }
 
     return $result;
