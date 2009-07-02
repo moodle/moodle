@@ -635,33 +635,7 @@
 
 
     if ($bulkoperations) {
-        echo '
-        <script type="text/javascript">
-        //<![CDATA[
-        function checksubmit(form) {
-            var destination = form.formaction.options[form.formaction.selectedIndex].value;
-            if (destination == "" || !checkchecked(form)) {
-                form.formaction.selectedIndex = 0;
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        function checkchecked(form) {
-            var inputs = document.getElementsByTagName(\'INPUT\');
-            var checked = false;
-            inputs = filterByParent(inputs, function() {return form;});
-            for(var i = 0; i < inputs.length; ++i) {
-                if (inputs[i].type == \'checkbox\' && inputs[i].checked) {
-                    checked = true;
-                }
-            }
-            return checked;
-        }
-        //]]>
-        </script>
-            ';
+        $PAGE->requires->js('user/user.js');
         echo '<form action="action_redir.php" method="post" id="participantsform" onsubmit="return checksubmit(this);">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -879,10 +853,7 @@
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<div id="noscriptparticipantsform" style="display: inline;">';
         echo '<input type="submit" value="'.get_string('ok').'" /></div>';
-        echo '<script type="text/javascript">'.
-               "\n//<![CDATA[\n".
-               'document.getElementById("noscriptparticipantsform").style.display = "none";'.
-               "\n//]]>\n".'</script>';
+        $PAGE->requires->js_function_call('hide_item', Array('noscriptparticipantsform'));
         echo '</div>';
         echo '</div>';
         echo '</form>';
