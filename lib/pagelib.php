@@ -874,7 +874,7 @@ class moodle_page {
             debugging('Some code on this page is using the horrible legacy mechanism $CFG->stylesheets to include links to ' .
                     'extra stylesheets. This is deprecated. Please use $PAGE->requires->css(...) instead.', DEBUG_DEVELOPER);
             foreach ($CFG->stylesheets as $stylesheet) {
-                $this->page->requires->css($stylesheet, true);
+                $this->requires->css($stylesheet, true);
             }
         }
 
