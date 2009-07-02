@@ -1501,7 +1501,7 @@ class grade_structure {
      * @return string
      */
     public function get_hiding_icon($element, $gpr) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if (!has_capability('moodle/grade:manage', $this->context) and
             !has_capability('moodle/grade:hide', $this->context)) {
@@ -1529,7 +1529,7 @@ class grade_structure {
 
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'" class="hide"><img alt="'.s($strshow).
-                    '" src="'.$CFG->pixpath.'/t/'.$icon.'.gif" ' .
+                    '" src="'.$OUTPUT->old_icon_url('t/' . $icon) . '" ' .
                     'class="iconsmall" title="'.s($tooltip).'"/></a>';
 
         } else {

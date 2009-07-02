@@ -905,7 +905,7 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz) {
  * @param $question the random question.
  */
 function print_random_option_icon($question) {
-    global $CFG;
+    global $OUTPUT;
     if (!empty($question->questiontext)) {
         $icon = 'withsubcat';
         $tooltip = get_string('randomwithsubcat', 'quiz');
@@ -913,7 +913,7 @@ function print_random_option_icon($question) {
         $icon = 'nosubcat';
         $tooltip = get_string('randomnosubcat', 'quiz');
     }
-    echo  '<img src="' . $CFG->pixpath . '/i/' . $icon . '.png" alt="' .
+    echo '<img src="' . $OUTPUT->old_icon_url('i/' . $icon) . '" alt="' .
             $tooltip . '" title="' . $tooltip . '" class="uihint" />';
 
 }

@@ -266,12 +266,12 @@
     die;
 
 function get_action_icon($url, $icon, $alt, $tooltip) {
-    global $CFG;
+    global $OUTPUT;
     return '<a title="' . $tooltip . '" href="'. $url . '">' .
-            '<img src="' . $CFG->pixpath . '/t/' . $icon . '.gif" class="iconsmall" alt="' . $alt . '" /></a> ';
+            '<img src="' . $OUTPUT->old_icon_url('t/' . $icon) . '" class="iconsmall" alt="' . $alt . '" /></a> ';
 }
 function get_spacer() {
-    global $CFG;
-    return '<img src="' . $CFG->pixpath . '/spacer.gif" class="iconsmall" alt="" /> ';
+    global $OUTPUT;
+    return '<img src="' . $OUTPUT->old_icon_url('spacer') . '" class="iconsmall" alt="" /> ';
 }
 ?>

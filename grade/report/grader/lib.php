@@ -1380,7 +1380,7 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     protected function get_collapsing_icon($element) {
-        global $CFG;
+        global $OUTPUT;
 
         $contract_expand_icon = '';
         // If object is a category, display expand/contract icon
@@ -1398,7 +1398,7 @@ class grade_report_grader extends grade_report {
                 $expand_contract = 'switch_whole';
             }
             $url = $this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>$expand_contract, 'sesskey'=>sesskey()));
-            $contract_expand_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
+            $contract_expand_icon = '<a href="'.$url.'"><img src="'.$OUTPUT->old_icon_url('t/' . $expand_contract) . '" class="iconsmall" alt="'
                                     .${'str'.$expand_contract}.'" title="'.${'str'.$expand_contract}.'" /></a>';
         }
         return $contract_expand_icon;

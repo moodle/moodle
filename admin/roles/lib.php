@@ -413,9 +413,9 @@ abstract class capability_table_with_risks extends capability_table_base {
      *      get_all_risks array. Must start with 'risk'.
      */
     function get_risk_icon($type) {
-        global $CFG;
+        global $OUTPUT;
         if (!isset($this->riskicons[$type])) {
-            $iconurl = $CFG->pixpath . '/i/' . str_replace('risk', 'risk_', $type) . '.gif';
+            $iconurl = $OUTPUT->old_icon_url('i/' . str_replace('risk', 'risk_', $type));
             $this->riskicons[$type] = link_to_popup_window($this->risksurl, 'docspopup', 
                     '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />',
                     0, 0, get_string($type, 'admin'), null, true);

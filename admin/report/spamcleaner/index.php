@@ -215,7 +215,7 @@ function filter_user($user, $keywords, $count) {
         $user->description = '<h3>'.get_string('spamfromblog', 'report_spamcleaner').'</h3>'.$user->summary;
         unset($user->summary);
     }
-    if (preg_match('#<img.*src=[\"\']('.$CFG->pixpath.')#', $user->description, $matches)
+    if (preg_match('#<img.*src=[\"\']('.$CFG->wwwroot.')#', $user->description, $matches)
         && $image_search) {
         $result = false;
         foreach ($keywords as $keyword) {

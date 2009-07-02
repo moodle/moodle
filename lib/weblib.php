@@ -2017,8 +2017,7 @@ function cleanAttributes2($htmlArray){
  * @return string
  */
 function replace_smilies(&$text) {
-
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (empty($CFG->emoticons)) { /// No emoticons defined, nothing to process here
         return;
@@ -2048,7 +2047,7 @@ function replace_smilies(&$text) {
             $alttext = get_string($image, 'pix');
             $alttext = preg_replace('/^\[\[(.*)\]\]$/', '$1', $alttext); /// Clean alttext in case there isn't lang string for it.
             $e[$lang][] = $emoticon;
-            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $CFG->pixpath .'/s/'. $image .'.gif" />';
+            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $OUTPUT->old_icon_url('s/' . $image) . '" />';
         }
     }
 
@@ -5494,7 +5493,7 @@ function print_location_comment($file, $line, $return = false)
  *
  */
 function print_arrow($direction='up', $strsort=null, $return=false) {
-    global $CFG;
+    global $OUTPUT;
 
     if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
         return null;
@@ -5523,7 +5522,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
         $strsort  = get_string('sort' . $sortdir, 'grades');
     }
 
-    $return = ' <img src="'.$CFG->pixpath.'/t/' . $direction . '.gif" alt="'.$strsort.'" /> ';
+    $return = ' <img src="'.$OUTPUT->old_icon_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
 
     if ($return) {
         return $return;

@@ -232,7 +232,7 @@ function action_url($filterpath, $action) {
 function action_icon($url, $icon, $straction) {
     global $CFG;
     return '<a href="' . $url . '" title="' . $straction . '">' .
-            '<img src="' . $CFG->pixpath . '/t/' . $icon . '.gif" alt="' . $straction . '" /></a> ';
+            '<img src="' . $OUTPUT->old_icon_url('t/' . $icon) . '" alt="' . $straction . '" /></a> ';
 }
 
 function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
