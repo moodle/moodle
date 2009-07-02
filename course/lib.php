@@ -1332,9 +1332,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $customicon = $modinfo->cms[$modnumber]->icon;
                 if (!empty($customicon)) {
                     if (substr($customicon, 0, 4) === 'mod/') {
-                        $icon = "$CFG->modpixpath/".substr($customicon, 4);
+                        list($modname, $iconname) = explode('/', substr($customicon, 4), 2);
+                        $icon = $OUTPUT->mod_icon_url($iconname, $modname);
                     } else {
-                        $icon = "$CFG->pixpath/".$customicon;
+                        $icon = $OUTPUT->old_icon_url($customicon);
                     }
                 } else {
                     $icon = "" . $OUTPUT->mod_icon_url('icon', $mod->modname) . "";

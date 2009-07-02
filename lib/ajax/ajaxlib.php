@@ -41,7 +41,6 @@ function setup_core_javascript(page_requirements_manager $requires) {
     $config = array(
         'wwwroot' => $CFG->httpswwwroot, // Yes, really. See above.
         'pixpath' => $CFG->pixpath,
-        'modpixpath' => $CFG->modpixpath,
         'sesskey' => sesskey(),
     );
     if (debugging('', DEBUG_DEVELOPER)) {
