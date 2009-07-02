@@ -29,8 +29,12 @@
     $strlivelogs = get_string("livelogs");
     $strupdatesevery = get_string("updatesevery", "moodle", COURSE_LIVELOG_REFRESH);
 
-    print_header("$strlivelogs ($strupdatesevery)", "$strlivelogs", "", "", 
-                 '<meta http-equiv="Refresh" content="'.COURSE_LIVELOG_REFRESH.'; url=live.php?id='.$course->id.'" />');
+    $PAGE->set_url('/course/report/log/live.php', Array('id'=>$course->id));
+    $PAGE->set_generaltype('popup');
+    $PAGE->set_title("$strlivelogs ($strupdatesevery)");
+    $PAGE->set_periodic_refresh_delay(COURSE_LIVELOG_REFRESH);
+    $PAGE->set_heading($strlivelogs);
+    echo $OUTPUT->header();
 
     $user=0;
     $date=time() - 3600;
@@ -38,7 +42,7 @@
     print_log($course, $user, $date, "l.time DESC", $page, 500,
               "live.php?id=$course->id&amp;user=$user&amp;date=$date");
 
-    print_footer('none');
+    echo $OUTPUT->footer();
 
     exit;
 
