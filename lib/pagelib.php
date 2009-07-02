@@ -515,12 +515,6 @@ class moodle_page {
     public function set_course($course) {
         global $COURSE, $PAGE;
 
-        //TODO: veryveryveryuglyhack - waiting for Tim to be fixed properly MDL-
-        if (during_initial_install()) {
-            return;
-        }
-        // end of veryveryuglyhack
-
         if (empty($course->id)) {
             throw new coding_exception('$course passed to moodle_page::set_course does not look like a proper course object.');
         }
