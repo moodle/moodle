@@ -4,7 +4,7 @@
  *
  * For naming conventions, see lib/db/access.php.
  */
-$quizreport_statistics_capabilities = array(
+$quiz_statistics_capabilities = array(
     'quizreport/statistics:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
