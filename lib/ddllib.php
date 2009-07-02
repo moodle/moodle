@@ -130,3 +130,20 @@ class ddl_change_structure_exception extends ddl_exception {
         parent::__construct('ddlexecuteerror', NULL, $errorinfo);
     }
 }
+
+/**
+ * Error changing db structure, caused by some depency found
+ * like trying to modify one field having related indexes.
+ */
+class ddl_dependency_exception extends ddl_exception {
+
+    function __construct($targettype, $targetname, $offendingtype, $offendingname, $debuginfo=null) {
+        $a = new object();
+        $a->targettype = $targettype;
+        $a->targetname = $targetname;
+        $a->offendingtype = $offendingtype;
+        $a->offendingname = $offendingname;
+
+        parent::__construct('ddldependencyerror', $a, $debuginfo);
+    }
+}

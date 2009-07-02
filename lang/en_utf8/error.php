@@ -171,6 +171,7 @@ $string['dbsessionmysqlpacketsize'] = 'Serious session error detected.<br /><br 
 $string['ddlexecuteerror'] = 'DDL sql execution error';
 $string['ddlfieldalreadyexists'] = 'Field \"$a\" does not exist';
 $string['ddlfieldnotexist'] = 'Field \"$a->fieldname\" does not exist in table \"$a->tablename\"';
+$string['ddldependencyerror'] = '$a->targettype \"$a->targetname\" cannot be modifed. Dependency found with $a->offendingtype \"$a->offendingname\"';
 $string['ddltablealreadyexists'] = 'Table \"$a\" already exists';
 $string['ddltablenotexist'] = 'Table \"$a\" does not exist';
 $string['ddlunknownerror'] = 'Unknown DDL library error';

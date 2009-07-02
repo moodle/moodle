@@ -611,6 +611,8 @@ class database_manager {
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
+    /// Check for dependencies in the DB before performing any action
+        $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getDropFieldSQL($xmldb_table, $xmldb_field)) {
             throw new ddl_exception('ddlunknownerror', null, 'drop_field sql not generated');
@@ -679,6 +681,30 @@ class database_manager {
     }
 
     /**
+     * This function will change the default of the field in the table passed as arguments
+     * One null value in the default field means delete the default
+     *
+     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_field field object (full specs are required)
+     * @return void
+     */
+    public function change_field_default(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
+        }
+    /// Check the field exists
+        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
+        }
+
+        if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
+            return; //Empty array = nothing to do = no error
+        }
+
+        $this->execute_sql_arr($sqlarr);
+    }
+
+    /**
      * This function will drop the existing enum of the field in the table passed as arguments
      *
      * TODO: Moodle 2.1 - Drop drop_enum_from_field()
@@ -703,30 +729,6 @@ class database_manager {
         }
 
         if (!$sqlarr = $this->generator->getDropEnumSQL($xmldb_table, $xmldb_field)) {
-            return; //Empty array = nothing to do = no error
-        }
-
-        $this->execute_sql_arr($sqlarr);
-    }
-
-    /**
-     * This function will change the default of the field in the table passed as arguments
-     * One null value in the default field means delete the default
-     *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
-     * @return void
-     */
-    public function change_field_default(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-        if (!$this->table_exists($xmldb_table)) {
-            throw new ddl_table_missing_exception($xmldb_table->getName());
-        }
-    /// Check the field exists
-        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
-        }
-
-        if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
             return; //Empty array = nothing to do = no error
         }
 
@@ -775,6 +777,35 @@ class database_manager {
         }
 
         $this->execute_sql_arr($sqlarr);
+    }
+
+    /**
+     * This function will check, for the given table and field, if there there is any dependency
+     * preventing the field to be modified. It's used by all the public methods that perform any
+     * DDL change on fields, throwing one ddl_dependency_exception if dependencies are found
+     */
+    private function check_field_dependencies(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+
+    /// Check the table exists
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
+        }
+
+    /// Check the field exists
+        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
+        }
+
+    /// Check the field isn't in use by any index in the table
+        if ($indexes = $this->mdb->get_indexes($xmldb_table->getName(), false)) {
+            foreach ($indexes as $indexname => $index) {
+                $columns = $index['columns'];
+                if (in_array($xmldb_field->getName(), $columns)) {
+                    throw new ddl_dependency_exception('column', $xmldb_table->getName() . '->' . $xmldb_field->getName(),
+                                                       'index', $indexname . ' (' . implode(', ', $columns)  . ')');
+                }
+            }
+        }
     }
 
     /**
