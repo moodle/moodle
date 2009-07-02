@@ -242,14 +242,12 @@
             $fromform->coursemodule = $cm->id;
         }
 
-        require_login($course); // needed to setup proper $COURSE
 
         if (!empty($fromform->coursemodule)) {
             $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
         }
-        require_capability('moodle/course:manageactivities', $context);
 
         $fromform->course = $course->id;
         $fromform->modulename = clean_param($fromform->modulename, PARAM_SAFEDIR);  // For safety
