@@ -834,7 +834,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforei
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $OUTPUT;
     if (!question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }
@@ -855,7 +855,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
 
     // Build the icon.
     return link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quiz->id, 'questionpreview',
-            "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreviewquestion\" /> $strpreviewlabel",
+            "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strpreviewquestion\" /> $strpreviewlabel",
             0, 0, $strpreviewquestion, QUESTION_PREVIEW_POPUP_OPTIONS, true);
 }
 

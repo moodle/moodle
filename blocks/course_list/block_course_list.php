@@ -13,7 +13,7 @@ class block_course_list extends block_list {
     }
 
     function get_content() {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -24,7 +24,7 @@ class block_course_list extends block_list {
         $this->content->icons = array();
         $this->content->footer = '';
 
-        $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
+        $icon  = "<img src=\"" . $OUTPUT->old_icon_url('i/course') . "\"".
                  " class=\"icon\" alt=\"".get_string("coursecategory")."\" />";
        
         $adminseesall = true;

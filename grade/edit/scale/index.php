@@ -103,10 +103,10 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
 
         $buttons = "";
         $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$scale->id\"><img".
-                    " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
+                    " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         if (!$used) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=".sesskey()."\"><img".
-                        " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+                        " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
         $data[] = $line;
@@ -132,11 +132,11 @@ if ($scales = grade_scale::fetch_all_global()) {
         $buttons = "";
         if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
             $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$scale->id\"><img".
-                        " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
+                        " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         }
         if (!$used and has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=".sesskey()."\"><img".
-                        " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+                        " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
         $data[] = $line;

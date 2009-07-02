@@ -94,7 +94,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 
     function _get_draftfiles($draftid, $suffix) {
-        global $USER, $CFG;
+        global $USER, $OUTPUT;
         $html = '';
         if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
         }
@@ -121,8 +121,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $icon    = mimeinfo_from_type('icon', $mimetype);
             $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
             $html .= '<li>';
-            $html .= "<a href=\"$viewurl\"><img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
-            $html .= "<a href=\"###\" onclick='rm_file(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";;
+            $html .= "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
+            $html .= "<a href=\"###\" onclick='rm_file(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" /></a>";;
             $html .= '</li>';
         }
         $html .= '</ul>';

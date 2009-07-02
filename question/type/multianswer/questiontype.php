@@ -277,8 +277,8 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+        global $QTYPES, $CFG, $USER, $OUTPUT;
 
-        global $QTYPES, $CFG, $USER;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
         $formatoptions = new stdClass;
@@ -456,7 +456,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo "<input $style $readonly $popup name=\"$inputname\"";
                     echo "  type=\"text\" value=\"".s($response)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
-                        echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
+                        echo "<img src=\"" . $OUTPUT->old_icon_url('i/feedback') . "\" alt=\"$feedback\" />";
                     }
                     echo $feedbackimg;
                     break;
@@ -483,7 +483,7 @@ class embedded_cloze_qtype extends default_questiontype {
                         echo $outputoptions;
                         echo '</select></span>';
                         if (!empty($feedback) && !empty($USER->screenreader)) {
-                            echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
+                            echo "<img src=\"" . $OUTPUT->old_icon_url('i/feedback') . "\" alt=\"$feedback\" />";
                         }
                         echo $feedbackimg;
                     }else if ($wrapped->options->layout == 1 || $wrapped->options->layout == 2){

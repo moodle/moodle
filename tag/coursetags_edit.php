@@ -141,7 +141,7 @@ print_header_simple($title, '', $nav, '', '', false);
                             </div>
                             <div class="coursetag_edit_input3" id="coursetag_sug_btn">
                                 <a title="$arrowtitle">
-                                    <img src="$CFG->pixpath/t/arrow_left.gif" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
+                                    <img src="" . $OUTPUT->old_icon_url('t/arrow_left') . "" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
                                 </a>
                             </div>
                         </div>

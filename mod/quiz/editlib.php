@@ -285,7 +285,7 @@ function quiz_move_question_down($layout, $questionid) {
 function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
         $reordertool = false, $quiz_qbanktool = false,
         $hasattempts = false) {
-    global $USER, $CFG, $QTYPES, $DB;
+    global $USER, $CFG, $QTYPES, $DB, $OUTPUT;
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'quiz');
     $strgrade = get_string('grade');
@@ -492,7 +492,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                     }
                     echo "<a title=\"$strmoveup\" href=\"" .
                             $pageurl->out_action(array('up' => $question->id)) . "\"><img
-                             src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall
+                             src=\"" . $OUTPUT->old_icon_url('t/up') . "\" class=\"iconsmall
                             $upbuttonclass\" alt=\"$strmoveup\" /></a>";
                 }
 
@@ -501,7 +501,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if (!$hasattempts) {
                     echo "<a title=\"$strmovedown\" href=\"" .
                             $pageurl->out_action(array('down' => $question->id)) . "\"><img
-                            src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\"" .
+                            src=\"" . $OUTPUT->old_icon_url('t/down') . "\" class=\"iconsmall\"" .
                             " alt=\"$strmovedown\" /></a>";
                 }
             }
@@ -510,7 +510,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 if (!$hasattempts) {
                     echo "<a title=\"$strremove\" href=\"" .
                             $pageurl->out_action(array('remove' => $question->id)) . "\">
-                            <img src=\"$CFG->pixpath/t/delete.gif\" " .
+                            <img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" " .
                             "class=\"iconsmall\" alt=\"$strremove\" /></a>";
                 }
             }

@@ -52,9 +52,9 @@ if ($keys) {
         $line[2] = empty($key->validuntil) ? get_string('always') : userdate($key->validuntil);
 
         $buttons  = "<a title=\"$stredit\" href=\"key.php?id=$key->id\"><img".
-                    " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
+                    " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         $buttons .= "<a title=\"$strdelete\" href=\"key.php?id=$key->id&amp;delete=1\"><img".
-                    " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+                    " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
 
         $line[3] = $buttons;
         $data[] = $line;

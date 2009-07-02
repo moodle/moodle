@@ -469,7 +469,7 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
  * @return mixed boolean/string
  **/
 function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = false, $return = false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
     $actions = array();
@@ -477,16 +477,16 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
     if (has_capability('mod/lesson:edit', $context)) {
         if ($printmove) {
             $actions[] = "<a title=\"".get_string('move')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=move&amp;pageid=$page->id\">
-                          <img src=\"$CFG->pixpath/t/move.gif\" class=\"iconsmall\" alt=\"".get_string('move')."\" /></a>\n";
+                          <img src=\"" . $OUTPUT->old_icon_url('t/move') . "\" class=\"iconsmall\" alt=\"".get_string('move')."\" /></a>\n";
         }
         $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"".get_string('update')."\" /></a>\n";
+                      <img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"".get_string('update')."\" /></a>\n";
         
         $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"".get_string('preview')."\" /></a>\n";
+                      <img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"".get_string('preview')."\" /></a>\n";
 
         $actions[] = "<a title=\"".get_string('delete')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=confirmdelete&amp;pageid=$page->id\">
-                      <img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"".get_string('delete')."\" /></a>\n";
+                      <img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"".get_string('delete')."\" /></a>\n";
 
         if ($printaddpage) {
             // Add page drop-down

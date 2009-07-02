@@ -902,7 +902,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
  * @return string|void
  */
 function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$hook='', $type = 'print') {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -940,7 +940,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         if ( $entry->sourceglossaryid ) {
             $icon = "minus.gif";   // graphical metaphor (minus) for deleting an imported entry
         } else {
-            $icon = "$CFG->pixpath/t/delete.gif";
+            $icon = $OUTPUT->old_icon_url('t/delete');
         }
 
         //Decide if an entry is editable:
@@ -953,7 +953,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $return .= $icon;
             $return .= "\" class=\"iconsmall\" alt=\"" . get_string("delete") .$altsuffix."\" /></a> ";
 
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
         } elseif ( $importedentry ) {
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -1720,7 +1720,7 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
  * @param object $comment
  */
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1757,11 +1757,11 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context)) {
         echo "<a href=\"comment.php?id=$comment->id&amp;action=edit\"><img
-               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" /></a> ";
+               alt=\"" . get_string("edit") . "\" src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" /></a> ";
     }
     if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context) ) {
         echo "<a href=\"comment.php?id=$comment->id&amp;action=delete\"><img
-               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" /></a>";
+               alt=\"" . get_string("delete") . "\" src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" /></a>";
     }
 
     echo '</div></td></tr>';

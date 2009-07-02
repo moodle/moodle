@@ -38,7 +38,7 @@ class block_tags extends block_base {
 
     function get_content() {
 
-        global $CFG, $SITE, $USER, $SCRIPT;
+        global $CFG, $SITE, $USER, $SCRIPT, $OUTPUT;
 
         if (empty($CFG->usetags)) {
             $this->content->text = '';
@@ -231,6 +231,7 @@ class block_tags extends block_base {
                     $arrowtitle = get_string('arrowtitle', $tagslang);
                     $coursetaghelpbutton = helpbutton('addtags', 'adding tags', $tagslang, TRUE, FALSE, '', TRUE);
                     $sesskey = sesskey();
+                    $arrowright = $OUTPUT->old_icon_url('t/arrow_left');
                     $this->content->footer .= <<<EOT
                         <hr />
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"
@@ -252,7 +253,7 @@ class block_tags extends block_base {
                                 </div>
                                 <div class="coursetag_form_input3" id="coursetag_sug_btn">
                                     <a title="$arrowtitle">
-                                        <img src="$CFG->pixpath/t/arrow_left.gif" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
+                                        <img src="$arrowright" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
                                     </a>
                                 </div>
                             </div>

@@ -13,7 +13,7 @@ class block_course_summary extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -33,7 +33,7 @@ class block_course_summary extends block_base {
             } else {
                 $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->page->course->id;
             }
-            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"".get_string('edit')."\" /></a></div>";
+            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" alt=\"".get_string('edit')."\" /></a></div>";
         }
         $this->content->footer = '';
 

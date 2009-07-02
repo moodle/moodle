@@ -382,7 +382,7 @@ class theme_config {
      * @return string the URL for that icon.
      */
     public function old_icon_url($iconname) {
-        return $this->if->old_icon_url($iconname);
+        return $this->get_icon_finder()->old_icon_url($iconname);
     }
 
     /**
@@ -396,7 +396,7 @@ class theme_config {
      * @return string the URL for that icon.
      */
     public function mod_icon_url($iconname, $module) {
-        return $this->if->mod_icon_url($iconname, $module);
+        return $this->get_icon_finder()->mod_icon_url($iconname, $module);
     }
 
     /**

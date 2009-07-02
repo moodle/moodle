@@ -162,7 +162,7 @@
             if ($editing) {
                 $streditsummary = get_string('editsummary');
                 echo "<a title=\"$streditsummary\" ".
-                     " href=\"course/editsection.php?id=$section->id\"><img src=\"$CFG->pixpath/t/edit.gif\" ".
+                     " href=\"course/editsection.php?id=$section->id\"><img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" ".
                      " class=\"iconsmall\" alt=\"$streditsummary\" /></a><br /><br />";
             }
 
