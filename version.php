@@ -9,4 +9,4 @@
     $version = 2009070100;  // YYYYMMDD   = date of the last version bump
                             //         XX = daily increments
 
-    $release = '2.0 dev (Build: 20090701)';  // Human-friendly version name
+    $release = '2.0 dev (Build: 20090702)';  // Human-friendly version name
