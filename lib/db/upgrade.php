@@ -608,19 +608,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008081300);
     }
 
-    if ($result && $oldversion < 2008081301) {
-
-    /// Changing list of values (enum) of field publishstate on table post to 'draft', 'site', 'public', 'group', 'course'
-        $table = new xmldb_table('post');
-        $field = new xmldb_field('publishstate', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('draft', 'site', 'public', 'group', 'course'), 'draft', 'attachment');
-
-    /// Launch change of list of values for field publishstate
-        $dbman->change_field_enum($table, $field);
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008081301);
-    }
-
     if ($result && $oldversion < 2008081500) {
     /// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
         $table = new xmldb_table('question');
