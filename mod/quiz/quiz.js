@@ -221,3 +221,7 @@ quiz_secure_window = {
         }
     }
 };
+
+function reveal_start_button() {
+    document.getElementById('quizstartbutton').style.cssText = '';
+}

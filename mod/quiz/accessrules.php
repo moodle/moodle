@@ -691,7 +691,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * a JavaScript altert before the button submits.
      */
     public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
-        global $CFG, $SESSION;
+        global $CFG, $SESSION, $PAGE;
 
         $attempturl = $this->_quizobj->start_attempt_url() . '?cmid=' . $this->_quizobj->get_cmid() .
                 '&sesskey=' . sesskey();
@@ -709,9 +709,8 @@ class securewindow_access_rule extends quiz_access_rule_base {
         echo "window.open('$attempturl', '$window', '$this->windowoptions');", '" />';
 
     /// JavaScript to reveal the button.
-        echo '<script type="text/javascript">' . "\n";
-        echo "document.getElementById('quizstartbutton').style.cssText = '';\n";
-        echo "</script>\n";
+        echo $PAGE->requires->js('mod/quiz/quiz.js')->asap();
+        echo $PAGE->requires->js_function_call('reveal_start_button')->asap();
 
     /// A noscript tag to explains that this quiz only works with JavaScript enabled.
         echo '<noscript>';
