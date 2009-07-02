@@ -3841,6 +3841,12 @@ body#user-index .rolesform {
   display:inline;
 }
 
+body.mod-chat-gui_ajax .yui-layout-doc .yui-layout-unit .yui-layout-wrap .yui-layout-hd h2 {
+  font-size:100%;
+  padding:0px;
+  font-weight:normal;
+}
+
 /***
  *** Modules: Choice
  ***/

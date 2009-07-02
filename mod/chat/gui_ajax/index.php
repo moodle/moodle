@@ -53,45 +53,39 @@ $str_sending = get_string('sending', 'chat');
 $str_title   = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
 $str_inputarea = get_string('inputarea', 'chat');
 $str_userlist  = get_string('userlist',  'chat');
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title></title>
-<link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/reset-fonts-grids/reset-fonts-grids.css" />
 
-<link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/resize/assets/skins/sam/resize.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/assets/skins/sam/layout.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/assets/skins/sam/button.css" />
-<script type="text/javascript">
-var chat_cfg = <?php echo json_encode(array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id, 'userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$str_chat,'chatroom_name'=>$str_title)); ?>;
-var chat_lang = <?php echo json_encode(array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist)); ?>;
-</script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/element/element-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/resize/resize-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/layout/layout-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/container/container.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/connection/connection-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/json/json-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/button/button-min.js"></script>
-<script type="text/javascript" src="<?php echo $CFG->httpswwwroot;?>/lib/yui/selector/selector-min.js"></script>
-<script type="text/javascript" src="script.js"></script>
-<style type="text/css">
-#listing a{text-decoration:none;color:gray}
-#listing a:hover {text-decoration:underline;color:white;background:blue}
-#listing{padding: .5em}
-</style>
-</head>
-<body class=" yui-skin-sam">
+$PAGE->set_generaltype('popup');
+$PAGE->set_title('Chat');
+
+$PAGE->requires->yui_lib('dom');
+$PAGE->requires->yui_lib('element');
+$PAGE->requires->yui_lib('dragdrop');
+$PAGE->requires->yui_lib('resize');
+$PAGE->requires->yui_lib('layout');
+$PAGE->requires->yui_lib('container');
+$PAGE->requires->yui_lib('connection');
+$PAGE->requires->yui_lib('json');
+$PAGE->requires->yui_lib('button');
+$PAGE->requires->yui_lib('selector');
+$PAGE->requires->data_for_js('chat_cfg', array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id, 'userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$str_chat,'chatroom_name'=>$str_title));
+$PAGE->requires->data_for_js('chat_lang', array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist));
+$PAGE->requires->js('mod/chat/gui_ajax/script.js');
+$PAGE->add_body_class('yui-skin-sam');
+
+$PAGE->requires->css('lib/yui/reset-fonts-grids/reset-fonts-grids.css');
+$PAGE->requires->css('lib/yui/resize/assets/skins/sam/resize.css');
+$PAGE->requires->css('lib/yui/layout/assets/skins/sam/layout.css');
+$PAGE->requires->css('lib/yui/button/assets/skins/sam/button.css');
+
+echo $OUTPUT->header();
+echo "<style type='text/css'> #listing a{text-decoration:none;color:gray} #listing a:hover {text-decoration:underline;color:white;background:blue} #listing{padding: .5em}</style>";
+echo $OUTPUT->heading($str_title,1);
+echo <<<DIVS
 <div id="chat_header">
-<h1><?php echo $str_title;?></h1>
 </div>
 <div id="chat_input">
     <input type="text" id="input_msgbox" value="" size="48" />
-    <input type="button" id="btn_send" value="<?php echo $str_send;?>" />
+    <input type="button" id="btn_send" value="$str_send" />
 </div>
 <div id="chat_user_list">
 <ul id="listing">
@@ -105,5 +99,6 @@ var chat_lang = <?php echo json_encode(array('send'=>$str_send, 'sending'=>$str_
 </div>
 <div id="notify">
 </div>
-</body>
-</html>
+DIVS;
+echo $OUTPUT->footer();
+?>

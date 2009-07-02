@@ -54,6 +54,8 @@ if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $course->id
 // setup $PAGE so that format_text will work properly
 $PAGE->set_cm($cm, $course, $chat);
 
+$OUTPUT->initialise_deprecated_cfg_pixpath();
+
 if($CFG->chat_use_cache){
     $cache = new file_cache();
     $users = $cache->get('user');
