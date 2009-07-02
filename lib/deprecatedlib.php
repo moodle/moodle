@@ -1751,16 +1751,17 @@ function make_mod_upload_directory($courseid) {
  * @deprecated Required to make the old $THEME->customcorners setting work.
  */
 class custom_corners_renderer_factory extends standard_renderer_factory {
-    /**
-     * Constructor.
-     * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
-     */
-    public function __construct($theme, $page) {
+    public function __construct($theme) {
+        parent::__construct($theme);
         global $CFG;
-        parent::__construct($theme, $page);
         require_once($CFG->themedir . '/custom_corners/renderers.php');
-        $this->renderers = array('core' => new custom_corners_core_renderer($this->opencontainers, $this->page, $this));
+    }
+    /* Implement the subclass method. */
+    public function get_renderer($module, $page) {
+        if ($module == 'core') {
+            return new custom_corners_core_renderer($page);
+        }
+        return parent::get_renderer($module, $page);
     }
 }
 

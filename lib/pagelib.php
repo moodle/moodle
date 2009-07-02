@@ -133,6 +133,9 @@ class moodle_page {
      */
     protected $_wherethemewasinitialised = null;
 
+    /** @var xhtml_container_stack tracks XHTML tags on this page that have been opened but not closed. */
+    protected $_opencontainers;
+
     /**
      * Sets the page to refresh after a given delay (in seconds) using meta refresh
      * in {@link standard_head_html()} in outputlib.php
@@ -418,6 +421,18 @@ class moodle_page {
      */
     public function get_periodicrefreshdelay() {
         return $this->_periodicrefreshdelay;
+    }
+
+    /**
+     * Please do not call this method directly use the ->opencontainers syntax. {@link __get()}
+     * @return xhtml_container_stack tracks XHTML tags on this page that have been opened but not closed.
+     *      mainly for internal use by the rendering code.
+     */
+    public function get_opencontainers() {
+        if (is_null($this->_opencontainers)) {
+            $this->_opencontainers = new xhtml_container_stack();
+        }
+        return $this->_opencontainers;
     }
 
     /**
@@ -802,6 +817,8 @@ class moodle_page {
         $this->_theme = theme_config::load($themename);
         if ($this === $PAGE) {
             $THEME = $this->_theme;
+            // Support legacy code.
+            $this->_theme->setup_cfg_paths();
         }
     }
 
@@ -893,14 +910,9 @@ class moodle_page {
 
         if ($this === $PAGE) {
             $THEME = $this->_theme;
+            $OUTPUT = $this->_theme->get_renderer('core', $this);
+            // Support legacy code.
             $this->_theme->setup_cfg_paths();
-            if (CLI_SCRIPT) {
-                $classname = 'cli_renderer_factory';
-            } else {
-                $classname = $this->_theme->rendererfactory;
-            }
-            $rendererfactory = new $classname($this->_theme, $this);
-            $OUTPUT = $rendererfactory->get_renderer('core');
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();

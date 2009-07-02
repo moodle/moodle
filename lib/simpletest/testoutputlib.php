@@ -45,12 +45,12 @@ class testable_renderer_factory extends renderer_factory_base {
     public $createcalls = array();
 
     public function __construct() {
-        parent::__construct(null, null);
+        parent::__construct(null);
     }
 
-    public function create_renderer($module) {
+    public function get_renderer($module, $page) {
         $this->createcalls[] = $module;
-        return new moodle_core_renderer(new xhtml_container_stack(), null, null);
+        return new moodle_core_renderer($page);
     }
 
     public function standard_renderer_class_for_module($module) {
@@ -103,20 +103,9 @@ class renderer_factory_base_test extends UnitTestCase {
         // Set up.
         $factory = new testable_renderer_factory();
         // Exercise SUT.
-        $renderer = $factory->get_renderer('modulename');
+        $renderer = $factory->get_renderer('modulename', new moodle_page);
         // Verify outcome
         $this->assertEqual(array('modulename'), $factory->createcalls);
-    }
-
-    public function test_get_caches_repeat_calls() {
-        // Set up.
-        $factory = new testable_renderer_factory();
-        // Exercise SUT.
-        $renderer1 = $factory->get_renderer('modulename');
-        $renderer2 = $factory->get_renderer('modulename');
-        // Verify outcome
-        $this->assertEqual(array('modulename'), $factory->createcalls);
-        $this->assertIdentical($renderer1, $renderer2);
     }
 
     public function test_standard_renderer_class_for_module_core() {
@@ -167,12 +156,12 @@ class standard_renderer_factory_test extends UnitTestCase {
     }
 
     public function test_get_core_renderer() {
-        $renderer = $this->factory->get_renderer('core');
+        $renderer = $this->factory->get_renderer('core', new moodle_page);
         $this->assertIsA($renderer, 'moodle_core_renderer');
     }
 
     public function test_get_test_renderer() {
-        $renderer = $this->factory->get_renderer('test');
+        $renderer = $this->factory->get_renderer('test', new moodle_page);
         $this->assertIsA($renderer, 'moodle_test_renderer');
     }
 }
@@ -198,12 +187,12 @@ class custom_corners_renderer_factory_test extends UnitTestCase {
     }
 
     public function test_get_core_renderer() {
-        $renderer = $this->factory->get_renderer('core');
+        $renderer = $this->factory->get_renderer('core', new moodle_page);
         $this->assertIsA($renderer, 'custom_corners_core_renderer');
     }
 
     public function test_get_test_renderer() {
-        $renderer = $this->factory->get_renderer('test');
+        $renderer = $this->factory->get_renderer('test', new moodle_page);
         $this->assertIsA($renderer, 'moodle_test_renderer');
     }
 }
@@ -315,7 +304,7 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('test');
+        $renderer = $factory->get_renderer('test', new moodle_page);
 
         // Verify outcome
         $this->assertIsA($renderer, 'moodle_test_renderer');
@@ -330,7 +319,7 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('test');
+        $renderer = $factory->get_renderer('test', new moodle_page);
 
         // Verify outcome
         $this->assertIsA($renderer, 'testrenderertheme_test_renderer');
@@ -348,7 +337,7 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('core');
+        $renderer = $factory->get_renderer('core', new moodle_page);
 
         // Verify outcome
         $this->assertIsA($renderer, 'parentrenderertheme_core_renderer');
@@ -368,7 +357,7 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('core');
+        $renderer = $factory->get_renderer('core', new moodle_page);
 
         // Verify outcome
         $this->assertIsA($renderer, 'ctheme_core_renderer');
@@ -411,7 +400,7 @@ class template_renderer_factory_test extends UnitTestCase {
         $CFG->themedir = $CFG->dataroot . '/' . $this->workspace;
         $this->foldertocleanup = $CFG->themedir;
 
-        $this->page = new stdClass;
+        $this->page = new moodle_page;
     }
 
     public function tearDown() {
@@ -532,10 +521,10 @@ class template_renderer_factory_test extends UnitTestCase {
         $this->make_theme_template_dir('mytheme', 'core');
         $this->make_theme_template_dir('parenttheme', 'test');
         $this->make_theme_template_dir('standardtemplate', 'test');
-        $factory = new testable_template_renderer_factory($theme, $this->page);
+        $factory = new testable_template_renderer_factory($theme);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('test');
+        $renderer = $factory->get_renderer('test', $this->page);
 
         // Verify outcome
         $this->assertEqual('moodle_test_renderer', $renderer->get_copied_class());
@@ -719,11 +708,9 @@ class template_renderer_test extends UnitTestCase {
         parent::setUp();
         $this->templatefolder = $CFG->dataroot . '/temp/template_renderer_fixtures/test';
         make_upload_directory('temp/template_renderer_fixtures/test');
-        $page = new stdClass;
-        $page->course = new stdClass;
+        $page = new moodle_page;
         $this->renderer = new template_renderer('moodle_test_renderer',
-                array($this->templatefolder), new xhtml_container_stack(), $page, null);
-        $this->savedtemplates = array();
+                array($this->templatefolder), $page);
     }
 
     public function tearDown() {
@@ -781,13 +768,11 @@ class template_renderer_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_core_renderer_test extends UnitTestCase {
-    protected $containerstack;
     protected $renderer;
 
     public function setUp() {
         parent::setUp();
-        $this->containerstack = new xhtml_container_stack();
-        $this->renderer = new moodle_core_renderer($this->containerstack, null, null);
+        $this->renderer = new moodle_core_renderer(new moodle_page);
     }
 
     public function test_select_menu_simple() {

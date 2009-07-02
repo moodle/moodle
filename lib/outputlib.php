@@ -60,7 +60,7 @@ interface renderer_factory {
      * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @return object an object implementing the requested renderer interface.
      */
-    public function get_renderer($module);
+    public function get_renderer($module, $page);
 }
 
 
@@ -78,50 +78,16 @@ interface renderer_factory {
  * @since     Moodle 2.0
  */
 abstract class renderer_factory_base implements renderer_factory {
-    /** The theme we are rendering for. */
+    /** @var theme_config the theme we belong to. */
     protected $theme;
-
-    /** The page we are doing output for. */
-    protected $page;
-
-    /** Used to cache renderers as they are created. */
-    protected $renderers = array();
-
-    protected $opencontainers;
 
     /**
      * Constructor.
-     * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
+     * @param theme_config $theme the theme we belong to.
      */
-    public function __construct($theme, $page) {
+    public function __construct($theme) {
         $this->theme = $theme;
-        $this->page = $page;
-        $this->opencontainers = new xhtml_container_stack();
     }
-
-    /* Implement the interface method. */
-    public function get_renderer($module) {
-        // Cache the renderers by module name, and delegate the actual
-        // construction to the create_renderer method.
-        if (!array_key_exists($module, $this->renderers)) {
-            $this->renderers[$module] = $this->create_renderer($module);
-        }
-
-        return $this->renderers[$module];
-    }
-
-    /**
-     * Subclasses should override this method to actually create an instance of
-     * the appropriate renderer class, based on the module name. That is,
-     * this method should implement the same contract as
-     * {@link renderer_factory::get_renderer}.
-     *
-     * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
-     * @return object an object implementing the requested renderer interface.
-     */
-    abstract public function create_renderer($module);
-
     /**
      * For a given module name, return the name of the standard renderer class
      * that defines the renderer interface for that module.
@@ -155,22 +121,13 @@ abstract class renderer_factory_base implements renderer_factory {
  * @since     Moodle 2.0
  */
 class standard_renderer_factory extends renderer_factory_base {
-    /**
-     * Constructor.
-     * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
-     */
-    public function __construct($theme, $page) {
-        parent::__construct($theme, $page);
-    }
-
     /* Implement the subclass method. */
-    public function create_renderer($module) {
+    public function get_renderer($module, $page) {
         if ($module == 'core') {
-            return new moodle_core_renderer($this->opencontainers, $this->page, $this);
+            return new moodle_core_renderer($page);
         } else {
             $class = $this->standard_renderer_class_for_module($module);
-            return new $class($this->opencontainers, $this->get_renderer('core'), $this->page);
+            return new $class($page, $this->get_renderer('core', $page));
         }
     }
 }
@@ -184,14 +141,13 @@ class standard_renderer_factory extends renderer_factory_base {
  * @since     Moodle 2.0
  */
 class cli_renderer_factory extends standard_renderer_factory {
-    /**
-     * Constructor.
-     * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
-     */
-    public function __construct($theme, $page) {
-        parent::__construct($theme, $page);
-        $this->renderers = array('core' => new cli_core_renderer($this->opencontainers, $this->page, $this));
+    /* Implement the subclass method. */
+    public function get_renderer($module, $page) {
+        if ($module == 'core') {
+            return new cli_core_renderer($page);
+        } else {
+            parent::get_renderer($module, $page);
+        }
     }
 }
 
@@ -220,9 +176,9 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
      * @param object $theme the theme we are rendering for.
      * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($theme, $page) {
+    public function __construct($theme) {
         global $CFG;
-        parent::__construct($theme, $page);
+        parent::__construct($theme);
 
         // Initialise $this->prefixes.
         $renderersfile = $theme->dir . '/renderers.php';
@@ -240,18 +196,18 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
     }
 
     /* Implement the subclass method. */
-    public function create_renderer($module) {
+    public function get_renderer($module, $page) {
         foreach ($this->prefixes as $prefix) {
             $classname = $prefix . $module . '_renderer';
             if (class_exists($classname)) {
                 if ($module == 'core') {
-                    return new $classname($this->opencontainers, $this->page, $this);
+                    return new $classname($page);
                 } else {
-                    return new $classname($this->opencontainers, $this->get_renderer('core'), $this->page);
+                    return new $classname($page, $this->get_renderer('core', $page));
                 }
             }
         }
-        return parent::create_renderer($module);
+        return parent::get_renderer($module, $page);
     }
 }
 
@@ -292,9 +248,9 @@ class template_renderer_factory extends renderer_factory_base {
      * @param object $theme the theme we are rendering for.
      * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($theme, $page) {
+    public function __construct($theme) {
         global $CFG;
-        parent::__construct($theme, $page);
+        parent::__construct($theme);
 
         // Initialise $this->searchpaths.
         if ($theme->name != 'standardtemplate') {
@@ -313,7 +269,7 @@ class template_renderer_factory extends renderer_factory_base {
     }
 
     /* Implement the subclass method. */
-    public function create_renderer($module) {
+    public function get_renderer($module, $page) {
         // Refine the list of search paths for this module.
         $searchpaths = array();
         foreach ($this->searchpaths as $rootpath) {
@@ -325,7 +281,7 @@ class template_renderer_factory extends renderer_factory_base {
 
         // Create a template_renderer that copies the API of the standard renderer.
         $copiedclass = $this->standard_renderer_class_for_module($module);
-        return new template_renderer($copiedclass, $searchpaths, $this->opencontainers, $this->page, $this);
+        return new template_renderer($copiedclass, $searchpaths, $page);
     }
 }
 
@@ -352,8 +308,8 @@ class moodle_renderer_base {
      * @param $opencontainers the xhtml_container_stack to use.
      * @param moodle_page $page the page we are doing output for.
      */
-    public function __construct($opencontainers, $page) {
-        $this->opencontainers = $opencontainers;
+    public function __construct($page) {
+        $this->opencontainers = $page->opencontainers;
         $this->page = $page;
     }
 
@@ -440,22 +396,11 @@ class template_renderer extends moodle_renderer_base {
      * @param $searchpaths a list of folders to search for templates in.
      * @param $opencontainers the xhtml_container_stack to use.
      * @param moodle_page $page the page we are doing output for.
-     * @param renderer_factory $rendererfactory the renderer factory that created us.
      */
-    public function __construct($copiedclass, $searchpaths, $opencontainers, $page, $rendererfactory) {
-        parent::__construct($opencontainers, $page);
+    public function __construct($copiedclass, $searchpaths, $page) {
+        parent::__construct($page);
         $this->copiedclass = new ReflectionClass($copiedclass);
         $this->searchpaths = $searchpaths;
-        $this->rendererfactory = $rendererfactory;
-    }
-
-    /**
-     * Get a renderer for another part of Moodle.
-     * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
-     * @return object an object implementing the requested renderer interface.
-     */
-    public function get_other_renderer($module) {
-        $this->rendererfactory->get_renderer($module);
     }
 
     /* PHP magic method implementation. */
@@ -710,27 +655,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     const END_HTML_TOKEN = '%%ENDHTML%%';
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
     protected $contenttype;
-    protected $rendererfactory;
     protected $metarefreshtag = '';
-    /**
-     * Constructor
-     * @param $opencontainers the xhtml_container_stack to use.
-     * @param moodle_page $page the page we are doing output for.
-     * @param renderer_factory $rendererfactory the renderer factory that created us.
-     */
-    public function __construct($opencontainers, $page, $rendererfactory) {
-        parent::__construct($opencontainers, $page);
-        $this->rendererfactory = $rendererfactory;
-    }
-
-    /**
-     * Get a renderer for another part of Moodle.
-     * @param $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
-     * @return object an object implementing the requested renderer interface.
-     */
-    public function get_other_renderer($module) {
-        $this->rendererfactory->get_renderer($module);
-    }
 
     public function doctype() {
         global $CFG;
@@ -1603,16 +1528,15 @@ class theme_config {
 /// added a block when anther theme was selected).
 ////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @var string the name of this theme. Set automatically.
-     */
+    /** @var string the name of this theme. Set automatically. */
     public $name;
-    /**
-     * @var string the folder where this themes fiels are stored. $CFG->themedir . '/' . $this->name
-     */
+    /** @var string the folder where this themes fiels are stored. $CFG->themedir . '/' . $this->name */
     public $dir;
 
+    /** @var string Name of the renderer factory class to use. */
     public $rendererfactory = 'standard_renderer_factory';
+    /** @var renderer_factory Instance of the renderer_factory class. */
+    protected $rf = null;
 
     /**
      * If you want to do custom processing on the CSS before it is output (for
@@ -1637,7 +1561,7 @@ class theme_config {
      * @return theme_config an instance of this class.
      */
     public static function load($themename) {
-        global $CFG, $PAGE;
+        global $CFG;
 
         // We have to use the variable name $THEME (upper case) becuase that
         // is what is used in theme config.php files.
@@ -1658,6 +1582,25 @@ class theme_config {
         $THEME->update_legacy_information();
 
         return $THEME;
+    }
+
+    /**
+     * Get the renderer for a part of Moodle for this theme.
+     * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
+     * @param moodle_page $page the page we are rendering
+     * @return moodle_renderer_base the requested renderer.
+     */
+    public function get_renderer($module, $page) {
+        if (is_null($this->rf)) {
+            if (CLI_SCRIPT) {
+                $classname = 'cli_renderer_factory';
+            } else {
+                $classname = $this->rendererfactory;
+            }
+            $this->rf = new $classname($this);
+        }
+
+        return $this->rf->get_renderer($module, $page);
     }
 
     /**
