@@ -3568,7 +3568,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
  * @return string|bool Depending on $return
  */
 function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
-    global $CFG;
+    global $OUTPUT;
     static $recentIE;
 
     if (!isset($recentIE)) {
@@ -3576,7 +3576,7 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
     }
 
     if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
-        $output .= '<img src="'. $CFG->pixpath .'/spacer.gif" width="'. $sizex .'" height="'. $sizey .'"'.
+        $output .= '<img src="'. $OUTPUT->old_icon_url('spacer') . '" width="'. $sizex .'" height="'. $sizey .'"'.
                    ' class="png" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
                    ' filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.
                    "'$url', sizingMethod='scale') ".
@@ -4192,7 +4192,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         }
         $menu[$url] = $localname;
         if (empty($THEME->navmenuiconshide)) {
-            $menustyle[$url] = 'style="background-image: url('.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif);"';  // Unfortunately necessary to do this here
+            $menustyle[$url] = 'style="background-image: url('.$OUTPUT->mod_icon_url('icon', $mod->modname) . ');"';  // Unfortunately necessary to do this here
         }
         $previousmod = $mod;
     }
@@ -4318,7 +4318,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         $class = 'activity '.$mod->modname;
         $class .= ($cmid == $mod->id) ? ' selected' : '';
         $menu[] = '<li class="'.$class.'">'.
-                  '<img src="'.$CFG->modpixpath.'/'.$mod->modname.'/icon.gif" alt="" />'.
+                  '<img src="'.$OUTPUT->mod_icon_url('icon', $mod->modname) . '" alt="" />'.
                   '<a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
     }
 
@@ -4465,7 +4465,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  */
 function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
 
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $output = '';
     $strscale = get_string('scale');
@@ -4483,7 +4483,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     }
     $output .= choose_from_menu($grades, $name, $current, '', '', 0, true);
 
-    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true);
 
@@ -4507,13 +4507,13 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
  */
 function print_scale_menu($courseid, $name, $current, $return=false) {
 
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $output = '';
     $strscales = get_string('scales');
     $output .= choose_from_menu(get_scales_menu($courseid), $name, $current, '', '', 0, true);
 
-    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true);
     if ($return) {
@@ -4534,12 +4534,12 @@ function print_scale_menu($courseid, $name, $current, $return=false) {
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 
-    global $CFG;
+    global $OUTPUT;
 
     $output = '';
     $strscales = get_string('scales');
 
-    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
+    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$scale->name.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scaleid='. $scale->id, 'ratingscale',
                                      $linkobject, 400, 500, $scale->name, 'none', true);
     if ($return) {
@@ -4576,7 +4576,7 @@ function mdie($msg='', $errorcode=1) {
  * @return string Link to help button
  */
 function editorhelpbutton(){
-    global $CFG, $SESSION;
+    global $CFG, $SESSION, $OUTPUT;
     $items = func_get_args();
     $i = 1;
     $urlparams = array();
@@ -4627,7 +4627,7 @@ function editorhelpbutton(){
     $alttag = join (', ', $titles);
 
     $paramstring = join('&', $urlparams);
-    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$CFG->pixpath .'/help.gif" />';
+    $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->old_icon_url('help') . '" />';
     return link_to_popup_window(s('/lib/form/editorhelp.php?'.$paramstring), 'popup', $linkobject, 400, 500, $alttag, 'none', true);
 }
 

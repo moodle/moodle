@@ -89,7 +89,7 @@
             $dimmed = $cm->visible ? '' : 'class="dimmed"';
             $modulename = get_string('modulename', $cm->modname);
             echo '<tr class="r'.$ri++.'">';
-            echo "<td class=\"cell c0 actvity\"><img src=\"$CFG->modpixpath/$cm->modname/icon.gif\" class=\"icon\" alt=\"$modulename\" />";
+            echo "<td class=\"cell c0 actvity\"><img src=\"" . $OUTPUT->mod_icon_url('icon', $cm->modname) . "\" class=\"icon\" alt=\"$modulename\" />";
             echo "<a $dimmed title=\"$modulename\" href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\">".format_string($cm->name)."</a></td>";
             echo "<td class=\"cell c1 numviews\">";
             if (!empty($views[$cm->id]->numviews)) {

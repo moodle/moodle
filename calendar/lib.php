@@ -232,7 +232,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 }
                 $event = $events[$eventid];
                 if(!empty($event->modulename)) {
-                    $popupicon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
+                    $popupicon = $OUTPUT->mod_icon_url('icon', $event->modulename) . '';
                     $popupalt  = $event->modulename;
 
                 } else if ($event->courseid == SITEID) {                                // Site event
@@ -484,7 +484,7 @@ function calendar_add_event_metadata($event) {
 
         $modulename = get_string('modulename', $event->modulename);
         $eventtype = get_string($event->eventtype, $event->modulename);
-        $icon = $CFG->modpixpath.'/'.$event->modulename.'/icon.gif';
+        $icon = $OUTPUT->mod_icon_url('icon', $event->modulename) . '';
 
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';

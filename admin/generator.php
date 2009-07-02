@@ -1184,7 +1184,6 @@ class generator_web extends generator {
 
     public function setup() {
         global $CFG;
-        $CFG->pixpath = $CFG->wwwroot. '/pix';
         $this->mform = new generator_form();
 
         $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
@@ -1249,7 +1248,6 @@ class fake_form {
 class generator_form extends moodleform {
     function definition() {
         global $generator, $CFG;
-        $CFG->pixpath = $CFG->wwwroot. '/pix';
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'do_generation', 1);

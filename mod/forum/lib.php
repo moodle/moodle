@@ -6103,7 +6103,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
  * @global object
  */
 function forum_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if ($activity->content->parent) {
         $class = 'reply';
@@ -6120,7 +6120,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<div class="title">';
     if ($detail) {
         $aname = s($activity->name);
-        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
+        echo "<img src=\"" . $OUTPUT->mod_icon_url('icon', $activity->type) . "\" ".
              "class=\"icon\" alt=\"{$aname}\" />";
     }
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d={$activity->content->discussion}"

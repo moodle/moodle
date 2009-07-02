@@ -578,7 +578,7 @@
             $currenttab = 'update';
             require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
-        $icon = '<img src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt=""/>';
+        $icon = '<img src="'.$OUTPUT->mod_icon_url('icon', $module->name) . '" alt=""/>';
 
         print_heading_with_help($pageheading, 'mods', $module->name, $icon);
         $mform->display();

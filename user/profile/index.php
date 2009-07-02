@@ -178,21 +178,21 @@ function profile_category_icons ($category) {
         $editstr .= '<a title="'.$strdelete.'" href="index.php?id='.$category->id.'&amp;action=deletecategory';
         $editstr .= '"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" alt="'.$strdelete.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->old_icon_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     /// Move up
     if ($category->sortorder > 1) {
         $editstr .= '<a title="'.$strmoveup.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=up&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->old_icon_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     /// Move down
     if ($category->sortorder < $categorycount) {
         $editstr .= '<a title="'.$strmovedown.'" href="index.php?id='.$category->id.'&amp;action=movecategory&amp;dir=down&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->old_icon_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     return $editstr;
@@ -227,14 +227,14 @@ function profile_field_icons($field) {
     if ($field->sortorder > 1) {
         $editstr .= '<a title="'.$strmoveup.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=up&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/up') . '" alt="'.$strmoveup.'" class="iconsmall" /></a> ';
      } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->old_icon_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     /// Move down
     if ($field->sortorder < $fieldcount) {
         $editstr .= '<a title="'.$strmovedown.'" href="index.php?id='.$field->id.'&amp;action=movefield&amp;dir=down&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/down') . '" alt="'.$strmovedown.'" class="iconsmall" /></a> ';
     } else {
-        $editstr .= '<img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="iconsmall" /> ';
+        $editstr .= '<img src="'.$OUTPUT->old_icon_url('spacer') . '" alt="" class="iconsmall" /> ';
     }
 
     return $editstr;

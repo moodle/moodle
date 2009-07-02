@@ -1251,7 +1251,7 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
  */
 function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
-    global $CFG, $THEME, $USER;
+    global $CFG, $THEME, $USER, $OUTPUT;
 
     if (isset($THEME->cellcontent2)) {
         $bgcolor =  ' bgcolor="'.$THEME->cellcontent2.'"';
@@ -1267,7 +1267,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         // activity icon
-        $src = "$CFG->modpixpath/$activity->type/icon.gif";
+        $src = "" . $OUTPUT->mod_icon_url('icon', $activity->type) . "";
         print '<img src="'.$src.'" class="icon" alt="'.$activity->type.'" /> ';
 
         // link to activity

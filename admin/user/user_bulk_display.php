@@ -55,7 +55,7 @@ foreach ($columns as $column) {
         $columndir = 'asc';
     } else {
         $columndir = $dir == 'asc' ? 'desc' : 'asc';
-        $columnicon = ' <img src="'.$CFG->pixpath.'/t/'.($dir == 'asc' ? 'down' : 'up' ).'.gif" alt="" />';
+        $columnicon = ' <img src="'.$OUTPUT->old_icon_url('t/'.($dir == 'asc' ? 'down' : 'up' )).'f" alt="" />';
     }
     $table->head[] = '<a href="user_bulk_display.php?sort='.$column.'&amp;dir='.$columndir.'">'.$strtitle.'</a>'.$columnicon;
     $table->align[] = 'left';

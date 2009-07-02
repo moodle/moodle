@@ -253,7 +253,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
 
     // Re-order
     $updown = '';
-    $spacer = '<img src="' . $CFG->pixpath . '/spacer.gif" class="iconsmall" alt="" /> ';
+    $spacer = '<img src="' . $OUTPUT->old_icon_url('spacer') . '" class="iconsmall" alt="" /> ';
     if ($filterinfo->active != TEXTFILTER_DISABLED) {
         if (!$isfirstrow) {
             $updown .= action_icon(action_url($filter, 'up'), 'up', get_string('up'));

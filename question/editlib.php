@@ -576,9 +576,9 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     }
 
     protected function print_icon($icon, $title, $url) {
-        global $CFG;
+        global $OUTPUT;
         echo '<a title="' . $title . '" href="' . $url . '">
-                <img src="' . $CFG->pixpath . '/' . $icon . '" class="iconsmall" alt="' . $title . '" /></a>';
+                <img src="' . $OUTPUT->old_icon_url($icon) . '" class="iconsmall" alt="' . $title . '" /></a>';
     }
 
     public function get_required_fields() {

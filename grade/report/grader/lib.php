@@ -474,7 +474,7 @@ class grade_report_grader extends grade_report {
     * @return void
     */
     public function print_toggle($type, $return=false) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $icons = array('eyecons' => 't/hide.gif',
                        'calculations' => 't/calc.gif',
@@ -510,7 +510,7 @@ class grade_report_grader extends grade_report {
 
         $string = ${'str' . $show_hide};
 
-        $img = '<img src="'.$CFG->pixpath.'/'.$image_name.'" class="iconsmall" alt="'
+        $img = '<img src="'.$OUTPUT->old_icon_url($image_name).'" class="iconsmall" alt="'
                       .$string.'" title="'.$string.'" />'. "\n";
 
         $retval = '<div class="gradertoggle">' . $img . '<a href="' . $this->baseurl . "&amp;toggle=$toggle_action&amp;toggle_type=$type\">"

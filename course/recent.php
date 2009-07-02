@@ -223,7 +223,7 @@
                     $name        = format_string($cm->name);
                     $modfullname = $modnames[$cm->modname];
 
-                    $image = "<img src=\"$CFG->modpixpath/$cm->modname/icon.gif\" class=\"icon\" alt=\"$modfullname\" />";
+                    $image = "<img src=\"" . $OUTPUT->mod_icon_url('icon', $cm->modname) . "\" class=\"icon\" alt=\"$modfullname\" />";
                     echo "<h4>$image $modfullname".
                          " <a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\" $linkformat>$name</a></h4>";
                }

@@ -2765,7 +2765,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
  * This is used by course/recent.php
  */
 function assignment_print_recent_mod_activity($activity, $courseid, $detail, $modnames)  {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     echo '<table border="0" cellpadding="3" cellspacing="0" class="assignment-recent">';
 
@@ -2776,7 +2776,7 @@ function assignment_print_recent_mod_activity($activity, $courseid, $detail, $mo
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo "<img src=\"$CFG->modpixpath/assignment/icon.gif\" ".
+        echo "<img src=\"" . $OUTPUT->mod_icon_url('icon', 'assignment') . "\" ".
              "class=\"icon\" alt=\"$modname\">";
         echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';

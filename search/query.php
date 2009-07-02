@@ -336,7 +336,7 @@
                 if ($listing->doctype == 'user'){ // A special handle for users                    
                     $icon = print_user_picture ($listing->userid, 0, true, 0, true, false) ;
                 } else {
-                    $iconpath = $CFG->modpixpath.'/'.$listing->doctype.'/icon.gif';
+                    $iconpath = $OUTPUT->mod_icon_url('icon', $listing->doctype);
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";
                 }
               	$coursename = $DB->get_field('course', 'fullname', array('id' => $listing->courseid));

@@ -229,7 +229,7 @@
                 $rowclass = 'dimmed_text';
             }
         } else {
-            $icons = '<img src="' . $CFG->pixpath . '/spacer.gif" alt="" class="spacer" />';
+            $icons = '<img src="' . $OUTPUT->old_icon_url('spacer') . '" alt="" class="spacer" />';
         }
 
         // Move icons.
@@ -275,14 +275,14 @@ function enable_disable_button($qtypename, $createable) {
 }
 
 function icon_html($action, $qtypename, $icon, $alt, $tip) {
-    global $CFG;
+    global $OUTPUT;
     if ($tip) {
         $tip = 'title="' . $tip . '" ';
     }
     $html = ' <form action="' . admin_url('qtypes.php') . '" method="post"><div>';
     $html .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
     $html .= '<input type="image" name="' . $action . '" value="' . $qtypename .
-            '" src="' . $CFG->pixpath . '/' . $icon . '" alt="' . $alt . '" ' . $tip . '/>';
+            '" src="' . $OUTPUT->old_icon_url($icon) . '" alt="' . $alt . '" ' . $tip . '/>';
     $html .= '</div></form>';
     return $html;
 }

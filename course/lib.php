@@ -1184,7 +1184,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
  * Prints a section full of activity modules
  */
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false) {
-    global $CFG, $USER, $DB, $PAGE;
+    global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
     static $initialised;
 
@@ -1296,7 +1296,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
                      ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
-                     '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
+                     '<img class="movetarget" src="'.$OUTPUT->old_icon_url('movehere') . '" '.
                      ' alt="'.$strmovehere.'" /></a><br />
                      ';
             }
@@ -1337,7 +1337,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         $icon = "$CFG->pixpath/".$customicon;
                     }
                 } else {
-                    $icon = "$CFG->modpixpath/$mod->modname/icon.gif";
+                    $icon = "" . $OUTPUT->mod_icon_url('icon', $mod->modname) . "";
                 }
 
                 //Accessibility: for files get description via icon.
@@ -1518,7 +1518,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     if ($ismoving) {
         echo '<li><a title="'.$strmovefull.'"'.
              ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.sesskey().'">'.
-             '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
+             '<img class="movetarget" src="'.$OUTPUT->old_icon_url('movehere') . '" '.
              ' alt="'.$strmovehere.'" /></a></li>
              ';
     }
@@ -1925,20 +1925,20 @@ function print_category_info($category, $depth, $showcourses = false) {
                     echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
                     echo '<img alt="'.$strallowguests.'" src="'.$OUTPUT->old_icon_url('i/guest') . '" /></a>';
                 } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
                 if ($course->password) {
                     echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
                     echo '<img alt="'.$strrequireskey.'" src="'.$OUTPUT->old_icon_url('i/key') . '" /></a>';
                 } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
                 if ($course->summary) {
                     link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
                                           '<img alt="'.$strsummary.'" src="'.$OUTPUT->old_icon_url('i/info') . '" />',
                                            400, 500, $strsummary);
                 } else {
-                    echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
                 echo '</td></tr>';
             }

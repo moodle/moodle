@@ -7,7 +7,7 @@ class block_activity_modules extends block_list {
     }
 
     function get_content() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -37,7 +37,7 @@ class block_activity_modules extends block_list {
         foreach ($modfullnames as $modname => $modfullname) {
             if ($modname != 'label') {
                 $this->content->items[] = '<a href="'.$CFG->wwwroot.'/mod/'.$modname.'/index.php?id='.$course->id.'">'.$modfullname.'</a>';
-                $this->content->icons[] = '<img src="'.$CFG->modpixpath.'/'.$modname.'/icon.gif" class="icon" alt="" />';
+                $this->content->icons[] = '<img src="'.$OUTPUT->mod_icon_url('icon', $modname) . '" class="icon" alt="" />';
             }
         }
 

@@ -235,11 +235,11 @@
                     echo '<td>';
                     $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
                     echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                            <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$CFG->pixpath .'/movehere.gif" />
+                            <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
                           </a>';
 
                         // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                        // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$CFG->pixpath .'/movehere.gif" hspace="1" height="16" width="80" border="0" />';
+                        // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" hspace="1" height="16" width="80" border="0" />';
                         // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
                         // feedback_edit_print_default_form_values($id, $do_show);
                         // echo '</fieldset></form>';
@@ -377,10 +377,10 @@
                         echo '<td>';
                             $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
                             echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                                    <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$CFG->pixpath .'/movehere.gif" />
+                                    <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
                                   </a>';
                             // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                            // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$CFG->pixpath .'/movehere.gif" />';
+                            // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" />';
                             // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
                             // feedback_edit_print_default_form_values($id, $do_show);
                             // echo '</fieldset></form>';
