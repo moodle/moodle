@@ -77,7 +77,7 @@ class repository_filesystem extends repository {
                         $list['list'][] = array(
                             'title' => $file,
                             'children' => array(),
-                            'thumbnail' => $CFG->pixpath .'/f/folder-32.png',
+                            'thumbnail' => $OUTPUT->old_icon_url('f/folder-32'),
                             'path' => $current_path
                             );
                     }

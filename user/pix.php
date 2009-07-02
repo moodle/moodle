@@ -9,7 +9,7 @@
     if (!empty($CFG->forcelogin) and !isloggedin()) {
         // protect images if login required and not logged in;
         // do not use require_login() because it is expensive and not suitable here anyway
-        redirect($CFG->pixpath.'/u/f1.png');
+        redirect($OUTPUT->old_icon_url('u/f1'));
     }
 
     // disable moodle specific debug messages
@@ -32,5 +32,5 @@
     }
 
     // picture was deleted - use default instead
-    redirect($CFG->pixpath.'/u/f1.png');
+    redirect($OUTPUT->old_icon_url('u/f1'));
 ?>

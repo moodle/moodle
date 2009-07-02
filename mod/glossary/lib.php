@@ -1084,13 +1084,13 @@ function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="righ
  * @param bool $insidetable
  */
 function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $insidetable=true) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if ($mode == 'approval' and !$entry->approved) {
         if ($insidetable) {
             echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
         }
-        echo '<a title="'.get_string('approve','glossary').'" href="approve.php?id='.$cm->id.'&amp;eid='.$entry->id.'&amp;mode='.$mode.'"><img align="'.$align.'" src="'.$CFG->pixpath.'/i/approve.gif" style="border:0px; width:34px; height:34px" alt="'.get_string('approve','glossary').'" /></a>';
+        echo '<a title="'.get_string('approve','glossary').'" href="approve.php?id='.$cm->id.'&amp;eid='.$entry->id.'&amp;mode='.$mode.'"><img align="'.$align.'" src="'.$OUTPUT->old_icon_url('i/approve') . '" style="border:0px; width:34px; height:34px" alt="'.get_string('approve','glossary').'" /></a>';
         if ($insidetable) {
             echo '</td></tr></table>';
         }

@@ -665,7 +665,7 @@ function scorm_get_last_attempt($scormid, $userid) {
 }
 
 function scorm_course_format_display($user,$course) {
-    global $CFG, $DB, $PAGE;
+    global $CFG, $DB, $PAGE, $OUTPUT;
 
     $strupdate = get_string('update');
     $strmodule = get_string('modulename','scorm');
@@ -686,7 +686,7 @@ function scorm_course_format_display($user,$course) {
                 $path = $CFG->wwwroot.'/course';
                 $headertext .= '<span class="commands">'.
                         '<a title="'.$strupdate.'" href="'.$path.'/mod.php?update='.$cm->id.'&amp;sesskey='.sesskey().'">'.
-                        '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$strupdate.'" /></a></span>';
+                        '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" alt="'.$strupdate.'" /></a></span>';
             }
             $headertext .= '</td>';
             // Display report link

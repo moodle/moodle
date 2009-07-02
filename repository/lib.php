@@ -924,7 +924,7 @@ abstract class repository {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $CFG->pixpath .'/f/folder-32.png'
+                    'thumbnail' => $OUTPUT->old_icon_url('f/folder-32')
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {

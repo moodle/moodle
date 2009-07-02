@@ -271,12 +271,12 @@
                 if($feedbackitem->position > 1){
                     $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveupitem='.$feedbackitem->id);
                     echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('moveup_item','feedback').'" src="'.$CFG->pixpath .'/t/up.gif" />
+                            <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/up') . '" />
                           </a>';
                     //print the button to move-up the item
                     // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/up.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/up.gif" />';
+                    // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" />';
                     // echo '<input type="hidden" name="moveupitem" value="'.$feedbackitem->id.'" />';
                     // feedback_edit_print_default_form_values($id, $do_show);
                     // echo '</fieldset></form>';
@@ -288,12 +288,12 @@
                 if($feedbackitem->position < $lastposition - 1){
                     $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movedownitem='.$feedbackitem->id);
                     echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('movedown_item','feedback').'" src="'.$CFG->pixpath .'/t/down.gif" />
+                            <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/down') . '" />
                           </a>';
                     //print the button to move-down the item
                     // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/down.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/down.gif" />';
+                    // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" />';
                     // echo '<input type="hidden" name="movedownitem" value="'.$feedbackitem->id.'" />';
                     // feedback_edit_print_default_form_values($id, $do_show);
                     // echo '</fieldset></form>';
@@ -304,11 +304,11 @@
                 echo '<td>';
                     $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveitem='.$feedbackitem->id);
                     echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('move_item','feedback').'" src="'.$CFG->pixpath .'/t/move.gif" />
+                            <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/move') . '" />
                           </a>';
                     // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/move.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/move.gif" />';
+                    // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" />';
                     // echo '<input type="hidden" name="moveitem" value="'.$feedbackitem->id.'" />';
                     // feedback_edit_print_default_form_values($id, $do_show);
                     // echo '</fieldset></form>';
@@ -318,11 +318,11 @@
                 if($feedbackitem->typ != 'pagebreak') {
                     $buttonlink = 'edit_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&itemid='.$feedbackitem->id.'&typ='.$feedbackitem->typ);
                     echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('edit_item','feedback').'" src="'.$CFG->pixpath .'/t/edit.gif" />
+                            <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/edit') . '" />
                           </a>';
                     // echo '<form action="edit_item.php" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('edit_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/edit.gif" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_edit_button" title="'.get_string('edit_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/edit.gif" />';
+                    // echo '<input title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_edit_button" title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" />';
                     // echo '<input type="hidden" name="itemid" value="'.$feedbackitem->id.'" />';
                     // echo '<input type="hidden" name="typ" value="'.$feedbackitem->typ.'" />';
                     // feedback_edit_print_default_form_values($id, $do_show);
@@ -361,11 +361,11 @@
                 echo '<td>';
                     $buttonlink = 'delete_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&deleteitem='.$feedbackitem->id);
                     echo '<a class="icon delete" title="'.get_string('delete_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('delete_item','feedback').'" src="'.$CFG->pixpath .'/t/delete.gif" />
+                            <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/delete') . '" />
                           </a>';
                 //print the button to drop the item
                 // echo '<form action="delete_item.php" method="post"><fieldset>';
-                // echo '<input class="feedback_delete_button" title="'.get_string('delete_item','feedback').'" type="image" src="'.$CFG->pixpath .'/t/delete.gif" />';
+                // echo '<input class="feedback_delete_button" title="'.get_string('delete_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/delete') . '" />';
                 // echo '<input type="hidden" name="deleteitem" value="'.$feedbackitem->id.'" />';
                 // feedback_edit_print_default_form_values($id, $do_show);
                 // echo '</fieldset></form>';

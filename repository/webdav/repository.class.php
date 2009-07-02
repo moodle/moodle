@@ -109,7 +109,7 @@ class repository_webdav extends repository {
                     }
                     $ret['list'][] = array(
                         'title'=>$title,
-                        'thumbnail'=>$CFG->pixpath.'/f/folder-32.png',
+                        'thumbnail'=>$OUTPUT->old_icon_url('f/folder-32'),
                         'children'=>array(),
                         'date'=>$filedate,
                         'size'=>0,

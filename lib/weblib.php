@@ -4091,7 +4091,7 @@ function update_categories_search_button($search,$page,$perpage) {
  * @return string
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
-    global $CFG, $THEME, $USER, $DB;
+    global $CFG, $THEME, $USER, $DB, $OUTPUT;
     require_once($CFG->dirroot . '/course/lib.php'); // Required for get_fast_modinfo
 
     if (empty($THEME->navmenuwidth)) {
@@ -4204,7 +4204,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                     $CFG->frametarget.'onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->id.'">'.
-                    '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
+                    '<img class="icon log" src="'.$OUTPUT->old_icon_url('i/log') . '" alt="'.$logstext.'" /></a>'."\n".'</li>';
 
     }
     if ($backmod) {
@@ -4737,11 +4737,11 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
  */
 function emoticonhelpbutton($form, $field, $return = false) {
 
-    global $CFG, $SESSION;
+    global $SESSION, $OUTPUT;
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    $imagetext = '<img src="' . $CFG->pixpath . '/s/smiley.gif" alt="" class="emoticon" style="margin-left:3px; padding-right:1px;width:15px;height:15px;" />';
+    $imagetext = '<img src="' . $OUTPUT->old_icon_url('s/smiley') . '" alt="" class="emoticon" style="margin-left:3px; padding-right:1px;width:15px;height:15px;" />';
     $help = helpbutton('emoticons2', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
     if (!$return){
         echo $help;

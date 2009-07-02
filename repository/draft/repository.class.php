@@ -51,7 +51,7 @@ class repository_draft extends repository {
                     'size' => 0,
                     'date' => '',
                     'source'=> $file->get_id(),
-                    'thumbnail' => $CFG->pixpath .'/f/text-32.png'
+                    'thumbnail' => $OUTPUT->old_icon_url('f/text-32')
                 );
                 $list[] = $node;
             }

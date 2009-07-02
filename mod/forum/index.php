@@ -172,7 +172,7 @@
                     } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                         $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                       $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="'.$strmarkallread.'" /></a></span>';
+                                       $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->old_icon_url('t/clear') . '" alt="'.$strmarkallread.'" /></a></span>';
                     } else {
                         $unreadlink = '<span class="read">0</span>';
                     }
@@ -294,7 +294,7 @@
                         } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                             $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                           $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="'.$strmarkallread.'" /></a></span>';
+                                           $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->old_icon_url('t/clear') . '" alt="'.$strmarkallread.'" /></a></span>';
                         } else {
                             $unreadlink = '<span class="read">0</span>';
                         }

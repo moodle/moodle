@@ -182,12 +182,12 @@ class assignment_online extends assignment_base {
 
 
     function print_student_answer($userid, $return=false){
-        global $CFG;
+        global $OUTPUT;
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
         $output = '<div class="files">'.
-                  '<img src="'.$CFG->pixpath.'/f/html.gif" class="icon" alt="html" />'.
+                  '<img src="'.$OUTPUT->old_icon_url('f/html') . '" class="icon" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
                   $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
                   get_string('submission', 'assignment'), 'none', true).
@@ -196,14 +196,14 @@ class assignment_online extends assignment_base {
     }
 
     function print_user_files($userid, $return=false) {
-        global $CFG;
+        global $OUTPUT;
 
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
 
         $output = '<div class="files">'.
-                  '<img align="middle" src="'.$CFG->pixpath.'/f/html.gif" height="16" width="16" alt="html" />'.
+                  '<img align="middle" src="'.$OUTPUT->old_icon_url('f/html') . '" height="16" width="16" alt="html" />'.
                   link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
                   $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
                   get_string('submission', 'assignment'), 'none', true).

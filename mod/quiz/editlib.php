@@ -431,7 +431,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                     echo '<div class="quizpagedelete">';
                     echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
                             $pageurl->out_action(array('deleteemptypage' => $i - 1)) .
-                            '"><img src="' . $CFG->pixpath . '/t/delete.gif" ' .
+                            '"><img src="' . $OUTPUT->old_icon_url('t/delete') . '" ' .
                             'class="iconsmall" alt="' . $strremove . '" /></a>';
                     echo '</div>';
                 }

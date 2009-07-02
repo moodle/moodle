@@ -313,7 +313,7 @@
                 echo '<h3>'.$group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
                     echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.$CFG->wwwroot.'/group/group.php?id='.$group->id.'&amp;courseid='.$group->courseid.'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" />';
+                    echo '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" alt="'.get_string('editgroupprofile').'" />';
                     echo '</a>';
                 }
                 echo '</h3>';
@@ -611,13 +611,13 @@
         $heading .= ": $a->number";
         if (user_can_assign($context, $roleid)) {
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
-            $heading .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
+            $heading .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
         }
         print_heading($heading, 'center', 3);
     } else {
         if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
             $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
-            $editlink .= '<img src="'.$CFG->pixpath.'/i/edit.gif" class="icon" alt="" /></a>';
+            $editlink .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
         } else {
             $editlink = '';
         }

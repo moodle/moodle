@@ -207,7 +207,7 @@ class repository_mahara extends repository {
         $list = array();
          if (!empty($filesandfolders['folders'])) {
             foreach ($filesandfolders['folders'] as $folder) {
-                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $CFG->pixpath .'/f/folder.gif');
+                $list[] =  array('path'=>$folder['id'], 'title'=>$folder['title'], 'date'=>$folder['mtime'], 'size'=>'0', 'children'=>array(), 'thumbnail' => $OUTPUT->old_icon_url('f/folder'));
             }
         }
         if (!empty($filesandfolders['files'])) {

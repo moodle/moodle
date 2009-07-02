@@ -125,7 +125,7 @@ class repository_alfresco extends repository {
                 {
                     $ret['list'][] = array('title'=>$child->child->cm_name,
                         'path'=>$child->child->id,
-                        'thumbnail'=>$CFG->pixpath.'/f/folder-32.png',
+                        'thumbnail'=>$OUTPUT->old_icon_url('f/folder-32') . '',
                         'children'=>array());
                 } elseif ($child->child->type == $file_filter) {
                     $ret['list'][] = array('title'=>$child->child->cm_name,

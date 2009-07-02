@@ -308,7 +308,7 @@ class assignment_upload extends assignment_base {
      * @return string optional
      */
     function print_user_files($userid=0, $return=false) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $mode    = optional_param('mode', '', PARAM_ALPHA);
         $offset  = optional_param('offset', 0, PARAM_INT);
@@ -354,7 +354,7 @@ class assignment_upload extends assignment_base {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
 
                     $output .= '<a href="'.$delurl.'">&nbsp;'
-                              .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
+                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="" /></a> ';
                 }
 
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
@@ -390,7 +390,7 @@ class assignment_upload extends assignment_base {
     }
 
     function print_responsefiles($userid, $return=false) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $mode    = optional_param('mode', '', PARAM_ALPHA);
         $offset  = optional_param('offset', 0, PARAM_INT);
@@ -417,7 +417,7 @@ class assignment_upload extends assignment_base {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;action=response";
 
                     $output .= '<a href="'.$delurl.'">&nbsp;'
-                              .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt=""/></a> ';
+                              .'<img title="'.$strdelete.'" src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt=""/></a> ';
                 }
 
                 $output .= '&nbsp;';

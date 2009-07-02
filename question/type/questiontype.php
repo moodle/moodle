@@ -1027,7 +1027,7 @@ class default_questiontype {
      * @return string the HTML of the link, or nothing it the currenty user is not allowed to edit.
      */
     function get_question_edit_link($question, $cmoptions, $options) {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
     /// Is this user allowed to edit this question?
         if (!empty($options->noeditlink) || !question_has_capability_on($question, 'edit')) {
@@ -1046,7 +1046,7 @@ class default_questiontype {
 
     /// Work out the contents of the link.
         $stredit = get_string('edit');
-        $linktext = '<img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . $stredit . '" />';
+        $linktext = '<img src="' . $OUTPUT->old_icon_url('t/edit') . '" alt="' . $stredit . '" />';
 
         if (!empty($cmoptions->thispageurl)) {
         /// The module allow editing in the same window, print an ordinary link.

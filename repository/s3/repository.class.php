@@ -32,7 +32,7 @@ class repository_s3 extends repository {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail'=>$CFG->pixpath.'/f/folder-32.png',
+                    'thumbnail'=>$OUTPUT->old_icon_url('f/folder-32'),
                     'path'=>$bucket
                     );
                 $tree[] = $folder;

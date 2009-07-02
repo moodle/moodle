@@ -795,11 +795,11 @@ function upgrade_setup_debug($starting) {
  * @global object
  */
 function print_upgrade_reload($url) {
-    global $CFG;
+    global $OUTPUT;
 
     echo "<br />";
     echo '<div class="continuebutton">';
-    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$CFG->pixpath.'/i/reload.gif" alt="" /> '.get_string('reload').'</a>';
+    echo '<a href="'.$url.'" title="'.get_string('reload').'" ><img src="'.$OUTPUT->old_icon_url('i/reload') . '" alt="" /> '.get_string('reload').'</a>';
     echo '</div><br />';
 }
 

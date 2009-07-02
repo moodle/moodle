@@ -128,7 +128,7 @@
         $table->setup();
     
         foreach ($coursemap as $cmap) {
-            $table->add_data(array('<a href="'.htmlspecialchars('unmapcourse.php?id='.$id.'&cmapid='.$cmap->id).'"><img src="'.$CFG->pixpath.'/t/delete.gif" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
+            $table->add_data(array('<a href="'.htmlspecialchars('unmapcourse.php?id='.$id.'&cmapid='.$cmap->id).'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" alt="Delete" /></a> ('.$cmap->shortname.') '.$cmap->fullname));
         }
     
         $table->print_html();

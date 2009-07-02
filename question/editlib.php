@@ -239,11 +239,11 @@ abstract class question_bank_column_base {
      * @return string HTML image tag.
      */
     protected function get_sort_icon($reverse) {
-        global $CFG;
+        global $OUTPUT;
         if ($reverse) {
-            return ' <img src="' . $CFG->pixpath . '/t/up.gif" alt="' . get_string('desc') . '" />';
+            return ' <img src="' . $OUTPUT->old_icon_url('t/up') . '" alt="' . get_string('desc') . '" />';
         } else {
-            return ' <img src="' . $CFG->pixpath . '/t/down.gif" alt="' . get_string('asc') . '" />';
+            return ' <img src="' . $OUTPUT->old_icon_url('t/down') . '" alt="' . get_string('asc') . '" />';
         }
     }
 
@@ -623,10 +623,10 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     }
 
     protected function display_content($question, $rowclasses) {
-        global $CFG;
+        global $OUTPUT;
         if (question_has_capability_on($question, 'use')) {
             link_to_popup_window($this->qbank->preview_question_url($question->id), 'questionpreview',
-                    ' <img src="' . $CFG->pixpath . '/t/preview.gif" class="iconsmall" alt="' . $this->strpreview . '" />',
+                    ' <img src="' . $OUTPUT->old_icon_url('t/preview') . '" class="iconsmall" alt="' . $this->strpreview . '" />',
                     0, 0, $this->strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
         }
     }

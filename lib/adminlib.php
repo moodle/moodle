@@ -4917,7 +4917,7 @@ class admin_setting_manageportfolio extends admin_setting {
      * @return string XHTML to display the control
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $output = print_box_start('generalbox','',true);
 
@@ -4944,10 +4944,10 @@ class admin_setting_manageportfolio extends admin_setting {
 
         foreach ($instances as $i) {
             $row = '';
-            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
-            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get('id') . '"><img src="' . $OUTPUT->old_icon_url('t/edit') . '" alt="' . get_string('edit') . '" /></a>' . "\n";
+            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get('id') . '"><img src="' . $OUTPUT->old_icon_url('t/delete') . '" alt="' . get_string('delete') . '" /></a>' . "\n";
             if (array_key_exists($i->get('plugin'), $insane) || array_key_exists($i->get('id'), $insaneinstances)) {
-                $row .=  '<img src="' . $CFG->pixpath . '/t/show.gif" alt="' . get_string('hidden', 'portfolio') . '" />' . "\n";
+                $row .=  '<img src="' . $OUTPUT->old_icon_url('t/show') . '" alt="' . get_string('hidden', 'portfolio') . '" />' . "\n";
             } else {
                 $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/'
                     . ($i->get('visible') ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get('visible') ? 'hide' : 'show') . '" /></a>' . "\n";

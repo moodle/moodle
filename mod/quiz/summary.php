@@ -88,7 +88,7 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
     }
     $flag = '';
     if ($attemptobj->is_question_flagged($question->id)) {
-        $flag = ' <img src="' . $CFG->pixpath . '/i/flagged.png" alt="' .
+        $flag = ' <img src="' . $OUTPUT->old_icon_url('i/flagged') . '" alt="' .
                 get_string('flagged', 'question') . '" class="questionflag" />';
     }
     $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . $flag . '</a>',

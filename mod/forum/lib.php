@@ -3582,7 +3582,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
                                         $cantrack=true, $forumtracked=true, $canviewparticipants=true, $modcontext=NULL) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     static $rowcount;
     static $strmarkalldread;
@@ -3660,7 +3660,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
+                         '<img src="'.$OUTPUT->old_icon_url('t/clear') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -5416,7 +5416,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
  */
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1, $perpage=100, $cm=NULL) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     if (!$cm) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
@@ -5572,7 +5572,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
                     echo '&nbsp;<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
-                         '<img src="'.$CFG->pixpath.'/t/clear.gif" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
+                         '<img src="'.$OUTPUT->old_icon_url('t/clear') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
                 }
                 echo '</th>';
             }

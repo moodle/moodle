@@ -568,7 +568,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 }
 
 function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     static $strmessagehistory;
 
@@ -587,9 +587,9 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     }
 
     if ($linktext == 'icon') {  // Icon only
-        $fulllink = '<img src="'.$CFG->pixpath.'/t/log.gif" class="iconsmall" alt="'.$strmessagehistory.'" />';
+        $fulllink = '<img src="'.$OUTPUT->old_icon_url('t/log') . '" class="iconsmall" alt="'.$strmessagehistory.'" />';
     } else if ($linktext == 'both') {  // Icon and standard name
-        $fulllink = '<img src="'.$CFG->pixpath.'/t/log.gif" class="iconsmall" alt="" />';
+        $fulllink = '<img src="'.$OUTPUT->old_icon_url('t/log') . '" class="iconsmall" alt="" />';
         $fulllink .= '&nbsp;'.$strmessagehistory;
     } else if ($linktext) {    // Custom name
         $fulllink = $linktext;
