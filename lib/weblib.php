@@ -3267,7 +3267,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
  * @return string|void String or nothing, depending on $return.
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $needrec = false;
     // only touch the DB if we are missing data...
@@ -3332,7 +3332,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         $src = get_file_url($user->id.'/'.$file.'.jpg', null, 'user');
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
-        $src =  "$CFG->pixpath/u/$file.png";
+        $src =  $OUTPUT->old_icon_url('u/' . $file);
     }
     $imagealt = '';
     if ($alttext) {
