@@ -110,7 +110,7 @@ global $OUTPUT;
 /**
  * $THEME is a global that defines the current theme.
  *
- * @global object $THEME
+ * @global theme_config $THEME
  * @name THEME
  */
 global $THEME;
