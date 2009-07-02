@@ -321,12 +321,8 @@ if (!$moving && count($categories) > 1) {
             'document.getElementById(\'bulkmoveinput\').value=1;document.getElementById(\'gradetreeform\').submit()', 0, true, true);
     echo '<div id="noscriptgradetreeform" style="display: inline;">
             <input type="submit" value="'.get_string('go').'" />
-          </div>
-          <script type="text/javascript">
-            //<![CDATA[
-                document.getElementById("noscriptgradetreeform").style.display= "none";
-            //]]>
-          </script>';
+          </div>';
+    echo $PAGE->requires->js_function_call('hide_item', Array('noscriptgradetreeform'))->asap();
 }
 
 echo '</div>';
