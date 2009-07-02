@@ -14,4 +14,5 @@ function xmldb_resource_install() {
     update_log_display_entry('resource', 'update', 'resource', 'name');
     update_log_display_entry('resource', 'add', 'resource', 'name');
 
+    set_config("resource_hide_repository", "1");
 }

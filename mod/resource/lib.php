@@ -35,10 +35,6 @@ global $RESOURCE_WINDOW_OPTIONS; // must be global because it might be included 
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
                                  'menubar', 'toolbar', 'status', 'width', 'height');
 
-if (!isset($CFG->resource_hide_repository)) {
-    set_config("resource_hide_repository", "1");
-}
-
 /**
  * resource_base is the base class for resource types
  *
