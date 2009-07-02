@@ -640,7 +640,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
     $importnames = array();
     if (!empty($imports)) {
-        foreach ($imports as $plugin) {
+        foreach ($imports as $plugin => $plugindir) {
             $pluginstr = get_string('modulename', 'gradeimport_'.$plugin);
             $url = $url_prefix.'import/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'import' and $active_plugin == $plugin ) {
@@ -657,9 +657,9 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
 
     // standard export plugins
     if ($exports = get_plugin_list('gradeexport')) { // Get all installed export plugins
-        foreach ($exports as $key => $plugin) { // Remove ones we can't see
+        foreach ($exports as $plugin => $plugindir) { // Remove ones we can't see
             if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
-                unset($exports[$key]);
+                unset($exports[$plugin]);
             }
         }
     }

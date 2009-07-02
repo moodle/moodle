@@ -155,7 +155,7 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, null, $buttons);
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';
