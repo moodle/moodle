@@ -2112,12 +2112,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Define field blockid to be dropped from block_instances
         $field = new xmldb_field('blockid');
         if ($dbman->field_exists($table, $field)) {
+        /// Before dropping the field, drop dependent indexes
+            $index = new xmldb_index('blockid', XMLDB_INDEX_NOTUNIQUE, array('blockid'));
+            if ($dbman->index_exists($table, $index)) {
+            /// Launch drop index blockid
+                $dbman->drop_index($table, $index);
+            }
             $dbman->drop_field($table, $field);
         }
 
     /// Define field pageid to be dropped from block_instances
         $field = new xmldb_field('pageid');
         if ($dbman->field_exists($table, $field)) {
+        /// Before dropping the field, drop dependent indexes
+            $index = new xmldb_index('pageid', XMLDB_INDEX_NOTUNIQUE, array('pageid'));
+            if ($dbman->index_exists($table, $index)) {
+            /// Launch drop index pageid
+                $dbman->drop_index($table, $index);
+            }
             $dbman->drop_field($table, $field);
         }
 
