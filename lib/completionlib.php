@@ -161,6 +161,20 @@ class completion_info {
     }
 
     /**
+     * Print the Your progress help icon if the completion tracking is enabled.
+     * @global object
+     * @return void
+     */
+    public function print_help_icon() {
+        global $PAGE;
+        if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
+            echo '<span class="completionprogress">'.get_string('yourprogress','completion').' ';
+            helpbutton('completionicons',get_string('completionicons','completion'),'completion');
+            echo '</span>';
+        }
+    }
+    // OU specific end
+    /**
      * Updates (if necessary) the completion state of activity $cm for the given
      * user.
      *

@@ -106,6 +106,10 @@
 
     echo skip_main_destination();
 
+    // Print the Your progress icon if the track completion is enabled
+    $completioninfo = new completion_info($course);
+    $completioninfo->print_help_icon();
+
     print_heading_block(get_string('topicoutline'), 'outline');
 
     // Note, an ordered list would confuse - "1" could be the clipboard or summary.

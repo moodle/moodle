@@ -48,4 +48,5 @@ $string['saved']='Saved';
 $string['unlockcompletion']='Unlock completion options';
 $string['writingcompletiondata']='Writing completion data';
 $string['completionicons']='progress icons';
+$string['yourprogress']='Your progress';
 ?>
