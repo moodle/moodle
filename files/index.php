@@ -207,7 +207,7 @@ function print_cell($alignment='center', $text='&nbsp;', $class='') {
 }
 
 function displaydir($file_info) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $children = $file_info->get_children();
     $parent_info = $file_info->get_parent();

@@ -84,8 +84,7 @@ class question_category_list_item extends list_item {
         }
     }
     public function item_html($extraargs = array()){
-        global $CFG;
-        $pixpath = $CFG->pixpath;
+        global $CFG, $OUTPUT;
         $str = $extraargs['str'];
         $category = $this->item;
 
@@ -101,7 +100,7 @@ class question_category_list_item extends list_item {
 
         if (count($this->parentlist->records)!=1){ // don't allow delete if this is the last category in this context.
             $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out_action(array('delete'=>$this->id)).'">
-                    <img src="' . $pixpath . '/t/delete.gif" class="iconsmall" alt="' .$str->delete. '" /></a>';
+                    <img src="' . $OUTPUT->old_icon_url('t/delete.gif') . '" class="iconsmall" alt="' .$str->delete. '" /></a>';
         }
 
         return $item;
@@ -118,7 +117,6 @@ class question_category_list_item extends list_item {
 class question_category_object {
 
     var $str;
-    var $pixpath;
     /**
      * Nested lists to display categories.
      *
@@ -173,7 +171,6 @@ class question_category_object {
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
         $this->str->page           = get_string('page');
-        $this->pixpath = $CFG->pixpath;
 
         $this->pageurl = $pageurl;
 
