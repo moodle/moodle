@@ -3,7 +3,7 @@
 // This file is executed right after the install.xml
 //
 
-function xmldb_quizreport_statistics_install() {
+function xmldb_quiz_statistics_install() {
     global $DB;
 
     $record = new object();

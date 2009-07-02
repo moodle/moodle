@@ -6741,7 +6741,7 @@ function get_plugin_types($fullpaths=true) {
                       'portfolio'     => 'portfolio/type',
                       'qtype'         => 'question/type',
                       'qformat'       => 'question/format');
-/*
+
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
             if (!$subplugins = plugin_supports('mod', $mod, FEATURE_MOD_SUBPLUGINS, false)) {
@@ -6751,9 +6751,9 @@ function get_plugin_types($fullpaths=true) {
                 $info[$subtype] = $dir;
             }
         }
-*/
+
         // do not include themes if in non-standard location
-        if ($CFG->themedir === $CFG->dirroot.'/theme') {
+        if (empty($CFG->themedir) or $CFG->themedir === $CFG->dirroot.'/theme') {
             $info['theme'] = 'theme';
         }
 
@@ -6786,7 +6786,7 @@ function get_plugin_list($plugintype, $fullpaths=true) {
     }
 
     if ($plugintype === 'mod') {
-        // mod is eán exception because we have to call this function from get_plugin_types()
+        // mod is an exception because we have to call this function from get_plugin_types()
         $fulldir = $CFG->dirroot.'/mod';
         $dir = $fullpaths ? $fulldir : 'mod';
 
