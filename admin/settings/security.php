@@ -58,7 +58,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                                                                                                                               1 => get_string('personalblogs','blog'),
                                                                                                                                               0 => get_string('disableblogs','blog'))));
     $temp->add(new admin_setting_configcheckbox('usetags', get_string('usetags','admin'),get_string('configusetags', 'admin'),'1'));
-    $temp->add(new admin_setting_configcheckbox('useassoc', get_string('useassoc','admin'),get_string('configuseassoc', 'admin'),'1'));
     $temp->add(new admin_setting_configcheckbox('keeptagnamecase', get_string('keeptagnamecase','admin'),get_string('configkeeptagnamecase', 'admin'),'1'));
 
     $temp->add(new admin_setting_configcheckbox('profilesforenrolledusersonly', get_string('profilesforenrolledusersonly','admin'),get_string('configprofilesforenrolledusersonly', 'admin'),'1'));
