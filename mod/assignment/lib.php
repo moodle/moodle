@@ -847,7 +847,7 @@ class assignment_base {
      * @param string $extra_javascript
      */
     function display_submission($extra_javascript = '') {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
 
@@ -919,22 +919,9 @@ class assignment_base {
         /// Print any extra javascript needed for saveandnext
         echo $extra_javascript;
 
-        ///SOme javascript to help with setting up >.>
+        echo $PAGE->requires->data_for_js('assignment', Array('nextid'=>$nextid, 'userid'=>$userid))->asap();
+        echo $PAGE->requires->js('mod/assignment/assignment.js')->asap();
 
-        echo '<script type="text/javascript">'."\n";
-        echo 'function setNext(){'."\n";
-        echo 'document.getElementById(\'submitform\').mode.value=\'next\';'."\n";
-        echo 'document.getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
-        echo '}'."\n";
-
-        echo 'function saveNext(){'."\n";
-        echo 'document.getElementById(\'submitform\').mode.value=\'saveandnext\';'."\n";
-        echo 'document.getElementById(\'submitform\').userid.value="'.$nextid.'";'."\n";
-        echo 'document.getElementById(\'submitform\').saveuserid.value="'.$userid.'";'."\n";
-        echo 'document.getElementById(\'submitform\').menuindex.value = document.getElementById(\'submitform\').grade.selectedIndex;'."\n";
-        echo '}'."\n";
-
-        echo '</script>'."\n";
         echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
 
         ///Start of teacher info row
