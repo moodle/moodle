@@ -284,6 +284,41 @@ class page_requirements_manager {
     }
 
     /**
+     * Make an array of language strings available for JS
+     *
+     * This function calls the above function {@link string_for_js()} for each requested
+     * string in the $identifiers array that is passed to the argument for a single module
+     * passed in $module.
+     *
+     * <code>
+     * $PAGE->strings_for_js(Array('one', 'two', 'three'), 'mymod', Array('a', null, 3));
+     *
+     * // The above is identifical to calling
+     *
+     * $PAGE->string_for_js('one', 'mymod', 'a');
+     * $PAGE->string_for_js('two', 'mymod');
+     * $PAGE->string_for_js('three', 'mymod', 3);
+     * </code>
+     *
+     * @param array $identifiers An array of desired strings
+     * @param string $module The module to load for
+     * @param mixed $a This can either be a single variable that gets passed as extra
+     *         information for every string or it can be an array of mixed data where the
+     *         key for the data matches that of the identifier it is meant for.
+     *
+     */
+    public function strings_for_js($identifiers, $module, $a=NULL) {
+        foreach ($identifiers as $key => $identifier) {
+            if (is_array($a) && array_key_exists($key, $a)) {
+                $extra = $a[$key];
+            } else {
+                $extra = $a;
+            }
+            $this->string_for_js($identifier, $module, $extra);
+        }
+    }
+
+    /**
      * Make some data from PHP available to JavaScript code.
      * 
      * For example, if you call
