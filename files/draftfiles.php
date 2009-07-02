@@ -132,7 +132,7 @@ $strdelete   = get_string('delete');
 
 if ($parent) {
     echo '<div class="folder">';
-    echo '<a href="draftfiles.php?itemid='.$itemid.'&amp;filepath='.$parent->get_filepath().'&amp;subdirs='.$subdirs.'&amp;maxbytes='.$maxbytes.'"><img src="'.$CFG->pixpath.'/f/parent.gif" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>';
+    echo '<a href="draftfiles.php?itemid='.$itemid.'&amp;filepath='.$parent->get_filepath().'&amp;subdirs='.$subdirs.'&amp;maxbytes='.$maxbytes.'"><img src="'.$OUTPUT->old_icon_url('f/parent') . '" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>';
     echo '</div>';
 }
 

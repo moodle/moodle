@@ -259,7 +259,7 @@
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
 
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     static $str = NULL;
 
@@ -297,28 +297,28 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         if (has_capability('moodle/category:manage', $category->context)) {
             echo '<a title="'.$str->edit.'" href="editcategory.php?id='.$category->id.'"><img'.
-                 ' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$str->edit.'" /></a> ';
+                 ' src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" alt="'.$str->edit.'" /></a> ';
 
             echo '<a title="'.$str->delete.'" href="index.php?delete='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                 ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$str->delete.'" /></a> ';
+                 ' src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'.$str->delete.'" /></a> ';
 
             if (!empty($category->visible)) {
                 echo '<a title="'.$str->hide.'" href="index.php?hide='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                     ' src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$str->hide.'" /></a> ';
+                     ' src="'.$OUTPUT->old_icon_url('t/hide') . '" class="iconsmall" alt="'.$str->hide.'" /></a> ';
             } else {
                 echo '<a title="'.$str->show.'" href="index.php?show='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                     ' src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$str->show.'" /></a> ';
+                     ' src="'.$OUTPUT->old_icon_url('t/show') . '" class="iconsmall" alt="'.$str->show.'" /></a> ';
             }
 
             if ($up) {
                 echo '<a title="'.$str->moveup.'" href="index.php?moveup='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                     ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$str->moveup.'" /></a> ';
+                     ' src="'.$OUTPUT->old_icon_url('t/up') . '" class="iconsmall" alt="'.$str->moveup.'" /></a> ';
             } else {
                 echo $str->spacer;
             }
             if ($down) {
                 echo '<a title="'.$str->movedown.'" href="index.php?movedown='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
-                     ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$str->movedown.'" /></a> ';
+                     ' src="'.$OUTPUT->old_icon_url('t/down') . '" class="iconsmall" alt="'.$str->movedown.'" /></a> ';
             } else {
                 echo $str->spacer;
             }

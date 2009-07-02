@@ -9,9 +9,9 @@ class block_loancalc extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
-        $calc = $CFG->pixpath.'/i/calc.gif';
+        $calc = $OUTPUT->old_icon_url('i/calc');
         
         $this->content->text = '
         <script type="text/javascript">

@@ -296,7 +296,7 @@
                 echo '<td>';
                 if (has_capability('moodle/course:update', $coursecontext)) {
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" alt="'.$stredit.'" /></a> ';
                 } else {
                     echo $spacer;
                 }
@@ -304,14 +304,14 @@
                 // role assignment link
                 if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo '<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('i/roles') . '" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ';
                 } else {
                     echo $spacer;
                 }
 
                 if (can_delete_course($acourse->id)) {
                     echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'.$strdelete.'" /></a> ';
                 } else {
                     echo $spacer;
                 }
@@ -321,11 +321,11 @@
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                             '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('t/hide') . '" class="iconsmall" alt="'.$strhide.'" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                             '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('t/show') . '" class="iconsmall" alt="'.$strshow.'" /></a> ';
                     }
                 } else {
                     echo $spacer;
@@ -333,7 +333,7 @@
 
                 if (has_capability('moodle/site:backup', $coursecontext)) {
                     echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                            '<img src="'.$CFG->pixpath.'/t/backup.gif" class="iconsmall" alt="'.$strbackup.'" /></a> ';
+                            '<img src="'.$OUTPUT->old_icon_url('t/backup') . '" class="iconsmall" alt="'.$strbackup.'" /></a> ';
                 } else {
                     echo $spacer;
                 }
@@ -341,7 +341,7 @@
                 if (has_capability('moodle/site:restore', $coursecontext)) {
                     echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
                          '&amp;wdir=/backupdata">'.
-                         '<img src="'.$CFG->pixpath.'/t/restore.gif" class="iconsmall" alt="'.$strrestore.'" /></a> ';
+                         '<img src="'.$OUTPUT->old_icon_url('t/restore') . '" class="iconsmall" alt="'.$strrestore.'" /></a> ';
                 } else {
                     echo $spacer;
                 }
@@ -350,7 +350,7 @@
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                             '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
+                             '<img src="'.$OUTPUT->old_icon_url('t/up') . '" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
                     } else {
                         echo $spacer;
                     }
@@ -358,7 +358,7 @@
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
                              '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                             '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
+                             '<img src="'.$OUTPUT->old_icon_url('t/down') . '" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
                     } else {
                         echo $spacer;
                     }
@@ -376,16 +376,16 @@
                 if (!empty($acourse->guest)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
                          $strallowguests.'" class="icon" src="'.
-                         $CFG->pixpath.'/i/guest.gif" alt="'.$strallowguests.'" /></a>';
+                         $OUTPUT->old_icon_url('i/guest') . '" alt="'.$strallowguests.'" /></a>';
                 }
                 if (!empty($acourse->password)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img title="'.
                          $strrequireskey.'" class="icon" src="'.
-                         $CFG->pixpath.'/i/key.gif" alt="'.$strrequireskey.'" /></a>';
+                         $OUTPUT->old_icon_url('i/key') . '" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
                     link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo",
-                                          '<img alt="'.get_string('info').'" class="icon" src="'.$CFG->pixpath.'/i/info.gif" />',
+                                          '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->old_icon_url('i/info') . '" />',
                                            400, 500, $strsummary);
                 }
                 echo "</td>";

@@ -8,7 +8,7 @@ class block_participants extends block_list {
 
     function get_content() {
 
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if (empty($this->instance)) {
             $this->content = '';
@@ -37,7 +37,7 @@ class block_participants extends block_list {
 
         $this->content->items[] = '<a title="'.get_string('listofallpeople').'" href="'.
                                   $CFG->wwwroot.'/user/index.php?contextid='.$currentcontext->id.'">'.get_string('participants').'</a>';
-        $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/users.gif" class="icon" alt="" />';
+        $this->content->icons[] = '<img src="'.$OUTPUT->old_icon_url('i/users') . '" class="icon" alt="" />';
 
         return $this->content;
     }

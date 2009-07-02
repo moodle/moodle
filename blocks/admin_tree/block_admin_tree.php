@@ -33,11 +33,11 @@ class block_admin_tree extends block_base {
     }
 
     function open_folder($visiblename) {
-        global $CFG;
+        global $OUTPUT;
         $strfolderopened = s(get_string('folderopened'));
 
         $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a name="d'.$this->divcounter.'">';
-        $this->tempcontent .= '<img id="vh_div'.$this->divcounter.'indicator" src="'.$CFG->pixpath.'/i/open.gif" alt="'.$strfolderopened.'" /> ';
+        $this->tempcontent .= '<img id="vh_div'.$this->divcounter.'indicator" src="'.$OUTPUT->old_icon_url('i/open') . '" alt="'.$strfolderopened.'" /> ';
         $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
         $this->divcounter++;
@@ -55,7 +55,7 @@ class block_admin_tree extends block_base {
     }
 
     function build_tree (&$content) {
-        global $CFG;
+        global $CFG, $OUTPUT;
         if ($content instanceof admin_settingpage) {
             // show hidden pages in tree if hidden page active
             if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
@@ -63,7 +63,7 @@ class block_admin_tree extends block_base {
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }
-                $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name,$CFG->pixpath.'/i/item.gif', $class);
+                $this->create_item($content->visiblename, $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$content->name,$OUTPUT->old_icon_url('i/item'), $class);
             }
         } else if ($content instanceof admin_externalpage) {
             // show hidden pages in tree if hidden page active
@@ -77,7 +77,7 @@ class block_admin_tree extends block_base {
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }
-                $this->create_item($content->visiblename, $content->url, $CFG->pixpath.'/i/item.gif', $class);
+                $this->create_item($content->visiblename, $content->url, $OUTPUT->old_icon_url('i/item'), $class);
             }
         } else if ($content instanceof admin_category) {
             if ($content->check_access() and !$content->is_hidden()) {

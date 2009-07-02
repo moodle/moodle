@@ -367,7 +367,7 @@ class block_base {
 
 
     function _title_html() {
-        global $CFG;
+        global $OUTPUT;
 
         //Accessibility: validation, can't have <div> inside <h2>, use <span>.
         $title = '<div class="title">';
@@ -377,7 +377,7 @@ class block_base {
             //Theme the buttons using, Admin - Miscellaneous - smartpix.
             $strshow = addslashes_js(get_string('showblocka', 'access', strip_tags($this->title)));
             $strhide = addslashes_js(get_string('hideblocka', 'access', strip_tags($this->title)));
-            $title .= '<input type="image" src="'.$CFG->pixpath.'/t/switch_minus.gif" '. 
+            $title .= '<input type="image" src="'.$OUTPUT->old_icon_url('t/switch_minus') . '" '. 
                 'id="togglehide_inst'.$this->instance->id.'" '.
                 'onclick="elementToggleHide(this, true, function(el) {'.
                 'return findParentNode(el, \'DIV\', \'sideblock\'); },'.
@@ -405,7 +405,7 @@ class block_base {
      * @todo complete documenting this function. Define $options.
      */
     function _add_edit_controls($options) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         // TODO - temporary hack to get the block context only if it already exists.
         global $DB;
@@ -458,7 +458,7 @@ class block_base {
         $script = $page->url->out(false, array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
 
         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
-                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
+                        '<img src="'.$OUTPUT->old_icon_url('i/roles') . '" alt="'.$this->str->assignroles.'" /></a>';
 
         // TODO MDL-19010 fix and re-enable.
         if (false && $this->user_can_edit()) {
@@ -468,12 +468,12 @@ class block_base {
 
         if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
             $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
-                            '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url('t/edit') . '" alt="'. $this->str->configure .'" /></a>';
         }
 
         if ($this->user_can_addto($page)) {
             $movebuttons .= '<a class="icon delete" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                            '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url('t/delete') . '" alt="'. $this->str->delete .'" /></a>';
         }
 
         if ($options & BLOCK_MOVE_LEFT) {
@@ -482,11 +482,11 @@ class block_base {
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a class="icon up" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
-                            '<img src="'. $CFG->pixpath .'/t/up.gif" alt="'. $this->str->moveup .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url('t/up') . '" alt="'. $this->str->moveup .'" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
             $movebuttons .= '<a class="icon down" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
-                            '<img src="'. $CFG->pixpath .'/t/down.gif" alt="'. $this->str->movedown .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url('t/down') . '" alt="'. $this->str->movedown .'" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a class="icon right" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .

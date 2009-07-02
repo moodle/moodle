@@ -7,7 +7,7 @@ class block_messages extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $OUTPUT;
 
         if (!$CFG->messaging) {
             return ''; 
@@ -43,7 +43,7 @@ class block_messages extends block_base {
                 $this->content->text .= '<li class="listentry"><div class="user"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'" title="'.$timeago.'">';
                 $this->content->text .= print_user_picture($user, SITEID, $user->picture, 0, true, false, '', false);
                 $this->content->text .= fullname($user).'</a></div>';
-                $this->content->text .= '<div class="message"><a href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img class="iconsmall" src="'.$CFG->pixpath.'/t/message.gif" alt="" />&nbsp;'.$user->count.'</a>';
+                $this->content->text .= '<div class="message"><a href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img class="iconsmall" src="'.$OUTPUT->old_icon_url('t/message') . '" alt="" />&nbsp;'.$user->count.'</a>';
                 $this->content->text .= '</div></li>';
             }
             $this->content->text .= '</ul>'; 

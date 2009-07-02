@@ -8,7 +8,7 @@
     // needs some hacking to rss/file.php
     function blog_rss_print_link($filtertype, $filterselect, $tagid=0, $tooltiptext='') {
 
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         if (empty($USER->id)) {
             $userid = 1;
@@ -36,7 +36,7 @@
         }
 
         $path .= '/rss.xml';
-        $rsspix = $CFG->pixpath .'/i/rss.gif';
+        $rsspix = $OUTPUT->old_icon_url('i/rss');
 
         require_once($CFG->libdir.'/filelib.php');
         $path = get_file_url($path, null, 'rssfile');

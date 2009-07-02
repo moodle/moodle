@@ -180,7 +180,7 @@
 
         /// Show an enrolment key icon in the first column if applicable.
             if (!empty($course->password)) {
-                $row[] = '<img hspace="1" alt="'.$strrequireskey.'" class="icon" src="'.$CFG->pixpath.'/i/key.gif" />';
+                $row[] = '<img hspace="1" alt="'.$strrequireskey.'" class="icon" src="'.$OUTPUT->old_icon_url('i/key') . '" />';
             } else {
                 $row[] = '';
             }

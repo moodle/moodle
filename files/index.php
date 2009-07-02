@@ -258,7 +258,7 @@ function displaydir($file_info) {
 
         echo "<tr class=\"folder\">";
         print_cell();
-        print_cell('left', '<a href="index.php?'.$params.'"><img src="'.$CFG->pixpath.'/f/parent.gif" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
+        print_cell('left', '<a href="index.php?'.$params.'"><img src="'.$OUTPUT->old_icon_url('f/parent') . '" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>', 'name');
         print_cell();
         print_cell();
         print_cell();

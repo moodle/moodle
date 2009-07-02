@@ -258,7 +258,7 @@
                 // checks whether user can do role assignment
                 if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
-                    echo '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
+                    echo '<img src="'.$OUTPUT->old_icon_url('i/roles') . '" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
                 }
 
                 // checks whether user can delete course

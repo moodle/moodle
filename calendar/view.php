@@ -173,7 +173,7 @@
             $usernameencoded = urlencode($USER->username);
 
             echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
-                 .'<img src="'.$CFG->pixpath.'/i/ical.gif" height="14" width="36" '
+                 .'<img src="'.$OUTPUT->old_icon_url('i/ical') . '" height="14" width="36" '
                  .'alt="'.get_string('ical', 'calendar').'" '
                  .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
                  .'</a>';

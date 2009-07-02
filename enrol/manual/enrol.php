@@ -373,7 +373,7 @@ function cron() {
 * @param    course  the current course, as an object
 */
 function get_access_icons($course) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     global $strallowguests;
     global $strrequireskey;
@@ -387,11 +387,11 @@ function get_access_icons($course) {
 
     if (!empty($course->guest)) {
         $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
+        $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$OUTPUT->old_icon_url('i/guest') . '" /></a>&nbsp;&nbsp;';
     }
     if (!empty($course->password)) {
         $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+        $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$OUTPUT->old_icon_url('i/key') . '" /></a>';
     }
 
     return $str;

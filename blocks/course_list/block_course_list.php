@@ -109,14 +109,14 @@ class block_course_list extends block_list {
     }
 
     function get_remote_courses() {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         if (!is_enabled_auth('mnet')) {
             // no need to query anything remote related
             return;
         }
 
-        $icon  = '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
+        $icon  = '<img src="'.$OUTPUT->old_icon_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
 
         // only for logged in users!
         if (!isloggedin() || isguest()) {

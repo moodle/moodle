@@ -1864,7 +1864,7 @@ function make_categories_options() {
  * This function is only used by print_whole_category_list() above
  */
 function print_category_info($category, $depth, $showcourses = false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     static $strallowguests, $strrequireskey, $strsummary;
 
     if (empty($strsummary)) {
@@ -1882,7 +1882,7 @@ function print_category_info($category, $depth, $showcourses = false) {
     }
 
     if ($showcourses and $coursecount) {
-        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" alt="" />';
+        $catimage = '<img src="'.$OUTPUT->old_icon_url('i/course') . '" alt="" />';
     } else {
         $catimage = "&nbsp;";
     }
@@ -1923,19 +1923,19 @@ function print_category_info($category, $depth, $showcourses = false) {
                 echo '</td><td align="right" valign="top" class="course info">';
                 if ($course->guest ) {
                     echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img alt="'.$strallowguests.'" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
+                    echo '<img alt="'.$strallowguests.'" src="'.$OUTPUT->old_icon_url('i/guest') . '" /></a>';
                 } else {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->password) {
                     echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img alt="'.$strrequireskey.'" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+                    echo '<img alt="'.$strrequireskey.'" src="'.$OUTPUT->old_icon_url('i/key') . '" /></a>';
                 } else {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
                 }
                 if ($course->summary) {
                     link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
-                                          '<img alt="'.$strsummary.'" src="'.$CFG->pixpath.'/i/info.gif" />',
+                                          '<img alt="'.$strsummary.'" src="'.$OUTPUT->old_icon_url('i/info') . '" />',
                                            400, 500, $strsummary);
                 } else {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$CFG->pixpath.'/spacer.gif" />';
@@ -2322,14 +2322,14 @@ function print_remote_course($course, $width="100%") {
 }
 
 function print_remote_host($host, $width="100%") {
-    global $CFG, $USER;
+    global $OUTPUT;
 
     $linkcss = '';
 
     echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
     echo '<div class="name">';
-    echo '<img src="'.$CFG->pixpath.'/i/mnethost.gif" class="icon" alt="'.get_string('course').'" />';
+    echo '<img src="'.$OUTPUT->old_icon_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
     echo '<a title="'.s($host['name']).'" href="'.s($host['url']).'">'
         . s($host['name']).'</a> - ';
     echo $host['count'] . ' ' . get_string('courses');
@@ -2718,7 +2718,7 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 }
 
 function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1, $section=-1) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     static $str;
     static $sesskey;
@@ -2764,12 +2764,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         if ($mod->visible) {
             $hideshow = '<a class="editing_hide" title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
                         '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url('t/hide') . '" class="iconsmall" '.
                         ' alt="'.$str->hide.'" /></a>'."\n";
         } else {
             $hideshow = '<a class="editing_show" title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
                         '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url('t/show') . '" class="iconsmall" '.
                         ' alt="'.$str->show.'" /></a>'."\n";
         }
     } else {
@@ -2780,17 +2780,17 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
             $groupclass = 'editing_groupsseparate';
-            $groupimage = $CFG->pixpath.'/t/groups.gif';
+            $groupimage = $OUTPUT->old_icon_url('t/groups') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
             $groupclass = 'editing_groupsvisible';
-            $groupimage = $CFG->pixpath.'/t/groupv.gif';
+            $groupimage = $OUTPUT->old_icon_url('t/groupv') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
         } else {
             $grouptitle = $str->groupsnone;
             $groupclass = 'editing_groupsnone';
-            $groupimage = $CFG->pixpath.'/t/groupn.gif';
+            $groupimage = $OUTPUT->old_icon_url('t/groupn') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=2&amp;sesskey='.$sesskey;
         }
         if ($mod->groupmodelink) {
@@ -2810,16 +2810,16 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         if ($moveselect) {
             $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
                         '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url('t/move') . '" class="iconsmall" '.
                         ' alt="'.$str->move.'" /></a>'."\n";
         } else {
             $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url('t/up') . '" class="iconsmall" '.
                         ' alt="'.$str->moveup.'" /></a>'."\n".
                         '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url('t/down') . '" class="iconsmall" '.
                         ' alt="'.$str->movedown.'" /></a>'."\n";
         }
     } else {
@@ -2853,7 +2853,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if (has_capability('moodle/course:managegroups', $modcontext)){
         $context = get_context_instance(CONTEXT_MODULE, $mod->id);
         $assign = '<a class="editing_assign" title="'.$str->assign.'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-            $context->id.'"><img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$str->assign.'" class="iconsmall"/></a>';
+            $context->id.'"><img src="'.$OUTPUT->old_icon_url('i/roles') . '" alt="'.$str->assign.'" class="iconsmall"/></a>';
     } else {
         $assign = '';
     }
@@ -2861,11 +2861,11 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     return '<span class="commands">'."\n".$leftright.$move.
            '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" '.
+           ' src="'.$OUTPUT->old_icon_url('t/edit') . '" class="iconsmall" '.
            ' alt="'.$str->update.'" /></a>'."\n".
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" '.
+           ' src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" '.
            ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".$assign.'</span>';
 }
 

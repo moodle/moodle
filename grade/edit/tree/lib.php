@@ -89,7 +89,7 @@ class grade_edit_tree {
      * @return string HTML
      */
     public function build_html_tree($element, $totals, $parents, &$categories, $level, &$row_count) {
-        global $CFG, $COURSE, $USER;
+        global $CFG, $COURSE, $USER, $OUTPUT;
 
         $object = $element['object'];
         $eid    = $element['eid'];
@@ -117,11 +117,11 @@ class grade_edit_tree {
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
             if ($this->element_deletable($element)) {
                 $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
-                         . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                         . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'
                          . get_string('delete').'" title="'.get_string('delete').'"/></a>';
             }
             $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='
-                     . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'
+                     . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/move') . '" class="iconsmall" alt="'
                      . get_string('move').'" title="'.get_string('move').'"/></a>';
         }
 

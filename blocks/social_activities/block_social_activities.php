@@ -11,7 +11,7 @@ class block_social_activities extends block_list {
     }
 
     function get_content() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $OUTPUT;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -89,7 +89,7 @@ class block_social_activities extends block_list {
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="" />';
+            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$OUTPUT->old_icon_url('t/move') . '" class="iconsmall" alt="" />';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.sesskey().'">'.$strcancel.'</a>)';
         }
 

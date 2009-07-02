@@ -159,7 +159,7 @@ print_box_end();
 print_footer($course);
 
 function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     // Only compute lang strings, etc once.
     static $stredit = null, $strcheckpermissions, $globalroleassigner, $assignurl, $checkurl;
@@ -207,9 +207,9 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
                 $strcheck = get_string('checkuserspermissionshere', 'role', $a);
             }
             echo ' <a title="' . $strgoto . '" href="' . $raurl . '"><img class="iconsmall" src="' .
-                    $CFG->pixpath . '/t/edit.gif" alt="' . $stredit . '" /></a> ';
+                    $OUTPUT->old_icon_url('t/edit') . '" alt="' . $stredit . '" /></a> ';
             echo ' <a title="' . $strcheck . '" href="' . $churl . '"><img class="iconsmall" src="' .
-                    $CFG->pixpath . '/t/preview.gif" alt="' . $strcheckpermissions . '" /></a> ';
+                    $OUTPUT->old_icon_url('t/preview') . '" alt="' . $strcheckpermissions . '" /></a> ';
             echo "</p>\n";
         }
     }
