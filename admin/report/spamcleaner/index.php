@@ -281,91 +281,12 @@ function print_user_entry($user, $keywords, $count) {
 }
 
 function print_spamcleaner_javascript()  {
-
-$sesskey = sesskey();
-
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-var row = null;
-var delall_cb = {
-    success: function(o){
-        try {
-            var resp = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
-            return;
-        }
-        if(resp == true){
-            window.location.href=window.location.href;
-        }
-    }
-}
-function init() {
-    YAHOO.util.Event.addListener("removeall_btn", "click", function(){
-        var yes = confirm('<?php echo get_string('spamdeleteallconfirm', 'report_spamcleaner');?>');
-        if(yes){
-            var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?delall=yes&sesskey=<?php echo $sesskey;?>', delall_cb); 
-        }
-    });
-}
-var del_cb = {
-    success: function(o) {
-        try {
-            var resp = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
-            return;
-        }
-        if(row) {
-            if(resp == true){
-                while(row.tagName != 'TR') {
-                    row = row.parentNode;
-                }
-                row.parentNode.removeChild(row);
-                row = null;
-            } else {
-                alert('<?php echo get_string('spamcannotdelete', 'report_spamcleaner');?>');
-            }
-        }
-    }
-}
-var ignore_cb = {
-    success: function(o){
-        try {
-            var resp = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('<?php echo get_string('spaminvalidresult', 'report_spamcleaner');?>');
-            return;
-        }
-        if(row) {
-            if(resp == true){
-                while(row.tagName != 'TR') {
-                    row = row.parentNode;
-                }
-                row.parentNode.removeChild(row);
-                row = null;
-            }
-        }
-    }
-}
-function del_user(obj, id) {
-    var yes = confirm('<?php echo get_string('spamdeleteconfirm', 'report_spamcleaner');?>');
-    if(yes){
-        row = obj;
-        var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?del=yes&sesskey=<?php echo $sesskey;?>&id='+id, del_cb); 
-    }
-}
-function ignore_user(obj, id) {
-    row = obj;
-    var cObj = YAHOO.util.Connect.asyncRequest('POST', '<?php echo me();?>?ignore=yes&sesskey=<?php echo $sesskey;?>&id='+id, ignore_cb); 
-}
-YAHOO.util.Event.onDOMReady(init);
-//]]>
-</script>
-
-<?php 
+    global $PAGE;
+    $PAGE->requires->js('admin/report/spamcleaner/spamcleaner.js');
+    $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
+    $PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
+    $PAGE->requires->data_for_js('spamcleaner', Array('me'=>me()));
+    //$sesskey = sesskey();
 }
 
 admin_externalpage_print_footer();

@@ -33,13 +33,9 @@ define('REPORT_SECURITY_SERIOUS', 'serious');
 define('REPORT_SECURITY_CRITICAL', 'critical');
 
 function report_security_hide_timearning() {
-     echo '<script type="text/javascript">
-//<![CDATA[
-    var el = document.getElementById("timewarning");
-    el.setAttribute("class", "timewarninghidden");
-//]]>
-</script>';
-
+     global $PAGE;
+     $PAGE->requires->yui_lib('dom');
+     $PAGE->requires->js_function_call('YAHOO.util.Dom.addClass', Array('timewarning', 'timewarninghidden'));
 }
 
 function report_security_get_issue_list() {
@@ -222,7 +218,7 @@ function report_security_check_mediafilterswf($detailed=false) {
     $result->status  = null;
     $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin\">".get_string('filtersettings', 'admin').'</a>';
 
-    $activefilters = filters_get_globally_enabled();
+    $activefilters = filter_get_globally_enabled();
 
     if (array_search('filter/mediaplugin', $activefilters) !== false and !empty($CFG->filter_mediaplugin_enable_swf)) {
         $result->status = REPORT_SECURITY_CRITICAL;
