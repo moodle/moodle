@@ -558,7 +558,6 @@
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
         }
-        require_capability('moodle/course:manageactivities', $context);
 
         $streditinga = get_string('editinga', 'moodle', $fullmodulename);
         $strmodulenameplural = get_string('modulenameplural', $module->name);
