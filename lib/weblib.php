@@ -1113,7 +1113,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  */
 function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
-    global $CFG, $SESSION;
+    global $CFG, $SESSION, $PAGE;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
 
     if (empty($options)) {
@@ -1264,10 +1264,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     }
     $output .= '<input type="submit" value="'.$submitvalue.'" '.$disabled.' /></div>';
     if (!$showbutton) {
-        $output .= '<script type="text/javascript">'.
-                   "\n//<![CDATA[\n".
-                   'document.getElementById("noscript'.$formid.'").style.display = "none";'.
-                   "\n//]]>\n".'</script>';
+        $output .= $PAGE->requires->js_function_call('hide_item', Array('noscript'.$formid))->asap();
     }
     $output .= '</div></form>';
 
@@ -5714,6 +5711,7 @@ EOT;
      * @return void Echo's output
      */
     function _update($percent, $msg, $es){
+        global $PAGE;
         if(empty($this->time_start)){
             $this->time_start = microtime(true);
         }
@@ -5727,7 +5725,7 @@ EOT;
         if ($es === null){
             $es = "Infinity";
         }
-        echo "<script type=\"text/javascript\">up_".$this->html_id."('$this->html_id', '$w', '$this->percent', '$msg', $es);</script>";
+        echo $PAGE->requires->js_function_call("up_".$this->html_id, Array($this->html_id, $w, $this->percent, $msg, $es))->asap();
         flush();
     }
     /**
