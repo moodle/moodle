@@ -9,11 +9,11 @@ function checksubmit(form) {
 }
 
 function checkchecked(form) {
-    var inputs = document.getElementsByTagName(\'INPUT\');
+    var inputs = document.getElementsByTagName('INPUT');
     var checked = false;
     inputs = filterByParent(inputs, function() {return form;});
     for(var i = 0; i < inputs.length; ++i) {
-        if (inputs[i].type == \'checkbox\' && inputs[i].checked) {
+        if (inputs[i].type == 'checkbox' && inputs[i].checked) {
             checked = true;
         }
     }
