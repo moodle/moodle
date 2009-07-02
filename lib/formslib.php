@@ -57,7 +57,7 @@ function pear_handle_error($error){
     print_object($error->backtrace);
 }
 
-if ($CFG->debug >= DEBUG_ALL){
+if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
     PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
 }
 
@@ -141,7 +141,7 @@ class moodleform {
 
         $this->_formname = get_class($this); // '_form' suffix kept in order to prevent collisions of form id and other element
         $this->_customdata = $customdata;
-        $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
+        $this->_form = new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
         if (!$editable){
             $this->_form->hardFreeze();
         }
@@ -2192,7 +2192,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
  * @global object $GLOBALS['_HTML_QuickForm_default_renderer']
  * @name $_HTML_QuickForm_default_renderer
  */
-$GLOBALS['_HTML_QuickForm_default_renderer'] =& new MoodleQuickForm_Renderer();
+$GLOBALS['_HTML_QuickForm_default_renderer'] = new MoodleQuickForm_Renderer();
 
 /** Please keep this list in alphabetical order. */
 MoodleQuickForm::registerElementType('advcheckbox', "$CFG->libdir/form/advcheckbox.php", 'MoodleQuickForm_advcheckbox');
