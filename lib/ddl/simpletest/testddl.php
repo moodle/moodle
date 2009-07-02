@@ -12,6 +12,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 class ddl_test extends UnitTestCase {
     private $tables = array();
+    private $records= array();
     private $tdb;
     public  static $includecoverage = array('lib/ddl');
     public  static $excludecoverage = array('lib/ddl/simpletest');
@@ -35,7 +36,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null);
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null);
+        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_field('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -52,12 +53,25 @@ class ddl_test extends UnitTestCase {
         $table->add_field('blockafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('blockperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('type-name', XMLDB_KEY_UNIQUE, array('type', 'name'));
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-        $table->add_index('rsstype', XMLDB_INDEX_UNIQUE, array('rsstype'));
+        $table->add_key('course', XMLDB_KEY_UNIQUE, array('course'));
+        $table->add_index('type-name', XMLDB_INDEX_UNIQUE, array('type', 'name'));
+        $table->add_index('rsstype', XMLDB_INDEX_NOTUNIQUE, array('rsstype'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
         $this->tables[$table->getName()] = $table;
+
+        // Define 2 initial records for this table
+        $this->records[$table->getName()] = array(
+                (object)array(
+                        'course' => '1',
+                        'type'   => 'general',
+                        'name'   => 'record',
+                        'intro'  => 'first record'),
+                (object)array(
+                        'course' => '2',
+                        'type'   => 'social',
+                        'name'   => 'record',
+                        'intro'  => 'second record'));
 
         // Second, smaller table
         $table = new xmldb_table ('test_table1');
@@ -71,10 +85,21 @@ class ddl_test extends UnitTestCase {
         $table->add_field('gradefloat', XMLDB_TYPE_FLOAT, '20,0', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('percentfloat', XMLDB_TYPE_FLOAT, '5,2', null, null, null, 99.9);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_index('course', XMLDB_INDEX_UNIQUE, array('course'));
+        $table->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'test_table0', array('course'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
         $this->tables[$table->getName()] = $table;
+
+        // Define 2 initial records for this table
+        $this->records[$table->getName()] = array(
+                (object)array(
+                        'course' => '1',
+                        'secondname'   => 'second record',
+                        'intro'  => 'first record'),
+                (object)array(
+                        'course'       => '2',
+                        'secondname'   => 'second record',
+                        'intro'  => 'second record'));
 
         // make sure no tables are present!
         $this->tearDown();
@@ -114,6 +139,30 @@ class ddl_test extends UnitTestCase {
         $dbman->create_table($table);
 
         return $table;
+    }
+
+    /**
+     * Fill the given test table with some records, as far as
+     * DDL behaviour must be tested both with real data and
+     * with empty tables
+     */
+    private function fill_deftable($tablename) {
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        if (!isset($this->records[$tablename])) {
+            return null;
+        }
+
+        if ($dbman->table_exists($tablename)) {
+            foreach ($this->records[$tablename] as $row) {
+                $DB->insert_record($tablename, $row);
+            }
+        } else {
+            return null;
+        }
+
+        return count($this->records[$tablename]);
     }
 
     /**
@@ -216,9 +265,12 @@ class ddl_test extends UnitTestCase {
         // initially table doesn't exist
         $this->assertFalse($dbman->table_exists('test_table0'));
 
-        // create table
+        // create table with contents
         $table = $this->create_deftable('test_table0');
         $this->assertTrue($dbman->table_exists('test_table0'));
+
+        // fill the table with some records before dropping it
+        $this->fill_deftable('test_table0');
 
         // drop by xmldb_table object
         $dbman->drop_table($table);
@@ -252,23 +304,19 @@ class ddl_test extends UnitTestCase {
 
         $table = $this->create_deftable('test_table1');
 
-        // check sequence returns 1 for first insert
-        $rec = (object)array(
-                'course'     => 10,
-                'secondname' => 'not important',
-                'intro'      => 'not important');
-        $this->assertIdentical($DB->insert_record('test_table1', $rec), 1);
+        // fill the table with some records before renaming it
+        $insertedrows = $this->fill_deftable('test_table1');
 
         $this->assertFalse($dbman->table_exists('test_table_cust1'));
         $dbman->rename_table($table, 'test_table_cust1');
         $this->assertTrue($dbman->table_exists('test_table_cust1'));
 
-        // check sequence returns 2 for second insert (after rename)
+        // check sequence returns $insertedrows + 1 for this insert (after rename)
         $rec = (object)array(
                 'course'     => 20,
                 'secondname' => 'not important',
                 'intro'      => 'not important');
-        $this->assertIdentical($DB->insert_record('test_table_cust1', $rec), 2);
+        $this->assertIdentical($DB->insert_record('test_table_cust1', $rec), $insertedrows + 1);
     }
 
     /**
@@ -335,35 +383,189 @@ class ddl_test extends UnitTestCase {
         $this->assertFalse($dbman->field_exists('test_table0', $nonexistentfield));
     }
 
-    public function testAddNumericField() {
+    /**
+     * Test behaviour of add_field()
+     */
+    public function test_add_field() {
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->create_deftable('test_table1');
+
+        // fill the table with some records before adding fields
+        $this->fill_deftable('test_table1');
+
+        /// add one not null field without specifying default value (throws ddl_exception)
+        $field = new xmldb_field('onefield');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        try {
+            $dbman->add_field($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
+        /// add one existing field (throws ddl_exception)
+        $field = new xmldb_field('course');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2);
+        try {
+            $dbman->add_field($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
+        // TODO: add one field with invalid type, must throw exception
+        // TODO: add one text field with default, must throw exception
+        // TODO: add one binary field with default, must throw exception
+
+        /// add one integer field and check it
+        $field = new xmldb_field('oneinteger');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'oneinteger'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['oneinteger']->name         ,'oneinteger');
+        $this->assertEqual($columns['oneinteger']->not_null     , true);
+        // max_length and scale cannot be checked under all DBs at all for integer fields
+        $this->assertEqual($columns['oneinteger']->primary_key  , false);
+        $this->assertEqual($columns['oneinteger']->binary       , false);
+        $this->assertEqual($columns['oneinteger']->has_default  , true);
+        $this->assertEqual($columns['oneinteger']->default_value, 2);
+        $this->assertEqual($columns['oneinteger']->meta_type    ,'I');
+        $this->assertEqual($DB->get_field('test_table1', 'oneinteger', array()), 2); //check default has been applied
+
+        /// add one numeric field and check it
+        $field = new xmldb_field('onenumber');
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2.55);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onenumber'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['onenumber']->name         ,'onenumber');
+        $this->assertEqual($columns['onenumber']->max_length   , 6);
+        $this->assertEqual($columns['onenumber']->scale        , 3);
+        $this->assertEqual($columns['onenumber']->not_null     , true);
+        $this->assertEqual($columns['onenumber']->primary_key  , false);
+        $this->assertEqual($columns['onenumber']->binary       , false);
+        $this->assertEqual($columns['onenumber']->has_default  , true);
+        $this->assertEqual($columns['onenumber']->default_value, 2.550);
+        $this->assertEqual($columns['onenumber']->meta_type    ,'N');
+        $this->assertEqual($DB->get_field('test_table1', 'onenumber', array()), 2.550); //check default has been applied
+
+        /// add one float field and check it (not official type - must work as number)
+        $field = new xmldb_field('onefloat');
+        $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 3.55);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onefloat'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['onefloat']->name         ,'onefloat');
+        $this->assertEqual($columns['onefloat']->not_null     , true);
+        // max_length and scale cannot be checked under all DBs at all for float fields
+        $this->assertEqual($columns['onefloat']->primary_key  , false);
+        $this->assertEqual($columns['onefloat']->binary       , false);
+        $this->assertEqual($columns['onefloat']->has_default  , true);
+        $this->assertEqual($columns['onefloat']->default_value, 3.550);
+        $this->assertEqual($columns['onefloat']->meta_type    ,'N');
+        $this->assertEqual($DB->get_field('test_table1', 'onefloat', array()), 3.550); //check default has been applied
+
+        /// add one char field and check it
+        $field = new xmldb_field('onechar');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '25', XMLDB_UNSIGNED, null, null, 'Nice dflt!');
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onechar'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['onechar']->name         ,'onechar');
+        $this->assertEqual($columns['onechar']->max_length   , 25);
+        $this->assertEqual($columns['onechar']->scale        , null);
+        $this->assertEqual($columns['onechar']->not_null     , false);
+        $this->assertEqual($columns['onechar']->primary_key  , false);
+        $this->assertEqual($columns['onechar']->binary       , false);
+        $this->assertEqual($columns['onechar']->has_default  , true);
+        $this->assertEqual($columns['onechar']->default_value,'Nice dflt!');
+        $this->assertEqual($columns['onechar']->meta_type    ,'C');
+        $this->assertEqual($DB->get_field('test_table1', 'onechar', array()), 'Nice dflt!'); //check default has been applied
+
+        /// add one text field and check it
+        $field = new xmldb_field('onetext');
+        $field->set_attributes(XMLDB_TYPE_TEXT);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onetext'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['onetext']->name         ,'onetext');
+        $this->assertEqual($columns['onetext']->max_length   , -1);
+        $this->assertEqual($columns['onetext']->scale        , null);
+        $this->assertEqual($columns['onetext']->not_null     , false);
+        $this->assertEqual($columns['onetext']->primary_key  , false);
+        $this->assertEqual($columns['onetext']->binary       , false);
+        $this->assertEqual($columns['onetext']->has_default  , false);
+        $this->assertEqual($columns['onetext']->default_value, null);
+        $this->assertEqual($columns['onetext']->meta_type    ,'X');
+
+        /// add one binary field and check it
+        $field = new xmldb_field('onebinary');
+        $field->set_attributes(XMLDB_TYPE_BINARY);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onebinary'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['onebinary']->name         ,'onebinary');
+        $this->assertEqual($columns['onebinary']->max_length   , -1);
+        $this->assertEqual($columns['onebinary']->scale        , null);
+        $this->assertEqual($columns['onebinary']->not_null     , false);
+        $this->assertEqual($columns['onebinary']->primary_key  , false);
+        $this->assertEqual($columns['onebinary']->binary       , true);
+        $this->assertEqual($columns['onebinary']->has_default  , false);
+        $this->assertEqual($columns['onebinary']->default_value, null);
+        $this->assertEqual($columns['onebinary']->meta_type    ,'B');
+
+        // TODO: Check datetime type. Alhough unused should be fully supported.
+    }
+
+    /**
+     * Test behaviour of drop_field()
+     */
+    public function test_drop_field() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
         $table = $this->create_deftable('test_table0');
-        /// Create a new field with complex specs (enums are good candidates)
-        $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'type');
-        $dbman->add_field($table, $field);
-        $this->assertTrue($dbman->field_exists($table, 'onenumber'));
 
-        $columns = $DB->get_columns('test_table0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'I');
+        // fill the table with some records before dropping fields
+        $this->fill_deftable('test_table0');
 
-        $dbman->drop_field($table, $field);
-    }
-
-    public function testDropField() {
-        $dbman = $this->tdb->get_manager();
-
-        $table = $this->create_deftable('test_table0');
-        $field = $table->getField('type');
-
-        $this->assertTrue($dbman->field_exists($table, $field));
+        // drop field with simple xmldb_field having indexes, must return exception
+        $field = new xmldb_field('type'); // Field has indexes and default clause
         $this->assertTrue($dbman->field_exists($table, 'type'));
+        try {
+            $dbman->drop_field($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_dependency_exception);
+        }
+        $this->assertTrue($dbman->field_exists($table, 'type')); // continues existing, drop aborted
 
+        // drop field with complete xmldb_field object and related indexes, must return exception
+        $field = $table->getField('course'); // Field has indexes and default clause
+        $this->assertTrue($dbman->field_exists($table, $field));
+        try {
+            $dbman->drop_field($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_dependency_exception);
+        }
+        $this->assertTrue($dbman->field_exists($table, $field)); // continues existing, drop aborted
+
+        // drop field with simple xmldb_field, not having related indexes
+        $field = new xmldb_field('forcesubscribe'); // Field has default clause
+        $this->assertTrue($dbman->field_exists($table, 'forcesubscribe'));
         $dbman->drop_field($table, $field);
+        $this->assertFalse($dbman->field_exists($table, 'forcesubscribe'));
 
-        $this->assertFalse($dbman->field_exists($table, 'type'));
+
+        // drop field with complete xmldb_field object, not having related indexes
+        $field = new xmldb_field('trackingtype'); // Field has default clause
+        $this->assertTrue($dbman->field_exists($table, $field));
+        $dbman->drop_field($table, $field);
+        $this->assertFalse($dbman->field_exists($table, $field));
     }
 
     public function testChangeFieldType() {
