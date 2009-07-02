@@ -524,13 +524,21 @@ class pix_icon_finder implements icon_finder {
     /* Implement interface method. */
     public function old_icon_url($iconname) {
         global $CFG;
-        return $CFG->httpswwwroot . '/pix/' . $iconname . '.gif';
+        if (file_exists($CFG->dirroot . '/pix/' . $iconname . '.png')) {
+            return $CFG->httpswwwroot . '/pix/' . $iconname . '.png';
+        } else {
+            return $CFG->httpswwwroot . '/pix/' . $iconname . '.gif';
+        }
     }
 
     /* Implement interface method. */
     public function mod_icon_url($iconname, $module) {
         global $CFG;
-        return $CFG->httpswwwroot . '/mod/' . $module . '/' . $iconname . '.gif';
+        if (file_exists($CFG->dirroot . '/mod/' . $module . '/' . $iconname . '.png')) {
+            return $CFG->httpswwwroot . '/mod/' . $module . '/' . $iconname . '.png';
+        } else {
+            return $CFG->httpswwwroot . '/mod/' . $module . '/' . $iconname . '.gif';
+        }
     }
 }
 
@@ -556,13 +564,21 @@ class theme_icon_finder implements icon_finder {
     /* Implement interface method. */
     public function old_icon_url($iconname) {
         global $CFG;
-        return $CFG->httpsthemewww . '/' . $this->themename . '/pix/' . $iconname . '.gif';
+        if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/' . $iconname . '.png')) {
+            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/' . $iconname . '.png';
+        } else {
+            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/' . $iconname . '.gif';
+        }
     }
 
     /* Implement interface method. */
     public function mod_icon_url($iconname, $module) {
         global $CFG;
-        return $CFG->httpsthemewww . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.gif';
+        if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.png')) {
+            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.png';
+        } else {
+            return $CFG->httpsthemewww . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.gif';
+        }
     }
 }
 
@@ -594,8 +610,10 @@ class smartpix_icon_finder extends pix_icon_finder {
     /* Implement interface method. */
     public function old_icon_url($iconname) {
         foreach ($this->places as $dirroot => $urlroot) {
-            if (file_exists($dirroot . $iconname . '.gif')) {
-                return $iconname . $iconname . '.gif';
+            if (file_exists($dirroot . $iconname . '.png')) {
+                return $dirroot . $iconname . '.png';
+            } else if (file_exists($dirroot . $iconname . '.gif')) {
+                return $dirroot . $iconname . '.gif';
             }
         }
         return parent::old_icon_url($iconname);
@@ -604,11 +622,13 @@ class smartpix_icon_finder extends pix_icon_finder {
     /* Implement interface method. */
     public function mod_icon_url($iconname, $module) {
         foreach ($this->places as $dirroot => $urlroot) {
-            if (file_exists($dirroot . 'mod/' . $iconname . '.gif')) {
-                return $iconname . 'mod/' . $iconname . '.gif';
+            if (file_exists($dirroot . 'mod/' . $iconname . '.png')) {
+                return $dirroot . 'mod/' . $iconname . '.png';
+            } else if (file_exists($dirroot . 'mod/' . $iconname . '.gif')) {
+                return $dirroot . 'mod/' . $iconname . '.gif';
             }
         }
-        return parent::old_icon_url($iconname);
+        return parent::old_icon_url($iconname, $module);
     }
 }
 
