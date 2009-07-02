@@ -80,7 +80,6 @@ EOD;
      */
     public function get_listing($path='', $page='') {
         global $CFG, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $ret = array();
         $curl = new curl;
         $msg = $curl->head($this->file_url);
@@ -102,7 +101,7 @@ EOD;
                 $ret['list'][] = array(
                     'title'=>$filename,
                     'source'=>$this->file_url,
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $filename)
+                    'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $filename)))
                     );
             }
         }
@@ -110,7 +109,6 @@ EOD;
     }
     public function analyse_page($baseurl, $content, &$list) {
         global $CFG, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $urls = extract_html_urls($content);
         $images = $urls['img']['src'];
         $pattern = '#img(.+)src="?\'?([[:alnum:]:?=&@/._+-]+)"?\'?#i';
@@ -122,8 +120,7 @@ EOD;
                     'thumbnail'=>url_to_absolute($baseurl, $url),
                     'thumbnail_height'=>84,
                     'thumbnail_width'=>84
-                    //'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $url)
-                    );
+                );
             }
         }
     }

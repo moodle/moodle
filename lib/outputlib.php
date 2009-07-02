@@ -1932,21 +1932,6 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function container_end() {
         return $this->opencontainers->pop('container');
     }
-
-    /**
-     * At the moment we frequently have a problem with $CFG->pixpath not being
-     * initialised when it is needed. Unfortunately, there is no nice way to handle
-     * this. I think we need to replace $CFG->pixpath with something like $OUTPUT->icon(...).
-     * However, until then, we need a way to force $CFG->pixpath to be initialised,
-     * to fix the error messages, and that is what this function if for.
-     */
-    public function initialise_deprecated_cfg_pixpath() {
-        // Actually, we don't have to do anything here. Just calling any method
-        // of $OBJECT  is enough. However, if the only reason you are calling
-        // an $OUTPUT method is to get $CFG->pixpath initialised, please use this
-        // method, so we can find them and clean them up later once we have
-        // found a better replacement for $CFG->pixpath.
-    }
 }
 
 

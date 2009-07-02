@@ -30,8 +30,6 @@ class repository_filesystem extends repository {
     }
     public function get_listing($path = '', $page = '') {
         global $CFG, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
-
         $list = array();
         $list['list'] = array();
         // process breacrumb trail
@@ -66,7 +64,7 @@ class repository_filesystem extends repository {
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
                             'date' => time(),
-                            'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $this->root_path.$file)
+                            'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $this->root_path.$file)))
                         );
                     } else {
                         if (!empty($path)) {

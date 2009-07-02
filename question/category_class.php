@@ -173,7 +173,6 @@ class question_category_object {
         $this->str->cancel         = get_string('cancel');
         $this->str->editcategories = get_string('editcategories', 'quiz');
         $this->str->page           = get_string('page');
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $this->pixpath = $CFG->pixpath;
 
         $this->pageurl = $pageurl;

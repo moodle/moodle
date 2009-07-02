@@ -13,7 +13,6 @@ class repository_s3 extends repository {
     }
     public function get_listing($path = '', $page = '') {
         global $CFG, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $list = array();
         $list['list'] = array();
         // the management interface url
@@ -46,7 +45,7 @@ class repository_s3 extends repository {
                     'size'=>$file['size'],
                     'date'=>userdate($file['time']),
                     'source'=>$path.'/'.$file['name'],
-                    'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $file['name'])
+                    'thumbnail'=>$OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $file['name'])))
                     );
             }
         }

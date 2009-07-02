@@ -4652,7 +4652,6 @@ function editorhelpbutton(){
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
     global $CFG, $COURSE, $OUTPUT;
-    $OUTPUT->initialise_deprecated_cfg_pixpath();
 
     //warning if ever $text parameter is used
     //$text option won't work properly because the text needs to be always cleaned and,
@@ -4694,7 +4693,7 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
             $linkobject .= $imagetext;
         } else {
             $linkobject .= '<img class="iconhelp" alt="'.s(strip_tags($tooltip)).'" src="'.
-                $CFG->pixpath .'/help.gif" />';
+                $OUTPUT->old_icon_url('help') . '" />';
         }
     } else {
         $linkobject .= $tooltip;

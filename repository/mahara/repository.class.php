@@ -129,7 +129,6 @@ class repository_mahara extends repository {
      */
     public function get_listing($path = null, $page = 1, $search = '') {
         global $CFG, $DB, $USER, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
 
         ///check that Mahara has a good version
         ///We also check that the "get file list" method has been activated (if it is not
@@ -215,7 +214,7 @@ class repository_mahara extends repository {
                 if ($file['artefacttype'] == 'image') {
                     $thumbnail = $host->wwwroot."/artefact/file/download.php?file=".$file['id']."&size=70x55";
                 } else {
-                    $thumbnail = $CFG->pixpath .'/f/'. mimeinfo('icon32', $file['title']);
+                    $thumbnail = $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $file['title'])));
                 }
                 $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'source'=>$file['id'], 'thumbnail' => $thumbnail);
             }

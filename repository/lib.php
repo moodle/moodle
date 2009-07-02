@@ -737,7 +737,6 @@ abstract class repository {
      */
     public static function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
         global $DB, $CFG, $USER, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $now = time();
         $entry = new object();
@@ -770,7 +769,7 @@ abstract class repository {
                 return array('url'=>$ret->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', $path)
+                    'icon'=>$OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $path)))
                 );
             } else {
                 return null;
@@ -897,7 +896,6 @@ abstract class repository {
      */
     public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG, $OUTPUT;
-        $OUTPUT->initialise_deprecated_cfg_pixpath();
 
         $filecount = 0;
         $children = $fileinfo->get_children();
