@@ -1311,7 +1311,7 @@ function glossary_get_file_areas($course, $cm, $context) {
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool falso if file not found, does not return if found - just send the file
+ * @return bool false if file not found, does not return if found - justsend the file
  */
 function glossary_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;

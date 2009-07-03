@@ -853,7 +853,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool falso if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
 function scorm_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG;

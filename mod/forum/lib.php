@@ -4365,9 +4365,10 @@ function forum_get_file_areas($course, $cm, $context) {
  * @param object $context
  * @param string $filearea
  * @param array $args
- * @return bool
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
  */
-function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
+function forum_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
     if (!$cminfo->uservisible) {
