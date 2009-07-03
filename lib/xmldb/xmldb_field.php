@@ -195,7 +195,13 @@ class xmldb_field extends xmldb_object {
         if ($this->type == XMLDB_TYPE_CHAR && $this->notnull && $default === '') {
             $this->errormsg = 'XMLDB has detected one CHAR NOT NULL column (' . $this->name . ") with '' (empty string) as DEFAULT value. This type of columns must have one meaningful DEFAULT declared or none (NULL). XMLDB have fixed it automatically changing it to none (NULL). The process will continue ok and proper defaults will be created accordingly with each DB requirements. Please fix it in source (XML and/or upgrade script) to avoid this message to be displayed.";
             $this->debug($this->errormsg);
-            $default = NULL;
+            $default = null;
+        }
+    /// Check, warn and autofix TEXT|BINARY columns having a default clause (only null is allowed)
+        if (($this->type == XMLDB_TYPE_TEXT || $this->type == XMLDB_TYPE_BINARY) && $default !== null) {
+            $this->errormsg = 'XMLDB has detected one TEXT/BINARY column (' . $this->name . ") with some DEFAULT defined. This type of columns cannot have any default value. Please fix it in source (XML and/or upgrade script) to avoid this message to be displayed.";
+            $this->debug($this->errormsg);
+            $default = null;
         }
         $this->default = $default;
     }
