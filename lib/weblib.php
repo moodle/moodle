@@ -4870,16 +4870,20 @@ function redirect($url, $message='', $delay=-1) {
        $url = $SESSION->sid_process_url($url);
     }
 
+    $lasterror = error_get_last();
+    $debugdisableredirect = defined('DEBUGGING_PRINTED') ||
+            (!empty($CFG->debugdisplay) && !empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
+
     $usingmsg = false;
-    if ($message!=='') {
-        $usingmsg = true;
-        if ($delay===-1 || !is_numeric($delay)) {
+    if (!empty($message)) {
+        if ($delay === -1 || !is_numeric($delay)) {
             $delay = 3;
         }
         $message = clean_text($message);
     } else {
-        $message = 'This page should redirect. If nothing is happening please click the continue button below.';
+        $message = get_string('pageshouldredirect');
         $delay = 0;
+        // We are going to try to use a HTTP redirect, so we need a full URL.
         if (!preg_match('|^[a-z]+:|', $url)) {
             // Get host name http://www.wherever.com
             $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
@@ -4901,7 +4905,6 @@ function redirect($url, $message='', $delay=-1) {
         }
     }
 
-    $performanceinfo = '';
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
         if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
             $perf = get_performance_info();
@@ -4912,11 +4915,16 @@ function redirect($url, $message='', $delay=-1) {
     $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
     $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
 
-    $message .= '<a href="'. $encodedurl .'">'. get_string('continue') .'</a>';
+    if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
+        //302 might not work for POST requests, 303 is ignored by obsolete clients.
+        @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
+        @header('Location: '.$url);
+    }
 
+    // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
-    echo $OUTPUT->redirect($encodedurl, $message, $delay);
-    die();
+    echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
+    exit;
 }
 
 /**

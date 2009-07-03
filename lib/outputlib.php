@@ -470,7 +470,7 @@ class theme_config {
             $this->customcssoutputfunction = 'output_css_for_css_edit';
         }
 
-        if ($CFG->smartpix) {
+        if (!empty($CFG->smartpix)) {
             $this->iconfinder = 'smartpix_icon_finder';
         } else if ($this->custompix) {
             $this->iconfinder = 'theme_icon_finder';
@@ -1416,39 +1416,25 @@ class moodle_core_renderer extends moodle_renderer_base {
      *         set this is a requirement and defaults to 3, set to 0 no delay
      * @param string $messageclass The css class to put on the message that is
      *         being displayed to the user
+     * @param boolean $debugdisableredirect this redirect has been disabled for
+     *         debugging purposes. Display a message that explains, and don't
+     *         trigger the redirect.
      * @return string The HTML to display to the user before dying, may contain
      *         meta refresh, javascript refresh, and may have set header redirects
      */
-    public function redirect($encodedurl, $message, $delay, $messageclass='notifyproblem') {
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);
-
-        $disableredirect = false;
-
-        if ($delay!=0) {
-            /// At developer debug level. Don't redirect if errors have been printed on screen.
-            /// Currenly only works in PHP 5.2+; we do not want strict PHP5 errors
-            $lasterror = error_get_last();
-            $error = defined('DEBUGGING_PRINTED') or (!empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
-            $errorprinted = debugging('', DEBUG_ALL) && $CFG->debugdisplay && $error;
-            if ($errorprinted) {
-                $disableredirect= true;
-                $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
-            }
-        }
 
         switch ($this->page->state) {
             case moodle_page::STATE_BEFORE_HEADER :
                 // No output yet it is safe to delivery the full arsenol of redirect methods
-                if (!$disableredirect) {
-                    @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
-                    @header('Location: '.$url);
+                if (!$debugdisableredirect) {
+                    // Don't use exactly the same time here, it can cause problems when both redirects fire at the same time.
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
-                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
+                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay + 3);
                 }
                 $output = $this->header();
-                $output .= $this->notification($message, $messageclass);
-                $output .= $this->footer();
                 break;
             case moodle_page::STATE_PRINTING_HEADER :
                 // We should hopefully never get here
@@ -1458,17 +1444,21 @@ class moodle_core_renderer extends moodle_renderer_base {
                 // We really shouldn't be here but we can deal with this
                 debugging("You should really redirect before you start page output");
                 if (!$disableredirect) {
-                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay+3);
+                    $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay);
                 }
                 $output = $this->opencontainers->pop_all_but_last();
-                $output .= $this->notification($message, $messageclass);
-                $output .= $this->footer();
                 break;
             case moodle_page::STATE_DONE :
                 // Too late to be calling redirect now
                 throw new coding_exception('You cannot redirect after the entire page has been generated');
                 break;
         }
+        $output .= $this->notification($message, 'redirectmessage');
+        $output .= '<a href="'. $encodedurl .'">'. get_string('continue') .'</a>';
+        if ($debugdisableredirect) {
+            $output .= '<p><strong>Error output, so disabling automatic redirect.</strong></p>';
+        }
+        $output .= $this->footer();
         return $output;
     }
 
