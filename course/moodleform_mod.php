@@ -10,6 +10,8 @@ if (!empty($CFG->enablecompletion) or !empty($CFG->enableavailability)) {
  *
  */
 class moodleform_mod extends moodleform {
+    /** Current data */
+    protected $current;
     /**
      * Instance of the module that is being updated. This is the id of the {prefix}{modulename}
      * record. Can be used in form definition. Will be "" if this is an 'add' form and not an
@@ -47,10 +49,11 @@ class moodleform_mod extends moodleform {
     /** current context, course or module depends if already exists*/
     protected $context;
 
-    function moodleform_mod($instance, $section, $cm, $course) {
-        $this->_instance = $instance;
-        $this->_section = $section;
-        $this->_cm = $cm;
+    function moodleform_mod($current, $section, $cm, $course) {
+        $this->current   = $current;
+        $this->_instance = $current->instance;
+        $this->_section  = $section;
+        $this->_cm       = $cm;
         if ($this->_cm) {
             $this->context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
         } else {
