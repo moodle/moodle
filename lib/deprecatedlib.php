@@ -243,7 +243,7 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
  * @return string|void Depending on $return
  */
 function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    debugging('print_simple_box(_star/_end) is deprecated. Please use $OUTPUT->box(_star/_end) instead', DEBUG_DEVELOPER);
+    debugging('print_simple_box(_start/_end) is deprecated. Please use $OUTPUT->box(_start/_end) instead', DEBUG_DEVELOPER);
 
     $output = '';
 
