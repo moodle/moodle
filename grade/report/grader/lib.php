@@ -991,7 +991,7 @@ class grade_report_grader extends grade_report {
                         ';
             }
 
-            $studentshtml .= '<tr class="heading"><th class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+            $studentshtml .= '<tr class="heading"><th id="studentheader" class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
                         . $strfirstname . '</a> '
                         . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
 
