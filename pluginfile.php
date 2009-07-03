@@ -281,7 +281,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
     $filefunction = $modname.'_pluginfile';
     if (function_exists($filefunction)) {
-        if ($filefunction($course, $cminfo, $context, $filearea, $args) !== false) {
+        if ($filefunction($course, $cminfo, $context, $filearea, $args, $forcedownload) !== false) {
             die;
         }
     }
