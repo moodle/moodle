@@ -960,7 +960,7 @@ abstract class repository {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo('icon32', $filename)
+                    'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.gif', '.png'), '', mimeinfo('icon32', $filename)))
                 );
                 $filecount++;
             }

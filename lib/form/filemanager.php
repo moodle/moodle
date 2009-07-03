@@ -208,7 +208,7 @@ function rm_file(id, name, context) {
 function fp_callback(obj) {
     var list = document.getElementById('draftfiles-'+obj.client_id);
     var html = '<li><a href="'+obj['url']+'"><img src="'+obj['icon']+'" class="icon" /> '+obj['file']+'</a> ';
-    html += '<a href="###" onclick=\'rm_file('+obj['id']+', "'+obj['file']+'", this)\'><img src="{$CFG->pixpath}/t/delete.gif" class="iconsmall" /></a>';;
+    html += '<a href="###" onclick=\'rm_file('+obj['id']+', "'+obj['file']+'", this)\'><img src="{$OUTPUT->old_icon_url('t/delete')}" class="iconsmall" /></a>';;
     html += '</li>';
     list.innerHTML += html;
 }

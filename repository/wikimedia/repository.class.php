@@ -7,7 +7,7 @@ class repository_wikimedia extends repository {
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
     }
     public function get_listing($path = '', $page = '') {
-        global $CFG;
+        global $OUTPUT;
         $client = new wikimedia; 
         $result = $client->search_images($this->keyword);
         $list = array();
@@ -15,7 +15,7 @@ class repository_wikimedia extends repository {
         foreach ($result as $title=>$url) {
             $list['list'][] = array(
                 'title'=>substr($title, 5),
-                'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon32', 'xx.jpg'),
+                'thumbnail'=>$OUTPUT->old_icon_url('f/'.str_replace(array('.gif', '.png'), '', mimeinfo('icon32', 'xx.jpg'))),
                 // plugin-dependent unique path to the file (id, url, path, etc.)
                 'source'=>$url,
                 // the accessible url of the file

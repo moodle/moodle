@@ -2086,7 +2086,7 @@ function replace_smilies(&$text) {
  * @return string HTML for a list of smilies.
  */
 function get_emoticons_list_for_help_file() {
-    global $CFG, $SESSION, $PAGE;
+    global $CFG, $SESSION, $PAGE, $OUTPUT;
     if (empty($CFG->emoticons)) {
         return '';
     }
@@ -2095,7 +2095,7 @@ function get_emoticons_list_for_help_file() {
     $output = '<ul id="emoticonlist">';
     foreach ($items as $item) {
         $item = explode('{:}', $item);
-        $output .= '<li><img src="' . $CFG->pixpath . '/s/' . $item[1] . '.gif" alt="' .
+        $output .= '<li><img src="' . $OUTPUT->old_icon_url('s/' . $item[1]) . '" alt="' .
                 $item[0] . '" /><code>' . $item[0] . '</code></li>';
     }
     $output .= '</ul>';

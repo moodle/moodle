@@ -736,7 +736,7 @@
                 $user = make_context_subobj($user);
                 if ( !empty($user->hidden) ) {
                 // if the assignment is hidden, display icon
-                    $hidden = " <img src=\"{$CFG->pixpath}/t/show.gif\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                    $hidden = " <img src=\"" . $OUTPUT->old_icon_url('t/show') . "\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                 } else {
                     $hidden = '';
                 }

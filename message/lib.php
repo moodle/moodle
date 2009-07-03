@@ -540,23 +540,23 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 
     switch ($linktype) {
         case 'block':
-            $icon = '/t/go.gif';
+            $icon = 't/go';
             break;
         case 'unblock':
-            $icon = '/t/stop.gif';
+            $icon = 't/stop';
             break;
         case 'remove':
-            $icon = '/t/user.gif';
+            $icon = 't/user';
             break;
         case 'add':
         default:
-            $icon = '/t/usernot.gif';
+            $icon = 't/usernot';
     }
 
     $output = '<span class="'.$linktype.'">'.
               '<a href="'.$script.'&amp;'.$command.'='.$userid.
               '&amp;sesskey='.sesskey().'" title="'.s($string).'">'.
-              '<img src="'.$CFG->pixpath.$icon.'" class="iconsmall" alt="'.s($alttext).'" />'.
+              '<img src="'.$OUTPUT->old_icon_url($icon).'" class="iconsmall" alt="'.s($alttext).'" />'.
               $text.'</a></span>';
 
     if ($return) {

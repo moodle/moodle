@@ -49,18 +49,18 @@ question_flag_changer = {
         } else {
             postdata += '&newstate=0'
         }
-        YAHOO.util.Connect.asyncRequest('POST', qengine_config.wwwroot + '/question/toggleflag.php', null, postdata);
+        YAHOO.util.Connect.asyncRequest('POST', qengine_config.actionurl, null, postdata);
         question_flag_changer.fire_state_changed(input);
         YAHOO.util.Event.preventDefault(e);
     },
 
     update_image: function(image) {
         if (image.statestore.value == 1) {
-            image.src = qengine_config.pixpath + '/i/flagged.png';
+            image.src = qengine_config.flagicon;
             image.alt = qengine_config.flaggedalt;
             image.title = qengine_config.unflagtooltip;
         } else {
-            image.src = qengine_config.pixpath + '/i/unflagged.png';
+            image.src = qengine_config.unflagicon;
             image.alt = qengine_config.unflaggedalt;
             image.title = qengine_config.flagtooltip;
         }

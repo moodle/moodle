@@ -11,12 +11,13 @@
  * @param Array extrafields extra fields we are displaying for each user in addition to fullname.
  * @param String label used for the optgroup of users who are selected but who do not match the current search.
  */
-function user_selector(name, hash, extrafields, lastsearch, strprevselected, strnomatchingusers, strnone) {
+function user_selector(name, hash, extrafields, lastsearch, strprevselected, strnomatchingusers, strnone, iconloading) {
     this.name = name;
     this.extrafields = extrafields;
     this.strprevselected = strprevselected;
     this.strnomatchingusers = strnomatchingusers;
     this.strnone = strnone;
+    this.iconloading = iconloading;
     this.searchurl = moodle_cfg.wwwroot + '/user/selector/search.php?selectorid=' +
             hash + '&sesskey=' + moodle_cfg.sesskey + '&search='
 
@@ -136,6 +137,14 @@ user_selector.prototype.strnomatchingusers = '';
  * @type String
  */
 user_selector.prototype.strnone = '';
+
+/**
+ * URL of the loading icon.
+ *
+ * @property iconloading
+ * @type String
+ */
+user_selector.prototype.iconloading = '';
 
 // Fields that configure the control's behaviour ===============================
 
@@ -320,7 +329,7 @@ user_selector.prototype.send_query = function(forceresearch) {
         scope: this
     });
     this.lastsearch = value;
-    this.listbox.style.background = 'url(' + moodle_cfg.pixpath + '/i/loading.gif) no-repeat center center';
+    this.listbox.style.background = 'url(' + this.iconloading + ') no-repeat center center';
 }
 
 /**

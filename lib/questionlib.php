@@ -1468,8 +1468,8 @@ function question_get_feedback_image($fraction, $selected=true) {
         $size = 'small';
     }
     $class = question_get_feedback_class($fraction);
-    return '<img src="' . $CFG->pixpath.'/i/' . $icons[$class] . '_' . $size . '.gif" '.
-            'alt="' . get_string($class, 'quiz') . '" class="icon" />';
+    return '<img src="' . $OUTPUT->old_icon_url('i/' . $icons[$class] . '_' . $size) .
+            '" alt="' . get_string($class, 'quiz') . '" class="icon" />';
 }
 
 /**
@@ -2091,17 +2091,16 @@ function question_format_grade($cmoptions, $grade) {
 }
 
 /**
- *
- * @global object
  * @return string An inline script that creates a JavaScript object storing
  * various strings and bits of configuration that the scripts in qengine.js need
  * to get from PHP.
  */
-function question_init_qenginejs_script() {
-    global $CFG, $PAGE;
+function question_init_qengine_js() {
+    global $CFG, $PAGE, $OUTPUT;
     $config = array(
-        'pixpath' => $CFG->pixpath,
-        'wwwroot' => $CFG->wwwroot,
+        'actionurl' => $CFG->wwwroot . '/question/toggleflag.php',
+        'flagicon' => $OUTPUT->old_icon_url('i/flagged'),
+        'unflagicon' => $OUTPUT->old_icon_url('i/unflagged'),
         'flagtooltip' => get_string('clicktoflag', 'question'),
         'unflagtooltip' => get_string('clicktounflag', 'question'),
         'flaggedalt' => get_string('flagged', 'question'),
@@ -2123,8 +2122,6 @@ function question_init_qenginejs_script() {
  *      Must contain all the questions in $questionlist
  * @param array $states an array of question state objects, whose keys are question ids.
  *      Must contain the state of all the questions in $questionlist
- *
- * @return string Deprecated. Some HTML code that can go inside the head tag.
  */
 function get_html_head_contributions($questionlist, &$questions, &$states) {
     global $CFG, $PAGE, $QTYPES;
@@ -2132,6 +2129,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
     // The question engine's own JavaScript.
     $PAGE->requires->yui_lib('connection');
     $PAGE->requires->js('question/qengine.js');
+    question_init_qengine_js();
 
     // Anything that questions on this page need.
     foreach ($questionlist as $questionid) {

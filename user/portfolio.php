@@ -90,7 +90,7 @@ if ($display) {
         $table->data[] = array($i->get('name'), $i->get('plugin'),
             ($i->has_user_config()
                 ?  '<a href="' . $baseurl . '?config=' . $i->get('id') . '"><img src="' . $OUTPUT->old_icon_url('t/edit') . '" alt="' . get_string('configure') . '" /></a>' : '') .
-                   ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/' . (($visible) ? 'hide' : 'show') . '.gif" alt="' . get_string($visible ? 'hide' : 'show') . '" /></a><br />'
+                   ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '"><img src="' . $OUTPUT->old_icon_url('t/' . (($visible) ? 'hide' : 'show')) . '" alt="' . get_string($visible ? 'hide' : 'show') . '" /></a><br />'
         );
     }
 

@@ -1003,16 +1003,16 @@ class default_questiontype {
      * @return string the img tag.
      */
     protected function get_question_flag_tag($flagged, $id = '') {
-        global $CFG;
+        global $OUTPUT;
         if ($id) {
             $id = 'id="' . $id . '" ';
         }
         if ($flagged) {
-            $img = 'flagged.png';
+            $img = 'i/flagged';
         } else {
-            $img = 'unflagged.png';
+            $img = 'i/unflagged';
         }
-        return '<img ' . $id . 'src="' . $CFG->pixpath . '/i/' . $img .
+        return '<img ' . $id . 'src="' . $OUTPUT->old_icon_url($img) .
                 '" alt="' . get_string('flagthisquestion', 'question') . '" />';
     }
 

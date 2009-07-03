@@ -626,7 +626,7 @@ abstract class user_selector_base {
      * @return any HTML needed here.
      */
     protected function initialise_javascript($search) {
-        global $USER, $PAGE;
+        global $USER, $PAGE, $OUTPUT;
         $output = '';
 
         // Put the options into the session, to allow search.php to respond to the ajax requests.
@@ -637,7 +637,7 @@ abstract class user_selector_base {
         // Initialise the selector.
         $PAGE->requires->js_function_call('new user_selector', array($this->name, $hash, $this->extrafields,
                 $search, get_string('previouslyselectedusers', '', '%%SEARCHTERM%%'),
-                get_string('nomatchingusers', '', '%%SEARCHTERM%%'), get_string('none')), true);
+                get_string('nomatchingusers', '', '%%SEARCHTERM%%'), get_string('none'), $OUTPUT->old_icon_url('i/loading')));
 
         return $output;
     }
