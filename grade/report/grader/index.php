@@ -205,6 +205,12 @@ echo '<div id="hiddentooltiproot">tooltip panel</div>';
 YAHOO.namespace("graderreport");
 
 function init() {
+    // Adjust height of header c0
+    var rows = document.getElementsByClassName('heading_name_row');
+    var header_cell_region = YAHOO.util.Dom.getRegion(rows[rows.length-1].firstChild);
+    var height = header_cell_region.bottom - header_cell_region.top;
+    YAHOO.util.Dom.setStyle('studentheader', 'height', height + 'px');
+    
     // attach event listener to the table for mouseover and mouseout
     var table = document.getElementById('user-grades');
     YAHOO.util.Event.on(table, 'mouseover', YAHOO.graderreport.mouseoverHandler);
@@ -224,7 +230,6 @@ function init() {
     YAHOO.graderreport.panelEl.render(table);
 
     document.body.className += ' yui-skin-sam';
-
 }
 
 YAHOO.graderreport.mouseoverHandler = function (e) {
@@ -343,6 +348,7 @@ YAHOO.graderreport.mouseoutHandler = function (e) {
 
 
 YAHOO.util.Event.onDOMReady(init);
+
 //]]>
 </script>
 <?php
