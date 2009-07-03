@@ -431,15 +431,15 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         /// Execute install.xml (XMLDB) - must be present in all modules
             $DB->get_manager()->install_from_xmldb_file($fullmod.'/db/install.xml');
 
+        /// Add record into modules table - may be needed in install.php already
+            $module->id = $DB->insert_record('modules', $module);
+
         /// Post installation hook - optional
             if (file_exists("$fullmod/db/install.php")) {
                 require_once("$fullmod/db/install.php");
                 $post_install_function = 'xmldb_'.$module->name.'_install';;
                 $post_install_function();
             }
-
-        /// Continue with the installation, roles and other stuff
-            $module->id = $DB->insert_record('modules', $module);
 
         /// Install various components
             update_capabilities($component);
