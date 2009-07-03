@@ -930,6 +930,27 @@ class dml_test extends UnitTestCase {
 
         $this->assertEqual(2, $record->course);
 
+        // record not found
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 0));
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 1));
+        try {
+            $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 2);
+            $this->fail("Exception expected");
+        } catch (dml_missing_record_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // multiple matches
+        ob_start(); // hide debug warning
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 0));
+        ob_end_clean();
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 1));
+        try {
+            $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 2);
+            $this->fail("Exception expected");
+        } catch (dml_multiple_records_exception $e) {
+            $this->assertTrue(true);
+        }
     }
 
     public function test_get_field() {

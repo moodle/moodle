@@ -1128,13 +1128,15 @@ abstract class moodle_database {
      * @param string $table The table to select from.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @param string $fields A comma separated list of fields to be returned from the chosen table.
-     * @param bool $ignoremultiple ignore multiple records if found
-     * @return maixed a fieldset object containing the first mathcing record or false if not found
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first (not recommended);
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record($table, array $conditions, $fields='*', $ignoremultiple=false) {
+    public function get_record($table, array $conditions, $fields='*', $strictness=0) {
         list($select, $params) = $this->where_clause($conditions);
-        return $this->get_record_select($table, $select, $params, $fields, $ignoremultiple);
+        return $this->get_record_select($table, $select, $params, $fields, $strictness);
     }
 
     /**
@@ -1143,42 +1145,57 @@ abstract class moodle_database {
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @param string $fields A comma separated list of fields to be returned from the chosen table.
-     * @param bool $ignoremultiple ignore multiple records if found
-     * @return maixed a fieldset object containing the first mathcing record or false if not found
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first (not recommended);
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_select($table, $select, array $params=null, $fields='*', $ignoremultiple=false) {
+    public function get_record_select($table, $select, array $params=null, $fields='*', $strictness=0) {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->get_record_sql("SELECT $fields FROM {$this->prefix}$table $select", $params, $ignoremultiple);
+        try {
+            return $this->get_record_sql("SELECT $fields FROM {$this->prefix}$table $select", $params, $strictness);
+        } catch (dml_missing_record_exception $e) {
+            // create new exception which will contain correct table name
+            throw new dml_missing_record_exception($table, $e->sql, $e->params);
+        }
     }
 
     /**
      * Get a single database record as an object using a SQL statement.
      *
-     * The SQL statement should normally only return one record. In debug mode
-     * you will get a warning if more records are found. In non-debug mode,
-     * it just returns the first record.
-     *
-     * Use get_records_sql() if more matches possible!
+     * The SQL statement should normally only return one record.
+     * It is recommended to use get_records_sql() if more matches possible!
      *
      * @param string $sql The SQL string you wish to be executed, should normally only return one record.
      * @param array $params array of sql parameters
-     * @param bool $ignoremultiple ignore multiple records if found
-     * @return maixed a fieldset object containing the first mathcing record or false if not found
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first (not recommended);
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_sql($sql, array $params=null, $ignoremultiple=false) {
-        $count = $ignoremultiple ? 1 : 2;
-
+    public function get_record_sql($sql, array $params=null, $strictness=0) {
+        $strictness = (int)$strictness;
+        if ($strictness == 1) {
+            $count = 1;
+        } else {
+            $count = 0;
+        }
         if (!$records = $this->get_records_sql($sql, $params, 0, $count)) {
             // not found
+            if ($strictness == 2) { //MUST_EXIST
+                throw new dml_missing_record_exception('', $sql, $params);
+            }
             return false;
         }
 
-        if (!$ignoremultiple and count($records) > 1) {
+        if (count($records) > 1) {
+            if ($strictness == 2) { //MUST_EXIST
+                throw new dml_multiple_records_exception($sql, $params);
+            }
             debugging('Error: mdb->get_record() found more than one record!');
         }
 
@@ -1192,12 +1209,15 @@ abstract class moodle_database {
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first;
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field($table, $return, array $conditions) {
+    public function get_field($table, $return, array $conditions, $strictness=0) {
         list($select, $params) = $this->where_clause($conditions);
-        return $this->get_field_select($table, $return, $select, $params);
+        return $this->get_field_select($table, $return, $select, $params, $strictness);
     }
 
     /**
@@ -1207,14 +1227,22 @@ abstract class moodle_database {
      * @param string $return the field to return the value of.
      * @param string $select A fragment of SQL to be used in a where clause returning one row with one column
      * @param array $params array of sql parameters
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first;
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field_select($table, $return, $select, array $params=null) {
+    public function get_field_select($table, $return, $select, array $params=null, $strictness=0) {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->get_field_sql("SELECT $return FROM {" . $table . "} $select", $params);
+        try {
+            return $this->get_field_sql("SELECT $return FROM {" . $table . "} $select", $params, $strictness);
+        } catch (dml_missing_record_exception $e) {
+            // create new exception which will contain correct table name
+            throw new dml_missing_record_exception($table, $e->sql, $e->params);
+        }
     }
 
     /**
@@ -1224,16 +1252,19 @@ abstract class moodle_database {
      * @param string $return the field to return the value of.
      * @param string $sql The SQL query returning one row with one column
      * @param array $params array of sql parameters
+     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                        1 means ignore multiple records found, return first;
+     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field_sql($sql, array $params=null) {
-        if ($records = $this->get_records_sql($sql, $params, 0, 1)) {
-            $record = reset($records);
-            $record = (array)$record;
-            return reset($record); // first column
+    public function get_field_sql($sql, array $params=null, $strictness=0) {
+        if (!$record = $this->get_record_sql($sql, $params, $strictness)) {
+            return false;
         }
-        return false;
+
+        $record = (array)$record;
+        return reset($record); // first column
     }
 
     /**

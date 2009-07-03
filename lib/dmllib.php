@@ -41,6 +41,9 @@
 // Require the essential
 require_once($CFG->libdir.'/dml/moodle_database.php');
 
+/** Indicates some record is required to exist */
+define('MUST_EXIST', 2);
+
 /**
  * DML exception class, use instead of error() in dml code.
  */
@@ -60,6 +63,7 @@ class dml_exception extends moodle_exception {
  */
 class dml_connection_exception extends dml_exception {
     /**
+     * Constructor
      * @param string $error
      */
     function __construct($error) {
@@ -74,11 +78,13 @@ class dml_connection_exception extends dml_exception {
 class dml_read_exception extends dml_exception {
     /** @var string */
     public $error;
+    /** @var string */
     public $sql;
     /** @var array */
     public $params;
     
     /**
+     * Constructor
      * @param string $error
      * @param string $sql
      * @param array $params
@@ -93,16 +99,86 @@ class dml_read_exception extends dml_exception {
 }
 
 /**
- * DML read exception - triggered by SQL syntax errors, missing tables, etc.
+ * Caused by multiple records found in get_record() call.
+ */
+class dml_multiple_records_exception extends dml_exception {
+    /** @var string */
+    public $sql;
+    /** @var array */
+    public $params;
+    
+    /**
+     * Constructor
+     * @param string $table table name if known, '' if unknown
+     * @param string $sql
+     * @param array $params
+     */
+    function __construct($sql='', array $params=null) {
+        $errorinfo = s($sql).'<br />['.s(var_export($params, true)).']';
+        parent::__construct('multiplerecordsfound', null, $errorinfo);
+    }
+}
+
+/**
+ * Caused by missing record that is required for normal operation.
+ */
+class dml_missing_record_exception extends dml_exception {
+    /** @var string */
+    public $table;
+    /** @var string */
+    public $sql;
+    /** @var array */
+    public $params;
+    
+    /**
+     * Constructor
+     * @param string $table table name if known, '' if unknown
+     * @param string $sql
+     * @param array $params
+     */
+    function __construct($tablename, $sql='', array $params=null) {
+        if (empty($tablename)) {
+            $tablename = null;
+        }
+        $this->tablename = $tablename;
+        $this->sql       = $sql;
+        $this->params    = $params;
+        
+        switch ($tablename) {
+            case null:
+                $errcode = 'invalidrecordunknown';
+                break;
+            case 'course':
+                $errocode = empty($sql) ? 'invalidcourseid' : 'invalidrecord';
+                break;
+            case 'course_module':
+                $errocode = 'invalidcoursemodule';
+                break;
+            case 'user':
+                $errcode = 'invaliduser';
+                break;
+            default:
+                $errcode = 'invalidrecord';
+                break;
+        }
+        $errorinfo = s($sql).'<br />['.s(var_export($params, true)).']';
+        parent::__construct($errcode, $tablename, $errorinfo);
+    }
+}
+
+/**
+ * DML write exception - triggered by SQL syntax errors, missing tables, etc.
  */
 class dml_write_exception extends dml_exception {
     /** @var string */
     public $error;
+    /** @var string */
     public $sql;
     /** @var array */
     public $params;
 
     /**
+     * Constructor
      * @param string $error
      * @param string $sql
      * @param array $params

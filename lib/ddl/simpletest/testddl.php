@@ -433,7 +433,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['oneinteger']->has_default  , true);
         $this->assertEqual($columns['oneinteger']->default_value, 2);
         $this->assertEqual($columns['oneinteger']->meta_type    ,'I');
-        $this->assertEqual($DB->get_field('test_table1', 'oneinteger', array()), 2); //check default has been applied
+        $this->assertEqual($DB->get_field('test_table1', 'oneinteger', array(), 1), 2); //check default has been applied
 
         /// add one numeric field and check it
         $field = new xmldb_field('onenumber');
@@ -450,7 +450,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onenumber']->has_default  , true);
         $this->assertEqual($columns['onenumber']->default_value, 2.550);
         $this->assertEqual($columns['onenumber']->meta_type    ,'N');
-        $this->assertEqual($DB->get_field('test_table1', 'onenumber', array()), 2.550); //check default has been applied
+        $this->assertEqual($DB->get_field('test_table1', 'onenumber', array(), 1), 2.550); //check default has been applied
 
         /// add one float field and check it (not official type - must work as number)
         $field = new xmldb_field('onefloat');
@@ -466,7 +466,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onefloat']->has_default  , true);
         $this->assertEqual($columns['onefloat']->default_value, 3.550);
         $this->assertEqual($columns['onefloat']->meta_type    ,'N');
-        $this->assertEqual($DB->get_field('test_table1', 'onefloat', array()), 3.550); //check default has been applied
+        $this->assertEqual($DB->get_field('test_table1', 'onefloat', array(), 1), 3.550); //check default has been applied
 
         /// add one char field and check it
         $field = new xmldb_field('onechar');
@@ -483,7 +483,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onechar']->has_default  , true);
         $this->assertEqual($columns['onechar']->default_value,'Nice dflt!');
         $this->assertEqual($columns['onechar']->meta_type    ,'C');
-        $this->assertEqual($DB->get_field('test_table1', 'onechar', array()), 'Nice dflt!'); //check default has been applied
+        $this->assertEqual($DB->get_field('test_table1', 'onechar', array(), 1), 'Nice dflt!'); //check default has been applied
 
         /// add one text field and check it
         $field = new xmldb_field('onetext');

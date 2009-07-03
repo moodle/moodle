@@ -656,51 +656,32 @@ class oci_native_moodle_database extends moodle_database {
     /**
      * Get a single database record as an object using a SQL statement.
      *
-     * The SQL statement should normally only return one record. In debug mode
-     * you will get a warning if more records are found. In non-debug mode,
-     * it just returns the first record.
-     *
-     * Use get_records_sql() if more matches possible!
+     * The SQL statement should normally only return one record.
+     * It is recommended to use get_records_sql() if more matches possible!
      *
      * @param string $sql The SQL string you wish to be executed, should normally only return one record.
      * @param array $params array of sql parameters
-     * @param bool $ignoremultiple ignore multiple records if found
-     * @return maixed a fieldset object containing the first mathcing record or false if not found
+     * @param int $mode 0 means compatible mode, false returned if record not found, debug message if more found;
+     *                  1 means ignore multiple records found, return first (not recommended);
+     *                  2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_sql($sql, array $params=null, $ignoremultiple=false) {
-        // do not limit here - ORA does not like that
-        if (!$records = $this->get_records_sql($sql, $params)) {
-            // not found
+    public function get_record_sql($sql, array $params=null, $mode=0) {
+        $mode = (int)$mode;
+        if ($mode == 1) {
+            // do not limit here - ORA does not like that
+            if (!$rs = $this->get_recordset_sql($sql, $params)) {
+                return false;
+            }
+            foreach ($rs as $result) {
+                $rs->close();
+                return $result;
+            }
+            $rs->close();
             return false;
         }
-
-        if (!$ignoremultiple and count($records) > 1) {
-            debugging('Error: mdb->get_record() found more than one record!');
-        }
-
-        $return = reset($records);
-        return $return;
-    }
-
-    /**
-     * Get a single field value (first field) using a SQL statement.
-     *
-     * @param string $table the table to query.
-     * @param string $return the field to return the value of.
-     * @param string $sql The SQL query returning one row with one column
-     * @param array $params array of sql parameters
-     * @return mixed the specified value false if not found
-     * @throws dml_exception if error
-     */
-    public function get_field_sql($sql, array $params=null) {
-        // do not limit here - ORA does not like that
-        if ($records = $this->get_records_sql($sql, $params)) {
-            $record = reset($records);
-            $record = (array)$record;
-            return reset($record); // first column
-        }
-        return false;
+        return parent::get_record_sql($sql, $params, $mode);
     }
 
     /**
