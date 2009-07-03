@@ -329,7 +329,7 @@ function scorm_parse_aicc($scorm) {
 }
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE;
 
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
