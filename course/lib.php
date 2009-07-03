@@ -1641,7 +1641,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         }
         $DB->set_field('course', 'modinfo', null, $courseselect);
         // update cached global COURSE too ;-)
-        if ($courseid == $COURSE->id) {
+        if ($courseid == $COURSE->id or empty($courseid)) {
             $COURSE->modinfo = null;
         }
         // reset the fast modinfo cache
@@ -2831,11 +2831,11 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
 
 	    if (right_to_left()) {   // Exchange arrows on RTL
-		    $rightarrow = 't/left.gif';
-		    $leftarrow  = 't/right.gif';
+		    $rightarrow = 't/left';
+		    $leftarrow  = 't/right';
 	    } else {
-	        $rightarrow = 't/right.gif';
-	        $leftarrow  = 't/left.gif';
+	        $rightarrow = 't/right';
+	        $leftarrow  = 't/left';
         }
 
         if ($indent > 0) {
