@@ -1262,9 +1262,10 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     if (!$showbutton) {
         $output .= '<div id="noscript'.$formid.'" style="display: inline;">';
     }
-    $output .= '<input type="submit" value="'.$submitvalue.'" '.$disabled.' /></div>';
+    $output .= '<input type="submit" value="'.$submitvalue.'" '.$disabled.' />';
     if (!$showbutton) {
         $output .= $PAGE->requires->js_function_call('hide_item', Array('noscript'.$formid))->asap();
+        $output .= '</div>';
     }
     $output .= '</div></form>';
 
