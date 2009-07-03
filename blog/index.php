@@ -8,7 +8,6 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
-require_once($CFG->dirroot .'/blog/newlib.php');
 
 $id           = optional_param('id', 0, PARAM_INT);
 $start        = optional_param('formstart', 0, PARAM_INT);
