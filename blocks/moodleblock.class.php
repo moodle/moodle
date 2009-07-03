@@ -437,20 +437,20 @@ class block_base {
 
         // RTL support - exchange right and left arrows
         if (right_to_left()) {
-            $rightarrow = 'left.gif';
-            $leftarrow  = 'right.gif';
+            $rightarrow = 't/left';
+            $leftarrow  = 't/right';
         } else {
-            $rightarrow = 'right.gif';
-            $leftarrow  = 'left.gif';
+            $rightarrow = 't/right';
+            $leftarrow  = 't/left';
         }
 
         $movebuttons = '<div class="commands">';
 
         if ($this->instance->visible) {
-            $icon = '/t/hide.gif';
+            $icon = 't/hide';
             $title = $this->str->hide;
         } else {
-            $icon = '/t/show.gif';
+            $icon = 't/show';
             $title = $this->str->show;
         }
 
@@ -463,7 +463,7 @@ class block_base {
         // TODO MDL-19010 fix and re-enable.
         if (false && $this->user_can_edit()) {
             $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                            '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url($icon) .'" alt="'.$title.'" /></a>';
         }
 
         if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
@@ -478,7 +478,7 @@ class block_base {
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a class="icon left" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $CFG->pixpath .'/t/'.$leftarrow.'" alt="'. $this->str->moveleft .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url($leftarrow).'" alt="'. $this->str->moveleft .'" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a class="icon up" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
@@ -490,7 +490,7 @@ class block_base {
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a class="icon right" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $CFG->pixpath .'/t/'.$rightarrow.'" alt="'. $this->str->moveright .'" /></a>';
+                            '<img src="'. $OUTPUT->old_icon_url($rightarrow).'" alt="'. $this->str->moveright .'" /></a>';
         }
 
         $movebuttons .= '</div>';

@@ -103,7 +103,7 @@ class block_admin_tree extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -135,7 +135,8 @@ class block_admin_tree extends block_base {
         if ($this->tempcontent !== '') {
             $this->page->requires->js('blocks/admin_tree/admintree.js');
             $this->page->requires->js_function_call('admin_tree.init',
-                    array($this->divcounter - 1, $this->expandnodes, $CFG->pixpath,
+                    array($this->divcounter - 1, $this->expandnodes,
+                    $OUTPUT->old_icon_url('i/open'), $OUTPUT->old_icon_url('i/closed'),
                     get_string('folderopened'), get_string('folderclosed')));
 
             $this->content = new object();

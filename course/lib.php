@@ -1459,7 +1459,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
                 }
                 if ($completionicon) {
-                    $imgsrc = $CFG->pixpath.'/i/completion-'.$completionicon.'.gif';
+                    $imgsrc = $OUTPUT->old_icon_url('i/completion-'.$completionicon);
                     $imgalt = get_string('completion-alt-'.$completionicon,'completion');
                     if ($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
                         $imgtitle = get_string('completion-title-'.$completionicon,'completion');
@@ -2080,7 +2080,7 @@ function print_courses($category) {
  * @param string $highlightterms (optional) some search terms that should be highlighted in the display.
  */
 function print_course($course, $highlightterms = '') {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     if (isset($course->context)) {
         $context = $course->context;
@@ -2125,7 +2125,7 @@ function print_course($course, $highlightterms = '') {
                     if ($ra->hidden == 0 || $canseehidden) {
                         $fullname = fullname($ra->user, $canviewfullnames);
                         if ($ra->hidden == 1) {
-                            $status = " <img src=\"{$CFG->pixpath}/t/show.gif\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
+                            $status = " <img src=\"" . $OUTPUT->old_icon_url('t/show') . "\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                         } else {
                             $status = '';
                         }
@@ -2831,23 +2831,23 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
 
 	    if (right_to_left()) {   // Exchange arrows on RTL
-		    $rightarrow = 'left.gif';
-		    $leftarrow  = 'right.gif';
+		    $rightarrow = 't/left.gif';
+		    $leftarrow  = 't/right.gif';
 	    } else {
-	        $rightarrow = 'right.gif';
-	        $leftarrow  = 'left.gif';
+	        $rightarrow = 't/right.gif';
+	        $leftarrow  = 't/left.gif';
         }
 
         if ($indent > 0) {
             $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/'.$leftarrow.'" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url($leftarrow).'" class="iconsmall" '.
                         ' alt="'.$str->moveleft.'" /></a>'."\n";
         }
         if ($indent >= 0) {
             $leftright .= '<a class="editing_moveright" title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/'.$rightarrow.'" class="iconsmall" '.
+                        ' src="'.$OUTPUT->old_icon_url($rightarrow).'" class="iconsmall" '.
                         ' alt="'.$str->moveright.'" /></a>'."\n";
         }
     }

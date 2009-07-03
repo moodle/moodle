@@ -19,7 +19,7 @@ class block_mnet_hosts extends block_list {
     }
 
     function get_content() {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         // only for logged in users!
         if (!isloggedin() || isguest()) {
@@ -82,7 +82,7 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-            $icon  = '<img src="'.$CFG->pixpath.'/i/'.$host->application.'_host.gif"'.
+            $icon  = '<img src="'.$OUTPUT->old_icon_url('i/'.$host->application.'_host') . '"'.
                 ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />';
 
                 $this->content->icons[]=$icon;

@@ -1586,8 +1586,7 @@ class grade_structure {
                     '&amp;eid='.$element['eid'];
 
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'" class="lock"><img src="'.$CFG->pixpath.
-                    '/t/'.$icon.'.gif" alt="'.s($strunlock).
+            $action  = '<a href="'.$url.'" class="lock"><img src="'.$OUTPUT->old_icon_url('t/'.$icon).'" alt="'.s($strunlock).
                     '" class="iconsmall" title="'.s($tooltip).'"/></a>';
 
         } else {
@@ -1616,7 +1615,7 @@ class grade_structure {
      * @return string
      */
     public function get_calculation_icon($element, $gpr) {
-        global $CFG;
+        global $CFG, $OUTPUT;
         if (!has_capability('moodle/grade:manage', $this->context)) {
             return '';
         }
@@ -1637,16 +1636,16 @@ class grade_structure {
             // show calculation icon only when calculation possible
             if (!$object->is_external_item() and ($is_scale or $is_value)) {
                 if ($object->is_calculated()) {
-                    $icon = 'calc.gif';
+                    $icon = 't/calc';
                 } else {
-                    $icon = 'calc_off.gif';
+                    $icon = 't/calc_off';
                 }
 
                 $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.
                         $this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 $calculation_icon = '<a href="'. $url.'" class="calculation">' .
-                        '<img src="'.$CFG->pixpath.'/t/'.$icon.'" class="iconsmall" alt="' .
+                        '<img src="'.$OUTPUT->old_icon_url($icon).'" class="iconsmall" alt="' .
                         s($streditcalculation).'" title="'.s($streditcalculation).'" /></a>'. "\n";
             }
         }

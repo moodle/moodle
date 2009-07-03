@@ -295,7 +295,7 @@ function displaydir($file_info) {
 
             } else {
 
-                $icon = mimeinfo_from_type("icon", $mimetype);
+                $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type("icon", $mimetype));
                 if ($downloadurl = $child_info->get_url(true)) {
                     $downloadurl = "&nbsp;<a href=\"$downloadurl\" title=\"" . get_string('downloadfile') . "\"><img src=\"" . $OUTPUT->old_icon_url('t/down') . "\" class=\"iconsmall\" alt=\"$strdownload\" /></a>";
                 } else {
@@ -314,7 +314,7 @@ function displaydir($file_info) {
 
                 echo "<tr class=\"file\">";
                 print_cell();
-                print_cell("left", "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename).$downloadurl.$viewurl, 'name');
+                print_cell("left", "<img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename).$downloadurl.$viewurl, 'name');
                 print_cell("right", $filesize, 'size');
                 print_cell("right", $filedate, 'date');
                 if ($parentwritable) {

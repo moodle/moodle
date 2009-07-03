@@ -6,12 +6,12 @@ admin_tree = {
     closedalt: null,
     openalt: null,
 
-    init: function(numdivs, expandnodes, pixpath, openalt, closedalt) {
+    init: function(numdivs, expandnodes, openimg, closedimg, openalt, closedalt) {
         // Store the information we were passed in. 
-        admin_tree.closedimg = pixpath + '/i/closed.gif';
-        admin_tree.openimg = pixpath + '/i/open.gif';
-        admin_tree.closedalt = closedalt;
+        admin_tree.openimg = openimg;
+        admin_tree.closedimg = closedimg;
         admin_tree.openalt = openalt;
+        admin_tree.closedalt = closedalt;
         admin_tree.numdivs = numdivs;
 
         // Initialise the hiddennodes array.
