@@ -586,28 +586,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008080600);
     }
 
-    if ($result && $oldversion < 2008081300) {
-    /// Define table blog_association to be created
-        $table = new xmldb_table('blog_association');
-
-    /// Adding fields to table blog_association
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('blogid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-    /// Adding keys to table blog_association
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
-        $table->add_key('blogid', XMLDB_KEY_FOREIGN, array('blogid'), 'post', array('id'));
- 
-        if (!$dbman->table_exists($table)) {
-        /// Launch create table for blog_association
-            $dbman->create_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008081300);
-    }
-
     if ($result && $oldversion < 2008081500) {
     /// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
         $table = new xmldb_table('question');
