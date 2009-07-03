@@ -304,10 +304,9 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
  * @return boolean
  */
 function scorm_user_complete($course, $user, $mod, $scorm) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $liststyle = 'structlist';
-    $scormpixdir = $CFG->modpixpath.'/scorm/pix';
     $now = time();
     $firstmodify = $now;
     $lastmodify = 0;
@@ -367,7 +366,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                         $sublist++;
                     } else {
-                        $report .= '<img src="'.$scormpixdir.'/spacer.gif" alt="" />';
+                        $report .= '<img src="'.$OUTPUT->mod_icon_url('pix/spacer', 'scorm').'" alt="" />';
                     }
 
                     if ($sco->launch) {
@@ -379,7 +378,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $usertrack->status = 'notattempted';
                             }
                             $strstatus = get_string($usertrack->status,'scorm');
-                            $report .= "<img src='".$scormpixdir.'/'.$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
+                            $report .= "<img src='".$OUTPUT->mod_icon_url('pix/'.$usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
                             if ($usertrack->timemodified != 0) {
                                 if ($usertrack->timemodified > $lastmodify) {
                                     $lastmodify = $usertrack->timemodified;
@@ -390,9 +389,9 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             }
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= '<img src="'.$scormpixdir.'/'.'notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->mod_icon_url('pix/notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
                             } else {
-                                $report .= '<img src="'.$scormpixdir.'/'.'asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->mod_icon_url('pix/asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime</li>\n";

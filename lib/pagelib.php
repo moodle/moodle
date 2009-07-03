@@ -818,7 +818,7 @@ class moodle_page {
         if ($this === $PAGE) {
             $THEME = $this->_theme;
             // Support legacy code.
-            $this->_theme->setup_cfg_paths();
+            $this->_theme->setup_legacy_pix_paths();
         }
     }
 
@@ -912,7 +912,7 @@ class moodle_page {
             $THEME = $this->_theme;
             $OUTPUT = $this->_theme->get_renderer('core', $this);
             // Support legacy code.
-            $this->_theme->setup_cfg_paths();
+            $this->_theme->setup_legacy_pix_paths();
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();

@@ -795,7 +795,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
  * @return the HTML for an edit icon, view icon, or nothing for a question (depending on permissions).
  */
 function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforeicon = '') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     // Minor efficiency saving. Only get strings once, even if there are a lot of icons on one page.
     static $stredit = null;
@@ -821,7 +821,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentbeforei
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '">' . $contentbeforeicon .
-                '<img src="' . $CFG->pixpath . $icon . '.gif" alt="' . $action . '" /></a>';
+                '<img src="' . $OUTPUT->old_icon_url($icon) . '.gif" alt="' . $action . '" /></a>';
     } else {
         return $contentbeforeicon;
     }

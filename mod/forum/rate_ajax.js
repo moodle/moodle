@@ -26,21 +26,14 @@
 
 /// Javascript used to handle AJAX forum ratings
 
-/**
- * This function initializes all the stuff needed to have forum ratings
- * working under AJAX. Basically it adds one onload listener that triggers
- * the add_menu_listeners() function to add menu listeners
- */
-function init_rate_ajax () {
-    YAHOO.util.Event.onDOMReady(add_menu_listeners);
-}
-
+var smallloadingicon;
 /**
  * This function adds event listeners to any rating
  * menu found in he page (class = forumpostratingmenu)
  * and prevents manual submission
  */
-function add_menu_listeners(e) {
+function add_menu_listeners(loadingicon) {
+    smallloadingicon = loadingicon;
 
     /** hide the submit button */
     var submitbutton = YAHOO.util.Dom.get('forumpostratingsubmit');
@@ -88,7 +81,7 @@ function perform_rate(e, menu) {
 
     /** Start animation **/
     var animatedElement   = YAHOO.util.Dom.getAncestorByTagName(menu, 'div');
-    animatedElement.style.background = "url('" + moodle_cfg.pixpath + "/i/loading_small.gif') no-repeat top right";
+    animatedElement.style.background = "url('" + smallloadingicon + "') no-repeat top right";
 
 }
 

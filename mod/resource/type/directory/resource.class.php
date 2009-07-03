@@ -25,7 +25,7 @@ function _postprocess(&$resource) {
 }
 
 function display() {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -116,25 +116,25 @@ function display() {
          "</tr>";
     foreach ($files as $file) {
         if (is_dir("$CFG->dataroot/$relativepath/$file")) {          // Must be a directory
-            $icon = "folder.gif";
+            $icon = 'folder';
             $relativeurl = "/view.php?blah";
             $filesize = display_size(get_directory_size("$CFG->dataroot/$relativepath/$file"));
 
         } else {
-            $icon = mimeinfo("icon", $file);
+            $icon = str_replace(array('.gif', '.png'), '', mimeinfo("icon", $file));
             $relativeurl = get_file_url("$relativepath/$file");
             $filesize = display_size(filesize("$CFG->dataroot/$relativepath/$file"));
         }
 
-        if ($icon == 'folder.gif') {
+        if ($icon == 'folder') {
             echo '<tr class="folder">';
             echo '<td class="name">';
             echo "<a href=\"view.php?id={$cm->id}&amp;subdir=$subdir/$file\">";
-            echo "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfolder\" />&nbsp;$file</a>";
+            echo "<img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"$strfolder\" />&nbsp;$file</a>";
         } else {
             echo '<tr class="file">';
             echo '<td class="name">';
-            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
+            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
         }
         echo '</td>';
         echo '<td>&nbsp;</td>';

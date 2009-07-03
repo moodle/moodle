@@ -1228,7 +1228,7 @@ function glossary_search_entries($searchterms, $glossary, $extended) {
  * @return string image string or nothing depending on $type param
  */
 function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
         return '';
@@ -1256,8 +1256,8 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
-            $icon = mimeinfo_from_type('icon', $mimetype);
-            $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
+            $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
+            $iconimage = '<img src="'.$OUTPUT->old_icon_url('f/'.$icon).'" class="icon" alt="'.$icon.'" />';
             $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/glossary_attachment/'.$entry->id.'/'.$filename);
 
             if ($type == 'html') {

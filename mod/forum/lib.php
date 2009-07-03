@@ -4268,7 +4268,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
  * @return mixed string or array of (html text withouth images and image HTML)
  */
 function forum_print_attachments($post, $cm, $type) {
-    global $CFG, $DB, $USER;
+    global $CFG, $DB, $USER, $OUTPUT;
 
     if (empty($post->attachment)) {
         return $type !== 'separateimages' ? '' : array('', '');
@@ -4296,8 +4296,8 @@ function forum_print_attachments($post, $cm, $type) {
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
-            $icon = mimeinfo_from_type('icon', $mimetype);
-            $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
+            $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
+            $iconimage = '<img src="'.$OUTPUT->old_icon_url('f/'.$icon).'" class="icon" alt="'.$icon.'" />';
             $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
 
             if ($type == 'html') {
@@ -5685,7 +5685,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
  */
 function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
-    global $USER, $CFG, $DB, $PAGE;
+    global $USER, $CFG, $DB, $PAGE, $OUTPUT;
 
     if (!empty($USER->id)) {
         $ownpost = ($USER->id == $post->userid);
@@ -5806,7 +5806,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             echo '<div class="ratingsubmit">';
             echo '<input type="submit" id="forumpostratingsubmit" value="'.get_string('sendinratings', 'forum').'" />';
             if (ajaxenabled() && !empty($CFG->forum_ajaxrating)) { /// AJAX enabled, standard submission form
-                $PAGE->requires->js_function_call('init_rate_ajax');
+                $PAGE->requires->js_function_call('add_menu_listeners', array($OUTPUT->old_icon_url('i/loading_small')))->on_dom_ready();
             }
             if ($forum->scale < 0) {
                 if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {
@@ -5815,7 +5815,6 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             }
             echo '</div>';
         }
-
         echo '</div>';
         echo '</form>';
     }

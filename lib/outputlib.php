@@ -479,9 +479,10 @@ class theme_config {
 
     /**
      * Set the variable $CFG->pixpath and $CFG->modpixpath to be the right
-     * ones for this theme.
+     * ones for this theme. These should no longer be used, but legacy code
+     * might still rely on them.
      */
-    public function setup_cfg_paths() {
+    public function setup_legacy_pix_paths() {
         global $CFG;
         if (!empty($CFG->smartpix)) {
             if ($CFG->slasharguments) {

@@ -294,7 +294,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
-   global $ewiki_binary_icons, $ewiki_upload_sections, $DB;
+   global $ewiki_binary_icons, $ewiki_upload_sections, $DB, $OUTPUT;
 
    $meta = &$row["meta"];
 
@@ -329,9 +329,9 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    
    /// Moodle Icon Handling
    global $CFG;
-   $icon = mimeinfo("icon", $id);
-   $p_icon="$CFG->pixpath/f/$icon";
-   $p_icon_t="";
+   $icon = str_replace(array('.gif', '.png'), '', mimeinfo("icon", $id));
+   $p_icon = $OUTPUT->old_icon_url('f/' . $icon);
+   $p_icon_t = '';
 
    $info->id = $id;
    $info->size = $p_size;
