@@ -855,19 +855,11 @@ class moodle_page {
     protected function starting_output() {
         global $SITE, $CFG;
 
-        if (during_initial_install()) {
-            $this->_course = new stdClass;
-            $this->_course->id = 1;
-            moodle_setlocale();
-            return;
-        }
-
-        if (!$this->_course) {
-            $this->set_course($SITE);
-        }
-
         $this->initialise_standard_body_classes();
-        $this->blocks->load_blocks();
+
+        if (!during_initial_install()) {
+            $this->blocks->load_blocks();
+        }
 
         // Add any stylesheets required using the horrible legacy mechanism.
         if (!empty($CFG->stylesheets)) {
@@ -896,7 +888,7 @@ class moodle_page {
     public function initialise_theme_and_output() {
         global $OUTPUT, $PAGE, $SITE, $THEME;
 
-        if (!$this->_course) {
+        if (!$this->_course && !during_initial_install()) {
             $this->set_course($SITE);
         }
 
@@ -1039,27 +1031,22 @@ class moodle_page {
         }
         $this->add_body_class($this->_legacyclass);
 
-        $this->add_body_class('course-' . $this->_course->id);
         $this->add_body_classes(get_browser_version_classes());
         $this->add_body_class('dir-' . get_string('thisdirection'));
         $this->add_body_class('lang-' . current_language());
         $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.
-
         $this->add_body_class($this->url_to_class_name($CFG->wwwroot));
 
-        $this->add_body_class('context-' . $this->context->id);
+        if (!during_initial_install()) {
+            $this->add_body_class('course-' . $this->_course->id);
+            $this->add_body_class('context-' . $this->context->id);
+        }
 
         if (!empty($this->_cm)) {
             $this->add_body_class('cmid-' . $this->_cm->id);
         }
 
-        $this->add_body_class('context-' . $this->context->id);
-
-        if (!empty($this->_cm)) {
-            $this->add_body_class('cmid-' . $this->_cm->id);
-        }
-
-        if ($CFG->allowcategorythemes) {
+        if (!empty($CFG->allowcategorythemes)) {
             $this->ensure_category_loaded();
             foreach ($this->_categories as $catid => $notused) {
                 $this->add_body_class('category-' . $catid);

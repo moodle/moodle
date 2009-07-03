@@ -1192,6 +1192,7 @@ $string['outline'] = 'Outline';
 $string['outlinereport'] = 'Outline report';
 $string['page'] = 'Page';
 $string['pageheaderconfigablock'] = 'Configuring a block in %%fullname%%';
+$string['pageshouldredirect'] = 'This page should automatically redirect. If nothing is happening please use the continue link below.';
 $string['parentcategory'] = 'Parent category';
 $string['parentcoursenotfound'] = 'Parent course not found!';
 $string['parentcoursenotmetacourse'] = 'Parent course not metacourse!';
