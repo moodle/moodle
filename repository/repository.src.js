@@ -460,10 +460,10 @@ repository_client.loading = function(id, type, name) {
     panel.get('element').innerHTML = '';
     var str = '<div style="text-align:center">';
     if(type=='load') {
-        str += '<img src="'+moodle_cfg.pixpath+'/i/loading.gif" />';
+        str += '<img src="'+fp_config.icons.loading+'" />';
         str += '<p>'+fp_lang.loading+'</p>';
     }else{
-        str += '<img src="'+moodle_cfg.pixpath+'/i/progressbar.gif" />';
+        str += '<img src="'+fp_config.icons.progressbar+'" />';
         str += '<p>'+fp_lang.copying+' <strong>'+name+'</strong></p>';
     }
     str += '</div>';
@@ -890,7 +890,7 @@ repository_client.print_footer = function(client_id) {
     }
     if(!fs.nosearch) {
         var img = document.createElement('img');
-        img.src = moodle_cfg.pixpath+'/a/search.png';
+        img.src = fp_config.icons.search;
         var search = document.createElement('A');
         search.href = '###';
         search.appendChild(document.createTextNode(fp_lang.search));
@@ -903,7 +903,7 @@ repository_client.print_footer = function(client_id) {
     // weather we use cache for this instance, this button will reload listing anyway
     if(!fs.norefresh) {
         var img = document.createElement('img');
-        img.src = moodle_cfg.pixpath+'/a/refresh.png';
+        img.src = fp_config.icons.refresh;
         var ccache = document.createElement('A');
         ccache.href = "###";
         ccache.appendChild(document.createTextNode(fp_lang.refresh));
@@ -923,7 +923,7 @@ repository_client.print_footer = function(client_id) {
     }
     if(fs.manage) {
         var mgr = document.createElement('A');
-        mgr.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/setting.png" /> '+fp_lang.mgr;
+        mgr.innerHTML = '<img src="'+fp_config.icons.setting+'" /> '+fp_lang.mgr;
         mgr.href = fs.manage;
         mgr.target = "_blank";
         oDiv.appendChild(mgr);
@@ -931,7 +931,7 @@ repository_client.print_footer = function(client_id) {
     if(!fs.nologin) {
         var logout = document.createElement('A');
         logout.href = '###';
-        logout.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/logout.png" /> '+fp_lang.logout;
+        logout.innerHTML = '<img src="'+fp_config.icons.logout+'" /> '+fp_lang.logout;
         oDiv.appendChild(logout);
         logout.onclick = function() {
             repository_client.logout(client_id, fs.repo_id);
@@ -941,7 +941,7 @@ repository_client.print_footer = function(client_id) {
         var help = document.createElement('A');
         help.href = fs.help;
         help.target = "_blank";
-        help.innerHTML = '<img src="'+moodle_cfg.pixpath+'/a/help.png" /> '+fp_lang['help'];
+        help.innerHTML = '<img src="'+fp_config.icons.help+'" /> '+fp_lang['help'];
         oDiv.appendChild(help);
     }
 }
@@ -1071,7 +1071,7 @@ repository_client.upload = function(client_id) {
         container.id = id+'_loading';
         container.style.textAlign='center';
         var img = document.createElement('IMG');
-        img.src = moodle_cfg.pixpath+'/i/progressbar.gif';
+        img.src = fp_config.icons.progressbar;
         var para = document.createElement('p');
         para.innerHTML = fp_lang.uploading;
         container.appendChild(para);

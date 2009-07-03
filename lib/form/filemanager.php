@@ -130,7 +130,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 
     function toHtml() {
-        global $CFG, $USER, $COURSE;
+        global $CFG, $USER, $COURSE, $OUTPUT;
         require_once("$CFG->dirroot/repository/lib.php");
 
         $strdelete  = get_string('confirmdeletefile', 'repository');

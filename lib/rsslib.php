@@ -33,7 +33,6 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
     global $OUTPUT;
 
-    static $pixpath = '';
     static $rsspath = '';
 
     //In site course, if no logged (userid), use admin->id. Bug 2048.
@@ -172,8 +171,6 @@ function rss_file_name($modname, $mod) {
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
     global $CFG, $USER;
 
-    static $pixpath = '';
-
     $status = true;
     $result = "";
 
@@ -219,7 +216,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
        */
 
         //write image info
-        $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
+        $rsspix = $OUTPUT->old_icon_url('i/rsssitelogo');
 
         //write the info
         $result .= rss_start_tag('image', 2, true);

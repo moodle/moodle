@@ -567,7 +567,6 @@ class list_item {
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
         $strmoveleft = get_string('maketoplevelitem', 'question');
-        $pixpath = $CFG->pixpath;
 
         if (isset($this->parentlist->parentitem)) {
             $parentitem =& $this->parentlist->parentitem;
@@ -602,16 +601,14 @@ class list_item {
     }
 
     function image_icon($action, $url, $icon) {
-        global $CFG;
-        $pixpath = $CFG->pixpath;
+        global $OUTPUT;
         return '<a title="' . $action .'" href="'.$url.'">
-                <img src="' . $pixpath . '/t/'.$icon.'.gif" class="iconsmall" alt="' . $action. '" /></a> ';
+                <img src="' . $OUTPUT->old_icon_url('t/'.$icon) . '" class="iconsmall" alt="' . $action. '" /></a> ';
     }
 
     function image_spacer() {
-        global $CFG;
-        $pixpath = $CFG->pixpath;
-        return '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+        global $OUTPUT;
+        return '<img src="' . $OUTPUT->old_icon_url('spacer') . '" class="iconsmall" alt="" />';
     }
 
     /**

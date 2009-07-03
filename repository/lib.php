@@ -1761,7 +1761,7 @@ function repository_head_setup() {
  * @return array
  */
 function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returnvalue = '*') {
-    global $CFG, $USER, $PAGE;
+    global $CFG, $USER, $PAGE, $OUTPUT;
 
     $ft = new file_type_to_ext();
     $image_file_ext = json_encode($ft->get_file_ext(array('image')));
@@ -1817,6 +1817,13 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
         $options = array();
         $context = get_system_context();
         $options['contextid'] = $context->id;
+        $options['icons']['loading'] = $OUTPUT->old_icon_url('i/loading');
+        $options['icons']['progressbar'] = $OUTPUT->old_icon_url('i/progressbar');
+        $options['icons']['search'] = $OUTPUT->old_icon_url('a/search');
+        $options['icons']['refresh'] = $OUTPUT->old_icon_url('a/refresh');
+        $options['icons']['setting'] = $OUTPUT->old_icon_url('a/setting');
+        $options['icons']['logout'] = $OUTPUT->old_icon_url('a/logout');
+        $options['icons']['help'] = $OUTPUT->old_icon_url('a/help');
         $options = json_encode($options);
         // fp_config includes filepicker options
 

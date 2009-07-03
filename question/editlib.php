@@ -603,9 +603,9 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit') ||
                 question_has_capability_on($question, 'move')) {
-            $this->print_icon('t/edit.gif', $this->stredit, $this->qbank->edit_question_url($question->id));
+            $this->print_icon('t/edit', $this->stredit, $this->qbank->edit_question_url($question->id));
         } else {
-            $this->print_icon('i/info.gif', $this->strview, $this->qbank->edit_question_url($question->id));
+            $this->print_icon('i/info', $this->strview, $this->qbank->edit_question_url($question->id));
         }
     }
 }
@@ -650,7 +650,7 @@ class question_bank_move_action_column extends question_bank_action_column_base 
 
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'move')) {
-            $this->print_icon('t/move.gif', $this->strmove, $this->qbank->move_question_url($question->id));
+            $this->print_icon('t/move', $this->strmove, $this->qbank->move_question_url($question->id));
         }
     }
 }
@@ -675,9 +675,9 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit')) {
             if ($question->hidden) {
-                $this->print_icon('t/restore.gif', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
+                $this->print_icon('t/restore', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
             } else {
-                $this->print_icon('t/delete.gif', $this->strdelete,
+                $this->print_icon('t/delete', $this->strdelete,
                         $this->qbank->base_url()->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
             }
         }

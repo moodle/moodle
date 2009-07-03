@@ -2970,7 +2970,7 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
  * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $OUTPUT;
 
     // Include required JavaScript libraries.
     $PAGE->requires->yui_lib('animation');
@@ -2995,7 +2995,8 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = fal
     $output .= $caption . ' ';
     $output .= '</div><div id="' . $id . '_inner" class="collapsibleregioninner">';
     $PAGE->requires->js_function_call('new collapsible_region',
-            array($id, $userpref, get_string('clicktohideshow')));
+            array($id, $userpref, get_string('clicktohideshow'),
+            $OUTPUT->old_icon_url('t/collapsed'), $OUTPUT->old_icon_url('t/expanded')));
 
     if ($return) {
         return $output;
