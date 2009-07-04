@@ -96,36 +96,32 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     function _get_draftfiles($draftid, $suffix) {
         global $USER, $OUTPUT, $CFG;
 
-        $html = '';
-        if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
-        }
-        $contextid = $context->id;
-        $filearea  = 'user_draft';
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $fs = get_file_storage();
 
-        $browser = get_file_browser();
-        $fs      = get_file_storage();
-        $filepath = '/';
-        if (!$directory = $fs->get_file($context->id, 'user_draft', $draftid, $filepath, '.')) {
-            $directory = new virtual_root_file($context->id, 'user_draft', $draftid);
-            $filepath = $directory->get_filepath();
+        $html = '<ul class="file-list" id="draftfiles-'.$suffix.'">';
+
+        if ($files = $fs->get_directory_files($context->id, 'user_draft', $draftid, '/', true)) {
+            foreach ($files as $file) {
+                if ($file->is_directory()) {
+                    continue;
+                }
+                $filename = $file->get_filename();
+                $filepath = $file->get_filepath();
+                $fullname = ltrim($filepath.$filename, '/');
+                $filesize = $file->get_filesize();
+                $filesize = $filesize ? display_size($filesize) : '';
+                $icon     = mimeinfo_from_type('icon', $file->get_mimetype());
+                $viewurl  = file_encode_url("$CFG->wwwroot/draftfile.php", "/$context->id/user_draft/$draftid".$fullname, false, false);
+                $html .= '<li>';
+                $html .= "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" />&nbsp;".s($fullname)." ($filesize)</a> ";
+                // TODO: maybe better use file->id here - but then make 100% it is from my own draftfiles ;-)
+                //       anyway this does not work for subdirectories
+                $html .= "<a href=\"###\" onclick='rm_file(".$file->get_itemid().", \"".addslashes_js($fullname)."\", this)'><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" /></a>";;
+                $html .= '</li>';
+            }
         }
-        $files = $fs->get_directory_files($context->id, 'user_draft', $draftid, $directory->get_filepath());
-        $parent = $directory->get_parent_directory();
-        $html .= '<ul class="file-list" id="draftfiles-'.$suffix.'">';
-        foreach ($files as $file) {
-            $filename    = $file->get_filename();
-            $filenameurl = rawurlencode($filename);
-            $filepath    = $file->get_filepath();
-            $filesize    = $file->get_filesize();
-            $filesize    = $filesize ? display_size($filesize) : '';
-            $mimetype = $file->get_mimetype();
-            $icon    = mimeinfo_from_type('icon', $mimetype);
-            $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$draftid".$filepath.$filename, false, false);
-            $html .= '<li>';
-            $html .= "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" />&nbsp;".s($filename)." ($filesize)</a> ";
-            $html .= "<a href=\"###\" onclick='rm_file(".$file->get_itemid().", \"".$filename."\", this)'><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" /></a>";;
-            $html .= '</li>';
-        }
+        
         $html .= '</ul>';
         return $html;
     }
