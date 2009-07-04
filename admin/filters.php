@@ -230,13 +230,13 @@ function action_url($filterpath, $action) {
 }
 
 function action_icon($url, $icon, $straction) {
-    global $CFG;
+    global $CFG, $OUTPUT;
     return '<a href="' . $url . '" title="' . $straction . '">' .
             '<img src="' . $OUTPUT->old_icon_url('t/' . $icon) . '" alt="' . $straction . '" /></a> ';
 }
 
 function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings) {
-    global $CFG, $activechoices, $applytochoices, $filternames;
+    global $CFG, $OUTPUT, $activechoices, $applytochoices, $filternames;
     $row = array();
     $filter = $filterinfo->filter;
 
