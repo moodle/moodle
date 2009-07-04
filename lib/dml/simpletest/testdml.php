@@ -930,11 +930,15 @@ class dml_test extends UnitTestCase {
 
         $this->assertEqual(2, $record->course);
 
+        // backwards compatibility with $ignoremultiple
+        $this->assertFalse(IGNORE_MISSING);
+        $this->assertTrue(IGNORE_MULTIPLE);
+
         // record not found
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 0));
-        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 1));
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), IGNORE_MISSING));
+        $this->assertFalse($record = $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), IGNORE_MULTIPLE));
         try {
-            $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), 2);
+            $DB->get_record_sql("SELECT * FROM {".$tablename."} WHERE id = ?", array(666), MUST_EXIST);
             $this->fail("Exception expected");
         } catch (dml_missing_record_exception $e) {
             $this->assertTrue(true);
@@ -942,11 +946,11 @@ class dml_test extends UnitTestCase {
 
         // multiple matches
         ob_start(); // hide debug warning
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 0));
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), IGNORE_MISSING));
         ob_end_clean();
-        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 1));
+        $this->assertTrue($record = $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), IGNORE_MULTIPLE));
         try {
-            $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), 2);
+            $DB->get_record_sql("SELECT * FROM {".$tablename."}", array(), MUST_EXIST);
             $this->fail("Exception expected");
         } catch (dml_multiple_records_exception $e) {
             $this->assertTrue(true);

@@ -41,7 +41,11 @@
 // Require the essential
 require_once($CFG->libdir.'/dml/moodle_database.php');
 
-/** Indicates some record is required to exist */
+/** Return false if record not found, show debug warning if multiple records found */
+define('IGNORE_MISSING', 0);
+/** Similar to IGNORE_MISSING but does not show debug warning if multiple records found, not recommended to be used */
+define('IGNORE_MULTIPLE', 1);
+/** Indicates exactly one record must exist */
 define('MUST_EXIST', 2);
 
 /**

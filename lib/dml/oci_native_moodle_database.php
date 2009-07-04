@@ -661,15 +661,15 @@ class oci_native_moodle_database extends moodle_database {
      *
      * @param string $sql The SQL string you wish to be executed, should normally only return one record.
      * @param array $params array of sql parameters
-     * @param int $mode 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                  1 means ignore multiple records found, return first (not recommended);
-     *                  2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
     public function get_record_sql($sql, array $params=null, $mode=0) {
         $mode = (int)$mode;
-        if ($mode == 1) {
+        if ($mode == IGNORE_MULTIPLE) {
             // do not limit here - ORA does not like that
             if (!$rs = $this->get_recordset_sql($sql, $params)) {
                 return false;

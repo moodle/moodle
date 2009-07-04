@@ -1128,9 +1128,9 @@ abstract class moodle_database {
      * @param string $table The table to select from.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @param string $fields A comma separated list of fields to be returned from the chosen table.
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first (not recommended);
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
@@ -1145,9 +1145,9 @@ abstract class moodle_database {
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first (not recommended);
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
@@ -1171,29 +1171,29 @@ abstract class moodle_database {
      *
      * @param string $sql The SQL string you wish to be executed, should normally only return one record.
      * @param array $params array of sql parameters
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first (not recommended);
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
     public function get_record_sql($sql, array $params=null, $strictness=0) {
-        $strictness = (int)$strictness;
-        if ($strictness == 1) {
+        $strictness = (int)$strictness; // we support true/false for BC reasons too
+        if ($strictness == IGNORE_MULTIPLE) {
             $count = 1;
         } else {
             $count = 0;
         }
         if (!$records = $this->get_records_sql($sql, $params, 0, $count)) {
             // not found
-            if ($strictness == 2) { //MUST_EXIST
+            if ($strictness == MUST_EXIST) {
                 throw new dml_missing_record_exception('', $sql, $params);
             }
             return false;
         }
 
         if (count($records) > 1) {
-            if ($strictness == 2) { //MUST_EXIST
+            if ($strictness == MUST_EXIST) {
                 throw new dml_multiple_records_exception($sql, $params);
             }
             debugging('Error: mdb->get_record() found more than one record!');
@@ -1209,9 +1209,9 @@ abstract class moodle_database {
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first;
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
@@ -1227,9 +1227,9 @@ abstract class moodle_database {
      * @param string $return the field to return the value of.
      * @param string $select A fragment of SQL to be used in a where clause returning one row with one column
      * @param array $params array of sql parameters
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first;
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
@@ -1252,9 +1252,9 @@ abstract class moodle_database {
      * @param string $return the field to return the value of.
      * @param string $sql The SQL query returning one row with one column
      * @param array $params array of sql parameters
-     * @param int $strictness 0 means compatible mode, false returned if record not found, debug message if more found;
-     *                        1 means ignore multiple records found, return first;
-     *                        2 means throw exception if no record or multiple records found (MUST_EXIST constant)
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+     *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
