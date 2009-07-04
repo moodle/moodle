@@ -15,7 +15,7 @@ $string['creativecommonscommercial'] = 'Only creative commons commercial';
 $string['emailaddress'] = 'Email address';
 $string['fulltext'] = 'Full text';
 $string['information'] = '<div>Get <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key</a> for your Moodle site. </div>';
-$string['invalidemail'] = 'Invalid email address for flickr';
+$string['invalidemail'] = 'Invalid email account for flickr';
 $string['license'] = 'License';
 $string['modification'] = 'Allow modifications of your work?';
 $string['notitle'] = 'notitle';
@@ -27,4 +27,5 @@ $string['repositorydesc'] = 'Repository on flickr.com';
 $string['secret'] = 'Secret';
 $string['sharealike'] = 'Yes, as long as others share alike';
 $string['username'] = 'Flickr account email';
+$string['watermark'] = 'Add watermark (Auther ID and original URL) to downloaed photos?';
 
