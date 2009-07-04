@@ -1728,9 +1728,12 @@ function get_course_mods($courseid) {
  * @param int $cmid course module id (id in course_modules table)
  * @param int $courseid optional course id for extra validation
  * @param bool $sectionnum include relative section number (0,1,2 ...)
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+ *                        MUST_EXIST means throw exception if no record or multiple records found
  * @return array Array of results
  */
-function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false) {
+function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
     global $DB;
 
     $params = array('cmid'=>$cmid);
@@ -1739,7 +1742,7 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
         if (!$modulename = $DB->get_field_sql("SELECT md.name
                                                  FROM {modules} md
                                                  JOIN {course_modules} cm ON cm.module = md.id
-                                                WHERE cm.id = :cmid", $params)) {
+                                                WHERE cm.id = :cmid", $params, $strictness)) {
             return false;
         }
     }
@@ -1768,7 +1771,7 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
              WHERE cm.id = :cmid AND md.name = :modulename
                    $courseselect";
 
-    return $DB->get_record_sql($sql, $params);
+    return $DB->get_record_sql($sql, $params, $strictness);
 }
 
 /**
@@ -1779,9 +1782,12 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
  * @param int $instance module instance number (id in resource, assignment etc. table)
  * @param int $courseid optional course id for extra validation
  * @param bool $sectionnum include relative section number (0,1,2 ...)
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+ *                        MUST_EXIST means throw exception if no record or multiple records found
  * @return array Array of results
  */
-function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false) {
+function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
     global $DB;
 
     $params = array('instance'=>$instance, 'modulename'=>$modulename);
@@ -1808,7 +1814,7 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
              WHERE m.id = :instance AND md.name = :modulename
                    $courseselect";
 
-    return $DB->get_record_sql($sql, $params);
+    return $DB->get_record_sql($sql, $params, $strictness);
 }
 
 /**
