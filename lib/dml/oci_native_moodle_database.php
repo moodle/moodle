@@ -667,9 +667,9 @@ class oci_native_moodle_database extends moodle_database {
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_sql($sql, array $params=null, $mode=0) {
-        $mode = (int)$mode;
-        if ($mode == IGNORE_MULTIPLE) {
+    public function get_record_sql($sql, array $params=null, $strictness=IGNORE_MISSING) {
+        $strictness = (int)$strictness;
+        if ($strictness == IGNORE_MULTIPLE) {
             // do not limit here - ORA does not like that
             if (!$rs = $this->get_recordset_sql($sql, $params)) {
                 return false;
@@ -681,7 +681,7 @@ class oci_native_moodle_database extends moodle_database {
             $rs->close();
             return false;
         }
-        return parent::get_record_sql($sql, $params, $mode);
+        return parent::get_record_sql($sql, $params, $strictness);
     }
 
     /**

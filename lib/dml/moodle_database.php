@@ -1134,7 +1134,7 @@ abstract class moodle_database {
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record($table, array $conditions, $fields='*', $strictness=0) {
+    public function get_record($table, array $conditions, $fields='*', $strictness=IGNORE_MISSING) {
         list($select, $params) = $this->where_clause($conditions);
         return $this->get_record_select($table, $select, $params, $fields, $strictness);
     }
@@ -1151,7 +1151,7 @@ abstract class moodle_database {
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_select($table, $select, array $params=null, $fields='*', $strictness=0) {
+    public function get_record_select($table, $select, array $params=null, $fields='*', $strictness=IGNORE_MISSING) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1177,7 +1177,7 @@ abstract class moodle_database {
      * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception if error
      */
-    public function get_record_sql($sql, array $params=null, $strictness=0) {
+    public function get_record_sql($sql, array $params=null, $strictness=IGNORE_MISSING) {
         $strictness = (int)$strictness; // we support true/false for BC reasons too
         if ($strictness == IGNORE_MULTIPLE) {
             $count = 1;
@@ -1215,7 +1215,7 @@ abstract class moodle_database {
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field($table, $return, array $conditions, $strictness=0) {
+    public function get_field($table, $return, array $conditions, $strictness=IGNORE_MISSING) {
         list($select, $params) = $this->where_clause($conditions);
         return $this->get_field_select($table, $return, $select, $params, $strictness);
     }
@@ -1233,7 +1233,7 @@ abstract class moodle_database {
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field_select($table, $return, $select, array $params=null, $strictness=0) {
+    public function get_field_select($table, $return, $select, array $params=null, $strictness=IGNORE_MISSING) {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1258,7 +1258,7 @@ abstract class moodle_database {
      * @return mixed the specified value false if not found
      * @throws dml_exception if error
      */
-    public function get_field_sql($sql, array $params=null, $strictness=0) {
+    public function get_field_sql($sql, array $params=null, $strictness=IGNORE_MISSING) {
         if (!$record = $this->get_record_sql($sql, $params, $strictness)) {
             return false;
         }
