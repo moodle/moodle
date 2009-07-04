@@ -142,10 +142,6 @@
         die;
     }
 
-/// Print headings
-    print_category_edit_header();
-    print_heading($strcategories);
-
 /// Create a default category if necessary
     if (!$categories = get_categories()) {    /// No category yet!
         // Try and make one
@@ -213,6 +209,10 @@
         // finally reorder courses
         fix_course_sortorder();
     }
+
+/// Print headings
+    print_category_edit_header();
+    print_heading($strcategories);
 
 /// Print out the categories with all the knobs
     $strcategories = get_string('categories');

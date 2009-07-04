@@ -63,53 +63,7 @@
         }
     }
 
-/// Print headings
-    $numcategories = $DB->count_records('course_categories');
-
-    $stradministration = get_string('administration');
-    $strcategories = get_string('categories');
-    $strcategory = get_string('category');
-    $strcourses = get_string('courses');
-
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcategories, 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => format_string($category->name), 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    if ($editingon && update_category_button()) {
-        // Integrate into the admin tree only if the user can edit categories at the top level,
-        // otherwise the admin block does not appear to this user, and you get an error.
-        require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt', $navbaritem, array('id' => $id,
-                'page' => $page, 'perpage' => $perpage), $CFG->wwwroot . '/course/category.php');
-        admin_externalpage_print_header();
-    } else {
-        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", $navigation, '', '', true, $navbaritem);
-    }
-
-/// Print link to roles
-    if (has_capability('moodle/role:assign', $context)) {
-        echo '<div class="rolelink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-         $context->id.'">'.get_string('assignroles','role').'</a></div>';
-    }
-
-/// Print the category selector
-    $displaylist = array();
-    $notused = array();
-    make_categories_list($displaylist, $notused);
-
-    echo '<div class="categorypicker">';
-    popup_form('category.php?id=', $displaylist, 'switchcategory', $category->id, '', '', '', false, 'self', $strcategories.':');
-    echo '</div>';
-
-/// Print current category description
-    if (!$editingon && $category->description) {
-        print_box_start();
-        echo format_text($category->description); // for multilang filter
-        print_box_end();
-    }
-
-/// Process any course actions.
+    // Process any course actions.
     if ($editingon) {
     /// Move a specified course to a new category
         if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
@@ -172,6 +126,52 @@
         }
 
     } // End of editing stuff
+
+    // Print headings
+    $numcategories = $DB->count_records('course_categories');
+
+    $stradministration = get_string('administration');
+    $strcategories = get_string('categories');
+    $strcategory = get_string('category');
+    $strcourses = get_string('courses');
+
+    $navlinks = array();
+    $navlinks[] = array('name' => $strcategories, 'link' => 'index.php', 'type' => 'misc');
+    $navlinks[] = array('name' => format_string($category->name), 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    if ($editingon && update_category_button()) {
+        // Integrate into the admin tree only if the user can edit categories at the top level,
+        // otherwise the admin block does not appear to this user, and you get an error.
+        require_once($CFG->libdir.'/adminlib.php');
+        admin_externalpage_setup('coursemgmt', $navbaritem, array('id' => $id,
+                'page' => $page, 'perpage' => $perpage), $CFG->wwwroot . '/course/category.php');
+        admin_externalpage_print_header();
+    } else {
+        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", $navigation, '', '', true, $navbaritem);
+    }
+
+/// Print link to roles
+    if (has_capability('moodle/role:assign', $context)) {
+        echo '<div class="rolelink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
+         $context->id.'">'.get_string('assignroles','role').'</a></div>';
+    }
+
+/// Print the category selector
+    $displaylist = array();
+    $notused = array();
+    make_categories_list($displaylist, $notused);
+
+    echo '<div class="categorypicker">';
+    popup_form('category.php?id=', $displaylist, 'switchcategory', $category->id, '', '', '', false, 'self', $strcategories.':');
+    echo '</div>';
+
+/// Print current category description
+    if (!$editingon && $category->description) {
+        print_box_start();
+        echo format_text($category->description); // for multilang filter
+        print_box_end();
+    }
 
     if ($editingon && has_capability('moodle/category:manage', $context)) {
         echo '<div class="buttons">';
