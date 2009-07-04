@@ -27,5 +27,5 @@ $string['repositorydesc'] = 'Repository on flickr.com';
 $string['secret'] = 'Secret';
 $string['sharealike'] = 'Yes, as long as others share alike';
 $string['username'] = 'Flickr account email';
-$string['watermark'] = 'Add watermark (Auther ID and original URL) to downloaed photos?';
+$string['watermark'] = 'Add watermark (Author ID and original URL) to downloaed photos?';
 
