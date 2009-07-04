@@ -1049,6 +1049,10 @@ function aggregate_roles_from_accessdata($context, $accessdata) {
  * This is an easy to use function, combining has_capability() with require_course_login().
  * And will call those where needed.
  *
+ * NOTE becuase this function calls require_login, and becuase require_login tries
+ * to initialise $PAGE->course, and the themes, you will get an exception if you
+ * try to call require_login after output has started, so don't do that.
+ *
  * It checks for a capability assertion being true.  If it isn't
  * then the page is terminated neatly with a standard error message.
  *
