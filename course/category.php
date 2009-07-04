@@ -433,6 +433,10 @@
 
     print_course_search();
 
-    print_footer();
+    if ($editingon && update_category_button()) {
+        admin_externalpage_print_footer();
+    } else {
+        print_footer();
+    }
 
 ?>
