@@ -234,6 +234,9 @@ class file_storage {
             $parts = explode('/', trim($dir->get_filepath(),'/'));
             $pointer =& $result;
             foreach ($parts as $part) {
+                if ($part === '') {
+                    continue;
+                }
                 if (!isset($pointer['subdirs'][$part])) {
                     $pointer['subdirs'][$part] = array('dirname'=>$part, 'dirfile'=>null, 'subdirs'=>array(), 'files'=>array());
                 }
@@ -246,6 +249,9 @@ class file_storage {
             $parts = explode('/', trim($file->get_filepath(),'/'));
             $pointer =& $result;
             foreach ($parts as $part) {
+                if ($part === '') {
+                    continue;
+                }
                 $pointer =& $pointer['subdirs'][$part];
             }
             $pointer['files'][$file->get_filename()] = $file;
