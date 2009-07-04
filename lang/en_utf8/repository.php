@@ -42,6 +42,7 @@ $string['download'] = 'Download';
 $string['downloadsucc'] = 'The file has been downloaded successfully';
 $string['editrepositoryinstance'] = 'Edit repository instance';
 $string['emptytype'] = 'Cannot create repository type: type name is empty';
+$string['emptylist'] = 'Empty result';
 $string['enablecourseinstances'] = 'Allow teachers to add a repository instance into the file picker';
 $string['enableuserinstances'] = 'Allow users to add a repository instance into the file picker';
 $string['enter'] = 'Enter';
