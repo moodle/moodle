@@ -929,7 +929,7 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         return true;
     }
 
-    if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type))) { // this is a potentail problem in DEBUG_DEVELOPER
+    if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type), '*', IGNORE_MULTIPLE)) { // this is a potentail problem in DEBUG_DEVELOPER
         if ($f->value == $value and $f->expiry == $expiry and $f->timemodified == $timemodified) {
             return true; //no need to update; helps rcache too
         }

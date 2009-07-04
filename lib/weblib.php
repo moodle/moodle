@@ -1425,7 +1425,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
         }
 
-        if ($oldcacheitem = $DB->get_record('cache_text', array('md5key'=>$md5key), '*', true)) {
+        if ($oldcacheitem = $DB->get_record('cache_text', array('md5key'=>$md5key), '*', IGNORE_MULTIPLE)) {
             if ($oldcacheitem->timemodified >= $time) {
                 if (CLI_SCRIPT) {
                     if (count($croncache) > 150) {
