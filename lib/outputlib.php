@@ -1156,6 +1156,11 @@ class template_renderer extends moodle_renderer_base {
 class xhtml_container_stack {
     /** @var array stores the list of open containers. */
     protected $opencontainers = array();
+    /**
+     * @var array in developer debug mode, stores a stack trace of all opens and
+     * closes, so we can output helpful error messages when there is a mismatch.
+     */
+    protected $log = array();
 
     /**
      * Push the close HTML for a recently opened container onto the stack.
@@ -1167,6 +1172,9 @@ class xhtml_container_stack {
         $container = new stdClass;
         $container->type = $type;
         $container->closehtml = $closehtml;
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $this->log('Open', $type);
+        }
         array_push($this->opencontainers, $container);
     }
 
@@ -1179,34 +1187,37 @@ class xhtml_container_stack {
      */
     public function pop($type) {
         if (empty($this->opencontainers)) {
-            debugging('There are no more open containers. This suggests there is a nesting problem.', DEBUG_DEVELOPER);
+            debugging('<p>There are no more open containers. This suggests there is a nesting problem.</p>' .
+                    $this->output_log(), DEBUG_DEVELOPER);
             return;
         }
 
         $container = array_pop($this->opencontainers);
         if ($container->type != $type) {
-            debugging('The type of container to be closed (' . $container->type .
+            debugging('<p>The type of container to be closed (' . $container->type .
                     ') does not match the type of the next open container (' . $type .
-                    '). This suggests there is a nesting problem.', DEBUG_DEVELOPER);
+                    '). This suggests there is a nesting problem.</p>' .
+                    $this->output_log(), DEBUG_DEVELOPER);
+        }
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $this->log('Close', $type);
         }
         return $container->closehtml;
-    }
-
-    /**
-     * Return how many containers are currently open.
-     * @return integer how many containers are currently open.
-     */
-    public function count() {
-        return count($this->opencontainers);
     }
 
     /**
      * Close all but the last open container. This is useful in places like error
      * handling, where you want to close all the open containers (apart from <body>)
      * before outputting the error message.
+     * @param $shouldbenone assert that the stack shold be empty now - causes a
+     *      developer debug warning if it isn't.
      * @return string the HTML requried to close any open containers inside <body>.
      */
-    public function pop_all_but_last() {
+    public function pop_all_but_last($shouldbenone = false) {
+        if ($shouldbenone && count($this->opencontainers) != 1) {
+            debugging('<p>Some HTML tags were opened in the body of the page but not closed.</p>' .
+                    $this->output_log(), DEBUG_DEVELOPER);
+        }
         $output = '';
         while (count($this->opencontainers) > 1) {
             $container = array_pop($this->opencontainers);
@@ -1234,10 +1245,20 @@ class xhtml_container_stack {
             return;
         }
 
-        debugging('Some containers were left open. This suggests there is a nesting problem.', DEBUG_DEVELOPER);
+        debugging('<p>Some containers were left open. This suggests there is a nesting problem.</p>' .
+                $this->output_log(), DEBUG_DEVELOPER);
         echo $this->pop_all_but_last();
         $container = array_pop($this->opencontainers);
         echo $container->closehtml;
+    }
+
+    protected function log($action, $type) {
+        $this->log[] = '<li>' . $action . ' ' . $type . ' at:' .
+                format_backtrace(debug_backtrace()) . '</li>';  
+    }
+
+    protected function output_log() {
+        return '<ul>' . implode("\n", $this->log) . '</ul>';
     }
 }
 
@@ -1584,11 +1605,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     public function footer() {
-        $output = '';
-        if ($this->opencontainers->count() != 1) {
-            debugging('Some HTML tags were opened in the body of the page but not closed.', DEBUG_DEVELOPER);
-            $output .= $this->opencontainers->pop_all_but_last();
-        }
+        $output = $this->opencontainers->pop_all_but_last(true);
 
         $footer = $this->opencontainers->pop('header/footer');
 
