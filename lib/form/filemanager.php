@@ -94,7 +94,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 
     function _get_draftfiles($draftid, $suffix) {
-        global $USER, $OUTPUT;
+        global $USER, $OUTPUT, $CFG;
+
         $html = '';
         if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
         }
