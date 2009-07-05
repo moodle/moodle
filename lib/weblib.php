@@ -379,15 +379,20 @@ class moodle_url {
      *
      * @param array $overrideparams params to add to the output params, these
      *      override existing ones with the same name.
+     * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string query string that can be added to a url.
      */
-    public function get_query_string($overrideparams = array()) {
+    public function get_query_string($overrideparams = array(), $escaped = true) {
         $arr = array();
         $params = $overrideparams + $this->params;
         foreach ($params as $key => $val) {
            $arr[] = urlencode($key)."=".urlencode($val);
         }
-        return implode($arr, "&amp;");
+        if ($escaped) {
+            return implode('&amp;', $arr);
+        } else {
+            return implode('&', $arr);
+        }
     }
 
     /**
@@ -415,18 +420,22 @@ class moodle_url {
     /**
      * Output url
      *
+     * If you use the returned URL in HTML code, you want the escaped ampersands. If you use
+     * the returned URL in HTTP headers, you want $escaped=false.
+     *
      * @param boolean $omitquerystring whether to output page params as a query string in the url.
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
+     * @param boolean $escaped Use &amp; as params separator instead of plain &
      * @return string Resulting URL
      */
-    public function out($omitquerystring = false, $overrideparams = array()) {
+    public function out($omitquerystring = false, $overrideparams = array(), $escaped = true) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
         if (!$omitquerystring) {
-            $querystring = $this->get_query_string($overrideparams);
+            $querystring = $this->get_query_string($overrideparams, $escaped);
             if ($querystring) {
                 $uri .= '?' . $querystring;
             }
