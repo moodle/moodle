@@ -10,6 +10,7 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['availablelangs']='Saadaval keelte nimekiri';
+$string['availablelangs']='Saadaval keelte nimekiri'; // ORPHANED
 $string['cannotcreatelangdir']='Ei saa luua lang kataloogi';
 $string['cannotdownloadcomponents']='Ei saa alla tõmmata komponente.';
 $string['cannotdownloadzipfile']='Ei saa alla tõmmata ZIP faili.';
@@ -25,15 +26,23 @@ $string['environment']='Keskkond';
 $string['environmentrequireinstall']='on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion']='versioon $a->needed on nõutud, Sinul on jooksmas versioon $a->current';
 $string['errorsinenvironment']='Keskkonna sobivuse kontroll ebaõnnestus!';
+$string['errorsinenvironment']='Keskkonna sobivuse kontroll ebaõnnestus!'; // ORPHANED
 $string['installation']='Installeerimine';
 $string['language']='Keel';
 $string['paths']='Rajad';
+$string['paths']='Rajad'; // ORPHANED
 $string['pathserrcreatedataroot']='Andmete kataloogi ($a->dataroot) ei saa installeerija luua.';
+$string['pathserrcreatedataroot']='Andmete kataloogi ($a->dataroot) ei saa installeerija luua.'; // ORPHANED
 $string['pathshead']='Radade kinnitused';
+$string['pathshead']='Radade kinnitused'; // ORPHANED
 $string['pathsunsecuredataroot']='Andmete juurkataloogi asukoht pole turvamine';
+$string['pathsunsecuredataroot']='Andmete juurkataloogi asukoht pole turvamine'; // ORPHANED
 $string['pathswrongadmindir']='Admin kataloogi ei eksisteeri';
+$string['pathswrongadmindir']='Admin kataloogi ei eksisteeri'; // ORPHANED
 $string['phpextension']='$a PHP laiendus';
+$string['phpextension']='$a PHP laiendus'; // ORPHANED
 $string['phpversion']='PHP versioon';
+$string['reload']='Laadi uuesti';
 $string['thischarset']='UTF-8';
 $string['thislanguage']='Eesti';
 $string['welcomep10']='$a->installername ($a->installerversion)';
