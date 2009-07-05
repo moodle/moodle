@@ -11,6 +11,7 @@
  */
 
 require_once($CFG->libdir.'/flickrlib.php');
+require_once(dirname(__FILE__) . '/image.php');
 
 /**
  *
@@ -333,7 +334,7 @@ class repository_flickr_public extends repository {
                 $format = '.'.$format;
                 if (substr($p['title'], strlen($p['title'])-strlen($format)) != $format) {
                     // append author id
-                    $p['title'] .= '-'.$p['owner'];
+                    // $p['title'] .= '-'.$p['owner'];
                     // append file extension
                     $p['title'] .= $format; 
                 }
@@ -384,7 +385,8 @@ class repository_flickr_public extends repository {
 
         $watermark = get_config('flickr_public', 'watermark');
         if (!empty($watermark)) {
-            // process watermark
+            $img = new moodle_image($path);
+            $img->watermark($url, array(10,10), array('ttf'=>true, 'fontsize'=>9))->saveas($path);
         }
         return $path;
     }
