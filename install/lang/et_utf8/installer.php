@@ -165,6 +165,7 @@ $string['mysql']='MySQL (mysql)';
 $string['mysql416bypassed']='Kuid, kui Sinu õpikeskkond kasutab AINULT iso-8859-1 (latin) tähestikuga keelt, Sa võid jätkata praegu installeeritud MySQL versiooniga 4.1.12 (või uuem).';
 $string['mysql416required']='MySQL 4.1.16 on minimaalne versioon, mis on nõutud Moodle 1.6 poolt, et tagada kõik andmed saaksid konverteeritud UTF-8 kodeeringusse.';
 $string['mysqlextensionisnotpresentinphp']='PHP ei ole MySQL laiendiga õigesti konfigureeritud, seega ei saa ta MySQL\'ga suhelda. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
+$string['mysqli']='Täiustatud MySQL (mysqli)';
 $string['name']='Nimi';
 $string['next']='Järgmine';
 $string['oci8po']='Oracle (oci8po)';
@@ -178,7 +179,7 @@ $string['password']='Salasõna';
 $string['pgsqlextensionisnotpresentinphp']='PHP laiendus PGSQL ei ole korralikult seadistatud, mistõttu ei saa ühenduda PostgreSQL\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['php50restricted']='PHP 5.0.x omab mitmeid probleeme. Palun uuenda 5.1.x või lase tagasi 4.3.x or 4.4.x PHP versioonile';
 $string['phpversion']='PHP versioon';
-$string['phpversionerror']='PHP versioon peab olema vähemalt 4.1.0'; // ORPHANED
+$string['phpversionerror']='PHP versioon peab olema vähemalt 4.1.0';
 $string['phpversionhelp']='<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sinu jooksev versioon on $a</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
@@ -214,4 +215,6 @@ $string['wrongsourcebase']='Vale allika URL\'i baas.';
 $string['wrongzipfilename']='Vale ZIP failinimi.'; // ORPHANED
 $string['wwwroot']='Veebiaadress';
 $string['wwwrooterror']='Veebiaadress näib vigane - Moodle installatsiooni ei paista seal olevat.';
+$string['xmlrpcrecommended']='Fakultatiivse xmlrpc laienduse installeerimine on kasulik Moodle Networking funktsionaalsuse jaoks.';
+$string['ziprequired']='Zip PHP laiendus on nüüd Moodle poolt nõutud. Info-ZIP binaare või PclZip teeke ei kasutata enam.';
 ?>
