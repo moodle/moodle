@@ -129,6 +129,8 @@ $CFG->lang                 = $config->lang;
 $CFG->dirroot              = str_replace('\\', '/', dirname(__FILE__)); // Fix for win32
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
+$CFG->themedir = $CFG->dirroot.'/theme';
+$CFG->themewww = $CFG->wwwroot.'/theme';
 $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->httpsthemewww        = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
@@ -141,6 +143,7 @@ $CFG->running_installer    = true;
 require_once($CFG->libdir.'/setuplib.php');
 require_once($CFG->libdir.'/textlib.class.php');
 require_once($CFG->libdir.'/weblib.php');
+require_once($CFG->libdir.'/outputlib.php');
 require_once($CFG->libdir.'/dmllib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
@@ -149,6 +152,12 @@ require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
+    //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
+    //the problem is that we need specific version of quickforms and hacked excel files :-(
+    ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
+    //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
+    ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
+    
 require('version.php');
 $CFG->target_release = $release;
 
