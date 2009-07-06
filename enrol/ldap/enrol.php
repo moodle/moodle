@@ -501,7 +501,7 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $role){
     }
 
     // define the search pattern
-    $ldap_search_pattern = "(".$CFG->{'enrol_ldap_memberattribute_role'.$role->id}."=".$memberuid.")";
+    $ldap_search_pattern = "(".$CFG->{'enrol_ldap_memberattribute_role'.$role->id}."=".$this->filter_addslashes($memberuid).")";
     if (!empty($CFG->enrol_ldap_objectclass)){ 
         $ldap_search_pattern='(&(objectclass='.$CFG->enrol_ldap_objectclass.')'.$ldap_search_pattern.')';
     }
@@ -669,6 +669,18 @@ function check_legacy_config () {
 
         unset_config('enrol_ldap_teacher_memberattribute');
     }
+}
+
+/**
+ * Quote control characters in texts used in ldap filters - see RFC 4515/2254
+ *
+ * @param string
+ */
+function filter_addslashes($text) {
+    $text = str_replace('\\', '\\5c', $text);
+    $text = str_replace(array('*',    '(',    ')',    "\0"),
+                        array('\\2a', '\\28', '\\29', '\\00'), $text);
+    return $text;
 }
 
 } // end of class

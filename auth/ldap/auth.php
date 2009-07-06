@@ -222,7 +222,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
             $ldapval = NULL;
             foreach ($values as $value) {
-                if ($value == 'dn') {
+                if ((moodle_strtolower($value) == 'dn') || (moodle_strtolower($value) == 'distinguishedname')) {
                     $result[$key] = $user_dn;
                 }
                 if (!array_key_exists($value, $user_entry[0])) {
@@ -2121,7 +2121,7 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
     /**
-     * Quote control characters in texts used in ldap filters - see rfc2254.txt
+     * Quote control characters in texts used in ldap filters - see RFC 4515/2254
      *
      * @param string
      */
@@ -2133,14 +2133,23 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
     /**
-     * Quote control characters in quoted "texts" used in ldap
+     * The order of the special characters in these arrays _IS IMPORTANT_.
+     * Make sure '\\5C' (and '\\') are the first elements of the arrays.
+     * Otherwise we'll double replace '\' with '\5C' which is Bad(tm)
+     */ 
+    var $LDAP_DN_QUOTED_SPECIAL_CHARS = array('\\5c','\\20','\\22','\\23','\\2b','\\2c','\\3b','\\3c','\\3d','\\3e','\\00');
+    var $LDAP_DN_SPECIAL_CHARS        = array('\\',  ' ',   '"',   '#',   '+',   ',',   ';',   '<',   '=',   '>',   "\0");
+
+    /**
+     * Quote control characters in distinguished names used in ldap - See RFC 4514/2253
      *
      * @param string
+     * @return string
      */
     function ldap_addslashes($text) {
-        $text = str_replace('\\', '\\\\', $text);
-        $text = str_replace(array('"',   "\0"),
-                            array('\\"', '\\00'), $text);
+        $text = str_replace ($this->LDAP_DN_SPECIAL_CHARS,
+                             $this->LDAP_DN_QUOTED_SPECIAL_CHARS,
+                             $text);
         return $text;
     }
 
