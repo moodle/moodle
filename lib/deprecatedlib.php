@@ -1816,6 +1816,20 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 }
 
 /**
+ * @todo Remove this deprecated function when no longer used
+ * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead of the .
+ *
+ * @param string $getid used to return $PAGE->pagetype.
+ * @param string $getclass used to return $PAGE->legacyclass.
+ */
+function page_id_and_class(&$getid, &$getclass) {
+    global $PAGE;
+    debugging('Call to deprecated function page_id_and_class. Please use $PAGE->pagetype instead.', DEBUG_DEVELOPER);
+    $getid = $PAGE->pagetype;
+    $getclass = $PAGE->legacyclass;
+}
+
+/**
  * Prints some red text using echo
  *
  * @deprecated

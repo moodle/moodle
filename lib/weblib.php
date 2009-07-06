@@ -4783,12 +4783,6 @@ function editorshortcutshelpbutton() {
 /**
  * Print a message and exit.
  *
- * @global object
- * @global object Apparently not used in this function
- * @global object
- * @global object
- * @global object
- * @uses CLI_SCRIPT
  * @param string $message The message to print in the notice
  * @param string $link The link to use for the continue button
  * @param object $course A course object
@@ -4861,12 +4855,6 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  * <strong>Good practice:</strong> You should call this method before starting page
  * output by using any of the OUTPUT methods.
  *
- * @global object
- * @global object
- * @global object
- * @uses $_COOKIE
- * @uses DEBUG_DEVELOPER
- * @uses DEBUG_ALL
  * @param string $url The URL to redirect to
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
@@ -5113,21 +5101,6 @@ function rebuildnolinktag($text) {
     $text = preg_replace('/&lt;(\/*nolink)&gt;/i','<$1>',$text);
 
     return $text;
-}
-
-/**
- * @todo Remove this deprecated function when no longer used
- * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead of the .
- *
- * @global object
- * @param string $getid used to return $PAGE->pagetype.
- * @param string $getclass used to return $PAGE->legacyclass.
- */
-function page_id_and_class(&$getid, &$getclass) {
-    global $PAGE;
-    debugging('Call to deprecated function page_id_and_class. Please use $PAGE->pagetype instead.', DEBUG_DEVELOPER);
-    $getid = $PAGE->pagetype;
-    $getclass = $PAGE->legacyclass;
 }
 
 /**
