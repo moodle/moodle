@@ -42,12 +42,11 @@ if (!file_exists("$CFG->dirroot/lib/dragmath/applet/lang/$lang.xml")) {
 	name="dragmath" 
 	codebase="<?php echo $CFG->httpswwwroot.'/lib/dragmath/applet' ?>" 
 	code="Display/MainApplet.class" 
-	archive="Project.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" 
+	archive="DragMath.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" 
 	width="540" height="300"
 >
 	<param name="language" value="<?php echo $lang; ?>" />
 	<param name="outputFormat" value="MoodleTex" />
-	<param name="showOutputToolBar" value="false" />
     <?php print_string('dragmath:dragmath_javaneeded', 'editor_tinymce', '<a href="http://www.java.com">Java.com</a>')?>
 </applet>
 <form name="form" action="">
