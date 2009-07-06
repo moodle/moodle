@@ -35,7 +35,6 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 /// find all accessible reports
 $reports = get_plugin_list('gradereport');     // Get all installed reports
-$reports = array_keys($reports);
 
 foreach ($reports as $plugin => $plugindir) {                      // Remove ones we can't see
     if (!has_capability('gradereport/'.$plugin.':view', $context)) {
@@ -57,19 +56,19 @@ if (!empty($USER->grade_last_report[$course->id])) {
     $last = null;
 }
 
-if (!in_array($last, $reports)) {
+if (!array_key_exists($last, $reports)) {
     $last = null;
 }
 
 if (empty($last)) {
-    if (in_array('grader', $reports)) {
+    if (array_key_exists('grader', $reports)) {
         $last = 'grader';
 
-    } else if (in_array('user', $reports)) {
+    } else if (array_key_exists('user', $reports)) {
         $last = 'user';
 
     } else {
-        $last = reset($reports);
+        $last = key(reset($reports));
     }
 }
 
