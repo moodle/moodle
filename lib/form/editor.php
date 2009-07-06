@@ -110,7 +110,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     function toHtml() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $PAGE;
 
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
@@ -174,28 +174,16 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
 
-        require_once($CFG->dirroot.'/repository/lib.php');
-        $client_id = uniqid();
-        $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
+            require_once($CFG->dirroot.'/repository/lib.php');
+            $client_id = uniqid();
+            $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
 
-        $str .= $repojs;
-        $str .= <<<EOD
-<script type="text/javascript">
-id2clientid['$id'] = '$client_id';
-id2itemid['$id']   = '$draftitemid';
-</script>
-EOD;
+            $str .= $repojs;
+            $str .= $PAGE->requires->data_for_js('id2clientid', Array($id, $client_id))->asap();
+            $str .= $PAGE->requires->data_for_js('id2itemid', Array($id, $draftitemid))->asap();
 
-        if ($editor->supports_repositories()) {
-            $str .= <<<EOD
-<script type="text/javascript">
-//<![CDATA[
-var fileman = document.getElementById("{$id}_filemanager");
-fileman.style.visibility = "hidden";
-fileman.style.height = "0";
-//]]>
-</script>
-EOD;
+            if ($editor->supports_repositories()) {
+                $str .= $PAGE->requires->js_function_call('hide_item', Array("{$id}_filemanager"))->asap();
             }
         }
 
