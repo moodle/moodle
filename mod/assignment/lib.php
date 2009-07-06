@@ -2425,7 +2425,18 @@ function assignment_get_participants($assignmentid) {
     return ($students);
 }
 
-function assignment_pluginfile($course, $cminfo, $context, $filearea, $args) {
+/**
+ * Serves assingment submissions and otehr files.
+ *
+ * @param object $course
+ * @param object $cminfo
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function assignment_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
     if (!$assignment = $DB->get_record('assignment', array('id'=>$cminfo->instance))) {
