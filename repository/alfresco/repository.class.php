@@ -128,7 +128,7 @@ class repository_alfresco extends repository {
                         'children'=>array());
                 } elseif ($child->child->type == $file_filter) {
                     $ret['list'][] = array('title'=>$child->child->cm_name,
-                        'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $child->child->cm_name))),
+                        'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($child->child->cm_name, 32)),
                         'source'=>$child->child->id);
                 }
             }

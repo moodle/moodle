@@ -214,7 +214,7 @@ class repository_mahara extends repository {
                 if ($file['artefacttype'] == 'image') {
                     $thumbnail = $host->wwwroot."/artefact/file/download.php?file=".$file['id']."&size=70x55";
                 } else {
-                    $thumbnail = $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $file['title'])));
+                    $thumbnail = $OUTPUT->old_icon_url(file_extension_icon( $file['title'], 32));
                 }
                 $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'source'=>$file['id'], 'thumbnail' => $thumbnail);
             }

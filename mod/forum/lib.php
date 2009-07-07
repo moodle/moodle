@@ -4296,8 +4296,7 @@ function forum_print_attachments($post, $cm, $type) {
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
-            $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
-            $iconimage = '<img src="'.$OUTPUT->old_icon_url('f/'.$icon).'" class="icon" alt="'.$icon.'" />';
+            $iconimage = '<img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
             $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
 
             if ($type == 'html') {

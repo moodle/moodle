@@ -121,7 +121,7 @@ class repository_webdav extends repository {
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';
                 $ret['list'][] = array(
                     'title'=>$title,
-                    'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $title))),
+                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($title, 32)),
                     'size'=>$size,
                     'date'=>$filedate,
                     'source'=>$v['href']

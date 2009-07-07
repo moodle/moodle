@@ -101,7 +101,7 @@ EOD;
                 $ret['list'][] = array(
                     'title'=>$filename,
                     'source'=>$this->file_url,
-                    'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $filename)))
+                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($filename, 32))
                     );
             }
         }

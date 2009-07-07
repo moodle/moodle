@@ -769,7 +769,7 @@ abstract class repository {
                 return array('url'=>$ret->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
-                    'icon'=>$OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $path)))
+                    'icon' => $OUTPUT->old_icon_url(file_extension_icon($path, 32))
                 );
             } else {
                 return null;
@@ -960,7 +960,7 @@ abstract class repository {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.gif', '.png'), '', mimeinfo('icon32', $filename)))
+                    'thumbnail'=>$OUTPUT->old_icon_url(file_extension_icon($filename, 32)),
                 );
                 $filecount++;
             }

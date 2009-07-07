@@ -64,7 +64,7 @@ class repository_filesystem extends repository {
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
                             'date' => time(),
-                            'thumbnail' => $OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $this->root_path.$file)))
+                            'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($this->root_path.$file, 32))
                         );
                     } else {
                         if (!empty($path)) {

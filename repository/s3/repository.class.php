@@ -45,7 +45,7 @@ class repository_s3 extends repository {
                     'size'=>$file['size'],
                     'date'=>userdate($file['time']),
                     'source'=>$path.'/'.$file['name'],
-                    'thumbnail'=>$OUTPUT->old_icon_url('f/'. str_replace(array('.png', '.gif'), '', mimeinfo('icon32', $file['name'])))
+                    'thumbnail' => $OUTPUT->old_icon_url(file_extension_icon($file['name'], 32))
                     );
             }
         }

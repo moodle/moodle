@@ -286,9 +286,8 @@ class assignment_upload extends assignment_base {
                 $filename = $file->get_filename();
                 $found = true;
                 $mimetype = $file->get_mimetype();
-                $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url('f/'.$icon).'" alt="'.$icon.'" />'.s($filename).'</a>&nbsp;';
+                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a>&nbsp;';
 
             }
 
@@ -346,9 +345,8 @@ class assignment_upload extends assignment_base {
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 $mimetype = $file->get_mimetype();
-                $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url('f/'.$icon).'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
+                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
 
                 if ($candelete) {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
@@ -408,10 +406,9 @@ class assignment_upload extends assignment_base {
                 $filename = $file->get_filename();
                 $found = true;
                 $mimetype = $file->get_mimetype();
-                $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_response/'.$userid.'/'.$filename);
 
-                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url('f/'.$icon).'" alt="'.$icon.'" />'.$filename.'</a>';
+                $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.$filename.'</a>';
 
                 if ($candelete) {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;action=response";

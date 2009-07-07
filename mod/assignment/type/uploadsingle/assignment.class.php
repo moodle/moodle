@@ -21,9 +21,8 @@ class assignment_uploadsingle extends assignment_base {
                 $filename = $file->get_filename();
                 $found = true;
                 $mimetype = $file->get_mimetype();
-                $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
-                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url('f/'.$icon).'" alt="'.$icon.'" />'.s($filename).'</a><br />';
+                $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->old_icon_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a><br />';
             }
         }
 

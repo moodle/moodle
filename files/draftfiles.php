@@ -156,10 +156,9 @@ foreach ($files as $file) {
         }
 
     } else {
-        $icon = str_replace(array('.gif', '.png'), '', mimeinfo_from_type('icon', $mimetype));
         $viewurl = file_encode_url("$CFG->wwwroot/draftfile.php", "/$contextid/user_draft/$itemid".$filepath.$filename, false, false);
         echo '<div class="file">';
-        echo "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename)." ($filesize)</a> ";
+        echo "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url(file_mimetype_icon($mimetype)) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;".s($filename)." ($filesize)</a> ";
         echo "<a href=\"draftfiles.php?itemid=$itemid&amp;filepath=$filepath&amp;delete=$filenameurl&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes\"><img src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";;
         echo '</div>';
     }

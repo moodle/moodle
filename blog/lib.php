@@ -281,10 +281,9 @@
             $filename = $file->get_filename();
             $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/'.$blogentry->id.'/'.$filename);
             $type     = $file->get_mimetype();
-            $icon     = str_replace(array('.gif', '.png'), '', mimeinfo_from_type("icon", $type));
             $type     = mimeinfo_from_type("type", $type);
 
-            $image = "<img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"\" />";
+            $image = "<img src=\"" . $OUTPUT->old_icon_url(file_mimetype_icon($type)) . "\" class=\"icon\" alt=\"\" />";
 
             if ($return == "html") {
                 $output .= "<a href=\"$ffurl\">$image</a> ";

@@ -26,9 +26,8 @@ class question_context_move_question_form extends moodleform {
 
             $i = 0;
             foreach (array_keys($urls) as $url){
-                $iconname = str_replace(array('.gif', '.png'), '', mimeinfo('icon', $url));
                 $icontype = mimeinfo('type', $url);
-                $img = "<img src=\"" . $OUTPUT->old_icon_url('f/$iconname') . "\"  class=\"icon\" alt=\"$icontype\" />";
+                $img = "<img src=\"" . $OUTPUT->old_icon_url(file_extension_icon($url)) . "\"  class=\"icon\" alt=\"$icontype\" />";
                 if (in_array($url, $brokenurls)){
                     $mform->addElement('select', "urls[$i]", $img.$url, $brokenfileoptions);
                 } else {

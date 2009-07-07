@@ -121,7 +121,7 @@ function display() {
             $filesize = display_size(get_directory_size("$CFG->dataroot/$relativepath/$file"));
 
         } else {
-            $icon = str_replace(array('.gif', '.png'), '', mimeinfo("icon", $file));
+            $icon = file_extension_icon($file);
             $relativeurl = get_file_url("$relativepath/$file");
             $filesize = display_size(filesize("$CFG->dataroot/$relativepath/$file"));
         }
@@ -134,7 +134,7 @@ function display() {
         } else {
             echo '<tr class="file">';
             echo '<td class="name">';
-            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
+            link_to_popup_window($relativeurl, "resourcedirectory{$resource->id}", "<img src=\"" . $OUTPUT->old_icon_url($icon) . "\" class=\"icon\" alt=\"$strfile\" />&nbsp;$file", 450, 600, '');
         }
         echo '</td>';
         echo '<td>&nbsp;</td>';
