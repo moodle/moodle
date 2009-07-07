@@ -788,8 +788,17 @@ class bootstrap_renderer {
     public function __call($method, $arguments) {
         global $OUTPUT, $PAGE;
 
+        $recursing = false;
+        if ($method == 'notification') {
+            // Catch infinite recursion cuased by debugging output during print_header.
+            $backtrace = debug_backtrace();
+            array_shift($backtrace);
+            array_shift($backtrace);
+            $recursing = is_stacktrace_during_output_init($backtrace);
+        }
+
         // If lib/outputlib.php has been loaded, call it.
-        if (!empty($PAGE)) {
+        if (!empty($PAGE) && !$recursing) {
             $PAGE->initialise_theme_and_output();
             return call_user_func_array(array($OUTPUT, $method), $arguments);
         }
