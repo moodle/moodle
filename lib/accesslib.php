@@ -482,7 +482,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     if (empty($userid)) { // we must accept null, 0, '0', '' etc. in $userid
         if (empty($USER->id)) {
             // Session not set up yet.
-            return false;
+            $userid = 0;
         }
         $userid = $USER->id;
     }
