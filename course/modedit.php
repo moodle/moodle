@@ -212,7 +212,7 @@
     }
 
     $mformclassname = 'mod_'.$module->name.'_mod_form';
-    $mform = new $mformclassname($form->instance, $cw->section, $cm, $course);
+    $mform = new $mformclassname($form, $cw->section, $cm, $course);
     $mform->set_data($form);
 
     if ($mform->is_cancelled()) {
