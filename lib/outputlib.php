@@ -543,7 +543,7 @@ class theme_config {
         if (file_exists($filename)) {
             ob_start();
             include_once($filename);
-            $metatags .= ob_get_contents();
+            $metatags = ob_get_contents();
             ob_end_clean();
         }
         return $metatags;
