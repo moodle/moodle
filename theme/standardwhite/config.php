@@ -75,5 +75,3 @@ $THEME->makenavmenulist = false;
 // $navmenulist ... this contains a simple XHTML menu of 
 // all activities in the current course, mostly useful for 
 // creating popup navigation menus and so on.
-
-$THEME->modsheets = true;
