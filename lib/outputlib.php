@@ -1561,16 +1561,30 @@ class moodle_core_renderer extends moodle_renderer_base {
         // Check if a periodic refresh delay has been set and make sure we arn't
         // already meta refreshing
         if ($this->metarefreshtag=='' && $this->page->periodicrefreshdelay!==null) {
-            $metarefesh = '<meta http-equiv="refresh" content="%d;url=%s" />';
-            $output .= sprintf($metarefesh, $this->page->periodicrefreshdelay, $this->page->url->out());
+            $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
-        // TODO get rid of $CFG->javascript. We should be able to do everything
-        // with $PAGE->requires.
-        ob_start();
-        include($CFG->javascript);
-        $output .= ob_get_contents();
-        ob_end_clean();
+        $this->page->requires->js('lib/javascript-static.js')->in_head();
+        $this->page->requires->js('lib/javascript-mod.php')->in_head();
+        $this->page->requires->js('lib/overlib/overlib.js')->in_head();
+        $this->page->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
+        $this->page->requires->js('lib/cookies.js')->in_head();
+        $this->page->requires->js('lib/ufo.js')->in_head();
+        $this->page->requires->js('lib/dropdown.js')->in_head();
+        $this->page->requires->js_function_call('setTimeout', Array('fix_column_widths()', 20));
+
+        $focus = $this->page->focuscontrol;
+        if (!empty($focus)) {
+            $pos = strpos($focus, '.');
+            if($pos !== false) {
+                // Old style of focus, bad way to do it
+                debugging('This code is using the old style focus event, Please update this code to focus on an element id', DEBUG_DEVELOPER);
+                $this->page->requires->js_function_call('old_onload_focus', Array(substr($focus, 0, $pos), substr($focus, $pos)));
+            } else {
+                // Focus element with given id
+                $this->page->requires->js_function_call('focuscontrol', Array($focus));
+            }
+        }
 
         // Add the meta tags from the themes if any were requested.
         $output .= $this->page->theme->get_meta_tags($this->page);

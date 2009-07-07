@@ -464,7 +464,6 @@ global $SCRIPT;
 
 /// Location of standard files
     $CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
-    $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
 
 /// Create the $PAGE global.

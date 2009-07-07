@@ -79,11 +79,25 @@
             /// Based on getDoesGenerate()
                 switch ($xmldb_action->getDoesGenerate()) {
                     case ACTION_GENERATE_HTML:
-                    /// Define $CFG->javascript to use our custom javascripts.
-                    /// Save the original one to add it from ours. Global too! :-(
-                        global $standard_javascript;
-                        $standard_javascript = $CFG->javascript;  // Save original javascript file
-                        $CFG->javascript = $CFG->dirroot.'/'.$CFG->admin.'/xmldb/javascript.php';  //Use our custom javascript code
+
+                        $action = optional_param('action', '', PARAM_ALPHAEXT);
+                        $postaction = optional_param('postaction', '', PARAM_ALPHAEXT);
+                    /// If the js exists, load it
+                        if ($action) {
+                            $script = $CFG->admin . '/xmldb/actions/' . $action . '/' . $action . '.js';
+                            $file = $CFG->dirroot . '/' . $script;
+                            if (file_exists($file) && is_readable($file)) {
+                                $PAGE->requires->js($script);
+                            } else if ($postaction) {
+                            /// Try to load the postaction javascript if exists
+                                $script = $CFG->admin . '/xmldb/actions/' . $postaction . '/' . $postaction . '.js';
+                                $file = $CFG->dirroot . '/' . $script;
+                                if (file_exists($file) && is_readable($file)) {
+                                    $PAGE->requires->js($script);
+                                }
+                            }
+                        }
+
                     /// Go with standard admin header
                         admin_externalpage_print_header();
                         print_heading($xmldb_action->getTitle());

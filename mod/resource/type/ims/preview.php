@@ -44,13 +44,16 @@
         $direction = ' dir="ltr"';
     }
 
-/// Conditional argument to pass to IMS JavaScript. Need to be global to retrieve it from our custom javascript! :-(
-    global $jsarg;
     $jsarg = 'true';
-/// Define $CFG->javascript to use our custom javascript. Save the original one to add it from ours. Global too! :-(
-    global $standard_javascript;
-    $standard_javascript = $CFG->javascript;  // Save original javascript file
-    $CFG->javascript = $CFG->dirroot.'/mod/resource/type/ims/javascript.php';  //Use our custom IMS javascript code
+    if (!empty($THEME->customcorners)) {
+        $customcorners = 'true';
+    } else {
+        $customcorners = 'false';
+    }
+    $PAGE->requires->data_for_js('imsdata', Array('customcorners'=>$customcorners, 'jsarg'=>$jsarg));
+    $PAGE->requires->js('mod/resource/type/ims/dummyapi.js')->in_head();
+    $PAGE->requires->js('mod/resource/type/ims/resize.js')->in_head();
+    $PAGE->requires->js('mod/resource/type/ims/ims.js')->in_head();
 
 /// The output here
 
