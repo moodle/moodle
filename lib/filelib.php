@@ -1131,6 +1131,81 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
 }
 
 /**
+ * Returns the relative icon path for a given mime type
+ *
+ * This function should be used in conjuction with $OUTPUT->old_icon_url to produce
+ * a return the full path to an icon.
+ *
+ * <code>
+ * $mimetype = 'image/jpg';
+ * $icon = $OUTPUT->old_icon_url(file_mimetype_icon($mimetype));
+ * echo '<img src="'.$icon.'" alt="'.$mimetype.'" />';
+ * </code>
+ *
+ * @todo When an $OUTPUT->icon method is available this function should be altered
+ * to conform with that.
+ *
+ * @param string $mimetype The mimetype to fetch an icon for
+ * @param int $size The size of the icon. Not yet implemented
+ * @return string The relative path to the icon
+ */
+function file_mimetype_icon($mimetype, $size=null) {
+    $icon = mimeinfo_from_type('icon', $mimetype);
+    $icon = substr($icon, 0, strrpos($icon, '.'));
+    if ($size!=null && is_int($size)) {
+        $icon .= '-'.$size;
+    }
+    return 'f/'.$icon;
+}
+
+/**
+ * Returns the relative icon path for a given file extension
+ *
+ * This function should be used in conjuction with $OUTPUT->old_icon_url to produce
+ * a return the full path to an icon.
+ *
+ * The extension that you should pass should be just the extension, not the whole filename.
+ * A preceeding . is tolerated.
+ *
+ * <code>
+ * $extension = 'jpg';
+ * $icon = $OUTPUT->old_icon_url(file_extension_icon($extension));
+ * echo '<img src="'.$icon.'" alt="'.$extension.'" />';
+ * </code>
+ *
+ * @todo When an $OUTPUT->icon method is available this function should be altered
+ * to conform with that.
+ * @todo Implement $size
+ *
+ * @param string $extension The extension of the file to get an icon for
+ * @param int $size The size of the icon. Not yet implemented
+ * @return string
+ */
+function file_extension_icon($extension, $size=null) {
+    // Get rid of any preceeding .
+    $extension = trim($extension, '. ');
+    $mimeinfo = get_mimetypes_array();
+    foreach ($mimeinfo as $ext=>$mime) {
+        // Check each till we find an exact match for extension
+        if ($ext === $extension) {
+            $icon = $mime['icon'];
+            $icon = substr($icon, 0, strrpos($icon, '.'));
+            if ($size!=null && is_int($size)) {
+                $icon .= '-'.$size;
+            }
+            return 'f/'.$icon;
+        }
+    }
+    // Didn't find a match return the default
+    $icon = $mimeinfo['xxx']['icon'];
+    $icon = substr($icon, 0, strrpos($icon, '.'));
+    if ($size!=null && is_int($size)) {
+        $icon .= '-'.$size;
+    }
+    return 'f/'.$icon;
+}
+
+/**
  * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the
  * mimetypes.php language file.
  *
