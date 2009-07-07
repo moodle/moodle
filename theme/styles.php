@@ -55,7 +55,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 
 
 $fortheme = required_param('for', PARAM_FILE);
-$lang = optional_param('lang', '', PARAM_FILE);
+$pluginsheets = optional_param('pluginsheets', '', PARAM_BOOL);
 
 $CACHE_LIFETIME = 1800; // Cache stylesheets for half an hour.
 $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
@@ -92,8 +92,27 @@ if (!empty($showdeprecatedstylesheetsetupwarning)) {
 END;
 }
 
+// This is a bit tricky, but the following initialisation code may output
+// notices or debug developer warnings (for example, if the theme uses some
+// Deprecated settings in it config.php file. Therefore start a CSS comment
+// so that any debugging output does not break the CSS. This comment is closed
+// below.
+echo '/*';
+
+
 // Load the configuration of the selected theme. (See comment at the top of the file.)
 $PAGE->force_theme($fortheme);
+
+// We will build up a list of CSS file path names, then concatenate them all.
+$files = array();
+
+// If this theme wants plugin sheets, include them. Do this first, so styles
+// here can be overridden by theme CSS.
+if ($pluginsheets) {
+    foreach ($THEME->pluginsheets as $plugintype) {
+        $files += get_sheets_for_plugin_type($plugintype);
+    }
+}
 
 // Now work out which stylesheets we shold be serving from this theme.
 if ($themename == $fortheme) {
@@ -106,8 +125,7 @@ if ($themename == $fortheme) {
     } else if (!empty($THEME->parentsheets)) {
         $themesheets = $THEME->parentsheets;
     } else {
-        echo "/* The current theme does not require anything from the standard theme. */\n\n";
-        exit;
+        $themesheets = array();
     }
 
 } else if ($themename == 'standard') {
@@ -117,66 +135,37 @@ if ($themename == $fortheme) {
     } else if (!empty($THEME->standardsheets)) {
         $themesheets = $THEME->standardsheets;
     } else {
-        echo "/* The current theme does not require anything from the standard theme. */\n\n";
-        exit;
+        $themesheets = array();
     }
 }
 
-// Conver the sheet names to file names.
-$files = array();
+// Conver the theme stylessheet names to file names.
 foreach ($themesheets as $sheet) {
     $files[] = $CFG->themedir . '/' . $themename . '/' . $sheet . '.css';
 }
 
-// If this is the standard theme, then also include the styles.php files from
-// each of the plugins, as determined by the theme settings.
-if ($themename == 'standard') {
-    if (!empty($THEME->modsheets)) {
-        $files += get_sheets_for_plugin_type('mod');
-    }
-
-    if (!empty($THEME->blocksheets)) {
-        $files += get_sheets_for_plugin_type('block');
-    }
-
-    if (!empty($THEME->courseformatsheets)) {
-        $files += get_sheets_for_plugin_type('format');
-    }
-
-    if (!empty($THEME->gradereportsheets)) {
-        $files += get_sheets_for_plugin_type('gradereport');
-    }
-
-    if (!empty($THEME->langsheets) && $lang) {
-        $file = $CFG->dirroot . '/lang/' . $lang . '/styles.php';
-        if (file_exists($file)) {
-            $files[] = $file;
-        }
-    }
-}
-
 if (empty($files)) {
-    echo "/* The current theme does not require anything from this theme. */\n\n";
+    echo " The $fortheme theme does not require anything from the $themename theme. */\n\n";
     exit;
 }
 
 // Output a commen with a summary of the included files.
 echo <<<END
-/*
+
  * Styles from theme '$themename' for theme '$fortheme'
  *
  * Files included here:
  *
 
 END;
-$toreplace = array($CFG->dirroot, $CFG->themedir);
+$toreplace = array($CFG->dirroot . '/', $CFG->themedir . '/');
 foreach ($files as $file) {
     echo ' *   ' . str_replace($toreplace, '', $file) . "\n";
 }
 echo " */\n\n";
 
 if (!empty($THEME->cssoutputfunction)) {
-    call_user_func($THEME->cssoutputfunction, $files);
+    call_user_func($THEME->cssoutputfunction, $files, $toreplace);
 
 } else {
     foreach ($files as $file) {
