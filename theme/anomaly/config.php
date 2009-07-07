@@ -53,39 +53,10 @@ $THEME->parentsheets = false;
 /// eg $THEME->parentsheets = array('styles_layout','styles_fonts','styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
+$THEME->pluginsheets = array('mod', 'block', 'format', 'gradereport');
 
-$THEME->modsheets = true;  
-
-/// When this is enabled, then this theme will search for 
-/// files named "styles.php" inside all Activity modules and 
-/// include them.   This allows modules to provide some basic 
-/// layouts so they work out of the box.
-/// It is HIGHLY recommended to leave this enabled.
-
-
-$THEME->blocksheets = true;  
-
-/// When this is enabled, then this theme will search for 
-/// files named "styles.php" inside all Block modules and 
-/// include them.   This allows Blocks to provide some basic 
-/// layouts so they work out of the box.
-/// It is HIGHLY recommended to leave this enabled.
-
-
-$THEME->langsheets = false;  
-
-/// By setting this to true, then this theme will search for 
-/// a file named "styles.php" inside the current language
-/// directory.  This allows different languages to provide 
-/// different styles.
-
-
-$THEME->courseformatsheets = true;
-
-/// When this is enabled, this theme will search for files 
-/// named "styles.php" inside all course formats and 
-/// include them.  This allows course formats to provide 
-/// their own default styles.
+/// All the plugins of the given types will be searched for a file called
+/// styles.php and, if found, these will be included with the CSS for this theme.
 
 
 $THEME->metainclude = false;
