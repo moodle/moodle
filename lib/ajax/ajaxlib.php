@@ -185,7 +185,7 @@ class page_requirements_manager {
         }
         if (!$fullurl) {
             if (!file_exists($CFG->dirroot . '/' . $stylesheet)) {
-                throw new coding_exception('Attept to require a CSS file that does not exist.', $stylesheet);
+                throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
             }
             $url = $CFG->httpswwwroot . '/' . $stylesheet;
         } else {
