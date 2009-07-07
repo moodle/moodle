@@ -1,4 +1,3 @@
-<<<<<<< category_form.php
 <?php  //$Id$
 
 ///////////////////////////////////////////////////////////////////////////
@@ -460,6 +459,14 @@ class edit_category_form extends moodleform {
             if (empty($data['grade_item_scaleid'])) {
                 $errors['grade_item_scaleid'] = get_string('missingscale', 'grades');
             }
+        }
+        if (array_key_exists('grade_item_grademin', $data) and array_key_exists('grade_item_grademax', $data)) {
+            if (($data['grade_item_grademax'] != 0 OR $data['grade_item_grademin'] != 0) AND
+                ($data['grade_item_grademax'] == $data['grade_item_grademin'] OR
+                 $data['grade_item_grademax'] < $data['grade_item_grademin'])) {
+                 $errors['grade_item_grademin'] = get_string('incorrectminmax', 'grades');
+                 $errors['grade_item_grademax'] = get_string('incorrectminmax', 'grades');
+             }
         }
 
         return $errors;

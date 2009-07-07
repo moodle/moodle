@@ -126,6 +126,18 @@ if ($mform->is_cancelled()) {
     if (!isset($itemdata->aggregationcoef)) {
         $itemdata->aggregationcoef = 0;
     }
+    
+    if (!isset($itemdata->gradepass) || $itemdata->gradepass == '') {
+        $itemdata->gradepass = 0;
+    }
+
+    if (!isset($itemdata->grademax) || $itemdata->grademax == '') {
+        $itemdata->grademax = 0;
+    }
+
+    if (!isset($itemdata->grademin) || $itemdata->grademin == '') {
+        $itemdata->grademin = 0;
+    } 
 
     $hidden      = empty($itemdata->hidden) ? 0: $itemdata->hidden;
     $hiddenuntil = empty($itemdata->hiddenuntil) ? 0: $itemdata->hiddenuntil;
@@ -154,16 +166,16 @@ if ($mform->is_cancelled()) {
     if (empty($grade_item->id)) {
         $grade_item->id = $grade_item_copy->id;
     }
-    if (empty($grade_item->grademax)) {
+    if (empty($grade_item->grademax) && $grade_item->grademax != '0') {
         $grade_item->grademax = $grade_item_copy->grademax;
     }
-    if (empty($grade_item->grademin)) {
+    if (empty($grade_item->grademin) && $grade_item->grademin != '0') {
         $grade_item->grademin = $grade_item_copy->grademin;
     }
-    if (empty($grade_item->gradepass)) {
+    if (empty($grade_item->gradepass) && $grade_item->gradepass != '0') {
         $grade_item->gradepass = $grade_item_copy->gradepass;
     }
-    if (empty($grade_item->aggregationcoef)) {
+    if (empty($grade_item->aggregationcoef) && $grade_item->aggregationcoef != '0') {
         $grade_item->aggregationcoef = $grade_item_copy->aggregationcoef;
     }
 
