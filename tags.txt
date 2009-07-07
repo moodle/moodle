@@ -1,0 +1,28 @@
+Generating a tags file
+======================
+
+If you need a tags file so that you can jump around Moodle code 
+easily in your editor (eg vim or emacs), you can generate one:
+
+Exuberant ctags (default on Linux, can be compiled on other platforms):
+----------------------------------------------------------------------
+
+ctags -R --languages=php --exclude="CVS" --php-kinds=f \
+--regex-PHP='/abstract class ([^ ]*)/\1/c/' \
+--regex-PHP='/interface ([^ ]*)/\1/c/' \
+--regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'
+
+BSD ctags (Default on Mac OS X):
+-------------------------------
+
+ (TODO)
+
+
+Downloading the tags file
+=========================
+
+If for some reason you can't generate one, you can download a recent one from here:
+
+http://download.moodle.org/tags            (for head)
+http://download.moodle.org/stable19/tags   (Moodle 1.9.x)
+http://download.moodle.org/stable18/tags   (Moodle 1.8.x)
