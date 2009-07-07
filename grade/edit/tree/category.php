@@ -85,6 +85,11 @@ if ($id) {
     $grade_category->apply_forced_settings();
 
     $category = $grade_category->get_record_data();
+
+    $grade_item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
+    foreach ($grade_item->get_record_data() as $key => $value) {
+        $category->{"grade_item_$key"} = $value;
+    }
 }
 
 $mform = new edit_category_form(null, array('current'=>$category, 'gpr'=>$gpr));
