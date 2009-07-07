@@ -1159,31 +1159,28 @@ function file_mimetype_icon($mimetype, $size=null) {
 }
 
 /**
- * Returns the relative icon path for a given file extension
+ * Returns the relative icon path for a given file name
  *
  * This function should be used in conjuction with $OUTPUT->old_icon_url to produce
  * a return the full path to an icon.
  *
- * The extension that you should pass should be just the extension, not the whole filename.
- * A preceeding . is tolerated.
- *
  * <code>
- * $extension = 'jpg';
- * $icon = $OUTPUT->old_icon_url(file_extension_icon($extension));
- * echo '<img src="'.$icon.'" alt="'.$extension.'" />';
+ * $filename = 'jpg';
+ * $icon = $OUTPUT->old_icon_url(file_extension_icon($filename));
+ * echo '<img src="'.$icon.'" alt="blah" />';
  * </code>
  *
  * @todo When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
  * @todo Implement $size
  *
- * @param string $extension The extension of the file to get an icon for
+ * @param string filename The filename to get the icon for
  * @param int $size The size of the icon. Not yet implemented
  * @return string
  */
-function file_extension_icon($extension, $size=null) {
-    // Get rid of any preceeding .
-    $extension = trim($extension, '. ');
+function file_extension_icon($filename, $size=null) {
+    // Get the extension
+    $extension = substr($filename, strrpos($filename, '.'));
     $mimeinfo = get_mimetypes_array();
     foreach ($mimeinfo as $ext=>$mime) {
         // Check each till we find an exact match for extension
