@@ -62,7 +62,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     }
 
     function toHtml() {
-        global $CFG, $COURSE, $USER;
+        global $CFG, $COURSE, $USER, $PAGE;
 
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
@@ -96,30 +96,11 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" '.$draftvalue.' />';
         $str .= $repojs;
 
+        $str .= $PAGE->requires->data_for_js('filepicker', Array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>$this->_options['maxfiles']))->asap();
+        $str .= $PAGE->requires->js('lib/form/filepicker.js')->asap();
         $str .= <<<EOD
 <a href="#nonjsfp" class="btnaddfile" onclick="return callpicker('$client_id', '$id', '$draftvalue')">$straddfile</a>
 <span id="repo_info_{$client_id}" class="notifysuccess">$currentfile</span>
-<script type="text/javascript">
-function updatefile(client_id, obj) {
-    document.getElementById('repo_info_'+client_id).innerHTML = obj['file'];
-}
-function callpicker(client_id, id) {
-    var picker = document.createElement('DIV');
-    picker.id = 'file-picker-'+client_id;
-    picker.className = 'file-picker';
-    document.body.appendChild(picker);
-    var el=document.getElementById(id);
-    var params = {};
-    params.env = 'filepicker';
-    params.itemid = itemid;
-    params.maxbytes = $this->_options['maxbytes'];
-    params.maxfiles = $this->_options['maxfiles'];
-    params.target = el;
-    params.callback = updatefile;
-    open_filepicker(client_id, params);
-    return false;
-}
-</script>
 <noscript>
 <a name="nonjsfp"></a>
 <object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>

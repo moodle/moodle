@@ -48,16 +48,11 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
      * @return    string
      */
     function toHtml() {
-        global $CFG;
+        global $CFG, $PAGE;
         require_once $CFG->libdir . '/recaptchalib.php';
 
-        $html = '<script type="text/javascript">
-            var RecaptchaOptions = {
-                theme : \'custom\',
-                tabindex : 2,
-                custom_theme_widget : \'recaptcha_widget\'
-            };
-              </script>' . "\n";
+        $recaptureoptions = Array('theme'=>'custom', 'tabindex'=>2, 'custom_theme_widget'=>'recaptcha_widget');
+        $html = $PAGE->requires->data_for_js('RecaptchaOptions', $recaptureoptions)->asap();
 
         $attributes = $this->getAttributes();
         if (empty($attributes['error_message'])) {
