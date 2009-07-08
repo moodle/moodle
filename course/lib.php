@@ -1333,9 +1333,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 if (!empty($customicon)) {
                     if (substr($customicon, 0, 4) === 'mod/') {
                         list($modname, $iconname) = explode('/', substr($customicon, 4), 2);
-                        $icon = $OUTPUT->mod_icon_url(file_extension_icon($iconname), $modname);
+                        $icon = $OUTPUT->mod_icon_url(str_replace(array('.gif', '.png'), '', $customicon), $modname);
                     } else {
-                        $icon = $OUTPUT->old_icon_url(file_extension_icon($customicon));
+                        $icon = $OUTPUT->old_icon_url(str_replace(array('.gif', '.png'), '', $customicon));
                     }
                 } else {
                     $icon = "" . $OUTPUT->mod_icon_url('icon', $mod->modname) . "";

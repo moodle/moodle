@@ -1175,30 +1175,15 @@ function file_mimetype_icon($mimetype, $size=null) {
  * @todo Implement $size
  *
  * @param string filename The filename to get the icon for
- * @param int $size The size of the icon. Not yet implemented
+ * @param int $size The size of the icon. Defaults to null can also be 32
  * @return string
  */
 function file_extension_icon($filename, $size=null) {
-    // Get the extension
-    $extension = substr($filename, strrpos($filename, '.'));
-    $mimeinfo = get_mimetypes_array();
-    foreach ($mimeinfo as $ext=>$mime) {
-        // Check each till we find an exact match for extension
-        if ($ext === $extension) {
-            $icon = $mime['icon'];
-            $icon = substr($icon, 0, strrpos($icon, '.'));
-            if ($size!=null && is_int($size)) {
-                $icon .= '-'.$size;
-            }
-            return 'f/'.$icon;
-        }
+    $element = 'icon';
+    if ($size!==null) {
+        $element .= (string)$size;
     }
-    // Didn't find a match return the default
-    $icon = $mimeinfo['xxx']['icon'];
-    $icon = substr($icon, 0, strrpos($icon, '.'));
-    if ($size!=null && is_int($size)) {
-        $icon .= '-'.$size;
-    }
+    $icon = mimeinfo($element, $filename);
     return 'f/'.$icon;
 }
 
