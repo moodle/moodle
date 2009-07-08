@@ -92,13 +92,15 @@ class testable_renderer_factory extends renderer_factory_base {
         parent::__construct(null);
     }
 
-    public function get_renderer($module, $page) {
-        $this->createcalls[] = $module;
+    public function get_renderer($module, $page, $subtype=null) {
+        if (!in_array(array($module, $subtype), $this->createcalls)) {
+            $this->createcalls[] = array($module, $subtype);
+        }
         return new moodle_core_renderer($page);
     }
 
-    public function standard_renderer_class_for_module($module) {
-        return parent::standard_renderer_class_for_module($module);
+    public function standard_renderer_class_for_module($module, $subtype=null) {
+        return parent::standard_renderer_class_for_module($module, $subtype);
     }
 }
 
@@ -137,6 +139,23 @@ class moodle_mod_test_renderer extends moodle_core_renderer {
 
 
 /**
+ * Renderer class for testing subrendering feature
+ *
+ * @copyright 2009 David Mudrak
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class moodle_mod_test_subtype_renderer extends moodle_core_renderer {
+    public function __construct($containerstack, $page) {
+        parent::__construct($containerstack, $page, null);
+    }
+
+    public function signature($user = 'Administrator') {
+        return '<div class="signature">Best regards, ' . $user . '</div>';
+    }
+}
+
+
+/**
  * Unit tests for the requriement_base base class.
  *
  * @copyright 2009 Tim Hunt
@@ -150,9 +169,12 @@ class renderer_factory_base_test extends UnitTestCase {
         // Set up.
         $factory = new testable_renderer_factory();
         // Exercise SUT.
-        $renderer = $factory->get_renderer('modulename', new moodle_page);
+        $renderer    = $factory->get_renderer('modulename', new moodle_page);
+        $subrenderer = $factory->get_renderer('modulename', new moodle_page, 'subtype');
+        $cached      = $factory->get_renderer('modulename', new moodle_page);
         // Verify outcome
-        $this->assertEqual(array('modulename'), $factory->createcalls);
+        $this->assertEqual(array(array('modulename', null), array('modulename', 'subtype')), $factory->createcalls);
+
     }
 
     public function test_standard_renderer_class_for_module_core() {
@@ -171,6 +193,15 @@ class renderer_factory_base_test extends UnitTestCase {
         $classname = $factory->standard_renderer_class_for_module('mod_test');
         // Verify outcome
         $this->assertEqual('moodle_mod_test_renderer', $classname);
+    }
+
+    public function test_standard_renderer_class_for_module_test_with_subtype() {
+        // Set up.
+        $factory = new testable_renderer_factory();
+        // Exercise SUT.
+        $classname = $factory->standard_renderer_class_for_module('mod_test', 'subtype');
+        // Verify outcome
+        $this->assertEqual('moodle_mod_test_subtype_renderer', $classname);
     }
 
     public function test_standard_renderer_class_for_module_unknown() {
@@ -211,6 +242,11 @@ class standard_renderer_factory_test extends UnitTestCase {
         $renderer = $this->factory->get_renderer('mod_test', new moodle_page);
         $this->assertIsA($renderer, 'moodle_mod_test_renderer');
     }
+
+    public function test_get_test_subtype_renderer() {
+        $renderer = $this->factory->get_renderer('mod_test', new moodle_page, 'subtype');
+        $this->assertIsA($renderer, 'moodle_mod_test_subtype_renderer');
+    }
 }
 
 
@@ -241,6 +277,11 @@ class custom_corners_renderer_factory_test extends UnitTestCase {
     public function test_get_test_renderer() {
         $renderer = $this->factory->get_renderer('mod_test', new moodle_page);
         $this->assertIsA($renderer, 'moodle_mod_test_renderer');
+    }
+
+    public function test_get_test_subtype_renderer() {
+        $renderer = $this->factory->get_renderer('mod_test', new moodle_page, 'subtype');
+        $this->assertIsA($renderer, 'moodle_mod_test_subtype_renderer');
     }
 }
 
@@ -351,10 +392,12 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('mod_test', new moodle_page);
+        $renderer    = $factory->get_renderer('mod_test', new moodle_page);
+        $subrenderer = $factory->get_renderer('mod_test', new moodle_page, 'subtype');
 
         // Verify outcome
         $this->assertIsA($renderer, 'moodle_mod_test_renderer');
+        $this->assertIsA($subrenderer, 'moodle_mod_test_subtype_renderer');
     }
 
     public function test_get_renderer_overridden() {
@@ -366,10 +409,12 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
         $factory = new testable_theme_overridden_renderer_factory($theme, $this->page);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('mod_test', new moodle_page);
+        $renderer    = $factory->get_renderer('mod_test', new moodle_page);
+        $subrenderer = $factory->get_renderer('mod_test', new moodle_page, 'subtype');
 
         // Verify outcome
         $this->assertIsA($renderer, 'testrenderertheme_mod_test_renderer');
+        $this->assertIsA($subrenderer, 'moodle_mod_test_subtype_renderer');
     }
 
     public function test_get_renderer_overridden_in_parent() {
@@ -469,10 +514,13 @@ class template_renderer_factory_test extends UnitTestCase {
         return $theme;
     }
 
-    protected function make_theme_template_dir($name, $module = '') {
+    protected function make_theme_template_dir($name, $module = '', $submodule = '') {
         $path = $this->workspace . '/' . $name . '/templates';
         if ($module) {
             $path .= '/' . $module;
+        }
+        if ($submodule) {
+            $path .= '/' . $submodule;
         }
         make_upload_directory($path);
     }
@@ -551,13 +599,18 @@ class template_renderer_factory_test extends UnitTestCase {
         $this->make_theme_template_dir('standardtemplate');
                 
         // Exercise SUT.
-        $factory = new testable_template_renderer_factory($theme, $this->page);
+        $factory    = new testable_template_renderer_factory($theme, $this->page);
+        $subfactory = new testable_template_renderer_factory($theme, $this->page, 'subtype');
 
         // Verify outcome
         $this->assertEqual(array(
                 $CFG->themedir . '/mytheme/templates',
                 $CFG->themedir . '/standardtemplate/templates'),
                 $factory->get_search_paths());
+        $this->assertEqual(array(
+                $CFG->themedir . '/mytheme/templates',
+                $CFG->themedir . '/standardtemplate/templates'),
+                $subfactory->get_search_paths());
     }
 
     public function test_get_renderer() {
@@ -568,10 +621,13 @@ class template_renderer_factory_test extends UnitTestCase {
         $this->make_theme_template_dir('mytheme', 'core');
         $this->make_theme_template_dir('parenttheme', 'mod_test');
         $this->make_theme_template_dir('standardtemplate', 'mod_test');
+        $this->make_theme_template_dir('parenttheme', 'mod_test', 'subtype');
+        $this->make_theme_template_dir('standardtemplate', 'mod_test', 'subtype');
         $factory = new testable_template_renderer_factory($theme);
 
         // Exercise SUT.
-        $renderer = $factory->get_renderer('mod_test', $this->page);
+        $renderer    = $factory->get_renderer('mod_test', $this->page);
+        $subrenderer = $factory->get_renderer('mod_test', $this->page, 'subtype');
 
         // Verify outcome
         $this->assertEqual('moodle_mod_test_renderer', $renderer->get_copied_class());
@@ -579,6 +635,11 @@ class template_renderer_factory_test extends UnitTestCase {
                 $CFG->themedir . '/parenttheme/templates/mod_test',
                 $CFG->themedir . '/standardtemplate/templates/mod_test'),
                 $renderer->get_search_paths());
+        $this->assertEqual('moodle_mod_test_subtype_renderer', $subrenderer->get_copied_class());
+        $this->assertEqual(array(
+                $CFG->themedir . '/parenttheme/templates/mod_test/subtype',
+                $CFG->themedir . '/standardtemplate/templates/mod_test/subtype'),
+                $subrenderer->get_search_paths());
     }
 }
 
