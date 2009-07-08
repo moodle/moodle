@@ -517,7 +517,7 @@ class resource_file extends resource_base {
                 $args['build'] = 40;
                 $args['flashvars'] = $c;
                 $args['quality'] = 'high';
-                echo $PAGE->requires->js('mod/resource/type/file/file.js')->asap();
+                echo $PAGE->requires->js('lib/ufo.js')->asap();
                 echo $PAGE->requires->data_for_js('FO', $args)->asap();
                 echo $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 
@@ -553,7 +553,7 @@ class resource_file extends resource_base {
                 $args['allowscriptaccess'] = 'never';
                 $args['allowfullscreen'] = 'true';
                 $args['quality'] = 'high';
-                echo $PAGE->requires->js('mod/resource/type/file/file.js')->asap();
+                echo $PAGE->requires->js('lib/ufo.js')->asap();
                 echo $PAGE->requires->data_for_js('FO', $args)->asap();
                 echo $PAGE->requires->js_function_call('create_UFO_object', Array($id))->asap();
 

@@ -38,7 +38,3 @@ function file_resource_init(viewportheight) {
     resizeEmbeddedHtml();
     YAHOO.widget.Overlay.windowResizeEvent.subscribe(resizeEmbeddedHtml);
 }
-
-function create_UFO_object(id) {
-    UFO.create(FO, id);
-}

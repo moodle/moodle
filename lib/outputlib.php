@@ -1569,7 +1569,6 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->page->requires->js('lib/overlib/overlib.js')->in_head();
         $this->page->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
         $this->page->requires->js('lib/cookies.js')->in_head();
-        $this->page->requires->js('lib/ufo.js')->in_head();
         $this->page->requires->js_function_call('setTimeout', Array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
