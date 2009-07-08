@@ -14,7 +14,9 @@ class repository_filesystem extends repository {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
         $this->root_path = $CFG->dataroot.'/repository/';
-        $this->root_path .= ($this->options['fs_path'] . '/');
+        if (!empty($options['fs_path'])) {
+            $this->root_path .= ($this->options['fs_path'] . '/');
+        }
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
                 $created = mkdir($this->root_path, 0700);
@@ -117,6 +119,11 @@ class repository_filesystem extends repository {
         return array();
     }
     public function type_config_form(&$mform) {
+    }
+    public function set_option($options = array()) {
+        $options['fs_path'] = clean_param($options['fs_path'], PARAM_PATH);
+        $ret = parent::set_option($options);
+        return $ret;
     }
     public function instance_config_form(&$mform) {
         global $CFG;
