@@ -1573,11 +1573,14 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
-            $pos = strpos($focus, '.');
-            if($pos !== false) {
+            if(preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
+                // This is a horrifically bad way to handle focus but it is passed in
+                // through messy formslib::moodleform
+                $this->page->requires->js_function_call('old_onload_focus', Array($matches[1], $matches[2]));
+            } else if (strpos($focus, '.')!==false) {
                 // Old style of focus, bad way to do it
-                debugging('This code is using the old style focus event, Please update this code to focus on an element id', DEBUG_DEVELOPER);
-                $this->page->requires->js_function_call('old_onload_focus', Array(substr($focus, 0, $pos), substr($focus, $pos)));
+                debugging('This code is using the old style focus event, Please update this code to focus on an element id or the moodleform focus method.', DEBUG_DEVELOPER);
+                $this->page->requires->js_function_call('old_onload_focus', explode('.', $focus, 2));
             } else {
                 // Focus element with given id
                 $this->page->requires->js_function_call('focuscontrol', Array($focus));
