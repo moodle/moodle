@@ -1172,6 +1172,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
         //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
         //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
         //so we do not fix the Opera behavior on Linux
+        $PAGE->requires->js('lib/dropdown.js')->asap();
         $javascript = ' onfocus="initSelect(\''.$formid.'\','.$targetwindow.')"';
     } else {
         //Other browser
