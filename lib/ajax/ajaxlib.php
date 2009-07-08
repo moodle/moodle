@@ -1285,7 +1285,7 @@ class jsportal {
      * Prints the JavaScript code needed to set up AJAX for the course.
      */
     function print_javascript($courseid, $return=false) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $blocksoutput = $output = '';
         for ($i=0; $i<count($this->blocks); $i++) {
