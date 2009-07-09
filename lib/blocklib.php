@@ -261,6 +261,7 @@ class block_manager {
             return false;
         }
         $this->check_is_loaded();
+        $this->ensure_instances_exist($region);
         if ($this->page->user_is_editing() && $this->page->user_can_edit_blocks()) {
             // If editing is on, we need all the block regions visible, for the
             // move blocks UI.
