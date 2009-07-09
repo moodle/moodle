@@ -103,7 +103,7 @@ class block_admin_tree extends block_base {
     }
 
     function get_content() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -111,6 +111,12 @@ class block_admin_tree extends block_base {
 
         if (isguestuser() or !isloggedin()) {
             // these users can not change any settings
+            $this->content = '';
+            return '';
+        }
+
+        if ($COURSE->shortname === '') {
+            // remove admin block if site not fully configured yet
             $this->content = '';
             return '';
         }
@@ -162,4 +168,4 @@ class block_admin_tree extends block_base {
         return $this->content;
     }
 }
-?>
+
