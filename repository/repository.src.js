@@ -1244,6 +1244,6 @@ function id2_add_clientid(id, clientid) {
 	id2clientid[id] = clientid;
 }
 
-var id2_add_itemid(id, drafitemid) {
+function id2_add_itemid(id, drafitemid) {
 	id2itemid[id] = drafitemid;
 }
