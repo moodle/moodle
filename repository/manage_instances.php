@@ -154,9 +154,9 @@
         } else {     // Display the form
             // admin_externalpage_print_header();
             print_heading(get_string('configplugin', 'repository_'.$plugin));
-            print_simple_box_start();
+            $OUTPUT->box_start();
             $mform->display();
-            print_simple_box_end();
+            $OUTPUT->box_end();
             $return = false;
         }
     } else if (!empty($delete)) {

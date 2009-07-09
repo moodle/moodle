@@ -115,9 +115,9 @@ if (!empty($edit) || !empty($new)) {
             }
         }
         if ($displaysettingform){
-            print_simple_box_start();
+            $OUTPUT->box_start();
             $mform->display();
-            print_simple_box_end();
+            $OUTPUT->box_end();
         }
         $return = false;
 
