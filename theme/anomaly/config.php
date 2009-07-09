@@ -123,15 +123,6 @@ $THEME->custompix = false;
 /// "pix/mod" directory containing all the icons 
 /// for all the activity modules.
 
-$THEME->block_l_min_width = 200;
-$THEME->block_l_max_width = 200;
-$THEME->block_r_min_width = 200;
-$THEME->block_r_max_width = 200;
-
-/// These values define the min and max width of the left and right
-/// sideblocks in the course pages. If not set or false the standard 
-/// values are taken.
-
 
 ///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
 ///$THEME->larrow = '&#x25C4;' //OR '&larr;';
