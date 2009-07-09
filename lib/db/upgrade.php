@@ -23,7 +23,7 @@ function xmldb_main_upgrade($oldversion) {
     global $CFG, $THEME, $USER, $DB;
 
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
-
+    
     $result = true;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
@@ -2229,7 +2229,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($result && $oldversion < 2009061704) {
-        // change component string in capability records to new "_" format
+        // change component string in capability records to new "_" format 
         if ($caps = $DB->get_records('capabilities')) {
             foreach ($caps as $cap) {
                 $cap->component = str_replace('/', '_', $cap->component);
@@ -2241,7 +2241,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($result && $oldversion < 2009061705) {
-        // change component string in events_handlers records to new "_" format
+        // change component string in events_handlers records to new "_" format 
         if ($handlers = $DB->get_records('events_handlers')) {
             foreach ($handlers as $handler) {
                 $handler->handlermodule = str_replace('/', '_', $handler->handlermodule);
@@ -2253,7 +2253,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($result && $oldversion < 2009061706) {
-        // change component string in message_providers records to new "_" format
+        // change component string in message_providers records to new "_" format 
         if ($mps = $DB->get_records('message_providers')) {
             foreach ($mps as $mp) {
                 $mp->component = str_replace('/', '_', $mp->component);
@@ -2263,7 +2263,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         unset($caps);
         upgrade_main_savepoint($result, 2009061706);
     }
-
+    
     if ($result && $oldversion < 2009063000) {
         // upgrade format of _with_advanced settings - quiz only
         // note: this can be removed later, not needed for upgrades from 1.9.x
@@ -2276,10 +2276,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 set_config($newname, $value, 'quiz');
                 unset_config($name, 'quiz');
             }
-        }
+        } 
         upgrade_main_savepoint($result, 2009063000);
     }
-
+    
     if ($result && $oldversion < 2009070100) {
         // MDL-19677 Change $CFG->bloglevel to BLOG_SITE_LEVEL if BLOG_COURSE_LEVEL or BLOG_GROUP_LEVEL
         $current_bloglevel = get_config(null, 'bloglevel');
