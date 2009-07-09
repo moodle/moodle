@@ -83,13 +83,6 @@ if (empty($SITE->fullname)) {
     echo '</form>';
 
 } else {
-    // Note: MDL-19010 there will be further changes to printing header and blocks.
-    // The code will be much nicer than this eventually.
-    $pageblocks = blocks_setup($PAGE);
-
-    $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
-    $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
-
     if ($PAGE->user_allowed_editing()) {
         $options = $PAGE->url->params();
         if ($PAGE->user_is_editing()) {
@@ -110,22 +103,6 @@ if (empty($SITE->fullname)) {
     $navigation = build_navigation($navlinks);
 
     print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
-
-    echo '<table id="layout-table"><tr>';
-    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-    foreach ($lt as $column) {
-        switch ($column) {
-            case 'left':
-    echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-    print_container_start();
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    print_container_end();
-    echo '</td>';
-            break;
-            case 'middle':
-    echo '<td id="middle-column">';
-    print_container_start();
-    echo '<a name="startofcontent"></a>';
 
     if ($errormsg !== '') {
         notify ($errormsg);
@@ -149,22 +126,6 @@ if (empty($SITE->fullname)) {
 
     echo '</div>';
     echo '</form>';
-
-    print_container_end();
-    echo '</td>';
-            break;
-            case 'right':
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
-        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        print_container_end();
-        echo '</td>';
-    }
-            break;
-        }
-    }
-    echo '</tr></table>';
 }
 
 print_footer();

@@ -67,45 +67,6 @@
         $strmovedown = get_string('movedown');
     }
 
-/* Internet Explorer min-width fix. (See theme/standard/styles_layout.css: min-width for Firefox.)
-   Window width: 800px, Firefox 763px, IE 752px. (Window width: 640px, Firefox 602px, IE 588px.)    
-*/
-?>
-
-<!--[if IE]>
-  <style type="text/css">
-  .topics-format { width: expression(document.body.clientWidth < 800 ? "752px" : "auto"); }
-  </style>
-<![endif]-->
-<?php
-/// Layout the whole page as three big columns (was, id="layout-table")
-    echo '<div class="topics-format">';
-
-/// The left column ...
-
-    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        echo '<div id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo '</div>';
-    }
-    
-/// The right column, BEFORE the middle-column.
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
-        echo '<div id="right-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        print_container_end();
-        echo '</div>';
-    }
-
-/// Start main column
-    echo '<div id="middle-column">';
-    print_container_start();
-
-    echo skip_main_destination();
-
     // Print the Your progress icon if the track completion is enabled
     $completioninfo = new completion_info($course);
     $completioninfo->print_help_icon();
@@ -295,11 +256,3 @@
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';
     }
-
-    print_container_end();
-    echo '</div>';
-
-    echo '</div>';
-    echo '<div class="clearer"></div>';
-
-?>

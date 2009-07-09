@@ -66,9 +66,6 @@ form.mform textarea {
 .course-view li.activity {
   height:0;
 }
-#mod-quiz-review #middle-column {
-  height: 1%;
-}
 #mod-quiz-edit div.question div.content .questiontext,
 #mod-quiz-edit #categoryquestions .questionname{
     /*ie6 shows this as an arrow if this is not specified*/

@@ -33,7 +33,6 @@ if (empty($tag)) {
 $PAGE->set_url('tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-$pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
 
 if (($edit != -1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
@@ -60,23 +59,6 @@ $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 if (has_capability('moodle/tag:manage', $systemcontext)) {
     echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">'. get_string('managetags', 'tag') .'</a></div>' ;
 }
-
-echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
-echo '<tr valign="top">';
-
-//----------------- left column -----------------
-
-$blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
-if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
-    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    echo '</td>';
-}
-
-//----------------- middle column -----------------
-
-echo '<td valign="top" id="middle-column">';
 
 $tagname  = tag_display_name($tag);
 
@@ -167,21 +149,6 @@ if ($usercount > 0) {
     tag_print_tagged_users_table($tag, $userpage * $perpage, $perpage);
     print_box_end();
 }
-
-echo '</td>';
-
-//----------------- right column -----------------
-
-$blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
-
-if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
-    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-    echo '</td>';
-}
-
-/// Finish the page
-echo '</tr></table>';
 
 print_footer();
 ?>

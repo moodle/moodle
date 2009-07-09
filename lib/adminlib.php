@@ -5046,143 +5046,57 @@ function admin_externalpage_setup($section, $extrabutton = '',
  * @param string $focus focus element
  */
 function admin_externalpage_print_header($focus='') {
+    global $CFG, $PAGE, $SITE, $THEME;
 
     if (!is_string($focus)) {
         $focus = ''; // BC compatibility, there used to be adminroot parameter
     }
 
-    global $CFG, $PAGE, $SITE, $THEME;
-
-    define('ADMIN_EXT_HEADER_PRINTED', 'true');
-
-    if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
-        // Note: MDL-19010 there will be further changes to printing header and blocks.
-        // The code will be much nicer than this eventually.
-        $pageblocks = blocks_setup($PAGE);
-
-        $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
-        $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
-
-        $adminroot = admin_get_root(false, false); //settings not required - only pages
-
-        // fetch the path parameter
-        $section = $PAGE->url->param('section');
-        $current = $adminroot->locate($section, true);
-        $visiblepathtosection = array_reverse($current->visiblepath);
-
-        if ($PAGE->user_allowed_editing()) {
-            $options = $PAGE->url->params();
-            if ($PAGE->user_is_editing()) {
-                $caption = get_string('blockseditoff');
-                $options['adminedit'] = 'off';
-            } else {
-                $caption = get_string('blocksediton');
-                $options['adminedit'] = 'on';
-            }
-            $buttons = print_single_button($PAGE->url->out(false), $options, $caption, 'get', '', true);
-        }
-
-        $navlinks = array();
-        foreach ($visiblepathtosection as $element) {
-            $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
-        }
-        $navigation = build_navigation($navlinks);
-
-        print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
-
-        echo '<table id="layout-table" summary=""><tr>';
-
-        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-        foreach ($lt as $column) {
-            $lt1[] = $column;
-            if ($column == 'middle') break;
-        }
-        foreach ($lt1 as $column) {
-            switch ($column) {
-                case 'left':
-                    echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-                    print_container_start();
-                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-                    print_container_end();
-                    echo '</td>';
-                break;
-
-                case 'middle':
-                    echo '<td id="middle-column">';
-                    print_container_start(true);
-                    $THEME->open_header_containers++; // this is hacky workaround for the print_error()/notice() autoclosing problems on admin pages
-                break;
-
-                case 'right':
-                    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
-                        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-                        print_container_start();
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-                        print_container_end();
-                        echo '</td>';
-                    }
-                break;
-            }
-        }
-    } else {
+    if (empty($SITE->fullname) || empty($SITE->shortname)) {
+        // During initial install.
         $strinstallation = get_string('installation', 'install');
         $strsettings = get_string('settings');
         $navigation = build_navigation(array(array('name'=>$strsettings, 'link'=>null, 'type'=>'misc')));
         print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        return;
     }
+
+    // Normal case.
+    $adminroot = admin_get_root(false, false); //settings not required - only pages
+
+    // fetch the path parameter
+    $section = $PAGE->url->param('section');
+    $current = $adminroot->locate($section, true);
+    $visiblepathtosection = array_reverse($current->visiblepath);
+
+    if ($PAGE->user_allowed_editing()) {
+        $options = $PAGE->url->params();
+        if ($PAGE->user_is_editing()) {
+            $caption = get_string('blockseditoff');
+            $options['adminedit'] = 'off';
+        } else {
+            $caption = get_string('blocksediton');
+            $options['adminedit'] = 'on';
+        }
+        $buttons = print_single_button($PAGE->url->out(false), $options, $caption, 'get', '', true);
+    }
+
+    $navlinks = array();
+    foreach ($visiblepathtosection as $element) {
+        $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
+    }
+    $navigation = build_navigation($navlinks);
+
+    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
 }
 
 /**
- * Print footer on admin page - please use normal print_footer() instead
+ * @deprecated since Moodle 1.9. Please use normal print_footer() instead
  */
 function admin_externalpage_print_footer() {
-
-    global $CFG, $PAGE, $SITE, $THEME;
-
-    define('ADMIN_EXT_FOOTER_PRINTED', 'true');
-
-    if (!empty($SITE->fullname)) {
-        $pageblocks = blocks_setup($PAGE);
-        $preferred_width_left = blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]);
-        $preferred_width_right = blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]);
-
-        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-        foreach ($lt as $column) {
-            if ($column != 'middle') {
-                array_shift($lt);
-            } else if ($column == 'middle') {
-                break;
-            }
-        }
-        foreach ($lt as $column) {
-            switch ($column) {
-                case 'left':
-                    echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-                    print_container_start();
-                    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-                    print_container_end();
-                    echo '</td>';
-                break;
-
-                case 'middle':
-                    print_container_end();
-                    $THEME->open_header_containers--; // this is hacky workaround for the print_error()/notice() autoclosing problems on admin pages
-                    echo '</td>';
-                break;
-
-                case 'right':
-                    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
-                        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-                        print_container_start();
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-                        print_container_end();
-                        echo '</td>';
-                    }
-                break;
-            }
-        }
-        echo '</tr></table>';
-    }
+// Still 103 referernces in core code. Don't do debugging output yet.
+//    debugging('admin_externalpage_print_footer is deprecated. Please  use print_footer ' .
+//            '(or even $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
     print_footer();
 }
 

@@ -14,6 +14,18 @@ $query   = optional_param('query', '', PARAM_RAW);
 $page    = optional_param('page', 0, PARAM_INT); // which page to show
 $perpage = optional_param('perpage', 18, PARAM_INT);
 
+$params = array();
+if ($query) {
+    $params['query'] = $query;
+}
+if ($page) {
+    $params['page'] = $page;
+}
+if ($perpage) {
+    $params['perpage'] = $perpage;
+}
+$PAGE->set_url('tag/search.php', $params);
+
 $navlinks = array();
 $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
 $navigation = build_navigation($navlinks);

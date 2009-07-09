@@ -76,6 +76,11 @@
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
+    // Arrange for the navigation to be displayed.
+    $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
+    $firstregion = reset($PAGE->blocks->get_regions());
+    $PAGE->blocks->add_pretend_block($navbc, $firstregion);
+
     // Print the page header
     $PAGE->requires->yui_lib('event');
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
@@ -126,18 +131,6 @@
     echo $PAGE->requires->js_function_call('init_quiz_form')->asap();
     echo '<div>';
 
-/// Print the navigation panel in a left column.
-    print_container_start();
-    echo '<div id="left-column">';
-    $attemptobj->print_navigation_panel('quiz_attempt_nav_panel', $page);
-    echo '</div>';
-    print_container_end();
-
-/// Start the main column.
-    echo '<div id="middle-column">';
-    print_container_start();
-    echo skip_main_destination();
-
 /// Print all the questions
     foreach ($attemptobj->get_question_ids($page) as $id) {
         $attemptobj->print_question($id, false, $attemptobj->attempt_url($id, $page));
@@ -167,15 +160,9 @@
     echo '<input type="hidden" name="questionids" value="' .
             implode(',', $attemptobj->get_question_ids($page)) . "\" />\n";
 
-    // End middle column.
-    print_container_end();
-
     // Finish the form
     echo '</div>';
-    echo '</div>';
     echo "</form>\n";
-
-    echo '<div class="clearer"></div>';
 
     // Finish the page
     $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());

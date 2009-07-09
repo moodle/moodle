@@ -2225,11 +2225,20 @@ function print_footer($course = NULL, $usercourse = NULL, $return = false) {
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
     global $OUTPUT;
+
+    // We don't use $heading, becuse it often contains HTML that we don't want.
+    // However, sometimes $title is not set, but $heading is.
+    if (empty($title)) {
+        $title = strip_tags($heading);
+    }
+
+    // Render list contents to HTML if required.
+    if (empty($content) && $list) {
+        $content = $OUTPUT->list_block_contents($icons, $list);
+    }
+
     $bc = new block_contents();
-    $bc->heading = $heading;
     $bc->content = $content;
-    $bc->list = $list;
-    $bc->icons = $icons;
     $bc->footer = $footer;
     $bc->title = $title;
 
@@ -2275,3 +2284,66 @@ function print_side_block_start($heading='', $attributes = array()) {
 function print_side_block_end($attributes = array(), $title='') {
     throw new coding_exception('print_side_block_end has been deprecated. Please cahnge your code to use $OUTPUT->block().');
 }
+
+/**
+ * This was used by old code to see whether a block region had anything in it,
+ * and hence wether that region should be printed.
+ *
+ * We don't ever want old code to print blocks, so we now always return false.
+ * The function only exists to avoid fatal errors in old code.
+ *
+ * @deprecated since Moodle 2.0. always returns false.
+ *
+ * @param object $blockmanager
+ * @param string $region
+ * @return bool
+ */
+function blocks_have_content(&$blockmanager, $region) {
+    debugging('The function blocks_have_content should no longer be used. Blocks are now printed by the theme.');
+    return false;
+}
+
+/**
+ * This was used by old code to print the blocks in a region.
+ * 
+ * We don't ever want old code to print blocks, so this is now a no-op.
+ * The function only exists to avoid fatal errors in old code.
+ *
+ * @deprecated since Moodle 2.0. does nothing.
+ *
+ * @param object $page
+ * @param object $blockmanager
+ * @param string $region
+ */
+function blocks_print_group($page, $blockmanager, $region) {
+    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
+}
+
+/**
+ * This used to be the old entry point for anyone that wants to use blocks.
+ * Since we don't want people people dealing with blocks this way any more,
+ * just return a suitable empty array.
+ *
+ * @deprecated since Moodle 2.0.
+ *
+ * @param object $page
+ * @return array
+ */
+function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
+    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
+    return array(BLOCK_POS_LEFT => array(), BLOCK_POS_RIGHT => array());
+}
+
+/**
+ * This iterates over an array of blocks and calculates the preferred width
+ * Parameter passed by reference for speed; it's not modified.
+ *
+ * @deprecated since Moodle 2.0. Layout is now controlled by the theme.
+ *
+ * @param mixed $instances
+ */
+function blocks_preferred_width($instances) {
+    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
+    $width = 210;
+}
+

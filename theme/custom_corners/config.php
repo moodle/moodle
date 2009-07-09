@@ -79,6 +79,9 @@ $THEME->parentmetainclude = false;
 /// to include a file meta.php from the parent theme into the
 /// <head></head> part of the page.
 
+$THEME->block_l_max_width = 200;
+$THEME->block_r_max_width = 200;
+/// Deprecated, but needed until this themes is updated to use layout.php
 
 $THEME->navmenuwidth = 50;
 

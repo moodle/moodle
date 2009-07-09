@@ -44,7 +44,6 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
 
     $ADMIN->add('modules', new admin_category('blocksettings', get_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
-    $ADMIN->add('blocksettings', new admin_externalpage('stickyblocks', get_string('stickyblocks', 'admin'), "$CFG->wwwroot/$CFG->admin/stickyblocks.php"));
     if ($blocks = $DB->get_records('block')) {
         $blockbyname = array();
 

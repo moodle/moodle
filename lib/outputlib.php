@@ -147,7 +147,7 @@ class theme_config {
     /**
      * You can base your theme on another theme by linking to the other theme as
      * a parent. This lets you use the CSS from the other theme
-     * (see {@link $parentsheets}), or layout templates (see {@link $layouttemplates}).
+     * (see {@link $parentsheets}), or layout templates (see {@link $layouts}).
      * That makes it easy to create a new theme that is similar to another one
      * but with a few changes. In this theme's CSS you only need to override
      * those rules you want to change.
@@ -240,50 +240,67 @@ class theme_config {
     /**
      * Which template to use for each general type of page.
      *
-     * The array should have keys that are the page types, and values that are
-     * the template names, as described below.
+     * This is an array of arrays. The keys of the outer array are the different
+     * types of page. Pages in Moodle are categorised into one of a short list of
+     * types like 'normal', 'home', 'popup', 'form', .... The most reliable way
+     * to get a complete list is to look at
+     * {@link http://cvs.moodle.org/moodle/theme/standard/config.php?view=markup the standard theme config.php file}.
+     * That file also has a good example of how to set this setting.
      *
-     * There are a few recognised page tyes like 'normal', 'popup', 'home'.
-     * If the current page if of a type not listed here, then the first listed
-     * template is used. Therefore you should probably list the 'normal' template
-     * first.
+     * If Moodle encouters a general type of page that is not listed in your theme,
+     * then it will use the first layout. Therefore, should probably put 'normal'
+     * first in this array.
      *
-     * To promote conisitency, you are encouraged to call your templates
-     * layout.php or layout-something.php.
+     * For each page type, the value in the outer array is an array that describes
+     * how you want that type of page to look. For example
+     * <pre>
+     *   $THEME->layouts = array(
+     *       // Most pages. Put this first, so if we encounter an unknown page type, this is used.
+     *       'normal' => array(
+     *           'layout' => 'parent:layout.php',
+     *           'regions' => array('side-pre', 'side-post'),
+     *           'defaultregion' => 'side-post'
+     *       ),
+     *       // The site home page.
+     *       'home' => array(
+     *           'layout' => 'layout-home.php',
+     *           'regions' => array('side-pre', 'side-post'),
+     *           'defaultregion' => 'side-post'
+     *       ),
+     *       // ...
+     *   );
+     * </pre>
      *
-     * The name of the template can take one of three forms:
+     * 'layout' is the layout template to use for this type of page. You can
+     * specify this in one of three ways:
      * <ol>
-     * <li><b>filename</b> for example 'layout.php'. Use that file from this theme.</li>
-     * <li><b>parent:filename</b> for example 'parent:layout-popup.php'. Use the
+     * <li><b>filename</b> for example 'layout-home.php' as above. Use that file from this theme.</li>
+     * <li><b>parent:filename</b> for example 'parent:layout.php' as above. Use the
      *      specified file from the parent theme. (Obviously, you can only do this
      *      if this theme has a parent!)</li>
      * <li><b>standard:filename</b> for example 'standard:layout-popup.php'. Use
      *      the specified file from the standard theme.</li>
      * </ol>
+     * To promote conisitency, you are encouraged to call your layout files
+     * layout.php or layout-something.php.
+     *
+     * 'regions' This lists the regions on the page where blocks may appear. For
+     * each region you list here, your layout file must include a call to
+     * <pre>
+     *   echo $OUTPUT->blocks_for_region($regionname);
+     * </pre>
+     * or equivalent so that the blocks are actually visible.
+     *
+     * 'defaultregion' If the list of regions is non-empty, then you must pick
+     * one of the one of them as 'default'. This has two meanings. First, this is
+     * where new blocks are added. Second, if there are any blocks associated with
+     * the page, but in non-existant regions, they appear here. (Imaging, for example,
+     * that someone added blocks using a different theme that used different region
+     * names, and then switched to this theme.)
      *
      * @var array
      */
-    public $layouttemplates = array();
-
-    /**
-     * Names of the regions where blocks may appear on the page.
-     *
-     * For each region you list in $THEME->blockregions you must call
-     * blocks_print_group with that region id somewhere in your layout template.
-     *
-     * @var array
-     */
-    public $blockregions = array('side-pre', 'side-post');
-
-    /**
-     * The blocks region where new blocks will be added.
-     * 
-     * Also, where any blocks in unrecognised regions will be shown.
-     * (Suppose someone added a block when another theme was selected).
-     * 
-     * @var string
-     */
-    public $defaultblockregion = 'side-post';
+    public $layouts = array();
 
     /**
      * With this you can control the colours of the big MP3 player
@@ -573,6 +590,19 @@ class theme_config {
     }
 
     /**
+     * Get the information from {@link $layouts} for this type of page.
+     * @param string $generaltype the general type of the page.
+     * @return array the appropriate part of {@link $layouts}.
+     */
+    protected function layout_info_for_page($generaltype) {
+        if (array_key_exists($generaltype, $this->layouts)) {
+            return $this->layouts[$generaltype];
+        } else {
+            return reset($this->layouts);
+        }
+    }
+
+    /**
      * Given the settings of this theme, and the page generaltype, return the
      * full path of the page layout template to use.
      *
@@ -580,28 +610,25 @@ class theme_config {
      * template cannot be found, returns false to signal that the old-style
      * header.html and footer.html files should be used.
      *
+     * @param string $generaltype the general type of the page.
      * @return string Full path to the template to use, or false if a new-style
      * template cannot be found.
      */
-    public function find_page_template($generaltype) {
+    public function template_for_page($generaltype) {
         global $CFG;
 
         // Legacy fallback.
-        if (empty($this->layouttemplates)) {
+        if (empty($this->layouts)) {
             return false;
         }
 
-        // Look up the page type in the config array.
-        if (array_key_exists($generaltype, $this->layouttemplates)) {
-            $templatefile = $this->layouttemplates[$generaltype];
-        } else {
-            $templatefile = reset($this->layouttemplates);
-        }
+        $layoutinfo = $this->layout_info_for_page($generaltype);
+        $templatefile = $layoutinfo['layout'];
 
         // Parse the name that was found.
-        if (strpos('standard:', $templatefile) === 0) {
+        if (strpos($templatefile, 'standard:') === 0) {
             $templatepath = $CFG->themedir . '/standard/' . substr($templatefile, 9);
-        } else if (strpos('parent:', $templatefile) === 0) {
+        } else if (strpos($templatefile, 'parent:') === 0) {
             if (empty($this->parent)) {
                 throw new coding_exception('This theme (' . $this->name .
                         ') does not have a parent. You cannot specify a layout template like ' .
@@ -623,13 +650,37 @@ class theme_config {
     }
 
     /**
+     * Inform a block_manager about the block regions this theme wants on this
+     * type of page.
+     * @param string $generaltype the general type of the page.
+     * @param block_manager $blockmanager the block_manger to set up.
+     */
+    public function setup_blocks($generaltype, $blockmanager) {
+        // Legacy fallback.
+        if (empty($this->layouts)) {
+            if (!in_array($generaltype, array('form', 'popup', 'maintenance'))) {
+                $blockmanager->add_regions(array(BLOCK_POS_LEFT, BLOCK_POS_RIGHT));
+                $blockmanager->set_default_region(BLOCK_POS_RIGHT);
+            }
+            return;
+        }
+
+        $layoutinfo = $this->layout_info_for_page($generaltype);
+        if (!empty($layoutinfo['regions'])) {
+            $blockmanager->add_regions($layoutinfo['regions']);
+            $blockmanager->set_default_region($layoutinfo['defaultregion']);
+        }
+    }
+
+    /**
      * Helper method used by {@link update_legacy_information()}. Update one entry
      * in the $this->pluginsheets array, based on the legacy $property propery.
      * @param $plugintype e.g. 'mod'.
      * @param $property e.g. 'modsheets'.
      */
     protected function update_legacy_plugin_sheets($plugintype, $property) {
-        if (property_exists($this, $property)) {
+        // In Moodle 1.9, modsheets etc. were ignored if standardsheets was false.
+        if (!empty($this->standardsheets) && property_exists($this, $property)) {
             debugging('$THEME->' . $property . ' is deprecated. Please use the new $THEME->pluginsheets instead.', DEBUG_DEVELOPER);
             if (!empty($this->$property) && !in_array($plugintype, $this->pluginsheets)) {
                 $this->pluginsheets[] = $plugintype;
@@ -651,14 +702,6 @@ class theme_config {
         $this->update_legacy_plugin_sheets('block', 'blocksheets');
         $this->update_legacy_plugin_sheets('format', 'formatsheets');
         $this->update_legacy_plugin_sheets('gradereport', 'gradereportsheets');
-
-        if (empty($this->standardsheets)) {
-            // In Moodle 1.9, these settings were dependant on each other. They
-            // are now independant, at least at the time when the CSS is served,
-            // to this is necessary to maintain backwards compatibility. Hmm.
-            // What if you don't want this?
-            $this->pluginsheets = array();
-        }
 
         if (!empty($this->langsheets)) {
             debugging('$THEME->langsheets is no longer supported. No languages were ' .
@@ -990,7 +1033,7 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
         }
     }
 
-    /* Implement the subclass method. */
+    /* Implement the interface method. */
     public function get_renderer($module, $page, $subtype=null) {
         foreach ($this->prefixes as $prefix) {
             if (is_null($subtype)) {
@@ -1073,8 +1116,8 @@ class template_renderer_factory extends renderer_factory_base {
         $searchpaths = array();
         foreach ($this->searchpaths as $rootpath) {
             $path = $rootpath . '/' . $module;
-            if (!is_null($subtype)) { 
-                $path .= '/' . $subtype; 
+            if (!is_null($subtype)) {
+                $path .= '/' . $subtype;
             }
             if (is_dir($path)) {
                 $searchpaths[] = $path;
@@ -1784,7 +1827,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
 
         // Find the appropriate page template, based on $this->page->generaltype.
-        $templatefile = $this->page->theme->find_page_template($this->page->generaltype);
+        $templatefile = $this->page->theme->template_for_page($this->page->generaltype);
         if ($templatefile) {
             // Render the template.
             $template = $this->render_page_template($templatefile, $menu, $navigation);
@@ -1828,10 +1871,11 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     protected function handle_legacy_theme($navigation, $menu) {
-        global $CFG, $SITE, $THEME, $USER;
+        global $CFG, $SITE, $USER;
         // Set a pretend global from the properties of this class.
         // See the comment in render_page_template for a fuller explanation.
         $COURSE = $this->page->course;
+        $THEME = $this->page->theme;
 
         // Set up local variables that header.html expects.
         $direction = $this->htmlattributes();
@@ -1860,10 +1904,53 @@ class moodle_core_renderer extends moodle_renderer_base {
             $menu = $loggedinas;
         }
 
+        if (!empty($this->page->theme->layouttable)) {
+            $lt = $this->page->theme->layouttable;
+        } else {
+            $lt = array('left', 'middle', 'right');
+        }
+
+        if (!empty($this->page->theme->block_l_max_width)) {
+            $preferredwidthleft = $this->page->theme->block_l_max_width;
+        } else {
+            $preferredwidthleft = 210;
+        }
+        if (!empty($this->page->theme->block_r_max_width)) {
+            $preferredwidthright = $this->page->theme->block_r_max_width;
+        } else {
+            $preferredwidthright = 210;
+        }
+
         ob_start();
-        include($THEME->dir . '/header.html');
+        include($this->page->theme->dir . '/header.html');
         $this->page->requires->get_top_of_body_code();
-        echo self::MAIN_CONTENT_TOKEN;
+
+        echo '<table id="layout-table"><tr>';
+        foreach ($lt as $column) {
+            if ($column == 'left' && $this->page->blocks->region_has_content(BLOCK_POS_LEFT)) {
+                echo '<td id="left-column" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
+                echo $this->container_start();
+                echo $this->blocks_for_region(BLOCK_POS_LEFT);
+                echo $this->container_end();
+                echo '</td>';
+
+            } else if ($column == 'middle') {
+                echo '<td id="middle-column" style="vertical-align: top;">';
+                echo $this->container_start();
+                echo $this->skip_link_target();
+                echo self::MAIN_CONTENT_TOKEN;
+                echo $this->container_end();
+                echo '</td>';
+
+            } else if ($column == 'right' && $this->page->blocks->region_has_content(BLOCK_POS_RIGHT)) {
+                echo '<td id="right-column" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
+                echo $this->container_start();
+                echo $this->blocks_for_region(BLOCK_POS_RIGHT);
+                echo $this->container_end();
+                echo '</td>';
+            }
+        }
+        echo '</tr></table>';
 
         $menu = str_replace('navmenu', 'navmenufooter', $menu);
         include($THEME->dir . '/footer.html');
@@ -1902,25 +1989,44 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Output the row of editing icons for a block, as defined by the controls array.
+     * @param $controls an array like {@link block_contents::$controls}.
+     * @return HTML fragment.
+     */
+    public function block_controls($controls) {
+        if (empty($controls)) {
+            return '';
+        }
+        $controlshtml = array();
+        foreach ($controls as $control) {
+            $controlshtml[] = $this->output_tag('a', array('class' => 'icon',
+                    'title' => $control['caption'], 'href' => $control['url']),
+                    $this->output_empty_tag('img',  array('src' => $control['icon'],
+                    'alt' => $control['caption'])));
+        }
+        return $this->output_tag('div', array('class' => 'commands'), implode('', $controlshtml));
+    }
+
+    /**
      * Prints a nice side block with an optional header.
      *
      * The content is described
      * by a {@link block_contents} object.
      *
-     * @param block $content HTML for the content
+     * @param block_contents $bc HTML for the content
      * @return string the HTML to be output.
      */
     function block($bc) {
-        $bc = clone($bc);
+        $bc = clone($bc); // Avoid messing up the object passed in.
         $bc->prepare();
 
-        $title = strip_tags($bc->title);
-        if (empty($title)) {
+        $skiptitle = strip_tags($bc->title);
+        if (empty($skiptitle)) {
             $output = '';
             $skipdest = '';
         } else {
             $output = $this->output_tag('a', array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'),
-                    get_string('skipa', 'access', $title));
+                    get_string('skipa', 'access', $skiptitle));
             $skipdest = $this->output_tag('span', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'), '');
         }
 
@@ -1928,40 +2034,21 @@ class moodle_core_renderer extends moodle_renderer_base {
         $bc->attributes['class'] = $bc->get_classes_string();
         $output .= $this->output_start_tag('div', $bc->attributes);
 
-        if ($bc->heading) {
-            // Some callers pass in complete html for the heading, which may include
-            // complicated things such as the 'hide block' button; some just pass in
-            // text. If they only pass in plain text i.e. it doesn't include a
-            // <div>, then we add in standard tags that make it look like a normal
-            // page block including the h2 for accessibility
-            if (strpos($bc->heading, '</div>') === false) {
-                $bc->heading = $this->output_tag('div', array('class' => 'title'),
-                        $this->output_tag('h2', null, $bc->heading));
-            }
+        $controlshtml = $this->block_controls($bc->controls);
 
-            $output .= $this->output_tag('div', array('class' => 'header'), $bc->heading);
+        $title = '';
+        if ($bc->title) {
+            $title = $this->output_tag('h2', null, $bc->title);
+        }
+
+        if ($title || $controlshtml) {
+            $output .= $this->output_tag('div', array('class' => 'header'),
+                    $this->output_tag('div', array('class' => 'title'),
+                    $title . $controlshtml));
         }
 
         $output .= $this->output_start_tag('div', array('class' => 'content'));
-
-        if ($bc->content) {
-            $output .= $bc->content;
-
-        } else if ($bc->list) {
-            $row = 0;
-            $items = array();
-            foreach ($bc->list as $key => $string) {
-                $item = $this->output_start_tag('li', array('class' => 'r' . $row));
-                if ($bc->icons) {
-                    $item .= $this->output_tag('div', array('class' => 'icon column c0'), $bc->icons[$key]);
-                }
-                $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
-                $item .= $this->output_end_tag('li');
-                $items[] = $item;
-                $row = 1 - $row; // Flip even/odd.
-            }
-            $output .= $this->output_tag('ul', array('class' => 'list'), implode("\n", $items));
-        }
+        $output .= $bc->content;
 
         if ($bc->footer) {
             $output .= $this->output_tag('div', array('class' => 'footer'), $bc->footer);
@@ -1969,15 +2056,61 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output .= $this->output_end_tag('div');
         $output .= $this->output_end_tag('div');
+        if ($bc->annotation) {
+            $output .= $this->output_tag('div', array('class' => 'blockannotation'), $bc->annotation);
+        }
         $output .= $skipdest;
 
-        if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
-            $strshow = addslashes_js(get_string('showblocka', 'access', $title));
-            $strhide = addslashes_js(get_string('hideblocka', 'access', $title));
-            $output .= $this->page->requires->js_function_call('elementCookieHide', array(
-                    $bc->id, $strshow, $strhide))->asap();
-        }
+        $this->init_block_hider_js($bc);
+        return $output;
+    }
 
+    protected function init_block_hider_js($bc) {
+        if ($bc->collapsible != block_contents::NOT_HIDEABLE) {
+            $userpref = 'block' . $bc->blockinstanceid . 'hidden';
+            user_preference_allow_ajax_update($userpref, PARAM_BOOL);
+            $this->page->requires->yui_lib('dom');
+            $this->page->requires->yui_lib('event');
+            $plaintitle = strip_tags($bc->title);
+            $this->page->requires->js_function_call('new block_hider', array($bc->id, $userpref,
+                    get_string('hideblocka', 'access', $plaintitle), get_string('showblocka', 'access', $plaintitle),
+                    $this->old_icon_url('t/switch_minus'), $this->old_icon_url('t/switch_plus')));
+        }
+    }
+
+    /**
+     * Render the contents of a block_list.
+     * @param array $icons the icon for each item.
+     * @param array $items the content of each item.
+     * @return string HTML
+     */
+    public function list_block_contents($icons, $items) {
+        $row = 0;
+        $lis = array();
+        foreach ($items as $key => $string) {
+            $item = $this->output_start_tag('li', array('class' => 'r' . $row));
+            if ($icons) {
+                $item .= $this->output_tag('div', array('class' => 'icon column c0'), $icons[$key]);
+            }
+            $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
+            $item .= $this->output_end_tag('li');
+            $lis[] = $item;
+            $row = 1 - $row; // Flip even/odd.
+        }
+        return $this->output_tag('ul', array('class' => 'list'), implode("\n", $lis));
+    }
+
+    /**
+     * Output all the blocks in a particular region.
+     * @param $region the name of a region on this page.
+     * @return string the HTML to be output.
+     */
+    public function blocks_for_region($region) {
+        $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
+        $output = '';
+        foreach ($blockcontents as $bc) {
+            $output .= $this->block($bc);
+        }
         return $output;
     }
 
@@ -2172,7 +2305,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
      * @return string the HTML to output.
      */
-    public function skip_link_target($id = 'maincontent') {
+    public function skip_link_target($id = '') {
         return $this->output_tag('span', array('id' => $id), '');
     }
 
@@ -2240,7 +2373,7 @@ class moodle_html_component {
      *      string containing class names.
      * @return array the class names as an array.
      */
-    public static function clean_clases($classes) {
+    public static function clean_classes($classes) {
         if (is_array($classes)) {
             return $classes;
         } else {
@@ -2254,7 +2387,7 @@ class moodle_html_component {
      *      string containing class names.
      */
     public function set_classes($classes) {
-        $this->classes = self::clean_clases($classes);
+        $this->classes = self::clean_classes($classes);
     }
 
     /**
@@ -2271,7 +2404,7 @@ class moodle_html_component {
      *      string containing class names.
      */
     public function add_classes($classes) {
-        $this->classes += self::clean_clases($classes);
+        $this->classes += self::clean_classes($classes);
     }
 
     /**
@@ -2287,7 +2420,7 @@ class moodle_html_component {
      * instance of this class is output.
      */
     public function prepare() {
-        $this->classes = array_unique(self::clean_clases($this->classes));
+        $this->classes = array_unique(self::clean_classes($this->classes));
     }
 }
 
@@ -2401,57 +2534,107 @@ class moodle_select_menu extends moodle_html_component {
 
 
 /**
- * This class hold all the information required to describe a Moodle block.
+ * This class represents how a block appears on a page.
  *
- * That is, it holds all the different bits of HTML content that need to be put into the block.
+ * During output, each block instance is asked to return a block_contents object,
+ * those are then passed to the $OUTPUT->block function for display.
+ *
+ * {@link $contents} should probably be generated using a moodle_block_..._renderer.
+ *
+ * Other block-like things that need to appear on the page, for example the
+ * add new block UI, are also represented as block_contents objects.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
 class block_contents extends moodle_html_component {
+    /** @var int used to set $skipid. */
     protected static $idcounter = 1;
+
+    const NOT_HIDEABLE = 0;
+    const VISIBLE = 1;
+    const HIDDEN = 2;
+
     /**
-     * @param string $heading HTML for the heading. Can include full HTML or just
-     *   plain text - plain text will automatically be enclosed in the appropriate
-     *   heading tags.
+     * @param integer $skipid All the blocks (or things that look like blocks)
+     * printed on a page are given a unique number that can be used to construct
+     * id="" attributes. This is set automatically be the {@link prepare()} method.
+     * Do not try to set it manually.
      */
-    public $heading = '';
+    public $skipid;
+
     /**
-     * @param string $title Plain text title, as embedded in the $heading.
+     * @var integer If this is the contents of a real block, this should be set to
+     * the block_instance.id. Otherwise this should be set to 0.
      */
-    public $title = '';
+    public $blockinstanceid = 0;
+
     /**
-     * @param string $content HTML for the content
+     * @var integer if this is a real block instance, and there is a corresponding
+     * block_position.id for the block on this page, this should be set to that id.
+     * Otherwise it should be 0.
      */
-    public $content = '';
-    /**
-     * @param array $list an alternative to $content, it you want a list of things with optional icons.
-     */
-    public $list = array();
-    /**
-     * @param array $icons optional icons for the things in $list.
-     */
-    public $icons = array();
-    /**
-     * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
-     */
-    public $footer = '';
+    public $blockpositionid = 0;
+
     /**
      * @param array $attributes an array of attribute => value pairs that are put on the
      * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
      */
     public $attributes = array();
+
     /**
-     * @param integer $skipid do not set this manually. It is set automatically be the {@link prepare()} method.
+     * @param string $title The title of this block. If this came from user input,
+     * it should already have had format_string() processing done on it. This will
+     * be output inside <h2> tags. Please do not cause invalid XHTML.
      */
-    public $skipid;
+    public $title = '';
+
+    /**
+     * @param string $content HTML for the content
+     */
+    public $content = '';
+
+    /**
+     * @param array $list an alternative to $content, it you want a list of things with optional icons.
+     */
+    public $footer = '';
+
+    /**
+     * Any small print that should appear under the block to explain to the
+     * teacher about the block, for example 'This is a sticky block that was
+     * added in the system context.'
+     * @var string
+     */
+    public $annotation = '';
+
+    /**
+     * @var integer one of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
+     * the user can toggle whether this block is visible.
+     */
+    public $collapsible = self::NOT_HIDEABLE;
+
+    /**
+     * A (possibly empty) array of editing controls. Each element of this array
+     * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption)
+     * @var array
+     */
+    public $controls = array();
 
     /* @see lib/moodle_html_component#prepare() */
     public function prepare() {
         $this->skipid = self::$idcounter;
         self::$idcounter += 1;
         $this->add_class('sideblock');
+        if (empty($this->blockinstanceid) || !strip_tags($this->title)) {
+            $this->collapsible = self::NOT_HIDEABLE;
+        }
+        if ($this->collapsible == self::HIDDEN) {
+            $this->add_class('hidden');
+        }
+        if (!empty($this->controls)) {
+            $this->add_class('block_with_controls');
+        }
         parent::prepare();
     }
 }

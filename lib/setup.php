@@ -246,6 +246,7 @@ global $SCRIPT;
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions
     require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
+    require_once($CFG->libdir .'/pagelib.php');         // Library that defines the moodle_page class, used for $PAGE
     require_once($CFG->libdir .'/blocklib.php');        // Library for controlling blocks
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions

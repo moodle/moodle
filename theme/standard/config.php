@@ -44,12 +44,35 @@ $THEME->standardmetainclude = true;
 
 $THEME->custompix = false;
 
-$THEME->layouttemplates = array(
-    'normal' => 'layout.php',
-    'home' => 'layout-home.php',
+$THEME->layouts = array(
+    // Most pages. Put this first, so if we encounter an unknown page type, this is used.
+    'normal' => array(
+        'layout' => 'layout.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // The site home page.
+    'home' => array(
+        'layout' => 'layout-home.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post'
+    ),
+    // Settings form pages, like course of module settings.
+    'form' => array(
+        'layout' => 'layout.php',
+        'regions' => array(),
+    ),
+    // Pages that appear in pop-up windows.
+    'popup' => array(
+        'layout' => 'layout-popup.php',
+        'regions' => array(),
+    ),
+    // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+    'maintenance' => array(
+        'layout' => 'layout-popup.php',
+        'regions' => array(),
+    ),
 );
-$THEME->blockregions = array('side-pre', 'side-post');
-$THEME->defaultblockregion = 'side-post';
 
 $THEME->resource_mp3player_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.

@@ -707,9 +707,9 @@ class quiz_attempt extends quiz {
                 $this->context, $this->cm);
     }
 
-    public function print_navigation_panel($panelclass, $page) {
+    public function get_navigation_panel($panelclass, $page) {
         $panel = new $panelclass($this, $this->get_review_options(), $page);
-        $panel->display();
+        return $panel->get_contents();
     }
 
     /// List of all this user's attempts for people who can see reports.
@@ -807,8 +807,13 @@ class quiz_attempt extends quiz {
             $page = 0;
         }
         $fragment = '';
-        if ($questionid && $questionid != reset($this->pagequestionids[$page])) {
-            $fragment = '#q' . $questionid;
+        if ($questionid) {
+            if ($questionid == reset($this->pagequestionids[$page])) {
+                // First question on page, go to top.
+                $fragment = '#';
+            } else {
+                $fragment = '#q' . $questionid;
+            }
         }
         $param = '';
         if ($showall) {
@@ -936,15 +941,19 @@ abstract class quiz_nav_panel_base {
         return $classes;
     }
 
-    public function display() {
-        $strquiznavigation = get_string('quiznavigation', 'quiz');
+    public function get_contents() {
         $content = '';
         if ($this->attemptobj->get_quiz()->showuserpicture) {
             $content .= $this->get_user_picture() . "\n";
         }
         $content .= $this->get_question_buttons() . "\n";
         $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() . "\n</div>\n";
-        print_side_block($strquiznavigation, $content, NULL, NULL, '', array('id' => 'quiznavigation'), $strquiznavigation);
+
+        $bc = new block_contents();
+        $bc->id = 'quiznavigation';
+        $bc->title = get_string('quiznavigation', 'quiz');
+        $bc->content = $content;
+        return $bc;
     }
 }
 

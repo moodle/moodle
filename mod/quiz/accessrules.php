@@ -158,6 +158,7 @@ class quiz_access_manager {
     }
 
     public function show_attempt_timer_if_needed($attempt, $timenow) {
+        global $PAGE;
         $timeleft = false;
         foreach ($this->_rules as $rule) {
             $ruletimeleft = $rule->time_left($attempt, $timenow);

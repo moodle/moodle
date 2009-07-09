@@ -331,81 +331,95 @@ class block_base {
     }
 
     /**
-     * Display the block!
-     */
-    function _print_block() {
-        global $COURSE;
-
-        // is_empty() includes a call to get_content()
-        if ($this->is_empty() && empty($COURSE->javascriptportal)) {
-            if (empty($this->edit_controls)) {
-                // No content, no edit controls, so just shut up
-                return;
-            } else {
-                // No content but editing, so show something at least
-                $this->_print_shadow();
-            }
-        } else {
-            if ($this->hide_header() && empty($this->edit_controls)) {
-                // Header wants to hide, no edit controls to show, so no header it is
-                print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
-            } else {
-                // The full treatment, please. Include the title text.
-                print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes(), $this->title);
-            }
-        }
-    }
-
-    /**
-     * Block contents are missing. Simply display an empty block so that
-     * edit controls are accessbile to the user and they are aware that this
-     * block is in place, even if empty.
-     */
-    function _print_shadow() {
-        print_side_block($this->_title_html(), '&nbsp;', NULL, NULL, '', array('class' => 'hidden'), $this->title);
-    }
-
-
-    function _title_html() {
-        global $OUTPUT;
-
-        //Accessibility: validation, can't have <div> inside <h2>, use <span>.
-        $title = '<div class="title">';
-
-        if (!empty($CFG->allowuserblockhiding)) {
-            //Accessibility: added 'alt' text for the +- icon.
-            //Theme the buttons using, Admin - Miscellaneous - smartpix.
-            $strshow = addslashes_js(get_string('showblocka', 'access', strip_tags($this->title)));
-            $strhide = addslashes_js(get_string('hideblocka', 'access', strip_tags($this->title)));
-            $title .= '<input type="image" src="'.$OUTPUT->old_icon_url('t/switch_minus') . '" '. 
-                'id="togglehide_inst'.$this->instance->id.'" '.
-                'onclick="elementToggleHide(this, true, function(el) {'.
-                'return findParentNode(el, \'DIV\', \'sideblock\'); },'.
-                ' \''.$strshow.'\', \''.$strhide.'\'); return false;" '.
-                'alt="'.$strhide.'" title="'.$strhide.'" class="hide-show-image" />';
-        }
-
-        //Accesssibility: added H2 (was in, weblib.php: print_side_block)
-        $title .= '<h2>'.format_string($this->title).'</h2>';
-
-        if ($this->edit_controls !== NULL) {
-            $title .= $this->edit_controls;
-        }
-
-        $title .= '</div>';
-        return $title;
-    }
-
-    /**
-     * Sets class $edit_controls var with correct block manipulation links.
+     * Return a block_contents oject representing the full contents of this block.
      *
-     * @uses $CFG
-     * @uses $USER
-     * @param stdObject $options ?
-     * @todo complete documenting this function. Define $options.
+     * This internally calls ->get_content(), and then adds the editing controls etc.
+     *
+     * You probably should not override this method, but instead override
+     * {@link html_attributes()}, {@link formatted_contents()} or {@link get_content()},
+     * {@link hide_header()}, {@link (get_edit_controls)}, etc.
+     *
+     * @return block_contents a represntation of the block, for rendering.
+     * @since Moodle 2.0.
      */
-    function _add_edit_controls($options) {
-        global $CFG, $USER, $OUTPUT;
+    public function get_content_for_output($output) {
+        global $CFG;
+
+        $bc = new block_contents();
+        $bc->blockinstanceid = $this->instance->id;
+        $bc->blockpositionid = $this->instance->blockpositionid;
+
+        $attributes = $this->html_attributes();
+        if (isset($attributes['id'])) {
+            $bc->id = $attributes['id'];
+            unset($attributes['id']);
+        }
+        if (isset($attributes['class'])) {
+            $bc->set_classes($attributes['class']);
+            unset($attributes['class']);
+        }
+        $bc->attributes = $attributes;
+
+        if (!$this->hide_header()) {
+            $bc->title = $this->title;
+        }
+        $bc->content = $this->formatted_contents($output);
+        if (!empty($this->content->footer)) {
+            $bc->footer = $this->content->footer;
+        }
+
+        if ($this->is_empty() && !$bc->controls) {
+            return null;
+        }
+
+        if ($this->page->user_is_editing()) {
+            $bc->controls = $this->get_edit_controls($output);
+        }
+
+        if (empty($CFG->allowuserblockhiding)) {
+            $bc->collapsible = block_contents::NOT_HIDEABLE;
+        } else if (get_user_preferences('block' . $bc->blockinstanceid . 'hidden', false)) {
+            $bc->collapsible = block_contents::HIDDEN;
+        } else {
+            $bc->collapsible = block_contents::VISIBLE;
+        }
+
+        $bc->annotation = ''; // TODO
+
+        return $bc;
+    }
+
+    /**
+     * Convert the contents of the block to HTML.
+     *
+     * This is used by block base classes like block_list to convert the structured
+     * $this->content->list and $this->content->icons arrays to HTML. So, in most
+     * blocks, you probaby want to override the {@link get_contents()} method,
+     * which generates that structured representation of the contents.
+     *
+     * @param $output The core_renderer to use when generating the output.
+     * @return string the HTML that should appearn in the body of the block.
+     * @since Moodle 2.0.
+     */
+    protected function formatted_contents($output) {
+        $this->get_content();
+        if (!empty($this->content->text)) {
+            return $this->content->text;
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Get the appropriate list of editing icons for this block. This is used
+     * to set {@link block_contents::$controls} in {@link get_contents_for_output()}.
+     *
+     * @param $output The core_renderer to use when generating the output. (Need to get icon paths.)
+     * @return an array in the format for {@link block_contents::$controls}
+     * @since Moodle 2.0.
+     */
+    protected function get_edit_controls($output) {
+        global $CFG, $DB;
 
         // TODO - temporary hack to get the block context only if it already exists.
         global $DB;
@@ -415,86 +429,50 @@ class block_base {
             $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
         }
 
-        // context for site or course, i.e. participant list etc
-        // check to see if user can edit site or course blocks.
-        // blocks can appear on other pages such as mod and blog pages...
+        $returnurlparam = '&amp;returnurl=' . urlencode($this->page->url->out_returnurl());
+        $actionurl = $CFG->wwwroot.'/blocks/action.php?block=' . $this->instance->id .
+                '&amp;sesskey=' . sesskey() . $returnurlparam;
 
-        if (!$this->page->user_can_edit_blocks()) {
-            return null;
+        $controls = array();
+
+        // Assign roles icon.
+        if ($context->contextlevel == CONTEXT_BLOCK && has_capability('moodle/role:assign', $context)) {
+            $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
+                    'icon' => $output->old_icon_url('i/roles'), 'caption' => get_string('assignroles', 'role'));
         }
 
-        if (!isset($this->str)) {
-            $this->str->delete    = get_string('delete');
-            $this->str->moveup    = get_string('moveup');
-            $this->str->movedown  = get_string('movedown');
-            $this->str->moveright = get_string('moveright');
-            $this->str->moveleft  = get_string('moveleft');
-            $this->str->hide      = get_string('hide');
-            $this->str->show      = get_string('show');
-            $this->str->configure = get_string('configuration');
-            $this->str->assignroles = get_string('assignroles', 'role');
+        if ($this->user_can_edit() && $this->page->user_can_edit_blocks()) {
+            // Show/hide icon.
+            if ($this->instance->visible) {
+                $controls[] = array('url' => $actionurl . '&amp;action=hide',
+                        'icon' => $output->old_icon_url('t/hide'), 'caption' => get_string('hide'));
+            } else {
+                $controls[] = array('url' => $actionurl . '&amp;action=show',
+                        'icon' => $output->old_icon_url('t/show'), 'caption' => get_string('show'));
+            }
+
+            // Edit config icon.
+            if ($this->instance_allow_multiple() || $this->instance_allow_config()) {
+                $editurl = $CFG->wwwroot . '/blocks/edit.php?block=' . $this->instance->id;
+                if (!empty($this->instance->blockpositionid)) {
+                    $editurl .= '&amp;positionid=' . $this->instance->blockpositionid;
+                }
+                $controls[] = array('url' => $editurl . $returnurlparam,
+                        'icon' => $output->old_icon_url('t/edit'), 'caption' => get_string('configuration'));
+            }
+
+            // Delete icon.
+            if ($this->user_can_addto($this->page)) {
+                $controls[] = array('url' => $actionurl . 'action=delete',
+                    'icon' => $output->old_icon_url('t/delete'), 'caption' => get_string('deletet'));
+            }
+
+            // Move icon.
+            $controls[] = array('url' => $this->page->url->out(false, array('moveblockid' => $this->instance->id)),
+                    'icon' => $output->old_icon_url('t/move'), 'caption' => get_string('move'));
         }
 
-        // RTL support - exchange right and left arrows
-        if (right_to_left()) {
-            $rightarrow = 't/left';
-            $leftarrow  = 't/right';
-        } else {
-            $rightarrow = 't/right';
-            $leftarrow  = 't/left';
-        }
-
-        $movebuttons = '<div class="commands">';
-
-        if ($this->instance->visible) {
-            $icon = 't/hide';
-            $title = $this->str->hide;
-        } else {
-            $icon = 't/show';
-            $title = $this->str->show;
-        }
-
-        $page = $this->page;
-        $script = $page->url->out(false, array('instanceid' => $this->instance->id, 'sesskey' => sesskey()));
-
-        $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">' .
-                        '<img src="'.$OUTPUT->old_icon_url('i/roles') . '" alt="'.$this->str->assignroles.'" /></a>';
-
-        // TODO MDL-19010 fix and re-enable.
-        if (false && $this->user_can_edit()) {
-            $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                            '<img src="'. $OUTPUT->old_icon_url($icon) .'" alt="'.$title.'" /></a>';
-        }
-
-        if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
-            $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
-                            '<img src="'. $OUTPUT->old_icon_url('t/edit') . '" alt="'. $this->str->configure .'" /></a>';
-        }
-
-        if ($this->user_can_addto($page)) {
-            $movebuttons .= '<a class="icon delete" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                            '<img src="'. $OUTPUT->old_icon_url('t/delete') . '" alt="'. $this->str->delete .'" /></a>';
-        }
-
-        if ($options & BLOCK_MOVE_LEFT) {
-            $movebuttons .= '<a class="icon left" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $OUTPUT->old_icon_url($leftarrow).'" alt="'. $this->str->moveleft .'" /></a>';
-        }
-        if ($options & BLOCK_MOVE_UP) {
-            $movebuttons .= '<a class="icon up" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
-                            '<img src="'. $OUTPUT->old_icon_url('t/up') . '" alt="'. $this->str->moveup .'" /></a>';
-        }
-        if ($options & BLOCK_MOVE_DOWN) {
-            $movebuttons .= '<a class="icon down" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
-                            '<img src="'. $OUTPUT->old_icon_url('t/down') . '" alt="'. $this->str->movedown .'" /></a>';
-        }
-        if ($options & BLOCK_MOVE_RIGHT) {
-            $movebuttons .= '<a class="icon right" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $OUTPUT->old_icon_url($rightarrow).'" alt="'. $this->str->moveright .'" /></a>';
-        }
-
-        $movebuttons .= '</div>';
-        $this->edit_controls = $movebuttons;
+        return $controls;
     }
 
     /**
@@ -556,7 +534,6 @@ class block_base {
      * Default behavior: print the config_global.html file
      * You don't need to override this if you're satisfied with the above
      *
-     * @uses $CFG
      * @return boolean
      */
     function config_print() {
@@ -598,14 +575,6 @@ class block_base {
     
 
     /**
-     * Default case: the block wants to be 180 pixels wide
-     * @return int
-     */
-    function preferred_width() {
-        return 180;
-    }
-    
-    /**
      * Default return is false - header will be shown
      * @return boolean
      */
@@ -614,18 +583,17 @@ class block_base {
     }
 
     /**
-     * Default case: an id with the instance and a class with our name in it
-     * @return array
-     * @todo finish documenting this function
+     * Return any HTML attributes that you want added to the outer <div> that
+     * of the block when it is output.
+     * @return array attribute name => value.
      */
     function html_attributes() {
         return array(
-            'id' => 'inst'.$this->instance->id, 
-            'class' => 'block_'. $this->name().
-                ($this->edit_controls ? ' block_with_controls' :'')
+            'id' => 'inst' . $this->instance->id, 
+            'class' => 'block_' . $this->name()
         );
     }
-    
+
     /**
      * Given an instance set the class var $instance to it and
      * load class var $config
@@ -727,7 +695,7 @@ class block_base {
         $this->instance_config_save($this->config);
     }
 
-     /**
+    /**
      * Do any additional initialization you may need at the time a new block instance is created
      * @return boolean
      * @todo finish documenting this function
@@ -736,7 +704,7 @@ class block_base {
         return true;
     }
 
-     /**
+    /**
      * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
      * @return boolean
      * @todo finish documenting this function
@@ -745,7 +713,7 @@ class block_base {
         return true;
     }
 
-     /**
+    /**
      * Allows the block class to have a say in the user's ability to edit (i.e., configure) blocks of this type.
      * The framework has first say in whether this will be allowed (e.g., no editing allowed unless in edit mode)
      * but if the framework does allow it, the block can still decide to refuse.
@@ -756,7 +724,7 @@ class block_base {
         return true;
     }
 
-     /**
+    /**
      * Allows the block class to have a say in the user's ability to create new instances of this block.
      * The framework has first say in whether this will be allowed (e.g., no adding allowed unless in edit mode)
      * but if the framework does allow it, the block can still decide to refuse.
@@ -771,10 +739,53 @@ class block_base {
     function get_extra_capabilities() {
         return array('moodle/block:view');
     }
+
+    // Methods deprecated in Moodle 2.0 ========================================
+
+    /**
+     * Default case: the block wants to be 180 pixels wide
+     * @deprecated since Moodle 2.0.
+     * @return int
+     */
+    function preferred_width() {
+        return 180;
+    }
+
+    /** @deprecated since Moodle 2.0. */
+    function _print_block() {
+        throw new coding_exception('_print_block is no longer used. It was a private ' .
+                'method of the block class, only for use by the blocks system. You ' .
+                'should not have been calling it anyway.');
+    }
+
+    /** @deprecated since Moodle 2.0. */
+    function _print_shadow() {
+        throw new coding_exception('_print_shadow is no longer used. It was a private ' .
+                'method of the block class, only for use by the blocks system. You ' .
+                'should not have been calling it anyway.');
+    }
+
+    /** @deprecated since Moodle 2.0. */
+    function _title_html() {
+        throw new coding_exception('_title_html is no longer used. It was a private ' .
+                'method of the block class, only for use by the blocks system. You ' .
+                'should not have been calling it anyway.');
+    }
+
+    /** @deprecated since Moodle 2.0. */
+    function _add_edit_controls() {
+        throw new coding_exception('_add_edit_controls is no longer used. It was a private ' .
+                'method of the block class, only for use by the blocks system. You ' .
+                'should not have been calling it anyway.');
+    }
+
 }
 
 /**
  * Specialized class for displaying a block with a list of icons/text labels
+ *
+ * The get_content method should set $this->content->items and (optionally)
+ * $this->content->icons, instead of $this->content->text.
  *
  * @author Jon Papaioannou
  * @package blocks
@@ -801,31 +812,14 @@ class block_list extends block_base {
         return (empty($this->content->items) && empty($this->content->footer));
     }
 
-    function _print_block() {
-        global $COURSE;
-
-        // is_empty() includes a call to get_content()
-        if ($this->is_empty() && empty($COURSE->javascriptportal)) {
-            if (empty($this->edit_controls)) {
-                // No content, no edit controls, so just shut up
-                return;
-            } else {
-                // No content but editing, so show something at least
-                $this->_print_shadow();
-            }
+    protected function formatted_contents($output) {
+        $this->get_content();
+        if (!empty($this->content->items)) {
+            return $output->list_block_contents($this->content->icons, $this->content->items);
         } else {
-            if ($this->hide_header() && empty($this->edit_controls)) {
-                // Header wants to hide, no edit controls to show, so no header it is
-                print_side_block(NULL, '', $this->content->items, $this->content->icons, 
-                                 $this->content->footer, $this->html_attributes());
-            } else {
-                // The full treatment, please. Include the title text.
-                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, 
-                                 $this->content->footer, $this->html_attributes(), $this->title);
-            }
+            return '';
         }
     }
-
 }
 
 ?>

@@ -1458,7 +1458,7 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
  * @return string
  */
 function question_get_feedback_image($fraction, $selected=true) {
-    global $CFG;
+    global $CFG, $OUTPUT;
     static $icons = array('correct' => 'tick_green', 'partiallycorrect' => 'tick_amber',
             'incorrect' => 'cross_red');
 

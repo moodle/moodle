@@ -108,27 +108,11 @@ class resource_base {
 
     /**
      * Display the resource with the course blocks.
-     *
-     * @global stdClass
-     * @uses PAGE_COURSE_VIEW
-     * @uses PARAM_BOOL
-     * @uses BLOCK_POS_LEFT
-     * @uses BLOCK_POS_RIGHT
      */
     function display_course_blocks_start() {
-        global $CFG, $USER, $THEME;
-
-        require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
-
-        $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
-        $PAGE->set_url('mod/resource/view.php', array('id' => $this->cm->id));
-        $this->PAGE = $PAGE;
-        $pageblocks = blocks_setup($PAGE);
-
-        $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+        global $CFG, $USER, $PAGE;
 
     /// Print the page header
-
         $edit = optional_param('edit', -1, PARAM_BOOL);
 
         if (($edit != -1) and $PAGE->user_allowed_editing()) {
@@ -140,53 +124,11 @@ class resource_base {
 
         $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks, "", "",
                             update_module_button($this->cm->id, $this->course->id, $this->strresource));
-
-        echo '<table id="layout-table"><tr>';
-
-            $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-        foreach ($lt as $column) {
-            $lt1[] = $column;
-            if ($column == 'middle') break;
-        }
-        foreach ($lt1 as $column) {
-            switch ($column) {
-                case 'left':
-                    if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-                        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-                        print_container_start();
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-                        print_container_end();
-                        echo '</td>';
-                    }
-                break;
-
-                case 'middle':
-                    echo '<td id="middle-column">';
-                    print_container_start(false, 'middle-column-wrap');
-                    echo '<div id="resource">';
-                break;
-
-                case 'right':
-                    if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-                        echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-                        print_container_start();
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-                        print_container_end();
-                        echo '</td>';
-                    }
-                break;
-            }
-        }
     }
 
 
     /**
      * Finish displaying the resource with the course blocks
-     *
-     * @global stdClass
-     * @global object
-     * @uses BLOCK_POS_LEFT
-     * @uses BLOCK_POS_RIGHT
      */
     function display_course_blocks_end() {
         global $CFG, $THEME;

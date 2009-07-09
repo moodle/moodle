@@ -133,46 +133,24 @@ class custom_corners_core_renderer extends moodle_core_renderer {
         $output .= $this->output_start_tag('div', $bc->attributes);
         $output .= $this->output_start_tag('div', array('class' => 'wrap'));
 
-        if ($bc->heading) {
-            // Some callers pass in complete html for the heading, which may include
-            // complicated things such as the 'hide block' button; some just pass in
-            // text. If they only pass in plain text i.e. it doesn't include a
-            // <div>, then we add in standard tags that make it look like a normal
-            // page block including the h2 for accessibility
-            if (strpos($bc->heading, '</div>') === false) {
-                $bc->heading = $this->output_tag('div', array('class' => 'title'),
-                        $this->output_tag('h2', null, $bc->heading));
-            }
+        $controlshtml = $this->block_controls($bc->controls);
 
+        $title = '';
+        if ($bc->title) {
+            $title = $this->output_tag('h2', null, $bc->title);
+        }
+
+        if ($title || $controlshtml) {
             $output .= '<div class="header"><div class="bt"><div>&nbsp;</div></div>';
             $output .= '<div class="i1"><div class="i2"><div class="i3">';
-            $output .= $bc->heading;
+            $output .= '<div class="title">' . $title . $controlshtml . '</div>';
             $output .= '</div></div></div></div>';
         } else {
             $output .= '<div class="bt"><div>&nbsp;</div></div>';
         }
 
         $output .= '<div class="i1"><div class="i2"><div class="i3"><div class="content">';
-
-        if ($bc->content) {
-            $output .= $bc->content;
-
-        } else if ($bc->list) {
-            $row = 0;
-            $output .= $this->output_start_tag('ul', array('class' => 'list'));
-            $items = array();
-            foreach ($bc->list as $key => $string) {
-                $item = $this->output_start_tag('li', array('class' => 'r' . $row));
-                if ($bc->icons) {
-                    $item .= $this->output_tag('div', array('class' => 'icon column c0'), $bc->icons[$key]);
-                }
-                $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
-                $item .= $this->output_end_tag('li');
-                $items[] = $item;
-                $row = 1 - $row; // Flip even/odd.
-            }
-            $output .= $this->output_tag('ul', array('class' => 'list'), implode("\n", $items));
-        }
+        $output .= $bc->content;
 
         if ($bc->footer) {
             $output .= $this->output_tag('div', array('class' => 'footer'), $bc->footer);
@@ -181,13 +159,7 @@ class custom_corners_core_renderer extends moodle_core_renderer {
         $output .= '</div></div></div></div><div class="bb"><div>&nbsp;</div></div></div></div>';
         $output .= $skipdest;
 
-        if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
-            $strshow = addslashes_js(get_string('showblocka', 'access', $title));
-            $strhide = addslashes_js(get_string('hideblocka', 'access', $title));
-            $output .= $this->page->requires->js_function_call('elementCookieHide', array(
-                    $bc->id, $strshow, $strhide))->asap();
-        }
-
+        $this->init_block_hider_js($bc);
         return $output;
     }
 

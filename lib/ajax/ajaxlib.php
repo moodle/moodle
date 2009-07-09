@@ -51,6 +51,8 @@ function setup_core_javascript(page_requirements_manager $requires) {
         $requires->yui_lib('logger');
     }
 
+    $requires->skip_link_to('maincontent', get_string('tocontent', 'access'));
+
     // Note that, as a short-cut, the code 
     // $js = "document.body.className += ' jsenabled';\n";
     // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)

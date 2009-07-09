@@ -18,18 +18,6 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourseid', '', '', $courseid);
 }
 
-// Bounds for block widths
-// more flexible for theme designers taken from theme config.php
-$lmin = (empty($THEME->block_l_min_width)) ? 160 : $THEME->block_l_min_width;
-$lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
-$rmin = (empty($THEME->block_r_min_width)) ? 160 : $THEME->block_r_min_width;
-$rmax = (empty($THEME->block_r_max_width)) ? 210 : $THEME->block_r_max_width;
-
-define('BLOCK_L_MIN_WIDTH', $lmin);
-define('BLOCK_L_MAX_WIDTH', $lmax);
-define('BLOCK_R_MIN_WIDTH', $rmin);
-define('BLOCK_R_MAX_WIDTH', $rmax);
-
 //_____________ new page class code ________
 $pagetype = PAGE_BLOG_VIEW;
 $pageclass = 'page_blog';
@@ -69,12 +57,6 @@ $editing = false;
 if ($PAGE->user_allowed_editing()) {
     $editing = $PAGE->user_is_editing();
 }
-
-// Calculate the preferred width for left, right and center (both center positions will use the same)
-$preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                        BLOCK_L_MAX_WIDTH);
-$preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                        BLOCK_R_MAX_WIDTH);
 
 if (!empty($tagid)) {
     $taginstance = $DB->get_record('tag', array('id'=>$tagid));
@@ -241,25 +223,6 @@ $currenttab = 'blogs';
 require_once($CFG->dirroot .'/user/tabs.php');
 
 
-/// Layout the whole page as three big columns.
-print '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">' . "\n";
-print '<tr valign="top">' . "\n";
-
-/// The left column ...
-if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-    print '<td style="vertical-align: top; width: '. $preferred_width_left .'px;" id="left-column">' . "\n";
-    print '<!-- Begin left side blocks -->' . "\n";
-    print_container_start();
-    blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-    print_container_end();
-    print '<!-- End left side blocks -->' . "\n";
-    print '</td>' . "\n";
-}
-
-/// Start main column
-print '<!-- Begin page content -->' . "\n";
-print '<td>';
-print_container_start();
 ?>
 <table width="100%">
 <tr>

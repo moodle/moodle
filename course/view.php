@@ -93,10 +93,6 @@
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
-    // Note: MDL-19010 there will be further changes to printing header and blocks.
-    // The code will be much nicer than this eventually.
-    $pageblocks = blocks_setup($PAGE, BLOCKS_PINNED_BOTH);
-
     if ($reset_user_allowed_editing) {
         // ugly hack
         unset($PAGE->_user_allowed_editing);

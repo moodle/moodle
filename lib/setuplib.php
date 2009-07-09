@@ -297,7 +297,7 @@ function prepare_error_message($errorcode, $module, $link, $a) {
     }
     $moreinfourl = $errordocroot . '/en/error/' . $modulelink . '/' . $errorcode;
 
-    if (empty($link) && !defined('ADMIN_EXT_HEADER_PRINTED')) {
+    if (empty($link)) {
         if (!empty($SESSION->fromurl)) {
             $link = $SESSION->fromurl;
             unset($SESSION->fromurl);

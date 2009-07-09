@@ -71,6 +71,11 @@
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
     }
 
+/// Arrange for the navigation to be displayed.
+    $navbc = $attemptobj->get_navigation_panel('quiz_review_nav_panel', $page);
+    $firstregion = reset($PAGE->blocks->get_regions());
+    $PAGE->blocks->add_pretend_block($navbc, $firstregion);
+
 /// Print the page header
     $PAGE->requires->js('mod/quiz/quiz.js');
     $headtags = $attemptobj->get_html_head_contributions($page);
@@ -99,17 +104,6 @@
         $attemptobj->print_restart_preview_button();
     }
     print_heading($strreviewtitle);
-
-/// Print the navigation panel in a left column.
-    print_container_start();
-    echo '<div id="left-column">';
-    $attemptobj->print_navigation_panel('quiz_review_nav_panel', $page);
-    echo '</div>';
-    print_container_end();
-
-/// Start the main column.
-    echo '<div id="middle-column">';
-    echo skip_main_destination();
 
 /// Summary table start ============================================================================
 
@@ -246,11 +240,6 @@
         link_arrow_right(get_string('next'), $attemptobj->review_url(0, $page + 1));
     }
     echo "</div>";
-
-    // End middle column.
-    echo '</div>';
-
-    echo '<div class="clearer"></div>';
 
     // Finish the page
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {

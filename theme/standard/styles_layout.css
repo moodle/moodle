@@ -50,14 +50,14 @@ h6.main {
   margin-top: 8px;
 }
 
-#layout-table #left-column,
-#layout-table #middle-column,
-#layout-table #right-column
+#layout-table #region-side-pre,
+#layout-table #content,
+#layout-table #region-side-post
 {
   vertical-align:top;
 }
 
-#layout-table #middle-column {
+#layout-table #content {
   padding-left:12px;
   padding-right:12px;
 }
@@ -1569,16 +1569,19 @@ a.skip:focus, a.skip:active {
   margin: 0px 2px;
 }
 
-#left-column .hidden .header,
-#right-column .hidden .header
-{
+.block-region .hidden .header {
   border-bottom-width: 1px;
   border-bottom-style: solid;
 }
+#region-side-pre,
+#region-side-post {
+  width: 12em;
+}
+#content {
+  width: auto;
+}
 
-#left-column .hidden .content,
-#right-column .hidden .content
-{
+.block-region .hidden .content {
   display: none;
 }
 
@@ -2194,24 +2197,6 @@ border-width:0px;
 .topics-format .block_calendar_month .minicalendar td {
   padding: 0.1em 0 0.1em 1px;
 }
-.weeks-format #middle-column ,
-.topics-format #middle-column {
-  margin: 0 12.5em 0 12.5em;
-}
-.weeks-format #left-column,
-.weeks-format #right-column,
-.topics-format #left-column,
-.topics-format #right-column {
-  width: 11.5em;
-}
-.weeks-format #left-column,
-.topics-format #left-column {
-  float: left;
-}
-.weeks-format #right-column,
-.topics-format #right-column {
-  float: right;
-}
 .weeks li.section ,
 .topics li.section {
   margin-bottom: 0.5em;
@@ -2334,20 +2319,20 @@ body#admin-course-category .buttons {
   margin-bottom: 15px;
 }
 
-body#admin-course-index #middle-column .editcourse {
+body#admin-course-index .editcourse {
   margin-left:auto;
   margin-right:auto;
   margin-top:20px;
   margin-bottom:20px;
 }
 
-body#admin-course-index #middle-column .editcourse th,
-body#admin-course-index #middle-column .editcourse td {
+body#admin-course-index .editcourse th,
+body#admin-course-index .editcourse td {
   padding-left:10px;
   padding-right:10px;
 }
 
-body#admin-course-index #middle-column .editcourse .count {
+body#admin-course-index .editcourse .count {
   text-align:right;
 }
 
@@ -4366,16 +4351,6 @@ body.jsenabled .jshidewhenenabled {
 #passwordform {
   margin: 1em 0;
 }
-#mod-quiz-attempt #middle-column,
-#mod-quiz-review #middle-column {
-  text-align: center;
-  margin: 0 0 0 12.5em;
-}
-#mod-quiz-attempt #left-column,
-#mod-quiz-review #left-column {
-  width: 11.5em;
-  float: left;
-}
 #mod-quiz-attempt .submitbtns,
 #mod-quiz-review .submitbtns {
   text-align: left;
@@ -4602,10 +4577,6 @@ table.quizreviewsummary td.cell {
   clear : left;
   text-align: center;
   margin: 6px 0;
-}
-#mod-quiz-attempt #left-column,
-#mod-quiz-review #left-column {
-  padding-top: 1px;
 }
 #quiznavigation .qnbutton {
   display: block;

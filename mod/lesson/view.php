@@ -501,10 +501,6 @@
 
         $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
         $PAGE->set_subpage($page->id);
-        $pageblocks = blocks_setup($PAGE);
-
-        $leftcolumnwidth  = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-        $rightcolumnwidth = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
         if (($edit != -1) and $PAGE->user_allowed_editing()) {
             $USER->editing = $edit;

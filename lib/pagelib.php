@@ -336,8 +336,8 @@ class moodle_page {
     public function get_url() {
         if (is_null($this->_url)) {
             debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
-            global $ME;
-            return new moodle_url($ME);
+            global $FULLME;
+            return new moodle_url($FULLME);
         }
         return new moodle_url($this->_url); // Return a clone for safety.
     }
@@ -888,6 +888,10 @@ class moodle_page {
     public function initialise_theme_and_output() {
         global $OUTPUT, $PAGE, $SITE, $THEME;
 
+        if (!empty($this->_wherethemewasinitialised)) {
+            return;
+        }
+
         if (!$this->_course && !during_initial_install()) {
             $this->set_course($SITE);
         }
@@ -897,8 +901,7 @@ class moodle_page {
             $this->_theme = theme_config::load($themename);
         }
 
-        $this->blocks->add_regions($this->_theme->blockregions);
-        $this->blocks->set_default_region($this->_theme->defaultblockregion);
+        $this->_theme->setup_blocks($this->generaltype, $this->blocks);
 
         if ($this === $PAGE) {
             $THEME = $this->_theme;

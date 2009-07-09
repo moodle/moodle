@@ -56,9 +56,6 @@ form.mform textarea {
 form.mform .fcheckbox input {
   margin-left: -3px;
 }
-#mod-quiz-review #middle-column {
-  height: 1%;
-}
 .mod-quiz div.tabtree a span img.iconsmall {
   margin: 0;
   vertical-align: baseline;

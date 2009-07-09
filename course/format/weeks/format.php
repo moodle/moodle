@@ -57,44 +57,6 @@
     }
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-/* Internet Explorer min-width fix. (See theme/standard/styles_layout.css: min-width for Firefox.)
-   Window width: 800px, Firefox 763px, IE 752px. (Window width: 640px, Firefox 602px, IE 588px.)    
-*/
-?>
-
-<!--[if IE]>
-  <style type="text/css">
-  .weeks-format { width: expression(document.body.clientWidth < 800 ? "752px" : "auto"); }
-  </style>
-<![endif]-->
-<?php
-/// Layout the whole page as three big columns (was, id="layout-table")
-    echo '<div class="weeks-format">';
-
-/// The left column ...
-
-    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        print_container_start();
-        echo '<div id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</div>';
-        print_container_end();
-    }
-    
-/// The right column, BEFORE the middle-column.
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
-        print_container_start();
-        echo '<div id="right-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        echo '</div>';
-        print_container_end();
-    }
-
-/// Start main column
-    echo '<div id="middle-column">';
-    print_container_start();
-
-    echo skip_main_destination();
 
     //Print the Your progress icon if the track completion is enabled
     $completioninfo = new completion_info($course);
@@ -123,7 +85,7 @@
 
         // Note, 'right side' is BEFORE content.
         echo '<li id="section-0" class="section main" >';
-	echo '<div class="left side">&nbsp;</div>';
+        echo '<div class="left side">&nbsp;</div>';
         echo '<div class="right side" >&nbsp;</div>';        
         echo '<div class="content">';
         
@@ -286,11 +248,3 @@
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';
     }
-
-    print_container_end();
-    echo '</div>';
-
-    echo '</div>';
-    echo '<div class="clearer"></div>';
-
-?>

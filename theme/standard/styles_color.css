@@ -488,9 +488,7 @@ table.flexible .r1 {
   border-top-color:#999999;
 }
 
-#left-column .hidden .header,
-#right-column .hidden .header
-{
+.block-region .hidden .header {
   border-bottom-color: #dddddd;
 }
 

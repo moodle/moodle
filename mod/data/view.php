@@ -255,8 +255,6 @@
 
 // Initialize $PAGE, compute blocks
     $PAGE->set_url('mod/data/view.php', array('id' => $cm->id));
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
     if (($edit != -1) and $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
@@ -292,20 +290,6 @@
 
     $navigation = build_navigation(array(), $cm);
     print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
-
-/// If we have blocks, then print the left side here
-    if (!empty($CFG->showblocksonmodpages)) {
-        echo '<table id="layout-table"><tr>';
-        if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-            echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-            print_container_start();
-            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-            print_container_end();
-            echo '</td>';
-        }
-        echo '<td id="middle-column">';
-        print_container_start();
-    }
 
 /// Check to see if groups are being used here
     $returnurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
@@ -680,23 +664,9 @@
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 
-/// If we have blocks, then print the left side here
-    if (!empty($CFG->showblocksonmodpages)) {
-        print_container_end();
-        echo '</td>';   // Middle column
-        if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-            echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-            print_container_start();
-            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-            print_container_end();
-            echo '</td>';
-        }
-        echo '</tr></table>';
-    }
-
-    print_footer($course);
-
 /// Mark as viewed
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);
+
+    print_footer($course);
 ?>

@@ -18,6 +18,7 @@
     }
     if (!empty($USER->newadminuser)) {
         $PAGE->set_course($SITE);
+        $PAGE->set_generaltype('maintenance');
     } else {
         require_login($course);
     }
@@ -229,10 +230,6 @@
     $userform->display();
 
 /// and proper footer
-    if (!empty($USER->newadminuser)) {
-        print_footer('none');
-    } else {
-        print_footer($course);
-    }
+    print_footer();
 
 ?>

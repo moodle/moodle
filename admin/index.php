@@ -105,7 +105,7 @@ $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
 $CFG->xmlstrictheaders = false;
 
 if (!core_tables_exist()) {
-    // hide errors from headers in case debug enabled in config.php
+    $PAGE->set_generaltype('maintenance');
 
     // fake some settings
     $CFG->docroot = 'http://docs.moodle.org';
@@ -127,7 +127,7 @@ if (!core_tables_exist()) {
         echo '<br />';
         notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                "http://docs.moodle.org/en/License");
-        print_footer('upgrade');
+        print_footer();
         die;
     }
     if (empty($confirmrelease)) {
@@ -147,7 +147,7 @@ if (!core_tables_exist()) {
             print_continue("index.php?agreelicense=1&amp;confirmrelease=1&amp;lang=$CFG->lang");
         }
 
-        print_footer('upgrade');
+        print_footer();
         die;
     }
 
@@ -178,6 +178,8 @@ if (empty($CFG->version)) {
 }
 
 if ($version > $CFG->version) {  // upgrade
+    $PAGE->set_generaltype('maintenance');
+
     $a->oldversion = "$CFG->release ($CFG->version)";
     $a->newversion = "$release ($version)";
     $strdatabasechecking = get_string('databasechecking', '', $a);
@@ -187,7 +189,7 @@ if ($version > $CFG->version) {  // upgrade
         print_header($strdatabasechecking, $stradministration, $navigation, '', '', false, '&nbsp;', '&nbsp;');
 
         notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
-        print_footer('upgrade');
+        print_footer();
         exit;
 
     } else if (empty($confirmrelease)){
@@ -212,7 +214,7 @@ if ($version > $CFG->version) {  // upgrade
             print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
         }
 
-        print_footer('upgrade');
+        print_footer();
         die;
 
     } elseif (empty($confirmplugins)) {

@@ -146,6 +146,7 @@ require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/outputlib.php');
 require_once($CFG->libdir.'/dmllib.php');
 require_once($CFG->libdir.'/moodlelib.php');
+require_once($CFG->libdir .'/pagelib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/environmentlib.php');

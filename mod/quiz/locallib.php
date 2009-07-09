@@ -362,39 +362,6 @@ function quiz_repaginate($layout, $perpage, $shuffle = false) {
     return $layout.'0';
 }
 
-/**
- * Print navigation panel for quiz attempt and review pages
- *
- * @param integer $page     The number of the current page (counting from 0).
- * @param integer $pages    The total number of pages.
- */
-function quiz_print_navigation_panel($page, $pages) {
-    //$page++;
-    echo '<div class="paging pagingbar">';
-    echo '<span class="title">' . get_string('page') . ':</span>';
-    if ($page > 0) {
-        // Print previous link
-        $strprev = get_string('previous');
-        echo '<a class="previous" href="javascript:navigate(' . ($page - 1) . ');" title="'
-         . $strprev . '">(' . $strprev . ')</a>';
-    }
-    for ($i = 0; $i < $pages; $i++) {
-        if ($i == $page) {
-            echo '<span class="thispage">'.($i+1).'</span>';
-        } else {
-            echo '<a href="javascript:navigate(' . ($i) . ');">'.($i+1).'</a>';
-        }
-    }
-
-    if ($page < $pages - 1) {
-        // Print next link
-        $strnext = get_string('next');
-        echo '<a class="next" href="javascript:navigate(' . ($page + 1) . ');" title="'
-         . $strnext . '">(' . $strnext . ')</a>';
-    }
-    echo '</div>';
-}
-
 /// Functions to do with quiz grades //////////////////////////////////////////
 
 /**

@@ -14,6 +14,8 @@
     $return = optional_param('return', 0, PARAM_BOOL); //return to course/view.php if false or mod/modname/view.php if true
     $type   = optional_param('type', '', PARAM_ALPHANUM);
 
+    $PAGE->set_generaltype('form');
+
     require_login();
 
     if (!empty($add)) {

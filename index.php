@@ -34,18 +34,6 @@
     require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->libdir .'/filelib.php');
 
-    // Bounds for block widths
-    // more flexible for theme designers taken from theme config.php
-    $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
-    $lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
-    $rmin = (empty($THEME->block_r_min_width)) ? 100 : $THEME->block_r_min_width;
-    $rmax = (empty($THEME->block_r_max_width)) ? 210 : $THEME->block_r_max_width;
-
-    define('BLOCK_L_MIN_WIDTH', $lmin);
-    define('BLOCK_L_MAX_WIDTH', $lmax);
-    define('BLOCK_R_MIN_WIDTH', $rmin);
-    define('BLOCK_R_MAX_WIDTH', $rmax);
-
     // check if major upgrade needed - also present in login/index.php
     if (empty($CFG->version) or (int)$CFG->version < 2009011900 or !empty($CFG->adminsetuppending)) { //1.9 or older
         @require_logout();
@@ -97,36 +85,10 @@
     $PAGE->set_url('');
     $PAGE->set_docs_path('');
     $PAGE->set_generaltype('home');
-    $pageblocks = blocks_setup($PAGE);
     $editing = $PAGE->user_is_editing();
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
-                                            BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                            BLOCK_R_MAX_WIDTH);
-    print_header($SITE->fullname, $SITE->fullname, 'home', '', '', true, '', user_login_string($SITE).$langmenu);
-
-?>
-
-
-<table id="layout-table" summary="layout">
-  <tr>
-  <?php
-    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-    foreach ($lt as $column) {
-        switch ($column) {
-            case 'left':
-    if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
-        echo '<td style="width: '.$preferred_width_left.'px;" id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo '</td>';
-    }
-            break;
-            case 'middle':
-    echo '<td id="middle-column">'. skip_main_destination();
-
-    print_container_start();
+    $PAGE->set_title($SITE->fullname);
+    $PAGE->set_heading($SITE->fullname);
+    echo $OUTPUT->header('', user_login_string($SITE) . $langmenu);
 
 /// Print Section
     if ($SITE->numsections > 0) {
@@ -249,32 +211,4 @@
         echo '<br />';
     }
 
-    print_container_end();
-
-    echo '</td>';
-            break;
-            case 'right':
-    // The right column
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || $PAGE->user_allowed_editing()) {
-        echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
-        print_container_start();
-        if ($PAGE->user_allowed_editing()) {
-            echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
-            echo '<br />';
-        }
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        print_container_end();
-        echo '</td>';
-    }
-            break;
-        }
-    }
-?>
-
-  </tr>
-</table>
-
-
-<?php
-    print_footer();
-?>
+    echo $OUTPUT->footer();

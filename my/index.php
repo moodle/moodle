@@ -24,10 +24,6 @@
     $PAGE->set_url('my/index.php');
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
 
-    // Note: MDL-19010 there will be further changes to printing header and blocks.
-    // The code will be much nicer than this eventually.
-    $pageblocks = blocks_setup($PAGE,BLOCKS_PINNED_BOTH);
-
     if (($edit != -1) and $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
     }
@@ -49,32 +45,8 @@
 
     print_header($strmymoodle, $header, $navigation, '', '', true, $button, $loggedinas . $langmenu);
 
-    echo '<table id="layout-table">';
-    echo '<tr valign="top">';
-
-    $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
-    foreach ($lt as $column) {
-        switch ($column) {
-            case 'left':
-
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
-    if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
-        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo '</td>';
-    }
-    
-            break;
-            case 'middle':
-    
-    echo '<td valign="top" id="middle-column">';
-    print_container_start(TRUE);
-
 /// The main overview in the middle of the page
-    
+
     // limits the number of courses showing up
     $courses_limit = 21;
     if (!empty($CFG->mycoursesperpage)) {
@@ -95,39 +67,17 @@
             $courses[$c->id]->lastaccess = 0;
         }
     }
-    
+
     if (empty($courses)) {
-        print_simple_box(get_string('nocourses','my'),'center');
+        print_box(get_string('nocourses','my'));
     } else {
         print_overview($courses);
     }
-    
+
     // if more than 20 courses
     if (count($courses) > 20) {
         echo '<br />...';  
     }
-    
-    print_container_end();
-    echo '</td>';
-    
-            break;
-            case 'right':
-            
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
-
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
-        echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        print_container_end();
-        echo '</td>';
-    }
-            break;
-        }
-    }
-
-    /// Finish the page
-    echo '</tr></table>';
 
     print_footer();
 

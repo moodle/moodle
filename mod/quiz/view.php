@@ -57,8 +57,6 @@
 
 /// Initialize $PAGE, compute blocks
     $PAGE->set_url('mod/quiz/view.php', array('id' => $cm->id));
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
     $edit = optional_param('edit', -1, PARAM_BOOL);
     if ($edit != -1 && $PAGE->user_allowed_editing()) {
@@ -87,20 +85,6 @@
 
     $navigation = build_navigation(array(), $cm);
     print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm), false, $bodytags);
-
-/// Print any blocks on the left of the page.
-    echo '<table id="layout-table"><tr>';
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        print_container_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        print_container_end();
-        echo "</td>\n";
-    }
-
-/// Start the main part of the page
-    echo '<td id="middle-column">';
-    print_container_start();
 
 /// Print heading and tabs (if there is more than one).
     $currenttab = 'info';
@@ -133,7 +117,8 @@
     if (isguestuser()) {
         notice_yesno('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n<p>" .
                 get_string('liketologin') . "</p>\n", get_login_url(), get_referer(false));
-        finish_page($course);
+        print_footer($course);
+        exit;
     }
 
 /// If they are not enrolled in this course in a good enough role, tell them to enrol.
@@ -141,7 +126,8 @@
         print_box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
                 print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
                 "</p>\n", 'generalbox', 'notice');
-        finish_page($course);
+        print_footer($course);
+        exit;
     }
 
 /// Get this user's attempts.
@@ -398,23 +384,10 @@
     }
     print_box_end();
 
-    // Should we not be seeing if we need to print right-hand-side blocks?
-
-    finish_page($course);
-    
     // Mark module as viewed (note, we do this here and not in finish_page,
     // otherwise the 'not enrolled' error conditions would result in marking 
     // 'viewed', I think it's better if they don't.)
     $completion=new completion_info($course);
-    $completion->set_module_viewed(cm);
+    $completion->set_module_viewed($cm);
 
-// Utility functions =================================================================
-
-function finish_page($course) {
-    global $THEME;
-    print_container_end();
-    echo '</td></tr></table>';
     print_footer($course);
-    exit;
-}
-?>
