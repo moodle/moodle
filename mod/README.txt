@@ -12,7 +12,7 @@ Each of these modules contains a number of expected components:
 
   icon.gif: a 16x16 icon for the module
 
-  db/mysql.sql: an SQL dump of all the required db tables and data
+  db/install.xml: an SQL dump of all the required db tables and data
  
   index.php: a page to list all instances in a course
 
