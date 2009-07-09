@@ -112,10 +112,10 @@ if ($hassiteconfig
     $languages += get_list_of_languages();
     $temp->add(new admin_setting_configselect('moodlecourse/lang', get_string('forcelanguage'), '',key($languages),$languages));
 
-    if(!empty($CFG->enablecompletion)) {
+    if (!empty($CFG->enablecompletion)) {
         $temp->add(new admin_setting_heading('progress', get_string('progress','completion'), ''));
         $temp->add(new admin_setting_configselect('moodlecourse/enablecompletion', get_string('completion','completion'), '',
-            1,array(0 => get_string('completiondisabled','completion'), 1 => get_string('completionenabled','completion'))));
+            1, array(0 => get_string('completiondisabled','completion'), 1 => get_string('completionenabled','completion'))));
     }
     $ADMIN->add('courses', $temp);
 
