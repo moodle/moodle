@@ -1239,3 +1239,11 @@ function open_filepicker(id, params) {
     r.maxfiles = params.maxfiles;
     return r;
 }
+
+function id2_add_clientid(id, clientid) {
+	id2clientid[id] = clientid;
+}
+
+var id2_add_itemid(id, drafitemid) {
+	id2itemid[id] = drafitemid;
+}

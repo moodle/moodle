@@ -179,11 +179,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
 
             $str .= $repojs;
-            $str .= $PAGE->requires->data_for_js('id2clientid', Array($id=>$client_id))->asap();
-            $str .= $PAGE->requires->data_for_js('id2itemid', Array($id=>$draftitemid))->asap();
+            $str .= $PAGE->requires->js_function_call('id2_add_clientid', array($id, $client_id))->asap();
+            $str .= $PAGE->requires->js_function_call('id2_add_itemid', array($id, $draftitemid))->asap();
 
             if ($editor->supports_repositories()) {
-                $str .= $PAGE->requires->js_function_call('hide_item', Array("{$id}_filemanager"))->asap();
+                $str .= $PAGE->requires->js_function_call('hide_item', array("{$id}_filemanager"))->asap();
             }
         }
 
