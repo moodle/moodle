@@ -68,6 +68,8 @@ $THEME->layouts = array(
         'regions' => array(),
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
+    // This must not have any blocks, and it is good idea if it does not have links to
+    // other places - for example there should not be a home link in the footer..
     'maintenance' => array(
         'layout' => 'layout-popup.php',
         'regions' => array(),
