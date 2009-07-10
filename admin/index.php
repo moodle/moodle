@@ -228,7 +228,7 @@ if ($version > $CFG->version) {  // upgrade
         print_plugin_tables();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
         print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
-        print_footer('none');
+        print_footer();
         die();
 
     } else {
