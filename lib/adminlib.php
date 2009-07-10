@@ -5094,7 +5094,7 @@ function admin_externalpage_print_header($focus='') {
  * @deprecated since Moodle 1.9. Please use normal print_footer() instead
  */
 function admin_externalpage_print_footer() {
-// Still 103 referernces in core code. Don't do debugging output yet.
+// TODO Still 103 referernces in core code. Don't do debugging output yet.
 //    debugging('admin_externalpage_print_footer is deprecated. Please  use print_footer ' .
 //            '(or even $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
     print_footer();
