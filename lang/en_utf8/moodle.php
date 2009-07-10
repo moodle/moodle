@@ -1284,6 +1284,7 @@ $string['recentactivity'] = 'Recent Activity';
 $string['recentactivityreport'] = 'Full report of recent activity...';
 $string['recipientslist'] = 'Recipients list';
 $string['recreatedcategory'] = 'Recreated category $a';
+$string['redirect'] = 'Redirect';
 $string['refreshingevents'] = 'Refreshing events';
 $string['refresh'] = 'Refresh';
 $string['registration'] = 'Moodle Registration';

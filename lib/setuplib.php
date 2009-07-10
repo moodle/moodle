@@ -656,6 +656,29 @@ function get_real_size($size=0) {
 }
 
 /**
+ * Check whether a major upgrade is needed. That is defined as an upgrade that
+ * changes something really fundamental in the database, so nothing can possibly
+ * work until the database has been updated, and that is defined by the hard-coded
+ * version number in this function.
+ */
+function redirect_if_major_upgrade_required() {
+    global $CFG;
+    $lastmajordbchanges = 2009071000;
+    if (empty($CFG->version) or (int)$CFG->version < $lastmajordbchanges or
+            during_initial_install() or !empty($CFG->adminsetuppending)) {
+        try {
+            @session_get_instance()->terminate_current();
+        } catch (Exception $e) {
+            // Ignore any errors, redirect to upgrade anyway.
+        }
+        @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
+        @header('Location: ' . $CFG->wwwroot . '/' . $CFG->admin . '/index.php');
+        echo bootstrap_renderer::plain_redirect_message($encodedurl);
+        exit;
+    }
+}
+
+/**
  * Create a directory.
  *
  * @uses $CFG
@@ -839,39 +862,51 @@ class bootstrap_renderer {
         @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
         @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-        if (function_exists('get_string') && function_exists('get_html_lang')) {
-            $htmllang = get_html_lang();
+        if (function_exists('get_string')) {
             $strerror = get_string('error');
         } else {
-            $htmllang = '';
             $strerror = 'Error';
         }
 
-        $output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" ' . $htmllang . '>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>' . $strerror . '</title>
-</head><body>
-<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
+        $content = '<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
     border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
     width: 80%; -moz-border-radius: 20px; padding: 15px">
 ' . $message . '
 </div>';
         if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
             if (!empty($debuginfo)) {
-                $output .= '<div class="notifytiny">' . $debuginfo . '</div>';
+                $content .= '<div class="notifytiny">' . $debuginfo . '</div>';
             }
             if (!empty($backtrace)) {
-                $output .= '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
+                $content .= '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
             }
         }
-    
-        $output .= '</body></html>';
-        return $output;
+
+        return self::plain_page($strerror, $content);
     }
 
     public static function early_notification($message, $classes = 'notifyproblem') {
         return '<div class="' . $classes . '">' . $message . '</div>';
+    }
+
+    public static function plain_redirect_message($encodedurl) {
+        $message = '<p>' . get_string('pageshouldredirect') . '</p><p><a href="'.
+                $encodedurl .'">'. get_string('continue') .'</a></p>';
+        return plain_page(get_string('redirect'), $message);
+    }
+
+    protected static function plain_page($title, $content) {
+        if (function_exists('get_string') && function_exists('get_html_lang')) {
+            $htmllang = get_html_lang();
+        } else {
+            $htmllang = '';
+        }
+
+        return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ' . $htmllang . '>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>' . $title . '</title>
+</head><body>' . $content . '</body></html>';
     }
 }
