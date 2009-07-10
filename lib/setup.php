@@ -263,7 +263,7 @@ global $SCRIPT;
     setup_validate_php_configuration();
 
 /// Increase memory limits if possible
-    //raise_memory_limit('96M');    // We should never NEED this much but just in case...
+    raise_memory_limit('96M');    // We should never NEED this much but just in case...
 
     /// Connect to the database
     setup_DB();
