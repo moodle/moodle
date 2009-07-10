@@ -1298,7 +1298,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     }
     $output .= '<input type="submit" value="'.$submitvalue.'" '.$disabled.' />';
     if (!$showbutton) {
-        $output .= $PAGE->requires->js_function_call('hide_item', Array('noscript'.$formid))->asap();
+        $PAGE->requires->js_function_call('hide_item', Array('noscript'.$formid));
         $output .= '</div>';
     }
     $output .= '</div></form>';
