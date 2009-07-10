@@ -262,11 +262,11 @@ global $SCRIPT;
 /// make sure PHP is not severly misconfigured
     setup_validate_php_configuration();
 
-/// Connect to the database
-    setup_DB();
-
 /// Increase memory limits if possible
-    raise_memory_limit('96M');    // We should never NEED this much but just in case...
+    //raise_memory_limit('96M');    // We should never NEED this much but just in case...
+
+    /// Connect to the database
+    setup_DB();
 
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {
