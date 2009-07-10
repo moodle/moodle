@@ -25,21 +25,30 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Block Defines
+/**#@+
+ * @deprecated since Moodle 2.0. No longer used.
  */
 define('BLOCK_MOVE_LEFT',   0x01);
 define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 define('BLOCK_CONFIGURE',   0x10);
+/**#@-*/
 
+/**#@+
+ * Default names for the block regions in the standard theme.
+ */
 define('BLOCK_POS_LEFT',  'side-pre');
 define('BLOCK_POS_RIGHT', 'side-post');
+/**#@-*/
 
+/**#@+
+ * @deprecated since Moodle 2.0. No longer used.
+ */
 define('BLOCKS_PINNED_TRUE',0);
 define('BLOCKS_PINNED_FALSE',1);
 define('BLOCKS_PINNED_BOTH',2);
+/**#@-*/
 
 /**
  * Exception thrown when someone tried to do something with a block that does
@@ -379,13 +388,13 @@ class block_manager {
         }
 
         $context = $this->page->context;
-        $contexttest = 'bi.contextid = :contextid2';
+        $contexttest = 'bi.parentcontextid = :contextid2';
         $parentcontextparams = array();
         $parentcontextids = get_parent_contexts($context);
         if ($parentcontextids) {
             list($parentcontexttest, $parentcontextparams) =
                     $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED, 'parentcontext0000');
-            $contexttest = "($contexttest OR (bi.showinsubcontexts = 1 AND bi.contextid $parentcontexttest))";
+            $contexttest = "($contexttest OR (bi.showinsubcontexts = 1 AND bi.parentcontextid $parentcontexttest))";
         }
 
         $pagetypepatterns = $this->matching_page_type_patterns($this->page->pagetype);
@@ -403,7 +412,7 @@ class block_manager {
                     bi.id,
                     bp.id AS blockpositionid,
                     bi.blockname,
-                    bi.contextid,
+                    bi.parentcontextid,
                     bi.showinsubcontexts,
                     bi.pagetypepattern,
                     bi.subpagepattern,
@@ -473,7 +482,7 @@ class block_manager {
 
         $blockinstance = new stdClass;
         $blockinstance->blockname = $blockname;
-        $blockinstance->contextid = $this->page->context->id;
+        $blockinstance->parentcontextid = $this->page->context->id;
         $blockinstance->showinsubcontexts = !empty($showinsubcontexts);
         $blockinstance->pagetypepattern = $pagetypepattern;
         $blockinstance->subpagepattern = $subpagepattern;
@@ -902,7 +911,7 @@ function blocks_delete_all_for_context($contextid) {
         blocks_delete_instance($instance, true);
     }
     $instances->close();
-    $DB->delete_records('block_instances', array('contextid' => $contextid));
+    $DB->delete_records('block_instances', array('parentcontextid' => $contextid));
     $DB->delete_records('block_positions', array('contextid' => $contextid));
 }
 
@@ -1204,7 +1213,7 @@ function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceori
 
             $region = $page->blocks->get_default_region();
             $weight = $DB->get_field_sql("SELECT MAX(defaultweight) FROM {block_instances} 
-                    WHERE contextid = ? AND defaultregion = ?", array($page->context->id, $region));
+                    WHERE parentcontextid = ? AND defaultregion = ?", array($page->context->id, $region));
             $pagetypepattern = $page->pagetype;
             if (strpos($pagetypepattern, 'course-view') === 0) {
                 $pagetypepattern = 'course-view-*';

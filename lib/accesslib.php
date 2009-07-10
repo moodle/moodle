@@ -2224,7 +2224,7 @@ function create_context($contextlevel, $instanceid) {
             // Only non-pinned & course-page based
             $sql = "SELECT ctx.path, ctx.depth
                       FROM {context} ctx
-                      JOIN {block_instances} bi ON (bi.contextid=ctx.id)
+                      JOIN {block_instances} bi ON (bi.parentcontextid=ctx.id)
                      WHERE bi.id=? AND ctx.contextlevel=?";
             $params = array($instanceid, CONTEXT_COURSE);
             if ($p = $DB->get_record_sql($sql, $params)) {
@@ -2539,7 +2539,7 @@ function preload_course_contexts($courseid) {
 
             SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
               FROM {context} px
-              JOIN {block_instances} bi ON bi.contextid = px.id
+              JOIN {block_instances} bi ON bi.parentcontextid = px.id
               JOIN {context} x ON x.instanceid=bi.id
               WHERE px.instanceid = ? AND px.contextlevel = ".CONTEXT_COURSE."
                    AND x.contextlevel=".CONTEXT_BLOCK."
@@ -6076,7 +6076,7 @@ function build_context_path($force=false) {
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
               JOIN {block_instances} bi ON ctx.instanceid = bi.id
-              JOIN {context} pctx ON bi.contextid = pctx.id
+              JOIN {context} pctx ON bi.parentcontextid = pctx.id
              WHERE ctx.contextlevel=".CONTEXT_BLOCK."
                    AND NOT EXISTS (SELECT 'x'
                                    FROM {context_temp} temp

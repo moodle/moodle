@@ -2177,12 +2177,12 @@
         <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="block_instances" COMMENT="This table stores block instances. The type of block this is is given by the block name column. The places this block instance appears is controlled by the contextid, showinsubcontexts, pagetypepattern and subpagepattern fields. Where the block appears on the page (by default) is controlled by the defaultposition and defaultweight columns. The block's own configuration is stored serialized in configdata." PREVIOUS="block" NEXT="block_positions">
+    <TABLE NAME="block_instances" COMMENT="This table stores block instances. The type of block this is is given by the blockname column. The places this block instance appears is controlled by the parentcontexid, showinsubcontexts, pagetypepattern and subpagepattern fields. Where the block appears on the page (by default) is controlled by the defaultposition and defaultweight columns. The block's own configuration is stored serialized in configdata." PREVIOUS="block" NEXT="block_positions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockname"/>
-        <FIELD NAME="blockname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The type of block this is. Foreign key, references block.name." PREVIOUS="id" NEXT="contextid"/>
-        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context within which this block appears. Foreign key, references context.id." PREVIOUS="blockname" NEXT="showinsubcontexts"/>
-        <FIELD NAME="showinsubcontexts" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If 1, this block appears on all matching pages in subcontexts of this contextid, as well in contextid." PREVIOUS="contextid" NEXT="pagetypepattern"/>
+        <FIELD NAME="blockname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The type of block this is. Foreign key, references block.name." PREVIOUS="id" NEXT="parentcontextid"/>
+        <FIELD NAME="parentcontextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context within which this block appears. Foreign key, references context.id." PREVIOUS="blockname" NEXT="showinsubcontexts"/>
+        <FIELD NAME="showinsubcontexts" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="If 1, this block appears on all matching pages in subcontexts of parentcontextid, as well in pages belonging to parentcontextid." PREVIOUS="parentcontextid" NEXT="pagetypepattern"/>
         <FIELD NAME="pagetypepattern" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The types of page this block appears on. Either an exact page type like mod-quiz-view, or a pattern like mod-quiz-* or course-view-*. Note that course-view-* will match course-view." PREVIOUS="showinsubcontexts" NEXT="subpagepattern"/>
         <FIELD NAME="subpagepattern" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Further restrictions on where this block appears. In some places, e.g. during a quiz or lesson attempt, different pages have different subpage ids. If this field is not null, the block only appears on that particular subpage." PREVIOUS="pagetypepattern" NEXT="defaultregion"/>
         <FIELD NAME="defaultregion" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region this block should appear in on each page, in the absence of a specific position in the block_positions table." PREVIOUS="subpagepattern" NEXT="defaultweight"/>
@@ -2190,11 +2190,11 @@
         <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="A serialized blob of configuration data for this block instance." PREVIOUS="defaultweight"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
-        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="parentcontextid"/>
+        <KEY NAME="parentcontextid" TYPE="foreign" FIELDS="parentcontextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="contextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="contextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
+        <INDEX NAME="parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="parentcontextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances">
