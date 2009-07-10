@@ -35,8 +35,11 @@
     require_once($CFG->libdir .'/filelib.php');
 
     // check if major upgrade needed - also present in login/index.php
-    if (empty($CFG->version) or (int)$CFG->version < 2009011900 or !empty($CFG->adminsetuppending)) { //1.9 or older
-        @require_logout();
+    if (empty($CFG->version) or (int)$CFG->version < 2009071000 or !empty($CFG->adminsetuppending)) { //1.9 or older
+        try {
+            @require_logout();
+        } catch (Exception $e) {
+        }
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
 
