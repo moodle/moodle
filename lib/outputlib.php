@@ -1782,7 +1782,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             case moodle_page::STATE_IN_BODY :
                 // We really shouldn't be here but we can deal with this
                 debugging("You should really redirect before you start page output");
-                if (!$disableredirect) {
+                if (!$debugdisableredirect) {
                     $this->page->requires->js_function_call('document.location.replace', array($url))->after_delay($delay);
                 }
                 $output = $this->opencontainers->pop_all_but_last();
