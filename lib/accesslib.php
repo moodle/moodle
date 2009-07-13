@@ -3191,7 +3191,7 @@ function get_child_contexts($context) {
         case CONTEXT_SYSTEM:
             // Just get all the contexts except for CONTEXT_SYSTEM level.
             $sql = 'SELECT c.id '.
-                     'FROM '.$CFG->prefix.'context AS c '.
+                     'FROM '.$CFG->prefix.'context c '.
                     'WHERE contextlevel != '.CONTEXT_SYSTEM;
 
             $contexts = get_records_sql($sql);
