@@ -5442,7 +5442,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             if (!defined('DEBUGGING_PRINTED')) {
                 define('DEBUGGING_PRINTED', 1); // indicates we have printed something
             }
-            notify($message . $from, 'notifytiny');
+            echo '<div class="notifytiny">' . $message . $from . '</div>';
         } else {
             trigger_error($message . $from, E_USER_NOTICE);
         }
