@@ -925,6 +925,9 @@ function cron_setup_user($user=null, $course=null) {
         }
     }
 
+    // TODO MDL-19774 relying on global $PAGE in cron is a bad idea.
+    // Temporary hack so that cron does not give fatal errors.
+    $PAGE = new moodle_page();
     if ($course) {
         $PAGE->set_course($course);
     } else {
