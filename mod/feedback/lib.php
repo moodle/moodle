@@ -40,8 +40,10 @@ define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens i
 
 //initialize the feedback-Session - not nice at all!!
 global $SESSION;
-if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
-    $SESSION->feedback = new object();
+if (!empty($SESSION)) {
+    if (!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
+        $SESSION->feedback = new object();
+    }
 }
 
 /**
