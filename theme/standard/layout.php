@@ -38,7 +38,6 @@
             </td>
             <?php } ?>
             <td id="content">
-                <?php echo $OUTPUT->skip_link_target(); ?>
                 [MAIN CONTENT GOES HERE]
             </td>
             <?php if ($PAGE->blocks->region_has_content('side-post')) { ?>
