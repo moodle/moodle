@@ -2936,6 +2936,9 @@ class html_table extends moodle_html_component {
 
             }
         }
+        if (empty($this->classes)) { // must be done before align
+            $this->set_classes(array('generaltable'));
+        }
         if (!empty($this->tablealign)) {
             $this->add_class('boxalign' . $this->tablealign);
         }
@@ -2943,9 +2946,6 @@ class html_table extends moodle_html_component {
             $this->add_class('rotateheaders');
         } else {
             $this->rotateheaders = false; // Makes life easier later.
-        }
-        if (empty($this->classes)) {
-            $this->set_classes(array('generaltable'));
         }
         parent::prepare();
     }
