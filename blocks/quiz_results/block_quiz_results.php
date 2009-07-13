@@ -50,8 +50,6 @@ class block_quiz_results extends block_base {
             $quizid = 0;
         }
 
-        $context = $this->page->context;
-
         if (empty($quizid)) {
             $this->content->text = get_string('error_emptyquizid', 'block_quiz_results');
             return $this->content;
@@ -84,15 +82,17 @@ class block_quiz_results extends block_base {
         if (!empty($this->config->usegroups)) {
             if ($inquiz) {
                 $cm = $this->page->cm;
+                $context = $this->page->context;
             } else {
                 $cm = get_coursemodule_from_instance('quiz', $quizid, $courseid);
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             }
             $groupmode = groups_get_activity_groupmode($cm);
-        }
 
-        if (has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
-            // We 'll make an exception in this case
-            $groupmode = VISIBLEGROUPS;
+            if ($groupmode == SEPARATEGROUPS && has_capability('moodle/site:accessallgroups', $context)) {
+                // We 'll make an exception in this case
+                $groupmode = VISIBLEGROUPS;
+            }
         }
 
         switch ($groupmode) {

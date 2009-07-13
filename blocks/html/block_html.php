@@ -25,7 +25,7 @@ class block_html extends block_base {
         }
 
         if ($this->content_is_trusted()) {
-            // fancy html allowed only on course page and in pinned blocks for security reasons
+            // fancy html allowed only on course, category and system blocks.
             $filteropt = new stdClass;
             $filteropt->noclean = true;
         } else {
@@ -88,7 +88,7 @@ class block_html extends block_base {
                     $blockobject = block_instance('html', $instance);
                     $blockobject->config->text = restore_decode_absolute_links($blockobject->config->text);
                     $blockobject->config->text = restore_decode_content_links_worker($blockobject->config->text, $restore);
-                    $blockobject->instance_config_commit($blockobject->pinned);
+                    $blockobject->instance_config_commit();
                 }
             }
         }

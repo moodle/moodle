@@ -76,6 +76,12 @@ class block_base {
     public $page       = NULL;
 
     /**
+     * This blocks's context.
+     * @var stdClass
+     */
+    public $context    = NULL;
+
+    /**
      * An object containing the instance configuration information for the current instance of this block.
      * @var stdObject $config
      */
@@ -87,11 +93,6 @@ class block_base {
      */
 
     var $cron          = NULL;
-
-    /**
-     * Indicates blocked is pinned - can not be moved, always present, does not have own context
-     */
-    var $pinned        = false;
 
 /// Class Functions
 
@@ -300,16 +301,7 @@ class block_base {
      * @return boolean
      */
     function is_empty() {
-
-        // TODO - temporary hack to get the block context only if it already exists.
-        global $DB;
-        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        } else {
-            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-        }
-
-        if ( !has_capability('moodle/block:view', $context) ) {
+        if ( !has_capability('moodle/block:view', $this->context) ) {
             return true;
         }
 
@@ -419,15 +411,7 @@ class block_base {
      * @since Moodle 2.0.
      */
     protected function get_edit_controls($output) {
-        global $CFG, $DB;
-
-        // TODO - temporary hack to get the block context only if it already exists.
-        global $DB;
-        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        } else {
-            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-        }
+        global $CFG;
 
         $returnurlparam = '&amp;returnurl=' . urlencode($this->page->url->out_returnurl());
         $actionurl = $CFG->wwwroot.'/blocks/action.php?block=' . $this->instance->id .
@@ -436,8 +420,8 @@ class block_base {
         $controls = array();
 
         // Assign roles icon.
-        if ($context->contextlevel == CONTEXT_BLOCK && has_capability('moodle/role:assign', $context)) {
-            $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
+        if (has_capability('moodle/role:assign', $this->context)) {
+            $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$this->context->id,
                     'icon' => $output->old_icon_url('i/roles'), 'caption' => get_string('assignroles', 'role'));
         }
 
@@ -604,12 +588,12 @@ class block_base {
         if (!empty($instance->configdata)) {
             $this->config = unserialize(base64_decode($instance->configdata));
         }
-        // [pj] This line below is supposed to be an optimization (we don't need configdata anymore)
-        // but what it does is break in PHP5 because the same instance object will be passed to
-        // this function twice in each page view, and the second time it won't have any configdata
-        // so it won't work correctly. Thus it's commented out.
-        // unset($instance->configdata);
         $this->instance = $instance;
+        if (isset($instance->context)) {
+            $this->context = $instance->context;
+        } else {
+            $this->context = get_context_instance(CONTEXT_BLOCK, $instance->id);
+        }
         $this->page = $page;
         $this->specialization();
     }
@@ -795,16 +779,7 @@ class block_list extends block_base {
     var $content_type  = BLOCK_TYPE_LIST;
 
     function is_empty() {
-
-        // TODO - temporary hack to get the block context only if it already exists.
-        global $DB;
-        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        } else {
-            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-        }
-
-        if ( !has_capability('moodle/block:view', $context) ) {
+        if ( !has_capability('moodle/block:view', $this->context) ) {
             return true;
         }
 

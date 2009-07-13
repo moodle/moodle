@@ -483,8 +483,9 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         if (empty($USER->id)) {
             // Session not set up yet.
             $userid = 0;
+        } else {
+            $userid = $USER->id;
         }
-        $userid = $USER->id;
     }
 
     if (is_null($context->path) or $context->depth == 0) {
@@ -2221,11 +2222,10 @@ function create_context($contextlevel, $instanceid) {
             break;
 
         case CONTEXT_BLOCK:
-            // Only non-pinned & course-page based
             $sql = "SELECT ctx.path, ctx.depth
                       FROM {context} ctx
                       JOIN {block_instances} bi ON (bi.parentcontextid=ctx.id)
-                     WHERE bi.id=? AND ctx.contextlevel=?";
+                     WHERE bi.id = ?";
             $params = array($instanceid, CONTEXT_COURSE);
             if ($p = $DB->get_record_sql($sql, $params)) {
                 $basepath  = $p->path;
@@ -2410,7 +2410,8 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
 
     }
 
-    if (empty($contextlevel) or $contextlevel == CONTEXT_MODULE) {
+    if (empty($contextlevel) or $contextlevel == CONTEXT_MODULE
+                             or $contextlevel == CONTEXT_BLOCK) {
         $sql = "INSERT INTO {context} (contextlevel, instanceid)
                 SELECT ".CONTEXT_MODULE.", cm.id
                   FROM {course}_modules cm
@@ -2418,6 +2419,19 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                                      FROM {context} cx
                                     WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
         $DB->execute($sql);
+    }
+
+    if (empty($contextlevel) or $contextlevel == CONTEXT_USER
+                             or $contextlevel == CONTEXT_BLOCK) {
+        $sql = "INSERT INTO {context} (contextlevel, instanceid)
+                SELECT ".CONTEXT_USER.", u.id
+                  FROM {user} u
+                 WHERE u.deleted=0
+                   AND NOT EXISTS (SELECT 'x'
+                                     FROM {context} cx
+                                    WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
+        $DB->execute($sql);
+
     }
 
     if (empty($contextlevel) or $contextlevel == CONTEXT_BLOCK) {
@@ -2428,18 +2442,6 @@ function create_contexts($contextlevel=null, $buildpaths=true) {
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
         $DB->execute($sql);
-    }
-
-    if (empty($contextlevel) or $contextlevel == CONTEXT_USER) {
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_USER.", u.id
-                  FROM {user} u
-                 WHERE u.deleted=0
-                   AND NOT EXISTS (SELECT 'x'
-                                     FROM {context} cx
-                                    WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
-        $DB->execute($sql);
-
     }
 
     if ($buildpaths) {
@@ -2513,10 +2515,10 @@ function cleanup_contexts() {
 }
 
 /**
- * Preloads all contexts relating to a course: course, modules, and blocks.
+ * Preloads all contexts relating to a course: course, modules. Block contexts
+ * are no longer loaded here. The contexts for all the blocks on the current
+ * page are now efficiently loaded by {@link block_manager::load_blocks()}.
  *
- * @global object
- * @global object
  * @param int $courseid Course ID
  * @return void
  */
@@ -2538,15 +2540,6 @@ function preload_course_contexts($courseid) {
          UNION ALL
 
             SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
-              FROM {context} px
-              JOIN {block_instances} bi ON bi.parentcontextid = px.id
-              JOIN {context} x ON x.instanceid=bi.id
-              WHERE px.instanceid = ? AND px.contextlevel = ".CONTEXT_COURSE."
-                   AND x.contextlevel=".CONTEXT_BLOCK."
-
-         UNION ALL
-
-            SELECT x.instanceid, x.id, x.contextlevel, x.path, x.depth
               FROM {context} x
              WHERE x.instanceid=? AND x.contextlevel=".CONTEXT_COURSE."";
 
@@ -2564,8 +2557,6 @@ function preload_course_contexts($courseid) {
  *
  * @todo Remove code branch from previous fix MDL-9016 which is no longer needed
  *
- * @global object
- * @global object
  * @param integer $level The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
  * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
  *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
@@ -3482,7 +3473,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
     $name = '';
     switch ($context->contextlevel) {
 
-        case CONTEXT_SYSTEM: // by now it's a definite an inherit
+        case CONTEXT_SYSTEM:
             $name = get_string('coresystem');
             break;
 
@@ -3495,7 +3486,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             }
             break;
 
-        case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
+        case CONTEXT_COURSECAT:
             if ($category = $DB->get_record('course_categories', array('id'=>$context->instanceid))) {
                 if ($withprefix){
                     $name = get_string('category').': ';
@@ -3504,7 +3495,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             }
             break;
 
-        case CONTEXT_COURSE: // 1 to 1 to course cat
+        case CONTEXT_COURSE:
             if ($context->instanceid == SITEID) {
                 $name = get_string('frontpage', 'admin');
             } else {
@@ -3521,7 +3512,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             }
             break;
 
-        case CONTEXT_MODULE: // 1 to 1 to course
+        case CONTEXT_MODULE:
             if ($cm = $DB->get_record_sql('SELECT cm.*, md.name AS modname FROM {course_modules} cm ' .
                     'JOIN {modules} md ON md.id = cm.module WHERE cm.id = ?', array($context->instanceid))) {
                 if ($mod = $DB->get_record($cm->modname, array('id' => $cm->instance))) {
@@ -3533,7 +3524,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
                 }
             break;
 
-        case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
+        case CONTEXT_BLOCK:
             if ($blockinstance = $DB->get_record('block_instances', array('id'=>$context->instanceid))) {
                 global $CFG;
                 require_once("$CFG->dirroot/blocks/moodleblock.class.php");
@@ -3893,14 +3884,12 @@ function get_sorted_contexts($select, $params = array()) {
  * displayed in the course page.
  *
  * For course category contexts it will return categories and courses. It will
- * NOT recurse into courses - if you want to do that, call it on the returned
- * courses.
+ * NOT recurse into courses, nor return blocks on the category pages. If you
+ * want to do that, call it on the returned courses.
  *
  * If called on a course context it _will_ populate the cache with the appropriate
  * contexts ;-)
  *
- * @global object
- * @global object
  * @param object $context.
  * @return array Array of child records
  */
@@ -3920,14 +3909,23 @@ function get_child_contexts($context) {
         break;
 
         case CONTEXT_MODULE:
-            // No children.
-            return array();
-        break;
+            // Find
+            // - blocks under this context path.
+            $sql = " SELECT ctx.*
+                       FROM {context} ctx
+                      WHERE ctx.path LIKE ?
+                            AND ctx.contextlevel = ".CONTEXT_BLOCK;
+            $params = array("{$context->path}/%", $context->instanceid);
+            $records = $DB->get_recordset_sql($sql, $params);
+            foreach ($records as $rec) {
+                cache_context($rec);
+            }
+            return $records;
+            break;
 
         case CONTEXT_COURSE:
             // Find
-            // - module instances - easy
-            // - blocks assigned to the course-view page explicitly - easy
+            // - modules and blocks under this context path.
             $sql = " SELECT ctx.*
                        FROM {context} ctx
                       WHERE ctx.path LIKE ?
@@ -3957,9 +3955,20 @@ function get_child_contexts($context) {
         break;
 
         case CONTEXT_USER:
-            // No children.
-            return array();
-        break;
+            // Find
+            // - blocks under this context path.
+            $sql = " SELECT ctx.*
+                       FROM {context} ctx
+                      WHERE ctx.path LIKE ?
+                            AND ctx.contextlevel = ".CONTEXT_BLOCK;
+            $params = array("{$context->path}/%", $context->instanceid);
+            $records = $DB->get_recordset_sql($sql, $params);
+            foreach ($records as $rec) {
+                cache_context($rec);
+            }
+            return $records;
+            break;
+            break;
 
         case CONTEXT_SYSTEM:
             // Just get all the contexts except for CONTEXT_SYSTEM level
@@ -3973,7 +3982,7 @@ function get_child_contexts($context) {
 
         default:
             print_error('unknowcontext', '', '', $context->contextlevel);
-        return false;
+            return false;
     }
 }
 
@@ -5828,10 +5837,16 @@ function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS)
     // If necessary, get the localised names.
     if ($rolenamedisplay != ROLENAME_ORIGINAL && !empty($context->id)) {
         // Make sure we have a course context.
-        if ($context->contextlevel == CONTEXT_MODULE || $context->contextlevel == CONTEXT_BLOCK) {  // find the parent course context
+        if ($context->contextlevel == CONTEXT_MODULE) {
             if ($parentcontextid = array_shift(get_parent_contexts($context))) {
                 $context = get_context_instance_by_id($parentcontextid);
             }
+        } else if ($context->contextlevel == CONTEXT_BLOCK) {
+            do {
+                if ($parentcontextid = array_shift(get_parent_contexts($context))) {
+                    $context = get_context_instance_by_id($parentcontextid);
+                }
+            } while ($parentcontextid && $context->contextlevel != CONTEXT_COURSE);
         }
 
         // The get the relevant renames, and use them.
@@ -5925,8 +5940,6 @@ function rebuild_contexts(array $fixcontexts) {
 /**
  * Populate context.path and context.depth where missing.
  *
- * @global object
- * @global object
  * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
  */
 function build_context_path($force=false) {

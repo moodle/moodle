@@ -96,16 +96,7 @@
             }
         }
 
-        // TODO - temporary hack to get the block context only if it already exists.
-        global $DB;
-        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        } else {
-            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-        }
-
-        if (has_capability('block/rss_client:createsharedfeeds', $context)
-                || has_capability('block/rss_client:createprivatefeeds', $context)) {
+        if (has_any_capability(array('block/rss_client:createsharedfeeds', 'block/rss_client:createprivatefeeds'), $this->context)) {
 
             $page = $this->page;
             //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
@@ -122,7 +113,7 @@
                 $output .= '<div class="info"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
             } else {
                 // This instance has not been configured yet - show configure link?
-                if (has_capability('block/rss_client:manageanyfeeds', $context)) {
+                if (has_capability('block/rss_client:manageanyfeeds', $this->context)) {
                     $script = $page->url->out(
                                     array('instanceid' => $this->instance->id,
                                           'sesskey' => sesskey(),

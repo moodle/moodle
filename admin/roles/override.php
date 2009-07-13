@@ -39,13 +39,15 @@
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
 /// Get the base URL for this and related pages into a convenient variable.
-    $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/override.php?contextid=' . $contextid;
+    $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
-        $baseurl .= '&amp;userid=' . $userid;
+        $urlparams['userid'] = $userid;
     }
     if ($courseid && $courseid != SITEID) {
-        $baseurl .= '&amp;courseid=' . $courseid;
+        $urlparams['courseid'] = $courseid;
     }
+    $PAGE->set_url($CFG->admin . '/roles/override.php', $urlparams);
+    $baseurl = $PAGE->url->out();
 
 /// Validate the contextid parameter.
     if (!$context = $DB->get_record('context', array('id'=>$contextid))) {
@@ -258,6 +260,5 @@
         }
     }
 
-    print_footer($course);
-
+    print_footer();
 ?>

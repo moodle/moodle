@@ -93,17 +93,10 @@ print_box_start();
                     print $checkbox . $feedtitle .'<br />'."\n";
                 }
             } else {
-                // TODO - temporary hack to get the block context only if it already exists.
-                global $DB;
-                if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-                    $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-                } else {
-                    $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-                }
                 print_string('nofeeds', 'block_rss_client');
 
-                if (has_capability('block/rss_client:createprivatefeeds', $context)
-                        || has_capability('block/rss_client:createsharedfeeds', $context)) {
+                if (has_capability('block/rss_client:createprivatefeeds', $this->context)
+                        || has_capability('block/rss_client:createsharedfeeds', $this->context)) {
 
                     $addrsspage = $page->url->out(array('instanceid' => $this->instance->id,
                                                             'sesskey' => sesskey(),
@@ -175,17 +168,10 @@ print_box_start();
 } else {
   global $act, $url, $rssid, $preferredtitle, $shared;
   print '</div></form></div>';   // Closes off page form
-  // TODO - temporary hack to get the block context only if it already exists.
-  global $DB;
-  if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-    $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-  } else {
-    $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-  }
 
   print_box_start();
   rss_display_feeds($id, $USER->id, '', $context);
-  rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
+  rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $this->context);
   print_box_end();
 }
 ?>

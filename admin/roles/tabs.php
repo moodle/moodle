@@ -121,7 +121,7 @@ if ($currenttab != 'update') {
             if ($blockinstance = $DB->get_record('block_instances', array('id' => $context->instanceid))) {
                 $blockname = print_context_name($context);
 
-                $parentcontext = get_context_instance_by_id($blockinstance->contextid);
+                $parentcontext = get_context_instance_by_id($blockinstance->parentcontextid);
                 $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
                 $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
                 switch ($parentcontext->contextlevel) {

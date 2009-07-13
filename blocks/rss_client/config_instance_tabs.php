@@ -5,15 +5,7 @@
 global $USER;
 $tabs = $row = array();
 
-    // TODO - temporary hack to get the block context only if it already exists.
-    global $DB;
-    if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-    } else {
-        $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-    }
-
-if (has_capability('moodle/site:manageblocks', $context)) {
+if (has_capability('moodle/site:manageblocks', $this->context)) {
     $script = $page->url->out(array('instanceid' => $this->instance->id, 'sesskey' => sesskey(), 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $id, 'section' => 'rss'));
     $row[] = new tabobject('configblock', $script,
                 get_string('configblock', 'block_rss_client'));

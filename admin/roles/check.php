@@ -37,6 +37,15 @@
     $userid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
+    $urlparams = array('contextid' => $contextid);
+    if (!empty($userid)) {
+        $urlparams['userid'] = $userid;
+    }
+    if ($courseid && $courseid != SITEID) {
+        $urlparams['courseid'] = $courseid;
+    }
+    $PAGE->set_url($CFG->admin . '/roles/check.php', $urlparams);
+
     if (! $context = get_context_instance_by_id($contextid)) {
         print_error('wrongcontextid', 'error');
     }
@@ -75,10 +84,10 @@
 /// Teachers within a course just get to see the same list of people they can
 /// assign roles to. Admins (people with moodle/role:manage) can run this report for any user.
     $options = array('context' => $context, 'roleid' => 0);
-    if ($context->contextlevel > CONTEXT_COURSE && !is_inside_frontpage($context) && !has_capability('moodle/role:manage', $context)) {
-        $userselector = new potential_assignees_below_course('reportuser', $options);
-    } else {
+    if (has_capability('moodle/role:manage', $context)) {
         $userselector = new potential_assignees_course_and_above('reportuser', $options);
+    } else {
+        $userselector = roles_get_potential_user_selector($context, 'reportuser', $options);
     }
     $userselector->set_multiselect(false);
     $userselector->set_rows(10);
@@ -177,5 +186,5 @@
             get_string('backto', '', $contextname) . '</a></div>';
     }
 
-    print_footer($course);
+    print_footer();
 ?>

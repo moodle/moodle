@@ -961,7 +961,7 @@ abstract class role_assign_user_selector_base extends user_selector_base {
 /**
  * User selector subclass for the list of potential users on the assign roles page,
  * when we are assigning in a context below the course level. (CONTEXT_MODULE and
- * CONTEXT_BLOCK).
+ * some CONTEXT_BLOCK).
  *
  * In this case we replicate part of get_users_by_capability() get the users
  * with moodle/course:view (or moodle/site:doanything). We can't use
@@ -1466,6 +1466,34 @@ class role_allow_switch_page extends role_allow_role_page {
     public function get_intro_text() {
         return get_string('configallowswitch', 'admin');
     }
+}
+
+/**
+ * Get the potential assignees selector for a given context.
+ *
+ * If this context is a course context, or inside a course context (module or
+ * some blocks) then return a potential_assignees_below_course object. Otherwise
+ * return a potential_assignees_course_and_above.
+ *
+ * @param $context a context.
+ * @param $name passed to user selector constructor.
+ * @param $options to user selector constructor.
+ * @return user_selector_base an appropriate user selector.
+ */
+function roles_get_potential_user_selector($context, $name, $options) {
+        $blockinsidecourse = false;
+        if ($context->contextlevel == CONTEXT_BLOCK) {
+            $parentcontext = get_context_instance_by_id(get_parent_contextid($context));
+            $blockinsidecourse = in_array($parentcontext->contextlevel, array(CONTEXT_MODULE, CONTEXT_COURSE));
+        }
+
+        if (($context->contextlevel == CONTEXT_MODULE || $blockinsidecourse) &&
+                !is_inside_frontpage($context)) {
+            $potentialuserselector = new potential_assignees_below_course('addselect', $options);
+        } else {
+            $potentialuserselector = new potential_assignees_course_and_above('addselect', $options);
+        }
+    return $potentialuserselector;
 }
 
 ?>

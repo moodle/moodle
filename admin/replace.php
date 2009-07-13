@@ -46,7 +46,7 @@ $instances = $DB->get_recordset('block_instances', array('blockname' => 'html'))
 foreach ($instances as $instance) {
     $blockobject = block_instance('html', $instance);
     $blockobject->config->text = str_replace($search, $replace, $blockobject->config->text);
-    $blockobject->instance_config_commit($blockobject->pinned);
+    $blockobject->instance_config_commit();
 }
 $instances->close();
 

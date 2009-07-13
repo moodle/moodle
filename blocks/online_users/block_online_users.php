@@ -34,21 +34,10 @@ class block_online_users extends block_base {
         }
         $timefrom = 100 * floor((time()-$timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
 
-        // Get context so we can check capabilities.
-        $context = $this->page->context;
-
-        // TODO - temporary hack to get the block context only if it already exists.
-        global $DB;
-        if ($DB->record_exists('context', array('contextlevel' => CONTEXT_BLOCK, 'instanceid' => $this->instance->id))) {
-            $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        } else {
-            $context = get_context_instance(CONTEXT_SYSTEM); // pinned blocks do not have own context
-        }
-
         //Calculate if we are in separate groups
         $isseparategroups = ($this->page->course->groupmode == SEPARATEGROUPS
                              && $this->page->course->groupmodeforce
-                             && !has_capability('moodle/site:accessallgroups', $context));
+                             && !has_capability('moodle/site:accessallgroups', $this->page->context));
 
         //Get the user current group
         $currentgroup = $isseparategroups ? groups_get_course_group($this->page->course) : NULL;
@@ -81,8 +70,8 @@ class block_online_users extends block_base {
                   GROUP BY u.id";
 
         } else { // Course-level
-            if (!has_capability('moodle/role:viewhiddenassigns', $context)) {
-                $pcontext = get_related_contexts_string($context);
+            if (!has_capability('moodle/role:viewhiddenassigns', $this->page->context)) {
+                $pcontext = get_related_contexts_string($this->page->context);
                 $rafrom  = ", {role_assignments} ra";
                 $rawhere = " AND ra.userid = u.id AND ra.contextid $pcontext AND ra.hidden = 0";
             }
@@ -111,7 +100,7 @@ class block_online_users extends block_base {
         $minutes  = floor($timetoshowusers/60);
 
         // Verify if we can see the list of users, if not just print number of users
-        if (!has_capability('block/online_users:viewlist', $context)) {
+        if (!has_capability('block/online_users:viewlist', $this->page->context)) {
             if (!$usercount = $DB->count_records_sql($csql, $params)) {
                 $usercount = get_string("none");
             }
@@ -142,7 +131,7 @@ class block_online_users extends block_base {
             //Accessibility: Don't want 'Alt' text for the user picture; DO want it for the envelope/message link (existing lang string).
             //Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
             $this->content->text .= "<ul class='list'>\n";
-            if (!empty($USER->id) && has_capability('moodle/site:sendmessage', $context)
+            if (!empty($USER->id) && has_capability('moodle/site:sendmessage', $this->page->context)
                            && !empty($CFG->messaging) && !isguest()) {
                 $canshowicon = true;
             } else {

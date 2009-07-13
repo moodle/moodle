@@ -43,13 +43,15 @@
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
     $extendbase     = optional_param('extendbase', 3, PARAM_INT);
 
-    $baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/roles/assign.php?contextid=' . $contextid;
+    $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
-        $baseurl .= '&amp;userid='.$userid;
+        $urlparams['userid'] = $userid;
     }
     if ($courseid && $courseid != SITEID) {
-        $baseurl .= '&amp;courseid='.$courseid;
+        $urlparams['courseid'] = $courseid;
     }
+    $PAGE->set_url($CFG->admin . '/roles/assign.php', $urlparams);
+    $baseurl = $PAGE->url->out();
 
     if (! $context = get_context_instance_by_id($contextid)) {
         print_error('wrongcontextid', 'error');
@@ -149,11 +151,8 @@
 
     /// Create the user selector objects.
         $options = array('context' => $context, 'roleid' => $roleid);
-        if ($context->contextlevel > CONTEXT_COURSE && !is_inside_frontpage($context)) {
-            $potentialuserselector = new potential_assignees_below_course('addselect', $options);
-        } else {
-            $potentialuserselector = new potential_assignees_course_and_above('addselect', $options);
-        }
+
+        $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
         if ($context->contextlevel == CONTEXT_SYSTEM && is_admin_role($roleid)) {
             $currentuserselector = new existing_role_holders_site_admin('removeselect', $options);
         } else {
@@ -377,7 +376,7 @@
 
     } else if (empty($assignableroles)) {
     /// Print a message that there are no roles that can me assigned here.
-        print_heading(get_string('notabletoassignroleshere', 'role'), 'center', 3);
+        print_heading(get_string('notabletoassignroleshere', 'role'), '', 3);
 
     } else {
     /// Show UI for choosing a role to assign.
@@ -388,7 +387,7 @@
         }
 
         // Print instruction
-        print_heading(get_string('chooseroletoassign', 'role'), 'center', 3);
+        print_heading(get_string('chooseroletoassign', 'role'), '', 3);
 
         // sync metacourse enrolments if needed
         if ($inmeta) {
@@ -452,6 +451,6 @@
     if ($context->contextlevel == CONTEXT_SYSTEM || $isfrontpage) {
         admin_externalpage_print_footer();
     } else {
-        print_footer($course);
+        print_footer();
     }
 ?>

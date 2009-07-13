@@ -2302,8 +2302,29 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009071000);
     }
 
+    if ($result && $oldversion < 2009071300) {
+
+    /// Create contexts for every block. In the past, only non-sticky course block had contexts.
+    /// This is a copy of the code in create_contexts.
+        $sql = "INSERT INTO {context} (contextlevel, instanceid)
+                SELECT " . CONTEXT_BLOCK . ", bi.id
+                  FROM {block_instances} bi
+                 WHERE NOT EXISTS (SELECT 'x'
+                                     FROM {context} ctx
+                                    WHERE bi.id = ctx.instanceid AND ctx.contextlevel=" . CONTEXT_BLOCK . ")";
+        $DB->execute($sql);
+
+    /// TODO MDL-19776 We should not really use API funcitons in upgrade.
+    /// If MDL-19776 is done, we can remove this whole upgrade block.
+        build_context_path();
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009071300);
+    }
+
     return $result;
 }
 
-//TODO: before 2.0 release
-// 1/ remove the automatic enabling of completion lib if debug enabled
+//TODO: Before 2.0 release
+// 1/ remove the automatic enabling of completion lib if debug enabled ( in 2008121701 block)
+// 2/ move 2009061300 block to the top of the file so that we may log upgrade queries

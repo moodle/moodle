@@ -407,6 +407,7 @@ class block_manager {
             'contextid1' => $context->id,
             'contextid2' => $context->id,
             'pagetype' => $this->page->pagetype,
+            'contextblock' => CONTEXT_BLOCK,
         );
         $sql = "SELECT
                     bi.id,
@@ -419,7 +420,11 @@ class block_manager {
                     COALESCE(bp.visible, 1) AS visible,
                     COALESCE(bp.region, bi.defaultregion) AS region,
                     COALESCE(bp.weight, bi.defaultweight) AS weight,
-                    bi.configdata
+                    bi.configdata,
+                    ctx.id AS ctxid,
+                    ctx.path AS ctxpath,
+                    ctx.depth AS ctxdepth,
+                    ctx.contextlevel AS ctxlevel
 
                 FROM {block_instances} bi
                 JOIN {block} b ON bi.blockname = b.name
@@ -427,6 +432,8 @@ class block_manager {
                                                   AND bp.contextid = :contextid1
                                                   AND bp.pagetype = :pagetype
                                                   AND bp.subpage = :subpage1
+                JOIN {context} ctx ON ctx.contextlevel = :contextblock
+                                      AND ctx.instanceid = bi.id
 
                 WHERE
                 $contexttest
@@ -444,6 +451,7 @@ class block_manager {
         $this->birecordsbyregion = $this->prepare_per_region_arrays();
         $unknown = array();
         foreach ($blockinstances as $bi) {
+            $bi = make_context_subobj($bi);
             if ($this->is_known_region($bi->region)) {
                 $this->birecordsbyregion[$bi->region][] = $bi;
             } else {
@@ -491,12 +499,11 @@ class block_manager {
         $blockinstance->configdata = '';
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
 
-        if ($this->page->context->contextlevel == CONTEXT_COURSE) {
-            get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
-        }
+        // Ensure the block context is created.
+        get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
 
         // If the new instance was created, allow it to do additional setup
-        if($block = block_instance($blockname, $blockinstance)) {
+        if ($block = block_instance($blockname, $blockinstance)) {
             $block->instance_create();
         }
     }

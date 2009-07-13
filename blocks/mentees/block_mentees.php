@@ -38,10 +38,9 @@ class block_mentees extends block_base {
             foreach ($usercontexts as $usercontext) {
                 $this->content->text .= '<li><a href="'.$CFG->wwwroot.'/user/view.php?id='.$usercontext->instanceid.'&amp;course=1">'.fullname($usercontext).'</a></li>';                
             }
-            $this->content->text .= '</ul>';                    
+            $this->content->text .= '</ul>';
         }
-                                
-        
+
         $this->content->footer = '';
 
         return $this->content;
