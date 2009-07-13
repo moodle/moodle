@@ -2308,6 +2308,118 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Render a HTML table
+     *
+     * @param object $table {@link html_table} instance containing all the information needed
+     * @return string the HTML to output.
+     */
+    public function table(html_table $table) {
+        $table->prepare();
+        $attributes = array(
+                'id'            => $table->id,
+                'width'         => $table->width,
+                'summary'       => $table->summary,
+                'cellpadding'   => $table->cellpadding,
+                'cellspacing'   => $table->cellspacing,
+                'class'         => $table->get_classes_string());
+        $output = $this->output_start_tag('table', $attributes) . "\n";
+
+        $countcols = 0;
+
+        if (!empty($table->head)) {
+            $countcols = count($table->head);
+            $output .= $this->output_start_tag('thead', array()) . "\n";
+            $output .= $this->output_start_tag('tr', array()) . "\n";
+            $keys = array_keys($table->head);
+            $lastkey = end($keys);
+            foreach ($table->head as $key => $heading) {
+                $classes = array('header', 'c' . $key);
+                if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
+                    $colspan = $table->headspan[$key];
+                    $countcols += $table->headspan[$key] - 1;
+                } else {
+                    $colspan = '';
+                }
+                if ($key == $lastkey) {
+                    $classes[] = 'lastcol';
+                }
+                if (isset($table->colclasses[$key])) {
+                    $classes[] = $table->colclasses[$key];
+                }
+                if ($table->rotateheaders) {
+                    // we need to wrap the heading content
+                    $heading = $this->output_tag('span', '', $heading);
+                }
+                $attributes = array(
+                        'style'     => $table->align[$key] . $table->size[$key] . 'white-space:nowrap;',
+                        'class'     => moodle_renderer_base::prepare_classes($classes),
+                        'scope'     => 'col',
+                        'colspan'   => $colspan);
+                $output .= $this->output_tag('th', $attributes, $heading) . "\n";
+            }
+            $output .= $this->output_end_tag('tr') . "\n";
+            $output .= $this->output_end_tag('thead') . "\n";
+        }
+
+        if (!empty($table->data)) {
+            $oddeven    = 1;
+            $keys       = array_keys($table->data);
+            $lastrowkey = end($keys);
+            $output .= $this->output_start_tag('tbody', array()) . "\n";
+            foreach ($table->data as $key => $row) {
+                $oddeven = $oddeven ? 0 : 1;
+                if (isset($table->rowclasses[$key])) {
+                    $classes = array_unique(moodle_html_component::clean_classes($table->rowclasses[$key]));
+                } else {
+                    $classes = array();
+                }
+                $classes[] = 'r' . $oddeven;
+                if ($key == $lastrowkey) {
+                    $classes[] = 'lastrow';
+                }
+                $output .= $this->output_start_tag('tr', array('class' => moodle_renderer_base::prepare_classes($classes))) . "\n";
+                if (($row === 'hr') && ($countcols)) {
+                    $output .= $this->output_tag('td', array('colspan' => $countcols),
+                                                 $this->output_tag('div', array('class' => 'tabledivider'), '')) . "\n";
+                } else {  /// it's a normal row of data
+                    $keys2 = array_keys($row);
+                    $lastkey = end($keys2);
+                    foreach ($row as $key => $item) {
+                        if (isset($table->colclasses[$key])) {
+                            $classes = array_unique(moodle_html_component::clean_classes($table->colclasses[$key]));
+                        } else {
+                            $classes = array();
+                        }
+                        $classes[] = 'cell';
+                        $classes[] = 'c' . $key;
+                        if ($key == $lastkey) {
+                            $classes[] = 'lastcol';
+                        }
+                        $tdstyle = '';
+                        $tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
+                        $tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
+                        $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
+                        $output .= $this->output_tag('td',
+                                                     array('style' => $tdstyle,
+                                                           'class' => moodle_renderer_base::prepare_classes($classes)),
+                                                     $item) . "\n";
+                    }
+                }
+                $output .= $this->output_end_tag('tr') . "\n";
+            }
+            $output .= $this->output_end_tag('tbody') . "\n";
+        }
+        $output .= $this->output_end_tag('table') . "\n";
+
+        if ($table->rotateheaders && can_use_rotated_text()) {
+            $this->page->requires->yui_lib('event');
+            $this->page->requires->js('course/report/progress/textrotate.js');
+        }
+
+        return $output;
+    }
+
+    /**
      * Output the place a skip link goes to.
      * @param $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
      * @return string the HTML to output.
@@ -2429,6 +2541,20 @@ class moodle_html_component {
     public function prepare() {
         $this->classes = array_unique(self::clean_classes($this->classes));
     }
+
+    /**
+     * This checks developer do not try to assign a property directly
+     * if we have a setter for it. Otherwise, the property is set as expected.
+     */
+    public function __set($name, $value) {
+        if ($name == 'class') {
+            debugging('this way of setting css class has been deprecated. use set_classes() method instead.');
+            $this->set_classes($value);
+        } else {
+            $this->{$name} = $value;
+        }
+    }
+
 }
 
 
@@ -2643,6 +2769,195 @@ class block_contents extends moodle_html_component {
             $this->add_class('block_with_controls');
         }
         parent::prepare();
+    }
+}
+
+
+/**
+ * Holds all the information required to render a <table> by
+ * {@see moodle_core_renderer::table()} or by an overridden version of that
+ * method in a subclass.
+ *
+ * Example of usage:
+ * $t = new html_table();
+ * ... // set various properties of the object $t as described below
+ * echo $OUTPUT->table($t);
+ *
+ * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table extends moodle_html_component {
+    /**
+     * @var array of headings. The n-th array item is used as a heading of the n-th column.
+     *
+     * Example of usage:
+     * $t->head = array('Student', 'Grade');
+     */
+    public $head;
+    /**
+     * @var array can be used to make a heading span multiple columns
+     *
+     * Example of usage:
+     * $t->headspan = array(2,1);
+     *
+     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
+     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
+     */
+    public $headspan;
+    /**
+     * @var array of column alignments. The value is used as CSS 'text-align' property. Therefore, possible
+     * values are 'left', 'right', 'center' and 'justify'. Specify 'right' or 'left' from the perspective
+     * of a left-to-right (LTR) language. For RTL, the values are flipped automatically.
+     *
+     * Examples of usage:
+     * $t->align = array(null, 'right');
+     * or
+     * $t->align[1] = 'right';
+     *
+     */
+    public $align;
+    /**
+     * @var array of column sizes. The value is used as CSS 'size' property.
+     *
+     * Examples of usage:
+     * $t->size = array('50%', '50%');
+     * or
+     * $t->size[1] = '120px';
+     */
+    public $size;
+    /**
+     * @var array of wrapping information. The only possible value is 'nowrap' that sets the
+     * CSS property 'white-space' to the value 'nowrap' in the given column.
+     *
+     * Example of usage:
+     * $t->wrap = array(null, 'nowrap');
+     */
+    public $wrap;
+    /**
+     * @var array of arrays containing the data. Alternatively, if you have
+     * $head specified, the string 'hr' (for horizontal ruler) can be used
+     * instead of an array of cells data resulting in a divider rendered.
+     *
+     * Example if usage:
+     * $row1 = array('Harry Potter', '76 %');
+     * $row2 = array('Hermione Granger', '100 %');
+     * $t->data = array($row1, $row2);
+     */
+    public $data;
+    /**
+     * @var string width of the table, percentage of the page prefered. Defaults to 80% of the page width.
+     */
+    public $width = '80%';
+    /**
+     * @var string alignment the whole table. Can be 'right', 'left' or 'center' (default).
+     */
+    public $tablealign = 'center';
+    /**
+     * @var int padding on each cell, in pixels
+     */
+    public $cellpadding = 5;
+    /**
+     * @var int spacing between cells, in pixels
+     */
+    public $cellspacing = 1;
+    /**
+     * @var array classes to add to particular rows, space-separated string.
+     * Classes 'r0' or 'r1' are added automatically for every odd or even row,
+     * respectively. Class 'lastrow' is added automatically for the last row
+     * in the table.
+     *
+     * Example of usage:
+     * $t->rowclasses[9] = 'tenth'
+     */
+    public $rowclasses;
+    /**
+     * @var array classes to add to every cell in a particular colummn,
+     * space-separated string. Class 'cell' is added automatically by the renderer.
+     * Classes 'c0' or 'c1' are added automatically for every odd or even column,
+     * respectively. Class 'lastcol' is added automatically for all last cells
+     * in a row.
+     *
+     * Example of usage:
+     * $t->colclasses = array(null, 'grade');
+     */
+    public $colclasses;
+    /**
+     * @var string description of the contents for screen readers.
+     */
+    public $summary;
+    /**
+     * @var bool true causes the contents of the heading cells to be rotated 90 degrees.
+     */
+    public $rotateheaders = false;
+
+    /**
+     * @see moodle_html_component::prepare()
+     */
+    public function prepare() {
+        if (!empty($this->align)) {
+            foreach ($this->align as $key => $aa) {
+                if ($aa) {
+                    $this->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
+                } else {
+                    $this->align[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->size)) {
+            foreach ($this->size as $key => $ss) {
+                if ($ss) {
+                    $this->size[$key] = 'width:'. $ss .';';
+                } else {
+                    $this->size[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->wrap)) {
+            foreach ($this->wrap as $key => $ww) {
+                if ($ww) {
+                    $this->wrap[$key] = 'white-space:nowrap;';
+                } else {
+                    $this->wrap[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->head)) {
+            foreach ($this->head as $key => $val) {
+                if (!isset($this->align[$key])) {
+                    $this->align[$key] = '';
+                }
+                if (!isset($this->size[$key])) {
+                    $this->size[$key] = '';
+                }
+                if (!isset($this->wrap[$key])) {
+                    $this->wrap[$key] = '';
+                }
+
+            }
+        }
+        if (!empty($this->tablealign)) {
+            $this->add_class('boxalign' . $this->tablealign);
+        }
+        if (!empty($this->rotateheaders)) {
+            $this->add_class('rotateheaders');
+        } else {
+            $this->rotateheaders = false; // Makes life easier later.
+        }
+        if (empty($this->classes)) {
+            $this->set_classes(array('generaltable'));
+        }
+        parent::prepare();
+    }
+
+    public function __set($name, $value) {
+        if ($name == 'rowclass') {
+            debugging('rowclass[] has been deprecated for html_table ' .
+                      'and should be replaced with rowclasses[]. please fix the code.');
+            $this->rowclasses = $value;
+        } else {
+            parent::__set($name, $value);
+        }
     }
 }
 

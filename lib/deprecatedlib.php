@@ -2347,3 +2347,35 @@ function blocks_preferred_width($instances) {
     $width = 210;
 }
 
+/**
+ * Print a nicely formatted table.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param array $table is an object with several properties.
+ */
+function print_table($table, $return=false) {
+    global $OUTPUT;
+    // TODO MDL-19755 turn debugging on once we migrate the current core code to use the new API
+    // debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
+    $newtable = new html_table();
+    foreach ($table as $property => $value) {
+        if (property_exists($newtable, $property)) {
+            $newtable->{$property} = $value;
+        }
+    }
+    if (isset($table->class)) {
+        $newtable->set_classes($table->class);
+    }
+    if (isset($table->rowclass) && is_array($table->rowclass)) {
+        debugging('rowclass[] has been deprecated for html_table and should be replaced by rowclasses[]. please fix the code.');
+        $newtable->rowclasses = $table->rowclass;
+    }
+    $output = $OUTPUT->table($newtable);
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+        return true;
+    }
+}
