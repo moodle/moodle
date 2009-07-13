@@ -1845,6 +1845,11 @@ class moodle_core_renderer extends moodle_renderer_base {
         $header = substr($template, 0, $cutpos);
         $footer = substr($template, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
 
+        if (empty($this->contenttype)) {
+            debugging('The layout template did not call $OUTPUT->doctype()');
+            $this->doctype();
+        }
+
         send_headers($this->contenttype, $this->page->cacheable);
         $this->opencontainers->push('header/footer', $footer);
         $this->page->set_state(moodle_page::STATE_IN_BODY);
@@ -1959,6 +1964,8 @@ class moodle_core_renderer extends moodle_renderer_base {
         ob_end_clean();
 
         $output = str_replace('</body>', self::END_HTML_TOKEN . '</body>', $output);
+        // Make sure we use the correct doctype.
+        $output = preg_replace('/(<!DOCTYPE.+?>)/s', $this->doctype(), $output);
 
         return $output;
     }
@@ -2667,7 +2674,7 @@ class cli_core_renderer extends moodle_core_renderer {
         }
     }
 
-    public function fatal_error($errorcode, $module, $a, $link, $backtrace,
+    public function fatal_error($message, $moreinfourl, $link, $backtrace,
                 $debuginfo = null, $showerrordebugwarning = false) {
         $output = "!!! $message !!!\n";
 
@@ -2683,7 +2690,7 @@ class cli_core_renderer extends moodle_core_renderer {
 
     public function notification($message, $classes = 'notifyproblem') {
         $message = clean_text($message);
-        if ($style === 'notifysuccess') {
+        if ($classes === 'notifysuccess') {
             return "++ $message ++\n";
         }
         return "!! $message !!\n";
