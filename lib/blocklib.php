@@ -67,8 +67,8 @@ class block_not_on_page_exception extends moodle_exception {
     public function __construct($instanceid, $page) {
         $a = new stdClass;
         $a->instanceid = $instanceid;
-        $a->url = $page->url;
-        parent::__construct('blockdoesnotexistonpage', '', $page->url, $a);
+        $a->url = $page->url->out();
+        parent::__construct('blockdoesnotexistonpage', '', $page->url->out(), $a);
     }
 }
 
@@ -511,7 +511,14 @@ class block_manager {
 
     public function add_block_at_end_of_default_region($blockname) {
         $defaulregion = $this->get_default_region();
+
         $lastcurrentblock = end($this->birecordsbyregion[$defaulregion]);
+        if ($lastcurrentblock) {
+            $weight = $lastcurrentblock->weight + 1;
+        } else {
+            $weight = 0;
+        }
+
         if ($this->page->subpage) {
             $subpage = $this->page->subpage;
         } else {
@@ -525,13 +532,13 @@ class block_manager {
             $pagetypepattern = 'course-view-*';
         }
 
-        $this->add_block($blockname, $defaulregion, $lastcurrentblock->weight + 1, false, $pagetypepattern, $subpage);
+        $this->add_block($blockname, $defaulregion, $weight, false, $pagetypepattern, $subpage);
     }
 
     /**
      * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
      *
-     * @param array $blocks array with arrray keys the region names, and values an array of block names.
+     * @param array $blocks array with array keys the region names, and values an array of block names.
      * @param string $pagetypepattern optional. Passed to @see add_block()
      * @param string $subpagepattern optional. Passed to @see add_block()
      */
@@ -865,6 +872,9 @@ function block_process_url_add($page) {
     }
 
     $page->blocks->add_block_at_end_of_default_region($blocktype);
+
+    $page->url->remove_params('bui_addblock');
+
     return true;
 }
 
@@ -881,6 +891,9 @@ function block_process_url_delete($page) {
 
     $instance = $page->blocks->find_instance($blockid);
     blocks_delete_instance($instance->instance);
+
+    $page->url->remove_params('bui_deleteid');
+
     return true;
 }
 
