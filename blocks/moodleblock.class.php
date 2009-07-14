@@ -360,12 +360,12 @@ class block_base {
             $bc->footer = $this->content->footer;
         }
 
-        if ($this->is_empty() && !$bc->controls) {
-            return null;
-        }
-
         if ($this->page->user_is_editing()) {
             $bc->controls = $this->get_edit_controls($output);
+        }
+
+        if ($this->is_empty() && !$bc->controls) {
+            return null;
         }
 
         if (empty($CFG->allowuserblockhiding)) {
