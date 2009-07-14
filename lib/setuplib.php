@@ -180,7 +180,7 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
     }
 
     if (is_stacktrace_during_output_init($backtrace)) {
-        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, $backtrace);
+        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
     } else {
         echo $OUTPUT->fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
     }
