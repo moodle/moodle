@@ -86,7 +86,6 @@
             if(!empty($instances)) {
                 foreach($instances as $instance) {
                     blocks_delete_instance($instance);
-                    blocks_delete_instance($instance, true);
                 }
             }
 
