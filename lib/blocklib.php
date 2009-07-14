@@ -99,8 +99,8 @@ class block_manager {
 
     /**
      * @var array blocks that this user can add to this page. Will be a subset
-     * of $allblocks. Access this via the {@link get_addable_blocks()} method
-     * to ensure it is lazy-loaded.
+     * of $allblocks, but with array keys block->name. Access this via the
+     * {@link get_addable_blocks()} method to ensure it is lazy-loaded.
      */
     protected $addableblocks = null;
 
@@ -192,8 +192,9 @@ class block_manager {
         foreach($allblocks as $block) {
             if ($block->visible &&
                     (block_method_result($block->name, 'instance_allow_multiple') || !$this->is_block_present($block->id)) &&
-                    blocks_name_allowed_in_format($block->name, $pageformat)) {
-                $this->addableblocks[$block->id] = $block;
+                    blocks_name_allowed_in_format($block->name, $pageformat) &&
+                    block_method_result($block->name, 'user_can_addto', $this->page)) {
+                $this->addableblocks[$block->name] = $block;
             }
         }
 
@@ -516,7 +517,15 @@ class block_manager {
         } else {
             $subpage = null;
         }
-        $this->add_block($blockname, $defaulregion, $lastcurrentblock->weight + 1, false, $this->page->pagetype, $subpage);
+
+        // Special case. Course view page type include the course format, but we
+        // want to add the block non-format-specifically.
+        $pagetypepattern = $this->page->pagetype;
+        if (strpos($pagetypepattern, 'course-view') === 0) {
+            $pagetypepattern = 'course-view-*';
+        }
+
+        $this->add_block($blockname, $defaulregion, $lastcurrentblock->weight + 1, false, $pagetypepattern, $subpage);
     }
 
     /**
@@ -801,15 +810,14 @@ function block_add_block_ui($page, $output) {
     $bc->title = get_string('addblock');
     $bc->add_class('block_adminblock');
 
-    $missingblocks = array_keys($page->blocks->get_addable_blocks());
+    $missingblocks = $page->blocks->get_addable_blocks();
     if (empty($missingblocks)) {
-        $bc->title = get_string('noblockstoaddhere');
+        $bc->content = get_string('noblockstoaddhere');
         return $bc;
     }
 
     $menu = array();
-    foreach ($missingblocks as $blockid) {
-        $block = blocks_get_record($blockid);
+    foreach ($missingblocks as $block) {
         $blockobject = block_instance($block->name);
         if ($blockobject !== false && $blockobject->user_can_addto($page)) {
             $menu[$block->name] = $blockobject->get_title();
@@ -818,8 +826,7 @@ function block_add_block_ui($page, $output) {
     asort($menu, SORT_LOCALE_STRING);
 
     // TODO convert to $OUTPUT.
-    $actionurl = $page->url->out_action(). '&amp;bui_addblock=';
-    $returnurlparam = '&amp;returnurl=' . urlencode($page->url->out_returnurl());
+    $actionurl = $page->url->out_action() . '&amp;bui_addblock=';
     $bc->content = popup_form($actionurl, $menu, 'add_block', '', get_string('adddots'), '', '', true);
     return $bc;
 }
@@ -829,17 +836,18 @@ function block_add_block_ui($page, $output) {
  * 
  * This can only be done given a valid $page object.
  *
+ * @param moodle_page $page the page to add blocks to.
  * @return boolean true if anything was done. False if not.
  */
 function block_process_url_actions($page) {
-    return block_process_url_add($page);
+    return block_process_url_add($page) ||
+        block_process_url_delete($page) ||
+        block_process_url_show_hide($page);
 }
 
 /**
- * Process any block actions that were specified in the URL.
- * 
- * This can only be done given a valid $page object.
- *
+ * Handle adding a block.
+ * @param moodle_page $page the page to add blocks to.
  * @return boolean true if anything was done. False if not.
  */
 function block_process_url_add($page) {
@@ -848,16 +856,56 @@ function block_process_url_add($page) {
         return false;
     }
 
+    if (!$page->user_is_editing() && !$page->user_can_edit_blocks()) {
+        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('addblock'));
+    }
+
+    if (!array_key_exists($blocktype, $page->blocks->get_addable_blocks())) {
+        throw new moodle_exception('cannotaddthisblocktype', '', $page->url->out(), $blocktype);
+    }
+
     $page->blocks->add_block_at_end_of_default_region($blocktype);
     return true;
 }
 
+/**
+ * Handle deleting a block.
+ * @param moodle_page $page the page to add blocks to.
+ * @return boolean true if anything was done. False if not.
+ */
+function block_process_url_delete($page) {
+    $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
+    if (!$blockid) {
+        return false;
+    }
 
+    $instance = $page->blocks->find_instance($blockid);
+    blocks_delete_instance($instance->instance);
+    return true;
+}
+
+/**
+ * Handle showing or hiding a block.
+ * @param moodle_page $page the page to add blocks to.
+ * @return boolean true if anything was done. False if not.
+ */
+function block_process_url_show_hide($page) {
+    
+}
+
+///**
+// * Handle deleting a block.
+// * @param moodle_page $page the page to add blocks to.
+// * @return boolean true if anything was done. False if not.
+// */
+//function block_process_url_delete($page) {
+//    
+//}
 
 // Functions that have been deprecated by block_manager =======================
 
 /**
- * @deprecated since Moodle 2.0 - use $page->blocks->get
+ * @deprecated since Moodle 2.0 - use $page->blocks->get_addable_blocks();
  *
  * This function returns an array with the IDs of any blocks that you can add to your page.
  * Parameters are passed by reference for speed; they are not modified at all.
@@ -867,7 +915,13 @@ function block_process_url_add($page) {
  * @return array of block type ids.
  */
 function blocks_get_missing(&$page, &$blockmanager) {
-    return array_keys($page->blocks->get_addable_blocks());
+    debugging('blocks_get_missing is deprecated. Please use $page->blocks->get_addable_blocks() instead.', DEBUG_DEVELOPER);
+    $blocks = $page->blocks->get_addable_blocks();
+    $ids = array();
+    foreach ($blocks as $block) {
+        $ids[] = $block->id;
+    }
+    return $ids;
 }
 
 /**
@@ -894,7 +948,7 @@ function blocks_remove_inappropriate($course) {
         foreach($region as $instance) {
             $block = blocks_get_record($instance->blockid);
             if(!blocks_name_allowed_in_format($block->name, $pageformat)) {
-               blocks_delete_instance($instance);
+               blocks_delete_instance($instance->instance);
             }
         }
     }
@@ -956,7 +1010,7 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
  */
 function blocks_delete_all_for_context($contextid) {
     global $DB;
-    $instances = $DB->get_recordset('block_instances', array('contextid' => $contextid));
+    $instances = $DB->get_recordset('block_instances', array('parentcontextid' => $contextid));
     foreach ($instances as $instance) {
         blocks_delete_instance($instance, true);
     }

@@ -414,8 +414,7 @@ class block_base {
         global $CFG;
 
         $returnurlparam = '&amp;returnurl=' . urlencode($this->page->url->out_returnurl());
-        $actionurl = $CFG->wwwroot.'/blocks/action.php?block=' . $this->instance->id .
-                '&amp;sesskey=' . sesskey() . $returnurlparam;
+        $actionurl = $this->page->url->out_action();
 
         $controls = array();
 
@@ -447,7 +446,7 @@ class block_base {
 
             // Delete icon.
             if ($this->user_can_addto($this->page)) {
-                $controls[] = array('url' => $actionurl . 'action=delete',
+                $controls[] = array('url' => $actionurl . '&amp;bui_deleteid=' . $this->instance->id,
                     'icon' => $output->old_icon_url('t/delete'), 'caption' => get_string('deletet'));
             }
 

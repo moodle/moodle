@@ -15,10 +15,11 @@ $string['backupcontainexternal'] = 'This backup file contains external Moodle Ne
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
 $string['cannotaddcoursemodule'] = 'Could not add a new course module';
 $string['cannotaddcoursemoduletosection'] = 'Could not add the new course module to that section';
-$string['cannotaddrss'] = 'You do not have permission to add rss feeds';
 $string['cannotaddmembergroupiddoesntexist'] = 'Cannot add member group: the group id doesn\'t exist';
 $string['cannotaddmodule'] = '$a module could not be added to the module list!';
 $string['cannotaddnewmodule'] = 'Could not add a new module of $a';
+$string['cannotaddrss'] = 'You do not have permission to add rss feeds';
+$string['cannotaddthisblocktype'] = 'You cannot add a $a block to this page.';
 $string['cannotassignanthing'] = 'Cannot assign moodle/site:doanything';
 $string['cannotassignrole'] = 'Cannot assign role in course';
 $string['cannotassignrolehere'] = 'You are not allowed to assign this role (id = $a->roleid) in this context ($a->context)';
