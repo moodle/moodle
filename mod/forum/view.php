@@ -13,6 +13,19 @@
     $page        = optional_param('page', 0, PARAM_INT);     // which page to show
     $search      = optional_param('search', '');             // search string
 
+    $params = array();
+    if ($id) {
+        $params['id'] = $id;
+    } else {
+        $params['f'] = $f;
+    }
+    if ($page) {
+        $params['page'] = $page;
+    }
+    if ($search) {
+        $params['search'] = $search;
+    }
+    $PAGE->set_url('mod/forum/view.php', $params);
 
     $buttontext = '';
 
