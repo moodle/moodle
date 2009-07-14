@@ -403,6 +403,7 @@ $string['defaultcourseteacher'] = 'Teacher';
 $string['defaultcourseteacherdescription'] = 'Teachers can do anything within a course, including changing the activities and grading students.';
 $string['defaultcourseteachers'] = 'Teachers';
 $string['delete'] = 'Delete';
+$string['deleteablock'] = 'Delete a block';
 $string['deleteall'] = 'Delete all';
 $string['deleteallcannotundo'] = 'Delete all - cannot be undone';
 $string['deleteallcomments'] = 'Delete all comments';

@@ -948,8 +948,13 @@ function block_process_url_delete($page) {
 
     confirm_sesskey();
 
-    $instance = $page->blocks->find_instance($blockid);
-    blocks_delete_instance($instance->instance);
+    $block = $page->blocks->find_instance($blockid);
+
+    if (!$block->user_can_edit() || !$page->user_can_edit_blocks() || !$block->user_can_addto($page)) {
+        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('deleteablock'));
+    }
+
+    blocks_delete_instance($block->instance);
 
     // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
     $page->ensure_param_not_in_url('bui_deleteid');
@@ -963,7 +968,7 @@ function block_process_url_delete($page) {
  * @return boolean true if anything was done. False if not.
  */
 function block_process_url_show_hide($page) {
-    
+    // TODO MDL-19398
 }
 
 ///**
