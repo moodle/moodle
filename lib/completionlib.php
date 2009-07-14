@@ -168,7 +168,7 @@ class completion_info {
     public function print_help_icon() {
         global $PAGE;
         if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
-            echo '<span class="completionprogress">'.get_string('yourprogress','completion').' ';
+            echo '<span id = "completionprogressid" class="completionprogress">'.get_string('yourprogress','completion').' ';
             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
             echo '</span>';
         }

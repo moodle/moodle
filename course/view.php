@@ -178,6 +178,7 @@
     if ($completion->is_enabled() && ajaxenabled()) {
         $PAGE->requires->yui_lib('connection');
         $PAGE->requires->js('course/completion.js');
+        $PAGE->requires->js_function_call('completion_init')->on_dom_ready();
         $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));
         $PAGE->requires->data_for_js('completion_strtitley', get_string('completion-title-manual-y', 'completion'));
         $PAGE->requires->data_for_js('completion_strtitlen', get_string('completion-title-manual-n', 'completion'));

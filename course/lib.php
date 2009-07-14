@@ -1197,6 +1197,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strunreadpostsone;
     static $usetracking;
     static $groupings;
+    static $shownhelp=false;
+    static $hiddenhelp=false;
 
 
     if (!isset($initialised)) {
@@ -1491,6 +1493,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         echo "<span class='autocompletion'>";
                         echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
                     }
+                    if (!$shownhelp && !$isediting) {
+                        $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'show'));
+                        $shownhelp=true;
+                    }
                 }
             }
 
@@ -1525,6 +1531,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
     if (!empty($section->sequence) || $ismoving) {
         echo "</ul><!--class='section'-->\n\n";
+    }
+
+    //use javascript to hide the progress help button when no progress tick boxes have been displayed
+    if (!$shownhelp && !$hiddenhelp && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
+        $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'hide'));
+        $hiddenhelp = true;
     }
 }
 
