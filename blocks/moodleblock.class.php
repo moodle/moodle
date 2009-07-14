@@ -361,7 +361,7 @@ class block_base {
         }
 
         if ($this->page->user_is_editing()) {
-            $bc->controls = $this->get_edit_controls($output);
+            $bc->controls = block_edit_controls($this, $this->page);
         }
 
         if ($this->is_empty() && !$bc->controls) {
@@ -400,62 +400,6 @@ class block_base {
         } else {
             return '';
         }
-    }
-
-    /**
-     * Get the appropriate list of editing icons for this block. This is used
-     * to set {@link block_contents::$controls} in {@link get_contents_for_output()}.
-     *
-     * @param $output The core_renderer to use when generating the output. (Need to get icon paths.)
-     * @return an array in the format for {@link block_contents::$controls}
-     * @since Moodle 2.0.
-     */
-    protected function get_edit_controls($output) {
-        global $CFG;
-
-        $returnurlparam = '&amp;returnurl=' . urlencode($this->page->url->out_returnurl());
-        $actionurl = $this->page->url->out_action();
-
-        $controls = array();
-
-        // Assign roles icon.
-        if (has_capability('moodle/role:assign', $this->context)) {
-            $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$this->context->id,
-                    'icon' => $output->old_icon_url('i/roles'), 'caption' => get_string('assignroles', 'role'));
-        }
-
-        if ($this->user_can_edit() && $this->page->user_can_edit_blocks()) {
-            // Show/hide icon.
-            if ($this->instance->visible) {
-                $controls[] = array('url' => $actionurl . '&amp;action=hide',
-                        'icon' => $output->old_icon_url('t/hide'), 'caption' => get_string('hide'));
-            } else {
-                $controls[] = array('url' => $actionurl . '&amp;action=show',
-                        'icon' => $output->old_icon_url('t/show'), 'caption' => get_string('show'));
-            }
-
-            // Edit config icon.
-            if ($this->instance_allow_multiple() || $this->instance_allow_config()) {
-                $editurl = $CFG->wwwroot . '/blocks/edit.php?block=' . $this->instance->id;
-                if (!empty($this->instance->blockpositionid)) {
-                    $editurl .= '&amp;positionid=' . $this->instance->blockpositionid;
-                }
-                $controls[] = array('url' => $editurl . $returnurlparam,
-                        'icon' => $output->old_icon_url('t/edit'), 'caption' => get_string('configuration'));
-            }
-
-            // Delete icon.
-            if ($this->user_can_addto($this->page)) {
-                $controls[] = array('url' => $actionurl . '&amp;bui_deleteid=' . $this->instance->id,
-                    'icon' => $output->old_icon_url('t/delete'), 'caption' => get_string('delete'));
-            }
-
-            // Move icon.
-            $controls[] = array('url' => $this->page->url->out(false, array('moveblockid' => $this->instance->id)),
-                    'icon' => $output->old_icon_url('t/move'), 'caption' => get_string('move'));
-        }
-
-        return $controls;
     }
 
     /**

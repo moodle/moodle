@@ -839,6 +839,60 @@ function block_add_block_ui($page, $output) {
 }
 
 /**
+ * Get the appropriate list of editing icons for a block. This is used
+ * to set {@link block_contents::$controls} in {@link block_base::get_contents_for_output()}.
+ *
+ * @param $output The core_renderer to use when generating the output. (Need to get icon paths.)
+ * @return an array in the format for {@link block_contents::$controls}
+ * @since Moodle 2.0.
+ */
+function block_edit_controls($block, $page) {
+    global $CFG;
+
+    $controls = array();
+    $actionurl = $page->url->out_action();
+
+    // Assign roles icon.
+    if (has_capability('moodle/role:assign', $block->context)) {
+        $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$block->context->id,
+                'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
+    }
+
+    if ($block->user_can_edit() && $page->user_can_edit_blocks()) {
+        // Show/hide icon.
+        if ($block->instance->visible) {
+            $controls[] = array('url' => $actionurl . '&amp;action=hide',
+                    'icon' => 't/hide', 'caption' => get_string('hide'));
+        } else {
+            $controls[] = array('url' => $actionurl . '&amp;action=show',
+                    'icon' => 't/show', 'caption' => get_string('show'));
+        }
+
+        // Edit config icon.
+        if ($block->instance_allow_multiple() || $block->instance_allow_config()) {
+            $editurl = $CFG->wwwroot . '/blocks/edit.php?block=' . $block->instance->id;
+            if (!empty($block->instance->blockpositionid)) {
+                $editurl .= '&amp;positionid=' . $block->instance->blockpositionid;
+            }
+            $controls[] = array('url' => $editurl . '&amp;returnurl=' . urlencode($page->url->out_returnurl()),
+                    'icon' => 't/edit', 'caption' => get_string('configuration'));
+        }
+
+        // Delete icon.
+        if ($block->user_can_addto($page)) {
+            $controls[] = array('url' => $actionurl . '&amp;bui_deleteid=' . $block->instance->id,
+                'icon' => 't/delete', 'caption' => get_string('delete'));
+        }
+
+        // Move icon.
+        $controls[] = array('url' => $page->url->out(false, array('moveblockid' => $block->instance->id)),
+                'icon' => 't/move', 'caption' => get_string('move'));
+    }
+
+    return $controls;
+}
+
+/**
  * Process any block actions that were specified in the URL.
  * 
  * This can only be done given a valid $page object.

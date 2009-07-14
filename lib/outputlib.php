@@ -2007,7 +2007,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = $this->output_tag('a', array('class' => 'icon',
                     'title' => $control['caption'], 'href' => $control['url']),
-                    $this->output_empty_tag('img',  array('src' => $control['icon'],
+                    $this->output_empty_tag('img',  array('src' => $this->old_icon_url($control['icon']),
                     'alt' => $control['caption'])));
         }
         return $this->output_tag('div', array('class' => 'commands'), implode('', $controlshtml));
@@ -2748,7 +2748,8 @@ class block_contents extends moodle_html_component {
 
     /**
      * A (possibly empty) array of editing controls. Each element of this array
-     * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption)
+     * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
+     * $icon is the icon name. Fed to $OUTPUT->old_icon_url.
      * @var array
      */
     public $controls = array();
