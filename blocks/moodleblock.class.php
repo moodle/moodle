@@ -447,7 +447,7 @@ class block_base {
             // Delete icon.
             if ($this->user_can_addto($this->page)) {
                 $controls[] = array('url' => $actionurl . '&amp;bui_deleteid=' . $this->instance->id,
-                    'icon' => $output->old_icon_url('t/delete'), 'caption' => get_string('deletet'));
+                    'icon' => $output->old_icon_url('t/delete'), 'caption' => get_string('delete'));
             }
 
             // Move icon.
