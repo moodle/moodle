@@ -56,12 +56,12 @@ function glossary_comment_add() {
 
     $comment = new object();
     $comment->id      = null;
-    $comment->action  = 'edit';
+    $comment->action  = 'add';
     $comment->entryid = $entry->id;
 
     $comment = file_prepare_standard_editor($comment, 'entrycomment', $commentoptions, $context);
 
-    $mform = new mod_glossary_comment_form(array('current'=>$comment, 'commentoptions'=>$commentoptions));
+    $mform = new mod_glossary_comment_form(null, array('current'=>$comment, 'commentoptions'=>$commentoptions));
 
     if ($mform->is_cancelled()) {
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
@@ -69,14 +69,14 @@ function glossary_comment_add() {
 
     if ($newcomment = $mform->get_data()) {
 
-        $newcomment = file_postupdate_standard_editor($newcomment, 'entrycomment', $newcommentoptions, $context);//no files - can be used before insert
+        $newcomment = file_postupdate_standard_editor($newcomment, 'entrycomment', $commentoptions, $context);//no files - can be used before insert
         $newcomment->timemodified = time();
         $newcomment->userid       = $USER->id;
 
         $newcomment->id = $DB->insert_record('glossary_comments', $newcomment);
 
         add_to_log($course->id, 'glossary', 'add comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$newcomment->id", $cm->id);
-        redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
+        redirect("comments.php?id=$cm->id&eid=$entry->id");
 
     } else {
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'add');
@@ -182,7 +182,7 @@ function glossary_comment_edit() {
     $comment->action  = 'edit';
     $comment = file_prepare_standard_editor($comment, 'entrycomment', $commentoptions, $context);
 
-    $mform = new mod_glossary_comment_form(array('current'=>$comment, 'commentoptions'=>$commentoptions));
+    $mform = new mod_glossary_comment_form(null, array('current'=>$comment, 'commentoptions'=>$commentoptions));
 
     if ($updatedcomment = $mform->get_data()) {
 
@@ -192,7 +192,7 @@ function glossary_comment_edit() {
         $DB->update_record('glossary_comments', $updatedcomment);
         add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);
 
-        redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
+        redirect("comments.php?id=$cm->id&eid=$entry->id");
 
     } else {
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'edit');
