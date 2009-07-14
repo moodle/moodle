@@ -508,6 +508,17 @@ class block_manager {
         }
     }
 
+    public function add_block_at_end_of_default_region($blockname) {
+        $defaulregion = $this->get_default_region();
+        $lastcurrentblock = end($this->birecordsbyregion[$defaulregion]);
+        if ($this->page->subpage) {
+            $subpage = $this->page->subpage;
+        } else {
+            $subpage = null;
+        }
+        $this->add_block($blockname, $defaulregion, $lastcurrentblock->weight + 1, false, $this->page->pagetype, $subpage);
+    }
+
     /**
      * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
      *
@@ -669,46 +680,6 @@ class block_manager {
     }
 
     /**
-     * Return a {@link block_contents} representing the add a new block UI, if
-     * this user is allowed to see it.
-     *
-     * @return block_contents an appropriate block_contents, or null if the user
-     * cannot add any blocks here.
-     */
-    function add_block_ui($output) {
-        global $CFG;
-        if (!$this->page->user_is_editing() || !$this->page->user_can_edit_blocks()) {
-            return null;
-        }
-
-        $bc = new block_contents();
-        $bc->title = get_string('addblock');
-        $bc->add_class('block_adminblock');
-
-        $missingblocks = array_keys($this->get_addable_blocks());
-        if (empty($missingblocks)) {
-            $bc->title = get_string('noblockstoaddhere');
-            return $bc;
-        }
-
-        $menu = array();
-        foreach ($missingblocks as $blockid) {
-            $block = blocks_get_record($blockid);
-            $blockobject = block_instance($block->name);
-            if ($blockobject !== false && $blockobject->user_can_addto($page)) {
-                $menu[$block->id] = $blockobject->get_title();
-            }
-        }
-        asort($menu, SORT_LOCALE_STRING);
-
-        // TODO convert to $OUTPUT.
-        $returnurlparam = '&amp;returnurl=' . urlencode($this->page->url->out_returnurl());
-        $actionurl = $CFG->wwwroot . '/blocks/add.php?sesskey=' . sesskey() . $returnurlparam . '&amp;blocktype=';
-        $bc->content = popup_form($actionurl, $menu, 'add_block', '', get_string('adddots'), '', '', true);
-        return $bc;
-    }
-
-    /**
      * Ensure block instances exist for a given region
      * 
      * @param string $region Check for bi's with the instance with this name
@@ -735,7 +706,7 @@ class block_manager {
             }
             $contents = array_merge($contents, $this->create_block_contents($this->blockinstances[$region], $output));
             if ($region == $this->defaultregion) {
-                $addblockui = $this->add_block_ui($output);
+                $addblockui = block_add_block_ui($this->page, $output);
                 if ($addblockui) {
                     $contents[] = $addblockui;
                 }
@@ -811,7 +782,79 @@ function block_load_class($blockname) {
     return class_exists($classname);
 }
 
-/// Functions that have been deprecated by block_manager =======================
+/// Functions update the blocks if required by the request parameters ==========
+
+/**
+ * Return a {@link block_contents} representing the add a new block UI, if
+ * this user is allowed to see it.
+ *
+ * @return block_contents an appropriate block_contents, or null if the user
+ * cannot add any blocks here.
+ */
+function block_add_block_ui($page, $output) {
+    global $CFG;
+    if (!$page->user_is_editing() || !$page->user_can_edit_blocks()) {
+        return null;
+    }
+
+    $bc = new block_contents();
+    $bc->title = get_string('addblock');
+    $bc->add_class('block_adminblock');
+
+    $missingblocks = array_keys($page->blocks->get_addable_blocks());
+    if (empty($missingblocks)) {
+        $bc->title = get_string('noblockstoaddhere');
+        return $bc;
+    }
+
+    $menu = array();
+    foreach ($missingblocks as $blockid) {
+        $block = blocks_get_record($blockid);
+        $blockobject = block_instance($block->name);
+        if ($blockobject !== false && $blockobject->user_can_addto($page)) {
+            $menu[$block->name] = $blockobject->get_title();
+        }
+    }
+    asort($menu, SORT_LOCALE_STRING);
+
+    // TODO convert to $OUTPUT.
+    $actionurl = $page->url->out_action(). '&amp;bui_addblock=';
+    $returnurlparam = '&amp;returnurl=' . urlencode($page->url->out_returnurl());
+    $bc->content = popup_form($actionurl, $menu, 'add_block', '', get_string('adddots'), '', '', true);
+    return $bc;
+}
+
+/**
+ * Process any block actions that were specified in the URL.
+ * 
+ * This can only be done given a valid $page object.
+ *
+ * @return boolean true if anything was done. False if not.
+ */
+function block_process_url_actions($page) {
+    return block_process_url_add($page);
+}
+
+/**
+ * Process any block actions that were specified in the URL.
+ * 
+ * This can only be done given a valid $page object.
+ *
+ * @return boolean true if anything was done. False if not.
+ */
+function block_process_url_add($page) {
+    $blocktype = optional_param('bui_addblock', null, PARAM_SAFEDIR);
+    if (!$blocktype) {
+        return false;
+    }
+
+    $page->blocks->add_block_at_end_of_default_region($blocktype);
+    return true;
+}
+
+
+
+// Functions that have been deprecated by block_manager =======================
 
 /**
  * @deprecated since Moodle 2.0 - use $page->blocks->get

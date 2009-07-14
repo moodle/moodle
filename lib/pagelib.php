@@ -855,10 +855,11 @@ class moodle_page {
     protected function starting_output() {
         global $CFG;
 
-        $this->initialise_standard_body_classes();
-
         if (!during_initial_install()) {
             $this->blocks->load_blocks();
+            if (block_process_url_actions($this)) {
+                redirect($this->url->out(false, array(), false));
+            }
         }
 
         // If maintenance mode is on, change the page header.
@@ -866,14 +867,14 @@ class moodle_page {
             $this->set_button('<a href="' . $CFG->wwwroot . '/' . $CFG->admin .
                     '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
                     '</a> ' . $this->button);
-    
+
             $title = $this->title;
             if ($title) {
                 $title .= ' - ';
             }
             $this->set_title($title . get_string('maintenancemode', 'admin'));
         }
-    
+
         // Show the messaging popup, if there are messages.
         message_popup_window();
 
@@ -891,6 +892,8 @@ class moodle_page {
         foreach ($stylesheets as $stylesheet) {
             $this->requires->css($stylesheet, true);
         }
+
+        $this->initialise_standard_body_classes();
     }
 
     /**
