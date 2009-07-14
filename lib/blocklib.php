@@ -171,7 +171,7 @@ class block_manager {
     /**
      * The list of block types that may be added to this page.
      *
-     * @return array block id => record from block table.
+     * @return array block name => record from block table.
      */
     public function get_addable_blocks() {
         $this->check_is_loaded();
@@ -863,6 +863,8 @@ function block_process_url_add($page) {
         return false;
     }
 
+    confirm_sesskey();
+
     if (!$page->user_is_editing() && !$page->user_can_edit_blocks()) {
         throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('addblock'));
     }
@@ -873,7 +875,8 @@ function block_process_url_add($page) {
 
     $page->blocks->add_block_at_end_of_default_region($blocktype);
 
-    $page->url->remove_params('bui_addblock');
+    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+    $page->ensure_param_not_in_url('bui_addblock');
 
     return true;
 }
@@ -889,10 +892,13 @@ function block_process_url_delete($page) {
         return false;
     }
 
+    confirm_sesskey();
+
     $instance = $page->blocks->find_instance($blockid);
     blocks_delete_instance($instance->instance);
 
-    $page->url->remove_params('bui_deleteid');
+    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+    $page->ensure_param_not_in_url('bui_deleteid');
 
     return true;
 }

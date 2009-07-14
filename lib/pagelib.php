@@ -337,7 +337,9 @@ class moodle_page {
         if (is_null($this->_url)) {
             debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
             global $FULLME;
-            return new moodle_url($FULLME);
+            $this->_url = new moodle_url($FULLME);
+            // Make sure the guessed URL cannot lead to dangerous redirects.
+            $this->_url->remove_params('sesskey');
         }
         return new moodle_url($this->_url); // Return a clone for safety.
     }
@@ -713,6 +715,23 @@ class moodle_page {
         if (!is_null($this->_legacypageobject)) {
             $this->_legacypageobject->set_url($url, $params);
         }
+    }
+
+    /**
+     * Make sure page URL does not contain the given URL parameter.
+     *
+     * This should not be necessary if the script has called set_url properly.
+     * However, in some situations like the block editing actions; when the URL
+     * has been guessed, it will contain dangerous block-related actions.
+     * Therefore, the blocks code calls this function to clean up such parameters
+     * before doing any redirect.
+     * 
+     * @param string $param the name of the parameter to make sure is not in the
+     * page URL.
+     */
+    public function ensure_param_not_in_url($param) {
+        $discard = $this->url; // Make sure $this->url is lazy-loaded;
+        $this->_url->remove_params($param);
     }
 
     /**
