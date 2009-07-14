@@ -8474,30 +8474,6 @@ function moodle_request_shutdown() {
 }
 
 /**
- * This function is called when output is started. This is a chance for Moodle core
- * to check things like whether the messages popup should be shown.
- */
-function output_starting_hook() {
-    global $CFG, $PAGE;
-
-    // If maintenance mode is on, change the page header.
-    if (!empty($CFG->maintenance_enabled)) {
-        $PAGE->set_button('<a href="' . $CFG->wwwroot . '/' . $CFG->admin .
-                '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
-                '</a> ' . $PAGE->button);
-
-        $title = $PAGE->title;
-        if ($title) {
-            $title .= ' - ';
-        }
-        $PAGE->set_title($title . get_string('maintenancemode', 'admin'));
-    }
-
-    // Show the messaging popup, if there are messages.
-    message_popup_window();
-}
-
-/**
  * If new messages are waiting for the current user, then load the
  * JavaScript required to pop up the messaging window.
  */

@@ -853,13 +853,29 @@ class moodle_page {
      * state. This is our last change to initialise things.
      */
     protected function starting_output() {
-        global $SITE, $CFG;
+        global $CFG;
 
         $this->initialise_standard_body_classes();
 
         if (!during_initial_install()) {
             $this->blocks->load_blocks();
         }
+
+        // If maintenance mode is on, change the page header.
+        if (!empty($CFG->maintenance_enabled)) {
+            $this->set_button('<a href="' . $CFG->wwwroot . '/' . $CFG->admin .
+                    '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
+                    '</a> ' . $this->button);
+    
+            $title = $this->title;
+            if ($title) {
+                $title .= ' - ';
+            }
+            $this->set_title($title . get_string('maintenancemode', 'admin'));
+        }
+    
+        // Show the messaging popup, if there are messages.
+        message_popup_window();
 
         // Add any stylesheets required using the horrible legacy mechanism.
         if (!empty($CFG->stylesheets)) {

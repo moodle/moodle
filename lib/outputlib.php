@@ -1823,7 +1823,6 @@ class moodle_core_renderer extends moodle_renderer_base {
     // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
         global $USER, $CFG;
 
-        output_starting_hook();
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
 
         // Find the appropriate page template, based on $this->page->generaltype.
