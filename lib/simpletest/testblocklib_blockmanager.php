@@ -163,12 +163,23 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
 
     public function setUp() {
         parent::setUp();
-        $this->create_test_tables(array('block', 'block_instances', 'block_positions'), 'lib');
+        $this->create_test_tables(array('block', 'block_instances', 'block_positions', 'context'), 'lib');
         $this->switch_to_test_db();
     }
 
     public function tearDown() {
         parent::tearDown();
+    }
+
+    /**
+     * Saves the context in the DB, setting $contextid.
+     * @param $context. Context. Path should be set to /parent/path/, that is with a traling /.
+     * This context's id will be appended.
+     */
+    protected function insert_context_in_db($context) {
+        $context->id = $this->testdb->insert_record('context', $context);
+        $context->path .= $context->id;
+        $this->testdb->set_field('context', 'path', $context->path, array('id' => $context->id));
     }
 
     protected function get_a_page_and_block_manager($regions, $context, $pagetype, $subpage = '') {
@@ -220,9 +231,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         // Set up fixture.
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context->path = '/';
+        $this->insert_context_in_db($context);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
-                get_context_instance(CONTEXT_SYSTEM), 'page-type');
+                $context, 'page-type');
 
         // Exercise SUT.
         $blockmanager->add_block($blockname, $regionname, 0, false);
@@ -236,9 +250,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         // Set up fixture.
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context->path = '/';
+        $this->insert_context_in_db($context);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
-                get_context_instance(CONTEXT_SYSTEM), 'page-type');
+                $context, 'page-type');
 
         // Exercise SUT.
         $blockmanager->add_block($blockname, $regionname, 0, false);
@@ -252,9 +269,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     public function test_block_not_included_in_different_context() {
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
         $fakecontext = new stdClass;
-        $fakecontext->id = $syscontext->id + 1;
         $fakecontext->contextlevel = CONTEXT_COURSECAT;
+        $fakecontext->path = $syscontext->path . '/';
+        $this->insert_context_in_db($fakecontext);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -273,9 +293,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     public function test_block_included_in_sub_context() {
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
         $childcontext = new stdClass;
-        $childcontext->id = $syscontext->id + 1;
-        $childcontext->path = '/' . $syscontext->id . '/' . $childcontext->id;
+        $childcontext->contextlevel = CONTEXT_COURSECAT;
+        $childcontext->path = $syscontext->path . '/';
+        $this->insert_context_in_db($childcontext);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -294,6 +317,8 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     public function test_block_not_included_on_different_page_type() {
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -313,9 +338,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         // Set up fixture.
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
-                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+                $syscontext, 'page-type', 'sub-page');
 
         $blockmanager->add_block($blockname, $regionname, 0, true, $page->pagetype, 'other-sub-page');
 
@@ -330,9 +358,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         // Set up fixture.
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
-                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+                $syscontext, 'page-type', 'sub-page');
 
         $blockmanager->add_block($blockname, $regionname, 0, true, $page->pagetype, $page->subpage);
 
@@ -347,9 +378,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         // Set up fixture.
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext->path = '/';
+        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
-                get_context_instance(CONTEXT_SYSTEM), 'page-type', 'sub-page');
+                $syscontext, 'page-type', 'sub-page');
 
         $blockmanager->add_block($blockname, $regionname, 0, true, 'page-*', $page->subpage);
 
