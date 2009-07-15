@@ -529,7 +529,7 @@ function clean_param($param, $type) {
                     // absolute, and matches our wwwroot
                 } else {
                     // relative - let's make sure there are no tricks
-                    if (validateUrlSyntax($param, 's-u-P-a-p-f+q?r?')) {
+                    if (validateUrlSyntax('/' . $param, 's-u-P-a-p-f+q?r?')) {
                         // looks ok.
                     } else {
                         $param = '';

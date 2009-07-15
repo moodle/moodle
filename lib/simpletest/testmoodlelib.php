@@ -296,6 +296,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param($CFG->wwwroot, PARAM_LOCALURL), $CFG->wwwroot);
         $this->assertEqual(clean_param('/just/a/path', PARAM_LOCALURL), '/just/a/path');
         $this->assertEqual(clean_param('funny:thing', PARAM_LOCALURL), '');
+        $this->assertEqual(clean_param('course/view.php?id=3', PARAM_LOCALURL), 'course/view.php?id=3');
     }
 
     function test_make_user_directory() {
