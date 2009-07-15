@@ -27,8 +27,6 @@
     }
     $PAGE->set_url('mod/forum/view.php', $params);
 
-    $buttontext = '';
-
     if ($id) {
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
             print_error('invalidcoursemodule');
@@ -44,7 +42,7 @@
         require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
-        $buttontext = update_module_button($cm->id, $course->id, $strforum);
+        $PAGE->set_button(update_module_button($cm->id, $course->id, $strforum));
 
     } else if ($f) {
 
@@ -63,23 +61,25 @@
         require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
-        $buttontext = update_module_button($cm->id, $course->id, $strforum);
+        $PAGE->set_button(update_module_button($cm->id, $course->id, $strforum));
 
     } else {
         print_error('missingparameter');
     }
 
-    if (!$buttontext) {
-        $buttontext = forum_search_form($course, $search);
+    if (!$PAGE->button) {
+        $PAGE->set_button(forum_search_form($course, $search));
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $PAGE->set_context($context);
 
 
 /// Print header.
     $navigation = build_navigation('', $cm);
-    print_header_simple(format_string($forum->name), "",
-                 $navigation, "", "", true, $buttontext, navmenu($course, $cm));
+    $PAGE->set_title(format_string($forum->name));
+    $PAGE->set_heading(format_string($course->fullname));
+    echo $OUTPUT->header($navigation, navmenu($course, $cm));
 
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
@@ -283,6 +283,6 @@
     }
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);
-    print_footer($course);
+    echo $OUTPUT->footer($course);
 
 ?>
