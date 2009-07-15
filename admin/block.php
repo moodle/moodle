@@ -53,7 +53,10 @@
 
     print_heading($strblockname);
 
-    print_simple_box(get_string('configwarning', 'admin'), 'center', '50%');
+    notify('This block still uses an old-style config_global.html file. ' .
+            'It must be updated by a developer to use a settings.php file.');
+
+    print_box(get_string('configwarning', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
     echo '<br />';
 
     echo '<form method="post" action="block.php">';
@@ -62,7 +65,11 @@
         echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
     }
     echo '</p>';
-    $block->config_print();
+
+    print_box_start();
+    include($CFG->dirroot.'/blocks/'. $block->name() .'/config_global.html');
+    print_box_end();
+
     echo '</form>';
     print_footer();
 

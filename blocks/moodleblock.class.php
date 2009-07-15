@@ -464,25 +464,6 @@ class block_base {
     }
 
     /**
-     * Default behavior: print the config_global.html file
-     * You don't need to override this if you're satisfied with the above
-     *
-     * @return boolean
-     */
-    function config_print() {
-        // Default behavior: print the config_global.html file
-        // You don't need to override this if you're satisfied with the above
-        if (!$this->has_config()) {
-            return false;
-        }
-        global $CFG;
-        print_simple_box_start('center', '', '', 5, 'blockconfigglobal');
-        include($CFG->dirroot.'/blocks/'. $this->name() .'/config_global.html');
-        print_simple_box_end();
-        return true;
-    }
-    
-    /**
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
@@ -712,6 +693,10 @@ class block_base {
                 'should not have been calling it anyway.');
     }
 
+    /** @deprecated since Moodle 2.0. */
+    function config_print() {
+        throw new coding_exception('config_print() can no longer be used. Blocks should use a settings.php file.');
+    }
 }
 
 /**
