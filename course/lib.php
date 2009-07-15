@@ -1534,7 +1534,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
 
     //use javascript to hide the progress help button when no progress tick boxes have been displayed
-    if (!$shownhelp && !$hiddenhelp && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
+    if (!$shownhelp && !$hiddenhelp && isset($completioninfo) && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
         $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'hide'));
         $hiddenhelp = true;
     }
