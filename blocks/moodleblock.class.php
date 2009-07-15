@@ -361,6 +361,8 @@ class block_base {
             if (!empty($this->content->footer)) {
                 $bc->footer = $this->content->footer;
             }
+        } else {
+            $bc->add_class('invisible');
         }
 
         if ($this->page->user_is_editing()) {

@@ -1585,6 +1585,11 @@ a.skip:focus, a.skip:active {
   display: none;
 }
 
+.block-region .invisible {
+  opacity: 0.5;
+  filter: alpha(opacity=0.5);
+}
+
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
   margin-right: 6px;
