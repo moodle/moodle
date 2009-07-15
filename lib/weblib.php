@@ -338,14 +338,21 @@ class moodle_url {
             $this->params($params);
         }
     }
+
     /**
-     * Add an array of params to the params for this page. The added params override existing ones if they
-     * have the same name.
+     * Add an array of params to the params for this page. 
      *
-     * @param array $params
+     * The added params override existing ones if they have the same name.
+     *
+     * @param array $params Defaults to null. If null then return value of param 'name'.
+     * @return array Array of Params for url.
      */
-    function params($params){
-        $this->params = $params + $this->params;
+    public function params($params = null) {
+        if (!is_null($params)) {
+            return $this->params = $params + $this->params;
+        } else {
+            return $this->params;
+        }
     }
 
     /**
