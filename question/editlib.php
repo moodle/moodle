@@ -567,10 +567,9 @@ function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, 
         if ($inuse) {
             $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
         }
-        $pageurl->remove_params('sesskey');
         notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
                     $pageurl->out_action(),
-                    $pageurl->out(false),
+                    $pageurl->out(true),
                     array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist)),
                     $pageurl->params(), 'post', 'get');
 
