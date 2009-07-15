@@ -675,10 +675,10 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
     protected function display_content($question, $rowclasses) {
         if (question_has_capability_on($question, 'edit')) {
             if ($question->hidden) {
-                $this->print_icon('t/restore', $this->strrestore, $this->qbank->base_url()->out(false, array('unhide' => $question->id)));
+                $this->print_icon('t/restore', $this->strrestore, $this->qbank->base_url()->out_action(array('unhide' => $question->id)));
             } else {
                 $this->print_icon('t/delete', $this->strdelete,
-                        $this->qbank->base_url()->out(false, array('deleteselected' => $question->id, 'q' . $question->id => 1)));
+                        $this->qbank->base_url()->out_action(array('deleteselected' => $question->id, 'q' . $question->id => 1)));
             }
         }
     }
@@ -1422,7 +1422,7 @@ class question_bank_view {
                     } else {
                         $movecontexturl->param('courseid', $this->course->id);
                     }
-                    redirect($movecontexturl->out());
+                    redirect($movecontexturl);
                 }
             }
         }
@@ -1445,7 +1445,7 @@ class question_bank_view {
                             }
                         }
                     }
-                    redirect($this->baseurl->out());
+                    redirect($this->baseurl);
                 } else {
                     print_error('invalidconfirm', 'question');
                 }
@@ -1455,10 +1455,10 @@ class question_bank_view {
         // Unhide a question
         if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
             question_require_capability_on($unhide, 'edit');
-            if(!$DB->set_field('question', 'hidden', 0, array('id', $unhide))) {
+            if(!$DB->set_field('question', 'hidden', 0, array('id' => $unhide))) {
                 print_error('cannotunhidequestion', 'question');
             }
-            redirect($this->baseurl->out());
+            redirect($this->baseurl);
         }
     }
 
@@ -1484,7 +1484,7 @@ class question_bank_view {
                 }
             }
             if (!$questionlist) { // no questions were selected
-                redirect($this->baseurl->out());
+                redirect($this->baseurl);
             }
             $questionlist = rtrim($questionlist, ',');
 
@@ -1493,8 +1493,10 @@ class question_bank_view {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $this->baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $this->baseurl->out_action());
+                        $this->baseurl->out_action(),
+                        $this->baseurl->out(true),
+                        array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist)),
+                        $this->baseurl->params(), 'post', 'get');
 
             return true;
         }
