@@ -140,6 +140,7 @@ $string['backtoparticipants'] = 'Back to participants list';
 $string['back'] = 'Back';
 $string['backto'] = 'Back to $a';
 $string['backtocourselisting'] = 'Back to course listing';
+$string['backtopageyouwereon'] = 'Back to the page you were on';
 $string['backup'] = 'Backup';
 $string['backupactivehelp'] = 'Choose whether or not to do automated backups.';
 $string['backupcancelled'] = 'Backup Cancelled';

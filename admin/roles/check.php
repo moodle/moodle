@@ -36,6 +36,7 @@
     $contextid = required_param('contextid',PARAM_INT);
     $userid = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+    $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
     $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
@@ -43,6 +44,9 @@
     }
     if ($courseid && $courseid != SITEID) {
         $urlparams['courseid'] = $courseid;
+    }
+    if ($returnurl) {
+        $urlparams['returnurl'] = $returnurl;
     }
     $PAGE->set_url($CFG->admin . '/roles/check.php', $urlparams);
 
@@ -184,6 +188,9 @@
     if (!$isfrontpage && ($url = get_context_url($context))) {
         echo '<div class="backlink"><a href="' . $url . '">' .
             get_string('backto', '', $contextname) . '</a></div>';
+        } else if ($returnurl) {
+            echo '<div class="backlink"><a href="' . $CFG->wwwroot . '/' . $returnurl . '">' .
+                get_string('backtopageyouwereon') . '</a></div>';
     }
 
     print_footer();

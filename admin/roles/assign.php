@@ -42,6 +42,7 @@
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
     $extendbase     = optional_param('extendbase', 3, PARAM_INT);
+    $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
     $urlparams = array('contextid' => $contextid);
     if (!empty($userid)) {
@@ -49,6 +50,9 @@
     }
     if ($courseid && $courseid != SITEID) {
         $urlparams['courseid'] = $courseid;
+    }
+    if ($returnurl) {
+        $urlparams['returnurl'] = $returnurl;
     }
     $PAGE->set_url($CFG->admin . '/roles/assign.php', $urlparams);
     $baseurl = $PAGE->url->out();
@@ -445,12 +449,10 @@
         if (!$isfrontpage && ($url = get_context_url($context))) {
             echo '<div class="backlink"><a href="' . $url . '">' .
                 get_string('backto', '', $contextname) . '</a></div>';
+        } else if ($returnurl) {
+            echo '<div class="backlink"><a href="' . $CFG->wwwroot . '/' . $returnurl . '">' .
+                get_string('backtopageyouwereon') . '</a></div>';
         }
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM || $isfrontpage) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer();
-    }
-?>
+    print_footer();

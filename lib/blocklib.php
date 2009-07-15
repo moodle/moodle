@@ -851,10 +851,12 @@ function block_edit_controls($block, $page) {
 
     $controls = array();
     $actionurl = $page->url->out_action();
+    $returnurlparam = '&amp;returnurl=' . urlencode($page->url->out_returnurl());
 
     // Assign roles icon.
     if (has_capability('moodle/role:assign', $block->context)) {
-        $controls[] = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$block->context->id,
+        $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
+                '/roles/assign.php?contextid=' . $block->context->id . $returnurlparam,
                 'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
     }
 
@@ -874,7 +876,7 @@ function block_edit_controls($block, $page) {
             if (!empty($block->instance->blockpositionid)) {
                 $editurl .= '&amp;positionid=' . $block->instance->blockpositionid;
             }
-            $controls[] = array('url' => $editurl . '&amp;returnurl=' . urlencode($page->url->out_returnurl()),
+            $controls[] = array('url' => $editurl . $returnurlparam,
                     'icon' => 't/edit', 'caption' => get_string('configuration'));
         }
 

@@ -37,6 +37,7 @@
     $roleid = optional_param('roleid', 0, PARAM_INT);   // requested role id
     $userid = optional_param('userid', 0, PARAM_INT);   // needed for user tabs
     $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
+    $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
 
 /// Get the base URL for this and related pages into a convenient variable.
     $urlparams = array('contextid' => $contextid);
@@ -45,6 +46,9 @@
     }
     if ($courseid && $courseid != SITEID) {
         $urlparams['courseid'] = $courseid;
+    }
+    if ($returnurl) {
+        $urlparams['returnurl'] = $returnurl;
     }
     $PAGE->set_url($CFG->admin . '/roles/override.php', $urlparams);
     $baseurl = $PAGE->url->out();
@@ -257,8 +261,10 @@
         if (!$isfrontpage && ($url = get_context_url($context))) {
             echo '<div class="backlink"><a href="' . $url . '">' .
                 get_string('backto', '', $contextname) . '</a></div>';
+        } else if ($returnurl) {
+            echo '<div class="backlink"><a href="' . $CFG->wwwroot . '/' . $returnurl . '">' .
+                get_string('backtopageyouwereon') . '</a></div>';
         }
     }
 
     print_footer();
-?>

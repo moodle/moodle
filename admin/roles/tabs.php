@@ -169,6 +169,12 @@ $activetwo = array();
 
 if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything except SYSTEM context
 
+    if (!empty($returnurl)) {
+        $returnurlparam = '&amp;returnurl=' . $returnurl;
+    } else {
+        $returnurlparam = '';
+    }
+
     if ($context->contextlevel == CONTEXT_MODULE) {  // Only show update button if module
         $toprow[] = new tabobject('update', $CFG->wwwroot.'/course/mod.php?update='.
                         $context->instanceid.'&amp;return=true&amp;sesskey='.sesskey(), get_string('settings'));
@@ -176,20 +182,20 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
 
     if (!empty($assignableroles) || $currenttab=='assign') {
         $toprow[] = new tabobject('assign',
-                $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id,
+                $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.$returnurlparam,
                 get_string('localroles', 'role'), '', true);
     }
 
     if (!empty($overridableroles)) {
         $toprow[] = new tabobject('override',
-                $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id,
+                $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id.$returnurlparam,
                 get_string('overridepermissions', 'role'), '', true);
     }
 
     if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
             'moodle/role:override', 'moodle/role:assign'), $context)) {
         $toprow[] = new tabobject('check',
-                $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$context->id,
+                $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$context->id.$returnurlparam,
                 get_string('checkpermissions', 'role'));
     }
 
