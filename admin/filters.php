@@ -159,7 +159,7 @@
 
 /// Print the page heading.
     admin_externalpage_print_header();
-    print_heading(get_string('managefilters'));
+    print_heading(get_string('filtersettings', 'admin'));
 
     $activechoices = array(
         TEXTFILTER_DISABLED => get_string('disabled', 'filters'),
