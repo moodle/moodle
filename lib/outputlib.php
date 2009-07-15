@@ -1932,7 +1932,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         echo '<table id="layout-table"><tr>';
         foreach ($lt as $column) {
             if ($column == 'left' && $this->page->blocks->region_has_content(BLOCK_POS_LEFT)) {
-                echo '<td id="left-column" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
+                echo '<td id="left-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
                 echo $this->container_start();
                 echo $this->blocks_for_region(BLOCK_POS_LEFT);
                 echo $this->container_end();
@@ -1947,7 +1947,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 echo '</td>';
 
             } else if ($column == 'right' && $this->page->blocks->region_has_content(BLOCK_POS_RIGHT)) {
-                echo '<td id="right-column" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
+                echo '<td id="right-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
                 echo $this->container_start();
                 echo $this->blocks_for_region(BLOCK_POS_RIGHT);
                 echo $this->container_end();

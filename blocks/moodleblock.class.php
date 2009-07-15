@@ -355,9 +355,12 @@ class block_base {
         if (!$this->hide_header()) {
             $bc->title = $this->title;
         }
-        $bc->content = $this->formatted_contents($output);
-        if (!empty($this->content->footer)) {
-            $bc->footer = $this->content->footer;
+
+        if ($this->instance->visible) {
+            $bc->content = $this->formatted_contents($output);
+            if (!empty($this->content->footer)) {
+                $bc->footer = $this->content->footer;
+            }
         }
 
         if ($this->page->user_is_editing()) {
@@ -368,7 +371,8 @@ class block_base {
             return null;
         }
 
-        if (empty($CFG->allowuserblockhiding)) {
+        if (empty($CFG->allowuserblockhiding) ||
+                (empty($bc->content) && empty($bc->footer))) {
             $bc->collapsible = block_contents::NOT_HIDEABLE;
         } else if (get_user_preferences('block' . $bc->blockinstanceid . 'hidden', false)) {
             $bc->collapsible = block_contents::HIDDEN;

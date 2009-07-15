@@ -820,6 +820,7 @@ $string['hideadvancedsettings'] = 'Hide advanced settings';
 $string['hidepicture'] = 'Hide picture';
 $string['hidesection'] = 'Hide section $a';
 $string['hidesettings'] = 'Hide settings';
+$string['hideshowblocks'] = 'Hide or show blocks';
 $string['hidetopicfromothers'] = 'Hide topic from others';
 $string['hideweekfromothers'] = 'Hide week from others';
 $string['hits'] = 'Hits';

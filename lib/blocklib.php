@@ -354,9 +354,12 @@ class block_manager {
     /**
      * This method actually loads the blocks for our page from the database.
      *
-     * @param bool|null $includeinvisible
+     * @param boolean|null $includeinvisible
+     *      null (default) - load hidden blocks if $this->page->user_is_editing();
+     *      true - load hidden blocks.
+     *      false - don't load hidden blocks.
      */
-    public function load_blocks($includeinvisible = NULL) {
+    public function load_blocks($includeinvisible = null) {
         global $DB, $CFG;
         if (!is_null($this->birecordsbyregion)) {
             // Already done.
@@ -383,9 +386,9 @@ class block_manager {
             $includeinvisible = $this->page->user_is_editing();
         }
         if ($includeinvisible) {
-            $visiblecheck = 'AND (bp.visible = 1 OR bp.visible IS NULL)';
-        } else {
             $visiblecheck = '';
+        } else {
+            $visiblecheck = 'AND (bp.visible = 1 OR bp.visible IS NULL)';
         }
 
         $context = $this->page->context;
@@ -418,6 +421,8 @@ class block_manager {
                     bi.showinsubcontexts,
                     bi.pagetypepattern,
                     bi.subpagepattern,
+                    bi.defaultregion,
+                    bi.defaultweight,
                     COALESCE(bp.visible, 1) AS visible,
                     COALESCE(bp.region, bi.defaultregion) AS region,
                     COALESCE(bp.weight, bi.defaultweight) AS weight,
@@ -863,10 +868,10 @@ function block_edit_controls($block, $page) {
     if ($block->user_can_edit() && $page->user_can_edit_blocks()) {
         // Show/hide icon.
         if ($block->instance->visible) {
-            $controls[] = array('url' => $actionurl . '&amp;action=hide',
+            $controls[] = array('url' => $actionurl . '&amp;bui_hideid=' . $block->instance->id,
                     'icon' => 't/hide', 'caption' => get_string('hide'));
         } else {
-            $controls[] = array('url' => $actionurl . '&amp;action=show',
+            $controls[] = array('url' => $actionurl . '&amp;bui_showid=' . $block->instance->id,
                     'icon' => 't/show', 'caption' => get_string('show'));
         }
 
@@ -970,7 +975,29 @@ function block_process_url_delete($page) {
  * @return boolean true if anything was done. False if not.
  */
 function block_process_url_show_hide($page) {
-    // TODO MDL-19398
+    if ($blockid = optional_param('bui_hideid', null, PARAM_INTEGER)) {
+        $newvisibility = 0;
+    } else if ($blockid = optional_param('bui_showid', null, PARAM_INTEGER)) {
+        $newvisibility = 1;
+    } else {
+        return false;
+    }
+
+    confirm_sesskey();
+
+    $block = $page->blocks->find_instance($blockid);
+
+    if (!$block->user_can_edit() || !$page->user_can_edit_blocks()) {
+        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('hideshowblocks'));
+    }
+
+    blocks_set_visibility($block->instance, $page, $newvisibility);
+
+    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+    $page->ensure_param_not_in_url('bui_hideid');
+    $page->ensure_param_not_in_url('bui_showid');
+
+    return true;
 }
 
 ///**
@@ -1097,6 +1124,36 @@ function blocks_delete_all_for_context($contextid) {
     $instances->close();
     $DB->delete_records('block_instances', array('parentcontextid' => $contextid));
     $DB->delete_records('block_positions', array('contextid' => $contextid));
+}
+
+/**
+ * Set a block to be visible or hidden on a particular page.
+ *
+ * @param object $instance a row from the block_instances, preferably LEFT JOINed with the
+ *      block_positions table as return by block_manager.
+ * @param moodle_page $page the back to set the visibility with respect to.
+ * @param integer $newvisibility 1 for visible, 0 for hidden.
+ */
+function blocks_set_visibility($instance, $page, $newvisibility) {
+    global $DB;
+    if (!empty($instance->blockpositionid)) {
+        // Already have local information on this page.
+        $DB->set_field('block_positions', 'visible', $newvisibility, array('id' => $instance->blockpositionid));
+        return;
+    }
+
+    // Create a new block_positions record.
+    $bp = new stdClass;
+    $bp->blockinstanceid = $instance->id;
+    $bp->contextid = $page->context->id;
+    $bp->pagetype = $page->pagetype;
+    if ($page->subpage) {
+        $bp->subpage = $page->subpage;
+    }
+    $bp->visible = $newvisibility;
+    $bp->region = $instance->defaultregion;
+    $bp->weight = $instance->defaultweight;
+    $DB->insert_record('block_positions', $bp);
 }
 
 /**
