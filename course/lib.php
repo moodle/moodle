@@ -1222,7 +1222,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     $modinfo = get_fast_modinfo($course);
-
+    $completioninfo = new completion_info($course);
 
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
@@ -1425,7 +1425,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             // Completion
-            $completioninfo = new completion_info($course);
             $completion = $hidecompletion
                 ? COMPLETION_TRACKING_NONE
                 : $completioninfo->is_enabled($mod);
@@ -1534,7 +1533,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     }
 
     //use javascript to hide the progress help button when no progress tick boxes have been displayed
-    if (!$shownhelp && !$hiddenhelp && isset($completioninfo) && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
+    if (!$shownhelp && !$hiddenhelp && $completioninfo->is_enabled()&& !$isediting && isloggedin() && !isguestuser()) {
         $PAGE->requires->js_function_call('completion_set_progressicon_visibility', array('completionprogressid', 'hide'));
         $hiddenhelp = true;
     }
