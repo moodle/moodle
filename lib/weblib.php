@@ -4695,13 +4695,17 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  * <strong>Good practice:</strong> You should call this method before starting page
  * output by using any of the OUTPUT methods.
  *
- * @param string $url The URL to redirect to
+ * @param mixed $url either a string URL, or a moodle_url to redirect to
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
  * @return void
  */
 function redirect($url, $message='', $delay=-1) {
     global $OUTPUT, $SESSION, $CFG;
+
+    if ($url instanceof moodle_url) {
+        $url = $url->out(false, array(), false);
+    }
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
        $url = $SESSION->sid_process_url($url);
