@@ -12,7 +12,6 @@
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);
     $delete   = optional_param('delete', 0, PARAM_INT);
-    $multiple = optional_param('multiple', 0, PARAM_INT);
 
 /// Print headings
 
@@ -24,7 +23,6 @@
     $strsettings = get_string('settings');
     $strcourses = get_string('blockinstances', 'admin');
     $strname = get_string('name');
-    $strmultiple = get_string('blockmultiple', 'admin');
     $strshowblockcourse = get_string('showblockcourse');
 
 /// If data submitted, then process and store.
@@ -42,15 +40,6 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
-        admin_get_root(true, false);  // settings not required - only pages
-    }
-
-    if (!empty($multiple) && confirm_sesskey()) {
-        if (!$block = blocks_get_record($multiple)) {
-            print_error('blockdoesnotexist', 'error');
-        }
-        $block->multiple = !$block->multiple;
-        $DB->update_record('block', $block);
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -141,8 +130,8 @@
 
     $table = new flexible_table('admin-blocks-compatible');
 
-    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'multiple', 'delete', 'settings'));
-    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings));
+    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'delete', 'settings'));
+    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strdelete, $strsettings));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('id', 'blocks');
     $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
@@ -187,24 +176,12 @@
                        '<img src="'.$OUTPUT->old_icon_url('i/show') . '" class="icon" alt="'.$strshow.'" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
-        if ($blockobject->instance_allow_multiple()) {
-            if($blocks[$blockid]->multiple) {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.sesskey().'">'.get_string('change', 'admin').'</a>)</span>';
-            }
-            else {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.sesskey().'">'.get_string('change', 'admin').'</a>)</span>';
-            }
-        }
-        else {
-            $multiple = '';
-        }
 
         $table->add_data(array(
             '<span'.$class.'>'.$blockobject->get_title().'</span>',
             $blocklist,
             '<span'.$class.'>'.$blockobject->get_version().'</span>',
             $visible,
-            $multiple,
             $delete,
             $settings
         ));
