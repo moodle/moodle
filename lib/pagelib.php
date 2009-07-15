@@ -335,7 +335,7 @@ class moodle_page {
      */
     public function get_url() {
         if (is_null($this->_url)) {
-            debugging('This page did no call $PAGE->set_url(...). Realying on a guess.', DEBUG_DEVELOPER);
+            debugging('This page did no call $PAGE->set_url(...). Relaying on a guess.', DEBUG_DEVELOPER);
             global $FULLME;
             $this->_url = new moodle_url($FULLME);
             // Make sure the guessed URL cannot lead to dangerous redirects.
