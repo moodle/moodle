@@ -134,7 +134,7 @@ foreach ($themes as $themename => $themedir) {
 
     $table->data[$themename] = $row;
     if ($themename == $CFG->theme) {
-        $table->rowclass[$themename] = 'selectedtheme';
+        $table->rowclasses[$themename] = 'selectedtheme';
     }
 }
 

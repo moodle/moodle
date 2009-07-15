@@ -1024,9 +1024,9 @@ abstract class repository {
 
             //display a grey row if the type is defined as not visible
             if (isset($type) && !$type->get_visible()) {
-                $table->rowclass[] = 'dimmed_text';
+                $table->rowclasses[] = 'dimmed_text';
             } else {
-                $table->rowclass[] = '';
+                $table->rowclasses[] = '';
             }
 
             if (!in_array($i->name, $alreadyplugins)) {

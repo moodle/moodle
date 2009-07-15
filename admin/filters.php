@@ -159,7 +159,7 @@
 
 /// Print the page heading.
     admin_externalpage_print_header();
-    print_heading(get_string('manageqtypes', 'admin'));
+    print_heading(get_string('managefilters'));
 
     $activechoices = array(
         TEXTFILTER_DISABLED => get_string('disabled', 'filters'),
@@ -202,9 +202,9 @@
         $row = get_table_row($filterinfo, $firstrow, $filter == $lastactive, $applytostrings);
         $table->data[] = $row;
         if ($filterinfo->active == TEXTFILTER_DISABLED) {
-            $table->rowclass[] = 'dimmed_text';
+            $table->rowclasses[] = 'dimmed_text';
         } else {
-            $table->rowclass[] = '';
+            $table->rowclasses[] = '';
         }
         $firstrow = false;
     }
@@ -214,7 +214,7 @@
         $filterinfo->active = TEXTFILTER_DISABLED;
         $row = get_table_row($filterinfo, false, false, false);
         $table->data[] = $row;
-        $table->rowclass[] = 'dimmed_text';
+        $table->rowclasses[] = 'dimmed_text';
     }
 
     print_table($table);

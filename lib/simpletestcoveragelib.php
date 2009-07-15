@@ -435,7 +435,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $table->tablealign = 'center';
                 $table->class = 'codecoveragetable';
                 $table->id = 'codecoveragetable_' . $type;
-                $table->rowclass = array('label', 'value');
+                $table->rowclasses = array('label', 'value');
                 $table->data = array(
                         array(get_string('date')                           , userdate($data->time)),
                         array(get_string('files')                          , format_float($data->totalfiles, 0)),

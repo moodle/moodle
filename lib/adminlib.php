@@ -5849,9 +5849,9 @@ class admin_setting_managerepository extends admin_setting {
 
             //display a grey row if the type is defined as not visible
             if (!$i->get_visible()){
-                $table->rowclass[] = 'dimmed_text';
+                $table->rowclasses[] = 'dimmed_text';
             } else{
-                $table->rowclass[] = '';
+                $table->rowclasses[] = '';
             }
 
             if (!in_array($i->get_typename(), $alreadyplugins)) {
@@ -5959,9 +5959,9 @@ class admin_setting_managewsprotocols extends admin_setting {
 
             //display a grey row if the type is defined as not visible
             if (!$i->get_enable()){
-                $table->rowclass[] = 'dimmed_text';
+                $table->rowclasses[] = 'dimmed_text';
             } else{
-                $table->rowclass[] = '';
+                $table->rowclasses[] = '';
             }
         }
         $output = print_table($table, true);

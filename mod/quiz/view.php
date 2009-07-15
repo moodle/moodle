@@ -264,7 +264,7 @@
                     // highlight the highest grade if appropriate
                     if ($overallstats && !$attempt->preview && $numattempts > 1 && !is_null($mygrade) &&
                             $attemptgrade == $mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
-                        $table->rowclass[$attempt->attempt] = 'bestrow';
+                        $table->rowclasses[$attempt->attempt] = 'bestrow';
                     }
 
                     $row[] = $formattedgrade;
