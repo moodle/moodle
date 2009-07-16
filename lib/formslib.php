@@ -88,7 +88,7 @@ function form_init_date_js() {
  * @copyright Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodleform {
+abstract class moodleform {
     /** @var string */
     protected $_formname;       // form name
     /**
@@ -753,9 +753,7 @@ class moodleform {
      *
      * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
      */
-    function definition() {
-        print_error('mustbeoverriden', 'form', '', get_class($this));
-    }
+    protected abstract function definition();
 
     /**
      * Dummy stub method - override if you need to setup the form depending on current
