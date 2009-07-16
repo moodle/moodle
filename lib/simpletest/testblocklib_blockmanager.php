@@ -46,9 +46,6 @@ class testable_block_manager extends block_manager {
     public function get_loaded_blocks() {
         return $this->birecordsbyregion;
     }
-    public function matching_page_type_patterns($pagetype) {
-        return parent::matching_page_type_patterns($pagetype);
-    }
 }
 class block_ablocktype extends block_base {
     public function init() {
@@ -140,19 +137,19 @@ class moodle_block_manager_test extends UnitTestCase {
     public function test_matching_page_type_patterns() {
         $this->assert(new ArraysHaveSameValuesExpectation(
                 array('site-index', 'site-index-*', 'site-*', '*')),
-                $this->blockmanager->matching_page_type_patterns('site-index'));
+                matching_page_type_patterns('site-index'));
 
         $this->assert(new ArraysHaveSameValuesExpectation(
                 array('mod-quiz-report-overview', 'mod-quiz-report-overview-*', 'mod-quiz-report-*', 'mod-quiz-*', 'mod-*', '*')),
-                $this->blockmanager->matching_page_type_patterns('mod-quiz-report-overview'));
+                matching_page_type_patterns('mod-quiz-report-overview'));
 
         $this->assert(new ArraysHaveSameValuesExpectation(
                 array('mod-forum-view', 'mod-*-view', 'mod-forum-view-*', 'mod-forum-*', 'mod-*', '*')),
-                $this->blockmanager->matching_page_type_patterns('mod-forum-view'));
+                matching_page_type_patterns('mod-forum-view'));
 
         $this->assert(new ArraysHaveSameValuesExpectation(
                 array('mod-forum-index', 'mod-*-index', 'mod-forum-index-*', 'mod-forum-*', 'mod-*', '*')),
-                $this->blockmanager->matching_page_type_patterns('mod-forum-index'));
+                matching_page_type_patterns('mod-forum-index'));
     }
 }
 

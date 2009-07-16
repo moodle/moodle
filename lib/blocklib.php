@@ -382,6 +382,7 @@ class block_manager {
             }
         }
 
+        // The code here needs to be consistent with the code in block_load_for_page.
         if (is_null($includeinvisible)) {
             $includeinvisible = $this->page->user_is_editing();
         }
@@ -401,7 +402,7 @@ class block_manager {
             $contexttest = "($contexttest OR (bi.showinsubcontexts = 1 AND bi.parentcontextid $parentcontexttest))";
         }
 
-        $pagetypepatterns = $this->matching_page_type_patterns($this->page->pagetype);
+        $pagetypepatterns = matching_page_type_patterns($this->page->pagetype);
         list($pagetypepatterntest, $pagetypepatternparams) =
                 $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest0000');
 
@@ -579,30 +580,6 @@ class block_manager {
 /// Inner workings =============================================================
 
     /**
-     * Given a specific page type, return all the page type patterns that might
-     * match it.
-     *
-     * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
-     * @return array an array of all the page type patterns that might match this page type.
-     */
-    protected function matching_page_type_patterns($pagetype) {
-        $patterns = array($pagetype, '*');
-        $bits = explode('-', $pagetype);
-        if (count($bits) == 3 && $bits[0] == 'mod') {
-            if ($bits[2] == 'view') {
-                $patterns[] = 'mod-*-view';
-            } else if ($bits[2] == 'index') {
-                $patterns[] = 'mod-*-index';
-            }
-        }
-        while (count($bits) > 0) {
-            $patterns[] = implode('-', $bits) . '-*';
-            array_pop($bits);
-        }
-        return $patterns;
-    }
-
-    /**
      * Check whether the page blocks have been loaded yet
      *
      * @return void Throws coding exception if already loaded
@@ -755,6 +732,66 @@ function block_method_result($blockname, $method, $param = NULL) {
 }
 
 /**
+ * Load a block instance, with position information about where that block appears
+ * on a given page.
+ *
+ * @param integer$blockid the block_instance.id.
+ * @param moodle_page $page the page the block is appearing on.
+ * @return block_base the requested block.
+ */
+function block_load_for_page($blockid, $page) {
+    global $DB;
+
+    // The code here needs to be consistent with the code in block_manager::load_blocks.
+    $params = array(
+        'blockinstanceid' => $blockid,
+        'subpage' => $page->subpage,
+        'contextid' => $page->context->id,
+        'pagetype' => $page->pagetype,
+        'contextblock' => CONTEXT_BLOCK,
+    );
+    $sql = "SELECT
+                bi.id,
+                bp.id AS blockpositionid,
+                bi.blockname,
+                bi.parentcontextid,
+                bi.showinsubcontexts,
+                bi.pagetypepattern,
+                bi.subpagepattern,
+                bi.defaultregion,
+                bi.defaultweight,
+                COALESCE(bp.visible, 1) AS visible,
+                COALESCE(bp.region, bi.defaultregion) AS region,
+                COALESCE(bp.weight, bi.defaultweight) AS weight,
+                bi.configdata,
+                ctx.id AS ctxid,
+                ctx.path AS ctxpath,
+                ctx.depth AS ctxdepth,
+                ctx.contextlevel AS ctxlevel
+
+            FROM {block_instances} bi
+            JOIN {block} b ON bi.blockname = b.name
+            LEFT JOIN {block_positions} bp ON bp.blockinstanceid = bi.id
+                                              AND bp.contextid = :contextid
+                                              AND bp.pagetype = :pagetype
+                                              AND bp.subpage = :subpage
+            JOIN {context} ctx ON ctx.contextlevel = :contextblock
+                                  AND ctx.instanceid = bi.id
+
+            WHERE
+            bi.id = :blockinstanceid
+            AND b.visible = 1
+
+            ORDER BY
+                COALESCE(bp.region, bi.defaultregion),
+                COALESCE(bp.weight, bi.defaultweight),
+                bi.id";
+    $bi = $DB->get_record_sql($sql, $params, MUST_EXIST);
+    $bi = make_context_subobj($bi);
+    return block_instance($bi->blockname, $bi, $page);
+}
+
+/**
  * Creates a new object of the specified block class.
  *
  * @param string $blockname the name of the block.
@@ -801,6 +838,31 @@ function block_load_class($blockname) {
     @include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php'); // do not throw errors if block code not present
 
     return class_exists($classname);
+}
+
+/**
+ * Given a specific page type, return all the page type patterns that might
+ * match it.
+ *
+ * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
+ * @return array an array of all the page type patterns that might match this page type.
+ */
+function matching_page_type_patterns($pagetype) {
+    $patterns = array($pagetype);
+    $bits = explode('-', $pagetype);
+    if (count($bits) == 3 && $bits[0] == 'mod') {
+        if ($bits[2] == 'view') {
+            $patterns[] = 'mod-*-view';
+        } else if ($bits[2] == 'index') {
+            $patterns[] = 'mod-*-index';
+        }
+    }
+    while (count($bits) > 0) {
+        $patterns[] = implode('-', $bits) . '-*';
+        array_pop($bits);
+    }
+     $patterns[] = '*';
+    return $patterns;
 }
 
 /// Functions update the blocks if required by the request parameters ==========
@@ -856,12 +918,11 @@ function block_edit_controls($block, $page) {
 
     $controls = array();
     $actionurl = $page->url->out_action();
-    $returnurlparam = '&amp;returnurl=' . urlencode($page->url->out_returnurl());
 
     // Assign roles icon.
     if (has_capability('moodle/role:assign', $block->context)) {
         $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
-                '/roles/assign.php?contextid=' . $block->context->id . $returnurlparam,
+                '/roles/assign.php?contextid=' . $block->context->id . '&amp;returnurl=' . urlencode($page->url->out_returnurl()),
                 'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
     }
 
@@ -877,11 +938,7 @@ function block_edit_controls($block, $page) {
 
         // Edit config icon.
         if ($block->instance_allow_multiple() || $block->instance_allow_config()) {
-            $editurl = $CFG->wwwroot . '/blocks/edit.php?block=' . $block->instance->id;
-            if (!empty($block->instance->blockpositionid)) {
-                $editurl .= '&amp;positionid=' . $block->instance->blockpositionid;
-            }
-            $controls[] = array('url' => $editurl . $returnurlparam,
+            $controls[] = array('url' => block_edit_url($block, $page)->out(),
                     'icon' => 't/edit', 'caption' => get_string('configuration'));
         }
 
@@ -897,6 +954,25 @@ function block_edit_controls($block, $page) {
     }
 
     return $controls;
+}
+
+/**
+ * Get the URL for editing a particular block instance.
+ * @param block_base $block a block object.
+ * @return moodle_url the url.
+ */
+function block_edit_url($block, $page) {
+    global $CFG;
+    $urlparams = array(
+        'id' => $block->instance->id,
+        'pagecontextid' => $page->context->id,
+        'pagetype' => $page->pagetype,
+        'returnurl' => $page->url->out_returnurl(),
+    );
+    if ($page->subpage) {
+        $urlparams['subpage'] = $page->subpage;
+    }
+    return new moodle_url($CFG->wwwroot . '/blocks/edit.php', $urlparams);
 }
 
 /**

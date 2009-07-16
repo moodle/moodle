@@ -673,6 +673,35 @@ class theme_config {
     }
 
     /**
+     * Get the list of all block regions known to this theme in all templates.
+     * @return array internal region name => human readable name.
+     */
+    public function get_all_block_regions() {
+        // Legacy fallback.
+        if (empty($this->layouts)) {
+            return array(
+                'side-pre' => get_string('region-side-pre', 'theme_standard'),
+                'side-post' => get_string('region-side-post', 'theme_standard'),
+            );
+        }
+
+        $regions = array();
+        foreach ($this->layouts as $layoutinfo) {
+            $ownertheme = $this->name;
+            if (strpos($layoutinfo['layout'], 'standard:') === 0) {
+                $ownertheme = 'standard';
+            } else if (strpos($layoutinfo['layout'], 'parent:') === 0) {
+                $ownertheme = $this->parent;
+            }
+
+            foreach ($layoutinfo['regions'] as $region) {
+                $regions[$region] = get_string('region-' . $region, 'theme_' . $ownertheme);
+            }
+        }
+        return $regions;
+    }
+
+    /**
      * Helper method used by {@link update_legacy_information()}. Update one entry
      * in the $this->pluginsheets array, based on the legacy $property propery.
      * @param $plugintype e.g. 'mod'.
