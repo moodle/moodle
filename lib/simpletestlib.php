@@ -209,8 +209,8 @@ class ContainsTagWithAttribute extends SimpleExpectation {
     }
 
     function test($html) {
-        $regex = '/<' . preg_quote($this->tag) . self::ATTRSREGEX .
-                '(?:\s+' . preg_quote($this->attribute) . '\s*=\s*["\']' . preg_quote($this->value) . '["\'])' .
+        $regex = '/<' . preg_quote($this->tag, '/') . self::ATTRSREGEX .
+                '(?:\s+' . preg_quote($this->attribute, '/') . '\s*=\s*["\']' . preg_quote($this->value, '/') . '["\'])' .
                 self::ATTRSREGEX . '\s*>/';
         return preg_match($regex, $html);
     }
@@ -241,8 +241,8 @@ class ContainsTagWithContents extends SimpleExpectation {
     }
 
     function test($html) {
-        $regex = '/<' . preg_quote($this->tag) . self::ATTRSREGEX . '\s*>' . preg_quote($this->content) .
-                '<\/' . preg_quote($this->tag) . '>/';
+        $regex = '/<' . preg_quote($this->tag, '/') . self::ATTRSREGEX . '\s*>' . preg_quote($this->content, '/') .
+                '<\/' . preg_quote($this->tag, '/') . '>/';
         return preg_match($regex, $html);
     }
 

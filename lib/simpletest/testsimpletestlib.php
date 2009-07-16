@@ -52,6 +52,11 @@ class ContainsTagWithAttribute_test extends UnitTestCase {
         $expectation = new ContainsTagWithAttribute('span', 'class', 'error');
         $this->assertFalse($expectation->test('<span class="mismatch">message</span>'));
     }
+
+    function test_link() {
+        $expectation = new ContainsTagWithAttribute('a', 'href', 'http://www.test.com');
+        $this->assertTrue($expectation->test('<a href="http://www.test.com">Click Here</a>'));
+    }
 }
 
 /**
