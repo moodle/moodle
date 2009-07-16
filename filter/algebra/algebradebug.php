@@ -15,7 +15,6 @@
     require_once($CFG->dirroot.'/filter/tex/lib.php');
 
     $query = urldecode($_SERVER['QUERY_STRING']);
-    error_reporting(E_ALL);
 
     if ($query) {
       $output = $query;

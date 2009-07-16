@@ -12,7 +12,6 @@
         error ('Filter not enabled!');
     }
 
-    error_reporting(E_ALL);
     $texexp = urldecode($_SERVER['QUERY_STRING']);
     $texexp = str_replace('formdata=','',$texexp);
 

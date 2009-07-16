@@ -20,8 +20,6 @@
     $cmd    = '';               // Initialise these variables
     $status = '';
 
-    //error_reporting(E_ALL);
-
     $relativepath = get_file_argument();
 
     $args = explode('/', trim($relativepath, '/'));

@@ -20,7 +20,6 @@
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $USER->id); /// Required cap to run this. MDL-18552
 
     $query = urldecode($_SERVER['QUERY_STRING']);
-    error_reporting(E_ALL);
     $output = '';
 
     // look up in cache if required
