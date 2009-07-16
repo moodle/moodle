@@ -57,7 +57,7 @@ $blockpage->set_url($url->out(true), $url->params());
 
 $block = block_load_for_page($blockid, $blockpage);
 
-if (!$block->user_can_edit() || (!$block->instance_allow_multiple() && !$block->instance_allow_config())) {
+if (!$block->user_can_edit()) {
     throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('editblock'));
 }
 

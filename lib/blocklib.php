@@ -936,11 +936,9 @@ function block_edit_controls($block, $page) {
                     'icon' => 't/show', 'caption' => get_string('show'));
         }
 
-        // Edit config icon.
-        if ($block->instance_allow_multiple() || $block->instance_allow_config()) {
-            $controls[] = array('url' => block_edit_url($block, $page)->out(),
-                    'icon' => 't/edit', 'caption' => get_string('configuration'));
-        }
+        // Edit config icon - always show - needed for positioning UI.
+        $controls[] = array('url' => block_edit_url($block, $page)->out(),
+                'icon' => 't/edit', 'caption' => get_string('configuration'));
 
         // Delete icon.
         if ($block->user_can_addto($page)) {
