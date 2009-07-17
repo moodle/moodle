@@ -333,7 +333,6 @@ class quiz_grading_report extends quiz_default_report {
     function print_questions_and_form($quiz, $question, $userid, $attemptid, $gradeungraded, $gradenextungraded, $ungraded) {
         global $CFG, $DB;
 
-        // TODO get the context, and put in proper roles an permissions checks.
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
         $questions[$question->id] = &$question;
