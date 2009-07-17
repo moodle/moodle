@@ -110,7 +110,7 @@ function check_to_dos($filepath) {
     $lines = file($filepath);
     $matchesinfile = array();
     foreach ($lines as $lineno => $line) {
-        if (preg_match('/\bTODO\b/i', $line)) {
+        if (preg_match('/(?<!->|\$)\bTODO\b/i', $line)) {
             $matchesinfile[$lineno] = $line;
         }
     }
