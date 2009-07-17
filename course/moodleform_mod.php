@@ -9,7 +9,7 @@ if (!empty($CFG->enablecompletion) or !empty($CFG->enableavailability)) {
  * add / update forms (mod/{modname}.mod_form.php replaces deprecated mod/{modname}/mod_form.php
  *
  */
-class moodleform_mod extends moodleform {
+abstract class moodleform_mod extends moodleform {
     /** Current data */
     protected $current;
     /**
