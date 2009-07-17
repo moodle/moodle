@@ -53,7 +53,6 @@
 
 
         // Then categories from parent contexts used by the quizzes we are backing up.
-        //TODO this will need generalising when we have modules other than quiz using shared questions above course level.
         $parentcontexts = get_parent_contexts($coursecontext);
         $params = array($course);
         $from = "{quiz} quiz,";
