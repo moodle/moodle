@@ -62,7 +62,6 @@ class block_admin_bookmarks extends block_base {
             $bookmarks = array();
         }
 
-        // TODO
         if (isset($this->page->section) and $this->page->section == 'search'){
             // the search page can't be properly bookmarked at present
             $this->content->footer = '';
