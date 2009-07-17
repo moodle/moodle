@@ -37,6 +37,7 @@ $PAGE->set_context($context);
 $PAGE->set_title('To-do checker');
 $PAGE->set_heading('To-do checker');
 
+$thirdparty = load_third_party_lib_list();
 $extensionstotest = array('php');
 $extensionsregex = '/\.(?:' . implode('|', $extensionstotest) . ')$/';
 $patterntofind = 'TO' . 'DO'; // Make it not match the regex.
@@ -48,7 +49,7 @@ echo $OUTPUT->heading('To-do checker', 2);
 echo $OUTPUT->box_start();
 echo 'Checking code ...';
 flush();
-recurseFolders($CFG->dirroot, 'check_to_dos', $extensionsregex);
+recurseFolders($CFG->dirroot, 'check_to_dos', $extensionsregex, false, array_keys($thirdparty));
 echo ' done.';
 echo $OUTPUT->box_end();
 
@@ -100,7 +101,10 @@ if (empty($found)) {
 echo $OUTPUT->footer();
 
 function check_to_dos($filepath) {
-    global $CFG, $found;
+    global $CFG, $found, $thirdparty;
+    if (isset($thirdparty[$filepath])) {
+        return; // Skip this file.
+    }
     $lines = file($filepath);
     $matchesinfile = array();
     foreach ($lines as $lineno => $line) {
@@ -126,4 +130,14 @@ function issue_open($issueid) {
 
     $cache[$issueid] = $result;
     return $result;
+}
+
+function load_third_party_lib_list() {
+    global $CFG;
+    $libs = array();
+    $xml = simplexml_load_file($CFG->libdir . '/thirdpartylibs.xml');
+    foreach ($xml->library as $libobject) {
+        $libs[$CFG->libdir . '/' . $libobject->location] = 1;
+    }
+    return $libs;
 }
