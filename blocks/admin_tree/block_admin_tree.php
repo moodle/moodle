@@ -16,8 +16,6 @@ class block_admin_tree extends block_base {
         $this->currentdepth = 0;
         $this->divcounter = 1;
         $this->tempcontent = '';
-        global $PAGE; // TODO change this when there is a proper way for blocks to get stuff into head.
-        $PAGE->requires->yui_lib('event');
     }
 
     function applicable_formats() {
@@ -139,6 +137,7 @@ class block_admin_tree extends block_base {
         }
 
         if ($this->tempcontent !== '') {
+            $this->page->requires->yui_lib('event');
             $this->page->requires->js('blocks/admin_tree/admintree.js');
             $this->page->requires->js_function_call('admin_tree.init',
                     array($this->divcounter - 1, $this->expandnodes,
