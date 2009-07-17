@@ -14,6 +14,9 @@
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/filter/tex/lib.php');
 
+    require_login();
+    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+
     $query = urldecode($_SERVER['QUERY_STRING']);
 
     if ($query) {
