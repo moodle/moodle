@@ -113,6 +113,8 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', true);
+$PAGE->set_url('mod/quiz/edit.php', $thispageurl->params());
+$PAGE->set_generaltype('form');
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategoryid = $defaultcategoryobj->id;
@@ -441,12 +443,13 @@ $strupdatemodule = has_capability('moodle/course:manageactivities',
         get_string('modulename', 'quiz')) :
         "";
 $navigation = build_navigation($pagetitle, $cm);
+
+$PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
+$PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
+
 print_header_simple($pagetitle, '', $navigation, '', '', true,
         $questionbankmanagement.$strupdatemodule);
-//TODO: these skip links really need to be right after the opening of the body element,
-// and preferably implemented in an <ul> element. See MDL-17730.
-echo '<a href="#questionbank" class="skip">Question bank</a> '.
-        '<a href="#quizcontentsblock" class="skip">Quiz contents</a>';
+
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass;
 $quizeditconfig->url = $thispageurl->out(false, array('qbanktool' => '0'));
@@ -515,7 +518,7 @@ if ($quiz_reordertool) {
             get_string('repaginatecommand', 'quiz').'...</button>';
     echo '</div>';
 }
-print_heading($pagetitle.": ".$quiz->name, 'left', 2);
+print_heading($pagetitle.": ".$quiz->name, '', 2);
 helpbutton('editconcepts', get_string('basicideasofquiz', 'quiz'), 'quiz',
         true, get_string('basicideasofquiz', 'quiz'));
 quiz_print_status_bar($quiz);
@@ -580,7 +583,7 @@ if (!$quiz_reordertool) {
     ?>
 <div id="randomquestiondialog">
 <div class="hd"><?php print_string('addrandomquestiontoquiz', 'quiz', $quiz->name); ?>
-<span id="pagenumber"><!-- TODO: insert pagenumber here via javascript -->
+<span id="pagenumber"><!-- JavaScript will insert the page number here. -->
 </span>
 </div>
 <div class="bd"><?php
