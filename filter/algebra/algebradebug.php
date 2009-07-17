@@ -25,6 +25,9 @@
       $CFG->algebrafilterdirwin = "filter\\algebra";
     }
 
+    if (!isadmin()) {
+        die('Only for admins, sorry.');
+    }
 
     $query = urldecode($_SERVER['QUERY_STRING']);
     error_reporting(E_ALL);
