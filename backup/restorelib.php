@@ -315,7 +315,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store it data from the info zone in an object
     function restore_read_xml_info ($xml_file) {
 
-        //We call the main read_xml function, with todo = INFO
+        //We call the main read_xml function, with $todo = INFO
         $info = restore_read_xml ($xml_file,"INFO",false);
 
         return $info;
@@ -324,7 +324,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store it data from the course header zone in an object
     function restore_read_xml_course_header ($xml_file) {
 
-        //We call the main read_xml function, with todo = COURSE_HEADER
+        //We call the main read_xml function, with $todo = COURSE_HEADER
         $info = restore_read_xml ($xml_file,"COURSE_HEADER",false);
 
         return $info;
@@ -333,7 +333,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store its data from the blocks in a object
     function restore_read_xml_blocks ($restore, $xml_file) {
 
-        //We call the main read_xml function, with todo = BLOCKS
+        //We call the main read_xml function, with $todo = BLOCKS
         $info = restore_read_xml ($xml_file,'BLOCKS',$restore);
 
         return $info;
@@ -342,7 +342,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store its data from the sections in a object
     function restore_read_xml_sections ($xml_file) {
 
-        //We call the main read_xml function, with todo = SECTIONS
+        //We call the main read_xml function, with $todo = SECTIONS
         $info = restore_read_xml ($xml_file,"SECTIONS",false);
 
         return $info;
@@ -351,7 +351,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store its data from the course format in an object
     function restore_read_xml_formatdata ($xml_file) {
 
-        //We call the main read_xml function, with todo = FORMATDATA
+        //We call the main read_xml function, with $todo = FORMATDATA
         $info = restore_read_xml ($xml_file,'FORMATDATA',false);
 
         return $info;
@@ -360,7 +360,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store its data from the metacourse in a object
     function restore_read_xml_metacourse ($xml_file) {
 
-        //We call the main read_xml function, with todo = METACOURSE
+        //We call the main read_xml function, with $todo = METACOURSE
         $info = restore_read_xml ($xml_file,"METACOURSE",false);
 
         return $info;
@@ -369,7 +369,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function read the xml file and store its data from the gradebook in a object
     function restore_read_xml_gradebook ($restore, $xml_file) {
 
-        //We call the main read_xml function, with todo = GRADEBOOK
+        //We call the main read_xml function, with $todo = GRADEBOOK
         $info = restore_read_xml ($xml_file,"GRADEBOOK",$restore);
 
         return $info;
@@ -379,7 +379,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and user's id in $info)
     function restore_read_xml_users ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = USERS
+        //We call the main read_xml function, with $todo = USERS
         $info = restore_read_xml ($xml_file,"USERS",$restore);
 
         return $info;
@@ -389,7 +389,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->message backup_ids->message_read and backup_ids->contact and db (and their counters in info)
     function restore_read_xml_messages ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = MESSAGES
+        //We call the main read_xml function, with $todo = MESSAGES
         $info = restore_read_xml ($xml_file,"MESSAGES",$restore);
 
         return $info;
@@ -399,7 +399,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->blog and backup_ids->blog_tag and db (and their counters in info)
     function restore_read_xml_blogs ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = BLOGS
+        //We call the main read_xml function, with $todo = BLOGS
         $info = restore_read_xml ($xml_file,"BLOGS",$restore);
 
         return $info;
@@ -410,7 +410,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and category's id in $info)
     function restore_read_xml_questions ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = QUESTIONS
+        //We call the main read_xml function, with $todo = QUESTIONS
         $info = restore_read_xml ($xml_file,"QUESTIONS",$restore);
 
         return $info;
@@ -420,7 +420,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and scale's id in $info)
     function restore_read_xml_scales ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = SCALES
+        //We call the main read_xml function, with $todo = SCALES
         $info = restore_read_xml ($xml_file,"SCALES",$restore);
 
         return $info;
@@ -430,7 +430,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and group's id in $info)
     function restore_read_xml_groups ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = GROUPS
+        //We call the main read_xml function, with $todo = GROUPS
         $info = restore_read_xml ($xml_file,"GROUPS",$restore);
 
         return $info;
@@ -440,7 +440,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and grouping's id in $info)
     function restore_read_xml_groupings ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = GROUPINGS
+        //We call the main read_xml function, with $todo = GROUPINGS
         $info = restore_read_xml ($xml_file,"GROUPINGS",$restore);
 
         return $info;
@@ -450,7 +450,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and grouping's id in $info)
     function restore_read_xml_groupings_groups ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = GROUPINGS
+        //We call the main read_xml function, with $todo = GROUPINGS
         $info = restore_read_xml ($xml_file,"GROUPINGSGROUPS",$restore);
 
         return $info;
@@ -460,7 +460,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info db (and event's id in $info)
     function restore_read_xml_events ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = EVENTS
+        //We call the main read_xml function, with $todo = EVENTS
         $info = restore_read_xml ($xml_file,"EVENTS",$restore);
 
         return $info;
@@ -470,7 +470,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info
     function restore_read_xml_modules ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = MODULES
+        //We call the main read_xml function, with $todo = MODULES
         $info = restore_read_xml ($xml_file,"MODULES",$restore);
 
         return $info;
@@ -480,14 +480,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //backup_ids->info
     function restore_read_xml_logs ($restore,$xml_file) {
 
-        //We call the main read_xml function, with todo = LOGS
+        //We call the main read_xml function, with $todo = LOGS
         $info = restore_read_xml ($xml_file,"LOGS",$restore);
 
         return $info;
     }
 
     function restore_read_xml_roles ($xml_file) {
-        //We call the main read_xml function, with todo = ROLES
+        //We call the main read_xml function, with $todo = ROLES
         $info = restore_read_xml ($xml_file,"ROLES",false);
 
         return $info;
@@ -4601,9 +4601,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     /// This is the class used to split, in first instance, the monolithic moodle.xml into
     /// smaller xml files allowing the MoodleParser later to process only the required info
-    /// based in each TODO, instead of processing the whole xml for each TODO. In theory
+    /// based in each $todo, instead of processing the whole xml for each $todo. In theory
     /// processing time can be reduced upto 1/20th of original time (depending of the
-    /// number of TODOs in the original moodle.xml file)
+    /// number of $todo in the original moodle.xml file)
     ///
     /// Anyway, note it's a general splitter parser, and only needs to be instantiated
     /// with the proper destination dir and the tosplit configuration. Be careful when
@@ -4829,7 +4829,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             return trim($this->content);
         }
 
-        //This is the startTag handler we use where we are reading the info zone (todo="INFO")
+        //This is the startTag handler we use where we are reading the info zone ($todo="INFO")
         function startElementInfo($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4843,7 +4843,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-                //This is the startTag handler we use where we are reading the info zone (todo="INFO")
+                //This is the startTag handler we use where we are reading the info zone ($todo="INFO")
         function startElementRoles($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4858,7 +4858,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
 
-        //This is the startTag handler we use where we are reading the course header zone (todo="COURSE_HEADER")
+        //This is the startTag handler we use where we are reading the course header zone ($todo="COURSE_HEADER")
         function startElementCourseHeader($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4872,7 +4872,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the blocks zone (todo="BLOCKS")
+        //This is the startTag handler we use where we are reading the blocks zone ($todo="BLOCKS")
         function startElementBlocks($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4896,7 +4896,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        //This is the startTag handler we use where we are reading the sections zone ($todo="SECTIONS")
         function startElementSections($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4910,7 +4910,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the optional format data zone (todo="FORMATDATA")
+        //This is the startTag handler we use where we are reading the optional format data zone ($todo="FORMATDATA")
         function startElementFormatData($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -4932,7 +4932,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
+        //This is the startTag handler we use where we are reading the metacourse zone ($todo="METACOURSE")
         function startElementMetacourse($parser, $tagName, $attrs) {
 
             //Refresh properties
@@ -4947,7 +4947,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        //This is the startTag handler we use where we are reading the gradebook zone ($todo="GRADEBOOK")
         function startElementGradebook($parser, $tagName, $attrs) {
 
             //Refresh properties
@@ -4973,7 +4973,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        //This is the startTag handler we use where we are reading the gradebook zone ($todo="GRADEBOOK")
         function startElementOldGradebook($parser, $tagName, $attrs) {
 
             //Refresh properties
@@ -4999,7 +4999,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
 
-        //This is the startTag handler we use where we are reading the user zone (todo="USERS")
+        //This is the startTag handler we use where we are reading the user zone ($todo="USERS")
         function startElementUsers($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5010,7 +5010,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the messages zone (todo="MESSAGES")
+        //This is the startTag handler we use where we are reading the messages zone ($todo="MESSAGES")
         function startElementMessages($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5034,7 +5034,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the blogs zone (todo="BLOGS")
+        //This is the startTag handler we use where we are reading the blogs zone ($todo="BLOGS")
         function startElementBlogs($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5058,7 +5058,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the questions zone (todo="QUESTIONS")
+        //This is the startTag handler we use where we are reading the questions zone ($todo="QUESTIONS")
         function startElementQuestions($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5086,7 +5086,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the scales zone (todo="SCALES")
+        //This is the startTag handler we use where we are reading the scales zone ($todo="SCALES")
         function startElementScales($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5195,7 +5195,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the events zone (todo="EVENTS")
+        //This is the startTag handler we use where we are reading the events zone ($todo="EVENTS")
         function startElementEvents($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5223,7 +5223,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the modules zone (todo="MODULES")
+        //This is the startTag handler we use where we are reading the modules zone ($todo="MODULES")
         function startElementModules($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5251,7 +5251,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag handler we use where we are reading the logs zone (todo="LOGS")
+        //This is the startTag handler we use where we are reading the logs zone ($todo="LOGS")
         function startElementLogs($parser, $tagName, $attrs) {
             //Refresh properties
             $this->level++;
@@ -5279,7 +5279,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
-        //This is the startTag default handler we use when todo is undefined
+        //This is the startTag default handler we use when $todo is undefined
         function startElement($parser, $tagName, $attrs) {
             $this->level++;
             $this->tree[$this->level] = $tagName;
@@ -5290,7 +5290,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
 
-        //This is the endTag handler we use where we are reading the info zone (todo="INFO")
+        //This is the endTag handler we use where we are reading the info zone ($todo="INFO")
         function endElementInfo($parser, $tagName) {
             //Check if we are into INFO zone
             if ($this->tree[2] == "INFO") {
@@ -5397,7 +5397,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
+            //Stop parsing if $todo = INFO and tagName = INFO (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "INFO") {
                 $this->finished = true;
@@ -5459,7 +5459,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = ROLES and tagName = ROLES (en of the tag, of course)
+            //Stop parsing if $todo = ROLES and tagName = ROLES (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "ROLES") {
                 $this->finished = true;
@@ -5472,7 +5472,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the course_header zone (todo="COURSE_HEADER")
+        //This is the endTag handler we use where we are reading the course_header zone ($todo="COURSE_HEADER")
         function endElementCourseHeader($parser, $tagName) {
             //Check if we are into COURSE_HEADER zone
             if ($this->tree[3] == "HEADER") {
@@ -5727,7 +5727,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 } /// ends FILTERCONFIGS
             }
 
-            //Stop parsing if todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
+            //Stop parsing if $todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "HEADER") {
                 $this->finished = true;
@@ -5740,7 +5740,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the sections zone (todo="BLOCKS")
+        //This is the endTag handler we use where we are reading the sections zone ($todo="BLOCKS")
         function endElementBlocks($parser, $tagName) {
             //Check if we are into BLOCKS zone
             if ($this->tree[3] == 'BLOCKS') {
@@ -5918,9 +5918,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 } /// ends role_overrides
             }
 
-            //Stop parsing if todo = BLOCKS and tagName = BLOCKS (en of the tag, of course)
+            //Stop parsing if $todo = BLOCKS and tagName = BLOCKS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
-            //WARNING: ONLY EXIT IF todo = BLOCKS (thus tree[3] = "BLOCKS") OTHERWISE
+            //WARNING: ONLY EXIT IF $todo = BLOCKS (thus tree[3] = "BLOCKS") OTHERWISE
             //         THE BLOCKS TAG IN THE HEADER WILL TERMINATE US!
             if ($this->tree[3] == 'BLOCKS' && $tagName == 'BLOCKS') {
                 $this->finished = true;
@@ -5932,7 +5932,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $this->content = "";
         }
 
-        //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        //This is the endTag handler we use where we are reading the sections zone ($todo="SECTIONS")
         function endElementSections($parser, $tagName) {
             //Check if we are into SECTIONS zone
             if ($this->tree[3] == "SECTIONS") {
@@ -6270,7 +6270,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
+            //Stop parsing if $todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "SECTIONS") {
                 $this->finished = true;
@@ -6283,7 +6283,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the optional format data zone (todo="FORMATDATA")
+        //This is the endTag handler we use where we are reading the optional format data zone ($todo="FORMATDATA")
         function endElementFormatData($parser, $tagName) {
             //Check if we are into FORMATDATA zone
             if ($this->tree[3] == 'FORMATDATA') {
@@ -6313,7 +6313,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $this->content = "";
         }
 
-        //This is the endTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
+        //This is the endTag handler we use where we are reading the metacourse zone ($todo="METACOURSE")
         function endElementMetacourse($parser, $tagName) {
             //Check if we are into METACOURSE zone
             if ($this->tree[3] == 'METACOURSE') {
@@ -6352,7 +6352,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = METACOURSE and tagName = METACOURSE (en of the tag, of course)
+            //Stop parsing if $todo = METACOURSE and tagName = METACOURSE (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($this->tree[3] == 'METACOURSE' && $tagName == 'METACOURSE') {
                 $this->finished = true;
@@ -6364,7 +6364,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $this->content = "";
         }
 
-        //This is the endTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        //This is the endTag handler we use where we are reading the gradebook zone ($todo="GRADEBOOK")
         function endElementGradebook($parser, $tagName) {
             //Check if we are into GRADEBOOK zone
             if ($this->tree[3] == "GRADEBOOK") {
@@ -6550,7 +6550,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
+            //Stop parsing if $todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GRADEBOOK" and $this->level == 3) {
                 $this->finished = true;
@@ -6564,7 +6564,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        //This is the endTag handler we use where we are reading the gradebook zone ($todo="GRADEBOOK")
         function endElementOldGradebook($parser, $tagName) {
             //Check if we are into GRADEBOOK zone
             if ($this->tree[3] == "GRADEBOOK") {
@@ -6654,7 +6654,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
+            //Stop parsing if $todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GRADEBOOK" and $this->level == 3) {
                 $this->finished = true;
@@ -6668,7 +6668,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the users zone (todo="USERS")
+        //This is the endTag handler we use where we are reading the users zone ($todo="USERS")
         function endElementUsers($parser, $tagName) {
             global $CFG;
             //Check if we are into USERS zone
@@ -7059,7 +7059,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             } // closes if this->tree[3]=="users"
 
-            //Stop parsing if todo = USERS and tagName = USERS (en of the tag, of course)
+            //Stop parsing if $todo = USERS and tagName = USERS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "USERS" and $this->level == 3) {
                 $this->finished = true;
@@ -7073,7 +7073,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the messages zone (todo="MESSAGES")
+        //This is the endTag handler we use where we are reading the messages zone ($todo="MESSAGES")
         function endElementMessages($parser, $tagName) {
             //Check if we are into MESSAGES zone
             if ($this->tree[3] == "MESSAGES") {
@@ -7140,7 +7140,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = MESSAGES and tagName = MESSAGES (en of the tag, of course)
+            //Stop parsing if $todo = MESSAGES and tagName = MESSAGES (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "MESSAGES" and $this->level == 3) {
                 $this->finished = true;
@@ -7154,7 +7154,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the blogs zone (todo="BLOGS")
+        //This is the endTag handler we use where we are reading the blogs zone ($todo="BLOGS")
         function endElementBlogs($parser, $tagName) {
             //Check if we are into BLOGS zone
             if ($this->tree[3] == "BLOGS") {
@@ -7192,7 +7192,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = BLOGS and tagName = BLOGS (end of the tag, of course)
+            //Stop parsing if $todo = BLOGS and tagName = BLOGS (end of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "BLOGS" and $this->level == 3) {
                 $this->finished = true;
@@ -7206,7 +7206,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")
+        //This is the endTag handler we use where we are reading the questions zone ($todo="QUESTIONS")
         function endElementQuestions($parser, $tagName) {
             //Check if we are into QUESTION_CATEGORIES zone
             if ($this->tree[3] == "QUESTION_CATEGORIES") {
@@ -7245,7 +7245,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = QUESTION_CATEGORIES and tagName = QUESTION_CATEGORY (en of the tag, of course)
+            //Stop parsing if $todo = QUESTION_CATEGORIES and tagName = QUESTION_CATEGORY (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "QUESTION_CATEGORIES" and $this->level == 3) {
                 $this->finished = true;
@@ -7258,7 +7258,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the scales zone (todo="SCALES")
+        //This is the endTag handler we use where we are reading the scales zone ($todo="SCALES")
         function endElementScales($parser, $tagName) {
             //Check if we are into SCALES zone
             if ($this->tree[3] == "SCALES") {
@@ -7297,7 +7297,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = SCALES and tagName = SCALE (en of the tag, of course)
+            //Stop parsing if $todo = SCALES and tagName = SCALE (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "SCALES" and $this->level == 3) {
                 $this->finished = true;
@@ -7310,7 +7310,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the groups zone (todo="GROUPS")
+        //This is the endTag handler we use where we are reading the groups zone ($todo="GROUPS")
         function endElementGroups($parser, $tagName) {
             //Check if we are into GROUPS zone
             if ($this->tree[3] == "GROUPS") {
@@ -7349,7 +7349,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = GROUPS and tagName = GROUP (en of the tag, of course)
+            //Stop parsing if $todo = GROUPS and tagName = GROUP (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GROUPS" and $this->level == 3) {
                 $this->finished = true;
@@ -7362,7 +7362,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the groupings zone (todo="GROUPINGS")
+        //This is the endTag handler we use where we are reading the groupings zone ($todo="GROUPINGS")
         function endElementGroupings($parser, $tagName) {
             //Check if we are into GROUPINGS zone
             if ($this->tree[3] == "GROUPINGS") {
@@ -7393,7 +7393,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = GROUPINGS and tagName = GROUPING (en of the tag, of course)
+            //Stop parsing if $todo = GROUPINGS and tagName = GROUPING (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GROUPINGS" and $this->level == 3) {
                 $this->finished = true;
@@ -7406,7 +7406,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the groupingsgroups zone (todo="GROUPINGGROUPS")
+        //This is the endTag handler we use where we are reading the groupingsgroups zone ($todo="GROUPINGGROUPS")
         function endElementGroupingsGroups($parser, $tagName) {
             //Check if we are into GROUPINGSGROUPS zone
             if ($this->tree[3] == "GROUPINGSGROUPS") {
@@ -7437,7 +7437,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = GROUPINGS and tagName = GROUPING (en of the tag, of course)
+            //Stop parsing if $todo = GROUPINGS and tagName = GROUPING (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "GROUPINGSGROUPS" and $this->level == 3) {
                 $this->finished = true;
@@ -7450,7 +7450,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the events zone (todo="EVENTS")
+        //This is the endTag handler we use where we are reading the events zone ($todo="EVENTS")
         function endElementEvents($parser, $tagName) {
             //Check if we are into EVENTS zone
             if ($this->tree[3] == "EVENTS") {
@@ -7489,7 +7489,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = EVENTS and tagName = EVENT (en of the tag, of course)
+            //Stop parsing if $todo = EVENTS and tagName = EVENT (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "EVENTS" and $this->level == 3) {
                 $this->finished = true;
@@ -7502,7 +7502,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the modules zone (todo="MODULES")
+        //This is the endTag handler we use where we are reading the modules zone ($todo="MODULES")
         function endElementModules($parser, $tagName) {
             //Check if we are into MODULES zone
             if ($this->tree[3] == "MODULES") {
@@ -7569,7 +7569,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             }
 
-            //Stop parsing if todo = MODULES and tagName = MODULES (en of the tag, of course)
+            //Stop parsing if $todo = MODULES and tagName = MODULES (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "MODULES" and $this->level == 3) {
                 $this->finished = true;
@@ -7582,7 +7582,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag handler we use where we are reading the logs zone (todo="LOGS")
+        //This is the endTag handler we use where we are reading the logs zone ($todo="LOGS")
         function endElementLogs($parser, $tagName) {
             //Check if we are into LOGS zone
             if ($this->tree[3] == "LOGS") {
@@ -7631,7 +7631,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
 
-            //Stop parsing if todo = LOGS and tagName = LOGS (en of the tag, of course)
+            //Stop parsing if $todo = LOGS and tagName = LOGS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "LOGS" and $this->level == 3) {
                 $this->finished = true;
@@ -7645,7 +7645,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         }
 
-        //This is the endTag default handler we use when todo is undefined
+        //This is the endTag default handler we use when $todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
                 echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
@@ -7673,19 +7673,19 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     /// If enabled in the site, use split files instead of original moodle.xml file
     /// This will speed parsing speed upto 20x.
         if (!empty($CFG->experimentalsplitrestore)) {
-        /// Use splite file, else nothing to process (saves one full parsing for each non-existing todo)
+        /// Use splite file, else nothing to process (saves one full parsing for each non-existing $todo)
             $splitfile= dirname($xml_file) . '/' . strtolower('split_' . $todo . '.xml');
             if (file_exists($splitfile)) {
                 $xml_file = $splitfile;
-                debugging("Info: todo=$todo, using split file", DEBUG_DEVELOPER);
+                debugging("Info: \$todo=$todo, using split file", DEBUG_DEVELOPER);
             } else {
-            /// For some todos, that are used in earlier restore steps (restore_precheck(), restore_form...
-            /// allow fallback to monolithic moodle.xml. Those todos are at the beggining of the xml, so
+            /// For some values of $todo, that are used in earlier restore steps (restore_precheck(), restore_form...
+            /// allow fallback to monolithic moodle.xml. Those values of $todo are at the beggining of the xml, so
             /// it doesn't hurts too much.
                 if ($todo == 'INFO' || $todo == 'COURSE_HEADER' || $todo == 'ROLES') {
-                    debugging("Info: todo=$todo, no split file. Fallback to moodle.xml", DEBUG_DEVELOPER);
+                    debugging("Info: \$todo=$todo, no split file. Fallback to moodle.xml", DEBUG_DEVELOPER);
                 } else {
-                    debugging("Info: todo=$todo, no split file. Parse skipped", DEBUG_DEVELOPER);
+                    debugging("Info: \$todo=$todo, no split file. Parse skipped", DEBUG_DEVELOPER);
                     return true;
                 }
             }
@@ -7696,7 +7696,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         $moodle_parser->todo = $todo;
         $moodle_parser->preferences = $preferences;
         xml_set_object($xml_parser,$moodle_parser);
-        //Depending of the todo we use some element_handler or another
+        //Depending of the $todo we use some element_handler or another
         if ($todo == "INFO") {
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");
         } else if ($todo == "ROLES") {
