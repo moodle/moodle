@@ -1956,7 +1956,6 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         ob_start();
         include($this->page->theme->dir . '/header.html');
-        $this->page->requires->get_top_of_body_code();
 
         echo '<table id="layout-table"><tr>';
         foreach ($lt as $column) {
@@ -1991,7 +1990,21 @@ class moodle_core_renderer extends moodle_renderer_base {
         $output = ob_get_contents();
         ob_end_clean();
 
+        // Put in the start of body code. Bit of a hack, put it in before the first
+        // <div or <table.
+        $divpos = strpos($output, '<div');
+        $tablepos = strpos($output, '<table');
+        if ($divpos === false || ($tablepos !== false && $tablepos < $divpos)) {
+            $pos = $tablepos;
+        } else {
+            $pos = $divpos;
+        }
+        $output = substr($output, 0, $divpos) . $this->standard_top_of_body_html() .
+                substr($output, $divpos);
+
+        // Put in the end token before the end of body.
         $output = str_replace('</body>', self::END_HTML_TOKEN . '</body>', $output);
+
         // Make sure we use the correct doctype.
         $output = preg_replace('/(<!DOCTYPE.+?>)/s', $this->doctype(), $output);
 
