@@ -1123,15 +1123,13 @@ function quiz_get_post_actions() {
 /**
  * Returns an array of names of quizzes that use this question
  *
- * @global stdClass
- * @global object
- * @param object $questionid
+ * @param integer $questionid
  * @return array of strings
  */
 function quiz_question_list_instances($questionid) {
     global $CFG, $DB;
 
-    // TODO: we should also consider other questions that are used by
+    // TODO MDL-5780: we should also consider other questions that are used by
     // random questions in this quiz, but that is very hard.
 
     $sql = "SELECT q.id, q.name
