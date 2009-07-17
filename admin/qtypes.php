@@ -233,8 +233,8 @@
         }
 
         // Move icons.
-        $icons .= icon_html('up', $qtypename, 't/up.gif', get_string('up'), '');
-        $icons .= icon_html('down', $qtypename, 't/down.gif', get_string('down'), '');
+        $icons .= icon_html('up', $qtypename, 't/up', get_string('up'), '');
+        $icons .= icon_html('down', $qtypename, 't/down', get_string('down'), '');
         $row[] = $icons;
 
         // Delete link, if available.
@@ -268,9 +268,9 @@ function admin_url($endbit) {
 
 function enable_disable_button($qtypename, $createable) {
     if ($createable) {
-        return icon_html('disable', $qtypename, 'i/hide.gif', get_string('enabled', 'question'), get_string('disable'));
+        return icon_html('disable', $qtypename, 'i/hide', get_string('enabled', 'question'), get_string('disable'));
     } else {
-        return icon_html('enable', $qtypename, 'i/show.gif', get_string('disabled', 'question'), get_string('enable'));
+        return icon_html('enable', $qtypename, 'i/show', get_string('disabled', 'question'), get_string('enable'));
     }
 }
 
