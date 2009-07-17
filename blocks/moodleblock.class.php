@@ -397,7 +397,7 @@ class block_base {
             $bc->collapsible = block_contents::VISIBLE;
         }
 
-        $bc->annotation = ''; // TODO
+        $bc->annotation = ''; // TODO MDL-19398 need to work out what to say here.
 
         return $bc;
     }
@@ -493,9 +493,15 @@ class block_base {
     }
     
     /**
-     * Default case: the block can be used in all course types
-     * @return array
-     * @todo finish documenting this function
+     * Which page types this block may appear on.
+     *
+     * The information returned here is processed by the
+     * {@link blocks_name_allowed_in_format()} function. Look there if you need
+     * to know exactly how this works.
+     *
+     * Default case: everything except mod and tag.
+     *
+     * @return array page-type prefix => true/false.
      */
     function applicable_formats() {
         // Default case: the block can be used in courses and site index, but not in activities
@@ -524,10 +530,11 @@ class block_base {
     }
 
     /**
-     * Given an instance set the class var $instance to it and
-     * load class var $config
-     * @param block $instance
-     * @todo add additional documentation to further explain the format of instance and config
+     * Set up a particular instance of this class given data from the block_insances
+     * table and the current page. (See {@link block_manager::load_blocks()}.) 
+     *
+     * @param stdClass $instance data from block_insances, block_positions, etc.
+     * @param moodle_page $the page this block is on.
      */
     function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
@@ -554,13 +561,12 @@ class block_base {
 
     /**
      * Is each block of this type going to have instance-specific configuration?
-     * Normally, this setting is controlled by {@link instance_allow_multiple}: if multiple
+     * Normally, this setting is controlled by {@link instance_allow_multiple()}: if multiple
      * instances are allowed, then each will surely need its own configuration. However, in some
      * cases it may be necessary to provide instance configuration to blocks that do not want to
      * allow multiple instances. In that case, make this function return true.
-     * I stress again that this makes a difference ONLY if {@link instance_allow_multiple} returns false.
+     * I stress again that this makes a difference ONLY if {@link instance_allow_multiple()} returns false.
      * @return boolean
-     * @todo finish documenting this function by explaining per-instance configuration further
      */
     function instance_allow_config() {
         return false;
@@ -570,7 +576,6 @@ class block_base {
      * Are you going to allow multiple instances of each block?
      * If yes, then it is assumed that the block WILL USE per-instance configuration
      * @return boolean
-     * @todo finish documenting this function by explaining per-instance configuration further
      */
     function instance_allow_multiple() {
         // Are you going to allow multiple instances of each block?
@@ -582,9 +587,8 @@ class block_base {
      * Default behavior: print the config_instance.html file
      * You don't need to override this if you're satisfied with the above
      *
-     * @uses $CFG
-     * @return boolean
-     * @todo finish documenting this function
+     * @deprecated since Moodle 2.0.
+     * @return boolean whether anything was done. Blocks should use edit_form.php.
      */
     function instance_config_print() {
         global $CFG, $DB;
@@ -601,7 +605,7 @@ class block_base {
         } else {
             notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
         }
-        
+
         return true;
     }
 
@@ -616,8 +620,6 @@ class block_base {
 
     /**
      * Replace the instance's configuration data with those currently in $this->config;
-     * @return boolean
-     * @todo finish documenting this function
      */
     function instance_config_commit($nolongerused = false) {
         global $DB;
@@ -627,7 +629,6 @@ class block_base {
     /**
      * Do any additional initialization you may need at the time a new block instance is created
      * @return boolean
-     * @todo finish documenting this function
      */
     function instance_create() {
         return true;
@@ -636,7 +637,6 @@ class block_base {
     /**
      * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
      * @return boolean
-     * @todo finish documenting this function
      */
     function instance_delete() {
         return true;
@@ -647,7 +647,6 @@ class block_base {
      * The framework has first say in whether this will be allowed (e.g., no editing allowed unless in edit mode)
      * but if the framework does allow it, the block can still decide to refuse.
      * @return boolean
-     * @todo finish documenting this function
      */
     function user_can_edit() {
         return true;
@@ -659,7 +658,6 @@ class block_base {
      * but if the framework does allow it, the block can still decide to refuse.
      * This function has access to the complete page object, the creation related to which is being determined.
      * @return boolean
-     * @todo finish documenting this function
      */
     function user_can_addto($page) {
         return true;
