@@ -46,16 +46,26 @@ interface renderer_factory {
     /**
      * Return the renderer for a particular part of Moodle.
      *
-     * The renderer interfaces are defined by classes called moodle_..._renderer
-     * where ... is the name of the module, which, will be defined in this file
-     * for core parts of Moodle, and in a file called renderer.php for plugins.
+     * The renderer interfaces are defined by classes called moodle_{plugin}_renderer
+     * where {plugin} is the name of the component. The renderers for core Moodle are
+     * defined in lib/renderer.php. For plugins, they will be defined in a file
+     * called renderer.php inside the plugin.
      *
-     * There is no separate interface definintion for renderers. Instead we
-     * take advantage of PHP being a dynamic languages. The renderer returned
-     * does not need to be a subclass of the moodle_..._renderer base class, it
-     * just needs to impmenent the same interface. This is sometimes called
-     * 'Duck typing'. For a tricky example, see {@link template_renderer} below.
-     * renderer ob
+     * Renderers will normally want to subclass the moodle_renderer_base class.
+     * (However, if you really know what you are doing, you don't have to do that.)
+     *
+     * There is no separate interface definintion for renderers. The default
+     * moodle_{plugin}_renderer implementation also serves to define the API for
+     * other implementations of the interface, whether or not they subclass it.
+     * For example, {@link custom_corners_core_renderer} does subclass
+     * {@link moodle_core_renderer}. On the other hand, if you are using
+     * {@link template_renderer_factory} then you always get back an instance
+     * of the {@link template_renderer} class, whatever type of renderer you ask
+     * for. This uses the fact that PHP is a dynamic language.
+     *
+     * A particular plugin can defnie multiple renderers if it wishes, using the
+     * $subtype parameter. For example moodle_mod_workshop_renderer,
+     * moodle_mod_workshop_allocation_manual_renderer etc.
      *
      * @param string $component name such as 'core', 'mod_forum' or 'qtype_multichoice'.
      * @param moodle_page $page the page the renderer is outputting content for.
