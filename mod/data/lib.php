@@ -2839,6 +2839,12 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
     if ($filearea === 'data_content') {
         $contentid = (int)array_shift($args);
 
+        if (!$cm = get_coursemodule_from_instance('data', $cminfo->instance, $course->id)) {
+            return false;
+        }
+        
+        require_course_login($course, true, $cm);
+        
         if (!$content = $DB->get_record('data_content', array('id'=>$contentid))) {
             return false;
         }
@@ -2862,7 +2868,7 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
 
         // group access
         if ($record->groupid) {
-            $groupmode = groups_get_activity_groupmode($cminfo, $course);
+            $groupmode = groups_get_activity_groupmode($cm, $course);
             if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                 if (!groups_is_member($record->groupid)) {
                     return false;
@@ -2870,7 +2876,7 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
             }
         }
 
-        $fieldobj = data_get_field($field, $data, $cminfo);
+        $fieldobj = data_get_field($field, $data, $cm);
 
         $relativepath = '/'.implode('/', $args);
         $fullpath = $context->id.'data_content'.$content->id.$relativepath;

@@ -4381,6 +4381,12 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedo
 
     $postid = (int)array_shift($args);
 
+    if (!$cm = get_coursemodule_from_instance('forum', $cminfo->instance, $course->id)) {
+        return false;
+    }
+    
+    require_course_login($course, true, $cm);
+    
     if (!$post = $DB->get_record('forum_posts', array('id'=>$postid))) {
         return false;
     }

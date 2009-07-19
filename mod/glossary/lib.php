@@ -1322,6 +1322,12 @@ function glossary_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
     if ($filearea === 'glossary_attachment' or $filearea === 'glossary_entry') {
         $entryid = (int)array_shift($args);
 
+        if (!$cm = get_coursemodule_from_instance('glossary', $cminfo->instance, $course->id)) {
+            return false;
+        }
+
+        require_course_login($course, true, $cm);
+        
         if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
             return false;
         }

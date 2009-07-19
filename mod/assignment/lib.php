@@ -2437,13 +2437,15 @@ function assignment_get_participants($assignmentid) {
  */
 function assignment_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
-
+    
     if (!$assignment = $DB->get_record('assignment', array('id'=>$cminfo->instance))) {
         return false;
     }
     if (!$cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
         return false;
     }
+
+    require_login($course, false, $cm);
 
     require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;

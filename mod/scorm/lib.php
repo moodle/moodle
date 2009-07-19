@@ -864,6 +864,12 @@ function scorm_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedo
 
     $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
 
+    if (!$cm = get_coursemodule_from_instance('scorm', $cminfo->instance, $course->id)) {
+        return false;
+    }
+    
+    require_login($course, true, $cm);
+
     if ($filearea === 'scorm_content') {
         $revision = (int)array_shift($args); // prevents caching problems - ignored here
         $relativepath = '/'.implode('/', $args);
