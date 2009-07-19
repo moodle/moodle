@@ -43,7 +43,8 @@ class geoiprecord {
   var $latitude;
   var $longitude;
   var $area_code;
-  var $dma_code;
+  var $dma_code;   # metro and dma code are the same. use metro_code
+  var $metro_code;
 }
 
 class geoipdnsrecord {
@@ -60,6 +61,7 @@ class geoipdnsrecord {
   var $dmacode;
   var $isp;
   var $org;
+  var $metrocode;
 }
 
 function getrecordwithdnsservice($str){
@@ -79,8 +81,9 @@ function getrecordwithdnsservice($str){
     if ($key == "ac"){
       $record->areacode = $value;
     }
-    if ($key == "dm"){
-      $record->dmacode = $value;
+    if ($key == "dm" || $key == "me" ){
+      $record->dmacode   = $value;
+      $record->metrocode = $value;
     }
     if ($key == "is"){
       $record->isp = $value;
@@ -181,14 +184,14 @@ function _get_record($gi,$ipnum){
   }
   $record->longitude = ($longitude/10000) - 180;
   if (GEOIP_CITY_EDITION_REV1 == $gi->databaseType){
-    $dmaarea_combo = 0;
+    $metroarea_combo = 0;
     if ($record->country_code == "US"){
       for ($j = 0;$j < 3;++$j){
         $char = ord(substr($record_buf,$record_buf_pos++,1));
-        $dmaarea_combo += ($char << ($j * 8));
+        $metroarea_combo += ($char << ($j * 8));
       }
-      $record->dma_code = floor($dmaarea_combo/1000);
-      $record->area_code = $dmaarea_combo%1000;
+      $record->metro_code = $record->dma_code = floor($metroarea_combo/1000);
+      $record->area_code = $metroarea_combo%1000;
     }
   }
   return $record;

@@ -1,26 +1,28 @@
-<?php // $Id$
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 2008 onwards  Petr Skoda (skodak)                       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Displays IP address on map
+ *
+ * @package    moodlecore
+ * @subpackage iplookup
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require('../config.php');
 require_once($CFG->libdir.'/filelib.php');
@@ -35,6 +37,9 @@ if (isset($CFG->iplookup)) {
     //clean up of old settings
     set_config('iplookup', NULL);
 }
+
+$PAGE->set_url('iplookup/index.php', array('id'=>$ip, 'user'=>$user));
+$PAGE->set_generaltype('popup');
 
 $info = array($ip);
 $note = array();
@@ -145,33 +150,18 @@ if (empty($CFG->googlemapkey)) {
     $info = implode(' - ', $info);
     $note = implode('<br />', $note);
 
-    $meta = '
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key='.$CFG->googlemapkey.'" type="text/javascript"></script>
-<script type="text/javascript">
+    $PAGE->requires->js("http://maps.google.com/maps?file=api&amp;v=2&amp;key=$CFG->googlemapkey", true)->in_head();
+    $PAGE->requires->js('/iplookup/functions.js')->in_head();
 
-//<![CDATA[
-
-function load() {
-  if (GBrowserIsCompatible()) {
-    var map = new GMap2(document.getElementById("map"));
-    map.addControl(new GSmallMapControl());
-    map.addControl(new GMapTypeControl());
-    var point = new GLatLng('.$latitude.', '.$longitude.');
-    map.setCenter(point, 4);
-    map.addOverlay(new GMarker(point));
-    map.setMapType(G_HYBRID_MAP);
-  }
-}
-
-//]]>
-</script>
-';
-
-    print_header(get_string('iplookup', 'admin').': '.$info, $info, '', '', $meta, false, '&nbsp;', '', false, 'onload="load()" onunload="GUnload()"');
+    print_header(get_string('iplookup', 'admin').': '.$info, $info);
 
     echo '<div id="map" style="width: 650px; height: 360px"></div>';
     echo '<div id="note">'.$note.'</div>';
-    print_footer('empty');
+
+    $PAGE->requires->js_function_call('iplookup_load', array($latitude, $longitude));
+
+    //TODO: MDL-19875 - call uplookup_unload() js function when page unloads, previously in meta parameter
+
+    echo $OUTPUT->footer();
 }
 
-?>

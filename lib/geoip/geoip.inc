@@ -103,7 +103,8 @@ class GeoIP {
 "VA" => 228, "VC" => 229, "VE" => 230, "VG" => 231, "VI" => 232, "VN" => 233,
 "VU" => 234, "WF" => 235, "WS" => 236, "YE" => 237, "YT" => 238, "RS" => 239, 
 "ZA" => 240, "ZM" => 241, "ME" => 242, "ZW" => 243, "A1" => 244, "A2" => 245, 
-"O1" => 246, "AX" => 247, "GG" => 248, "IM" => 249, "JE" => 250
+"O1" => 246, "AX" => 247, "GG" => 248, "IM" => 249, "JE" => 250, "BL" => 251,
+"MF" => 252
 );
     var $GEOIP_COUNTRY_CODES = array(
 "", "AP", "EU", "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ",
@@ -125,7 +126,7 @@ class GeoIP {
 "TF", "TG", "TH", "TJ", "TK", "TM", "TN", "TO", "TL", "TR", "TT", "TV", "TW",
 "TZ", "UA", "UG", "UM", "US", "UY", "UZ", "VA", "VC", "VE", "VG", "VI", "VN",
 "VU", "WF", "WS", "YE", "YT", "RS", "ZA", "ZM", "ME", "ZW", "A1", "A2", "O1",
-"AX", "GG", "IM", "JE"
+"AX", "GG", "IM", "JE", "BL", "MF"
 );
     var $GEOIP_COUNTRY_CODES3 = array(
 "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","ANT","AGO","AQ","ARG",
@@ -147,7 +148,7 @@ class GeoIP {
 "TGO","THA","TJK","TKL","TLS","TKM","TUN","TON","TUR","TTO","TUV","TWN","TZA",
 "UKR","UGA","UM","USA","URY","UZB","VAT","VCT","VEN","VGB","VIR","VNM","VUT",
 "WLF","WSM","YEM","YT","SRB","ZAF","ZMB","MNE","ZWE","A1","A2","O1",
-"ALA","GGY","IMN","JEY"
+"ALA","GGY","IMN","JEY","BLM","MAF"
     );
     var $GEOIP_COUNTRY_NAMES = array(
 "", "Asia/Pacific Region", "Europe", "Andorra", "United Arab Emirates",
@@ -158,49 +159,49 @@ class GeoIP {
 "Burundi", "Benin", "Bermuda", "Brunei Darussalam", "Bolivia", "Brazil",
 "Bahamas", "Bhutan", "Bouvet Island", "Botswana", "Belarus", "Belize",
 "Canada", "Cocos (Keeling) Islands", "Congo, The Democratic Republic of the",
-"Central African Republic", "Congo", "Switzerland", "Cote D'Ivoire", "Cook
-Islands", "Chile", "Cameroon", "China", "Colombia", "Costa Rica", "Cuba", "Cape
-Verde", "Christmas Island", "Cyprus", "Czech Republic", "Germany", "Djibouti",
+"Central African Republic", "Congo", "Switzerland", "Cote D'Ivoire", "Cook Islands",
+"Chile", "Cameroon", "China", "Colombia", "Costa Rica", "Cuba", "Cape Verde",
+"Christmas Island", "Cyprus", "Czech Republic", "Germany", "Djibouti",
 "Denmark", "Dominica", "Dominican Republic", "Algeria", "Ecuador", "Estonia",
 "Egypt", "Western Sahara", "Eritrea", "Spain", "Ethiopia", "Finland", "Fiji",
-"Falkland Islands (Malvinas)", "Micronesia, Federated States of", "Faroe
-Islands", "France", "France, Metropolitan", "Gabon", "United Kingdom",
+"Falkland Islands (Malvinas)", "Micronesia, Federated States of", "Faroe Islands",
+"France", "France, Metropolitan", "Gabon", "United Kingdom",
 "Grenada", "Georgia", "French Guiana", "Ghana", "Gibraltar", "Greenland",
-"Gambia", "Guinea", "Guadeloupe", "Equatorial Guinea", "Greece", "South Georgia
-and the South Sandwich Islands", "Guatemala", "Guam", "Guinea-Bissau",
+"Gambia", "Guinea", "Guadeloupe", "Equatorial Guinea", "Greece", "South Georgia and the South Sandwich Islands",
+"Guatemala", "Guam", "Guinea-Bissau",
 "Guyana", "Hong Kong", "Heard Island and McDonald Islands", "Honduras",
 "Croatia", "Haiti", "Hungary", "Indonesia", "Ireland", "Israel", "India",
 "British Indian Ocean Territory", "Iraq", "Iran, Islamic Republic of",
 "Iceland", "Italy", "Jamaica", "Jordan", "Japan", "Kenya", "Kyrgyzstan",
-"Cambodia", "Kiribati", "Comoros", "Saint Kitts and Nevis", "Korea, Democratic
-People's Republic of", "Korea, Republic of", "Kuwait", "Cayman Islands",
-"Kazakstan", "Lao People's Democratic Republic", "Lebanon", "Saint Lucia",
+"Cambodia", "Kiribati", "Comoros", "Saint Kitts and Nevis", "Korea, Democratic People's Republic of",
+"Korea, Republic of", "Kuwait", "Cayman Islands",
+"Kazakhstan", "Lao People's Democratic Republic", "Lebanon", "Saint Lucia",
 "Liechtenstein", "Sri Lanka", "Liberia", "Lesotho", "Lithuania", "Luxembourg",
-"Latvia", "Libyan Arab Jamahiriya", "Morocco", "Monaco", "Moldova, Republic
-of", "Madagascar", "Marshall Islands", "Macedonia",
+"Latvia", "Libyan Arab Jamahiriya", "Morocco", "Monaco", "Moldova, Republic of",
+"Madagascar", "Marshall Islands", "Macedonia",
 "Mali", "Myanmar", "Mongolia", "Macau", "Northern Mariana Islands",
 "Martinique", "Mauritania", "Montserrat", "Malta", "Mauritius", "Maldives",
 "Malawi", "Mexico", "Malaysia", "Mozambique", "Namibia", "New Caledonia",
 "Niger", "Norfolk Island", "Nigeria", "Nicaragua", "Netherlands", "Norway",
-"Nepal", "Nauru", "Niue", "New Zealand", "Oman", "Panama", "Peru", "French
-Polynesia", "Papua New Guinea", "Philippines", "Pakistan", "Poland", "Saint
-Pierre and Miquelon", "Pitcairn Islands", "Puerto Rico", "Palestinian Territory",
+"Nepal", "Nauru", "Niue", "New Zealand", "Oman", "Panama", "Peru", "French Polynesia",
+"Papua New Guinea", "Philippines", "Pakistan", "Poland", "Saint Pierre and Miquelon",
+"Pitcairn Islands", "Puerto Rico", "Palestinian Territory",
 "Portugal", "Palau", "Paraguay", "Qatar", "Reunion", "Romania",
 "Russian Federation", "Rwanda", "Saudi Arabia", "Solomon Islands",
 "Seychelles", "Sudan", "Sweden", "Singapore", "Saint Helena", "Slovenia",
 "Svalbard and Jan Mayen", "Slovakia", "Sierra Leone", "San Marino", "Senegal",
-"Somalia", "Suriname", "Sao Tome and Principe", "El Salvador", "Syrian Arab
-Republic", "Swaziland", "Turks and Caicos Islands", "Chad", "French Southern
-Territories", "Togo", "Thailand", "Tajikistan", "Tokelau", "Turkmenistan",
+"Somalia", "Suriname", "Sao Tome and Principe", "El Salvador", "Syrian Arab Republic",
+"Swaziland", "Turks and Caicos Islands", "Chad", "French Southern Territories",
+"Togo", "Thailand", "Tajikistan", "Tokelau", "Turkmenistan",
 "Tunisia", "Tonga", "Timor-Leste", "Turkey", "Trinidad and Tobago", "Tuvalu",
 "Taiwan", "Tanzania, United Republic of", "Ukraine",
 "Uganda", "United States Minor Outlying Islands", "United States", "Uruguay",
-"Uzbekistan", "Holy See (Vatican City State)", "Saint Vincent and the
-Grenadines", "Venezuela", "Virgin Islands, British", "Virgin Islands, U.S.",
+"Uzbekistan", "Holy See (Vatican City State)", "Saint Vincent and the Grenadines",
+"Venezuela", "Virgin Islands, British", "Virgin Islands, U.S.",
 "Vietnam", "Vanuatu", "Wallis and Futuna", "Samoa", "Yemen", "Mayotte",
 "Serbia", "South Africa", "Zambia", "Montenegro", "Zimbabwe",
 "Anonymous Proxy","Satellite Provider","Other",
-"Aland Islands","Guernsey","Isle of Man","Jersey"
+"Aland Islands","Guernsey","Isle of Man","Jersey","Saint Barthelemy","Saint Martin"
 );
 }
 function geoip_load_shared_mem ($file) {
@@ -237,19 +238,19 @@ function _setup_segments($gi){
                 $gi->databaseSegments = GEOIP_STATE_BEGIN_REV0;
             } else if ($gi->databaseType == GEOIP_REGION_EDITION_REV1){
                 $gi->databaseSegments = GEOIP_STATE_BEGIN_REV1;
-	    } else if (($gi->databaseType == GEOIP_CITY_EDITION_REV0)||
+        } else if (($gi->databaseType == GEOIP_CITY_EDITION_REV0)||
                      ($gi->databaseType == GEOIP_CITY_EDITION_REV1) 
                     || ($gi->databaseType == GEOIP_ORG_EDITION)
-		    || ($gi->databaseType == GEOIP_ISP_EDITION)
-		    || ($gi->databaseType == GEOIP_ASNUM_EDITION)){
+            || ($gi->databaseType == GEOIP_ISP_EDITION)
+            || ($gi->databaseType == GEOIP_ASNUM_EDITION)){
                 $gi->databaseSegments = 0;
                 $buf = @shmop_read ($gi->shmid, $offset, SEGMENT_RECORD_LENGTH);
                 for ($j = 0;$j < SEGMENT_RECORD_LENGTH;$j++){
                     $gi->databaseSegments += (ord($buf[$j]) << ($j * 8));
                 }
-	            if (($gi->databaseType == GEOIP_ORG_EDITION)||
-			($gi->databaseType == GEOIP_ISP_EDITION)) {
-	                $gi->record_length = ORG_RECORD_LENGTH;
+                if (($gi->databaseType == GEOIP_ORG_EDITION)||
+            ($gi->databaseType == GEOIP_ISP_EDITION)) {
+                    $gi->record_length = ORG_RECORD_LENGTH;
                 }
             }
             break;
@@ -273,20 +274,20 @@ function _setup_segments($gi){
             $gi->databaseSegments = GEOIP_STATE_BEGIN_REV0;
         }
         else if ($gi->databaseType == GEOIP_REGION_EDITION_REV1){
-	    $gi->databaseSegments = GEOIP_STATE_BEGIN_REV1;
+        $gi->databaseSegments = GEOIP_STATE_BEGIN_REV1;
                 }  else if (($gi->databaseType == GEOIP_CITY_EDITION_REV0) ||
                  ($gi->databaseType == GEOIP_CITY_EDITION_REV1) || 
                  ($gi->databaseType == GEOIP_ORG_EDITION) || 
-		 ($gi->databaseType == GEOIP_ISP_EDITION) || 
+         ($gi->databaseType == GEOIP_ISP_EDITION) || 
                  ($gi->databaseType == GEOIP_ASNUM_EDITION)){
             $gi->databaseSegments = 0;
             $buf = fread($gi->filehandle,SEGMENT_RECORD_LENGTH);
             for ($j = 0;$j < SEGMENT_RECORD_LENGTH;$j++){
             $gi->databaseSegments += (ord($buf[$j]) << ($j * 8));
             }
-	    if ($gi->databaseType == GEOIP_ORG_EDITION ||
-		$gi->databaseType == GEOIP_ISP_EDITION) {
-	    $gi->record_length = ORG_RECORD_LENGTH;
+        if ($gi->databaseType == GEOIP_ORG_EDITION ||
+        $gi->databaseType == GEOIP_ISP_EDITION) {
+        $gi->record_length = ORG_RECORD_LENGTH;
             }
         }
         break;
@@ -310,7 +311,7 @@ function geoip_open($filename, $flags) {
   if ($gi->flags & GEOIP_SHARED_MEMORY) {
     $gi->shmid = @shmop_open (GEOIP_SHM_KEY, "a", 0, 0);
     } else {
-    $gi->filehandle = fopen($filename,"rb");
+    $gi->filehandle = fopen($filename,"rb") or die( "Can not open $filename\n" );
     if ($gi->flags & GEOIP_MEMORY_CACHE) {
         $s_array = fstat($gi->filehandle);
         $gi->memory_buffer = fread($gi->filehandle, $s_array['size']);
@@ -361,7 +362,9 @@ function geoip_country_id_by_addr($gi, $addr) {
 function geoip_country_code_by_addr($gi, $addr) {
   if ($gi->databaseType == GEOIP_CITY_EDITION_REV1) {
     $record = geoip_record_by_addr($gi,$addr);
-    return $record->country_code;
+    if ( $record !== false ) {
+      return $record->country_code;
+    }
   } else {
     $country_id = geoip_country_id_by_addr($gi,$addr);
     if ($country_id !== false) {
