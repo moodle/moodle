@@ -1,4 +1,4 @@
-<?php // $id$
+<?php
 
 /**
  * Moodle - Modular Object-Oriented Dynamic Learning Environment

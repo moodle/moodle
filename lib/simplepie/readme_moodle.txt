@@ -8,4 +8,3 @@ Changes:
 
 Dan Poltawski <talktodan@gmail.com>
 
-$Id$
