@@ -1,4 +1,4 @@
-Description of DragMath 0.7.8 library import into Moodle
+Description of DragMath 0.7.8.1 library import into Moodle
 
 Removed:
  * demo*
