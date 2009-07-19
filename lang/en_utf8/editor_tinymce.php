@@ -6,6 +6,7 @@ $string['dragmath:dragmath_javaneeded'] = 'To use this page you need a Java-enab
 $string['dragmath:dragmath_title'] = 'DragMath Equation Editor';
 $string['modulename'] = 'TinyMCE HTML editor';
 
+
 // == TinyMCE upstream lang strings from all plugins ==
 $string['advanced:address'] = 'Address';
 $string['advanced:anchor_delta_height'] = '';

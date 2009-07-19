@@ -28,7 +28,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) { // this script is accessed only via comman
     die;
 }
 
-require_once('../../../../../config.php');
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php';
 
 if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');

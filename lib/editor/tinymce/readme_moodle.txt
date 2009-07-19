@@ -1,4 +1,4 @@
-Description of TinyMCE v3.2.4.1 library integration in Moodle
+Description of TinyMCE v3.2.5 library integration in Moodle
 =========================================================================================
 
 Copyright: (c) 2004-2008, Moxiecode Systems AB, All rights reserved.
