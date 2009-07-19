@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays IP address on map
+ * This script serves draft files of current user
  *
  * @package    moodlecore
  * @subpackage iplookup
