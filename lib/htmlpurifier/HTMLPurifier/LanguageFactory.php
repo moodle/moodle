@@ -85,7 +85,7 @@ class HTMLPurifier_LanguageFactory
         // validate language code
         if ($code === false) {
             $code = $this->validator->validate(
-              $config->get('Core', 'Language'), $config, $context
+              $config->get('Core.Language'), $config, $context
             );
         } else {
             $code = $this->validator->validate($code, $config, $context);

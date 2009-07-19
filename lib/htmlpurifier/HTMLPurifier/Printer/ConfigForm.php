@@ -91,7 +91,7 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
         $all = array();
         foreach ($allowed as $key) {
             list($ns, $directive) = $key;
-            $all[$ns][$directive] = $config->get($ns, $directive);
+            $all[$ns][$directive] = $config->get($ns .'.'. $directive);
         }
 
         $ret = '';
@@ -159,7 +159,7 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
             $ret .= $this->end('th');
 
             $ret .= $this->start('td');
-                $def = $this->config->def->info[$ns][$directive];
+                $def = $this->config->def->info["$ns.$directive"];
                 if (is_int($def)) {
                     $allow_null = $def < 0;
                     $type = abs($def);
@@ -248,7 +248,7 @@ class HTMLPurifier_Printer_ConfigForm_default extends HTMLPurifier_Printer {
         $this->prepareGenerator($gen_config);
         // this should probably be split up a little
         $ret = '';
-        $def = $config->def->info[$ns][$directive];
+        $def = $config->def->info["$ns.$directive"];
         if (is_int($def)) {
             $type = abs($def);
         } else {

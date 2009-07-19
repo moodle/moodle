@@ -28,7 +28,7 @@ abstract class HTMLPurifier_DefinitionCache
     public function generateKey($config) {
         return $config->version . ',' . // possibly replace with function calls
                $config->getBatchSerial($this->type) . ',' .
-               $config->get($this->type, 'DefinitionRev');
+               $config->get($this->type . '.DefinitionRev');
     }
 
     /**
@@ -46,7 +46,7 @@ abstract class HTMLPurifier_DefinitionCache
         // versions match, ids match, check revision number
         if (
             $hash == $config->getBatchSerial($this->type) &&
-            $revision < $config->get($this->type, 'DefinitionRev')
+            $revision < $config->get($this->type . '.DefinitionRev')
         ) return true;
         return false;
     }

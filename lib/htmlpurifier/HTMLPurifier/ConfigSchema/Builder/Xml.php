@@ -8,6 +8,7 @@ class HTMLPurifier_ConfigSchema_Builder_Xml extends XMLWriter
 {
 
     protected $interchange;
+    private $namespace;
 
     protected function writeHTMLDiv($html) {
         $this->startElement('div');
@@ -34,36 +35,33 @@ class HTMLPurifier_ConfigSchema_Builder_Xml extends XMLWriter
         $this->startElement('configdoc');
         $this->writeElement('title', $interchange->name);
 
-        foreach ($interchange->namespaces as $namespace) {
-            $this->buildNamespace($namespace);
+        foreach ($interchange->directives as $directive) {
+            $this->buildDirective($directive);
         }
+
+        if ($this->namespace) $this->endElement(); // namespace
 
         $this->endElement(); // configdoc
         $this->flush();
     }
 
-    public function buildNamespace($namespace) {
-        $this->startElement('namespace');
-        $this->writeAttribute('id', $namespace->namespace);
+    public function buildDirective($directive) {
 
-        $this->writeElement('name', $namespace->namespace);
-        $this->startElement('description');
-            $this->writeHTMLDiv($namespace->description);
-        $this->endElement(); // description
-
-        foreach ($this->interchange->directives as $directive) {
-            if ($directive->id->namespace !== $namespace->namespace) continue;
-            $this->buildDirective($directive);
+        // Kludge, although I suppose having a notion of a "root namespace"
+        // certainly makes things look nicer when documentation is built.
+        // Depends on things being sorted.
+        if (!$this->namespace || $this->namespace !== $directive->id->getRootNamespace()) {
+            if ($this->namespace) $this->endElement(); // namespace
+            $this->namespace = $directive->id->getRootNamespace();
+            $this->startElement('namespace');
+            $this->writeAttribute('id', $this->namespace);
+            $this->writeElement('name', $this->namespace);
         }
 
-        $this->endElement(); // namespace
-    }
-
-    public function buildDirective($directive) {
         $this->startElement('directive');
         $this->writeAttribute('id', $directive->id->toString());
 
-        $this->writeElement('name', $directive->id->directive);
+        $this->writeElement('name', $directive->id->getDirective());
 
         $this->startElement('aliases');
             foreach ($directive->aliases as $alias) $this->writeElement('alias', $alias->toString());

@@ -16,7 +16,7 @@ class HTMLPurifier_HTMLModule_SafeObject extends HTMLPurifier_HTMLModule
         // These definitions are not intrinsically safe: the attribute transforms
         // are a vital part of ensuring safety.
 
-        $max = $config->get('HTML', 'MaxImgLength');
+        $max = $config->get('HTML.MaxImgLength');
         $object = $this->addElement(
             'object',
             'Inline',

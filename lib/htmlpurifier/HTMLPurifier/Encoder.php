@@ -17,7 +17,7 @@ class HTMLPurifier_Encoder
     /**
      * Error-handler that mutes errors, alternative to shut-up operator.
      */
-    private static function muteErrorHandler() {}
+    public static function muteErrorHandler() {}
 
     /**
      * Cleans a UTF-8 string for well-formedness and SGML validity
@@ -264,12 +264,12 @@ class HTMLPurifier_Encoder
      * Converts a string to UTF-8 based on configuration.
      */
     public static function convertToUTF8($str, $config, $context) {
-        $encoding = $config->get('Core', 'Encoding');
+        $encoding = $config->get('Core.Encoding');
         if ($encoding === 'utf-8') return $str;
         static $iconv = null;
         if ($iconv === null) $iconv = function_exists('iconv');
         set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
-        if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
+        if ($iconv && !$config->get('Test.ForceNoIconv')) {
             $str = iconv($encoding, 'utf-8//IGNORE', $str);
             if ($str === false) {
                 // $encoding is not a valid encoding
@@ -297,15 +297,15 @@ class HTMLPurifier_Encoder
      *       characters being omitted.
      */
     public static function convertFromUTF8($str, $config, $context) {
-        $encoding = $config->get('Core', 'Encoding');
+        $encoding = $config->get('Core.Encoding');
         if ($encoding === 'utf-8') return $str;
         static $iconv = null;
         if ($iconv === null) $iconv = function_exists('iconv');
-        if ($escape = $config->get('Core', 'EscapeNonASCIICharacters')) {
+        if ($escape = $config->get('Core.EscapeNonASCIICharacters')) {
             $str = HTMLPurifier_Encoder::convertToASCIIDumbLossless($str);
         }
         set_error_handler(array('HTMLPurifier_Encoder', 'muteErrorHandler'));
-        if ($iconv && !$config->get('Test', 'ForceNoIconv')) {
+        if ($iconv && !$config->get('Test.ForceNoIconv')) {
             // Undo our previous fix in convertToUTF8, otherwise iconv will barf
             $ascii_fix = HTMLPurifier_Encoder::testEncodingSupportsASCII($encoding);
             if (!$escape && !empty($ascii_fix)) {

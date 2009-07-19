@@ -52,7 +52,7 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
 
     protected function setupFilters($config) {
         foreach ($this->registeredFilters as $name => $filter) {
-            $conf = $config->get('URI', $name);
+            $conf = $config->get('URI.' . $name);
             if ($conf !== false && $conf !== null) {
                 $this->addFilter($filter, $config);
             }
@@ -61,15 +61,15 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
     }
 
     protected function setupMemberVariables($config) {
-        $this->host = $config->get('URI', 'Host');
-        $base_uri = $config->get('URI', 'Base');
+        $this->host = $config->get('URI.Host');
+        $base_uri = $config->get('URI.Base');
         if (!is_null($base_uri)) {
             $parser = new HTMLPurifier_URIParser();
             $this->base = $parser->parse($base_uri);
             $this->defaultScheme = $this->base->scheme;
             if (is_null($this->host)) $this->host = $this->base->host;
         }
-        if (is_null($this->defaultScheme)) $this->defaultScheme = $config->get('URI', 'DefaultScheme');
+        if (is_null($this->defaultScheme)) $this->defaultScheme = $config->get('URI.DefaultScheme');
     }
 
     public function filter(&$uri, $config, $context) {

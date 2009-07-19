@@ -39,30 +39,12 @@ class HTMLPurifier_ConfigSchema_Validator
         $this->aliases = array();
         // PHP is a bit lax with integer <=> string conversions in
         // arrays, so we don't use the identical !== comparison
-        foreach ($interchange->namespaces as $i => $namespace) {
-            if ($i != $namespace->namespace) $this->error(false, "Integrity violation: key '$i' does not match internal id '{$namespace->namespace}'");
-            $this->validateNamespace($namespace);
-        }
         foreach ($interchange->directives as $i => $directive) {
             $id = $directive->id->toString();
             if ($i != $id) $this->error(false, "Integrity violation: key '$i' does not match internal id '$id'");
             $this->validateDirective($directive);
         }
         return true;
-    }
-
-    /**
-     * Validates a HTMLPurifier_ConfigSchema_Interchange_Namespace object.
-     */
-    public function validateNamespace($n) {
-        $this->context[] = "namespace '{$n->namespace}'";
-        $this->with($n, 'namespace')
-            ->assertNotEmpty()
-            ->assertAlnum(); // implicit assertIsString handled by InterchangeBuilder
-        $this->with($n, 'description')
-            ->assertNotEmpty()
-            ->assertIsString(); // handled by InterchangeBuilder
-        array_pop($this->context);
     }
 
     /**
@@ -75,12 +57,11 @@ class HTMLPurifier_ConfigSchema_Validator
             // handled by InterchangeBuilder
             $this->error(false, 'is not an instance of HTMLPurifier_ConfigSchema_Interchange_Id');
         }
-        if (!isset($this->interchange->namespaces[$id->namespace])) {
-            $this->error('namespace', 'does not exist'); // assumes that the namespace was validated already
-        }
-        $this->with($id, 'directive')
+        // keys are now unconstrained (we might want to narrow down to A-Za-z0-9.)
+        // we probably should check that it has at least one namespace
+        $this->with($id, 'key')
             ->assertNotEmpty()
-            ->assertAlnum(); // implicit assertIsString handled by InterchangeBuilder
+            ->assertIsString(); // implicit assertIsString handled by InterchangeBuilder
         array_pop($this->context);
     }
 

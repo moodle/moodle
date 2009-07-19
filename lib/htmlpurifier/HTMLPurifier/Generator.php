@@ -42,8 +42,8 @@ class HTMLPurifier_Generator
      */
     public function __construct($config, $context) {
         $this->config = $config;
-        $this->_scriptFix = $config->get('Output', 'CommentScriptContents');
-        $this->_sortAttr = $config->get('Output', 'SortAttr');
+        $this->_scriptFix = $config->get('Output.CommentScriptContents');
+        $this->_sortAttr = $config->get('Output.SortAttr');
         $this->_def = $config->getHTMLDefinition();
         $this->_xhtml = $this->_def->doctype->xml;
     }
@@ -72,7 +72,7 @@ class HTMLPurifier_Generator
         }
 
         // Tidy cleanup
-        if (extension_loaded('tidy') && $this->config->get('Output', 'TidyFormat')) {
+        if (extension_loaded('tidy') && $this->config->get('Output.TidyFormat')) {
             $tidy = new Tidy;
             $tidy->parseString($html, array(
                'indent'=> true,
@@ -86,7 +86,7 @@ class HTMLPurifier_Generator
         }
 
         // Normalize newlines to system defined value
-        $nl = $this->config->get('Output', 'Newline');
+        $nl = $this->config->get('Output.Newline');
         if ($nl === null) $nl = PHP_EOL;
         if ($nl !== "\n") $html = str_replace("\n", $nl, $html);
         return $html;

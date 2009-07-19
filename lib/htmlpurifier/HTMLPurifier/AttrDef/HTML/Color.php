@@ -9,7 +9,7 @@ class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
     public function validate($string, $config, $context) {
 
         static $colors = null;
-        if ($colors === null) $colors = $config->get('Core', 'ColorKeywords');
+        if ($colors === null) $colors = $config->get('Core.ColorKeywords');
 
         $string = trim($string);
 

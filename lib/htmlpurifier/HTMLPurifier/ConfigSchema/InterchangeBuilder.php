@@ -13,13 +13,17 @@ class HTMLPurifier_ConfigSchema_InterchangeBuilder
     }
 
     public static function buildFromDirectory($dir = null) {
-        $parser      = new HTMLPurifier_StringHashParser();
         $builder     = new HTMLPurifier_ConfigSchema_InterchangeBuilder();
         $interchange = new HTMLPurifier_ConfigSchema_Interchange();
+        return $builder->buildDir($interchange, $dir);
+    }
 
-        if (!$dir) $dir = HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema/';
-        $info = parse_ini_file($dir . 'info.ini');
-        $interchange->name = $info['name'];
+    public function buildDir($interchange, $dir = null) {
+        if (!$dir) $dir = HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema';
+        if (file_exists($dir . '/info.ini')) {
+            $info = parse_ini_file($dir . '/info.ini');
+            $interchange->name = $info['name'];
+        }
 
         $files = array();
         $dh = opendir($dir);
@@ -33,13 +37,18 @@ class HTMLPurifier_ConfigSchema_InterchangeBuilder
 
         sort($files);
         foreach ($files as $file) {
-            $builder->build(
-                $interchange,
-                new HTMLPurifier_StringHash( $parser->parseFile($dir . $file) )
-            );
+            $this->buildFile($interchange, $dir . '/' . $file);
         }
 
         return $interchange;
+    }
+
+    public function buildFile($interchange, $file) {
+        $parser = new HTMLPurifier_StringHashParser();
+        $this->build(
+            $interchange,
+            new HTMLPurifier_StringHash( $parser->parseFile($file) )
+        );
     }
 
     /**
@@ -55,20 +64,15 @@ class HTMLPurifier_ConfigSchema_InterchangeBuilder
             throw new HTMLPurifier_ConfigSchema_Exception('Hash does not have any ID');
         }
         if (strpos($hash['ID'], '.') === false) {
-            $this->buildNamespace($interchange, $hash);
+            if (count($hash) == 2 && isset($hash['DESCRIPTION'])) {
+                $hash->offsetGet('DESCRIPTION'); // prevent complaining
+            } else {
+                throw new HTMLPurifier_ConfigSchema_Exception('All directives must have a namespace');
+            }
         } else {
             $this->buildDirective($interchange, $hash);
         }
         $this->_findUnused($hash);
-    }
-
-    public function buildNamespace($interchange, $hash) {
-        $namespace = new HTMLPurifier_ConfigSchema_Interchange_Namespace();
-        $namespace->namespace   = $hash->offsetGet('ID');
-        if (isset($hash['DESCRIPTION'])) {
-            $namespace->description = $hash->offsetGet('DESCRIPTION');
-        }
-        $interchange->addNamespace($namespace);
     }
 
     public function buildDirective($interchange, $hash) {

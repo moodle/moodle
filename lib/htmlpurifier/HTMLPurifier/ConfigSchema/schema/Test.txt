@@ -1,3 +1,0 @@
-Test
-DESCRIPTION: Developer testing configuration for our unit tests.
---# vim: et sw=4 sts=4

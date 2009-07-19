@@ -137,6 +137,12 @@ abstract class HTMLPurifier_Injector
         if (!isset($parent->child->elements[$name]) || isset($parent->excludes[$name])) {
             return false;
         }
+        // check for exclusion
+        for ($i = count($this->currentNesting) - 2; $i >= 0; $i--) {
+            $node = $this->currentNesting[$i];
+            $def  = $this->htmlDefinition->info[$node->name];
+            if (isset($def->excludes[$name])) return false;
+        }
         return true;
     }
 

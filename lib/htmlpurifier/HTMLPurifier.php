@@ -19,7 +19,7 @@
  */
 
 /*
-    HTML Purifier 3.3.0 - Standards Compliant HTML Filtering
+    HTML Purifier 4.0.0 - Standards Compliant HTML Filtering
     Copyright (C) 2006-2008 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -55,10 +55,10 @@ class HTMLPurifier
 {
 
     /** Version of HTML Purifier */
-    public $version = '3.3.0';
+    public $version = '4.0.0';
 
     /** Constant with version of HTML Purifier */
-    const VERSION = '3.3.0';
+    const VERSION = '4.0.0';
 
     /** Global configuration object */
     public $config;
@@ -128,7 +128,7 @@ class HTMLPurifier
         $context->register('Generator', $this->generator);
 
         // set up global context variables
-        if ($config->get('Core', 'CollectErrors')) {
+        if ($config->get('Core.CollectErrors')) {
             // may get moved out if other facilities use it
             $language_factory = HTMLPurifier_LanguageFactory::instance();
             $language = $language_factory->create($config, $context);
@@ -152,6 +152,7 @@ class HTMLPurifier
         $filters = array();
         foreach ($filter_flags as $filter => $flag) {
             if (!$flag) continue;
+            if (strpos($filter, '.') !== false) continue;
             $class = "HTMLPurifier_Filter_$filter";
             $filters[] = new $class;
         }

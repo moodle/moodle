@@ -33,7 +33,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         // special normalization for script tags without any armor
         // our "armor" heurstic is a < sign any number of whitespaces after
         // the first script tag
-        if ($config->get('HTML', 'Trusted')) {
+        if ($config->get('HTML.Trusted')) {
             $html = preg_replace_callback('#(<script[^>]*>)(\s*[^<].+?)(</script>)#si',
                 array($this, 'scriptCallback'), $html);
         }
@@ -45,12 +45,12 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         $array = array(); // result array
 
         // This is also treated to mean maintain *column* numbers too
-        $maintain_line_numbers = $config->get('Core', 'MaintainLineNumbers');
+        $maintain_line_numbers = $config->get('Core.MaintainLineNumbers');
 
         if ($maintain_line_numbers === null) {
             // automatically determine line numbering by checking
             // if error collection is on
-            $maintain_line_numbers = $config->get('Core', 'CollectErrors');
+            $maintain_line_numbers = $config->get('Core.CollectErrors');
         }
 
         if ($maintain_line_numbers) {
@@ -67,10 +67,10 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         $nl = "\n";
         // how often to manually recalculate. This will ALWAYS be right,
         // but it's pretty wasteful. Set to 0 to turn off
-        $synchronize_interval = $config->get('Core', 'DirectLexLineNumberSyncInterval');
+        $synchronize_interval = $config->get('Core.DirectLexLineNumberSyncInterval');
 
         $e = false;
-        if ($config->get('Core', 'CollectErrors')) {
+        if ($config->get('Core.CollectErrors')) {
             $e =& $context->get('ErrorCollector');
         }
 
@@ -345,7 +345,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         if ($string == '') return array(); // no attributes
 
         $e = false;
-        if ($config->get('Core', 'CollectErrors')) {
+        if ($config->get('Core.CollectErrors')) {
             $e =& $context->get('ErrorCollector');
         }
 

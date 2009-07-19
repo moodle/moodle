@@ -27,7 +27,7 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
 
     public function validate($string, $config, $context) {
 
-        $allowed = $config->get('Attr', $this->name);
+        $allowed = $config->get('Attr.' . $this->name);
         if (empty($allowed)) return false;
 
         $string = $this->parseCDATA($string);

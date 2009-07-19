@@ -16,14 +16,14 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
         $generator = new HTMLPurifier_Generator($config, $context);
         $result = array();
 
-        $escape_invalid_tags = $config->get('Core', 'EscapeInvalidTags');
-        $remove_invalid_img  = $config->get('Core', 'RemoveInvalidImg');
+        $escape_invalid_tags = $config->get('Core.EscapeInvalidTags');
+        $remove_invalid_img  = $config->get('Core.RemoveInvalidImg');
 
         // currently only used to determine if comments should be kept
-        $trusted = $config->get('HTML', 'Trusted');
+        $trusted = $config->get('HTML.Trusted');
 
-        $remove_script_contents = $config->get('Core', 'RemoveScriptContents');
-        $hidden_elements     = $config->get('Core', 'HiddenElements');
+        $remove_script_contents = $config->get('Core.RemoveScriptContents');
+        $hidden_elements     = $config->get('Core.HiddenElements');
 
         // remove script contents compatibility
         if ($remove_script_contents === true) {
@@ -44,7 +44,7 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
         $context->register('CurrentToken', $token);
 
         $e = false;
-        if ($config->get('Core', 'CollectErrors')) {
+        if ($config->get('Core.CollectErrors')) {
             $e =& $context->get('ErrorCollector');
         }
 

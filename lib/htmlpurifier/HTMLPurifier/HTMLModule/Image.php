@@ -11,7 +11,7 @@ class HTMLPurifier_HTMLModule_Image extends HTMLPurifier_HTMLModule
     public $name = 'Image';
 
     public function setup($config) {
-        $max = $config->get('HTML', 'MaxImgLength');
+        $max = $config->get('HTML.MaxImgLength');
         $img = $this->addElement(
             'img', 'Inline', 'Empty', 'Common',
             array(
@@ -24,7 +24,7 @@ class HTMLPurifier_HTMLModule_Image extends HTMLPurifier_HTMLModule
                 'src*' => new HTMLPurifier_AttrDef_URI(true), // embedded
             )
         );
-        if ($max === null || $config->get('HTML', 'Trusted')) {
+        if ($max === null || $config->get('HTML.Trusted')) {
             $img->attr['height'] =
             $img->attr['width'] = 'Length';
         }

@@ -199,15 +199,15 @@ class HTMLPurifier_HTMLModuleManager
      */
     public function setup($config) {
 
-        $this->trusted = $config->get('HTML', 'Trusted');
+        $this->trusted = $config->get('HTML.Trusted');
 
         // generate
         $this->doctype = $this->doctypes->make($config);
         $modules = $this->doctype->modules;
 
         // take out the default modules that aren't allowed
-        $lookup = $config->get('HTML', 'AllowedModules');
-        $special_cases = $config->get('HTML', 'CoreModules');
+        $lookup = $config->get('HTML.AllowedModules');
+        $special_cases = $config->get('HTML.CoreModules');
 
         if (is_array($lookup)) {
             foreach ($modules as $k => $m) {
@@ -218,15 +218,15 @@ class HTMLPurifier_HTMLModuleManager
 
         // add proprietary module (this gets special treatment because
         // it is completely removed from doctypes, etc.)
-        if ($config->get('HTML', 'Proprietary')) {
+        if ($config->get('HTML.Proprietary')) {
             $modules[] = 'Proprietary';
         }
 
         // add SafeObject/Safeembed modules
-        if ($config->get('HTML', 'SafeObject')) {
+        if ($config->get('HTML.SafeObject')) {
             $modules[] = 'SafeObject';
         }
-        if ($config->get('HTML', 'SafeEmbed')) {
+        if ($config->get('HTML.SafeEmbed')) {
             $modules[] = 'SafeEmbed';
         }
 

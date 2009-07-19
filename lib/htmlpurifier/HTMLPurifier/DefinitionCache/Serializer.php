@@ -88,7 +88,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends
      * @todo Make protected
      */
     public function generateBaseDirectoryPath($config) {
-        $base = $config->get('Cache', 'SerializerPath');
+        $base = $config->get('Cache.SerializerPath');
         $base = is_null($base) ? HTMLPURIFIER_PREFIX . '/HTMLPurifier/DefinitionCache/Serializer' : $base;
         return $base;
     }

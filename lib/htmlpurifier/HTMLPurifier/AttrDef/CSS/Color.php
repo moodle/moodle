@@ -9,7 +9,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
     public function validate($color, $config, $context) {
 
         static $colors = null;
-        if ($colors === null) $colors = $config->get('Core', 'ColorKeywords');
+        if ($colors === null) $colors = $config->get('Core.ColorKeywords');
 
         $color = trim($color);
         if ($color === '') return false;

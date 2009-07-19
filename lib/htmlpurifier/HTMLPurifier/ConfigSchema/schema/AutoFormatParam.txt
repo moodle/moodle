@@ -1,3 +1,0 @@
-AutoFormatParam
-DESCRIPTION: Configuration for customizing auto-formatting functionality
---# vim: et sw=4 sts=4

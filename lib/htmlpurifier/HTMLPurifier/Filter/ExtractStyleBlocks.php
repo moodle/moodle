@@ -38,7 +38,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
      * @todo Extend to indicate non-text/css style blocks
      */
     public function preFilter($html, $config, $context) {
-        $tidy = $config->get('FilterParam', 'ExtractStyleBlocksTidyImpl');
+        $tidy = $config->get('Filter.ExtractStyleBlocks.TidyImpl');
         if ($tidy !== null) $this->_tidy = $tidy;
         $html = preg_replace_callback('#<style(?:\s.*)?>(.+)</style>#isU', array($this, 'styleCallback'), $html);
         $style_blocks = $this->_styleMatches;
@@ -62,7 +62,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
      */
     public function cleanCSS($css, $config, $context) {
         // prepare scope
-        $scope = $config->get('FilterParam', 'ExtractStyleBlocksScope');
+        $scope = $config->get('Filter.ExtractStyleBlocks.Scope');
         if ($scope !== null) {
             $scopes = array_map('trim', explode(',', $scope));
         } else {
@@ -120,7 +120,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
         $css = $this->_tidy->print->plain();
         // we are going to escape any special characters <>& to ensure
         // that no funny business occurs (i.e. </style> in a font-family prop).
-        if ($config->get('FilterParam', 'ExtractStyleBlocksEscaping')) {
+        if ($config->get('Filter.ExtractStyleBlocks.Escaping')) {
             $css = str_replace(
                 array('<',    '>',    '&'),
                 array('\3C ', '\3E ', '\26 '),

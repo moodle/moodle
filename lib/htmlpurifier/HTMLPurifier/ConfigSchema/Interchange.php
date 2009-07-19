@@ -14,24 +14,9 @@ class HTMLPurifier_ConfigSchema_Interchange
     public $name;
 
     /**
-     * Array of Namespace ID => array(namespace info)
-     */
-    public $namespaces = array();
-
-    /**
      * Array of Directive ID => array(directive info)
      */
     public $directives = array();
-
-    /**
-     * Adds a namespace array to $namespaces
-     */
-    public function addNamespace($namespace) {
-        if (isset($this->namespaces[$i = $namespace->namespace])) {
-            throw new HTMLPurifier_ConfigSchema_Exception("Cannot redefine namespace '$i'");
-        }
-        $this->namespaces[$i] = $namespace;
-    }
 
     /**
      * Adds a directive array to $directives

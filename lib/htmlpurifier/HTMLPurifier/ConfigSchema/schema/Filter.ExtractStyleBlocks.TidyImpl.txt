@@ -1,7 +1,8 @@
-FilterParam.ExtractStyleBlocksTidyImpl
+Filter.ExtractStyleBlocks.TidyImpl
 TYPE: mixed/null
 VERSION: 3.1.0
 DEFAULT: NULL
+ALIASES: FilterParam.ExtractStyleBlocksTidyImpl
 --DESCRIPTION--
 <p>
   If left NULL, HTML Purifier will attempt to instantiate a <code>csstidy</code>

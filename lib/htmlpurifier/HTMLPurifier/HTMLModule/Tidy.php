@@ -42,12 +42,12 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
         $this->makeFixesForLevel($fixes);
 
         // figure out which fixes to use
-        $level = $config->get('HTML', 'TidyLevel');
+        $level = $config->get('HTML.TidyLevel');
         $fixes_lookup = $this->getFixesForLevel($level);
 
         // get custom fix declarations: these need namespace processing
-        $add_fixes    = $config->get('HTML', 'TidyAdd');
-        $remove_fixes = $config->get('HTML', 'TidyRemove');
+        $add_fixes    = $config->get('HTML.TidyAdd');
+        $remove_fixes = $config->get('HTML.TidyRemove');
 
         foreach ($fixes as $name => $fix) {
             // needs to be refactored a little to implement globbing

@@ -154,7 +154,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             new HTMLPurifier_AttrDef_CSS_Percentage(true),
             new HTMLPurifier_AttrDef_Enum(array('auto'))
         ));
-        $max = $config->get('CSS', 'MaxImgLength');
+        $max = $config->get('CSS.MaxImgLength');
 
         $this->info['width'] =
         $this->info['height'] =
@@ -211,15 +211,15 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         // partial support
         $this->info['white-space'] = new HTMLPurifier_AttrDef_Enum(array('nowrap'));
 
-        if ($config->get('CSS', 'Proprietary')) {
+        if ($config->get('CSS.Proprietary')) {
             $this->doSetupProprietary($config);
         }
 
-        if ($config->get('CSS', 'AllowTricky')) {
+        if ($config->get('CSS.AllowTricky')) {
             $this->doSetupTricky($config);
         }
 
-        $allow_important = $config->get('CSS', 'AllowImportant');
+        $allow_important = $config->get('CSS.AllowImportant');
         // wrap all attr-defs with decorator that handles !important
         foreach ($this->info as $k => $v) {
             $this->info[$k] = new HTMLPurifier_AttrDef_CSS_ImportantDecorator($v, $allow_important);
@@ -272,7 +272,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         // setup allowed elements
         $support = "(for information on implementing this, see the ".
                    "support forums) ";
-        $allowed_attributes = $config->get('CSS', 'AllowedProperties');
+        $allowed_attributes = $config->get('CSS.AllowedProperties');
         if ($allowed_attributes !== null) {
             foreach ($this->info as $name => $d) {
                 if(!isset($allowed_attributes[$name])) unset($this->info[$name]);

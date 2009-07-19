@@ -9,7 +9,10 @@ class HTMLPurifier_HTMLModule_Name extends HTMLPurifier_HTMLModule
         $elements = array('a', 'applet', 'form', 'frame', 'iframe', 'img', 'map');
         foreach ($elements as $name) {
             $element = $this->addBlankElement($name);
-            $element->attr['name'] = 'ID';
+            $element->attr['name'] = 'CDATA';
+            if (!$config->get('HTML.Attr.Name.UseCDATA')) {
+                $element->attr_transform_post['NameSync'] = new HTMLPurifier_AttrTransform_NameSync();
+            }
         }
     }
 

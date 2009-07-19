@@ -31,7 +31,8 @@ DEFAULT: false
 </p>
 <p>
   Elements that contain only whitespace will be treated as empty. Non-breaking
-  spaces, however, do not count as whitespace.
+  spaces, however, do not count as whitespace. See
+  %AutoFormat.RemoveEmpty.RemoveNbsp for alternate behavior.
 </p>
 <p>
   This algorithm is not perfect; you may still notice some empty tags,
@@ -39,7 +40,7 @@ DEFAULT: false
   because they were not permitted in that context, or tags that, after
   being auto-closed by another tag, where empty. This is for safety reasons
   to prevent clever code from breaking validation. The general rule of thumb:
-  if a tag looked empty on the way end, it will get removed; if HTML Purifier
+  if a tag looked empty on the way in, it will get removed; if HTML Purifier
   made it empty, it will stay.
 </p>
 --# vim: et sw=4 sts=4

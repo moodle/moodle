@@ -80,17 +80,17 @@ class HTMLPurifier_DoctypeRegistry
      */
     public function getDoctypeFromConfig($config) {
         // recommended test
-        $doctype = $config->get('HTML', 'Doctype');
+        $doctype = $config->get('HTML.Doctype');
         if (!empty($doctype)) return $doctype;
-        $doctype = $config->get('HTML', 'CustomDoctype');
+        $doctype = $config->get('HTML.CustomDoctype');
         if (!empty($doctype)) return $doctype;
         // backwards-compatibility
-        if ($config->get('HTML', 'XHTML')) {
+        if ($config->get('HTML.XHTML')) {
             $doctype = 'XHTML 1.0';
         } else {
             $doctype = 'HTML 4.01';
         }
-        if ($config->get('HTML', 'Strict')) {
+        if ($config->get('HTML.Strict')) {
             $doctype .= ' Strict';
         } else {
             $doctype .= ' Transitional';

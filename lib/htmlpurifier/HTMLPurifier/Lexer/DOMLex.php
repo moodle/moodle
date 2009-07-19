@@ -41,7 +41,7 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
 
         // attempt to armor stray angled brackets that cannot possibly
         // form tags and thus are probably being used as emoticons
-        if ($config->get('Core', 'AggressivelyFixLt')) {
+        if ($config->get('Core.AggressivelyFixLt')) {
             $char = '[^a-z!\/]';
             $comment = "/<!--(.*?)(-->|\z)/is";
             $html = preg_replace_callback($comment, array($this, 'callbackArmorCommentEntities'), $html);

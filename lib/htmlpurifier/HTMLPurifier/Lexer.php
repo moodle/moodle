@@ -73,12 +73,12 @@ class HTMLPurifier_Lexer
               HTMLPurifier_Lexer::create() is deprecated, please instead
               use %Core.LexerImpl", E_USER_WARNING);
         } else {
-            $lexer = $config->get('Core', 'LexerImpl');
+            $lexer = $config->get('Core.LexerImpl');
         }
 
         $needs_tracking =
-            $config->get('Core', 'MaintainLineNumbers') ||
-            $config->get('Core', 'CollectErrors');
+            $config->get('Core.MaintainLineNumbers') ||
+            $config->get('Core.CollectErrors');
 
         $inst = null;
         if (is_object($lexer)) {
@@ -255,7 +255,7 @@ class HTMLPurifier_Lexer
         $html = str_replace("\r\n", "\n", $html);
         $html = str_replace("\r", "\n", $html);
 
-        if ($config->get('HTML', 'Trusted')) {
+        if ($config->get('HTML.Trusted')) {
             // escape convoluted CDATA
             $html = $this->escapeCommentedCDATA($html);
         }
@@ -264,7 +264,7 @@ class HTMLPurifier_Lexer
         $html = $this->escapeCDATA($html);
 
         // extract body from document if applicable
-        if ($config->get('Core', 'ConvertDocumentToFragment')) {
+        if ($config->get('Core.ConvertDocumentToFragment')) {
             $html = $this->extractBody($html);
         }
 
@@ -285,7 +285,7 @@ class HTMLPurifier_Lexer
      */
     public function extractBody($html) {
         $matches = array();
-        $result = preg_match('!<body[^>]*>(.+?)</body>!is', $html, $matches);
+        $result = preg_match('!<body[^>]*>(.*)</body>!is', $html, $matches);
         if ($result) {
             return $matches[1];
         } else {

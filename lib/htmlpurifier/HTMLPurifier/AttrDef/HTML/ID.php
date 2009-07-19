@@ -17,18 +17,18 @@ class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
 
     public function validate($id, $config, $context) {
 
-        if (!$config->get('Attr', 'EnableID')) return false;
+        if (!$config->get('Attr.EnableID')) return false;
 
         $id = trim($id); // trim it first
 
         if ($id === '') return false;
 
-        $prefix = $config->get('Attr', 'IDPrefix');
+        $prefix = $config->get('Attr.IDPrefix');
         if ($prefix !== '') {
-            $prefix .= $config->get('Attr', 'IDPrefixLocal');
+            $prefix .= $config->get('Attr.IDPrefixLocal');
             // prevent re-appending the prefix
             if (strpos($id, $prefix) !== 0) $id = $prefix . $id;
-        } elseif ($config->get('Attr', 'IDPrefixLocal') !== '') {
+        } elseif ($config->get('Attr.IDPrefixLocal') !== '') {
             trigger_error('%Attr.IDPrefixLocal cannot be used unless '.
                 '%Attr.IDPrefix is set', E_USER_WARNING);
         }
@@ -51,7 +51,7 @@ class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
             $result = ($trim === '');
         }
 
-        $regexp = $config->get('Attr', 'IDBlacklistRegexp');
+        $regexp = $config->get('Attr.IDBlacklistRegexp');
         if ($regexp && preg_match($regexp, $id)) {
             return false;
         }

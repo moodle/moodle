@@ -42,7 +42,7 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
 
         // local variables
         $generator = new HTMLPurifier_Generator($config, $context);
-        $escape_invalid_tags = $config->get('Core', 'EscapeInvalidTags');
+        $escape_invalid_tags = $config->get('Core.EscapeInvalidTags');
         $e = $context->get('ErrorCollector', true);
         $t = false; // token index
         $i = false; // injector index
@@ -72,6 +72,8 @@ class HTMLPurifier_Strategy_MakeWellFormed extends HTMLPurifier_Strategy
         $custom_injectors = $injectors['Custom'];
         unset($injectors['Custom']); // special case
         foreach ($injectors as $injector => $b) {
+            // XXX: Fix with a legitimate lookup table of enabled filters
+            if (strpos($injector, '.') !== false) continue;
             $injector = "HTMLPurifier_Injector_$injector";
             if (!$b) continue;
             $this->injectors[] = new $injector;

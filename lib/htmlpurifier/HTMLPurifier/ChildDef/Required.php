@@ -59,7 +59,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         $all_whitespace = true;
 
         // some configuration
-        $escape_invalid_children = $config->get('Core', 'EscapeInvalidChildren');
+        $escape_invalid_children = $config->get('Core.EscapeInvalidChildren');
 
         // generator
         $gen = new HTMLPurifier_Generator($config, $context);

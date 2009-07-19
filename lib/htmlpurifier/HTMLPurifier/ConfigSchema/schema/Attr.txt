@@ -1,3 +1,0 @@
-Attr
-DESCRIPTION: Features regarding attribute validation.
---# vim: et sw=4 sts=4

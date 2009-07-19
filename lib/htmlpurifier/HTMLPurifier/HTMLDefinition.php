@@ -114,7 +114,7 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
      * @note See HTMLPurifier_HTMLModule::addElement for detailed
      *       parameter and return value descriptions.
      */
-    public function addElement($element_name, $type, $contents, $attr_collections, $attributes) {
+    public function addElement($element_name, $type, $contents, $attr_collections, $attributes = array()) {
         $module = $this->getAnonymousModule();
         // assume that if the user is calling this, the element
         // is safe. This may not be a good idea
@@ -219,7 +219,7 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
      */
     protected function setupConfigStuff($config) {
 
-        $block_wrapper = $config->get('HTML', 'BlockWrapper');
+        $block_wrapper = $config->get('HTML.BlockWrapper');
         if (isset($this->info_content_sets['Block'][$block_wrapper])) {
             $this->info_block_wrapper = $block_wrapper;
         } else {
@@ -227,7 +227,7 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
                 E_USER_ERROR);
         }
 
-        $parent = $config->get('HTML', 'Parent');
+        $parent = $config->get('HTML.Parent');
         $def = $this->manager->getElement($parent, true);
         if ($def) {
             $this->info_parent = $parent;
@@ -244,11 +244,11 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
 
         // setup allowed elements -----------------------------------------
 
-        $allowed_elements = $config->get('HTML', 'AllowedElements');
-        $allowed_attributes = $config->get('HTML', 'AllowedAttributes'); // retrieve early
+        $allowed_elements = $config->get('HTML.AllowedElements');
+        $allowed_attributes = $config->get('HTML.AllowedAttributes'); // retrieve early
 
         if (!is_array($allowed_elements) && !is_array($allowed_attributes)) {
-            $allowed = $config->get('HTML', 'Allowed');
+            $allowed = $config->get('HTML.Allowed');
             if (is_string($allowed)) {
                 list($allowed_elements, $allowed_attributes) = $this->parseTinyMCEAllowedList($allowed);
             }
@@ -334,8 +334,8 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
 
         // setup forbidden elements ---------------------------------------
 
-        $forbidden_elements   = $config->get('HTML', 'ForbiddenElements');
-        $forbidden_attributes = $config->get('HTML', 'ForbiddenAttributes');
+        $forbidden_elements   = $config->get('HTML.ForbiddenElements');
+        $forbidden_attributes = $config->get('HTML.ForbiddenAttributes');
 
         foreach ($this->info as $tag => $info) {
             if (isset($forbidden_elements[$tag])) {

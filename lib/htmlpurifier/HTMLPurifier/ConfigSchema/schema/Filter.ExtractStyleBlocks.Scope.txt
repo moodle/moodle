@@ -1,8 +1,8 @@
-FilterParam.ExtractStyleBlocksScope
+Filter.ExtractStyleBlocks.Scope
 TYPE: string/null
 VERSION: 3.0.0
 DEFAULT: NULL
-ALIASES: Filter.ExtractStyleBlocksScope
+ALIASES: Filter.ExtractStyleBlocksScope, FilterParam.ExtractStyleBlocksScope
 --DESCRIPTION--
 
 <p>

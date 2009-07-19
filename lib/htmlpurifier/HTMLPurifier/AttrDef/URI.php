@@ -25,7 +25,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
 
     public function validate($uri, $config, $context) {
 
-        if ($config->get('URI', 'Disable')) return false;
+        if ($config->get('URI.Disable')) return false;
 
         $uri = $this->parseCDATA($uri);
 

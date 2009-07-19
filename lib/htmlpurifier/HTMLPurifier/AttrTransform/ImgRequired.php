@@ -15,21 +15,21 @@ class HTMLPurifier_AttrTransform_ImgRequired extends HTMLPurifier_AttrTransform
 
         $src = true;
         if (!isset($attr['src'])) {
-            if ($config->get('Core', 'RemoveInvalidImg')) return $attr;
-            $attr['src'] = $config->get('Attr', 'DefaultInvalidImage');
+            if ($config->get('Core.RemoveInvalidImg')) return $attr;
+            $attr['src'] = $config->get('Attr.DefaultInvalidImage');
             $src = false;
         }
 
         if (!isset($attr['alt'])) {
             if ($src) {
-                $alt = $config->get('Attr', 'DefaultImageAlt');
+                $alt = $config->get('Attr.DefaultImageAlt');
                 if ($alt === null) {
                     $attr['alt'] = basename($attr['src']);
                 } else {
                     $attr['alt'] = $alt;
                 }
             } else {
-                $attr['alt'] = $config->get('Attr', 'DefaultInvalidImageAlt');
+                $attr['alt'] = $config->get('Attr.DefaultInvalidImageAlt');
             }
         }
 

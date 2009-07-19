@@ -87,24 +87,13 @@ class HTMLPurifier_ConfigSchema {
      *      HTMLPurifier_DirectiveDef::$type for allowed values
      * @param $allow_null Whether or not to allow null values
      */
-    public function add($namespace, $name, $default, $type, $allow_null) {
+    public function add($key, $default, $type, $allow_null) {
         $obj = new stdclass();
         $obj->type = is_int($type) ? $type : HTMLPurifier_VarParser::$types[$type];
         if ($allow_null) $obj->allow_null = true;
-        $this->info[$namespace][$name] = $obj;
-        $this->defaults[$namespace][$name] = $default;
-        $this->defaultPlist->set("$namespace.$name", $default);
-    }
-
-    /**
-     * Defines a namespace for directives to be put into.
-     * @warning This is slightly different from the corresponding static
-     *          method.
-     * @param $namespace Namespace's name
-     */
-    public function addNamespace($namespace) {
-        $this->info[$namespace] = array();
-        $this->defaults[$namespace] = array();
+        $this->info[$key] = $obj;
+        $this->defaults[$key] = $default;
+        $this->defaultPlist->set($key, $default);
     }
 
     /**
@@ -116,12 +105,12 @@ class HTMLPurifier_ConfigSchema {
      * @param $name Name of Directive
      * @param $aliases Hash of aliased values to the real alias
      */
-    public function addValueAliases($namespace, $name, $aliases) {
-        if (!isset($this->info[$namespace][$name]->aliases)) {
-            $this->info[$namespace][$name]->aliases = array();
+    public function addValueAliases($key, $aliases) {
+        if (!isset($this->info[$key]->aliases)) {
+            $this->info[$key]->aliases = array();
         }
         foreach ($aliases as $alias => $real) {
-            $this->info[$namespace][$name]->aliases[$alias] = $real;
+            $this->info[$key]->aliases[$alias] = $real;
         }
     }
 
@@ -133,8 +122,8 @@ class HTMLPurifier_ConfigSchema {
      * @param $name Name of directive
      * @param $allowed Lookup array of allowed values
      */
-    public function addAllowedValues($namespace, $name, $allowed) {
-        $this->info[$namespace][$name]->allowed = $allowed;
+    public function addAllowedValues($key, $allowed) {
+        $this->info[$key]->allowed = $allowed;
     }
 
     /**
@@ -144,86 +133,24 @@ class HTMLPurifier_ConfigSchema {
      * @param $new_namespace
      * @param $new_name Directive that the alias will be to
      */
-    public function addAlias($namespace, $name, $new_namespace, $new_name) {
+    public function addAlias($key, $new_key) {
         $obj = new stdclass;
-        $obj->namespace = $new_namespace;
-        $obj->name = $new_name;
+        $obj->key = $new_key;
         $obj->isAlias = true;
-        $this->info[$namespace][$name] = $obj;
+        $this->info[$key] = $obj;
     }
 
     /**
      * Replaces any stdclass that only has the type property with type integer.
      */
     public function postProcess() {
-        foreach ($this->info as $namespace => $info) {
-            foreach ($info as $directive => $v) {
-                if (count((array) $v) == 1) {
-                    $this->info[$namespace][$directive] = $v->type;
-                } elseif (count((array) $v) == 2 && isset($v->allow_null)) {
-                    $this->info[$namespace][$directive] = -$v->type;
-                }
+        foreach ($this->info as $key => $v) {
+            if (count((array) $v) == 1) {
+                $this->info[$key] = $v->type;
+            } elseif (count((array) $v) == 2 && isset($v->allow_null)) {
+                $this->info[$key] = -$v->type;
             }
         }
-    }
-
-    // DEPRECATED METHODS
-
-    /** @see HTMLPurifier_ConfigSchema->set() */
-    public static function define($namespace, $name, $default, $type, $description) {
-        HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        $type_values = explode('/', $type, 2);
-        $type = $type_values[0];
-        $modifier = isset($type_values[1]) ? $type_values[1] : false;
-        $allow_null = ($modifier === 'null');
-        $def = HTMLPurifier_ConfigSchema::instance();
-        $def->add($namespace, $name, $default, $type, $allow_null);
-    }
-
-    /** @see HTMLPurifier_ConfigSchema->addNamespace() */
-    public static function defineNamespace($namespace, $description) {
-        HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        $def = HTMLPurifier_ConfigSchema::instance();
-        $def->addNamespace($namespace);
-    }
-
-    /** @see HTMLPurifier_ConfigSchema->addValueAliases() */
-    public static function defineValueAliases($namespace, $name, $aliases) {
-        HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        $def = HTMLPurifier_ConfigSchema::instance();
-        $def->addValueAliases($namespace, $name, $aliases);
-    }
-
-    /** @see HTMLPurifier_ConfigSchema->addAllowedValues() */
-    public static function defineAllowedValues($namespace, $name, $allowed_values) {
-        HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        $allowed = array();
-        foreach ($allowed_values as $value) {
-            $allowed[$value] = true;
-        }
-        $def = HTMLPurifier_ConfigSchema::instance();
-        $def->addAllowedValues($namespace, $name, $allowed);
-    }
-
-    /** @see HTMLPurifier_ConfigSchema->addAlias() */
-    public static function defineAlias($namespace, $name, $new_namespace, $new_name) {
-        HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        $def = HTMLPurifier_ConfigSchema::instance();
-        $def->addAlias($namespace, $name, $new_namespace, $new_name);
-    }
-
-    /** @deprecated, use HTMLPurifier_VarParser->parse() */
-    public function validate($a, $b, $c = false) {
-        trigger_error("HTMLPurifier_ConfigSchema->validate deprecated, use HTMLPurifier_VarParser->parse instead", E_USER_NOTICE);
-        $parser = new HTMLPurifier_VarParser();
-        return $parser->parse($a, $b, $c);
-    }
-
-    /**
-     * Throws an E_USER_NOTICE stating that a method is deprecated.
-     */
-    private static function deprecated($method) {
-        trigger_error("Static HTMLPurifier_ConfigSchema::$method deprecated, use add*() method instead", E_USER_NOTICE);
     }
 
 }

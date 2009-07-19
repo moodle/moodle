@@ -9,10 +9,10 @@ class HTMLPurifier_URIFilter_Munge extends HTMLPurifier_URIFilter
     protected $replace = array();
 
     public function prepare($config) {
-        $this->target    = $config->get('URI', $this->name);
+        $this->target    = $config->get('URI.' . $this->name);
         $this->parser    = new HTMLPurifier_URIParser();
-        $this->doEmbed   = $config->get('URI', 'MungeResources');
-        $this->secretKey = $config->get('URI', 'MungeSecretKey');
+        $this->doEmbed   = $config->get('URI.MungeResources');
+        $this->secretKey = $config->get('URI.MungeSecretKey');
         return true;
     }
     public function filter(&$uri, $config, $context) {
@@ -21,6 +21,10 @@ class HTMLPurifier_URIFilter_Munge extends HTMLPurifier_URIFilter
         $scheme_obj = $uri->getSchemeObj($config, $context);
         if (!$scheme_obj) return true; // ignore unknown schemes, maybe another postfilter did it
         if (is_null($uri->host) || empty($scheme_obj->browsable)) {
+            return true;
+        }
+        // don't redirect if target host is our host
+        if ($uri->host === $config->getDefinition('URI')->host) {
             return true;
         }
 
