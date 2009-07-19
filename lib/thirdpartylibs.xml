@@ -25,7 +25,7 @@
     <location>dragmath</location>
     <name>DragMath</name>
     <license>GPL</license>
-    <version>0.7.7</version>
+    <version>0.7.8.1</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -67,7 +67,7 @@
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <license>LGPL</license>
-    <version>3.3.0</version>
+    <version>4</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
