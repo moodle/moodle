@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script serves draft files of current user
+ * Iplookup utility functions
  *
  * @package    moodlecore
  * @subpackage iplookup
