@@ -1948,12 +1948,12 @@ function purify_html($text) {
     if ($purifier === false) {
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         $config = HTMLPurifier_Config::createDefault();
-        $config->set('Core', 'ConvertDocumentToFragment', true);
-        $config->set('Core', 'Encoding', 'UTF-8');
-        $config->set('HTML', 'Doctype', 'XHTML 1.0 Transitional');
-        $config->set('Cache', 'SerializerPath', $cachedir);
-        $config->set('URI', 'AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
-        $config->set('Attr', 'AllowedFrameTargets', array('_blank'));
+        $config->set('Core.ConvertDocumentToFragment', true);
+        $config->set('Core.Encoding', 'UTF-8');
+        $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
+        $config->set('Cache.SerializerPath', $cachedir);
+        $config->set('URI.AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
+        $config->set('Attr.AllowedFrameTargets', array('_blank'));
         $purifier = new HTMLPurifier($config);
     }
     return $purifier->purify($text);
