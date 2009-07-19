@@ -38,7 +38,7 @@
   <library>
     <location>evalmath</location>
     <name>EvalMath</name>
-    <license>GPL</license>
+    <license>BSD</license>
     <version></version>
     <licenseversion></licenseversion>
   </library>
