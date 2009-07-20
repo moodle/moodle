@@ -183,7 +183,7 @@ if ($mform->is_cancelled()){
     /// Ensure we redirect back to the category the question is being saved into.
     $returnurl = new moodle_url($returnurl);
     $returnurl->param('category', $fromform->category);
-    $returnurl = $returnurl->out();
+    $returnurl = $returnurl->out(false, array(), false);
 
     /// Call the appropriate method.
     if ($movecontext) {
@@ -200,7 +200,7 @@ if ($mform->is_cancelled()){
             } else {
                 $movecontexturl->param('courseid', $COURSE->id);
             }
-            redirect($movecontexturl->out());
+            redirect($movecontexturl);
         }
     }
 
@@ -221,7 +221,7 @@ if ($mform->is_cancelled()){
             if($appendqnumstring) {
                 $nexturl->params(array($appendqnumstring=>($question->id), "sesskey"=>sesskey(), "cmid"=>$cmid));
             }
-            redirect($nexturl->out());
+            redirect($nexturl);
         }
     } else {
         $nexturlparams = array('returnurl'=>$returnurl, 'appendqnumstring'=>$appendqnumstring);
@@ -236,7 +236,7 @@ if ($mform->is_cancelled()){
         } else {
             $nexturl->param('courseid', $COURSE->id);
         }
-        redirect($nexturl->out());
+        redirect($nexturl);
     }
 } else {
 
