@@ -14,10 +14,6 @@
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
 
-    if ($CFG->forcelogin) {
-        require_login();
-    }
-
     if (!$site = get_site()) {
         print_error('siteisnotdefined', 'debug');
     }
@@ -31,8 +27,12 @@
         if ($categoryedit !== -1) {
             $USER->editing = $categoryedit;
         }
+        require_login();
         $adminediting = $PAGE->user_is_editing();
     } else {
+        if ($CFG->forcelogin) {
+            require_login();
+        }
         $adminediting = false;
     }
 

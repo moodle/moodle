@@ -8,6 +8,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $format = optional_param('format', '', PARAM_ALPHA);
 
+require_login();
 admin_externalpage_setup('userbulk');
 require_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
 

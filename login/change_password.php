@@ -26,6 +26,7 @@
 
     // do not require change own password cap if change forced
     if (!get_user_preferences('auth_forcepasswordchange', false)) {
+        require_login();
         require_capability('moodle/user:changeownpassword', $systemcontext);
     }
 

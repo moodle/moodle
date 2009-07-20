@@ -27,6 +27,7 @@ if (function_exists('apache_child_terminate')) {
     @apache_child_terminate();
 }
 
+require_login();
 admin_externalpage_setup('uploadusers');
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 

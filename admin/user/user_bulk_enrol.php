@@ -8,6 +8,7 @@ $processed = optional_param('processed', '', PARAM_CLEAN);
 $sort = optional_param('sort', 'fullname', PARAM_ALPHA); //Sort by full name
 $dir  = optional_param('dir', 'asc', PARAM_ALPHA);       //Order to sort (ASC)
 
+require_login();
 admin_externalpage_setup('userbulk');
 require_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM));
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';

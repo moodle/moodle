@@ -7,6 +7,7 @@ require_once('user_message_form.php');
 $msg     = optional_param('msg', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
+require_login();
 admin_externalpage_setup('userbulk');
 require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM));
 

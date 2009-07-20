@@ -17,10 +17,6 @@
     $moveto = optional_param('moveto', 0, PARAM_INT);
     $resort = optional_param('resort', 0, PARAM_BOOL);
 
-    if ($CFG->forcelogin) {
-        require_login();
-    }
-
     if (!$site = get_site()) {
         print_error('siteisnotdefined', 'debug');
     }
@@ -33,19 +29,23 @@
     $context = $PAGE->context;
     $category = $PAGE->category;
 
-    if (!$category->visible) {
-        require_capability('moodle/category:viewhiddencategories', $context);
-    }
-
     if (update_category_button($category->id)) {
         if ($categoryedit !== -1) {
             $USER->editing = $categoryedit;
         }
-        $editingon = $PAGE->user_is_editing();
+        require_login();
         $navbaritem = update_category_button($category->id); // Must call this again after updating the state.
+        $editingon = $PAGE->user_is_editing();
     } else {
+        if ($CFG->forcelogin) {
+            require_login();
+        }
         $navbaritem = print_course_search('', true, 'navbar');
         $editingon = false;
+    }
+
+    if (!$category->visible) {
+        require_capability('moodle/category:viewhiddencategories', $context);
     }
 
     // Process any category actions.

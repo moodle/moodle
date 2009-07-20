@@ -18,6 +18,7 @@ if ($CFG->mnet_dispatcher_mode === 'off') {
 }
 
 // Site admins only, thanks.
+require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
