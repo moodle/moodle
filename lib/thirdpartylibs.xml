@@ -50,13 +50,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>fpdf</location>
-    <name>FPDF</name>
-    <license>Freeware</license>
-    <version>1.53</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>geoip</location>
     <name>GeoIP</name>
     <license>LGPL</license>
