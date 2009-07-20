@@ -89,6 +89,8 @@
         exit;
     }
 /// Everything else is editing on mode.
+    require_once($CFG->libdir.'/adminlib.php');
+    admin_externalpage_setup('coursemgmt', update_category_button());
 
 /// Delete a category.
     if (!empty($delete) and confirm_sesskey()) {
@@ -109,14 +111,14 @@
 
         } else if (!$data= $mform->get_data()) {
             require_once($CFG->libdir . '/questionlib.php');
-            print_category_edit_header();
+            admin_externalpage_print_header();
             print_heading($heading);
             $mform->display();
             admin_externalpage_print_footer();
             exit();
         }
 
-        print_category_edit_header();
+        admin_externalpage_print_header();
         print_heading($heading);
 
         if ($data->fulldelete) {
@@ -211,7 +213,7 @@
     }
 
 /// Print headings
-    print_category_edit_header();
+    admin_externalpage_print_header();
     print_heading($strcategories);
 
 /// Print out the categories with all the knobs
@@ -361,12 +363,3 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     }
 }
 
-function print_category_edit_header() {
-    global $CFG;
-    global $SITE;
-
-    require_once($CFG->libdir.'/adminlib.php');
-    admin_externalpage_setup('coursemgmt', update_category_button());
-    admin_externalpage_print_header();
-}
-?>

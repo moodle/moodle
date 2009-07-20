@@ -17,10 +17,12 @@ if ($id) {
     if (!$category = $DB->get_record('course_categories', array('id' => $id))) {
         print_error('unknowcategory');
     }
+    $PAGE->set_url('course/editcategory.php', array('id' => $id));
     require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $id));
     $strtitle = get_string('editcategorysettings');
 } else {
     $parent = required_param('parent', PARAM_INT);
+    $PAGE->set_url('course/editcategory.php', array('parent' => $parent));
     if ($parent) {
         if (!$DB->record_exists('course_categories', array('id' => $parent))) {
             print_error('unknowcategory');

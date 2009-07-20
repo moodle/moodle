@@ -7,6 +7,7 @@
     $id     = required_param('id', PARAM_INT);              // course id
     $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
 
+    $PAGE->set_url('course/delete.php', array('id' => $id));
     require_login();
 
     if (!can_delete_course($id)) {
@@ -45,7 +46,7 @@
                      "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=".sesskey(),
                      "category.php?id=$course->category");
 
-        print_footer($course);
+        print_footer();
         exit;
     }
 
