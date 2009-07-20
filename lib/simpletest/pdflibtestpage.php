@@ -31,7 +31,7 @@ $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);
 
 $getpdf     = optional_param('getpdf', 0, PARAM_INT);
-$fontfamily = '';   // use default
+$fontfamily = optional_param('fontfamily', PDF_DEFAULT_FONT, PARAM_ALPHA);  // to be configurable
 
 /**
  * Extend the standard PDF class to get access to some protected values we want to display
