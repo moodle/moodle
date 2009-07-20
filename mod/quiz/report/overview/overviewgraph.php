@@ -7,8 +7,8 @@ $groupid = optional_param('groupid', 0, PARAM_INT);
 
 $quiz = $DB->get_record('quiz', array('id' => $quizid));
 $course = $DB->get_record('course', array('id' => $quiz->course));
-require_login($course);
 $cm = get_coursemodule_from_instance('quiz', $quizid);
+require_login($course, true, $cm);
 $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 if ($groupid && $groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
     $groups = groups_get_activity_allowed_groups($cm);
