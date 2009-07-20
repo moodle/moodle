@@ -1,7 +1,24 @@
 Moodle-specific changes to TCPDF are tracked here.
+==================================================
 
-2008/07/29 
-Upgrade to tcpdf_php5 TCPDF 4.0.015 (MDL-15055) 
+2008/07/20
+==========
+Upgrade to tcpdf_php5 TCPDF 4.6.020 (MDL-19876)
+by David Mudrak <david.mudrak@gmail.com>
+
+* deleted cache/ doc/ examples/ config/tcpdf_config_alt.php config/lang/ images/
+* removed all fonts but the core ones (courier.php, helveticabi.php,
+    helveticab.php, helveticai.php, helvetica.php, symbol.php, timesbi.php,
+    timesb.php, timesi.php, times.php, zapfdingbats.php) and FreeFont
+* FreeFont chosen as a default utf8 font distributed by default, all others will
+    be downloadable from moodle.org via new UI
+* removed font/utils/
+* moving configuration to the lib/pdflib.php wrapper so we do not need to modify
+    TCPDF at all. Credit to Chardelle Busch for this solution in MDL-17179
+
+2008/07/29
+==========
+Upgrade to tcpdf_php5 TCPDF 4.0.015 (MDL-15055)
 by David Mudrak <david.mudrak@gmail.com>
 
 * deleted cache/ doc/ examples/

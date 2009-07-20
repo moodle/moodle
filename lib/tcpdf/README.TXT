@@ -7,19 +7,12 @@ http://sourceforge.net/donate/index.php?group_id=128076
 
 ------------------------------------------------------------
 
-Name:
-	TCPDF
-
-Version:
-	4.0.015
+Name: TCPDF
+Version: 4.6.020
+Release date: 2009-07-16
+Author:	Nicola Asuni 
 	
-Release date:
-	2008-07-29
-
-Author:
-	Nicola Asuni 
-	
-Copyright (c) 2001-2008:
+Copyright (c) 2001-2009:
 	Nicola Asuni
 	Tecnick.com s.r.l.
 	Via Della Pace, 11
@@ -38,31 +31,33 @@ Description:
 Main Features:
 //  * no external libraries are required for the basic functions;
 // 	* supports all ISO page formats;
+// 	* supports custom page formats, margins and units of measure;
 // 	* supports UTF-8 Unicode and Right-To-Left languages;
+// 	* supports TrueTypeUnicode, OpenTypeUnicode, TrueType, OpenType, Type1 and CID-0 fonts;
 // 	* supports document encryption;
 // 	* includes methods to publish some XHTML code;
 // 	* includes graphic (geometric) and transformation methods;
-// 	* includes bookmarks;
 // 	* includes Javascript and forms support;
-// 	* includes a method to print various barcode formats;
-// 	* supports TrueTypeUnicode, TrueType, Type1 and CID-0 fonts;
-// 	* supports custom page formats, margins and units of measure;
-// 	* includes methods for page header and footer management;
+// 	* includes a method to print various barcode formats: CODE 39, ANSI MH10.8M-1983, USD-3, 3 of 9, CODE 93, USS-93, Standard 2 of 5, Interleaved 2 of 5, CODE 128 A/B/C, 2 and 5 Digits UPC-Based Extention, EAN 8, EAN 13, UPC-A, UPC-E, MSI, POSTNET, PLANET, RMS4CC (Royal Mail 4-state Customer Code), CBC (Customer Bar Code), KIX (Klant index - Customer index), Intelligent Mail Barcode, Onecode, USPS-B-3200, CODABAR, CODE 11, PHARMACODE, PHARMACODE TWO-TRACKS;
+// 	* includes methods to set Bookmarks and print a Table of Content;
+// 	* includes methods to move and delete pages;
+// 	* includes methods for automatic page header and footer management;
 // 	* supports automatic page break;
 // 	* supports automatic page numbering and page groups;
 // 	* supports automatic line break and text justification;
-// 	* supports JPEG and PNG images whitout GD library and all images supported by GD: GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM;
+// 	* supports JPEG and PNG images natively, all images supported by GD (GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM) and all images supported via ImagMagick (http://www.imagemagick.org/www/formats.html)
 // 	* supports stroke and clipping mode for text;
 // 	* supports clipping masks;
-// 	* supports Grayscale, RGB and CMYK colors and transparency;
-// 	* supports links;
+// 	* supports Grayscale, RGB, CMYK, Spot Colors and Transparencies;
+// 	* supports several annotations, including links, text and file attachments;
 // 	* supports page compression (requires zlib extension);
-// 	* supports PDF user's rights.
+//  * supports text hyphenation.
+//  * supports transactions to UNDO commands.
 
 Installation (full instructions on http://www.tcpdf.org):
 	1. copy the folder on your Web server
-	2. set your installation path on the config/tcpdf_config.php
-	3. call the example/example_001.php page with your browser to see an example
+	2. set your installation path and other parameters on the config/tcpdf_config.php
+	3. call the examples/example_001.php page with your browser to see an example
 
 Source Code Documentation:
 	doc/index.html
@@ -71,7 +66,7 @@ For Additional Documentation:
 	http://www.tcpdf.org
 
 License
-	Copyright (C) 2002-2008  Nicola Asuni - Tecnick.com S.r.l.
+	Copyright (C) 2002-2009  Nicola Asuni - Tecnick.com S.r.l.
 	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by
