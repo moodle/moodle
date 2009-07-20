@@ -30,6 +30,13 @@
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
 
+/// Set up page URL for blocks etc
+    if ($course->id == SITEID) {
+        $PAGE->set_url('user/view.php', array('id' => $user->id));
+    } else {
+        $PAGE->set_url('user/view.php', array('id' => $user->id, 'course' => $course->id));
+    }
+
 /// Make sure the current user is allowed to see this user
 
     if (empty($USER->id)) {
