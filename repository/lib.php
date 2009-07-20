@@ -1359,15 +1359,8 @@ abstract class repository {
         $result = true;
         foreach ($options as $name=>$value) {
             if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
-                if ($value===null) {
-                    $result = $result && $DB->delete_records('repository_instance_config', array('name'=>$name, 'instanceid'=>$this->id));
-                } else {
-                    $result = $result && $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
-                }
+                $result = $result && $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
             } else {
-                if ($value===null) {
-                    return true;
-                }
                 $config = new object();
                 $config->instanceid = $this->id;
                 $config->name   = $name;
