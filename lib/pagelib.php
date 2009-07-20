@@ -482,6 +482,18 @@ class moodle_page {
         return has_any_capability($this->all_editing_caps(), $this->context);
     }
 
+    /**
+     * @return string a description of this page (context, page-type and sub-page.
+     */
+    public function debug_summary() {
+        $summary = 'Context ' . print_context_name($this->context) . ' (context id ' . $this->context->id . '). ';
+        $summary .= 'Page type ' . $this->pagetype .  '. ';
+        if ($this->subpage) {
+            'Sub-page ' . $this->subpage .  '. ';
+        }
+        return $summary;
+    }
+
 /// Setter methods =============================================================
 
     /**

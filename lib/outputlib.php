@@ -1718,6 +1718,9 @@ class moodle_core_renderer extends moodle_renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
         $output = self::PERFORMANCE_INFO_TOKEN;
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $output .= '<div class="performanceinfo">This page is: ' . $this->page->debug_summary() . '</div>';
+        }
         if (debugging()) {
             $output .= '<div class="validators"><ul>
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
