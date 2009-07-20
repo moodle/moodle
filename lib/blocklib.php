@@ -661,6 +661,18 @@ class block_manager {
     }
 
     /**
+     * Create all the bock instances for all the blocks that were loaded by
+     * load_blocks. This is used, for example, to ensure that all blocks get a
+     * chance to initialise themselves via the {@link block_base::specialize()}
+     * method, before any output is done.
+     */
+    public function create_all_block_instances() {
+        foreach ($this->get_regions() as $region) {
+            $this->ensure_instances_exist($region);
+        }
+    }
+
+    /**
      * Return an array of content vars from a set of block instances
      *
      * @param array $instances An array of block instances

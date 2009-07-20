@@ -880,6 +880,7 @@ class moodle_page {
                 $this->_block_actions_done = true;
                 redirect($this->url->out(false, array(), false));
             }
+            $this->blocks->create_all_block_instances();
         }
 
         // If maintenance mode is on, change the page header.
