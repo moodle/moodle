@@ -9,7 +9,7 @@
 
 /// Require capabilites
     require_login();
-    require_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id));
+    require_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_SYSTEM));
 
 /// Print header
     $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
