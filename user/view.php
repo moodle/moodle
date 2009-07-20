@@ -52,6 +52,8 @@
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
 
+    $PAGE->context = $usercontext;
+
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         // do not force parents to enrol
         if (!$DB->get_record('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))) {
