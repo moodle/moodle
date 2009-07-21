@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
-global $DB;
+global $DB, $OUTPUT;
 if (empty($quiz)) {
     if (empty($attemptobj)) {
         print_error('cannotcallscript');
