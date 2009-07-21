@@ -47,7 +47,10 @@ class block_tag_flickr extends block_base {
         }
 
         if (empty($tagobject)) {
-            print_error('tagnotfound');
+            $this->content = new stdClass;
+            $this->content->text = '';
+            $this->content->footer = '';
+            return $this->content;
         }
 
         //include related tags in the photo query ?

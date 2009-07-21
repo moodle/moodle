@@ -86,7 +86,7 @@ class block_tag_youtube extends block_base {
         }
 
         if (empty($tagobject)) {
-            print_error('tagnotfound');
+            return '';
         }
 
         $querytag = urlencode($tagobject->name);
@@ -117,7 +117,7 @@ class block_tag_youtube extends block_base {
         }
 
         if (empty($tagobject)) {
-            print_error('tagnotfound');
+            return '';
         }
 
         $querytag = urlencode($tagobject->name);
