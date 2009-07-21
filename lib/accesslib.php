@@ -434,21 +434,21 @@ function get_guest_role() {
 }
 
 /**
- * Check whether user has capability of performing a function
+ * Check whether a user has a paritcular capability in a given context.
  *
- * This function returns whether the current user has the capability of performing a function
- * For example, we can do has_capability('mod/forum:replypost',$context) in forum
+ * For example::
+ *      $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+ *      has_capability('mod/forum:replypost',$context)
  *
- * @global object
- * @global object
- * @global object
- * @global string
- * @global object
- * @param string $capability - name of the capability (or debugcache or clearcache)
- * @param object $context - a context object (record from context table)
- * @param integer $userid - a userid number, empty if current $USER
- * @param bool $doanything - if false, ignore do anything
- * @return bool
+ * By default checks the capabilties of the current user, but you can pass a
+ * different userid. By default will return true for admin-like users who have the
+ * moodle/site:doanything capability, but you can override that with the fourth argument.
+ * 
+ * @param string $capability the name of the capability to check. For example mod/forum:view
+ * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
+ * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @return boolean true if the user has this capability. Otherwise false.
  */
 function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     global $USER, $CFG, $DB, $SCRIPT, $ACCESSLIB_PRIVATE;
@@ -591,22 +591,27 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 }
 
 /**
- * Check if the user has any capabilities in $capabilities array
+ * Check if the user has any one of several capabilities from a list.
  *
- * This function returns whether the current user has any of the capabilities in the
- * $capabilities array. This is a simple wrapper around has_capability for convinience.
+ * This is just a utility method that calls has_capability in a loop. Try to put
+ * the capabilities that most users are likely to have first in the list for best
+ * performance.
  *
  * There are probably tricks that could be done to improve the performance here, for example,
  * check the capabilities that are already cached first.
  *
  * @see has_capability()
- * @param array $capabilities - an array of capability names.
- * @param object $context - a context object (record from context table)
- * @param integer $userid - a userid number, empty if current $USER
- * @param bool $doanything - if false, ignore do anything
- * @return bool
+ * @param array $capabilities an array of capability names.
+ * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
+ * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @return boolean true if the user has any of these capabilities. Otherwise false.
  */
 function has_any_capability($capabilities, $context, $userid=NULL, $doanything=true) {
+    if (!is_array($capabilities)) {
+        debugging('Incorrect $capabilities parameter in has_any_capabilities() call - must be an array');
+        return false;
+    }
     foreach ($capabilities as $capability) {
         if (has_capability($capability, $context, $userid, $doanything)) {
             return true;
@@ -616,20 +621,21 @@ function has_any_capability($capabilities, $context, $userid=NULL, $doanything=t
 }
 
 /**
- * Checks if the user has ALL capabilities in $capabilities array
+ * Check if the user has all the capabilities in a list.
  *
- * This function returns whether the current user has all of the capabilities in the
- * $capabilities array. This is a simple wrapper around has_capability for convinience.
+ * This is just a utility method that calls has_capability in a loop. Try to put
+ * the capabilities that fewest users are likely to have first in the list for best
+ * performance.
  *
  * There are probably tricks that could be done to improve the performance here, for example,
  * check the capabilities that are already cached first.
  *
  * @see has_capability()
- * @param array $capabilities - an array of capability names.
- * @param object $context - a context object (record from context table)
- * @param integer $userid - a userid number, empty if current $USER
- * @param bool $doanything - if false, ignore do anything
- * @return bool
+ * @param array $capabilities an array of capability names.
+ * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
+ * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param boolean $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @return boolean true if the user has all of these capabilities. Otherwise false.
  */
 function has_all_capabilities($capabilities, $context, $userid=NULL, $doanything=true) {
     if (!is_array($capabilities)) {
@@ -1047,73 +1053,29 @@ function aggregate_roles_from_accessdata($context, $accessdata) {
 }
 
 /**
- * This is an easy to use function, combining has_capability() with require_course_login().
- * And will call those where needed.
+ * A convenience function that tests has_capability, and displays an error if
+ * the user does not have that capability.
  *
- * NOTE becuase this function calls require_login, and becuase require_login tries
- * to initialise $PAGE->course, and the themes, you will get an exception if you
- * try to call require_login after output has started, so don't do that.
+ * NOTE before Moodle 2.0, this function attempted to make an appropriate
+ * require_login call before checking the capability. This is no longer the case.
+ * You must call require_login (or one of its variants) if you want to check the
+ * user is logged in, before you call this function.
  *
- * It checks for a capability assertion being true.  If it isn't
- * then the page is terminated neatly with a standard error message.
- *
- * If the user is not logged in, or is using 'guest' access or other special "users,
- * it provides a logon prompt.
- *
- * @see require_course_login()
  * @see has_capability()
  *
- * @global object
- * @global object
- * @global object
- * @param string $capability - name of the capability
- * @param object $context - a context object (record from context table)
- * @param integer $userid - a userid number
- * @param bool $doanything - if false, ignore do anything
- * @param string $errorstring - an errorstring
- * @param string $stringfile - which stringfile to get it from
+ * @param string $capability the name of the capability to check. For example mod/forum:view
+ * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
+ * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param bool $doanything If false, ignore the special moodle/site:doanything capability that admin-like roles have.
+ * @param string $errorstring The error string to to user. Defaults to 'nopermissions'.
+ * @param string $stringfile The language file to load the error string from. Defaults to 'error'.
+ * @return void terminates with an error if the user does not have the given capability.
  */
-function require_capability($capability, $context, $userid=NULL, $doanything=true,
-                            $errormessage='nopermissions', $stringfile='') {
-
-    global $USER, $CFG, $DB;
-
-    /* Empty $userid means current user, if the current user is not logged in,
-     * then make sure they are (if needed).
-     * Originally there was a check for loaded permissions - it is not needed here.
-     * Context is now required parameter, the cached $CONTEXT was only hiding errors.
-     */
-    $errorlink = '';
-
-    if (empty($userid)) {
-        if ($context->contextlevel == CONTEXT_COURSE) {
-            require_login($context->instanceid);
-
-        } else if ($context->contextlevel == CONTEXT_MODULE) {
-            if (!$cm = $DB->get_record('course_modules', array('id'=>$context->instanceid))) {
-                print_error('invalidmodule');
-            }
-            if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
-                print_error('invalidcourseid');
-            }
-            require_course_login($course, true, $cm);
-            $errorlink = $CFG->wwwroot.'/course/view.php?id='.$cm->course;
-
-        } else if ($context->contextlevel == CONTEXT_SYSTEM) {
-            if (!empty($CFG->forcelogin)) {
-                require_login();
-            }
-
-        } else {
-            require_login();
-        }
-    }
-
-/// OK, if they still don't have the capability then print a nice error message
-
+function require_capability($capability, $context, $userid = NULL, $doanything = true,
+                            $errormessage = 'nopermissions', $stringfile = '') {
     if (!has_capability($capability, $context, $userid, $doanything)) {
         $capabilityname = get_capability_string($capability);
-        print_error('nopermissions', '', $errorlink, $capabilityname);
+        print_error($errormessage, $stringfile, get_context_url($context), $capabilityname);
     }
 }
 
