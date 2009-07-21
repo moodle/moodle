@@ -31,11 +31,11 @@
  */
 class block_html_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
-        // Then show the fields about where this block appears.
+        // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('configtitle', 'block_html'));
-        $mform->setType('configtitle', PARAM_MULTILANG);
+        $mform->setType('config_title', PARAM_MULTILANG);
 
         // TODO MDL-19844 should use the new editor field type.
         $mform->addElement('htmleditor', 'config_text', get_string('configcontent', 'block_html'));
