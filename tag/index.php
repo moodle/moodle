@@ -19,6 +19,7 @@ $edit        = optional_param('edit', -1, PARAM_BOOL);
 $userpage    = optional_param('userpage', 0, PARAM_INT); // which page to show
 $perpage     = optional_param('perpage', 24, PARAM_INT);
 
+$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
 if ($tagname) {
     $tag = tag_get('name', $tagname, '*');
@@ -32,6 +33,7 @@ if (empty($tag)) {
 
 $PAGE->set_url('tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
+$PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 
 if (($edit != -1) and $PAGE->user_allowed_editing()) {
@@ -54,8 +56,6 @@ if ($PAGE->user_allowed_editing() ) {
 print_header_simple($title, '', $navigation, '', '', '', $button);
 
 // Manage all tags links
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-
 if (has_capability('moodle/tag:manage', $systemcontext)) {
     echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">'. get_string('managetags', 'tag') .'</a></div>' ;
 }

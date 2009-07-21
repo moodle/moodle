@@ -4,8 +4,8 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
 
-$PAGE->requires->yui_lib('animation');
-$PAGE->requires->yui_lib('autocomplete');
+$tag_id = optional_param('id', 0, PARAM_INT);
+$tag_name = optional_param('tag', '', PARAM_TAG);
 
 require_login();
 
@@ -13,8 +13,9 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-$tag_id = optional_param('id', 0, PARAM_INT);
-$tag_name = optional_param('tag', '', PARAM_TAG);
+//Editing a tag requires moodle/tag:edit capability
+$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/tag:edit', $systemcontext);
 
 if ($tag_name) {
     $tag = tag_get('name', $tag_name, '*');
@@ -26,11 +27,16 @@ if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
-$tagname = tag_display_name($tag);
+$PAGE->set_url('tag/index.php', array('id' => $tag->id));
+$PAGE->set_subpage($tag->id);
+$PAGE->set_context($systemcontext);
+$PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
+$PAGE->set_generaltype('form');
 
-//Editing a tag requires moodle/tag:edit capability
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/tag:edit', $systemcontext);
+$PAGE->requires->yui_lib('animation');
+$PAGE->requires->yui_lib('autocomplete');
+
+$tagname = tag_display_name($tag);
 
 // set the relatedtags field of the $tag object that will be passed to the form
 $tag->relatedtags = tag_get_related_tags_csv(tag_get_related_tags($tag->id, TAG_RELATED_MANUAL), TAG_RETURN_TEXT);

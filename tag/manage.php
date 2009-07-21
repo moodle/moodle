@@ -19,8 +19,16 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/tag:manage', $systemcontext);
+
+$params = array();
+if ($perpage != DEFAULT_PAGE_SIZE) {
+    $params['perpage'] = $perpage;
+}
+$PAGE->set_url('tag/manage.php', $params);
+$PAGE->set_context($systemcontext);
+$PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 
 $navlinks = array();
 $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
