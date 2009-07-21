@@ -63,7 +63,7 @@ class block_tags extends block_base {
 
         /// Get a list of tags
 
-        require_once($CFG->dirroot.'/tag/lib.php');
+        require_once($CFG->dirroot.'/tag/locallib.php');
 
         if (empty($CFG->block_tags_showcoursetags) or !$CFG->block_tags_showcoursetags) {
 
@@ -318,37 +318,5 @@ EOT;
 
         return $this->content;
     }
-
-    function instance_config_print() {
-        global $CFG;
-
-    /// set up the numberoftags select field
-        $numberoftags = array();
-        for($i=1;$i<=200;$i++) $numberoftags[$i] = $i;
-
-        if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
-            print_simple_box_start('center', '', '', 5, 'blockconfigglobal');
-            include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
-            print_simple_box_end();
-        } else {
-            notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
-        }
-    }
-
-    /*
-     * function removed until rsslib supports dc/cc
-     */
-    /*
-    function cron() {
-        global $CFG;
-        if ($CFG->block_tags_showcoursetags) {
-            require_once($CFG->dirroot.'/tag/coursetagslib.php');
-            return coursetag_rss_feeds();
-        } else {
-            return TRUE;
-}
-    }
-    */
-
 }
 ?>
