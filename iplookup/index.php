@@ -137,14 +137,17 @@ if (empty($CFG->googlemapkey)) {
     $dx = round((($longitude + 180) * ($imgwidth / 360)) - $imgwidth - $dotwidth/2);
     $dy = round((($latitude + 90) * ($imgheight / 180)));
 
-    print_header(get_string('iplookup', 'admin').': '.$info, $info);
+    $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);
+    $PAGE->set_heading($info);
+    echo $OUTPUT->header();
 
     echo '<div id="map" style="width:'.($imgwidth+$dotwidth).'px; height:'.$imgheight.'px;">';
     echo '<img src="earth.jpeg" style="width:'.$imgwidth.'px; height:'.$imgheight.'px" alt="" />';
     echo '<img src="marker.gif" style="width:'.$dotwidth.'px; height:'.$dotheight.'px; margin-left:'.$dx.'px; margin-bottom:'.$dy.'px;" alt="" />';
     echo '</div>';
     echo '<div id="note">'.$note.'</div>';
-    print_footer('empty');
+
+    echo $OUTPUT->footer();
 
 } else {
     $info = implode(' - ', $info);
@@ -152,15 +155,15 @@ if (empty($CFG->googlemapkey)) {
 
     $PAGE->requires->js("http://maps.google.com/maps?file=api&amp;v=2&amp;key=$CFG->googlemapkey", true)->in_head();
     $PAGE->requires->js('/iplookup/functions.js')->in_head();
+    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->js_function_call('iplookup_load', array($latitude, $longitude));
 
-    print_header(get_string('iplookup', 'admin').': '.$info, $info);
+    $PAGE->set_title(get_string('iplookup', 'admin').': '.$info);
+    $PAGE->set_heading($info);
+    echo $OUTPUT->header();
 
     echo '<div id="map" style="width: 650px; height: 360px"></div>';
     echo '<div id="note">'.$note.'</div>';
-
-    $PAGE->requires->js_function_call('iplookup_load', array($latitude, $longitude));
-
-    //TODO: MDL-19875 - call uplookup_unload() js function when page unloads, previously in meta parameter
 
     echo $OUTPUT->footer();
 }

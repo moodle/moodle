@@ -23,19 +23,21 @@
  */
 
 function iplookup_load(latitude, longitude) {
-  if (GBrowserIsCompatible()) {
-    var map = new GMap2(document.getElementById("map"));
-    map.addControl(new GSmallMapControl());
-    map.addControl(new GMapTypeControl());
-    var point = new GLatLng(latitude, longitude);
-    map.setCenter(point, 4);
-    map.addOverlay(new GMarker(point));
-    map.setMapType(G_HYBRID_MAP);
-  }
+    if (GBrowserIsCompatible()) {
+        var map = new GMap2(document.getElementById("map"));
+        map.addControl(new GSmallMapControl());
+        map.addControl(new GMapTypeControl());
+        var point = new GLatLng(latitude, longitude);
+        map.setCenter(point, 4);
+        map.addOverlay(new GMarker(point));
+        map.setMapType(G_HYBRID_MAP);
+
+        YAHOO.utils.Event.addListener(document.body, 'unload', iplookup_unload);
+    }
 }
 
 function iplookup_unload() {
-  if (GBrowserIsCompatible()) {
-	GUnload();
-  }
+    if (GBrowserIsCompatible()) {
+        GUnload();
+    }
 }
