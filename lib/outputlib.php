@@ -2902,20 +2902,24 @@ class html_table extends moodle_html_component {
     public $data;
     /**
      * @var string width of the table, percentage of the page prefered. Defaults to 80% of the page width.
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
-    public $width = '80%';
+    public $width = null;
     /**
      * @var string alignment the whole table. Can be 'right', 'left' or 'center' (default).
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
-    public $tablealign = 'center';
+    public $tablealign = null;
     /**
      * @var int padding on each cell, in pixels
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
-    public $cellpadding = 5;
+    public $cellpadding = null;
     /**
      * @var int spacing between cells, in pixels
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
-    public $cellspacing = 1;
+    public $cellspacing = null;
     /**
      * @var array classes to add to particular rows, space-separated string.
      * Classes 'r0' or 'r1' are added automatically for every odd or even row,
