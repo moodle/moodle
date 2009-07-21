@@ -483,10 +483,15 @@ class moodle_page {
     }
 
     /**
-     * @return string a description of this page (context, page-type and sub-page.
+     * @return string a description of this page. Normally displayed in the footer in
+     * developer debug mode.
      */
     public function debug_summary() {
-        $summary = 'Context ' . print_context_name($this->context) . ' (context id ' . $this->context->id . '). ';
+        $summary = '';
+        $summary .= 'General type: ' . $this->generaltype . '. ';
+        if (!during_initial_install()) {
+            $summary .= 'Context ' . print_context_name($this->context) . ' (context id ' . $this->context->id . '). ';
+        }
         $summary .= 'Page type ' . $this->pagetype .  '. ';
         if ($this->subpage) {
             'Sub-page ' . $this->subpage .  '. ';
