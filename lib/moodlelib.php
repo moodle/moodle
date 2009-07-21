@@ -1989,7 +1989,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                 throw new moodle_exception('invalidcourseid');
             }
         }
-        $PAGE->set_course($course);
+        if ($cm) {
+            $PAGE->set_cm($cm, $course);
+        } else {
+            $PAGE->set_course($course);
+        }
     } else {
         // If $PAGE->course, and hence $PAGE->context, have not already been set
         // up properly, set them up now.
