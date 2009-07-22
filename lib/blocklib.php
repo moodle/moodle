@@ -263,21 +263,31 @@ class block_manager {
     /**
      * Determine whether a region contains anything. (Either any real blocks, or
      * the add new block UI.)
+     *
+     * (You may wonder why the $output parameter is required. Unfortunately,
+     * becuase of the way that blocks work, the only reliable way to find out
+     * if a block will be visible is to get the content for output, and to
+     * get the content, you need a renderer. Fortunately, this is not a
+     * performance problem, becuase we cache the output that is generated, and
+     * in almost every case where we call region_has_content, we are about to
+     * output the blocks anyway, so we are not doing wasted effort.)
+     *
      * @param string $region a block region that exists on this page.
+     * @param object $output a moodle_core_renderer. normally the global $OUTPUT. 
      * @return boolean Whether there is anything in this region.
      */
-    public function region_has_content($region) {
+    public function region_has_content($region, $output) {
         if (!$this->is_known_region($region)) {
             return false;
         }
         $this->check_is_loaded();
-        $this->ensure_instances_exist($region);
+        $this->ensure_content_created($region, $output);
         if ($this->page->user_is_editing() && $this->page->user_can_edit_blocks()) {
             // If editing is on, we need all the block regions visible, for the
             // move blocks UI.
             return true;
         }
-        return !empty($this->blockinstances[$region]) || !empty($this->extracontent[$region]);
+        return !empty($this->visibleblockcontent[$region]) || !empty($this->extracontent[$region]);
     }
 
     /**
