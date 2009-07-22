@@ -3121,6 +3121,11 @@ body.jsenabled #qtypechoicecontainer {
   padding: 0.3em;
   width: auto;
 }
+.calculated .answer input,
+.numerical .answer input,
+.shortanswer .answer input {
+  width: 99%;
+}
 .truefalse .answer span {
   float: left;
   clear: left;
