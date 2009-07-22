@@ -61,7 +61,7 @@ require_once "Zend/Search/Lucene/Search/Similarity.php";
 require_once "Zend/Search/Lucene/Index/SegmentInfoPriorityQueue.php";
 
 /** Zend_Search_Lucene_LockManager */
-if (@$CFG->block_search_softlock){
+if (!empty($CFG->block_search_softlock)){
     require_once "Zend/Search/Lucene/SoftLockManager.php";
 } else {
     require_once "Zend/Search/Lucene/LockManager.php";
@@ -448,6 +448,8 @@ class Zend_Search_Lucene implements Zend_Search_Lucene_Interface
         }
 
         if ($this->_generation == -1) {
+            Zend_Search_Lucene_LockManager::deEscalateReadLock($this->_directory);
+            Zend_Search_Lucene_LockManager::releaseReadLock($this->_directory);
             throw new Zend_Search_Lucene_Exception('Index doesn\'t exists in the specified directory.');
         } else if ($this->_generation == 0) {
             $this->_readPre21SegmentsFile();

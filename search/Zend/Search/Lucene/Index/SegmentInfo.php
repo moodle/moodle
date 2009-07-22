@@ -27,10 +27,10 @@ require_once 'Zend/Search/Lucene/Index/DictionaryLoader.php';
 require_once 'Zend/Search/Lucene/Exception.php';
 
 /** Zend_Search_Lucene_LockManager */
-if (@$CFG->block_search_softlock){
-    require_once "Zend/Search/Lucene/SoftLockManager.php";
+if (!empty($CFG->block_search_softlock)){
+    require_once 'Zend/Search/Lucene/SoftLockManager.php';
 } else {
-    require_once "Zend/Search/Lucene/LockManager.php";
+    require_once 'Zend/Search/Lucene/LockManager.php';
 }
 
 

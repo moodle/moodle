@@ -54,6 +54,7 @@ class Zend_Search_Lucene_LockManager
      */
     public static function obtainWriteLock(Zend_Search_Lucene_Storage_Directory $lockDirectory)
     {
+        // echo "obtain WL ";
         if ($lockDirectory->fileExists(self::WRITE_LOCK_FILE)){
             throw new Zend_Search_Lucene_Exception('Can\'t obtain exclusive index lock : somebody else is writing');
         }
@@ -74,6 +75,7 @@ class Zend_Search_Lucene_LockManager
      */
     public static function releaseWriteLock(Zend_Search_Lucene_Storage_Directory $lockDirectory)
     {
+        // echo "release WL ";
         $lockDirectory->deleteFile(self::WRITE_LOCK_FILE);
     }
     
@@ -88,6 +90,8 @@ class Zend_Search_Lucene_LockManager
      */
     public static function obtainReadLock(Zend_Search_Lucene_Storage_Directory $lockDirectory)
     {
+        // echo "obtain RL ";
+
         // is being written. Can't read
         if ($lockDirectory->fileExists(self::WRITE_LOCK_FILE)){
             throw new Zend_Search_Lucene_Exception('Can\'t obtain shared reading index lock : write in progress');
@@ -138,6 +142,7 @@ class Zend_Search_Lucene_LockManager
     {
 
         // get exclusive operation lock on read lock file.
+        // echo "release RL ";
         if ($lockDirectory->fileExists(self::EXCLUSIVE_READ_LOCK_FILE)){
             throw new Zend_Search_Lucene_Exception('Can\'t obtain shared reading index lock : read lock operation in progress');
         } else {
@@ -177,6 +182,7 @@ class Zend_Search_Lucene_LockManager
      */
     public static function escalateReadLock(Zend_Search_Lucene_Storage_Directory $lockDirectory)
     {
+        // echo "escalate RL ";
         // get exclusive operation lock on read lock file.
         if ($lockDirectory->fileExists(self::EXCLUSIVE_READ_LOCK_FILE)){
             return false;
@@ -193,6 +199,7 @@ class Zend_Search_Lucene_LockManager
      */
     public static function deEscalateReadLock(Zend_Search_Lucene_Storage_Directory $lockDirectory)
     {
+        // echo "deescalate RL ";
         $lockDirectory->deleteFile(self::EXCLUSIVE_READ_LOCK_FILE);
     }
 
