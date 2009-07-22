@@ -371,7 +371,7 @@ class question_category_object {
         $vars = new stdClass;
         $vars->name = $category->name;
         $vars->count = $questionsincategory;
-        print_simple_box(get_string("categorymove", "quiz", $vars), "center");
+        print_box(get_string('categorymove', 'quiz', $vars), 'generalbox boxaligncenter');
         $this->moveform->display();
     }
 
