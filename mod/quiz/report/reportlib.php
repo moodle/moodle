@@ -354,22 +354,20 @@ function quiz_report_list($context){
         return $reportlist;
     }
     $reports = $DB->get_records('quiz_report', null, 'displayorder DESC', 'name, capability');
-
     $reportdirs = get_plugin_list("quiz");
-    //order the reports tab in descending order of displayorder
+
+    // Order the reports tab in descending order of displayorder
     $reportcaps = array();
-    if ($reports){
-        foreach ($reports as $key => $obj) {
-            if (in_array($obj->name, $reportdirs)) {
-                $reportcaps[$obj->name]=$obj->capability;
-            }
+    foreach ($reports as $key => $obj) {
+        if (array_key_exists($obj->name, $reportdirs)) {
+            $reportcaps[$obj->name] = $obj->capability;
         }
     }
 
-    //add any other reports on the end
-    foreach ($reportdirs as $reportname => $reportdir) {
+    // Add any other reports on the end
+    foreach ($reportdirs as $reportname => $notused) {
         if (!isset($reportcaps[$reportname])) {
-            $reportcaps[$reportname]= null;
+            $reportcaps[$reportname] = null;
         }
     }
     $reportlist = array();
@@ -377,7 +375,7 @@ function quiz_report_list($context){
         if (empty($capability)){
             $capability = 'mod/quiz:viewreports';
         }
-        if ($has = has_capability($capability, $context)){
+        if (has_capability($capability, $context)){
             $reportlist[] = $name;
         }
     }
