@@ -20,8 +20,8 @@
 /**
 * requires and includes
 */
-require_once("$CFG->dirroot/search/documents/document.php");
-require_once("$CFG->dirroot/mod/resource/lib.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
+require_once($CFG->dirroot.'/mod/resource/lib.php');
 
 /* *
 * a class for representing searchable information
@@ -99,11 +99,12 @@ function resource_get_content_for_index(&$notneeded) {
     if ($resources = get_records_sql($query)){ 
         foreach($resources as $aResource){
             $coursemodule = get_field('modules', 'id', 'name', 'resource');
-            $cm = get_record('course_modules', 'course', $aResource->course, 'module', $coursemodule, 'instance', $aResource->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $aResource->id = $cm->id;
-            $documents[] = new ResourceSearchDocument(get_object_vars($aResource), $context->id);
-            mtrace("finished $aResource->name");
+            if($cm = get_record('course_modules', 'course', $aResource->course, 'module', $coursemodule, 'instance', $aResource->id)){
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $aResource->id = $cm->id;
+                $documents[] = new ResourceSearchDocument(get_object_vars($aResource), $context->id);
+                mtrace("finished $aResource->name");
+            }
         }
     }
 
