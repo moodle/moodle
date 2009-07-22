@@ -250,7 +250,7 @@
             // for remote users, shuffle columns around and display MNET stuff
             if (is_mnet_remote_user($user)) {
                 $accessctrl = 'allow';
-                if ($acl = $DF->get_record('mnet_sso_access_control', array('username'=>$user->username, 'mnet_host_id'=>$user->mnethostid))) {
+                if ($acl = $DB->get_record('mnet_sso_access_control', array('username'=>$user->username, 'mnet_host_id'=>$user->mnethostid))) {
                     $accessctrl = $acl->accessctrl;
                 }
                 $changeaccessto = ($accessctrl == 'deny' ? 'allow' : 'deny');
