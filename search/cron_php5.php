@@ -7,12 +7,10 @@
 
 try{
     // overrides php limits
+    $maxtimelimit = ini_get('max_execution_time');
     ini_set('max_execution_time', 300);
-    if (empty($CFG->extramemorylimit)) {
-        raise_memory_limit('128M');
-    } else {
-        raise_memory_limit($CFG->extramemorylimit);
-    }
+    $maxmemoryamount = ini_get('memory_limit');
+    ini_set('memory_limit', '48M');
 
     mtrace("\n--DELETE----");
     require_once("$CFG->dirroot/search/delete.php");
@@ -23,6 +21,10 @@ try{
     mtrace("------------");
     //mtrace("cron finished.</pre>");
     mtrace('done');
+
+    // set back normal values for php limits
+    ini_set('max_execution_time', $maxtimelimit);
+    ini_set('memory_limit', $maxmemoryamount);
 }
 catch(Exception $ex){
     mtrace('Fatal exception from Lucene subsystem. Search engine may not have been updated.');
