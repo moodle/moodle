@@ -195,8 +195,6 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ContainsTagWithAttribute extends SimpleExpectation {
-    const ATTRSREGEX = '(?:\s+\w+\s*=\s*["\'][^"\'>]*["\'])*';
-
     protected $tag;
     protected $attribute;
     protected $value;
@@ -209,10 +207,17 @@ class ContainsTagWithAttribute extends SimpleExpectation {
     }
 
     function test($html) {
-        $regex = '/<' . preg_quote($this->tag, '/') . self::ATTRSREGEX .
-                '(?:\s+' . preg_quote($this->attribute, '/') . '\s*=\s*["\']' . preg_quote($this->value, '/') . '["\'])' .
-                self::ATTRSREGEX . '\s*>/';
-        return preg_match($regex, $html);
+        $parser = new DOMDocument();
+        $parser->validateOnParse = true;
+        $parser->loadHTML($html); 
+        $list = $parser->getElementsByTagName($this->tag);
+        
+        foreach ($list as $node) {
+            if ($node->attributes->getNamedItem($this->attribute)->nodeValue == $this->value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function testMessage($html) {
@@ -221,6 +226,65 @@ class ContainsTagWithAttribute extends SimpleExpectation {
     }
 }
 
+/**
+ * An Expectation that looks to see whether some HMTL contains a tag with an array of attributes.
+ * All attributes must be present and their values must match the expected values.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsTagWithAttributes extends SimpleExpectation {
+    protected $tag;
+    protected $attributes = array();
+
+    function __construct($tag, $attributes, $message = '%s') {
+        $this->SimpleExpectation($message);
+        $this->tag = $tag;
+        $this->attributes = $attributes;
+    }
+    
+    function test($html) {
+        $parser = new DOMDocument();
+        $parser->validateOnParse = true;
+        $parser->loadHTML($html); 
+        $list = $parser->getElementsByTagName($this->tag);
+        
+        // Iterating through inputs
+        foreach ($list as $node) {
+            if (empty($node->attributes) || !is_a($node->attributes, 'DOMNamedNodeMap')) {
+                continue;
+            }
+
+            $result = true;
+
+            foreach ($this->attributes as $attribute => $expectedvalue) {
+                if (!$node->attributes->getNamedItem($attribute)) {
+                    break 2;
+                }
+                
+                if ($node->attributes->getNamedItem($attribute)->value != $expectedvalue) {
+                    $result = false;
+                }
+            }
+
+            if ($result) {
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    
+    function testMessage($html) {
+        $output = 'Content [' . $html . '] does not contain the tag [' . $this->tag . '] with attributes [';
+        foreach ($this->attributes as $var => $val) {
+            $output .= "$var=\"$val\" ";
+        }
+        $output = rtrim($output);
+        $output .= ']';
+        return $output;
+    }
+}
 
 /**
  * An Expectation that looks to see whether some HMTL contains a tag with a certain text inside it.
@@ -229,8 +293,6 @@ class ContainsTagWithAttribute extends SimpleExpectation {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ContainsTagWithContents extends SimpleExpectation {
-    const ATTRSREGEX = '(?:\s+\w+\s*=\s*["\'][^"\'>]*["\'])*';
-
     protected $tag;
     protected $content;
 
@@ -241,14 +303,55 @@ class ContainsTagWithContents extends SimpleExpectation {
     }
 
     function test($html) {
-        $regex = '/<' . preg_quote($this->tag, '/') . self::ATTRSREGEX . '\s*>' . preg_quote($this->content, '/') .
-                '<\/' . preg_quote($this->tag, '/') . '>/';
-        return preg_match($regex, $html);
+        $parser = new DOMDocument();
+        $parser->loadHTML($html); 
+        $list = $parser->getElementsByTagName($this->tag);
+
+        foreach ($list as $node) {
+            if ($node->textContent == $this->content) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     function testMessage($html) {
         return 'Content [' . $html . '] does not contain the tag [' .
                 $this->tag . '] with contents [' . $this->content . '].';
+    }
+}
+
+/**
+ * An Expectation that looks to see whether some HMTL contains an empty tag of a specific type.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsEmptyTag extends SimpleExpectation {
+    protected $tag;
+
+    function __construct($tag, $message = '%s') {
+        $this->SimpleExpectation($message);
+        $this->tag = $tag;
+    }
+
+    function test($html) {
+        $parser = new DOMDocument();
+        $parser->loadHTML($html); 
+        $list = $parser->getElementsByTagName($this->tag);
+
+        foreach ($list as $node) {
+            if (!$node->hasAttributes() && !$node->hasChildNodes()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    function testMessage($html) {
+        return 'Content ['.$html.'] does not contain the empty tag ['.$this->tag.'].';
     }
 }
 
