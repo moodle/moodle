@@ -2252,7 +2252,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     }
     $bc->attributes = $attributes;
 
-    echo $OUTPUT->block($bc);
+    echo $OUTPUT->block($bc, BLOCK_POS_LEFT); // POS LEFT may be wrong, but no way to get a better guess here.
 }
 
 /**
@@ -2269,7 +2269,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
  * @deprecated
  */
 function print_side_block_start($heading='', $attributes = array()) {
-    throw new coding_exception('print_side_block_start has been deprecated. Please cahnge your code to use $OUTPUT->block().');
+    throw new coding_exception('print_side_block_start has been deprecated. Please change your code to use $OUTPUT->block().');
 }
 
 /**
@@ -2282,7 +2282,7 @@ function print_side_block_start($heading='', $attributes = array()) {
  * @deprecated
  */
 function print_side_block_end($attributes = array(), $title='') {
-    throw new coding_exception('print_side_block_end has been deprecated. Please cahnge your code to use $OUTPUT->block().');
+    throw new coding_exception('print_side_block_end has been deprecated. Please change your code to use $OUTPUT->block().');
 }
 
 /**

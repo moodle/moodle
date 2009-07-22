@@ -2075,9 +2075,10 @@ class moodle_core_renderer extends moodle_renderer_base {
      * by a {@link block_contents} object.
      *
      * @param block_contents $bc HTML for the content
+     * @param string $region the region the block is appearing in.
      * @return string the HTML to be output.
      */
-    function block($bc) {
+    function block($bc, $region) {
         $bc = clone($bc); // Avoid messing up the object passed in.
         $bc->prepare();
 
@@ -2170,7 +2171,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
         $output = '';
         foreach ($blockcontents as $bc) {
-            $output .= $this->block($bc);
+            $output .= $this->block($bc, $region);
         }
         return $output;
     }
