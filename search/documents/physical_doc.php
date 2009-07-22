@@ -27,10 +27,12 @@ function get_text_for_indexing_doc(&$resource, $directfile = ''){
 
     $moodleroot = (@$CFG->block_search_usemoodleroot) ? "{$CFG->dirroot}/" : '' ;
 
-    // just call pdftotext over stdout and capture the output
+    // just call antiword over stdout and capture the output
     if (!empty($CFG->block_search_word_to_text_cmd)){
-        if (!file_exists("{$moodleroot}{$CFG->block_search_word_to_text_cmd}")){
-            mtrace('Error with MSWord to text converter command : exectutable not found at '.$moodleroot.$CFG->block_search_word_to_text_cmd);
+        // we need to remove any line command options...
+        preg_match("/^\S+/", $CFG->block_search_word_to_text_cmd, $matches);
+        if (!file_exists("{$moodleroot}{$matches[0]}")){
+            mtrace('Error with MSWord to text converter command : executable not found at '.$moodleroot.$CFG->block_search_word_to_text_cmd);
         } else {
             if ($directfile == ''){
                 $file = escapeshellarg("{$CFG->dataroot}/{$resource->course}/{$resource->reference}");

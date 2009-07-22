@@ -29,8 +29,10 @@ function get_text_for_indexing_odt(&$resource, $directfile = ''){
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_odt_to_text_cmd)){
-        if (!file_exists("{$moodleroot}{$CFG->block_search_odt_to_text_cmd}")){
-            mtrace('Error with OpenOffice ODT to text converter command : executable not found at'.$moodleroot.$CFG->block_search_odt_to_text_cmd);
+        // we need to remove any line command options...
+        preg_match("/^\S+/", $CFG->block_search_odt_to_text_cmd, $matches);
+        if (!file_exists("{$moodleroot}{$matches[0]}")){
+            mtrace('Error with OpenOffice ODT to text converter command : executable not found at '.$moodleroot.$CFG->block_search_odt_to_text_cmd);
         } else {
             if ($directfile == ''){
                 $file = escapeshellarg("{$CFG->dataroot}/{$resource->course}/{$resource->reference}");

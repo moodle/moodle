@@ -32,6 +32,7 @@ function get_text_for_indexing_pdf(&$resource, $directfile = ''){
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_pdf_to_text_cmd)){
+        // we need to remove any line command options...
         preg_match("/^\S+/", $CFG->block_search_pdf_to_text_cmd, $matches);
         if (!file_exists("{$moodleroot}{$matches[0]}")){
             mtrace('Error with pdf to text converter command : executable not found at '.$moodleroot.$matches[0]);
