@@ -29,7 +29,7 @@
      a multi-column cross-browser layout too, so this is a temporary hack. -->
     <table id="layout-table" summary="layout">
         <tr>
-            <?php if ($PAGE->blocks->region_has_content('side-pre')) { ?>
+            <?php if ($PAGE->blocks->region_has_content('side-pre', $OUTPUT)) { ?>
             <td id="region-side-pre" class="block-region">
                 <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
             </td>
@@ -37,7 +37,7 @@
             <td id="content">
                 [MAIN CONTENT GOES HERE]
             </td>
-            <?php if ($PAGE->blocks->region_has_content('side-post')) { ?>
+            <?php if ($PAGE->blocks->region_has_content('side-post', $OUTPUT)) { ?>
             <td id="region-side-post" class="block-region">
                 <?php echo $OUTPUT->blocks_for_region('side-post') ?>
             </td>
