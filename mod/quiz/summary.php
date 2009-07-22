@@ -91,7 +91,7 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
         $flag = ' <img src="' . $OUTPUT->old_icon_url('i/flagged') . '" alt="' .
                 get_string('flagged', 'question') . '" class="questionflag" />';
     }
-    $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . $flag . '</a>',
+    $row = array('<a href="' . s($attemptobj->attempt_url($question->id)) . '">' . $number . $flag . '</a>',
             get_string($attemptobj->get_question_status($question->id), 'quiz'));
     if ($scorescolumn) {
         $row[] = $attemptobj->get_question_score($question->id);
@@ -114,7 +114,7 @@ $options = array(
     'questionids' => '',
     'sesskey' => sesskey(),
 );
-print_single_button($attemptobj->processattempt_url(), $options, get_string('finishattempt', 'quiz'),
+print_single_button(s($attemptobj->processattempt_url()), $options, get_string('finishattempt', 'quiz'),
         'post', '', false, '', false, get_string('confirmclose', 'quiz'), 'responseform');
 echo "</div>\n";
 

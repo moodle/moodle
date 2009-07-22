@@ -725,7 +725,7 @@ class quiz_attempt extends quiz {
                 $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
             } else {
                 $changedurl = preg_replace($search, 'attempt=' . $at->id, $url);
-                $attemptlist[] = '<a href="' . $changedurl . '">' . $at->attempt . '</a>';
+                $attemptlist[] = '<a href="' . s($changedurl) . '">' . $at->attempt . '</a>';
             }
         }
         return implode(', ', $attemptlist);
@@ -817,9 +817,9 @@ class quiz_attempt extends quiz {
         }
         $param = '';
         if ($showall) {
-            $param = '&amp;showall=1';
+            $param = '&showall=1';
         } else if ($page > 0) {
-            $param = '&amp;page=' . $page;
+            $param = '&page=' . $page;
         }
         return $param . $fragment;
     }

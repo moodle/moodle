@@ -204,7 +204,7 @@
 
 /// Form for saving flags if necessary.
     if ($options->flags == QUESTION_FLAGSEDITABLE) {
-        echo '<form action="' . $attemptobj->review_url(0, $page, $showall) .
+        echo '<form action="' . s($attemptobj->review_url(0, $page, $showall)) .
                 '" method="post"><div>';
         echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
     }
@@ -236,7 +236,7 @@
     if ($lastpage) {
         $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
     } else {
-        link_arrow_right(get_string('next'), $attemptobj->review_url(0, $page + 1));
+        link_arrow_right(get_string('next'), s($attemptobj->review_url(0, $page + 1)));
     }
     echo "</div>";
 

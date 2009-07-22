@@ -34,7 +34,11 @@
 
 /// Check that this attempt belongs to this user.
     if ($attemptobj->get_userid() != $USER->id) {
-        redirect($attemptobj->review_url(0, $page));
+        if ($attemptobj->has_capability('mod/quiz:viewreports')) {
+            redirect($attemptobj->review_url(0, $page));
+        } else {
+            quiz_error($attemptobj->get_quiz(), 'notyourattempt');
+        }
     }
 
 /// Check capabilites.
@@ -110,17 +114,10 @@
             $accessmanager->print_messages($messages);
             print_box_end();
         }
-    } else {
-    /// Just a heading.
-        if ($attemptobj->get_num_attempts_allowed() != 1) {
-            print_heading(format_string($attemptobj->get_quiz_name()).' - '.$title);
-        } else {
-            print_heading(format_string($attemptobj->get_quiz_name()));
-        }
     }
 
     // Start the form
-    echo '<form id="responseform" method="post" action="', $attemptobj->processattempt_url(),
+    echo '<form id="responseform" method="post" action="', s($attemptobj->processattempt_url()),
             '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
 
     // A quiz page with a lot of questions can take a long time to load, and we
