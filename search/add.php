@@ -63,11 +63,10 @@
     mtrace('Index size before: '.$CFG->search_index_size."\n");
     
 /// get all modules
-    if ($mods = get_records_select('modules')) {
+    if ($mods = search_collect_searchables(false, true)){
     
 /// append virtual modules onto array
 
-    $mods = array_merge($mods, search_get_additional_modules());
         foreach ($mods as $mod) {
             //build include file and function names
             $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';

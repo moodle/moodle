@@ -28,8 +28,7 @@
     ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
 
     require_once($CFG->dirroot.'/search/lib.php');
-    require_once($CFG->dirroot.'/search/indexlib.php');    
-    
+    require_once($CFG->dirroot.'/search/indexlib.php');        
     
 /// checks global search activation
 
@@ -60,8 +59,7 @@
     mtrace('Index size before: '.$CFG->search_index_size."\n");
     
 /// check all modules
-    if ($mods = get_records_select('modules')) {
-        $mods = array_merge($mods, search_get_additional_modules());
+    if ($mods = search_collect_searchables(false, true)){
         
         foreach ($mods as $mod) {
             //build function names
