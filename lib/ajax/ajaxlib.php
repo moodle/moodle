@@ -353,6 +353,21 @@ class page_requirements_manager {
         $this->variablesinitialised[$variable] = 1;
         return $requirement;
     }
+    
+    /**
+     * Creates a YUI event handler.
+     *
+     * @param string $id The id of the DOM element that will be listening for the event
+     * @param string $event A valid DOM event (click, mousedown, change etc.)
+     * @param string $function The name of the function to call
+     * @param array  $arguments An optional array of argument parameters to pass to the function
+     * @return required_event_handler The event_handler object
+     */
+    public function event_handler($id, $event, $function, $arguments=array()) {
+        $requirement = new required_event_handler($id, $event, $function, $arguments);
+        $this->requiredjscode[] = $requirement;
+        return $requirement;
+    }
 
     /**
      * Get the code for the linked resources that need to appear in a particular place.
@@ -1040,6 +1055,49 @@ class required_data_for_js extends required_js_code {
     }
 }
 
+/**
+ * This class represents a Javascript event handler, listening for a 
+ * specific Event to occur on a DOM element identified by a given id.
+ * By default the data will be output at the end of the page, but you 
+ * can change that using the {@link asap()}, {@link in_head()}, etc. methods.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ */
+class required_event_handler extends required_js_code {
+    protected $id;
+    protected $event;
+    protected $function;
+    protected $args = array();
+
+    /**
+     * Constructor. Normally the class and its subclasses should not be created directly.
+     * Client code should create them via the page_requirements_manager
+     * method {@link page_requirements_manager::data_for_js()}.
+     *
+     * @param page_requirements_manager $manager the page_requirements_manager we are associated with.
+     * @param string $id The id of the DOM element that will be listening for the event
+     * @param string $event A valid DOM event (click, mousedown, change etc.)
+     * @param string $function The name of the function to call
+     * @param array  $arguments An optional array of argument parameters to pass to the function
+     */
+    public function __construct(page_requirements_manager $manager, $id, $event, $function, $args=array()) {
+        parent::__construct($manager);
+        $this->id = $id;
+        $this->event = $event;
+        $this->function = $function;
+        $this->args = $args;
+    }
+
+    public function get_js_code() {
+        $output = "YAHOO.util.Event.addListener($this->id, '$this->event', $this->function";
+        if (!empty($this->args)) {
+            $output .= ', ' . json_encode($this->args);
+        }
+        return $output . ");\n";
+    }
+}
 
 /**
  * Generate a script tag containing the the specified code.
