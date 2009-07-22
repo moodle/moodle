@@ -19,8 +19,8 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/lib.php");
-require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
+require_once($CFG->dirroot.'/search/lib.php');
+require_once($CFG->dirroot.'/search/Zend/Search/Lucene.php');
 
 /**
 * main class for searchable information in the Lucene index 
@@ -238,6 +238,8 @@ class IndexDBControl {
         $doc->docdate   = $document->date;
         $doc->courseid  = $document->course_id;
         $doc->groupid   = $document->group_id;
+        
+        if ($doc->groupid < 0) $doc->groupid = 0;
         
         //insert summary into db
         $id = insert_record(SEARCH_DATABASE_TABLE, $doc);
