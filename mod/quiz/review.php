@@ -27,13 +27,13 @@
 
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
     if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
+    /// Can't review other users' attempts.
+        if (!$attemptobj->is_own_attempt()) {
+            quiz_error($attemptobj->get_quiz(), 'notyourattempt');
+        }
     /// Can't review during the attempt - send them back to the attempt page.
         if (!$attemptobj->is_finished()) {
             redirect($attemptobj->attempt_url(0, $page));
-        }
-    /// Can't review other users' attempts.
-        if (!$attemptobj->is_own_attempt()) {
-            quiz_error($quiz, 'notyourattempt');
         }
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
@@ -99,7 +99,6 @@
     }
 
 /// Print heading.
-    print_heading(format_string($attemptobj->get_quiz_name()));
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         $attemptobj->print_restart_preview_button();
     }
