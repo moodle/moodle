@@ -15,7 +15,7 @@ context as usually accessed, from the current user point of view.
 Results filtering removes from results any link to information the
 current user would not be allowed to acces on a straight situation.
 
-Deployement
+Deployment
 ###########
 
 For setting the engine : 
