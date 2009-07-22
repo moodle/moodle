@@ -238,10 +238,20 @@ function print_error($errorcode, $module = 'error', $link = '', $a = null) {
     // Errors in unit test become exceptions, so you can unit test code that might call print_error().
     if (!empty($UNITTEST->running)) {
         throw new moodle_exception($errorcode, $module, $link, $a);
+    } else {
+        // It is really bad if library code calls print_error when output buffering
+        // is on.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
     }
 
     list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
-    echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
+    if (is_stacktrace_during_output_init(debug_backtrace())) {
+        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, debug_backtrace());
+    } else {
+        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
+    }
 
     exit(1); // General error code
 }
