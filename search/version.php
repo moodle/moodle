@@ -4,7 +4,7 @@
 //  Code fragment to define the search version etc.
 //  This fragment is called by /admin/index.php
 //  
-//  Consider it IS NOT handled by Moodle core upgrade code. 
+//  Consider it is not handled by Moodle core upgrade code. 
 //  Just for identification
 ////////////////////////////////////////////////////////////////////////////////
 
