@@ -492,5 +492,13 @@ class SearchQuery {
     public function get_results_per_page() {
       return $this->results_per_page;
     }
+
+    /**
+    *
+    */    
+    public function __destruct(){
+        unset($this->index);
+    }
+
 }
 ?>
