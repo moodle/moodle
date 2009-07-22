@@ -14,11 +14,11 @@
 * of time, amongst other things.
 */
 
-    /**
-    * includes and requires
-    */
-    require_once('../config.php');
-    require_once("{$CFG->dirroot}/search/lib.php");
+/**
+* includes and requires
+*/
+require_once('../config.php');
+require_once($CFG->dirroot.'/search/lib.php');
 
 /// makes inclusions of the Zend Engine more reliable
 
@@ -33,10 +33,10 @@
     }
     
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
+        error(get_string('beadmin', 'search'), $CFG->wwwroot.'/login/index.php');
     } 
     
-    require_once("$CFG->dirroot/search/indexlib.php");
+    require_once($CFG->dirroot.'/search/indexlib.php');
     $indexinfo = new IndexInfo();
     
     if ($indexinfo->valid()) {

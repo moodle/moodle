@@ -23,7 +23,7 @@
     }
     
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-      error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
+      error("You need to be an admin user to use this page.", $CFG->wwwroot.'/login/index.php');
     } //if
     
     mtrace('<pre>Server Time: '.date('r',time()));
@@ -33,7 +33,7 @@
     
     //fix paths for testing
     set_include_path(get_include_path().":../");
-    require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
+    require_once($CFG->dirroot.'/search/Zend/Search/Lucene.php');
     
     mtrace("Checking activity modules:\n");
     

@@ -51,7 +51,7 @@
     
 /// check for php5, but don't die yet (see line 52)
 
-    require_once("{$CFG->dirroot}/search/querylib.php");
+    require_once($CFG->dirroot.'/search/querylib.php');
 
     $page_number  = optional_param('page', -1, PARAM_INT);
     $pages        = ($page_number == -1) ? false : true;
