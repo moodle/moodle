@@ -25,6 +25,7 @@ if ($perpage) {
     $params['perpage'] = $perpage;
 }
 $PAGE->set_url('tag/search.php', $params);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $navlinks = array();
 $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
