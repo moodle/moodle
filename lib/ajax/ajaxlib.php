@@ -87,7 +87,7 @@ class page_requirements_manager {
     const WHEN_AT_END = 20;
     const WHEN_ON_DOM_READY = 30;
 
-    protected $linkedrequiremets = array();
+    protected $linkedrequirements = array();
     protected $stringsforjs = array();
     protected $requiredjscode = array();
 
@@ -127,10 +127,10 @@ class page_requirements_manager {
         } else {
             $url = $jsfile;
         }
-        if (!isset($this->linkedrequiremets[$url])) {
-            $this->linkedrequiremets[$url] = new required_js($this, $url);
+        if (!isset($this->linkedrequirements[$url])) {
+            $this->linkedrequirements[$url] = new required_js($this, $url);
         }
-        return $this->linkedrequiremets[$url];
+        return $this->linkedrequirements[$url];
     }
 
     /**
@@ -156,10 +156,10 @@ class page_requirements_manager {
      */
     public function yui_lib($libname) {
         $key = 'yui:' . $libname;
-        if (!isset($this->linkedrequiremets[$key])) {
-            $this->linkedrequiremets[$key] = new required_yui_lib($this, $libname);
+        if (!isset($this->linkedrequirements[$key])) {
+            $this->linkedrequirements[$key] = new required_yui_lib($this, $libname);
         }
-        return $this->linkedrequiremets[$key];
+        return $this->linkedrequirements[$key];
     }
 
     /**
@@ -193,8 +193,8 @@ class page_requirements_manager {
         } else {
             $url = $stylesheet;
         }
-        if (!isset($this->linkedrequiremets[$url])) {
-            $this->linkedrequiremets[$url] = new required_css($this, $url);
+        if (!isset($this->linkedrequirements[$url])) {
+            $this->linkedrequirements[$url] = new required_css($this, $url);
         }
     }
 
@@ -214,8 +214,8 @@ class page_requirements_manager {
      * @param $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
      */
     public function skip_link_to($target, $linktext) {
-        if (!isset($this->linkedrequiremets[$target])) {
-            $this->linkedrequiremets[$target] = new required_skip_link($this, $target, $linktext);
+        if (!isset($this->linkedrequirements[$target])) {
+            $this->linkedrequirements[$target] = new required_skip_link($this, $target, $linktext);
         }
     }
 
@@ -361,7 +361,7 @@ class page_requirements_manager {
      */
     protected function get_linked_resources_code($when) {
         $output = '';
-        foreach ($this->linkedrequiremets as $requirement) {
+        foreach ($this->linkedrequirements as $requirement) {
             if (!$requirement->is_done() && $requirement->get_when() == $when) {
                 $output .= $requirement->get_html();
                 $requirement->mark_done();
