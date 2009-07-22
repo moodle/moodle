@@ -1083,6 +1083,7 @@ class required_event_handler extends required_js_code {
      * @param array  $arguments An optional array of argument parameters to pass to the function
      */
     public function __construct(page_requirements_manager $manager, $id, $event, $function, $args=array()) {
+        $manager->requires->yui_lib('event');
         parent::__construct($manager);
         $this->id = $id;
         $this->event = $event;
