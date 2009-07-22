@@ -20,7 +20,7 @@
 /**
 * includes and requires
 */
-require_once("$CFG->dirroot/search/documents/document.php");
+require_once($CFG->dirroot.'/search/documents/document.php');
 
 /**
 * a class for representing searchable information
