@@ -1972,7 +1972,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         echo '<table id="layout-table"><tr>';
         foreach ($lt as $column) {
-            if ($column == 'left' && $this->page->blocks->region_has_content(BLOCK_POS_LEFT, $OUTPUT)) {
+            if ($column == 'left' && $this->page->blocks->region_has_content(BLOCK_POS_LEFT, $this)) {
                 echo '<td id="left-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
                 echo $this->container_start();
                 echo $this->blocks_for_region(BLOCK_POS_LEFT);
@@ -1987,7 +1987,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 echo $this->container_end();
                 echo '</td>';
 
-            } else if ($column == 'right' && $this->page->blocks->region_has_content(BLOCK_POS_RIGHT, $OUTPUT)) {
+            } else if ($column == 'right' && $this->page->blocks->region_has_content(BLOCK_POS_RIGHT, $this)) {
                 echo '<td id="right-column" class="block-region" style="width: ' . $preferredwidthright . 'px; vertical-align: top;">';
                 echo $this->container_start();
                 echo $this->blocks_for_region(BLOCK_POS_RIGHT);
