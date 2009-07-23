@@ -849,7 +849,7 @@ class required_skip_link extends linked_requirement {
     }
 
     public function get_html() {
-        return '<a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a>\n";
+        return '<div><a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a></div>\n";
     }
 }
 
