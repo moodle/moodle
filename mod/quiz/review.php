@@ -72,12 +72,11 @@
     }
 
 /// Arrange for the navigation to be displayed.
-    $navbc = $attemptobj->get_navigation_panel('quiz_review_nav_panel', $page);
+    $navbc = $attemptobj->get_navigation_panel('quiz_review_nav_panel', $page, $showall);
     $firstregion = reset($PAGE->blocks->get_regions());
     $PAGE->blocks->add_pretend_block($navbc, $firstregion);
 
 /// Print the page header
-    $PAGE->requires->js('mod/quiz/quiz.js');
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);
@@ -236,7 +235,7 @@
     if ($lastpage) {
         $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
     } else {
-        link_arrow_right(get_string('next'), s($attemptobj->review_url(0, $page + 1)));
+        echo link_arrow_right(get_string('next'), s($attemptobj->review_url(0, $page + 1)));
     }
     echo "</div>";
 

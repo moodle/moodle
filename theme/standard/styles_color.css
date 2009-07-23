@@ -1174,7 +1174,9 @@ table.quizreviewsummary td.cell {
 #quiznavigation .qnbutton.incorrect {
   background-color: #fcc;
 }
-
+#quiznojswarning {
+  color: red;
+}
 #mod-quiz-report .dubious{
   background-color: #fcc;
 }

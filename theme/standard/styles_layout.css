@@ -4377,8 +4377,12 @@ body.jsenabled .jshidewhenenabled {
   height: 16px;
   vertical-align: middle;
 }
-#mod-quiz-attempt #quiz-timer {
-  display: none;
+#mod-quiz-attempt #quiz-timer,
+#mod-quiz-summary #quiz-timer {
+  display: none; /* Revealed by JavaScript if applicable */
+}
+#mod-quiz-summary #quiz-timer {
+  margin-top: 1em;
 }
 #mod-quiz-attempt #quiz-time-left {
   font-weight: bold;
@@ -4612,12 +4616,19 @@ table.quizreviewsummary td.cell {
     float: left;
 }
 #quiznavigation .othernav {
-  clear: both;
+    clear: both;
 }
 #quiznavigation .othernav a,
 #quiznavigation .othernav input {
   display: block;
   margin: 0.5em 0;
+}
+#quiznojswarning {
+    font-size: 0.7em;
+    line-height: 1.1;
+}
+.jsenabled #quiznojswarning {
+    display: none;
 }
 .mod-quiz div.tabtree a span img.iconsmall {
   vertical-align: baseline;

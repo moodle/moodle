@@ -29,23 +29,6 @@ $timeup = optional_param('timeup', 0, PARAM_BOOL); // True if form was submitted
 
 $attemptobj = new quiz_attempt($attemptid);
 
-/// Because IE is buggy (see http://www.peterbe.com/plog/button-tag-in-IE) we cannot
-/// do the quiz navigation buttons as <button type="submit" name="page" value="N">Caption</button>.
-/// Instead we have to do them as <input type="submit" name="gotopageN" value="Caption"/> -
-/// at lest that seemed like the least horrible work-around to me. Therefore, we need to
-/// intercept gotopageN parameters here, and adjust $pgae accordingly.
-if (optional_param('gotosummary', false, PARAM_BOOL)) {
-    $nextpage = -1;
-} else {
-    $numpagesinquiz = $attemptobj->get_num_pages();
-    for ($i = 0; $i < $numpagesinquiz; $i++) {
-        if (optional_param('gotopage' . $i, false, PARAM_BOOL)) {
-            $nextpage = $i;
-            break;
-        }
-    }
-}
-
 /// Set $nexturl now. It will be updated if a particular question was sumbitted in
 /// adaptive mode.
 if ($nextpage == -1) {
@@ -163,8 +146,9 @@ if (!$finishattempt) {
 
 /// We have been asked to finish attempt, so do that //////////////////////
 
-/// Load the states of questions we have not done anything with, and reload the 
-/// ones we changed above.
+/// Now load the state of every question, reloading the ones we messed around
+/// with above.
+$attemptobj->preload_question_states();
 $attemptobj->load_question_states();
 
 /// Move each question to the closed state.

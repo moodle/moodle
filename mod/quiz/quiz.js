@@ -148,11 +148,54 @@ quiz_timer = {
     }
 };
 
-// Initialise a button on the navigation panel.
-function quiz_init_nav_button(buttonid, questionid) {
-    // Arrange to be notified if the flagged state changes.
-    var button = document.getElementById(buttonid);
-    button.stateupdater = new quiz_nav_updater(button, questionid);
+// Set up synchronisation between question flags and the corresponding button in the nav panel.
+function quiz_init_nav_flags() {
+    var navblock = document.getElementById('quiznavigation');
+    var buttons = YAHOO.util.Dom.getElementsByClassName('qnbutton', 'a', navblock);
+    for (var i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        var questionid = button.id.match(/\d+/)[0];
+        button.stateupdater = new quiz_nav_updater(button, questionid);
+    }
+}
+
+// Make the links in the attempt nav panel submit the form.
+function quiz_init_attempt_nav() {
+    var warning = document.getElementById('quiznojswarning');
+    warning.parentNode.removeChild(warning);
+    var navblock = document.getElementById('quiznavigation');
+    var buttons = YAHOO.util.Dom.getElementsByClassName('qnbutton', 'a', navblock);
+    for (var i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        if (YAHOO.util.Dom.hasClass(button, 'thispage')) {
+            continue;
+        }
+        var pageidmatch = button.href.match(/page=(\d+)/);
+        var nav = {pageid: pageidmatch[1]};
+        var questionidmatch = button.href.match(/#q(\d+)/);
+        if (questionidmatch) {
+            nav.questionid = questionidmatch[1];
+        }
+        YAHOO.util.Event.addListener(button, 'click', quiz_nav_button_click, nav);
+    }
+    var endlink = YAHOO.util.Dom.getElementsByClassName('endtestlink', 'a', navblock)[0];
+    YAHOO.util.Event.addListener(endlink, 'click', quiz_end_test_click);
+}
+
+function quiz_nav_button_click(e, nav) {
+    YAHOO.util.Event.preventDefault(e);
+    document.getElementById('nextpagehiddeninput').value = nav.pageid;
+    var form = document.getElementById('responseform');
+    if (nav.questionid) {
+        form.action += '#q' + nav.questionid;
+    }
+    form.submit();
+}
+
+function quiz_end_test_click(e) {
+    YAHOO.util.Event.preventDefault(e);
+    document.getElementById('nextpagehiddeninput').value = -1;
+    document.getElementById('responseform').submit();
 }
 
 function quiz_nav_updater(element, questionid) {

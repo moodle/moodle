@@ -1,19 +1,39 @@
 <?php
-/**
- * This class handles loading all the information about a quiz attempt into memory,
- * and making it available for attemtp.php, summary.php and review.php.
- * Initially, it only loads a minimal amout of information about each attempt - loading
- * extra information only when necessary or when asked. The class tracks which questions
- * are loaded.
- *//** */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
-}
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Back-end code for handling data about quizzes and the current user's attempt.
+ *
+ * There are classes for loading all the information about a quiz and attempts,
+ * and for displaying the navigation panel.
+ *
+ * @package quiz
+ * @copyright 2008 onwards Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Class for quiz exceptions. Just saves a couple of arguments on the
  * constructor for a moodle_exception.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class moodle_quiz_exception extends moodle_exception {
     function __construct($quizobj, $errorcode, $a = NULL, $link = '', $debuginfo = null) {
@@ -25,8 +45,16 @@ class moodle_quiz_exception extends moodle_exception {
 }
 
 /**
- * A base class for holding and accessing information about a quiz and its questions,
- * before details of a particular attempt are loaded.
+ * A class encapsulating a quiz and the questions it contains, and making the
+ * information available to scripts like view.php.
+ *
+ * Initially, it only loads a minimal amout of information about each question - loading
+ * extra information only when necessary or when asked. The class tracks which questions
+ * are loaded.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class quiz {
     // Fields initialised in the constructor.
@@ -63,10 +91,19 @@ class quiz {
     }
 
     // Functions for loading more data =====================================================
+    /**
+     * Convenience method. Calls {@link load_questions()} with the list of
+     * question ids for a given page.
+     *
+     * @param integer $page a page number.
+     */
     public function load_questions_on_page($page) {
         $this->load_questions($this->pagequestionids[$page]);
     }
 
+    /**
+     * Load just basic information about all the questions in this quiz.
+     */
     public function preload_questions() {
         if (empty($this->questionids)) {
             throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
@@ -79,7 +116,7 @@ class quiz {
     }
 
    /**
-     * Load some or all of the questions for this quiz.
+     * Fully load some or all of the questions for this quiz. You must call {@link preload_questions()} first.
      *
      * @param array $questionids question ids of the questions to load. null for all.
      */
@@ -301,14 +338,20 @@ class quiz {
     }
 
     // Private methods =====================================================================
-    // Check that the definition of a particular question is loaded, and if not throw an exception.
+    /**
+     *  Check that the definition of a particular question is loaded, and if not throw an exception.
+     *  @param $id a questionid.
+     */
     protected function ensure_question_loaded($id) {
         if (isset($this->questions[$id]->_partiallyloaded)) {
             throw new moodle_quiz_exception($this, 'questionnotloaded', $id);
         }
     }
 
-    private function determine_layout() {
+    /**
+     * Populate {@link $questionids} and {@link $pagequestionids} from the layout.
+     */
+    protected function determine_layout() {
         $this->questionids = array();
         $this->pagequestionids = array();
 
@@ -340,7 +383,9 @@ class quiz {
         }
     }
 
-    // Number the questions.
+    /**
+     * Number the questions, adding a _number field to each one.
+     */
     private function number_questions() {
         $number = 1;
         foreach ($this->pagequestionids as $page => $questionids) {
@@ -368,6 +413,10 @@ class quiz {
 /**
  * This class extends the quiz class to hold data about the state of a particular attempt,
  * in addition to the data about the quiz.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class quiz_attempt extends quiz {
     // Fields initialised in the constructor.
@@ -424,7 +473,12 @@ class quiz_attempt extends quiz {
         }
     }
 
-    
+    /**
+     * Load basic information about the state of each question.
+     *
+     * This is enough to, for example, show the state of each question in the
+     * navigation panel, but only takes one DB query.
+     */
     public function preload_question_states() {
         if (empty($this->questionids)) {
             throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
@@ -435,6 +489,14 @@ class quiz_attempt extends quiz {
         }
     }
 
+    /**
+     * Load a particular state of a particular question. Used by the reviewquestion.php
+     * script to let the teacher walk through the entire sequence of a student's
+     * interaction with a question.
+     *
+     * @param $questionid the question id
+     * @param $stateid the id of the particular state to load.
+     */
     public function load_specific_question_state($questionid, $stateid) {
         global $DB;
         $state = question_load_specific_state($this->questions[$questionid],
@@ -508,6 +570,12 @@ class quiz_attempt extends quiz {
         }
     }
 
+    /**
+     * Get the current state of a question in the attempt.
+     *
+     * @param $questionid a questionid.
+     * @return object the state.
+     */
     public function get_question_state($questionid) {
         $this->ensure_state_loaded($questionid);
         return $this->states[$questionid];
@@ -612,16 +680,16 @@ class quiz_attempt extends quiz {
 
     // URLs related to this attempt ========================================================
     /**
-     * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
-     * the URL will go to the first page.
      * @param integer $questionid a question id. If set, will add a fragment to the URL
      * to jump to a particuar question on the page.
+     * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
+     * the URL will go to the first page. If -1, deduce $page from $questionid.
+     * @param integer $thispage if not -1, the current page. Will cause links to other things on
+     * this page to be output as only a fragment.
      * @return string the URL to continue this attempt.
      */
-    public function attempt_url($questionid = 0, $page = -1) {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $this->attempt->id .
-                $this->page_and_question_fragment($questionid, $page);
+    public function attempt_url($questionid = 0, $page = -1, $thispage = -1) {
+        return $this->page_and_question_url('attempt', $questionid, $page, false, $thispage);
     }
 
     /**
@@ -641,32 +709,46 @@ class quiz_attempt extends quiz {
     }
 
     /**
+     * @param integer $questionid a question id. If set, will add a fragment to the URL
+     * to jump to a particuar question on the page. If -1, deduce $page from $questionid.
      * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
      * the URL will go to the first page.
-     * @param integer $questionid a question id. If set, will add a fragment to the URL
-     * to jump to a particuar question on the page.
      * @param boolean $showall if true, the URL will be to review the entire attempt on one page,
      * and $page will be ignored.
-     * @param $otherattemptid if given, link to another attempt, instead of the one we represent.
+     * @param integer $thispage if not -1, the current page. Will cause links to other things on
+     * this page to be output as only a fragment.
      * @return string the URL to review this attempt.
      */
-    public function review_url($questionid = 0, $page = -1, $showall = false) {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $this->attempt->id .
-                $this->page_and_question_fragment($questionid, $page, $showall);
+    public function review_url($questionid = 0, $page = -1, $showall = false, $thispage = -1) {
+        return $this->page_and_question_url('review', $questionid, $page, $showall, $thispage);
     }
 
     // Bits of content =====================================================================
+    /**
+     * Initialise the JS etc. required all the questions on a page..
+     * @param mixed $page a page number, or 'all'.
+     */
     public function get_html_head_contributions($page = 'all') {
-        return get_html_head_contributions($this->get_question_ids($page),
-                $this->questions, $this->states);
+        global $PAGE;
+        // The JS does important things like navigation and so must be initialised
+        // as seen as possible, particularly if the page is loading slowly.
+        $PAGE->requires->yui_lib('dom')->in_head();
+        $PAGE->requires->yui_lib('event')->in_head();
+        $PAGE->requires->js('mod/quiz/quiz.js')->in_head();
+        get_html_head_contributions($this->get_question_ids($page), $this->questions, $this->states);
     }
 
+    /**
+     * Initialise the JS etc. required by one question.
+     * @param integer $questionid the question id.
+     */
     public function get_question_html_head_contributions($questionid) {
-        return get_html_head_contributions(array($questionid),
-                $this->questions, $this->states);
+        get_html_head_contributions(array($questionid), $this->questions, $this->states);
     }
 
+    /**
+     * Print the HTML for the start new preview button.
+     */
     public function print_restart_preview_button() {
         global $CFG;
         echo '<div class="controls">';
@@ -675,6 +757,10 @@ class quiz_attempt extends quiz {
         echo '</div>';
     }
 
+    /**
+     * Return the HTML of the quiz timer.
+     * @return string HTML content.
+     */
     public function get_timer_html() {
         return '<div id="quiz-timer">' . get_string('timeleft', 'quiz') .
                 ' <span id="quiz-time-left"></span></div>';
@@ -702,17 +788,34 @@ class quiz_attempt extends quiz {
                 $this->quiz, $options);
     }
 
+    /**
+     * Triggers the sending of the notification emails at the end of this attempt.
+     */
     public function quiz_send_notification_emails() {
         quiz_send_notification_emails($this->course, $this->quiz, $this->attempt,
                 $this->context, $this->cm);
     }
 
-    public function get_navigation_panel($panelclass, $page) {
-        $panel = new $panelclass($this, $this->get_review_options(), $page);
+    /**
+     * Get the navigation panel object for this attempt.
+     *
+     * @param $panelclass The type of panel, quiz_attempt_nav_panel or quiz_review_nav_panel
+     * @param $page the current page number.
+     * @param $showall whether we are showing the whole quiz on one page. (Used by review.php)
+     * @return quiz_nav_panel_base the requested object.
+     */
+    public function get_navigation_panel($panelclass, $page, $showall = false) {
+        $panel = new $panelclass($this, $this->get_review_options(), $page, $showall);
         return $panel->get_contents();
     }
 
-    /// List of all this user's attempts for people who can see reports.
+    /**
+     * Given a URL containing attempt={this attempt id}, return an array of variant URLs 
+     * @param $url a URL.
+     * @return string HTML fragment. Comma-separated list of links to the other
+     * attempts with the attempt number as the link text. The curent attempt is
+     * included but is not a link.
+     */
     public function links_to_other_attempts($url) {
         $search = '/\battempt=' . $this->attempt->id . '\b/';
         $attempts = quiz_get_user_attempts($this->quiz->id, $this->attempt->userid, 'all');
@@ -732,10 +835,19 @@ class quiz_attempt extends quiz {
     }
 
     // Methods for processing manual comments ==============================================
-    // I am not sure it is a good idea to have update methods here - this class is only
-    // about getting data out of the question engine, and helping to display it, apart from
-    // this.
+    /**
+     * Process a manual comment for a question in this attempt.
+     * @param $questionid
+     * @param integer $questionid the question id
+     * @param string $comment the new comment from the teacher.
+     * @param mixed $grade the grade the teacher assigned, or '' to not change the grade.
+     * @return mixed true on success, a string error message if a problem is detected
+     *         (for example score out of range).
+     */
     public function process_comment($questionid, $comment, $grade) {
+        // I am not sure it is a good idea to have update methods here - this
+        // class is only about getting data out of the question engine, and
+        // helping to display it, apart from this.
         $this->ensure_question_loaded($questionid);
         $this->ensure_state_loaded($questionid);
         $state = $this->states[$questionid];
@@ -755,6 +867,11 @@ class quiz_attempt extends quiz {
         return $error;
     }
 
+    /**
+     * Print the fields of the comment form for questions in this attempt.
+     * @param $questionid a question id.
+     * @param $prefix Prefix to add to all field names.
+     */
     public function question_print_comment_fields($questionid, $prefix) {
         global $DB;
 
@@ -772,7 +889,10 @@ class quiz_attempt extends quiz {
     }
 
     // Private methods =====================================================================
-    // Check that the state of a particular question is loaded, and if not throw an exception.
+    /**
+     * Check that the state of a particular question is loaded, and if not throw an exception.
+     * @param integer $id a question id.
+     */
     private function ensure_state_loaded($id) {
         if (!array_key_exists($id, $this->states) || isset($this->states[$id]->_partiallyloaded)) {
             throw new moodle_quiz_exception($this, 'statenotloaded', $id);
@@ -788,16 +908,23 @@ class quiz_attempt extends quiz {
     }
 
     /**
-     * Enter description here...
+     * Get a URL for a particular question on a particular page of the quiz.
+     * Used by {@link attempt_url()} and {@link review_url()}.
      *
-     * @param unknown_type $questionid the id of a particular question on the page to jump to.
-     * @param integer $page -1 to look up the page number from the questionid, otherwise the page number to use.
-     * @param boolean $showall
-     * @return string bit to add to the end of a URL.
+     * @param string $script. Used in the URL like /mod/quiz/$script.php
+     * @param integer $questionid the id of a particular question on the page to jump to. 0 to just use the $page parameter.
+     * @param integer $page -1 to look up the page number from the questionid, otherwise the page number to go to.
+     * @param boolean $showall if true, return a URL with showall=1, and not page number
+     * @param integer $thispage the page we are currently on. Links to questoins on this
+     *      page will just be a fragment #q123. -1 to disable this.
+     * @return The requested URL.
      */
-    private function page_and_question_fragment($questionid, $page, $showall = false) {
+    protected function page_and_question_url($script, $questionid, $page, $showall, $thispage) {
+        global $CFG;
+
+        // Fix up $page
         if ($page == -1) {
-            if ($questionid) {
+            if ($questionid && !$showall) {
                 $page = $this->questions[$questionid]->_page;
             } else {
                 $page = 0;
@@ -806,28 +933,40 @@ class quiz_attempt extends quiz {
         if ($showall) {
             $page = 0;
         }
-        $fragment = '';
+
+        // Work out the correct start to the URL.
+        if ($thispage == $page) {
+            $url = '';
+        } else {
+            $url = $CFG->wwwroot . '/mod/quiz/' . $script . '.php?attempt=' . $this->attempt->id;
+            if ($showall) {
+                $url .= '&showall=1';
+            } else if ($page > 0) {
+                $url .= '&page=' . $page;
+            }
+        }
+
+        // Add a fragment to scroll down ot the question.
         if ($questionid) {
             if ($questionid == reset($this->pagequestionids[$page])) {
                 // First question on page, go to top.
-                $fragment = '#';
+                $url .= '#';
             } else {
-                $fragment = '#q' . $questionid;
+                $url .= '#q' . $questionid;
             }
         }
-        $param = '';
-        if ($showall) {
-            $param = '&showall=1';
-        } else if ($page > 0) {
-            $param = '&page=' . $page;
-        }
-        return $param . $fragment;
+
+        return $url;
     }
 }
 
 /**
  * A PHP Iterator for conviniently looping over the questions in a quiz. The keys are the question
  * numbers (with 'i' for descriptions) and the values are the question objects.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class quiz_attempt_question_iterator implements Iterator {
     private $attemptobj; // Reference to the quiz_attempt object we provide access to.
@@ -882,37 +1021,51 @@ class quiz_attempt_question_iterator implements Iterator {
     }
 }
 
+/**
+ * Represents the navigation panel, and builds a {@link block_contents} to allow
+ * it to be output.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ */
 abstract class quiz_nav_panel_base {
     protected $attemptobj;
     protected $options;
     protected $page;
+    protected $showall;
 
-    protected function __construct(quiz_attempt $attemptobj, $options, $page) {
+    public function __construct(quiz_attempt $attemptobj, $options, $page, $showall) {
           $this->attemptobj = $attemptobj;
           $this->options = $options;
           $this->page = $page;
+          $this->showall = $showall;
     }
 
     protected function get_question_buttons() {
-        global $PAGE;
         $html = '<div class="qn_buttons">' . "\n";
         foreach ($this->attemptobj->get_question_iterator() as $number => $question) {
             $html .= $this->get_question_button($number, $question) . "\n";
-            $PAGE->requires->js_function_call('quiz_init_nav_button',
-                    array($this->get_button_id($question), $question->id));
         }
         $html .= "</div>\n";
         return $html;
     }
 
-    protected function get_button_id($question) {
-        // The id to put on the button element in the HTML.
-        return 'quiznavbutton' . $question->id;
+    protected function get_question_button($number, $question) {
+        $strstate = get_string($this->attemptobj->get_question_status($question->id), 'quiz');
+        return '<a href="' . $this->get_question_url($question) .
+                '" class="qnbutton ' . $this->get_question_state_classes($question) .
+                '" id="quiznavbutton' . $question->id . '" title="' . $strstate . '">' .
+                $number . ' <span class="accesshide"> (' . $strstate . ')</span></a>';
     }
 
-    abstract protected function get_question_button($number, $question);
+    protected function get_before_button_bits() {
+        return '';
+    }
 
     abstract protected function get_end_bits();
+
+    abstract protected function get_question_url($question);
 
     protected function get_user_picture() {
         global $DB;
@@ -930,7 +1083,7 @@ abstract class quiz_nav_panel_base {
         $classes = $this->attemptobj->get_question_status($question->id);
 
         // Plus a marker for the current page.
-        if ($question->_page == $this->page) {
+        if ($this->showall || $question->_page == $this->page) {
             $classes .= ' thispage';
         }
 
@@ -942,10 +1095,14 @@ abstract class quiz_nav_panel_base {
     }
 
     public function get_contents() {
+        global $PAGE;
+        $PAGE->requires->js_function_call('quiz_init_nav_flags');
+
         $content = '';
         if ($this->attemptobj->get_quiz()->showuserpicture) {
             $content .= $this->get_user_picture() . "\n";
         }
+        $content .= $this->get_before_button_bits();
         $content .= $this->get_question_buttons() . "\n";
         $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() . "\n</div>\n";
 
@@ -957,49 +1114,54 @@ abstract class quiz_nav_panel_base {
     }
 }
 
+/**
+ * Specialisation of {@link quiz_nav_panel_base} for the attempt quiz page.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ */
 class quiz_attempt_nav_panel extends quiz_nav_panel_base {
-    public function __construct(quiz_attempt $attemptobj, $options, $page) {
-        parent::__construct($attemptobj, $options, $page);
+    protected function get_question_url($question) {
+        return $this->attemptobj->attempt_url($question->id, -1, $this->page);
     }
 
-    protected function get_question_button($number, $question) {
-        $questionsonpage = $this->attemptobj->get_question_ids($question->_page);
-        $onclick = '';
-        if ($question->id != reset($questionsonpage)) {
-            $onclick = ' onclick="form.action = form.action + \'#q' . $question->id .
-                '\'; return true;"';
-        }
-        return '<input type="submit" name="gotopage' . $question->_page .
-                '" value="' . $number . '" class="qnbutton ' .
-                $this->get_question_state_classes($question) . '" id="' .
-                $this->get_button_id($question) . '" ' . $onclick . '/>';
+    protected function get_before_button_bits() {
+        return '<div id="quiznojswarning">' . get_string('navnojswarning', 'quiz') . "</div>\n";
     }
 
     protected function get_end_bits() {
+        global $PAGE;
         $output = '';
-        $output .= '<input type="submit" name="gotosummary" value="' .
-                get_string('endtest', 'quiz') . '" class="endtestlink" />';
+        $output .= '<a href="' . $this->attemptobj->summary_url() . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
         $output .= $this->attemptobj->get_timer_html();
+        $output .= $PAGE->requires->js_function_call('quiz_init_attempt_nav')->now();
         return $output;
     }
 }
 
+/**
+ * Specialisation of {@link quiz_nav_panel_base} for the review quiz page.
+ *
+ * @copyright 2008 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ */
 class quiz_review_nav_panel extends quiz_nav_panel_base {
-    public function __construct(quiz_attempt $attemptobj, $options, $page) {
-        parent::__construct($attemptobj, $options, $page);
-    }
-
-    protected function get_question_button($number, $question) {
-        $strstate = get_string($this->attemptobj->get_question_status($question->id), 'quiz');
-        return '<a href="' . $this->attemptobj->review_url($question->id) .
-                '" class="qnbutton ' . $this->get_question_state_classes($question) . '" id="' .
-                $this->get_button_id($question) . '" title="' . $strstate . '">' . $number . '<span class="accesshide">(' . $strstate . '</span></a>';
+    protected function get_question_url($question) {
+        return $this->attemptobj->review_url($question->id, -1, $this->showall, $this->page);
     }
 
     protected function get_end_bits() {
+        $html = '';
+        if ($this->attemptobj->get_num_pages() > 1) {
+            if ($this->showall) {
+                $html = '<a href="' . $this->attemptobj->review_url(0, 0, false) . '">' . get_string('showeachpage', 'quiz') . '</a>';
+            } else {
+                $html = '<a href="' . $this->attemptobj->review_url(0, 0, true) . '">' . get_string('showall', 'quiz') . '</a>';
+            }
+        }
         $accessmanager = $this->attemptobj->get_access_manager(time());
-        $html = '<a href="' . $this->attemptobj->review_url(0, 0, true) . '">' .
-                get_string('showall', 'quiz') . '</a>';
         $html .= $accessmanager->print_finish_review_link($this->attemptobj->is_preview_user(), true);
         return $html;
     }

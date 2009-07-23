@@ -86,7 +86,6 @@
     $PAGE->blocks->add_pretend_block($navbc, $firstregion);
 
     // Print the page header
-    $PAGE->requires->yui_lib('event');
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
@@ -123,9 +122,7 @@
     // A quiz page with a lot of questions can take a long time to load, and we
     // want the protection afforded by init_quiz_form immediately, so include the
     // JS now.
-    echo $PAGE->requires->yui_lib('event')->asap();
-    echo $PAGE->requires->js('mod/quiz/quiz.js')->asap();
-    echo $PAGE->requires->js_function_call('init_quiz_form')->asap();
+    echo $PAGE->requires->js_function_call('init_quiz_form')->now();
     echo '<div>';
 
 /// Print all the questions
@@ -137,17 +134,15 @@
     echo '<div class="submitbtns">';
     if ($attemptobj->is_last_page($page)) {
         $nextpage = -1;
-        $nextpageforie = 'gotosummary';
     } else {
         $nextpage = $page + 1;
-        $nextpageforie = 'gotopage' . $nextpage;
     }
-    echo '<input type="submit" name="' . $nextpageforie . '" value="' . get_string('next') . '" />';
+    echo '<input type="submit" value="' . get_string('next') . '" />';
     echo "</div>";
 
     // Some hidden fields to trach what is going on.
     echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
-    echo '<input type="hidden" name="nextpage" value="' . $nextpage . '" />';
+    echo '<input type="hidden" name="nextpage" id="nextpagehiddeninput" value="' . $nextpage . '" />';
     echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
