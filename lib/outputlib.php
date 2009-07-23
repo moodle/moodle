@@ -54,7 +54,7 @@ interface renderer_factory {
      * Renderers will normally want to subclass the moodle_renderer_base class.
      * (However, if you really know what you are doing, you don't have to do that.)
      *
-     * There is no separate interface definintion for renderers. The default
+     * There is no separate interface definition for renderers. The default
      * moodle_{plugin}_renderer implementation also serves to define the API for
      * other implementations of the interface, whether or not they subclass it.
      * For example, {@link custom_corners_core_renderer} does subclass
@@ -63,7 +63,7 @@ interface renderer_factory {
      * of the {@link template_renderer} class, whatever type of renderer you ask
      * for. This uses the fact that PHP is a dynamic language.
      *
-     * A particular plugin can defnie multiple renderers if it wishes, using the
+     * A particular plugin can define multiple renderers if it wishes, using the
      * $subtype parameter. For example moodle_mod_workshop_renderer,
      * moodle_mod_workshop_allocation_manual_renderer etc.
      *
@@ -83,7 +83,7 @@ interface renderer_factory {
  * (See {@link standard_icon_finder::__construct} for an example.)
  *
  * Note that we are planning to change the Moodle icon naming convention before
- * the Moodle 2.0 relase. Therefore, this API will probably change.
+ * the Moodle 2.0 release. Therefore, this API will probably change.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -91,24 +91,24 @@ interface renderer_factory {
  */
 interface icon_finder {
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
      * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
+     * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
     public function old_icon_url($iconname);
 
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
      * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
-     * @param $module the module the icon belongs to.
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
      */
     public function mod_icon_url($iconname, $module);
@@ -123,11 +123,11 @@ interface icon_finder {
  *
  * There are also some methods and protected variables that are part of the inner
  * workings of Moodle's themes system. If you are just editing a theme's config.php
- * file, you cac just ingore those, and the following information for developers.
+ * file, you can just ignore those, and the following information for developers.
  *
  * Normally, to create an instance of this class, you should use the
  * {@link theme_config::load()} factory method to load a themes config.php file.
- * However, normally you don't need to bother, becuase moodle_page (that is, $PAGE)
+ * However, normally you don't need to bother, because moodle_page (that is, $PAGE)
  * will create one for you, accessible as $PAGE->theme.
  *
  * @copyright 2009 Tim Hunt
@@ -168,7 +168,7 @@ class theme_config {
      * @var boolean|array Whether and which stylesheets from the parent theme
      * to use in this theme. (Ignored if parent is null)
      *
-     * Possbile values are:
+     * Possible values are:
      *      false - no parent theme CSS.
      *      true - include all the normal parent theme CSS. Currently this means
      *             array('styles_layout', 'styles_fonts', 'styles_color').
@@ -187,7 +187,7 @@ class theme_config {
      * the changes in the code. Therefore, your theme is less likely to break
      * when you upgrade Moodle.
      *
-     * Possbile values are:
+     * Possible values are:
      *      false - no standard theme CSS.
      *      true - include all the main standard theme CSS. Currently this means
      *             array('styles_layout', 'styles_fonts', 'styles_color').
@@ -212,7 +212,7 @@ class theme_config {
      * This is not necessarily the best choice.
      *
      * The plugin CSS is included first, before any theme CSS. To be precise,
-     * if $standardsheets is true, the the plugin CSS is included with the
+     * if $standardsheets is true, the plugin CSS is included with the
      * standard theme's CSS, otherwise if $parentsheets is true, the plugin CSS
      * will be included with the parent theme's CSS, otherwise the plugin CSS
      * will be include with this theme's CSS.
@@ -257,7 +257,7 @@ class theme_config {
      * {@link http://cvs.moodle.org/moodle/theme/standard/config.php?view=markup the standard theme config.php file}.
      * That file also has a good example of how to set this setting.
      *
-     * If Moodle encouters a general type of page that is not listed in your theme,
+     * If Moodle encounters a general type of page that is not listed in your theme,
      * then it will use the first layout. Therefore, should probably put 'normal'
      * first in this array.
      *
@@ -291,7 +291,7 @@ class theme_config {
      * <li><b>standard:filename</b> for example 'standard:layout-popup.php'. Use
      *      the specified file from the standard theme.</li>
      * </ol>
-     * To promote conisitency, you are encouraged to call your layout files
+     * To promote consistency, you are encouraged to call your layout files
      * layout.php or layout-something.php.
      *
      * 'regions' This lists the regions on the page where blocks may appear. For
@@ -304,7 +304,7 @@ class theme_config {
      * 'defaultregion' If the list of regions is non-empty, then you must pick
      * one of the one of them as 'default'. This has two meanings. First, this is
      * where new blocks are added. Second, if there are any blocks associated with
-     * the page, but in non-existant regions, they appear here. (Imaging, for example,
+     * the page, but in non-existent regions, they appear here. (Imaging, for example,
      * that someone added blocks using a different theme that used different region
      * names, and then switched to this theme.)
      *
@@ -382,7 +382,7 @@ class theme_config {
      * CSS before it is output (for example, to replace certain variable names
      * with particular values) you can give the name of a function here.
      *
-     * There are two functions avaiable that you may wish to use (defined in lib/outputlib.php):
+     * There are two functions available that you may wish to use (defined in lib/outputlib.php):
      * <ul>
      * <li>{@link output_css_replacing_constants}</li>
      * <li>{@link output_css_for_css_edit}</li>
@@ -433,7 +433,7 @@ class theme_config {
     public static function load($themename) {
         global $CFG;
 
-        // We have to use the variable name $THEME (upper case) becuase that
+        // We have to use the variable name $THEME (upper case) because that
         // is what is used in theme config.php files.
 
         // Set some other standard properties of the theme.
@@ -458,8 +458,8 @@ class theme_config {
      * Get the renderer for a part of Moodle for this theme.
      * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param moodle_page $page the page we are rendering
-     * @return moodle_renderer_base the requested renderer.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return moodle_renderer_base the requested renderer.
      */
     public function get_renderer($module, $page, $subtype=null) {
         if (is_null($this->rf)) {
@@ -487,12 +487,12 @@ class theme_config {
     }
 
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
      * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
+     * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
     public function old_icon_url($iconname) {
@@ -500,13 +500,13 @@ class theme_config {
     }
 
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
      * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
-     * @param $module the module the icon belongs to.
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
      */
     public function mod_icon_url($iconname, $module) {
@@ -560,8 +560,8 @@ class theme_config {
 
     /**
      * Get the meta tags from one theme to got in the <head> of the HTML.
-     * @param $themename the name of the theme to get meta tags from.
-     * @param $page that page whose <head> is being output.
+     * @param string $themename the name of the theme to get meta tags from.
+     * @param string $page that page whose <head> is being output.
      * @return string HTML code.
      */
     protected function get_theme_meta_tags($themename, $page) {
@@ -582,7 +582,7 @@ class theme_config {
      * Get all the meta tags (from this theme, standard, parent) that this theme
      * wants in the <head> of the HTML.
      *
-     * @param $page that page whose <head> is being output.
+     * @param string $page that page whose <head> is being output.
      * @return string HTML code.
      */
     public function get_meta_tags($page) {
@@ -649,7 +649,7 @@ class theme_config {
             $templatepath = $this->dir . '/' . $templatefile;
         }
 
-        // Check the the template exists.
+        // Check the template exists.
         if (!is_readable($templatepath)) {
             throw new coding_exception('The template ' . $templatefile . ' (' . $templatepath .
                     ') for page type ' . $generaltype . ' cannot be found in this theme (' .
@@ -664,6 +664,7 @@ class theme_config {
      * type of page.
      * @param string $generaltype the general type of the page.
      * @param block_manager $blockmanager the block_manger to set up.
+     * @return void
      */
     public function setup_blocks($generaltype, $blockmanager) {
         // Legacy fallback.
@@ -714,8 +715,9 @@ class theme_config {
     /**
      * Helper method used by {@link update_legacy_information()}. Update one entry
      * in the $this->pluginsheets array, based on the legacy $property propery.
-     * @param $plugintype e.g. 'mod'.
-     * @param $property e.g. 'modsheets'.
+     * @param string $plugintype e.g. 'mod'.
+     * @param string $property e.g. 'modsheets'.
+     * @return void
      */
     protected function update_legacy_plugin_sheets($plugintype, $property) {
         // In Moodle 1.9, modsheets etc. were ignored if standardsheets was false.
@@ -733,6 +735,7 @@ class theme_config {
      * This method looks a the settings that have been loaded, to see whether
      * any legacy things are being used, and outputs warning and tries to update
      * things to use equivalent newer settings.
+     * @return void
      */
     protected function update_legacy_information() {
         global $CFG;
@@ -781,6 +784,7 @@ class theme_config {
      * Set the variable $CFG->pixpath and $CFG->modpixpath to be the right
      * ones for this theme. These should no longer be used, but legacy code
      * might still rely on them.
+     * @return void
      */
     public function setup_legacy_pix_paths() {
         global $CFG;
@@ -822,7 +826,11 @@ class pix_icon_finder implements icon_finder {
     public function __construct($theme) {
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @return string the URL for that icon.
+     */
     public function old_icon_url($iconname) {
         global $CFG;
         if (file_exists($CFG->dirroot . '/pix/' . $iconname . '.png')) {
@@ -832,7 +840,12 @@ class pix_icon_finder implements icon_finder {
         }
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
+     * @return string the URL for that icon.
+     */
     public function mod_icon_url($iconname, $module) {
         global $CFG;
         if (file_exists($CFG->dirroot . '/mod/' . $module . '/' . $iconname . '.png')) {
@@ -862,7 +875,11 @@ class theme_icon_finder implements icon_finder {
         $this->themename = $theme->name;
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @return string the URL for that icon.
+     */
     public function old_icon_url($iconname) {
         global $CFG;
         if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/' . $iconname . '.png')) {
@@ -872,7 +889,12 @@ class theme_icon_finder implements icon_finder {
         }
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
+     * @return string the URL for that icon.
+     */
     public function mod_icon_url($iconname, $module) {
         global $CFG;
         if (file_exists($CFG->themedir . '/' . $this->themename . '/pix/mod/' . $module . '/' . $iconname . '.png')) {
@@ -908,7 +930,11 @@ class smartpix_icon_finder extends pix_icon_finder {
         }
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @return string the URL for that icon.
+     */
     public function old_icon_url($iconname) {
         foreach ($this->places as $dirroot => $urlroot) {
             if (file_exists($dirroot . $iconname . '.png')) {
@@ -920,7 +946,12 @@ class smartpix_icon_finder extends pix_icon_finder {
         return parent::old_icon_url($iconname);
     }
 
-    /* Implement interface method. */
+    /**
+     * Implement interface method. 
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
+     * @return string the URL for that icon.
+     */
     public function mod_icon_url($iconname, $module) {
         foreach ($this->places as $dirroot => $urlroot) {
             if (file_exists($dirroot . 'mod/' . $iconname . '.png')) {
@@ -998,7 +1029,13 @@ abstract class renderer_factory_base implements renderer_factory {
  * @since     Moodle 2.0
  */
 class standard_renderer_factory extends renderer_factory_base {
-    /* Implement the subclass method. */
+    /**
+     * Implement the subclass method
+     * @param string $module name such as 'core', 'mod_forum' or 'qtype_multichoice'.
+     * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return object an object implementing the requested renderer interface.
+     */
     public function get_renderer($module, $page, $subtype=null) {
         if ($module == 'core') {
             return new moodle_core_renderer($page);
@@ -1018,7 +1055,13 @@ class standard_renderer_factory extends renderer_factory_base {
  * @since     Moodle 2.0
  */
 class cli_renderer_factory extends standard_renderer_factory {
-    /* Implement the subclass method. */
+    /**
+     * Implement the subclass method
+     * @param string $module name such as 'core', 'mod_forum' or 'qtype_multichoice'.
+     * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return object an object implementing the requested renderer interface.
+     */
     public function get_renderer($module, $page, $subtype=null) {
         if ($module == 'core') {
             return new cli_core_renderer($page);
@@ -1051,7 +1094,6 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
     /**
      * Constructor.
      * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
      */
     public function __construct($theme) {
         global $CFG;
@@ -1072,7 +1114,13 @@ class theme_overridden_renderer_factory extends standard_renderer_factory {
         }
     }
 
-    /* Implement the interface method. */
+    /**
+     * Implement the subclass method
+     * @param string $module name such as 'core', 'mod_forum' or 'qtype_multichoice'.
+     * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return object an object implementing the requested renderer interface.
+     */
     public function get_renderer($module, $page, $subtype=null) {
         foreach ($this->prefixes as $prefix) {
             if (is_null($subtype)) {
@@ -1127,7 +1175,6 @@ class template_renderer_factory extends renderer_factory_base {
     /**
      * Constructor.
      * @param object $theme the theme we are rendering for.
-     * @param moodle_page $page the page we are doing output for.
      */
     public function __construct($theme) {
         global $CFG;
@@ -1149,7 +1196,13 @@ class template_renderer_factory extends renderer_factory_base {
         $this->searchpaths[] = $CFG->themedir .'/standardtemplate/templates';
     }
 
-    /* Implement the subclass method. */
+    /**
+     * Implement the subclass method
+     * @param string $module name such as 'core', 'mod_forum' or 'qtype_multichoice'.
+     * @param moodle_page $page the page the renderer is outputting content for.
+     * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
+     * @return object an object implementing the requested renderer interface.
+     */
     public function get_renderer($module, $page, $subtype=null) {
         // Refine the list of search paths for this module.
         $searchpaths = array();
@@ -1189,7 +1242,6 @@ class moodle_renderer_base {
 
     /**
      * Constructor
-     * @param $opencontainers the xhtml_container_stack to use.
      * @param moodle_page $page the page we are doing output for.
      */
     public function __construct($page) {
@@ -1205,26 +1257,65 @@ class moodle_renderer_base {
         return $this->page->state >= moodle_page::STATE_IN_BODY;
     }
 
+    /**
+     * Outputs a tag with attributes and contents
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @param string $contents What goes between the opening and closing tags
+     * @return string HTML fragment
+     */
     protected function output_tag($tagname, $attributes, $contents) {
         return $this->output_start_tag($tagname, $attributes) . $contents .
                 $this->output_end_tag($tagname);
     }
+
+    /**
+     * Outputs an opening tag with attributes
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
     protected function output_start_tag($tagname, $attributes) {
         return '<' . $tagname . $this->output_attributes($attributes) . '>';
     }
+
+    /**
+     * Outputs a closing tag
+     * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
+     * @return string HTML fragment
+     */
     protected function output_end_tag($tagname) {
         return '</' . $tagname . '>';
     }
+
+    /**
+     * Outputs an empty tag with attributes
+     * @param string $tagname The name of tag ('input', 'img', 'br' etc.)
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
     protected function output_empty_tag($tagname, $attributes) {
         return '<' . $tagname . $this->output_attributes($attributes) . ' />';
     }
 
+    /**
+     * Outputs a HTML attribute and value
+     * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
+     * @param string $value The value of the attribute
+     * @return string HTML fragment
+     */
     protected function output_attribute($name, $value) {
         $value = trim($value);
         if ($value || is_numeric($value)) { // We want 0 to be output.
             return ' ' . $name . '="' . $value . '"';
         }
     }
+
+    /**
+     * Outputs a list of HTML attributes and values
+     * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     * @return string HTML fragment
+     */
     protected function output_attributes($attributes) {
         if (empty($attributes)) {
             $attributes = array();
@@ -1235,6 +1326,12 @@ class moodle_renderer_base {
         }
         return $output;
     }
+    
+    /**
+     * Given an array or space-separated list of classes, prepares and returns the HTML class attribute value
+     * @param mixed $classes Space-separated string or array of classes
+     * @return string HTML class attribute value
+     */
     public static function prepare_classes($classes) {
         if (is_array($classes)) {
             return implode(' ', array_unique($classes));
@@ -1243,12 +1340,12 @@ class moodle_renderer_base {
     }
 
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->pixpath/i/course.gif";
      * then old_icon_url('i/course'); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
+     * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
     public function old_icon_url($iconname) {
@@ -1256,13 +1353,13 @@ class moodle_renderer_base {
     }
 
     /**
-     * Return the URL for an icon indentifed as in pre-Moodle 2.0 code.
+     * Return the URL for an icon identified as in pre-Moodle 2.0 code.
      *
      * Suppose you have old code like $url = "$CFG->modpixpath/$mod/icon.gif";
      * then mod_icon_url('icon', $mod); will return the equivalent URL that is correct now.
      *
-     * @param $iconname the name of the icon.
-     * @param $module the module the icon belongs to.
+     * @param string $iconname the name of the icon.
+     * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
      */
     public function mod_icon_url($iconname, $module) {
@@ -1299,13 +1396,12 @@ class template_renderer extends moodle_renderer_base {
      * Magic word used when breaking apart container templates to implement
      * _start and _end methods.
      */
-    const contentstoken = '-@#-Contents-go-here-#@-';
+    const CONTENTSTOKEN = '-@#-Contents-go-here-#@-';
 
     /**
      * Constructor
      * @param string $copiedclass the name of a class whose API we should be copying.
-     * @param $searchpaths a list of folders to search for templates in.
-     * @param $opencontainers the xhtml_container_stack to use.
+     * @param array $searchpaths a list of folders to search for templates in.
      * @param moodle_page $page the page we are doing output for.
      */
     public function __construct($copiedclass, $searchpaths, $page) {
@@ -1314,7 +1410,12 @@ class template_renderer extends moodle_renderer_base {
         $this->searchpaths = $searchpaths;
     }
 
-    /* PHP magic method implementation. */
+    /**
+     * PHP magic method implementation. Do not use this method directly.
+     * @param string $method The method to call
+     * @param array $arguments The arguments to pass to the method
+     * @return mixed The return value of the called method
+     */
     public function __call($method, $arguments) {
         if (substr($method, -6) == '_start') {
             return $this->process_start(substr($method, 0, -6), $arguments);
@@ -1362,8 +1463,8 @@ class template_renderer extends moodle_renderer_base {
 
     /**
      * Actually do the work of rendering the template.
-     * @param $_template the full path to the template file.
-     * @param $_namedarguments an array variable name => value, the variables
+     * @param string $_template the full path to the template file.
+     * @param array $_namedarguments an array variable name => value, the variables
      *      that should be available to the template.
      * @return string the HTML to be output.
      */
@@ -1374,10 +1475,10 @@ class template_renderer extends moodle_renderer_base {
 
         global $CFG, $SITE, $THEME, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
-        // of a renderer class, and this object may, or may not, be the the same as
+        // of a renderer class, and this object may, or may not, be the same as
         // the global $OUTPUT object. When rendering the template, we want to use
         // this object. However, people writing Moodle code expect the current
-        // rederer to be called $OUTPUT, not $this, so define a variable called
+        // renderer to be called $OUTPUT, not $this, so define a variable called
         // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
         $OUTPUT = $this;
         $PAGE = $this->page;
@@ -1413,16 +1514,16 @@ class template_renderer extends moodle_renderer_base {
 
     /**
      * Handle methods like print_box_start by using the print_box template,
-     * splitting the result, pusing the end onto the stack, then returning the start.
+     * splitting the result, pushing the end onto the stack, then returning the start.
      * @param string $method the method that was called, with _start stripped off.
      * @param array $arguments the arguments that were passed to it.
      * @return string the HTML to be output.
      */
-    protected function process_start($template, $arguments) {
-        array_unshift($arguments, self::contentstoken);
-        $html = $this->process_template($template, $arguments);
-        list($start, $end) = explode(self::contentstoken, $html, 2);
-        $this->opencontainers->push($template, $end);
+    protected function process_start($method, $arguments) {
+        array_unshift($arguments, self::CONTENTSTOKEN);
+        $html = $this->process_template($method, $arguments);
+        list($start, $end) = explode(self::CONTENTSTOKEN, $html, 2);
+        $this->opencontainers->push($method, $end);
         return $start;
     }
 
@@ -1433,8 +1534,8 @@ class template_renderer extends moodle_renderer_base {
      * @param array $arguments not used. Assumed to be irrelevant.
      * @return string the HTML to be output.
      */
-    protected function process_end($template, $arguments) {
-        return $this->opencontainers->pop($template);
+    protected function process_end($method, $arguments) {
+        return $this->opencontainers->pop($method);
     }
 
     /**
@@ -1458,7 +1559,7 @@ class template_renderer extends moodle_renderer_base {
  *
  * This makes it much easier to always generate well formed XHTML output, even
  * if execution terminates abruptly. Any time you output some opening HTML
- * without the matching closing HTML, you should push the neccessary close tags
+ * without the matching closing HTML, you should push the necessary close tags
  * onto the stack.
  *
  * @copyright 2009 Tim Hunt
@@ -1479,6 +1580,7 @@ class xhtml_container_stack {
      * @param string $type The type of container. This is checked when {@link pop()}
      *      is called and must match, otherwise a developer debug warning is output.
      * @param string $closehtml The HTML required to close the container.
+     * @return void
      */
     public function push($type, $closehtml) {
         $container = new stdClass;
@@ -1495,7 +1597,7 @@ class xhtml_container_stack {
      * must match the type passed when the container was opened, otherwise a
      * warning will be output.
      * @param string $type The type of container.
-     * @return string the HTML requried to close the container.
+     * @return string the HTML required to close the container.
      */
     public function pop($type) {
         if (empty($this->opencontainers)) {
@@ -1521,9 +1623,9 @@ class xhtml_container_stack {
      * Close all but the last open container. This is useful in places like error
      * handling, where you want to close all the open containers (apart from <body>)
      * before outputting the error message.
-     * @param $shouldbenone assert that the stack shold be empty now - causes a
+     * @param bool $shouldbenone assert that the stack should be empty now - causes a
      *      developer debug warning if it isn't.
-     * @return string the HTML requried to close any open containers inside <body>.
+     * @return string the HTML required to close any open containers inside <body>.
      */
     public function pop_all_but_last($shouldbenone = false) {
         if ($shouldbenone && count($this->opencontainers) != 1) {
@@ -1543,6 +1645,7 @@ class xhtml_container_stack {
      * class without properly emptying the stack (for example, in a unit test).
      * Calling this method stops the destruct method from outputting a developer
      * debug warning. After calling this method, the instance can no longer be used.
+     * @return void
      */
     public function discard() {
         $this->opencontainers = null;
@@ -1551,6 +1654,7 @@ class xhtml_container_stack {
     /**
      * Emergency fallback. If we get to the end of processing and not all
      * containers have been closed, output the rest with a developer debug warning.
+     * @return void
      */
     public function __destruct() {
         if (empty($this->opencontainers)) {
@@ -1563,12 +1667,22 @@ class xhtml_container_stack {
         $container = array_pop($this->opencontainers);
         echo $container->closehtml;
     }
-
+    
+    /**
+     * Adds an entry to the log.
+     * @param string $action The name of the action
+     * @param string $type The type of action
+     * @return void
+     */
     protected function log($action, $type) {
         $this->log[] = '<li>' . $action . ' ' . $type . ' at:' .
                 format_backtrace(debug_backtrace()) . '</li>';
     }
-
+    
+    /**
+     * Outputs the log's contents as a HTML list.
+     * @return string HTML list of the log
+     */
     protected function output_log() {
         return '<ul>' . implode("\n", $this->log) . '</ul>';
     }
@@ -1669,7 +1783,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
-            if(preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
+            if (preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
                 // This is a horrifically bad way to handle focus but it is passed in
                 // through messy formslib::moodleform
                 $this->page->requires->js_function_call('old_onload_focus', Array($matches[1], $matches[2]));
@@ -1709,7 +1823,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     /**
      * The standard tags (typically performance information and validation links,
-     * if we are indevelope debug mode) that should be output in the footer area
+     * if we are in developer debug mode) that should be output in the footer area
      * of the page. Designed to be called in theme layout.php files.
      * @return string HTML fragment.
      */
@@ -1795,8 +1909,6 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param string $message The message to display to the user if any
      * @param int $delay The delay before redirecting a user, if $message has been
      *         set this is a requirement and defaults to 3, set to 0 no delay
-     * @param string $messageclass The css class to put on the message that is
-     *         being displayed to the user
      * @param boolean $debugdisableredirect this redirect has been disabled for
      *         debugging purposes. Display a message that explains, and don't
      *         trigger the redirect.
@@ -1809,7 +1921,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         switch ($this->page->state) {
             case moodle_page::STATE_BEFORE_HEADER :
-                // No output yet it is safe to delivery the full arsenol of redirect methods
+                // No output yet it is safe to delivery the full arsenal of redirect methods
                 if (!$debugdisableredirect) {
                     // Don't use exactly the same time here, it can cause problems when both redirects fire at the same time.
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
@@ -1847,22 +1959,22 @@ class moodle_core_renderer extends moodle_renderer_base {
      * Start output by sending the HTTP headers, and printing the HTML <head>
      * and the start of the <body>.
      *
-     * To control what is printed, you should set properies on $PAGE. If you
+     * To control what is printed, you should set properties on $PAGE. If you
      * are familiar with the old {@link print_header()} function from Moodle 1.9
      * you will find that there are properties on $PAGE that correspond to most
-     * of the old paramters to could be passed to print_header.
+     * of the old parameters to could be passed to print_header.
      *
-     * Not that, in due course, the remaining $navigation, $menu paramters here
+     * Not that, in due course, the remaining $navigation, $menu parameters here
      * will be replaced by more properties of $PAGE, but that is still to do.
      *
-     * @param $navigation legacy, like the old paramter to print_header. Will be
+     * @param string $navigation legacy, like the old parameter to print_header. Will be
      *      removed when there is a $PAGE->... replacement.
-     * @param $menu legacy, like the old paramter to print_header. Will be
+     * @param string $menu legacy, like the old parameter to print_header. Will be
      *      removed when there is a $PAGE->... replacement.
      * @return string HTML that you must output this, preferably immediately.
      */
     public function header($navigation = '', $menu='') {
-    // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
+        // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
         global $USER, $CFG;
 
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
@@ -1896,14 +2008,21 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->page->set_state(moodle_page::STATE_IN_BODY);
         return $header . $this->skip_link_target();
     }
-
+    
+    /**
+     * Renders and outputs the page template.
+     * @param string $templatefile The name of the template's file
+     * @param array $menu The menu that will be used in the included file
+     * @param array $navigation The navigation that will be used in the included file
+     * @return string HTML code
+     */
     protected function render_page_template($templatefile, $menu, $navigation) {
         global $CFG, $SITE, $THEME, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
-        // of a renderer class, and this object may, or may not, be the the same as
+        // of a renderer class, and this object may, or may not, be the same as
         // the global $OUTPUT object. When rendering the template, we want to use
         // this object. However, people writing Moodle code expect the current
-        // rederer to be called $OUTPUT, not $this, so define a variable called
+        // renderer to be called $OUTPUT, not $this, so define a variable called
         // $OUTPUT pointing at $this. The same comment applies to $PAGE and $COURSE.
         $OUTPUT = $this;
         $PAGE = $this->page;
@@ -1916,6 +2035,12 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $template;
     }
 
+    /**
+     * Renders and outputs a legacy template.
+     * @param array $navigation The navigation that will be used in the included file
+     * @param array $menu The menu that will be used in the included file
+     * @return string HTML code
+     */
     protected function handle_legacy_theme($navigation, $menu) {
         global $CFG, $SITE, $USER;
         // Set a pretend global from the properties of this class.
@@ -2023,7 +2148,11 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         return $output;
     }
-
+    
+    /**
+     * Outputs the page's footer
+     * @return string HTML fragment
+     */
     public function footer() {
         $output = $this->opencontainers->pop_all_but_last(true);
 
@@ -2051,7 +2180,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     /**
      * Output the row of editing icons for a block, as defined by the controls array.
-     * @param $controls an array like {@link block_contents::$controls}.
+     * @param array $controls an array like {@link block_contents::$controls}.
      * @return HTML fragment.
      */
     public function block_controls($controls) {
@@ -2126,7 +2255,12 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->init_block_hider_js($bc);
         return $output;
     }
-
+    
+    /**
+     * Calls the JS require function to hide a block.
+     * @param block_contents $bc A block_contents object
+     * @return void
+     */
     protected function init_block_hider_js($bc) {
         if ($bc->collapsible != block_contents::NOT_HIDEABLE) {
             $userpref = 'block' . $bc->blockinstanceid . 'hidden';
@@ -2164,7 +2298,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     /**
      * Output all the blocks in a particular region.
-     * @param $region the name of a region on this page.
+     * @param string $region the name of a region on this page.
      * @return string the HTML to be output.
      */
     public function blocks_for_region($region) {
@@ -2247,7 +2381,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $html = $this->output_start_tag('select', $attributes) . "\n";
         foreach ($selectmenu->options as $value => $label) {
             $attributes = array('value' => $value);
-            if ((string)$value == (string)$selectmenu->selectedvalue ||
+            if ((string) $value == (string) $selectmenu->selectedvalue ||
                     (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
                 $attributes['selected'] = 'selected';
             }
@@ -2265,7 +2399,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     /**
      * Output an error message. By default wraps the error message in <span class="error">.
      * If the error message is blank, nothing is output.
-     * @param $message the error message.
+     * @param string $message the error message.
      * @return string the HTML to output.
      */
     public function error_text($message) {
@@ -2280,14 +2414,14 @@ class moodle_core_renderer extends moodle_renderer_base {
      *
      * To terminate the current script with a fatal error, call the {@link print_error}
      * function, or throw an exception. Doing either of those things will then call this
-     * funciton to display the error, before terminating the exection.
+     * function to display the error, before terminating the execution.
      *
-     * @param string $message
-     * @param string $moreinfourl
-     * @param string $link
-     * @param array $backtrace
-     * @param string $debuginfo
-     * @param bool $showerrordebugwarning
+     * @param string $message The message to output
+     * @param string $moreinfourl URL where more info can be found about the error
+     * @param string $link Link for the Continue button
+     * @param array $backtrace The execution backtrace
+     * @param string $debuginfo Debugging information
+     * @param bool $showerrordebugwarning Whether or not to show a debugging warning
      * @return string the HTML to output.
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace,
@@ -2476,13 +2610,21 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     /**
      * Output the place a skip link goes to.
-     * @param $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
+     * @param string $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.
      * @return string the HTML to output.
      */
     public function skip_link_target($id = '') {
         return $this->output_tag('span', array('id' => $id), '');
     }
 
+    /**
+     * Outputs a heading
+     * @param string $text The text of the heading
+     * @param int $level The level of importance of the heading
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string the HTML to output.
+     */
     public function heading($text, $level, $classes = 'main', $id = '') {
         $level = (integer) $level;
         if ($level < 1 or $level > 6) {
@@ -2492,30 +2634,64 @@ class moodle_core_renderer extends moodle_renderer_base {
                 array('id' => $id, 'class' => moodle_renderer_base::prepare_classes($classes)), $text);
     }
 
+    /**
+     * Outputs a box.
+     * @param string $contents The contents of the box
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string the HTML to output.
+     */
     public function box($contents, $classes = 'generalbox', $id = '') {
         return $this->box_start($classes, $id) . $contents . $this->box_end();
     }
 
+    /**
+     * Outputs the opening section of a box.
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string the HTML to output.
+     */
     public function box_start($classes = 'generalbox', $id = '') {
         $this->opencontainers->push('box', $this->output_end_tag('div'));
         return $this->output_start_tag('div', array('id' => $id,
                 'class' => 'box ' . moodle_renderer_base::prepare_classes($classes)));
     }
 
+    /**
+     * Outputs the closing section of a box.
+     * @return string the HTML to output.
+     */
     public function box_end() {
         return $this->opencontainers->pop('box');
     }
 
+    /**
+     * Outputs a container.
+     * @param string $contents The contents of the box
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string the HTML to output.
+     */
     public function container($contents, $classes = '', $id = '') {
         return $this->container_start($classes, $id) . $contents . $this->container_end();
     }
 
+    /**
+     * Outputs the opening section of a container.
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string the HTML to output.
+     */
     public function container_start($classes = '', $id = '') {
         $this->opencontainers->push('container', $this->output_end_tag('div'));
         return $this->output_start_tag('div', array('id' => $id,
                 'class' => moodle_renderer_base::prepare_classes($classes)));
     }
 
+    /**
+     * Outputs the closing section of a container.
+     * @return string the HTML to output.
+     */
     public function container_end() {
         return $this->opencontainers->pop('container');
     }
@@ -2525,7 +2701,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 /**
  * Base class for classes representing HTML elements, like moodle_select_menu.
  *
- * Handles the id and class attribues.
+ * Handles the id and class attributes.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -2559,6 +2735,7 @@ class moodle_html_component {
      * Set the class name array.
      * @param mixed $classes either an array of class names or a space-separated
      *      string containing class names.
+     * @return void
      */
     public function set_classes($classes) {
         $this->classes = self::clean_classes($classes);
@@ -2567,6 +2744,7 @@ class moodle_html_component {
     /**
      * Add a class name to the class names array.
      * @param string $class the new class name to add.
+     * @return void
      */
     public function add_class($class) {
         $this->classes[] = $class;
@@ -2576,6 +2754,7 @@ class moodle_html_component {
      * Add a whole lot of class names to the class names array.
      * @param mixed $classes either an array of class names or a space-separated
      *      string containing class names.
+     * @return void
      */
     public function add_classes($classes) {
         $this->classes += self::clean_classes($classes);
@@ -2592,6 +2771,7 @@ class moodle_html_component {
     /**
      * Perform any cleanup or final processing that should be done before an
      * instance of this class is output.
+     * @return void
      */
     public function prepare() {
         $this->classes = array_unique(self::clean_classes($this->classes));
@@ -2600,6 +2780,9 @@ class moodle_html_component {
     /**
      * This checks developer do not try to assign a property directly
      * if we have a setter for it. Otherwise, the property is set as expected.
+     * @param string $name The name of the variable to set
+     * @param mixed $value The value to assign to the variable
+     * @return void
      */
     public function __set($name, $value) {
         if ($name == 'class') {
@@ -2632,7 +2815,7 @@ class moodle_select_menu extends moodle_html_component {
     public $options;
     /**
      * @var string the name of this form control. That is, the name of the GET/POST
-     * variable that will be set if this select is submmitted as part of a form.
+     * variable that will be set if this select is submitted as part of a form.
      */
     public $name;
     /**
@@ -2681,7 +2864,10 @@ class moodle_select_menu extends moodle_html_component {
      */
     public $script = '';
 
-    /* @see lib/moodle_html_component#prepare() */
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
     public function prepare() {
         if (empty($this->id)) {
             $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
@@ -2810,7 +2996,10 @@ class block_contents extends moodle_html_component {
      */
     public $controls = array();
 
-    /* @see lib/moodle_html_component#prepare() */
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
     public function prepare() {
         $this->skipid = self::$idcounter;
         self::$idcounter += 1;
@@ -2902,7 +3091,7 @@ class html_table extends moodle_html_component {
      */
     public $data;
     /**
-     * @var string width of the table, percentage of the page prefered. Defaults to 80% of the page width.
+     * @var string width of the table, percentage of the page preferred. Defaults to 80% of the page width.
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
      */
     public $width = null;
@@ -2932,7 +3121,7 @@ class html_table extends moodle_html_component {
      */
     public $rowclasses;
     /**
-     * @var array classes to add to every cell in a particular colummn,
+     * @var array classes to add to every cell in a particular column,
      * space-separated string. Class 'cell' is added automatically by the renderer.
      * Classes 'c0' or 'c1' are added automatically for every odd or even column,
      * respectively. Class 'lastcol' is added automatically for all last cells
@@ -2953,6 +3142,7 @@ class html_table extends moodle_html_component {
 
     /**
      * @see moodle_html_component::prepare()
+     * @return void
      */
     public function prepare() {
         if (!empty($this->align)) {
@@ -3009,7 +3199,11 @@ class html_table extends moodle_html_component {
         }
         parent::prepare();
     }
-
+    /**
+     * @param string $name The name of the variable to set
+     * @param mixed $value The value to assign to the variable
+     * @return void
+     */
     public function __set($name, $value) {
         if ($name == 'rowclass') {
             debugging('rowclass[] has been deprecated for html_table ' .
@@ -3023,7 +3217,7 @@ class html_table extends moodle_html_component {
 
 
 /**
- * A renderer that generates output for commandlines scripts.
+ * A renderer that generates output for command-line scripts.
  *
  * The implementation of this renderer is probably incomplete.
  *
@@ -3032,11 +3226,23 @@ class html_table extends moodle_html_component {
  * @since     Moodle 2.0
  */
 class cli_core_renderer extends moodle_core_renderer {
+    /**
+     * Returns the page header.
+     * @return string HTML fragment
+     */ 
     public function header() {
         output_starting_hook();
         return $this->page->heading . "\n";
     }
-
+    
+    /**
+     * Returns a template fragment representing a Heading.
+     * @param string $text The text of the heading
+     * @param int $level The level of importance of the heading
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @return string A template fragment for a heading
+     */ 
     public function heading($text, $level, $classes = 'main', $id = '') {
         $text .= "\n";
         switch ($level) {
@@ -3049,6 +3255,16 @@ class cli_core_renderer extends moodle_core_renderer {
         }
     }
 
+    /**
+     * Returns a template fragment representing a fatal error.
+     * @param string $message The message to output
+     * @param string $moreinfourl URL where more info can be found about the error
+     * @param string $link Link for the Continue button
+     * @param array $backtrace The execution backtrace
+     * @param string $debuginfo Debugging information
+     * @param bool $showerrordebugwarning Whether or not to show a debugging warning
+     * @return string A template fragment for a fatal error
+     */
     public function fatal_error($message, $moreinfourl, $link, $backtrace,
                 $debuginfo = null, $showerrordebugwarning = false) {
         $output = "!!! $message !!!\n";
@@ -3062,7 +3278,13 @@ class cli_core_renderer extends moodle_core_renderer {
             }
         }
     }
-
+    
+    /**
+     * Returns a template fragment representing a notification.
+     * @param string $message The message to include
+     * @param string $classes A space-separated list of CSS classes
+     * @return string A template fragment for a notification
+     */
     public function notification($message, $classes = 'notifyproblem') {
         $message = clean_text($message);
         if ($classes === 'notifysuccess') {
@@ -3129,10 +3351,11 @@ class cli_core_renderer extends moodle_core_renderer {
  * }
  * </code>
  *
- * @param array $files an arry of the CSS fiels that need to be output.
+ * @param array $files an array of the CSS fields that need to be output.
  * @param array $toreplace for convenience. If you are going to output the names
  *      of the css files, for debugging purposes, then you should output
- *      str_replace($toreplace, '', $file); becuase it looks prettier.
+ *      str_replace($toreplace, '', $file); because it looks prettier.
+ * @return void
  */
 function output_css_replacing_constants($files, $toreplace) {
     // Get all the CSS.
@@ -3168,10 +3391,11 @@ function output_css_replacing_constants($files, $toreplace) {
  * CSS editors like CSSEdit. Any files that have a .php extension are still included
  * inline.
  *
- * @param array $files an arry of the CSS fiels that need to be output.
+ * @param array $files an array of the CSS fields that need to be output.
  * @param array $toreplace for convenience. If you are going to output the names
  *      of the css files, for debugging purposes, then you should output
- *      str_replace($toreplace, '', $file); becuase it looks prettier.
+ *      str_replace($toreplace, '', $file); because it looks prettier.
+ * @return void
  */
 function output_css_for_css_edit($files, $toreplace) {
     foreach ($files as $file) {
