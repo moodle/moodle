@@ -39,12 +39,12 @@
             }
             
             lesson_print_header($cm, $course, $lesson);
-            print_simple_box_start('center');
+            print_box_start('generalbox boxaligncenter');
             echo '<div style="text-align:center;">';
             echo '<p>'.$message.'</p>';
             echo '<div class="lessonbutton standardbutton" style="padding: 5px;"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. get_string('returnto', 'lesson', format_string($course->fullname, true)) .'</a></div>';
             echo '</div>';
-            print_simple_box_end();
+            print_box_end();
             print_footer($course);
             exit();
         
@@ -65,7 +65,7 @@
             if (!$correctpass) {
                 lesson_print_header($cm, $course, $lesson);
                 echo "<div class=\"password-form\">\n";
-                print_simple_box_start('center');
+                print_box_start('generalbox boxaligncenter');
                 echo '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">' . "\n";
                 echo '<fieldset class="invisiblefieldset">';
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
@@ -79,7 +79,7 @@
 
                 lesson_print_submit_link(get_string('continue', 'lesson'), 'password', 'center', 'standardbutton submitbutton');
                 echo '</fieldset></form>';
-                print_simple_box_end();
+                print_box_end();
                 echo "</div>\n";
                 print_footer($course);
                 exit();
@@ -147,10 +147,10 @@
                 if (!empty($errors)) {  // print out the errors if any
                     lesson_print_header($cm, $course, $lesson);
                     echo '<p>';
-                    print_simple_box_start('center');
+                    print_box_start('generalbox boxaligncenter');
                     print_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
                     echo '<p style="text-align:center;">'.implode('<br />'.get_string('and', 'lesson').'<br />', $errors).'</p>';
-                    print_simple_box_end();
+                    print_box_end();
                     echo '</p>';
                     print_footer($course);
                     exit();
@@ -260,22 +260,22 @@
             lesson_print_header($cm, $course, $lesson);
             if ($lesson->timed) {
                 if ($lesson->retake) {
-                    print_simple_box('<p style="text-align:center;">'. get_string('leftduringtimed', 'lesson') .'</p>', 'center');
+                    print_box('<p style="text-align:center;">'. get_string('leftduringtimed', 'lesson') .'</p>', 'generalbox boxaligncenter');
                     echo '<div style="text-align:center;" class="lessonbutton standardbutton">'.
                               '<a href="view.php?id='.$cm->id.'&amp;pageid='.$firstpageid.'&amp;startlastseen=no">'.
                                 get_string('continue', 'lesson').'</a></div>';
                 } else {
-                    print_simple_box_start('center');
+                    print_box_start('generalbox boxaligncenter');
                     echo '<div style="text-align:center;">';
                     echo get_string('leftduringtimednoretake', 'lesson');
                     echo '<br /><br /><div class="lessonbutton standardbutton"><a href="../../course/view.php?id='. $course->id .'">'. get_string('returntocourse', 'lesson') .'</a></div>';
                     echo '</div>';
-                    print_simple_box_end();
+                    print_box_end();
                 }
                 
             } else {
-                print_simple_box("<p style=\"text-align:center;\">".get_string('youhaveseen','lesson').'</p>',
-                        "center");
+                print_box("<p style=\"text-align:center;\">".get_string('youhaveseen','lesson').'</p>',
+                        'generalbox boxaligncenter');
                 
                 echo '<div style="text-align:center;">';
                 echo '<span class="lessonbutton standardbutton">'.
@@ -297,12 +297,12 @@
             }
             if (!$lesson->retake) {
                 lesson_print_header($cm, $course, $lesson, 'view');
-                print_simple_box_start('center');
+                print_box_start('generalbox boxaligncenter');
                 echo "<div style=\"text-align:center;\">";
                 echo get_string("noretake", "lesson");
                 echo "<br /><br /><div class=\"lessonbutton standardbutton\"><a href=\"../../course/view.php?id=$course->id\">".get_string('returntocourse', 'lesson').'</a></div>';
                 echo "</div>";
-                print_simple_box_end();
+                print_box_end();
                 print_footer($course);
                 exit();
                   //redirect("../../course/view.php?id=$course->id", get_string("alreadytaken", "lesson"));
@@ -507,6 +507,7 @@
         }
 
     /// Print the page header, heading and tabs
+        lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
         lesson_print_header($cm, $course, $lesson, 'view', 'true', $page->id);
 
         if ($attemptflag) {
@@ -518,7 +519,14 @@
             lesson_print_ongoing_score($lesson);
         }
 
-        require($CFG->dirroot.'/mod/lesson/viewstart.html');
+        if ($lesson->displayleft) {
+            echo '<a name="maincontent" id="maincontent" title="' . get_string('anchortitle', 'lesson') . '"></a>';
+        }
+
+        if ($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { // Starts the slideshow div
+            echo '<div class="slideshow" style="background-color: ' . $lesson->bgcolor .
+                    '; height: ' . $lesson->height . 'px; width: ' . $lesson->width . 'px;">';
+        }
 
         // now starting to print the page's contents   
         if ($page->qtype == LESSON_BRANCHTABLE) {
@@ -530,9 +538,9 @@
         if (!$lesson->slideshow) {
             $options = new stdClass;
             $options->noclean = true;
-            print_simple_box('<div class="contents">'.
+            print_box('<div class="contents">'.
                             format_text($page->contents, FORMAT_MOODLE, $options).
-                            '</div>', 'center');
+                            '</div>', 'generalbox boxaligncenter');
         }
         
         // this is for modattempts option.  Find the users previous answer to this page,
@@ -556,7 +564,7 @@
                 echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
                 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-                print_simple_box_start("center");
+                print_box_start('generalbox boxaligncenter');
                 echo '<table width="100%">';
             }
             // default format text options
@@ -575,7 +583,7 @@
                     echo '<tr><td style="text-align:center;"><label for="answer">'.get_string('youranswer', 'lesson').'</label>'.
                         ": <input type=\"text\" id=\"answer\" name=\"answer\" size=\"50\" maxlength=\"200\" $value />\n";
                     echo '</td></tr></table>';
-                    print_simple_box_end();
+                    print_box_end();
                     lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                     break;
                 case LESSON_TRUEFALSE :
@@ -598,7 +606,7 @@
                         $i++;
                     }
                     echo '</table>';
-                    print_simple_box_end();
+                    print_box_end();
                     lesson_print_submit_link(get_string('pleasecheckoneanswer', 'lesson'), 'answerform');
                     break;
                 case LESSON_MULTICHOICE :
@@ -637,7 +645,7 @@
                         $i++;
                     }
                     echo '</table>';
-                    print_simple_box_end();
+                    print_box_end();
                     if ($page->qoption) {
                         $linkname = get_string('pleasecheckoneormoreanswers', 'lesson');
                     } else {
@@ -688,7 +696,7 @@
                         }
                     }
                     echo '</table>';
-                    print_simple_box_end();
+                    print_box_end();
                     lesson_print_submit_link(get_string('pleasematchtheabovepairs', 'lesson'), 'answerform');
                     break;
                 case LESSON_BRANCHTABLE :                  
@@ -745,12 +753,12 @@
                     echo '<tr><td style="text-align:center;" valign="top" nowrap="nowrap"><label for="answer">'.get_string("youranswer", "lesson").'</label>:</td><td>'.
                          '<textarea id="answer" name="answer" rows="15" cols="60">'.$value."</textarea>\n";
                     echo '</td></tr></table>';
-                    print_simple_box_end();
+                    print_box_end();
                     lesson_print_submit_link(get_string('pleaseenteryouranswerinthebox', 'lesson'), 'answerform');
                     break;
                 default: // close the tags MDL-7861
                     echo ('</table>');
-                    print_simple_box_end();
+                    print_box_end();
                 break;
             }
             if ($page->qtype != LESSON_BRANCHTABLE) {  // To fix XHTML problem (BT have their own forms)
@@ -813,7 +821,7 @@
         
         // Finish of the page
         lesson_print_progress_bar($lesson, $course);
-        require($CFG->dirroot.'/mod/lesson/viewend.html');
+
     } else {
         // end of lesson reached work out grade
         
@@ -833,12 +841,13 @@
             
             $DB->update_record("lesson_timer", $timer);
         }
-        
+
         add_to_log($course->id, "lesson", "end", "view.php?id=$cm->id", "$lesson->id", $cm->id);
-        
+
+        lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
         lesson_print_header($cm, $course, $lesson, 'view');
         print_heading(get_string("congratulations", "lesson"));
-        print_simple_box_start("center");
+        print_box_start('generalbox boxaligncenter');
         $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         if (isset($USER->modattempts[$lesson->id])) {
             $ntries--;  // need to look at the old attempts :)
@@ -920,7 +929,7 @@
             // display for teacher
             echo "<p style=\"text-align:center;\">".get_string("displayofgrade", "lesson")."</p>\n";
         }
-        print_simple_box_end(); //End of Lesson button to Continue.
+        print_box_end(); //End of Lesson button to Continue.
 
         // after all the grade processing, check to see if "Show Grades" is off for the course
         // if yes, redirect to the course page

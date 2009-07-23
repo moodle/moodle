@@ -230,19 +230,16 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraeditbuttons = false, $lessonpageid = NULL) {
     global $CFG, $PAGE;
 
-    // Note: MDL-19010 there will be further changes to printing header and blocks.
-    // The code will be much nicer than this eventually.
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $activityname = format_string($lesson->name, true, $course->id);
-    $strlesson = get_string('modulename', 'lesson');
 
     if (empty($title)) {
         $title = "{$course->shortname}: $activityname";
     }
 
 /// Build the buttons
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/lesson:edit', $context)) {
-        $buttons = update_module_button($cm->id, $course->id, $strlesson);
+        $buttons = update_module_button($cm->id, $course->id, get_string('modulename', 'lesson'));
         if ($extraeditbuttons) {
             if ($lessonpageid === NULL) {
                 print_error('invalidpageid', 'lesson');
@@ -255,20 +252,6 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
                             '<input type="hidden" name="pageid" value="'.$lessonpageid.'" />'.
                             '<input type="submit" value="'.get_string('editpagecontent', 'lesson').'" />'.
                             '</form>';
-
-                if (!empty($CFG->showblocksonmodpages) and $PAGE->user_allowed_editing()) {
-                    if ($PAGE->user_is_editing()) {
-                        $onoff = 'off';
-                    } else {
-                        $onoff = 'on';
-                    }
-                    $buttons .= '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/mod/lesson/view.php">'.
-                                '<input type="hidden" name="id" value="'.$cm->id.'" />'.
-                                '<input type="hidden" name="pageid" value="'.$lessonpageid.'" />'.
-                                '<input type="hidden" name="edit" value="'.$onoff.'" />'.
-                                '<input type="submit" value="'.get_string("blocksedit$onoff").'" />
-                                </form>';
-                }
             }
             $buttons = '<span class="edit_buttons">' . $buttons  .'</span>';
         }
@@ -1735,53 +1718,92 @@ function lesson_displayleftif($lesson) {
 }
 
 /**
- * If there is a media file associated with this 
- * lesson, then print it in a block.
- *
- * @param int $cmid Course Module ID for this lesson
- * @param object $lesson Full lesson record object
- * @return void
- **/
-function lesson_print_mediafile_block($cmid, $lesson) {
-    if (!empty($lesson->mediafile)) {
-        $url      = '/mod/lesson/mediafile.php?id='.$cmid;
-        $options  = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
-        $name     = 'lessonmediafile';
+ * 
+ * @param $cm
+ * @param $lesson
+ * @param $page
+ * @return unknown_type
+ */
+function lesson_add_pretend_blocks($page, $cm, $lesson, $timer = null) {
+    $bc = lesson_menu_block_contents($cm->id, $lesson);
+    if (!empty($bc)) {
+        $regions = $page->blocks->get_regions();
+        $firstregion = reset($regions);
+        $page->blocks->add_pretend_block($bc, $firstregion);
+    }
 
-        $content  = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
-        $content .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
-        
-        print_side_block(get_string('linkedmedia', 'lesson'), $content, NULL, NULL, '', array('class' => 'mediafile'), get_string('linkedmedia', 'lesson'));
+    $bc = lesson_mediafile_block_contents($cm->id, $lesson);
+    if (!empty($bc)) {
+        $page->blocks->add_pretend_block($bc, $page->blocks->get_default_region());
+    }
+
+    if (!empty($timer)) {
+        $bc = lesson_clock_block_contents($cm->id, $lesson, $timer, $page);
+        if (!empty($bc)) {
+            $page->blocks->add_pretend_block($bc, $page->blocks->get_default_region());
+        }
     }
 }
 
 /**
+ * If there is a media file associated with this 
+ * lesson, return a block_contents that displays it.
+ *
+ * @param int $cmid Course Module ID for this lesson
+ * @param object $lesson Full lesson record object
+ * @return block_contents
+ **/
+function lesson_mediafile_block_contents($cmid, $lesson) {
+    if (empty($lesson->mediafile)) {
+        return null;
+    }
+
+    $url      = '/mod/lesson/mediafile.php?id='.$cmid;
+    $options  = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
+    $name     = 'lessonmediafile';
+
+    $content  = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
+    $content .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
+
+    $bc = new block_contents();
+    $bc->title = get_string('linkedmedia', 'lesson');
+    $bc->set_classes('mediafile');
+    $bc->content = $content;
+
+    return $bc;
+}
+
+/**
  * If a timed lesson and not a teacher, then
- * print the clock
+ * return a block_contents containing the clock.
  *
  * @param int $cmid Course Module ID for this lesson
  * @param object $lesson Full lesson record object
  * @param object $timer Full timer record object
- * @return void
+ * @return block_contents
  **/
-function lesson_print_clock_block($cmid, $lesson, $timer) {
-    global $CFG, $PAGE;
-
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
-
+function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
     // Display for timed lessons and for students only
-    if($lesson->timed and !has_capability('mod/lesson:manage', $context) and !empty($timer)) {
-
-        $clocksettings = Array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
-        $content = $PAGE->requires->data_for_js('clocksettings', $clocksettings)->asap();
-        $content .= $PAGE->requires->js('mod/lesson/timer.js')->asap();
-        $content .= $PAGE->requires->js_function_call('show_clock')->asap();
-        $content .= '<div class="jshidewhenenabled">';
-        $content .= lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."\n";
-        $content .= '</div>';
-
-        print_side_block(get_string('timeremaining', 'lesson'), $content, NULL, NULL, '', array('class' => 'clock'), get_string('timeremaining', 'lesson'));
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    if(!$lesson->timed || has_capability('mod/lesson:manage', $context)) {
+        return null;
     }
+
+    $content = '<div class="jshidewhenenabled">';
+    $content .= lesson_print_time_remaining($timer->starttime, $lesson->maxtime, true)."\n";
+    $content .= '</div>';
+
+    $clocksettings = array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
+    $content .= $page->requires->data_for_js('clocksettings', $clocksettings)->now();
+    $content .= $page->requires->js('mod/lesson/timer.js')->now();
+    $content .= $page->requires->js_function_call('show_clock')->now();
+
+    $bc = new block_contents();
+    $bc->title = get_string('timeremaining', 'lesson');
+    $bc->set_classes('clock');
+    $bc->content = $content;
+
+    return $bc;
 }
 
 /**
@@ -1792,77 +1814,44 @@ function lesson_print_clock_block($cmid, $lesson, $timer) {
  * @param object $lesson Full lesson record object
  * @return void
  **/
-function lesson_print_menu_block($cmid, $lesson) {
+function lesson_menu_block_contents($cmid, $lesson) {
     global $CFG, $DB;
 
-    if ($lesson->displayleft) {
-        $pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0));
-        $params = array ("lessonid" => $lesson->id);
-        $pages  = $DB->get_records_select('lesson_pages', "lessonid = :lessonid", $params);
-        $currentpageid = optional_param('pageid', $pageid, PARAM_INT);
+    if (!$lesson->displayleft) {
+        return null;
+    }
 
-        if ($pageid and $pages) {
-            $content = '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
+    $pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0));
+    $params = array ("lessonid" => $lesson->id);
+    $pages  = $DB->get_records_select('lesson_pages', "lessonid = :lessonid", $params);
+    $currentpageid = optional_param('pageid', $pageid, PARAM_INT);
 
-            while ($pageid != 0) {
-                $page = $pages[$pageid];
+    if (!$pageid || !$pages) {
+        return null;
+    }
 
-                // Only process branch tables with display turned on
-                if ($page->qtype == LESSON_BRANCHTABLE and $page->display) {
-                    if ($page->id == $currentpageid) { 
-                        $content .= '<li class="selected">'.format_string($page->title,true)."</a></li>\n";
-                    } else {
-                        $content .= "<li class=\"notselected\"><a href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">".format_string($page->title,true)."</a></li>\n";
-                    }
-                    
-                }
-                $pageid = $page->nextpageid;
+    $content = '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
+
+    while ($pageid != 0) {
+        $page = $pages[$pageid];
+
+        // Only process branch tables with display turned on
+        if ($page->qtype == LESSON_BRANCHTABLE and $page->display) {
+            if ($page->id == $currentpageid) { 
+                $content .= '<li class="selected">'.format_string($page->title,true)."</li>\n";
+            } else {
+                $content .= "<li class=\"notselected\"><a href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">".format_string($page->title,true)."</a></li>\n";
             }
-            $content .= "</ul>\n</div>\n";
-            print_side_block(get_string('lessonmenu', 'lesson'), $content, NULL, NULL, '', array('class' => 'menu'), get_string('lessonmenu', 'lesson'));
+            
         }
+        $pageid = $page->nextpageid;
     }
+    $content .= "</ul>\n</div>\n";
+
+    $bc = new block_contents();
+    $bc->title = get_string('lessonmenu', 'lesson');
+    $bc->set_classes('menu');
+    $bc->content = $content;
+
+    return $bc;
 }
-
-/**
- * This is not ideal, but checks to see if a
- * column has "block" content.
- *
- * In the future, it would be nice if the lesson
- * media file, timer and navigation were blocks
- * then this would be unnecessary.
- *
- * @uses $CFG
- * @uses $PAGE
- * @param object $lesson Full lesson record object
- * @param array $pageblocks An array of block instances organized by left and right columns
- * @param string $column Pass either BLOCK_POS_RIGHT or BLOCK_POS_LEFT constants
- * @return boolean
- **/
-function lesson_blocks_have_content($lesson, $pageblocks, $column) {
-    global $CFG, $PAGE;
-
-    // First check lesson conditions
-    if ($column == BLOCK_POS_RIGHT) {
-        $managecap = false;
-        if ($cm = get_coursemodule_from_instance('lesson', $lesson->id, $lesson->course)) {
-            $managecap = has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $cm->id));
-        }
-        if (($lesson->timed and !$managecap) or !empty($lesson->mediafile)) {
-            return true;
-        }
-    } else if ($column == BLOCK_POS_LEFT) {
-        if ($lesson->displayleft) {
-            return true;
-        }
-    }
-    if (!empty($CFG->showblocksonmodpages)) {
-        if ((blocks_have_content($pageblocks, $column) || $PAGE->user_is_editing())) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-?>

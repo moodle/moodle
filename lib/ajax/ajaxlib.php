@@ -616,11 +616,26 @@ class required_js extends linked_requirement {
      * is responsible for outputting this HTML promptly.
      */
     public function asap() {
-        if ($this->is_done()) {
-            return;
-        }
         if (!$this->manager->is_head_done()) {
             $this->in_head();
+            return '';
+        } else {
+            return $this->now();
+        }
+    }
+
+    /**
+     * Return the required JavaScript immediately, so it can be included in some
+     * HTML that is being built.
+     *
+     * This is not really recommeneded. But is necessary in some legacy code that
+     * includes a .js files that does document.write.
+     *
+     * @return string The HTML for the script tag. The caller
+     * is responsible for making sure it is output.
+     */
+    public function now() {
+        if ($this->is_done()) {
             return '';
         }
         $output = $this->get_html();

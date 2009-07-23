@@ -7,26 +7,6 @@
  **/
 ?>
 
-<!-- Primary layout table -->
-<table id="layout-table" cellpadding="0" cellspacing="0">
-    <tr>
-        <!-- First Column -->
-        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_LEFT)) { ?>
-        <td id="left-column" style="width: <?php echo $leftcolumnwidth; ?>px;">
-            <?php
-                lesson_print_menu_block($cm->id, $lesson);
-
-                if (!empty($CFG->showblocksonmodpages)) {
-                    if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-                    }
-                }
-            ?>
-        </td>
-        <?php } ?>
-        <!-- Start Primary column -->
-        <td id="middle-column">
-    
 <?php if ($lesson->displayleft) { // Skip navigation anchor ?>
         
         <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
@@ -97,23 +77,3 @@
 <?php } ?>
 
             </form>
-        </td>
-        <!-- End primary column -->
-        <?php if (lesson_blocks_have_content($lesson, $pageblocks, BLOCK_POS_RIGHT)) { ?>
-        <td id="right-column" style="width: <?php echo $rightcolumnwidth; ?>px;">
-            <!-- Third column -->
-            <?php
-                lesson_print_clock_block($cm->id, $lesson, $timer);
-                lesson_print_mediafile_block($cm->id, $lesson);
-
-                if (!empty($CFG->showblocksonmodpages)) {
-                    if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-                        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-                    }
-                }
-            ?>
-        </td>
-        <?php } ?>
-    </tr>
-</table>
-<!-- End primary layout table -->

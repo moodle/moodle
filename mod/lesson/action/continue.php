@@ -682,7 +682,7 @@
                 $options = new stdClass;
                 $options->noclean = true;
                 $options->para = true;
-                $feedback = print_simple_box(format_text($page->contents, FORMAT_MOODLE, $options), 'center', '', '', 5, 'generalbox', '', true);
+                $feedback = print_box(format_text($page->contents, FORMAT_MOODLE, $options), 'generalbox boxaligncenter', '', true);
                 $feedback .= '<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
                                  "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options).'</div>';
             }
@@ -783,12 +783,9 @@
 
     $PAGE->set_url('mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
     $PAGE->set_subpage($page->id);
-    $pageblocks = blocks_setup($PAGE);
-
-    $leftcolumnwidth  = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-    $rightcolumnwidth = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
 /// Print the header, heading and tabs
+    lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
     lesson_print_header($cm, $course, $lesson, 'view', true, $page->id);
 
     include(dirname(__FILE__).'/continue.html');
