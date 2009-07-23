@@ -29,7 +29,8 @@ class enrolment_plugin_authorize
      */
     public function print_entry($course)
     {
-        global $CFG, $USER, $form;
+        global $CFG, $USER, $OUTPUT;
+        global $form;
 
         $zerocost = zero_cost($course);
         if ($zerocost) {
@@ -96,9 +97,9 @@ class enrolment_plugin_authorize
                 }
             }
 
-            print_box_start();
+            $OUTPUT->box_start();
             $frmenrol->display();
-            print_box_end();
+            $OUTPUT->box_end();
         }
 
         if ($course->password) {
@@ -149,7 +150,7 @@ class enrolment_plugin_authorize
      */
     private function cc_submit($form, $course)
     {
-        global $CFG, $USER, $SESSION, $DB;
+        global $CFG, $USER, $SESSION, $OUTPUT, $DB;
 
         prevent_double_paid($course);
 
@@ -314,13 +315,13 @@ class enrolment_plugin_authorize
 
                     load_all_capabilities();
 
-                    print_box_start('generalbox', 'notice');
+                    $OUTPUT->box_start('generalbox notice');
                     echo '<p>'. get_string('paymentthanks', 'moodle', $course->fullname) .'</p>';
                     echo '<div class="buttons">';
                     print_single_button("$CFG->wwwroot/enrol/authorize/index.php", array('order'=>$order->id), get_string('payments'));
                     print_single_button("$CFG->wwwroot/course/view.php", array('id'=>$course->id), $course->fullname);
                     echo '</div>';
-                    print_box_end();
+                    $OUTPUT->box_end();
                     print_footer($course);
                     exit; // break;
                 }

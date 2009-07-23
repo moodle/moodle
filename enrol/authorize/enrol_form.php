@@ -272,7 +272,7 @@ class enrol_authorize_form extends moodleform
         $GoodCard = true;
 
         //  Get rid of any non-digits
-        $Num = preg_replace("/[^0-9]~", "", $Num);
+        $Num = preg_replace("/[^0-9]~/", "", $Num);
 
         // Perform card-specific checks, if applicable
         switch ($Name)
