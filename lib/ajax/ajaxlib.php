@@ -427,7 +427,7 @@ class page_requirements_manager {
      * @return string the HTML code to go at the start of the <body> tag.
      */
     public function get_top_of_body_code() {
-        $output = $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY);
+        $output = '<div class="skiplinks">' . $this->get_linked_resources_code(self::WHEN_TOP_OF_BODY) . '</div>';
         $js = "document.body.className += ' jsenabled';\n";
         $js .= $this->get_javascript_code(self::WHEN_TOP_OF_BODY);
         $output .= ajax_generate_script_tag($js);
@@ -849,7 +849,7 @@ class required_skip_link extends linked_requirement {
     }
 
     public function get_html() {
-        return '<div><a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a></div>\n";
+        return '<a class="skip" href="#' . $this->url . '">' . $this->linktext . "</a>\n";
     }
 }
 
