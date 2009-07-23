@@ -827,7 +827,7 @@ class pix_icon_finder implements icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
@@ -841,7 +841,7 @@ class pix_icon_finder implements icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
@@ -876,7 +876,7 @@ class theme_icon_finder implements icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
@@ -890,7 +890,7 @@ class theme_icon_finder implements icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
@@ -931,7 +931,7 @@ class smartpix_icon_finder extends pix_icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @return string the URL for that icon.
      */
@@ -947,7 +947,7 @@ class smartpix_icon_finder extends pix_icon_finder {
     }
 
     /**
-     * Implement interface method. 
+     * Implement interface method.
      * @param string $iconname the name of the icon.
      * @param string $module the module the icon belongs to.
      * @return string the URL for that icon.
@@ -1326,7 +1326,7 @@ class moodle_renderer_base {
         }
         return $output;
     }
-    
+
     /**
      * Given an array or space-separated list of classes, prepares and returns the HTML class attribute value
      * @param mixed $classes Space-separated string or array of classes
@@ -1667,7 +1667,7 @@ class xhtml_container_stack {
         $container = array_pop($this->opencontainers);
         echo $container->closehtml;
     }
-    
+
     /**
      * Adds an entry to the log.
      * @param string $action The name of the action
@@ -1678,7 +1678,7 @@ class xhtml_container_stack {
         $this->log[] = '<li>' . $action . ' ' . $type . ' at:' .
                 format_backtrace(debug_backtrace()) . '</li>';
     }
-    
+
     /**
      * Outputs the log's contents as a HTML list.
      * @return string HTML list of the log
@@ -2008,7 +2008,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->page->set_state(moodle_page::STATE_IN_BODY);
         return $header . $this->skip_link_target();
     }
-    
+
     /**
      * Renders and outputs the page template.
      * @param string $templatefile The name of the template's file
@@ -2148,7 +2148,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         return $output;
     }
-    
+
     /**
      * Outputs the page's footer
      * @return string HTML fragment
@@ -2255,7 +2255,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->init_block_hider_js($bc);
         return $output;
     }
-    
+
     /**
      * Calls the JS require function to hide a block.
      * @param block_contents $bc A block_contents object
@@ -3229,12 +3229,12 @@ class cli_core_renderer extends moodle_core_renderer {
     /**
      * Returns the page header.
      * @return string HTML fragment
-     */ 
+     */
     public function header() {
         output_starting_hook();
         return $this->page->heading . "\n";
     }
-    
+
     /**
      * Returns a template fragment representing a Heading.
      * @param string $text The text of the heading
@@ -3242,7 +3242,7 @@ class cli_core_renderer extends moodle_core_renderer {
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
      * @return string A template fragment for a heading
-     */ 
+     */
     public function heading($text, $level, $classes = 'main', $id = '') {
         $text .= "\n";
         switch ($level) {
@@ -3278,7 +3278,7 @@ class cli_core_renderer extends moodle_core_renderer {
             }
         }
     }
-    
+
     /**
      * Returns a template fragment representing a notification.
      * @param string $message The message to include
