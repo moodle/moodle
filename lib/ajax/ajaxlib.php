@@ -889,15 +889,26 @@ abstract class required_js_code extends requirement_base {
      *     echo $PAGE->requires->js(...)->asap();
      * </pre>
      *
-     * @return string The HTML required to include this JavaScript file. The caller
+     * @return string The HTML for the script tag. The caller
      * is responsible for outputting this HTML promptly.
      */
     public function asap() {
-        if ($this->is_done()) {
-            return;
-        }
-        if (!$this->manager->is_head_done()) {
+        if ($this->manager->is_head_done()) {
+            return $this->now();
+        } else {
             $this->in_head();
+            return '';
+        }
+    }
+
+    /**
+     * Return the required JavaScript immediately, so it can be included in some
+     * HTML that is being built.
+     * @return string The HTML for the script tag. The caller
+     * is responsible for making sure it is output.
+     */
+    public function now() {
+        if ($this->is_done()) {
             return '';
         }
         $js = $this->get_js_code();
