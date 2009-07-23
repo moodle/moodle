@@ -173,7 +173,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $str .= $repojs;
         $str .= <<<EOD
 <input value="$draftitemid" name="{$this->_attributes['name']}" type="hidden" />
-<a href="###" id="btnadd-{$client_id}" style="display:none" class="btnaddfile" onclick="return callpicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
+<a href="###" id="btnadd-{$client_id}" class="btnaddfile" onclick="return callpicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
 EOD;
         $PAGE->requires->yui_lib('dom');
         $PAGE->requires->js_function_call('YAHOO.util.Dom.setStyle', Array("btnadd-{$client_id}", 'display', 'inline'));
