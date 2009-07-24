@@ -5542,6 +5542,7 @@ function print_plugin_tables() {
                                         'blog_tags',
                                         'calendar_month',
                                         'calendar_upcoming',
+                                        'comments',
                                         'course_list',
                                         'course_summary',
                                         'glossary_random',
