@@ -72,7 +72,7 @@ class ChatConnection {
 
     function ChatConnection($resource) {
         $this->handle = $resource;
-        @socket_getpeername($this->handle, &$this->ip, &$this->port);
+        @socket_getpeername($this->handle, $this->ip, $this->port);
     }
 }
 
