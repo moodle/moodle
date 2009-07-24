@@ -710,6 +710,29 @@ class block_base {
     function config_print() {
         throw new coding_exception('config_print() can no longer be used. Blocks should use a settings.php file.');
     }
+    /** @callback callback functions for comments api */
+    public static function comment_template($options) {
+        $ret = <<<EOD
+<div class="comment-userpicture">___picture___</div> 
+<div class="comment-content">
+    ___name___ - <span>___time___</span>
+    <div>___content___</div>
+</div>
+EOD;
+        return $ret;
+    }
+    public static function comment_permissions($options) {
+        return array('view'=>true, 'post'=>true);
+    }
+    public static function comment_url($options) {
+        return null;
+    }
+    public static function comment_display(&$comments, $options) {
+        return true;
+    }
+    public static function comment_add(&$comments, $options) {
+        return true;
+    }
 }
 
 /**

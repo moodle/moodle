@@ -307,6 +307,8 @@ define('FEATURE_MOD_SUBPLUGINS', 'mod_subplugins');
 /** True if module has default completion */
 define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
+define('FEATURE_COMMENT', 'comment');
+
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -6879,6 +6881,68 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
         asort($plugins);
     }
     return $plugins;
+}
+
+
+/**
+ * invoke plugin's callback functions
+ *
+ * @param string $type Plugin type e.g. 'mod'
+ * @param string $name Plugin name
+ * @param string $feature Feature code (FEATURE_xx constant)
+ * @param string $action Feature's action
+ * @param string $options parameters of callback function, should be an array
+ * @param mixed $default default value if callback function hasn't been defined
+ * @return mixed
+ */
+function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
+    global $CFG;
+
+    $name = clean_param($name, PARAM_SAFEDIR);
+    $function = $name.'_'.$feature.'_'.$action;
+
+    switch($type) {
+        case 'mod' :
+            $file = $CFG->dirroot.'/mod/'.$name.'/lib.php';
+            break;
+        case 'block' :
+            // load block_base class
+            require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
+            // block uses class based callback functions
+            // see blocks/moodleblock.class.php
+            $file = $CFG->dirroot.'/blocks/'.$name.'/block_'.$name.'.php';
+            $function = array('block_' . $name, 'comment_'.$action);
+            break;
+        case 'blog':
+            $file = $CFG->dirroot.'/blog/lib.php';
+            break;
+        case 'moodle':
+            // for special plugins, such as blog and tag
+            $file = $CFG->dirroot.'/'.$name.'/lib.php';
+            break;
+        default:
+            throw new Exception('Unsupported callback type ('.$type.')');
+    }
+
+    // Load library and look for function
+    if (file_exists($file)) {
+        require_once($file);
+    }
+    if (is_array($function) || function_exists($function)) {
+        // Function exists, so just return function result
+        $ret = call_user_func_array($function, $options);
+        if (is_null($ret)) {
+            return $default;
+        } else {
+            return $ret;
+        }
+    } else {
+        switch($feature) {
+            // If some features can also be checked in other ways
+            // for legacy support, this could be added here
+            default: return $default;
+        }
+    }
 }
 
 /**

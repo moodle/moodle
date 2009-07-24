@@ -1408,6 +1408,14 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
     if ($text === '') {
         return ''; // no need to do any filters and cleaning
     }
+    if (!empty($options->comments) && !empty($CFG->usecomments)) {
+        require_once($CFG->libdir . '/commentlib.php');
+        $comment = new comment($options->comments);
+        $cmt = $comment->init(true);
+    } else {
+        $cmt = '';
+    }
+
 
     if (!isset($options->trusted)) {
         $options->trusted = false;
@@ -1455,7 +1463,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         $md5key = md5($hashstr);
         if (CLI_SCRIPT) {
             if (isset($croncache[$md5key])) {
-                return $croncache[$md5key];
+                return $croncache[$md5key].$cmt;
             }
         }
 
@@ -1469,7 +1477,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                     }
                     $croncache[$md5key] = $oldcacheitem->formattedtext;
                 }
-                return $oldcacheitem->formattedtext;
+                return $oldcacheitem->formattedtext.$cmt;
             }
         }
     }
@@ -1538,7 +1546,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
                 unset($croncache[$key]);
             }
             $croncache[$md5key] = $text;
-            return $text;
+            return $text.$cmt;
         }
 
         $newcacheitem = new object();
@@ -1566,8 +1574,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             }
         }
     }
-
-    return $text;
+    return $text.$cmt;
+                
 }
 
 /**
