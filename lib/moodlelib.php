@@ -6786,6 +6786,13 @@ function get_plugin_list($plugintype, $fullpaths=true) {
     global $CFG;
 
     $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db');
+    if ($plugintype == 'auth') {
+        // Historically we have had an auth plugin called 'db', so allow a special case.
+        $key = array_search('db', $ignored);
+        if ($key !== false) {
+            unset($ignored[$key]);
+        }
+    }
 
     if ($plugintype === '') {
         $plugintype = 'mod';
