@@ -21,7 +21,7 @@ class question_edit_calculated_form extends question_edit_form {
     var $qtypeobj;
 
     function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
-        $repeated = parent::get_per_answer_fields(&$mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
+        $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
         $mform->setType('answer', PARAM_NOTAGS);
 
         $addrepeated = array();
