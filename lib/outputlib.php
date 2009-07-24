@@ -1574,6 +1574,16 @@ class xhtml_container_stack {
      * closes, so we can output helpful error messages when there is a mismatch.
      */
     protected $log = array();
+    /**
+     * Store whether we are developer debug mode. We need this in several places
+     * including in the destructor where we may no thave access to $CFG.
+     * @var boolean
+     */
+    protected $isdebugging;
+
+    public function __construct() {
+        $this->isdebugging = debugging('', DEBUG_DEVELOPER);
+    }
 
     /**
      * Push the close HTML for a recently opened container onto the stack.
@@ -1586,7 +1596,7 @@ class xhtml_container_stack {
         $container = new stdClass;
         $container->type = $type;
         $container->closehtml = $closehtml;
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($this->isdebugging) {
             $this->log('Open', $type);
         }
         array_push($this->opencontainers, $container);
@@ -1613,7 +1623,7 @@ class xhtml_container_stack {
                     '). This suggests there is a nesting problem.</p>' .
                     $this->output_log(), DEBUG_DEVELOPER);
         }
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($this->isdebugging) {
             $this->log('Close', $type);
         }
         return $container->closehtml;
@@ -1661,8 +1671,12 @@ class xhtml_container_stack {
             return;
         }
 
-        debugging('<p>Some containers were left open. This suggests there is a nesting problem.</p>' .
-                $this->output_log(), DEBUG_DEVELOPER);
+        // It seems you cannot rely on $CFG, and hence the debugging function here,
+        // becuase $CFG may be destroyed before this object is.
+        if ($this->isdebugging) {
+            echo '<div class="notifytiny"><p>Some containers were left open. This suggests there is a nesting problem.</p>' .
+                    $this->output_log() . '</div>';
+        }
         echo $this->pop_all_but_last();
         $container = array_pop($this->opencontainers);
         echo $container->closehtml;
