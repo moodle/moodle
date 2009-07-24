@@ -6920,9 +6920,6 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
             $file = $CFG->dirroot.'/blocks/'.$name.'/block_'.$name.'.php';
             $function = array('block_' . $name, 'comment_'.$action);
             break;
-        case 'blog':
-            $file = $CFG->dirroot.'/blog/lib.php';
-            break;
         case 'moodle':
             // for special plugins, such as blog and tag
             $file = $CFG->dirroot.'/'.$name.'/lib.php';
