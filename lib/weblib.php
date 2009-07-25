@@ -347,7 +347,7 @@ class moodle_url {
      * @param array $params Defaults to null. If null then return value of param 'name'.
      * @return array Array of Params for url.
      */
-    public function params($params = null) {
+    function params($params = null) {
         if (!is_null($params)) {
             return $this->params = $params + $this->params;
         } else {
