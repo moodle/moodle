@@ -72,7 +72,7 @@ class block_glossary_random extends block_base {
                     break;
             }
 
-            if ($entry = $DB->get_records_sql("SELECT concept, definition, format
+            if ($entry = $DB->get_records_sql("SELECT concept, definition, definitionformat
                                                  FROM {glossary_entries}
                                                 WHERE glossaryid = ? AND approved = 1
                                              ORDER BY timemodified $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
