@@ -25,7 +25,11 @@ $courseid  = optional_param('courseid',  SITEID, PARAM_INT);
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 
 $context   = get_context_instance_by_id($contextid);
-$cm        = get_coursemodule_from_id('', $context->instanceid);
+if ($context->contextlevel == CONTEXT_MODULE) {
+    $cm = get_coursemodule_from_id('', $context->instanceid);
+} else {
+    $cm = null;
+}
 require_login($courseid, true, $cm);
 
 $err = new stdclass;
@@ -60,7 +64,7 @@ switch ($action) {
 case 'add':
     $cmt = $comment->add($content);
     if (!empty($cmt) && is_object($cmt)) {
-        redirect($returnurl, get_string('pageshouldredirect'));
+        redirect($returnurl, get_string('pageshouldredirect'), 0);
     } else if ($cmt === COMMENT_ERROR_DB) {
         print_error('dbupdatefailed');
     } else if ($cmt === COMMENT_ERROR_MODULE_REJECT) {

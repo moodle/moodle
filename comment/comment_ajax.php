@@ -25,7 +25,11 @@ $courseid  = optional_param('courseid',  SITEID, PARAM_INT);
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 
 $context   = get_context_instance_by_id($contextid);
-$cm        = get_coursemodule_from_id('', $context->instanceid);
+if ($context->contextlevel == CONTEXT_MODULE) {
+    $cm = get_coursemodule_from_id('', $context->instanceid);
+} else {
+    $cm = null;
+}
 require_login($courseid, true, $cm);
 
 $err = new stdclass;

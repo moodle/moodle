@@ -20,24 +20,6 @@ define('COMMENT_ERROR_INSUFFICIENT_CAPS', 2);
 define('COMMENT_ERROR_MODULE_REJECT', 3);
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-class comment_form extends moodleform {
-
-    // Define the form
-    function definition () {
-        global $USER, $CFG, $COURSE;
-
-        $mform =& $this->_form;
-
-        $mform->addElement('textarea', 'content', get_string('addcomment'));
-        $mform->addElement('hidden', 'contextid');
-        $mform->addElement('hidden', 'itemid');
-        $mform->addElement('hidden', 'area');
-        $mform->addElement('hidden', 'courseid');
-        $mform->addElement('hidden', 'returnurl');
-
-        $this->add_action_buttons();
-    }
-}
 /**
  * comment is class to process moodle comments
  *
@@ -65,7 +47,7 @@ class comment {
      */
     private $commentarea;
     /**
-     * itemid is used to associate with commenting content 
+     * itemid is used to associate with commenting content
      * @var integer
      */
     private $itemid;
@@ -98,13 +80,12 @@ class comment {
      */
     private $linktext;
     private static $nonjs = false;
-    private static $commentform = null;
     // will be used by non-js comments UI
     private static $comment_itemid = null;
     private static $comment_context = null;
-    private static $comment_area = null; 
+    private static $comment_area = null;
     /**
-     * Construct function of comment class, initilize 
+     * Construct function of comment class, initilize
      * class members
      * @param object $options
      */
@@ -153,7 +134,7 @@ class comment {
 
         // load template
         $this->template = <<<EOD
-<div class="comment-userpicture">___picture___</div> 
+<div class="comment-userpicture">___picture___</div>
 <div class="comment-content">
     ___name___ - <span>___time___</span>
     <div>___content___</div>
@@ -192,7 +173,7 @@ EOD;
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
         if (!empty(self::$nonjs)) {
-            self::$commentform = new comment_form($CFG->httpswwwroot . '/comment/comment_post.php?action=add');
+            //self::$commentform = new comment_form($CFG->httpswwwroot . '/comment/comment_post.php?action=add');
         }
 
         $PAGE->requires->yui_lib('yahoo')->in_head();
@@ -253,7 +234,7 @@ EOD;
     /**
      * check posting comments permission
      * It will check based on user roles and ask modules
-     * If you need to check permission by modules, a 
+     * If you need to check permission by modules, a
      * function named $pluginname_check_comment_post must be implemented
      */
     private function _check_permissions() {
@@ -269,7 +250,7 @@ EOD;
 
     /**
      * Prepare comment code in html
-     * @param boolean
+     * @param  boolean $return
      * @return mixed
      */
     public function init($return = true) {
@@ -314,7 +295,7 @@ EOD;
             // print commenting icon and tooltip
             $html = <<<EOD
 <a id="comment-link-{$this->cid}" onclick="return view_comments('{$this->cid}', '{$this->commentarea}', '{$this->itemid}', 0)" href="{$this->link}">
-<img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" /> 
+<img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
 <span>{$this->linktext}</span>
 </a>
 <div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
@@ -330,7 +311,7 @@ EOD;
                 $html .= <<<EOD
 <div class='comment-area'>
     <div class="bd">
-        <form method="POST" id="comment-form-{$this->cid}" action="{$CFG->wwwroot}/admin/comments.php">
+        <form method="POST" id="comment-form-{$this->cid}" action="{$CFG->wwwroot}/comment/comment_post.php">
         <textarea name="content" rows="1" id="dlg-content-{$this->cid}"></textarea>
         <input type="hidden" name="contextid" value="$this->contextid" />
         <input type="hidden" name="action" value="add" />
@@ -366,8 +347,8 @@ EOD;
     }
 
     /**
-     * Return matched comments 
-     * @param int $page 
+     * Return matched comments
+     * @param  int $page
      * @return mixed
      */
     public function get_comments($page = '') {
@@ -407,7 +388,7 @@ EOD;
                 $c->avatar = print_user_picture($user, $this->course->id, NULL, NULL, true);
                 if (($USER->id == $c->userid) || !empty($candelete)) {
                     $c->delete = true;
-                } 
+                }
                 $comments[] = $c;
             }
         }
@@ -449,7 +430,7 @@ EOD;
 
     /**
      * Add a new comment
-     * @param string $content 
+     * @param string $content
      * @return mixed
      */
     public function add($content) {
@@ -489,8 +470,8 @@ EOD;
     }
 
     /**
-     * delete a comment
-     * @param int $commentid 
+     * Delete a comment
+     * @param  int $commentid
      * @return mixed
      */
     public function delete($commentid) {
@@ -509,10 +490,10 @@ EOD;
         global $DB, $CFG;
         $html = '';
         if (!(self::$comment_itemid == $this->options->itemid &&
-            self::$comment_context == $this->options->context->id && 
+            self::$comment_context == $this->options->context->id &&
             self::$comment_area == $this->options->commentarea)) {
             $page = 0;
-        } 
+        }
         $comments = $this->get_comments($page);
 
         $html .= '<h3>'.get_string('comments').'</h3>';
@@ -525,7 +506,22 @@ EOD;
         $html .= $list;
         $html .= '</ul>';
         $html .= $this->get_pagination($page);
-        self::$commentform->set_data(array('itemid'=>$this->itemid, 'courseid'=>$this->course->id, 'contextid'=>$this->contextid, 'area'=>$this->commentarea, 'returnurl'=>qualified_me()));
+        $sesskey = sesskey();
+        $returnurl = qualified_me();
+        $strsubmit = get_string('submit');
+        $html .= <<<EOD
+<form method="POST" action="{$CFG->wwwroot}/comment/comment_post.php">
+<textarea name="content" rows="1"></textarea>
+<input type="hidden" name="contextid" value="$this->contextid" />
+<input type="hidden" name="action" value="add" />
+<input type="hidden" name="area" value="$this->commentarea" />
+<input type="hidden" name="itemid" value="$this->itemid" />
+<input type="hidden" name="courseid" value="{$this->course->id}" />
+<input type="hidden" name="sesskey" value="{$sesskey}" />
+<input type="hidden" name="returnurl" value="{$returnurl}" />
+<input type="submit" value="{$strsubmit}" />
+</form>
+EOD;
         if ($return) {
             //ob_start();
             //self::$commentform->display();
