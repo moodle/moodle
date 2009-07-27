@@ -113,7 +113,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
                 $filesize = $filesize ? display_size($filesize) : '';
                 $icon     = mimeinfo_from_type('icon', $file->get_mimetype());
                 $icon     = str_replace('.gif', '', $icon); //TODO: temp icon fix
-                $viewurl  = file_encode_url("$CFG->wwwroot/draftfile.php", "/$context->id/user_draft/$draftid".$fullname, false, false);
+                $viewurl  = file_encode_url("$CFG->wwwroot/draftfile.php", "/$context->id/user_draft/$draftid/".$fullname, false, false);
                 $html .= '<li>';
                 $html .= "<a href=\"$viewurl\"><img src=\"" . $OUTPUT->old_icon_url('f/' . $icon) . "\" class=\"icon\" />&nbsp;".s($fullname)." ($filesize)</a> ";
                 // TODO: maybe better use file->id here - but then make 100% it is from my own draftfiles ;-)
