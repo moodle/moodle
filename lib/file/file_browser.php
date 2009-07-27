@@ -453,19 +453,14 @@ class file_browser {
         if (!isset($areas[$modname.'_intro'])
           and plugin_supports('mod', $modname, FEATURE_MOD_INTRO, true)
           and has_capability('moodle/course:managefiles', $context)) {
-            $areas[$modname.'_intro'] = get_string('moduleintro');
+            $areas = array_merge(array($modname.'_intro'=>get_string('moduleintro')), $areas);
         }
         if (empty($areas)) {
             return null;
         }
 
-        if (is_null($filearea) or is_null($itemid)) {
-            return new file_info_module($this, $course, $cm, $context, $areas);
-
-        } else if (!isset($areas[$filearea])) {
-            return null;
-
-        } else if ($filearea === $modname.'_intro') {
+        if ($filearea === $modname.'_intro') {
+            // always only itemid 0
             if (!has_capability('moodle/course:managefiles', $context)) {
                 return null;
             }
@@ -483,6 +478,13 @@ class file_browser {
                 }
             }
             return new file_info_stored($this, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
+
+        } else if (is_null($filearea)) {
+            // modules have to decide if they want to use itemids
+            return new file_info_module($this, $course, $cm, $context, $areas);
+
+        } else if (!array_key_exists($filearea, $areas)) {
+            return null;
 
         } else {
             $fileinfofunction = $modname.'_get_file_info';

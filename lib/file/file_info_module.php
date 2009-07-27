@@ -86,7 +86,7 @@ class file_info_module extends file_info {
     public function get_children() {
         $children = array();
         foreach ($this->areas as $area=>$desctiption) {
-            if ($child = $this->browser->get_file_info($this->context, $area, 0)) {
+            if ($child = $this->browser->get_file_info($this->context, $area, null)) {
                 $children[] = $child;
             }
         }
