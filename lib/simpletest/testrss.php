@@ -5,9 +5,13 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 /*
- * * rsstest.xml: One valid rss feed.
- *     md5:  8fd047914863bf9b3a4b1514ec51c32c
- *         size: 32188
+ * These tests rely on the rsstest.xml file on download.moodle.org,
+ * from eloys listing:
+ *   rsstest.xml: One valid rss feed.
+ *   md5:  8fd047914863bf9b3a4b1514ec51c32c
+ *   size: 32188
+ * 
+ * If networking/proxy configuration is wrong these tests will fail..
  */
 
 require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
@@ -15,10 +19,20 @@ require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 class moodlesimplepie_test extends UnitTestCase {
 
     public static $includecoverage = array('lib/simplepie/moodle_simplepie.php');
-    var $testurl = 'http://download.moodle.org/unittest/rsstest.xml';
 
-    function test_getfeed(){
-        $feed = new moodle_simplepie($this->testurl);
+    # A url we know exists and is valid
+    const VALIDURL = 'http://download.moodle.org/unittest/rsstest.xml';
+    # A url which we know doesn't exist
+    const INVALIDURL = 'http://download.moodle.org/unittest/rsstest-which-doesnt-exist.xml';
+    # This tinyurl redirects to th rsstest.xml file
+    const REDIRECTURL = 'http://tinyurl.com/lvyslv';
+
+    function setUp() {
+        moodle_simplepie::reset_cache();
+    }
+
+    function test_getfeed() {
+        $feed = new moodle_simplepie(moodlesimplepie_test::VALIDURL);
 
         $this->assertIsA($feed, 'moodle_simplepie');
 
@@ -61,17 +75,48 @@ EOD;
         // TODO fix this so it uses $CFG by default
         $this->assertEqual($itemone->get_date('U'), 1196412453);
 
-
         // last item
         $this->assertTrue($feed->get_item(14));
         // Past last item
         $this->assertFalse($feed->get_item(15));
     }
 
-    function test_failfeed(){
-        $feed = new moodle_simplepie('http://111xxxxxxxxxxxxxmoodle.org/');
+    /*
+     * Test retrieving a url which doesn't exist
+     */
+    function test_failurl() {
+        $feed = new moodle_simplepie(moodlesimplepie_test::INVALIDURL);
 
         $this->assertTrue($feed->error());
+    }
+
+    /*
+     * Test retrieving a url with broken proxy configuration
+     */
+    function test_failproxy() {
+        global $CFG;
+
+        $oldproxy = $CFG->proxyhost;
+        $CFG->proxyhost = 'xxxxxxxxxxxxxxx.moodle.org';
+
+        $feed = new moodle_simplepie(moodlesimplepie_test::VALIDURL);
+
+        $this->assertTrue($feed->error());
+        $this->assertFalse($feed->get_title());
+        $CFG->proxyhost = $oldproxy;
+    }
+
+    /*
+     * Test retrieving a url which sends a redirect to another valid feed
+     */
+    function test_redirect() {
+        global $CFG;
+
+        $feed = new moodle_simplepie(moodlesimplepie_test::REDIRECTURL);
+
+        $this->assertFalse($feed->error());
+        $this->assertEqual($feed->get_title(), 'Moodle News');
+        $this->assertEqual($feed->get_link(), 'http://moodle.org/mod/forum/view.php?f=1');
     }
 
 }

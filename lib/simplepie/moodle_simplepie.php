@@ -21,7 +21,7 @@
  * @package    moodle
  * @subpackage lib
  * @author     Dan Poltawski <talktodan@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * Customised version of SimplePie for Moodle
  */
@@ -39,25 +39,54 @@ require_once($CFG->libdir.'/simplepie/simplepie.inc');
  * This class extends the stock SimplePie class
  * in order to make sensible configuration choices,
  * such as using the Moodle cache directory and
- * curl functions/proxy config  for making http
- * requests.
+ * curl functions/proxy config for making http
+ * requests in line with moodle configuration.
+ *
+ * @copyright 2009 Dan Poltawski <talktodan@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
  */
 class moodle_simplepie extends SimplePie
 {
-    function __construct($feed_url = null){
-        global $CFG;
+    /** 
+     * Constructor - creates an instance of the SimplePie class
+     * with Moodle defaults.
+     *
+     * @param string $feedurl optional URL of the feed 
+     */
+    function __construct($feedurl = null) {
 
         // Use the Moodle class for http requests
         $this->file_class = 'moodle_simplepie_file';
 
-        // Use sensible cache directory
-        $cachedir = $CFG->dataroot.'/cache/simplepie/';
-        if (!file_exists($cachedir)){
-            mkdir($cachedir, 0777, true);
-        }
+        $cachedir = moodle_simplepie::get_cache_directory();
+        check_dir_exists($cachedir, true, true);
 
-        parent::__construct($feed_url, $cachedir);
+        parent::__construct($feedurl, $cachedir);
         parent::set_output_encoding('UTF-8');
+    }
+
+    /**
+     * Get path for feed cache directory
+     *
+     * @return string absolute path to cache directory
+     */
+    private static function get_cache_directory() {
+        global $CFG;
+
+        return $CFG->dataroot.'/cache/simplepie/';
+    }
+
+    /**
+     * Reset RSS cache 
+     *
+     * @return boolean success if cache clear or didn't exist
+     */
+    public static function reset_cache() {
+
+        $cachedir = moodle_simplepie::get_cache_directory();
+
+        return remove_dir($cachedir);
     }
 }
 
@@ -77,25 +106,24 @@ class moodle_simplepie_file extends SimplePie_File
      * been modifed to add in use the Moodle curl class rather than php curl
      * functions.
      */
-    function moodle_simplepie_file($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false)
-    {
+    function moodle_simplepie_file($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false) {
         $this->url = $url;
         $this->method = SIMPLEPIE_FILE_SOURCE_REMOTE | SIMPLEPIE_FILE_SOURCE_CURL;
 
         $curl = new curl();
         $curl->setopt(array('CURLOPT_HEADER'=>true));
 
-        try{
-            $this->headers = $curl->get($url);
-        }catch(moodle_exception $e){
+        $this->headers = $curl->get($url);
+
+        if ($curl->error) {
             $this->error = 'cURL Error: '.$curl->error;
             $this->success = false;
             return false;
         }
 
-        $parser =& new SimplePie_HTTP_Parser($this->headers);
+        $parser = new SimplePie_HTTP_Parser($this->headers);
 
-        if ($parser->parse()){
+        if ($parser->parse()) {
             $this->headers = $parser->headers;
             $this->body = $parser->body;
             $this->status_code = $parser->status_code;
@@ -105,7 +133,7 @@ class moodle_simplepie_file extends SimplePie_File
             {
                 $this->redirects++;
                 $location = SimplePie_Misc::absolutize_url($this->headers['location'], $url);
-                return $this->SimplePie_File($location, $timeout, $redirects, $headers);
+                return $this->moodle_simplepie_file($location, $timeout, $redirects, $headers);
             }
         }
     }
