@@ -503,7 +503,7 @@ function prepare_url($url, $stripformparams=false) {
     // Handle relative URLs
     if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
-            debugging('Relative URLs are deprecated, please use an absolute URL in your code', DEBUG_DEVELOPER);
+            
             return $matches[1] . "/$output";
         } else {
             throw new coding_exception('Your page uses bizarre relative URLs which Moodle cannot handle. Please use absolute URLs.');
