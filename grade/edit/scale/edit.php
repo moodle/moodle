@@ -77,6 +77,11 @@ if ($id) {
     require_capability('moodle/course:managescales', $systemcontext);
 }
 
+if (!$courseid) {
+    require_once $CFG->libdir.'/adminlib.php';
+    admin_externalpage_setup('scales');
+}
+
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
@@ -113,10 +118,7 @@ if ($mform->is_cancelled()) {
 
 if ($courseid) {
     print_grade_page_head($course->id, 'scale', 'edit', $heading);
-
 } else {
-    require_once $CFG->libdir.'/adminlib.php';
-    admin_externalpage_setup('scales');
     admin_externalpage_print_header();
 }
 
