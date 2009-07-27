@@ -2402,14 +2402,16 @@ class moodle_core_renderer extends moodle_renderer_base {
             $continueform = new html_form();
             $continueform->url = new moodle_url($continue);
             $continue = $continueform;
-        } else {
-            throw new coding_exception('The 2nd and 3rd params to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+        } else if (!is_object($continue)) {
+            throw new coding_exception('The 2nd param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
         }
 
         if (!($cancel instanceof html_form) && !is_object($cancel)) {
             $cancelform = new html_form();
             $cancelform->url = new moodle_url($cancel);
             $cancel = $cancelform;
+        } else if (!is_object($cancel)) {
+            throw new coding_exception('The 3rd param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
         }
 
         if (empty($continue->button->label)) {
