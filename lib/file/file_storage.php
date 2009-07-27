@@ -640,7 +640,7 @@ class file_storage {
 
         if (!$newrecord->id) {
             if ($newfile) {
-                $this->mark_delete_candidate($newrecord->contenthash);
+                $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename);
@@ -716,7 +716,7 @@ class file_storage {
 
         if (!$newrecord->id) {
             if ($newfile) {
-                $this->mark_delete_candidate($newrecord->contenthash);
+                $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
                                                     $newrecord->filepath, $newrecord->filename);
