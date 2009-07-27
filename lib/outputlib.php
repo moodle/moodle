@@ -2435,7 +2435,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function button($form) {
-        if (empty($form->button)) {
+        if (empty($form->button) or !($form->button instanceof html_button)) {
             throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
         }
 
