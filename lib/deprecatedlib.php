@@ -2555,6 +2555,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     $options = (array) $options;
     $form = new html_form();
     $form->url = new moodle_url($link, $options);
+    $form->button = new html_button();
     $form->button->label = $label;
     $form->button->disabled = $disabled;
     $form->button->title = $tooltip;
@@ -2956,15 +2957,20 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
     // debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
 
     global $OUTPUT;
+
+    $formcontinue = new html_form();
+    $formcontinue->url = new moodle_url($linkyes, $optionsyes);
+    $formcontinue->button = new html_button();
+    $formcontinue->button->label = get_string('yes');
+    $formcontinue->method = $methodyes;
+
+    $formcancel = new html_form();
+    $formcancel->url = new moodle_url($linkno, $optionsno);
+    $formcancel->button = new html_button();
+    $formcancel->button->label = get_string('no');
+    $formcancel->method = $methodno;
     
-    $buttoncontinue = new html_button();
-    $buttoncontinue->url = new moodle_url($linkyes, $optionsyes);
-    $buttoncontinue->method = $methodyes;
-    $buttoncancel = new html_button();
-    $buttoncancel->url = new moodle_url($linkno, $optionsno);
-    $buttoncancel->method = $methodno;
-    
-    echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
+    echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
 }
 
 /**
