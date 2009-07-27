@@ -2379,3 +2379,599 @@ function print_table($table, $return=false) {
         return true;
     }
 }
+
+/**
+ * Creates and displays (or returns) a link to a popup window
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
+ * @param string $name Name to be assigned to the popup window (this is used by
+ *   client-side scripts to "talk" to the popup window)
+ * @param string $linkname Text to be displayed as web link
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @param bool $return If true, return as a string, otherwise print
+ * @param string $id id added to the element
+ * @param string $class class added to the element
+ * @return string html code to display a link to a popup window.
+ */
+function link_to_popup_window ($url, $name=null, $linkname=null,
+                               $height=400, $width=500, $title=null,
+                               $options=null, $return=false) {
+    global $OUTPUT;
+
+    // debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
+
+    if ($options == 'none') {
+        $options = null;
+    }
+
+    if (empty($linkname)) {
+        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link_to_popup() for usage.');
+    }
+
+    // Create a html_link object
+    $link = new html_link();
+    $link->text = $linkname;
+    $link->url = $url;
+    $link->title = $title;
+
+    // Parse the $options string
+    $popupparams = array();
+    if (!empty($options)) { 
+        $optionsarray = explode(',', $options);
+        foreach ($optionsarray as $option) {
+            if (strstr($option, '=')) {
+                $parts = explode('=', $option);
+                if ($parts[1] == '0') {
+                    $popupparams[$parts[0]] = false;
+                } else {
+                    $popupparams[$parts[0]] = $parts[1];
+                }
+            } else {
+                $popupparams[$option] = true;
+            }
+        }
+    }
+
+    $popupaction = new popup_action('click', $url, $name, $popupparams);
+    $link->add_action_object($popupaction);
+
+    // Call the output method
+    $output = $OUTPUT->link_to_popup($link);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output; 
+    }
+}
+
+/**
+ * Creates and displays (or returns) a buttons to a popup window.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
+ * @param string $name Name to be assigned to the popup window (this is used by
+ *   client-side scripts to "talk" to the popup window)
+ * @param string $linkname Text to be displayed as web link
+ * @param int $height Height to assign to popup window
+ * @param int $width Height to assign to popup window
+ * @param string $title Text to be displayed as popup page title
+ * @param string $options List of additional options for popup window
+ * @param bool $return If true, return as a string, otherwise print
+ * @param string $id id added to the element
+ * @param string $class class added to the element
+ * @return string html code to display a link to a popup window.
+ */
+function button_to_popup_window ($url, $name=null, $linkname=null,
+                                 $height=400, $width=500, $title=null, $options=null, $return=false,
+                                 $id=null, $class=null) {
+    global $OUTPUT;
+
+    // debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
+
+    if ($options == 'none') {
+        $options = null;
+    }
+
+    if (empty($linkname)) {
+        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->link_to_popup() for usage.');
+    }
+
+    // Create a html_button object
+    $button = new html_button();
+    $button->value = $linkname;
+    $button->url = $url;
+    $button->id = $id;
+    $button->add_class($class);
+    $button->method = 'post';
+    $button->title = $title;
+
+    // Parse the $options string
+    $popupparams = array();
+    if (!empty($options)) { 
+        $optionsarray = explode(',', $options);
+        foreach ($optionsarray as $option) {
+            if (strstr($option, '=')) {
+                $parts = explode('=', $option);
+                if ($parts[1] == '0') {
+                    $popupparams[$parts[0]] = false;
+                } else {
+                    $popupparams[$parts[0]] = $parts[1];
+                }
+            } else {
+                $popupparams[$option] = true;
+            }
+        }
+    }
+
+    if (!empty($height)) {
+        $popupparams['height'] = $height;
+    }
+    if (!empty($width)) {
+        $popupparams['width'] = $width;
+    }
+
+    $popupaction = new popup_action('click', $url, $name, $popupparams);
+    $button->add_action_object($popupaction);
+    $output = $OUTPUT->button($button);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output; 
+    }
+}
+
+/**
+ * Print a self contained form with a single submit button.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $link used as the action attribute on the form, so the URL that will be hit if the button is clicked.
+ * @param array $options these become hidden form fields, so these options get passed to the script at $link.
+ * @param string $label the caption that appears on the button.
+ * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
+ * @param string $notusedanymore no longer used.
+ * @param boolean $return if false, output the form directly, otherwise return the HTML as a string.
+ * @param string $tooltip a tooltip to add to the button as a title attribute.
+ * @param boolean $disabled if true, the button will be disabled.
+ * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
+ * @param string $formid The id attribute to use for the form
+ * @return string|void Depending on the $return paramter.
+ */
+function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
+        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
+    global $OUTPUT;
+
+    // debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
+
+    // Cast $options to array
+    $options = (array) $options;
+    $form = new html_form();
+    $form->url = new moodle_url($link, $options);
+    $form->button->label = $label;
+    $form->button->disabled = $disabled;
+    $form->button->title = $tooltip;
+    $form->method = $method;
+    $form->id = $formid;
+
+    if ($jsconfirmmessage) {
+        $confirmaction = new component_action('click', 'confirm_dialog', array($jsconfirmmessage));
+        $form->button->add_action_object($confirmaction);
+    }
+
+    $output = $OUTPUT->button($form);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a spacer image with the option of including a line break.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @param int $height The height in pixels to make the spacer
+ * @param int $width The width in pixels to make the spacer
+ * @param boolean $br If set to true a BR is written after the spacer
+ */
+function print_spacer($height=1, $width=1, $br=true, $return=false) {
+    global $CFG, $OUTPUT;
+
+    // debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
+
+    $spacer = new html_spacer();
+    $spacer->height = $height;
+    $spacer->width = $width;
+
+    $output = $OUTPUT->spacer($spacer);
+
+    $output .= '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
+
+    if ($br) {
+        $output .= '<br />';
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Given the path to a picture file in a course, or a URL,
+ * this function includes the picture in the page.
+ *
+ * @deprecated since Moodle 2.0
+ */
+function print_file_picture($path, $courseid=0, $height='', $width='', $link='', $return=false) {
+    throw new coding_exception('print_file_picture() has been deprecated since Moodle 2.0. Please use $OUTPUT->action_icon() instead.');
+}
+
+/**
+ * Print the specified user's avatar.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @global object
+ * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname
+ *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
+ *      if at all possible, particularly for reports. It is very bad for performance.
+ * @param int $courseid The course id. Used when constructing the link to the user's profile.
+ * @param boolean $picture The picture to print. By default (or if NULL is passed) $user->picture is used.
+ * @param int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
+ * @param boolean $return If false print picture to current page, otherwise return the output as string
+ * @param boolean $link enclose printed image in a link the user's profile (default true).
+ * @param string $target link target attribute. Makes the profile open in a popup window.
+ * @param boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
+ *      decorative images, or where the username will be printed anyway.)
+ * @return string|void String or nothing, depending on $return.
+ */
+function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
+    global $CFG, $DB, $OUTPUT;
+
+    // debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $link, $popup).');
+
+    $userpic = new user_picture();
+    $userpic->user = $user;
+    $userpic->courseid = $courseid;
+    $userpic->size = $size;
+    $userpic->link = $link;
+    $userpic->alttext = $alttext;
+
+    if (!empty($picture)) {
+        $userpic->image = new html_image();
+        $userpic->image->src = $picture;
+    }
+
+    if (!empty($target)) {
+        $popupaction = new popup_action('click', new moodle_url($target));
+        $userpic->add_action_object($popupaction);
+    }
+
+    $output = $OUTPUT->user_picture($userpic);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Print a png image.
+ *
+ * @deprecated since Moodle 2.0: no replacement
+ *
+ */
+function print_png() {
+    throw new coding_exception('print_png() has been deprecated since Moodle 2.0. Please use $OUTPUT->image() instead.');
+}
+
+
+/**
+ * Prints a basic textarea field.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * When using this function, you should
+ *
+ * @global object
+ * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
+ * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
+ * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
+ * @param null $width (Deprecated) Width of the element; if a value is passed, the minimum value for $cols will be 65. Value is otherwise ignored.
+ * @param null $height (Deprecated) Height of the element; if a value is passe, the minimum value for $rows will be 10. Value is otherwise ignored.
+ * @param string $name Name to use for the textarea element.
+ * @param string $value Initial content to display in the textarea.
+ * @param int $obsolete deprecated
+ * @param bool $return If false, will output string. If true, will return string value.
+ * @param string $id CSS ID to add to the textarea element.
+ * @return string|void depending on the value of $return
+ */
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
+    /// $width and height are legacy fields and no longer used as pixels like they used to be.
+    /// However, you can set them to zero to override the mincols and minrows values below.
+
+    // debugging('print_textarea() has been deprecated. Please change your code to use $OUTPUT->textarea().');
+
+    global $CFG;
+
+    $mincols = 65;
+    $minrows = 10;
+    $str = '';
+
+    if ($id === '') {
+        $id = 'edit-'.$name;
+    }
+
+    if ($usehtmleditor) {
+        if ($height && ($rows < $minrows)) {
+            $rows = $minrows;
+        }
+        if ($width && ($cols < $mincols)) {
+            $cols = $mincols;
+        }
+    }
+
+    if ($usehtmleditor) {
+        editors_head_setup();
+        $editor = get_preferred_texteditor(FORMAT_HTML);
+        $editor->use_editor($id, array('legacy'=>true));
+    } else {
+        $editorclass = '';
+    }
+
+    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
+    if ($usehtmleditor) {
+        $str .= htmlspecialchars($value); // needed for editing of cleaned text!
+    } else {
+        $str .= s($value);
+    }
+    $str .= '</textarea>'."\n";
+
+    if ($return) {
+        return $str;
+    }
+    echo $str;
+}
+
+
+/**
+ * Print a help button.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $page  The keyword that defines a help page
+ * @param string $title The title of links, rollover tips, alt tags etc
+ *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
+ * @param string $module Which module is the page defined in
+ * @param mixed $image Use a help image for the link?  (true/false/"both")
+ * @param boolean $linktext If true, display the title next to the help icon.
+ * @param string $text If defined then this text is used in the page, and
+ *           the $page variable is ignored. DEPRECATED!
+ * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
+ * @param string $imagetext The full text for the helpbutton icon. If empty use default help.gif
+ * @return string|void Depending on value of $return
+ */
+function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
+    // debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
+
+    global $OUTPUT;
+
+    if (!empty($text)) {
+        throw new coding_exception('The $text parameter has been deprecated. Please update your code and use $OUTPUT->help_icon() instead. <br />' .
+            "You will also need to copy the following text into a proper html help file if not already done so: <p>$text</p>");
+    }
+
+    if (!empty($imagetext)) {
+        throw new coding_exception('The $imagetext parameter has been deprecated. Please update your code and use $OUTPUT->help_icon() instead.');
+    }
+
+    $helpicon = new help_icon();
+    $helpicon->page = $page;
+    $helpicon->module = $module;
+    $helpicon->text = $title;
+    $helpicon->linktext = $linktext;
+
+    // If image is true, the defaults are handled by the helpicon's prepare method
+    if (!$image) {
+        $helpicon->image = false;
+    }
+
+    $output = $OUTPUT->help_icon($helpicon);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+
+}
+
+/**
+ * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
+ * provide this function with the language strings for sortasc and sortdesc.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * TODO migrate to outputlib
+ * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
+ *
+ * @global object
+ * @param string $direction 'up' or 'down'
+ * @param string $strsort The language string used for the alt attribute of this image
+ * @param bool $return Whether to print directly or return the html string
+ * @return string|void depending on $return
+ *
+ */
+function print_arrow($direction='up', $strsort=null, $return=false) {
+    // debugging('print_arrow() has been deprecated. Please change your code to use $OUTPUT->arrow().');
+
+    global $OUTPUT;
+
+    if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
+        return null;
+    }
+
+    $return = null;
+
+    switch ($direction) {
+        case 'up':
+            $sortdir = 'asc';
+            break;
+        case 'down':
+            $sortdir = 'desc';
+            break;
+        case 'move':
+            $sortdir = 'asc';
+            break;
+        default:
+            $sortdir = null;
+            break;
+    }
+
+    // Prepare language string
+    $strsort = '';
+    if (empty($strsort) && !empty($sortdir)) {
+        $strsort  = get_string('sort' . $sortdir, 'grades');
+    }
+
+    $return = ' <img src="'.$OUTPUT->old_icon_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
+
+    if ($return) {
+        return $return;
+    } else {
+        echo $return;
+    }
+}
+
+/**
+ * Returns a string containing a link to the user documentation.
+ * Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @param string $path The page link after doc root and language, no leading slash.
+ * @param string $text The text to be displayed for the link
+ * @param string $iconpath The path to the icon to be displayed
+ * @return string Either the link or an empty string
+ */
+function doc_link($path='', $text='', $iconpath='') {
+    global $CFG, $OUTPUT;
+
+    // debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->action_icon().');
+
+    if (empty($CFG->docroot)) {
+        return '';
+    }
+
+    $icon = new action_icon();
+    $icon->linktext = $text;
+
+    if (!empty($iconpath)) {
+        $icon->image->src = $iconpath;
+        $icon->image->alt = $text;
+        $icon->image->add_class('iconhelp');
+    } else {
+        $icon->image->src = $CFG->httpswwwroot . '/pix/docs.gif';
+    }
+
+    $icon->link->url = new moodle_url(get_docs_url($path));
+
+    if (!empty($CFG->doctonewwindow)) {
+        $icon->actions[] = new popup_action('click', $icon->link->url);
+    }
+
+    return $OUTPUT->action_icon($icon);
+}
+
+/**
+ * Prints a single paging bar to provide access to other pages  (usually in a search)
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param int $totalcount Thetotal number of entries available to be paged through
+ * @param int $page The page you are currently viewing
+ * @param int $perpage The number of entries that should be shown per page
+ * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
+ *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
+ * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
+ * @param bool $nocurr do not display the current page as a link
+ * @param bool $return whether to return an output string or echo now
+ * @return bool|string depending on $result
+ */
+function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
+    global $OUTPUT;
+
+    // debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
+
+    $pagingbar = new moodle_paging_bar();
+    $pagingbar->totalcount = $totalcount;
+    $pagingbar->page = $page;
+    $pagingbar->perpage = $perpage;
+    $pagingbar->baseurl = $baseurl;
+    $pagingbar->pagevar = $pagevar;
+    $pagingbar->nocurr = $nocurr;
+    $output = $OUTPUT->paging_bar($pagingbar);
+
+    if ($return) {
+        return $output;
+    }
+
+    echo $output;
+    return true;
+}
+
+/**
+ * Print a message along with "Yes" and "No" links for the user to continue.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @param string $message The text to display
+ * @param string $linkyes The link to take the user to if they choose "Yes"
+ * @param string $linkno The link to take the user to if they choose "No"
+ * @param string $optionyes The yes option to show on the notice
+ * @param string $optionsno The no option to show
+ * @param string $methodyes Form action method to use if yes [post, get]
+ * @param string $methodno Form action method to use if no [post, get]
+ * @return void Output is echo'd
+ */
+function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
+
+    // debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
+
+    global $OUTPUT;
+    
+    $buttoncontinue = new html_button();
+    $buttoncontinue->url = new moodle_url($linkyes, $optionsyes);
+    $buttoncontinue->method = $methodyes;
+    $buttoncancel = new html_button();
+    $buttoncancel->url = new moodle_url($linkno, $optionsno);
+    $buttoncancel->method = $methodno;
+    
+    echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
+}
+
+/**
+ * Prints a scale menu (as part of an existing form) including help button
+ * @deprecated since Moodle 2.0
+ */
+function print_scale_menu() {
+    throw new coding_exception('print_scale_menu() has been deprecated since the Jurassic period. Get with the times!.');
+}
+

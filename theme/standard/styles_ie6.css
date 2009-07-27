@@ -94,3 +94,6 @@ form.mform textarea {
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{
     width: 35%;
 }
+#help_icon_tooltip .yui-tt-shadow-visible {
+  background-color: transparent;
+}

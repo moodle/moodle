@@ -70,7 +70,7 @@ class web_test extends UnitTestCase {
         $this->assertEqual(highlight('good', 'This is goodness'), 'This is <span class="highlight">good</span>ness');
     }
 
-    function test_replace_ampersands() { 
+    function test_replace_ampersands() {
         $this->assertEqual(replace_ampersands_not_followed_by_entity("This & that &nbsp;"), "This &amp; that &nbsp;");
         $this->assertEqual(replace_ampersands_not_followed_by_entity("This &nbsp that &nbsp;"), "This &amp;nbsp that &nbsp;");
     }
@@ -92,10 +92,29 @@ class web_test extends UnitTestCase {
         $string = "visit http://www.moodle.org";
         convert_urls_into_links($string);
         $this->assertEqual($string, 'visit <a href="http://www.moodle.org">http://www.moodle.org</a>');
-        
+
         $string = "visit www.moodle.org";
         convert_urls_into_links($string);
         $this->assertEqual($string, 'visit <a href="http://www.moodle.org">www.moodle.org</a>');
+    }
+
+    function test_prepare_url() {
+        global $CFG, $PAGE;
+        $fullexternalurl = 'http://www.externalsite.com/somepage.php';
+        $fullmoodleurl = $CFG->wwwroot . '/mod/forum/view.php?id=5';
+        $relativeurl1 = 'edit.php';
+        $relativeurl2 = '/edit.php';
+
+        $this->assertEqual($fullmoodleurl, prepare_url($fullmoodleurl));
+        $this->assertEqual($fullexternalurl, prepare_url($fullexternalurl));
+        $this->assertEqual("$CFG->wwwroot/admin/report/unittest/$relativeurl1", prepare_url($relativeurl1));
+        $this->assertEqual("$CFG->wwwroot$relativeurl2", prepare_url($relativeurl2));
+
+        // Use moodle_url object
+        $this->assertEqual($fullmoodleurl, prepare_url(new moodle_url('/mod/forum/view.php', array('id' => 5))));
+        $this->assertEqual($fullexternalurl, prepare_url(new moodle_url($fullexternalurl)));
+        $this->assertEqual("$CFG->wwwroot/admin/report/unittest/$relativeurl1", prepare_url(new moodle_url($relativeurl1)));
+        $this->assertEqual("$CFG->wwwroot$relativeurl2", prepare_url(new moodle_url($relativeurl2)));
     }
 }
 ?>

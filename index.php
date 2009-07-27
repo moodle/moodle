@@ -66,6 +66,9 @@
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
 
+    $PAGE->set_pagetype('site-index');
+    $PAGE->set_course($SITE);
+
     if (empty($CFG->langmenu)) {
         $langmenu = '';
     } else {
@@ -74,9 +77,6 @@
         $langlabel = get_accesshide(get_string('language'));
         $langmenu = popup_form($CFG->wwwroot .'/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
     }
-
-    $PAGE->set_pagetype('site-index');
-    $PAGE->set_course($SITE);
     $PAGE->set_other_editing_capability('moodle/course:manageactivities');
     $PAGE->set_url('');
     $PAGE->set_docs_path('');

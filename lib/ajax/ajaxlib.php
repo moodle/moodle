@@ -32,7 +32,7 @@
  * @param page_requirements_manager $requires The page_requirements_manager to initialise.
  */
 function setup_core_javascript(page_requirements_manager $requires) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
     // Otherwise, in some situations, users will get warnings about insecure content
@@ -41,6 +41,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
     $config = array(
         'wwwroot' => $CFG->httpswwwroot, // Yes, really. See above.
         'sesskey' => sesskey(),
+        'loadingicon' => $OUTPUT->old_icon_url('i/loading_small')
     );
     if (debugging('', DEBUG_DEVELOPER)) {
         $config['developerdebug'] = true;
@@ -56,6 +57,12 @@ function setup_core_javascript(page_requirements_manager $requires) {
     // Note that, as a short-cut, the code 
     // $js = "document.body.className += ' jsenabled';\n";
     // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
+    $requires->yui_lib('container');
+    $requires->yui_lib('connection');
+    $requires->string_for_js('confirmation', 'moodle');
+    $requires->string_for_js('cancel', 'moodle');
+    $requires->string_for_js('yes', 'moodle');
+    $requires->js_function_call('init_help_icons'); 
 }
 
 
@@ -364,8 +371,9 @@ class page_requirements_manager {
      * @return required_event_handler The event_handler object
      */
     public function event_handler($id, $event, $function, $arguments=array()) {
-        $requirement = new required_event_handler($id, $event, $function, $arguments);
+        $requirement = new required_event_handler($this, $id, $event, $function, $arguments);
         $this->requiredjscode[] = $requirement;
+        $this->linkedrequirements[] = new required_yui_lib($this, 'event');
         return $requirement;
     }
 
@@ -1109,7 +1117,6 @@ class required_event_handler extends required_js_code {
      * @param array  $arguments An optional array of argument parameters to pass to the function
      */
     public function __construct(page_requirements_manager $manager, $id, $event, $function, $args=array()) {
-        $manager->requires->yui_lib('event');
         parent::__construct($manager);
         $this->id = $id;
         $this->event = $event;
@@ -1118,7 +1125,7 @@ class required_event_handler extends required_js_code {
     }
 
     public function get_js_code() {
-        $output = "YAHOO.util.Event.addListener($this->id, '$this->event', $this->function";
+        $output = "YAHOO.util.Event.addListener('$this->id', '$this->event', $this->function";
         if (!empty($this->args)) {
             $output .= ', ' . json_encode($this->args);
         }

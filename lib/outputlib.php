@@ -15,6 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This constant is used for html attributes which need to have an empty
+ * value and still be output by the renderers (e.g. alt="");
+ *
+ * @constant @EMPTY@
+ */
+define('HTML_ATTR_EMPTY', '@EMPTY@');
 
 /**
  * Functions for generating the HTML that Moodle should output.
@@ -26,7 +33,6 @@
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 /**
  * A renderer factory is just responsible for creating an appropriate renderer
@@ -1306,7 +1312,9 @@ class moodle_renderer_base {
      */
     protected function output_attribute($name, $value) {
         $value = trim($value);
-        if ($value || is_numeric($value)) { // We want 0 to be output.
+        if ($value == HTML_ATTR_EMPTY) {
+            return ' ' . $name . '=""';
+        } else if ($value || is_numeric($value)) { // We want 0 to be output.
             return ' ' . $name . '="' . $value . '"';
         }
     }
@@ -1364,6 +1372,25 @@ class moodle_renderer_base {
      */
     public function mod_icon_url($iconname, $module) {
         return $this->page->theme->mod_icon_url($iconname, $module);
+    }
+
+    /**
+     * A helper function that takes a moodle_html_component subclass as param.
+     * If that component has an id attribute and an array of valid component_action objects,
+     * it sets up the appropriate event handlers.
+     *
+     * @param moodle_html_component $component
+     * @return void;
+     */
+    public function prepare_event_handlers(&$component) {
+        $actions = $component->get_actions();
+        if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
+            foreach ($actions as $action) {
+                if (!empty($action->jsfunction)) {
+                    $this->page->requires->event_handler($component->id, $action->event, $action->jsfunction, $action->jsfunctionargs);
+                }
+            }
+        }
     }
 }
 
@@ -2189,6 +2216,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $this->page->set_state(moodle_page::STATE_DONE);
 
+
         return $output . $footer;
     }
 
@@ -2324,12 +2352,325 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $output;
     }
 
-    public function link_to_popup_window() {
+    /**
+     * Given a html_textarea object, outputs an <a> tag that uses the object's attributes.
+     *
+     * @param mixed $link A html_link object or a string URL (text param required in second case)
+     * @param string $text A descriptive text for the link. If $link is a html_link, this is not required.
+     * @return string HTML fragment
+     */
+    public function textarea($textarea) {
 
     }
 
-    public function button_to_popup_window() {
+    /**
+     * Given a html_link object, outputs an <a> tag that uses the object's attributes.
+     *
+     * @param mixed $link A html_link object or a string URL (text param required in second case)
+     * @param string $text A descriptive text for the link. If $link is a html_link, this is not required.
+     * @return string HTML fragment
+     */
+    public function link($link, $text=null) {
+        $attributes = array('href' => $link);
 
+        if (is_a($link, 'html_link')) {
+            $link->prepare();
+            $attributes['href'] = prepare_url($link->url);
+            $text = $link->text;
+
+            $attributes['class'] = $link->get_classes_string();
+            $attributes['title'] = $link->title;
+            $attributes['id'] = $link->id;
+
+        } else if (empty($text)) {
+            throw new coding_exception('$OUTPUT->link() must have a string as second parameter if the first param ($link) is a string');
+        }
+
+        return $this->output_tag('a', $attributes, $text);
+    }
+
+   /**
+    * Print a message along with button choices for Continue/Cancel. Labels default to Yes(Continue)/No(Cancel).
+    * If a string or moodle_url is given instead of a html_button, method defaults to post and text to Yes/No
+    * @param string $message The question to ask the user
+    * @param mixed $continue The html_form component representing the Continue answer. Can also be a moodle_url or string URL
+    * @param mixed $cancel The html_form component representing the Cancel answer. Can also be a moodle_url or string URL
+    * @return string HTML fragment
+    */
+    public function confirm($message, $continue, $cancel) {
+        if (!($continue instanceof html_form) && !is_object($continue)) {
+            $continueform = new html_form();
+            $continueform->url = new moodle_url($continue);
+            $continue = $continueform;
+        } else {
+            throw new coding_exception('The 2nd and 3rd params to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+        }
+
+        if (!($cancel instanceof html_form) && !is_object($cancel)) {
+            $cancelform = new html_form();
+            $cancelform->url = new moodle_url($cancel);
+            $cancel = $cancelform;
+        }
+
+        if (empty($continue->button->label)) {
+            $continue->button->label = get_string('yes');
+        }
+        if (empty($cancel->button->label)) {
+            $cancel->button->label = get_string('no');
+        }
+
+        $output = $this->box_start('generalbox', 'notice');
+        $output .= $this->output_tag('p', array(), $message);
+        $output .= $this->output_tag('div', array('class' => 'buttons'), $this->button($continue) . $this->button($cancel));
+        $output .= $this->box_end();
+        return $output;
+    }
+
+    /**
+     * Given a html_form object, outputs an <input> tag within a form that uses the object's attributes.
+     *
+     * @param html_form $form A html_form object
+     * @return string HTML fragment
+     */
+    public function button($form) {
+        if (empty($form->button)) {
+            throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
+        }
+
+        $form->button->prepare();
+
+        $this->prepare_event_handlers($form->button);
+
+        $buttonattributes = array('class' => $form->button->get_classes_string(),
+                                  'type' => 'submit',
+                                  'value' => $form->button->label,
+                                  'disabled' => $form->button->disabled,
+                                  'id' => $form->button->id);
+
+        $buttonoutput = $this->output_empty_tag('input', $buttonattributes);
+
+        return $this->form($form, $buttonoutput);
+    }
+
+    /**
+     * Given a html_form component and an optional rendered submit button,
+     * outputs a HTML form with correct divs and inputs and a single submit button.
+     * This doesn't render any other visible inputs. Use moodleforms for these.
+     * @param html_form $form A html_form instance
+     * @param string $contents HTML fragment to put inside the form. If given, must contain at least the submit button.
+     * @return string HTML fragment
+     */
+    public function form($form, $contents=null) {
+        $form->prepare();
+
+        $this->prepare_event_handlers($form);
+
+        if (empty($contents)) {
+            $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
+        }
+
+        $hiddenoutput = '';
+
+        foreach ($form->url->params() as $var => $val) {
+            $hiddenoutput .= $this->output_empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+        }
+
+        $formattributes = array(
+                'method' => $form->method,
+                'action' => prepare_url($form->url, true),
+                'id' => $form->id,
+                'class' => $form->get_classes_string());
+
+        $divoutput = $this->output_tag('div', array(), $hiddenoutput . $contents);
+        $formoutput = $this->output_tag('form', $formattributes, $divoutput);
+        $output = $this->output_tag('div', array('class' => 'singlebutton'), $formoutput);
+
+        return $output;
+    }
+
+    /**
+     * Given a action_icon object, outputs an image linking to an action (URL or AJAX).
+     *
+     * @param action_icon $icon An action_icon object
+     * @return string HTML fragment
+     */
+    public function action_icon($icon) {
+
+        $icon->prepare();
+
+        $this->prepare_event_handlers($icon);
+
+        $imageoutput = $this->image($icon->image);
+
+        if ($icon->linktext) {
+            $imageoutput .= $icon->linktext;
+        }
+
+        $icon->link->text = $imageoutput;
+
+        return $this->link($icon->link);
+    }
+
+    /**
+     * Print a help icon.
+     *
+     * @param help_icon $helpicon A help_icon object, subclass of html_link
+     *
+     * @return string  HTML fragment
+     */
+    public function help_icon($icon) {
+        global $COURSE;
+
+        $icon->prepare();
+
+        $icon->link->add_action_object(new popup_action('click', $icon->link->url));
+
+        $image = null;
+
+        if (!empty($icon->image)) {
+            $image = $icon->image;
+            $image->add_class('iconhelp');
+        }
+
+        return $this->output_tag('span', array('class' => 'helplink'), $this->link_to_popup($icon->link, $image));
+    }
+
+    /**
+     * Creates and returns a button to a popup window
+     *
+     * @param html_link $link Subclass of moodle_html_component
+     * @param moodle_popup $popup A moodle_popup object
+     * @param html_image $image An optional image replacing the link text
+     *
+     * @return string HTML fragment
+     */
+    public function link_to_popup($link, $image=null) {
+        $link->prepare();
+
+        $this->prepare_event_handlers($link);
+
+        if (empty($link->url)) {
+            throw new coding_exception('Called $OUTPUT->link_to_popup($link) method without $link->url set.');
+        }
+
+        $linkurl = prepare_url($link->url);
+
+        $tagoptions = array(
+                'title' => $link->title,
+                'id' => $link->id,
+                'href' => ($linkurl) ? $linkurl : prepare_url($popup->url),
+                'class' => $link->get_classes_string());
+
+        // Use image if one is given
+        if (!empty($image) && $image instanceof html_image) {
+
+            if (empty($image->alt)) {
+                $image->alt = $link->text;
+            }
+
+            $link->text = $this->image($image);
+
+            if (!empty($link->linktext)) {
+                $link->text = "$link->title &nbsp; $link->text";
+            }
+        }
+
+        return $this->output_tag('a', $tagoptions, $link->text);
+    }
+
+    /**
+     * Creates and returns a spacer image with optional line break.
+     *
+     * @param html_image $image Subclass of moodle_html_component
+     *
+     * @return string HTML fragment
+     */
+    public function spacer($image) {
+        $image->prepare();
+        $image->add_class('spacer');
+
+        if (empty($image->src)) {
+            $image->src = $this->old_icon_url('spacer');
+        }
+
+        $output = $this->image($image);
+
+        return $output;
+    }
+
+    /**
+     * Creates and returns an image.
+     *
+     * @param html_image $image Subclass of moodle_html_component
+     *
+     * @return string HTML fragment
+     */
+    public function image($image) {
+        $image->prepare();
+
+        $attributes = array('class' => $image->get_classes_string(),
+                            'style' => prepare_legacy_width_and_height($image),
+                            'src' => prepare_url($image->src),
+                            'alt' => $image->alt,
+                            'title' => $image->title);
+
+        return $this->output_empty_tag('img', $attributes);
+    }
+
+    /**
+     * Print the specified user's avatar.
+     *
+     * This method can be used in two ways:
+     * <pre>
+     * // Option 1:
+     * $userpic = new user_picture();
+     * // Set properties of $userpic
+     * $OUTPUT->user_picture($userpic);
+     *
+     * // Option 2: (shortcut for simple cases)
+     * // $user has come from the DB and has fields id, picture, imagealt, firstname and lastname
+     * $OUTPUT->user_picture($user, $COURSE->id);
+     * </pre>
+     *
+     * @param object $userpic Object with at least fields id, picture, imagealt, firstname, lastname
+     *     If any of these are missing, or if a userid is passed, the database is queried. Avoid this
+     *     if at all possible, particularly for reports. It is very bad for performance.
+     *     A user_picture object is a better parameter.
+     * @param int $courseid courseid Used when constructing the link to the user's profile. Required if $userpic
+     *     is not a user_picture object
+     * @return string HTML fragment
+     */
+    public function user_picture($userpic, $courseid=null) {
+        // Instantiate a user_picture object if $user is not already one
+        if (!($userpic instanceof user_picture)) {
+            if (empty($courseid)) {
+                throw new coding_exception('Called $OUTPUT->user_picture with a $user object but no $courseid.');
+            }
+
+            $user = $userpic;
+            $userpic = new user_picture();
+            $userpic->user = $user;
+            $userpic->courseid = $courseid;
+        }
+
+        $userpic->prepare();
+
+        $output = $this->image($userpic->image);
+
+        if (!empty($userpic->link) && !empty($userpic->url)) {
+            $actions = $userpic->get_actions();
+            if (!empty($actions)) {
+                $link = new html_link();
+                $link->url = $userpic->url;
+                $link->text = fullname($userpic->user);
+                $link->add_action_object($actions[0]);
+                $output = $this->link_to_popup($link);
+            } else {
+                $output = $this->link(prepare_url($userpic->url), $output);
+            }
+        }
+
+        return $output;
     }
 
     public function close_window_button($buttontext = null, $reloadopener = false) {
@@ -2506,8 +2847,55 @@ class moodle_core_renderer extends moodle_renderer_base {
         if (!is_a($link, 'moodle_url')) {
             $link = new moodle_url($link);
         }
-        return $this->output_tag('div', array('class' => 'continuebutton'),
-                print_single_button($link->out(true), $link->params(), get_string('continue'), 'get', '', true));
+        $form = new html_form();
+        $form->url = $link;
+        $form->values = $link->params();
+        $form->button->label = get_string('continue');
+        $form->method = 'get';
+
+        return $this->output_tag('div', array('class' => 'continuebutton') , $this->button($form));
+    }
+
+    /**
+     * Print a continue button that goes to a particular URL.
+     *
+     * @param string|moodle_url $link The url the button goes to.
+     * @return string the HTML to output.
+     */
+    public function paging_bar($pagingbar) {
+        $output = '';
+
+        $pagingbar->prepare();
+
+        if ($pagingbar->totalcount > $pagingbar->perpage) {
+            $output .= get_string('page') . ':';
+
+            if (!empty($pagingbar->previouslink)) {
+                $output .= '&nbsp;(' . $this->link($pagingbar->previouslink) . ')&nbsp;';
+            }
+
+            if (!empty($pagingbar->firstlink)) {
+                $output .= '&nbsp;' . $this->link($pagingbar->firstlink) . '&nbsp;...';
+            }
+
+            foreach ($pagingbar->pagelinks as $link) {
+                if ($link instanceof html_link) {
+                    $output .= '&nbsp;&nbsp;' . $this->link($link);
+                } else {
+                    $output .= "&nbsp;&nbsp;$link";
+                }
+            }
+
+            if (!empty($pagingbar->lastlink)) {
+                $output .= '&nbsp;...' . $this->link($pagingbar->lastlink) . '&nbsp;';
+            }
+
+            if (!empty($pagingbar->nextlink)) {
+                $output .= '&nbsp;&nbsp;(' . $this->link($pagingbar->nextlink) . ')';
+            }
+        }
+
+        return $this->output_tag('div', array('class' => 'paging'), $output);
     }
 
     /**
@@ -2711,6 +3099,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 }
 
+/// COMPONENTS
 
 /**
  * Base class for classes representing HTML elements, like moodle_select_menu.
@@ -2730,6 +3119,20 @@ class moodle_html_component {
      * @var array class names to add to this HTML element.
      */
     public $classes = array();
+    /**
+     * @var string $title The title attributes applicable to any XHTML element
+     */
+    public $title = '';
+    /**
+     * An optional array of component_action objects handling the action part of this component.
+     * @var array $actions
+     */
+    protected $actions = array();
+    /**
+     * This array of generated ids is kept static to avoid id collisions
+     * @var array $generated_ids
+     */
+    public static $generated_ids = array();
 
     /**
      * Ensure some class names are an array.
@@ -2807,6 +3210,59 @@ class moodle_html_component {
         }
     }
 
+    /**
+     * Adds a JS action to this component.
+     * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
+     * If you want to add an instantiated component_action (or one of its subclasses), use $component->add_action_object($action)
+     *
+     * @param string $event a DOM event (click, mouseover etc.)
+     * @param string $jsfunction The name of the JS function to call
+     * @param array  $jsfunctionargs An optional array of JS arguments to pass to the function
+     * @return void
+     */
+    public function add_action($event, $jsfunction, $jsfunctionargs=array()) {
+        while (empty($this->id) || in_array($this->id, moodle_html_component::$generated_ids)) {
+            $this->generate_id();
+        }
+        $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
+    }
+
+    /**
+     * Adds an instantiated component_action to this component.
+     * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
+     *
+     * @param component_action $action An instantiated component_action or one of its subclasses
+     * @return void
+     */
+    public function add_action_object($action) {
+        if (!($action instanceof component_action)) {
+            throw new coding_exception('moodle_html_component::add_action_object($action) only takes an instance of component_action.');
+        }
+
+        while (empty($this->id) && !in_array($this->id, moodle_html_component::$generated_ids)) {
+            $this->generate_id();
+        }
+        $this->actions[] = $action;
+    }
+
+    /**
+     * Internal method for generating a unique ID for the purpose of event handlers.
+     * @return void;
+     */
+    protected function generate_id() {
+        $this->id = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 5);
+        if (!in_array($this->id, moodle_html_component::$generated_ids)) {
+            moodle_html_component::$generated_ids[] = $this->id;
+        }
+    }
+
+    /**
+     * Returns the array of component_actions.
+     * @return array Component actions
+     */
+    public function get_actions() {
+        return $this->actions;
+    }
 }
 
 
@@ -2814,6 +3270,10 @@ class moodle_html_component {
  * This class hold all the information required to describe a <select> menu that
  * will be printed by {@link moodle_core_renderer::select_menu()}. (Or by an overridden
  * version of that method in a subclass.)
+ *
+ * This component can also hold enough metadata to be used as a popup form. It just
+ * needs a bit more setting up than for a simple menu. See the shortcut methods for
+ * developer-friendly usage.
  *
  * All the fields that are not set by the constructor have sensible defaults, so
  * you only need to set the properties where you want non-default behaviour.
@@ -3229,6 +3689,795 @@ class html_table extends moodle_html_component {
     }
 }
 
+/**
+ * Component representing a XHTML link.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_link extends moodle_html_component {
+    /**
+     * URL can be simple text or a moodle_url object
+     * @var mixed $url
+     */
+    public $url;
+
+    /**
+     * @var string $text The text that will appear between the link tags
+     */
+    public $text;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        // We can't accept an empty text value
+        if (empty($this->text)) {
+            throw new coding_exception('A html_link must have a descriptive text value!');
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a help icon.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class help_icon extends moodle_html_component {
+    /**
+     * @var html_link $link A html_link object that will hold the URL info
+     */
+    public $link;
+    /**
+     * @var string $text A descriptive text
+     */
+    public $text;
+    /**
+     * @var string $page  The keyword that defines a help page
+     */
+    public $page;
+    /**
+     * @var string $module Which module is the page defined in
+     */
+    public $module = 'moodle';
+    /**
+     * @var boolean $linktext Whether or not to show text next to the icon
+     */
+    public $linktext = false;
+    /**
+     * @var mixed $image The help icon. Can be set to true (will use default help icon),
+     *                   false (will not use any icon), the URL to an image, or a full
+     *                   html_image object.
+     */
+    public $image;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        $this->link = new html_link();
+        $this->image = new html_image();
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        global $COURSE, $OUTPUT;
+
+        if (empty($this->page)) {
+            throw new coding_exception('A help_icon object requires a $page parameter');
+        }
+
+        if (empty($this->text)) {
+            throw new coding_exception('A help_icon object requires a $text parameter');
+        }
+
+        $this->link->text = $this->text;
+
+        // fix for MDL-7734
+        $this->link->url = new moodle_url('/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
+
+        // fix for MDL-7734
+        if (!empty($COURSE->lang)) {
+            $this->link->url->param('forcelang', $COURSE->lang);
+        }
+
+        // Catch references to the old text.html and emoticons.html help files that
+        // were renamed in MDL-13233.
+        if (in_array($this->page, array('text', 'emoticons', 'richtext'))) {
+            $oldname = $this->page;
+            $this->page .= '2';
+            debugging("You are referring to the old help file '$oldname'. " .
+                    "This was renamed to '$this->page' because of MDL-13233. " .
+                    "Please update your code.", DEBUG_DEVELOPER);
+        }
+
+        if ($this->module == '') {
+            $this->module = 'moodle';
+        }
+
+        // Warn users about new window for Accessibility
+        $this->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
+
+        // Prepare image and linktext
+        if ($this->image && !($this->image instanceof html_image)) {
+            $image = fullclone($this->image);
+            $this->image = new html_image();
+
+            if ($image instanceof moodle_url) {
+                $this->image->src = $image->out();
+            } else if ($image === true) {
+                $this->image->src = $OUTPUT->old_icon_url('help');
+            } else if (is_string($image)) {
+                $this->image->src = $image;
+            }
+            $this->image->alt = $this->text;
+
+            if ($this->linktext) {
+                $this->image->alt = get_string('helpwiththis');
+            } else {
+                $this->image->alt = $this->title;
+            }
+            $this->image->add_class('iconhelp');
+        } else if (empty($this->image->src)) {
+            $this->image->src = $OUTPUT->old_icon_url('help');
+        }
+
+        parent::prepare();
+    }
+}
+
+
+/**
+ * Component representing a XHTML button (input of type 'button').
+ * The renderer will either output it as a button with an onclick event,
+ * or as a form with hidden inputs.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_button extends moodle_html_component {
+    /**
+     * @var string $label
+     */
+    public $label;
+
+    /**
+     * @var boolean $disabled Whether or not this button is disabled
+     */
+    public $disabled = false;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('singlebutton');
+
+        if (empty($this->label)) {
+            throw new coding_exception('A html_button must have a label value!');
+        }
+
+        if ($this->disabled) {
+            $this->disabled = 'disabled';
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing an icon linking to a Moodle page.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class action_icon extends moodle_html_component {
+    /**
+     * @var string $linktext Optional text to display next to the icon
+     */
+    public $linktext;
+    /**
+     * @var html_image $image The icon
+     */
+    public $image;
+    /**
+     * @var html_link $link The link
+     */
+    public $link;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        $this->image = new html_image();
+        $this->link = new html_link();
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->image->add_class('action-icon');
+
+        parent::prepare();
+
+        if (empty($this->image->src)) {
+            throw new coding_exception('action_icon->image->src must not be empty');
+        }
+
+        if (empty($this->image->alt) && !empty($this->linktext)) {
+            $this->image->alt = $this->linktext;
+        } else if (empty($this->image->alt)) {
+            debugging('action_icon->image->alt should not be empty.', DEBUG_DEVELOPER);
+        }
+    }
+}
+
+/**
+ * Component representing an image.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_image extends moodle_html_component {
+    /**
+     * @var string $alt A descriptive text
+     */
+    public $alt = HTML_ATTR_EMPTY;
+    /**
+     * @var string $src The path to the image being used
+     */
+    public $src;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('image');
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a user picture.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class user_picture extends moodle_html_component {
+    /**
+     * @var mixed $user A userid or a user object with at least fields id, picture, imagealrt, firstname and lastname set.
+     */
+    public $user;
+    /**
+     * @var int $courseid The course id. Used when constructing the link to the user's profile.
+     */
+    public $courseid;
+    /**
+     * @var html_image $image A custom image used as the user picture.
+     */
+    public $image;
+    /**
+     * @var mixed $url False: picture not enclosed in a link. True: default link. moodle_url: custom link.
+     */
+    public $url;
+    /**
+     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
+     */
+    public $size;
+    /**
+     * @var boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
+     */
+    public $alttext = true;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        $this->image = new html_image();
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        global $CFG, $DB, $OUTPUT;
+
+        if (empty($this->user)) {
+            throw new coding_exception('A user_picture object must have a $user object before being rendered.');
+        }
+
+        if (empty($this->courseid)) {
+            throw new coding_exception('A user_picture object must have a courseid value before being rendered.');
+        }
+
+        if (!($this->image instanceof html_image)) {
+            debugging('user_picture::image must be an instance of html_image', DEBUG_DEVELOPER);
+        }
+
+        $needrec = false;
+        // only touch the DB if we are missing data...
+        if (is_object($this->user)) {
+            // Note - both picture and imagealt _can_ be empty
+            // what we are trying to see here is if they have been fetched
+            // from the DB. We should use isset() _except_ that some installs
+            // have those fields as nullable, and isset() will return false
+            // on null. The only safe thing is to ask array_key_exists()
+            // which works on objects. property_exists() isn't quite
+            // what we want here...
+            if (! (array_key_exists('picture', $this->user)
+                   && ($this->alttext && array_key_exists('imagealt', $this->user)
+                       || (isset($this->user->firstname) && isset($this->user->lastname)))) ) {
+                $needrec = true;
+                $this->user = $this->user->id;
+            }
+        } else {
+            if ($this->alttext) {
+                // we need firstname, lastname, imagealt, can't escape...
+                $needrec = true;
+            } else {
+                $userobj = new StdClass; // fake it to save DB traffic
+                $userobj->id = $user;
+                $userobj->picture = $picture;
+                $this->user = clone($userobj);
+                unset($userobj);
+            }
+        }
+        if ($needrec) {
+            $this->user = $DB->get_record('user', array('id' => $this->user), 'id,firstname,lastname,imagealt');
+        }
+
+        if (!empty($this->link) && empty($this->url)) {
+            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $this->courseid));
+        }
+
+        if (empty($this->size)) {
+            $file = 'f2';
+            $this->size = 35;
+        } else if ($this->size === true or $this->size == 1) {
+            $file = 'f1';
+            $this->size = 100;
+        } else if ($this->size >= 50) {
+            $file = 'f1';
+        } else {
+            $file = 'f2';
+        }
+
+        $this->add_class('userpicture');
+
+        if (empty($this->image->src)) {
+            $this->image->src = $this->user->picture;
+        }
+
+        if (!empty($this->image->src)) {
+            require_once($CFG->libdir.'/filelib.php');
+            $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
+        } else { // Print default user pictures (use theme version if available)
+            $this->add_class('defaultuserpic');
+            $this->image->src = $OUTPUT->old_icon_url('u/' . $file);
+        }
+
+        if ($this->alttext) {
+            if (!empty($this->user->imagealt)) {
+                $this->image->alt = $this->user->imagealt;
+            } else {
+                $this->image->alt = get_string('pictureof','',fullname($this->user));
+            }
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a textarea.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_textarea extends moodle_html_component {
+    /**
+     * @param string $name Name to use for the textarea element.
+     */
+    public $name;
+    /**
+     * @param string $value Initial content to display in the textarea.
+     */
+    public $value;
+    /**
+     * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
+     */
+    public $rows;
+    /**
+     * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
+     */
+    public $cols;
+    /**
+     * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
+     */
+    public $usehtmleditor;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('form-textarea');
+
+        if (empty($this->id)) {
+            $this->id = "edit-$this->name";
+        }
+
+        if ($this->usehtmleditor) {
+            editors_head_setup();
+            $editor = get_preferred_texteditor(FORMAT_HTML);
+            $editor->use_editor($this->id, array('legacy'=>true));
+            $this->value = htmlspecialchars($value);
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a simple form wrapper. Its purpose is mainly to enclose
+ * a submit input with the appropriate action and hidden inputs.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_form extends moodle_html_component {
+    /**
+     * @var string $method post or get
+     */
+    public $method = 'post';
+    /**
+     * If a string is given, it will be converted to a moodle_url during prepare()
+     * @var mixed $url A moodle_url including params or a string
+     */
+    public $url;
+    /**
+     * @var array $params Optional array of parameters. Ignored if $url instanceof moodle_url
+     */
+    public $params = array();
+    /**
+     * @var boolean $showbutton If true, the submit button will always be shown even if JavaScript is available
+     */
+    public $showbutton = false;
+    /**
+     * @var string $targetwindow The name of the target page to open the linked page in.
+     */
+    public $targetwindow = 'self';
+    /**
+     * @var html_button $button A submit button
+     */
+    public $button;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        static $go;
+        $this->button = new html_button();
+        if (!isset($go)) {
+            $go = get_string('go');
+            $this->button->label = $go;
+        }
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+
+        if (empty($this->url)) {
+            throw new coding_exception('A html_form must have a $url value (string or moodle_url).');
+        }
+
+        if (!($this->url instanceof moodle_url)) {
+            $this->url = new moodle_url($this->url, $this->params);
+        }
+
+        if ($this->method == 'post') {
+            $this->url->param('sesskey', sesskey());
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a paging bar.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_paging_bar extends moodle_html_component {
+    /**
+     * @var int $maxdisplay The maximum number of pagelinks to display
+     */
+    public $maxdisplay = 18;
+    /**
+     * @var int $totalcount post or get
+     */
+    public $totalcount;
+    /**
+     * @var int $page The page you are currently viewing
+     */
+    public $page;
+    /**
+     * @var int $perpage The number of entries that should be shown per page
+     */
+    public $perpage;
+    /**
+     * @var string $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
+     *      If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
+     */
+    public $baseurl;
+    /**
+     * @var string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
+     */
+    public $pagevar = 'page';
+    /**
+     * @var bool $nocurr do not display the current page as a link
+     */
+    public $nocurr;
+    /**
+     * @var html_link $previouslink A HTML link representing the "previous" page
+     */
+    public $previouslink = null;
+    /**
+     * @var html_link $nextlink A HTML link representing the "next" page
+     */
+    public $nextlink = null;
+    /**
+     * @var html_link $firstlink A HTML link representing the first page
+     */
+    public $firstlink = null;
+    /**
+     * @var html_link $lastlink A HTML link representing the last page
+     */
+    public $lastlink = null;
+    /**
+     * @var array $pagelinks An array of html_links. One of them is just a string: the current page
+     */
+    public $pagelinks = array();
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (!($this->baseurl instanceof moodle_url)) {
+            $this->baseurl = new moodle_url($this->baseurl);
+        }
+
+        if ($this->totalcount > $this->perpage) {
+            $pagenum = $this->page - 1;
+
+            if ($this->page > 0) {
+                $this->previouslink = new html_link();
+                $this->previouslink->add_class('previous');
+                $this->previouslink->url = $this->baseurl->out(false, array($this->pagevar => $pagenum));
+                $this->previouslink->text = get_string('previous');
+            }
+
+            if ($this->perpage > 0) {
+                $lastpage = ceil($this->totalcount / $this->perpage);
+            } else {
+                $lastpage = 1;
+            }
+
+            if ($this->page > 15) {
+                $startpage = $this->page - 10;
+
+                $this->firstlink = new html_link();
+                $this->firstlink->url = $this->baseurl->out(false, array($this->pagevar => 0));
+                $this->firstlink->text = 1;
+                $this->firstlink->add_class('first');
+            } else {
+                $startpage = 0;
+            }
+
+            $currpage = $startpage;
+            $displaycount = $displaypage = 0;
+
+            while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
+                $displaypage = $currpage + 1;
+
+                if ($this->page == $currpage && empty($this->nocurr)) {
+                    $this->pagelinks[] = $displaypage;
+                } else {
+                    $pagelink = new html_link();
+                    $pagelink->url = $this->baseurl->out(false, array($this->pagevar => $currpage));
+                    $pagelink->text = $displaypage;
+                    $this->pagelinks[] = $pagelink;
+                }
+
+                $displaycount++;
+                $currpage++;
+            }
+
+            if ($currpage < $lastpage) {
+                $lastpageactual = $lastpage - 1;
+                $this->lastlink = new html_link();
+                $this->lastlink->url = $this->baseurl->out(false, array($this->pagevar => $lastpageactual));
+                $this->lastlink->text = $lastpage;
+                $this->lastlink->add_class('last');
+            }
+
+            $pagenum = $this->page + 1;
+
+            if ($pagenum != $displaypage) {
+                $this->nextlink = new html_link();
+                $this->nextlink->url = $this->baseurl->out(false, array($this->pagevar => $pagenum));
+                $this->nextlink->text = get_string('next');
+                $this->nextlink->add_class('next');
+            }
+        }
+    }
+
+}
+
+/// ACTIONS
+
+/**
+ * Helper class used by other components that involve an action on the page (URL or JS).
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class component_action {
+
+    /**
+     * The DOM event that will trigger this action when caught
+     * @var string $event DOM event
+     */
+    public $event;
+
+    /**
+     * The JS function you create must have two arguments:
+     *      1. The event object
+     *      2. An object/array of arguments ($jsfunctionargs)
+     * @var string $jsfunction A function name to call when the button is clicked
+     */
+    public $jsfunction = false;
+
+    /**
+     * @var array $jsfunctionargs An array of arguments to pass to the JS function
+     */
+    public $jsfunctionargs = array();
+
+    /**
+     * Constructor
+     * @param string $event DOM event
+     * @param moodle_url $url A moodle_url object, required if no jsfunction is given
+     * @param string $method 'post' or 'get'
+     * @param string $jsfunction An optional JS function. Required if jsfunctionargs is given
+     * @param array  $jsfunctionargs An array of arguments to pass to the jsfunction
+     * @return void
+     */
+    public function __construct($event, $jsfunction, $jsfunctionargs=array()) {
+        $this->event = $event;
+
+        $this->jsfunction = $jsfunction;
+        $this->jsfunctionargs = $jsfunctionargs;
+
+        if (!empty($this->jsfunctionargs)) {
+            if (empty($this->jsfunction)) {
+                throw new coding_exception('The component_action object needs a jsfunction value to pass the jsfunctionargs to.');
+            }
+        }
+    }
+}
+
+/**
+ * Component action for a popup window.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class popup_action extends component_action {
+    /**
+     * @var array $params An array of parameters that will be passed to the openpopup JS function
+     */
+    public $params = array(
+            'height' =>  400,
+            'width' => 500,
+            'top' => 0,
+            'left' => 0,
+            'menubar' => false,
+            'location' => false,
+            'scrollbars' => true,
+            'resizable' => true,
+            'toolbar' => true,
+            'status' => true,
+            'directories' => false,
+            'fullscreen' => false,
+            'dependent' => true);
+
+    /**
+     * Constructor
+     * @param string $event DOM event
+     * @param moodle_url $url A moodle_url object, required if no jsfunction is given
+     * @param string $method 'post' or 'get'
+     * @param array  $params An array of popup parameters
+     * @return void
+     */
+    public function __construct($event, $url, $name='popup', $params=array()) {
+        global $CFG;
+        $this->name = $name;
+
+        $url = new moodle_url($url);
+
+        if ($this->name) {
+            $_name = $this->name;
+            if (($_name = preg_replace("/\s/", '_', $_name)) != $this->name) {
+                throw new coding_exception('The $name of a popup window shouldn\'t contain spaces - string modified. '. $this->name .' changed to '. $_name);
+                $this->name = $_name;
+            }
+        } else {
+            $this->name = 'popup';
+        }
+
+        foreach ($this->params as $var => $val) {
+            if (array_key_exists($var, $params)) {
+                $this->params[$var] = $params[$var];
+            }
+        }
+        parent::__construct($event, 'openpopup', array('url' => $url->out(false, array(), false), 'name' => $name, 'options' => $this->get_js_options($params)));
+    }
+
+    /**
+     * Returns a string of concatenated option->value pairs used by JS to call the popup window,
+     * based on this object's variables
+     *
+     * @return string String of option->value pairs for JS popup function.
+     */
+    public function get_js_options() {
+        $jsoptions = '';
+
+        foreach ($this->params as $var => $val) {
+            if (is_string($val) || is_int($val)) {
+                $jsoptions .= "$var=$val,";
+            } elseif (is_bool($val)) {
+                $jsoptions .= ($val) ? "$var," : "$var=0,";
+            }
+        }
+
+        $jsoptions = substr($jsoptions, 0, strlen($jsoptions) - 1);
+
+        return $jsoptions;
+    }
+}
+
+/// RENDERERS
 
 /**
  * A renderer that generates output for command-line scripts.
@@ -3422,4 +4671,24 @@ function output_css_for_css_edit($files, $toreplace) {
         }
         echo "/* @end */\n\n";
     }
+}
+
+/**
+ * Given a moodle_html_component with height and/or width set, translates them
+ * to appropriate CSS rules.
+ *
+ * @param moodle_html_component $component
+ * @return string CSS rules
+ */
+function prepare_legacy_width_and_height($component) {
+    $output = '';
+    if (!empty($component->height)) {
+        debugging('Explicit height given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+        $output = "height: {$component->height}px;";
+    }
+    if (!empty($component->width)) {
+        debugging('Explicit width given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+        $output .= "width: {$component->width}px;";
+    }
+    return $output;
 }

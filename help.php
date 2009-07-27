@@ -19,6 +19,7 @@ $text = optional_param('text', 'No text to display', PARAM_CLEAN);
 $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
 $skiplocal = optional_param('skiplocal', 0, PARAM_INT);     // shall _local help files be skipped?
+$fortooltip = optional_param('fortooltip', 0, PARAM_INT);
 
 $PAGE->set_course($COURSE);
 
@@ -62,7 +63,13 @@ if (!empty($file)) {
 
 // Finish buffer
 $output = ob_get_contents();
+
 ob_end_clean();
+
+if ($fortooltip) {
+    echo shorten_text($output, 400, false, '<span class="readmore">' . get_string('clickhelpiconformoreinfo') . '</span>');
+    die();
+}
 
 // Determine title
 $title = get_string('help'); // Default is just 'Help'

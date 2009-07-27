@@ -595,6 +595,22 @@ div.hide {
     margin:0.2em 0pt;
     text-align:left;
 }
+#help_icon_tooltip {
+  font-size: 0.7em;
+}
+#help_icon_tooltip h1 {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+#help_icon_tooltip div.bd {
+  width: 35em;
+}
+
+#help_icon_tooltip .readmore {
+  display: block;
+  font-style: italic;
+  margin-top:10px;
+}
 
 /***
  *** Forms

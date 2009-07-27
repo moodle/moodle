@@ -229,59 +229,96 @@ class ContainsTagWithAttribute extends SimpleExpectation {
 /**
  * An Expectation that looks to see whether some HMTL contains a tag with an array of attributes.
  * All attributes must be present and their values must match the expected values.
+ * A third parameter can be used to specify attribute=>value pairs which must not be present in a positive match.
  *
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ContainsTagWithAttributes extends SimpleExpectation {
+    /**
+     * @var string $tag The name of the Tag to search
+     */
     protected $tag;
-    protected $attributes = array();
+    /**
+     * @var array $expectedvalues An associative array of parameters, all of which must be matched
+     */
+    protected $expectedvalues = array();
+    /**
+     * @var array $forbiddenvalues An associative array of parameters, none of which must be matched
+     */
+    protected $forbiddenvalues = array();
+    /**
+     * @var string $failurereason The reason why the test failed: nomatch or forbiddenmatch
+     */
+    protected $failurereason = 'nomatch';
 
-    function __construct($tag, $attributes, $message = '%s') {
+    function __construct($tag, $expectedvalues, $forbiddenvalues=array(), $message = '%s') {
         $this->SimpleExpectation($message);
         $this->tag = $tag;
-        $this->attributes = $attributes;
+        $this->expectedvalues = $expectedvalues;
+        $this->forbiddenvalues = $forbiddenvalues;
     }
-    
+
     function test($html) {
         $parser = new DOMDocument();
         $parser->validateOnParse = true;
         $parser->loadHTML($html); 
         $list = $parser->getElementsByTagName($this->tag);
-        
+
+        $foundamatch = false;
+
         // Iterating through inputs
         foreach ($list as $node) {
             if (empty($node->attributes) || !is_a($node->attributes, 'DOMNamedNodeMap')) {
                 continue;
             }
 
-            $result = true;
+            // For the current expected attribute under consideration, check that values match
+            $allattributesmatch = true;
 
-            foreach ($this->attributes as $attribute => $expectedvalue) {
-                if (!$node->attributes->getNamedItem($attribute)) {
-                    break 2;
+            foreach ($this->expectedvalues as $expectedattribute => $expectedvalue) {
+                if (!$node->getAttribute($expectedattribute)) {
+                    $this->failurereason = 'nomatch';
+                    continue 2; // Skip this tag, it doesn't have all the expected attributes
                 }
-                
-                if ($node->attributes->getNamedItem($attribute)->value != $expectedvalue) {
-                    $result = false;
+                if ($node->getAttribute($expectedattribute) != $expectedvalue) {
+                    $allattributesmatch = false;
+                    $this->failurereason = 'nomatch';
                 }
             }
 
-            if ($result) {
-                return true;
+            if ($allattributesmatch) {
+                $foundamatch = true;
+
+                // Now make sure this node doesn't have any of the forbidden attributes either
+                $nodeattrlist = $node->attributes;
+
+                foreach ($nodeattrlist as $domattrname => $domattr) {
+                    if (array_key_exists($domattrname, $this->forbiddenvalues) && $node->getAttribute($domattrname) == $this->forbiddenvalues[$domattrname]) {
+                        $this->failurereason = "forbiddenmatch:$domattrname:" . $node->getAttribute($domattrname);
+                        $foundamatch = false;
+                    }
+                }
             }
-            
         }
-        return false;
+
+        return $foundamatch;
     }
-    
+
     function testMessage($html) {
-        $output = 'Content [' . $html . '] does not contain the tag [' . $this->tag . '] with attributes [';
-        foreach ($this->attributes as $var => $val) {
-            $output .= "$var=\"$val\" ";
+        $output = 'Content [' . $html . '] ';
+
+        if (preg_match('/forbiddenmatch:(.*):(.*)/', $this->failurereason, $matches)) {
+            $output .= "contains the tag $this->tag with the forbidden attribute=>value pair: [$matches[1]=>$matches[2]]";
+        } else if ($this->failurereason == 'nomatch') {
+            $output .= 'does not contain the tag [' . $this->tag . '] with attributes [';
+            foreach ($this->expectedvalues as $var => $val) {
+                $output .= "$var=\"$val\" ";
+            }
+            $output = rtrim($output);
+            $output .= '].';
         }
-        $output = rtrim($output);
-        $output .= ']';
+
         return $output;
     }
 }

@@ -318,7 +318,7 @@ class moodle_url {
      *
      * The added params override existing ones if they have the same name.
      *
-     * @param array $params Defaults to null. If null then return value of param 'name'.
+     * @param array $params Defaults to null. If null then returns all params.
      * @return array Array of Params for url.
      */
     public function params($params = null) {
@@ -484,6 +484,41 @@ class moodle_url {
 }
 
 /**
+ * Given an unknown $url type (string or moodle_url), returns a string URL.
+ * A relative URL is handled with $PAGE->url but gives a debugging error.
+ *
+ * @param mixed $url The URL (moodle_url or string)
+ * @param bool $stripformparams Whether or not to strip the query params from the URL
+ * @return string
+ */
+function prepare_url($url, $stripformparams=false) {
+    global $CFG, $PAGE;
+
+    $output = $url;
+
+    if ($url instanceof moodle_url) {
+        $output = $url->out($stripformparams);
+    }
+
+    // Handle relative URLs
+    if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
+        if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
+            debugging('Relative URLs are deprecated, please use an absolute URL in your code', DEBUG_DEVELOPER);
+            return $matches[1] . "/$output";
+        } else {
+            throw new coding_exception('Your page uses bizarre relative URLs which Moodle cannot handle. Please use absolute URLs.');
+        }
+    }
+
+    // Add wwwroot only if the URL does not already start with http:// or https://
+    if (!preg_match('|https?://|', $output) ) {
+        $output = $CFG->wwwroot . $output;
+    }
+
+    return $output;
+}
+
+/**
  * Determine if there is data waiting to be processed from a form
  *
  * Used on most forms in Moodle to check for data
@@ -550,157 +585,6 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
     }
 
     return $output;
-}
-
-/**
- * This function will print a button/link/etc. form element
- * that will work on both Javascript and non-javascript browsers.
- *
- * Relies on the Javascript function openpopup in javascript.php
- * All parameters default to null, only $type and $url are mandatory.
- *
- * $url must be relative to home page  eg /mod/survey/stuff.php
- *
- * @global object
- * @param string $type Can be 'button' or 'link'
- * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
- * @param string $name Name to be assigned to the popup window (this is used by
- *   client-side scripts to "talk" to the popup window)
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @param bool $return If true, return as a string, otherwise print
- * @param string $id id added to the element
- * @param string $class class added to the element
- * @return string
- */
-function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=null,
-                                  $height=400, $width=500, $title=null,
-                                  $options=null, $return=false, $id=null, $class=null) {
-
-    if (is_null($url)) {
-        debugging('You must give the url to display in the popup. URL is missing - can\'t create popup window.', DEBUG_DEVELOPER);
-    }
-
-    global $CFG;
-
-    if ($options == 'none') { // 'none' is legacy, should be removed in v2.0
-        $options = null;
-    }
-
-    // add some sane default options for popup windows
-    if (!$options) {
-        $options = 'menubar=0,location=0,scrollbars,resizable';
-    }
-    if ($width) {
-        $options .= ',width='. $width;
-    }
-    if ($height) {
-        $options .= ',height='. $height;
-    }
-    if ($id) {
-        $id = ' id="'.$id.'" ';
-    }
-    if ($class) {
-        $class = ' class="'.$class.'" ';
-    }
-    if ($name) {
-        $_name = $name;
-        if (($name = preg_replace("/\s/", '_', $name)) != $_name) {
-            debugging('The $name of a popup window shouldn\'t contain spaces - string modified. '. $_name .' changed to '. $name, DEBUG_DEVELOPER);
-        }
-    } else {
-        $name = 'popup';
-    }
-
-    // get some default string, using the localized version of legacy defaults
-    if (is_null($linkname) || $linkname === '') {
-        $linkname = get_string('clickhere');
-    }
-    if (!$title) {
-        $title = get_string('popupwindowname');
-    }
-
-    $fullscreen = 0; // must be passed to openpopup
-    $element = '';
-
-    switch ($type) {
-        case 'button':
-            $element = '<input type="button" name="'. $name .'" title="'. $title .'" value="'. $linkname .'" '. $id . $class .
-                       "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
-            break;
-        case 'link':
-            // Add wwwroot only if the URL does not already start with http:// or https://
-            if (!preg_match('|https?://|', $url)) {
-                $url = $CFG->wwwroot . $url;
-            }
-            $element = '<a title="'. s(strip_tags($title)) .'" href="'. $url .'" '.
-                       "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
-            break;
-        default :
-            print_error('cannotcreatepopupwin');
-            break;
-    }
-
-    if ($return) {
-        return $element;
-    } else {
-        echo $element;
-    }
-}
-
-/**
- * Creates and displays (or returns) a link to a popup window, using element_to_popup_window function.
- *
- * Simply calls {@link element_to_popup_window()} with type set to 'link'
- * @see element_to_popup_window()
- *
- * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
- * @param string $name Name to be assigned to the popup window (this is used by
- *   client-side scripts to "talk" to the popup window)
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @param bool $return If true, return as a string, otherwise print
- * @param string $id id added to the element
- * @param string $class class added to the element
- * @return string html code to display a link to a popup window.
- */
-function link_to_popup_window ($url, $name=null, $linkname=null,
-                               $height=400, $width=500, $title=null,
-                               $options=null, $return=false) {
-
-    return element_to_popup_window('link', $url, $name, $linkname, $height, $width, $title, $options, $return, null, null);
-}
-
-/**
- * Creates and displays (or returns) a buttons to a popup window, using element_to_popup_window function.
- *
- * Simply calls {@link element_to_popup_window()} with type set to 'button'
- * @see element_to_popup_window()
- *
- * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
- * @param string $name Name to be assigned to the popup window (this is used by
- *   client-side scripts to "talk" to the popup window)
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @param bool $return If true, return as a string, otherwise print
- * @param string $id id added to the element
- * @param string $class class added to the element
- * @return string html code to display a link to a popup window.
- */
-function button_to_popup_window ($url, $name=null, $linkname=null,
-                                 $height=400, $width=500, $title=null, $options=null, $return=false,
-                                 $id=null, $class=null) {
-
-    return element_to_popup_window('button', $url, $name, $linkname, $height, $width, $title, $options, $return, $id, $class);
 }
 
 
@@ -3165,240 +3049,6 @@ function _print_custom_corners_end($idbase) {
 
 
 /**
- * Print a self contained form with a single submit button.
- *
- * @param string $link used as the action attribute on the form, so the URL that will be hit if the button is clicked.
- * @param array $options these become hidden form fields, so these options get passed to the script at $link.
- * @param string $label the caption that appears on the button.
- * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
- * @param string $notusedanymore no longer used.
- * @param boolean $return if false, output the form directly, otherwise return the HTML as a string.
- * @param string $tooltip a tooltip to add to the button as a title attribute.
- * @param boolean $disabled if true, the button will be disabled.
- * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
- * @param string $formid The id attribute to use for the form
- * @return string|void Depending on the $return paramter.
- */
-function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
-        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
-    $output = '';
-    if ($formid) {
-        $formid = ' id="' . s($formid) . '"';
-    }
-    $link = str_replace('"', '&quot;', $link); //basic XSS protection
-    $output .= '<div class="singlebutton">';
-    // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'"' . $formid . '>';
-    $output .= '<div>';
-    if ($options) {
-        foreach ($options as $name => $value) {
-            $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';
-        }
-    }
-    if ($tooltip) {
-        $tooltip = 'title="' . s($tooltip) . '"';
-    } else {
-        $tooltip = '';
-    }
-    if ($disabled) {
-        $disabled = 'disabled="disabled"';
-    } else {
-        $disabled = '';
-    }
-    if ($jsconfirmmessage){
-        $jsconfirmmessage = addslashes_js($jsconfirmmessage);
-        $jsconfirmmessage = 'onclick="return confirm(\''. $jsconfirmmessage .'\');" ';
-    }
-    $output .= '<input type="submit" value="'. s($label) ."\" $tooltip $disabled $jsconfirmmessage/></div></form></div>";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-
-/**
- * Print a spacer image with the option of including a line break.
- *
- * @global object
- * @param int $height The height in pixels to make the spacer
- * @param int $width The width in pixels to make the spacer
- * @param boolean $br If set to true a BR is written after the spacer
- */
-function print_spacer($height=1, $width=1, $br=true, $return=false) {
-    global $CFG;
-    $output = '';
-
-    $output .= '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
-    if ($br) {
-        $output .= '<br />'."\n";
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Given the path to a picture file in a course, or a URL,
- * this function includes the picture in the page.
- *
- * @global object
- * @param string $path The path the to the picture
- * @param int $courseid The courseid the picture is associated with if any
- * @param int $height The height of the picture in pixels if known
- * @param int $width The width of the picture in pixels if known
- * @param string $link If set the image is wrapped with this link
- * @param bool $return If true the HTML is returned rather than being echo'd
- * @return string|void Depending on $return
- */
-function print_file_picture($path, $courseid=0, $height='', $width='', $link='', $return=false) {
-    global $CFG;
-    $output = '';
-
-    if ($height) {
-        $height = 'height="'. $height .'"';
-    }
-    if ($width) {
-        $width = 'width="'. $width .'"';
-    }
-    if ($link) {
-        $output .= '<a href="'. $link .'">';
-    }
-    if (substr(strtolower($path), 0, 7) == 'http://') {
-        $output .= '<img style="height:'.$height.'px;width:'.$width.'px;" src="'. $path .'" />';
-
-    } else if ($courseid) {
-        $output .= '<img style="height:'.$height.'px;width:'.$width.'px;" src="';
-        require_once($CFG->libdir.'/filelib.php');
-        $output .= get_file_url("$courseid/$path");
-        $output .= '" />';
-    } else {
-        $output .= 'Error: must pass URL or course';
-    }
-    if ($link) {
-        $output .= '</a>';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Print the specified user's avatar.
- *
- * @global object
- * @global object
- * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname
- *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
- *      if at all possible, particularly for reports. It is very bad for performance.
- * @param int $courseid The course id. Used when constructing the link to the user's profile.
- * @param boolean $picture The picture to print. By default (or if NULL is passed) $user->picture is used.
- * @param int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatability
- * @param boolean $return If false print picture to current page, otherwise return the output as string
- * @param boolean $link enclose printed image in a link the user's profile (default true).
- * @param string $target link target attribute. Makes the profile open in a popup window.
- * @param boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
- *      decorative images, or where the username will be printed anyway.)
- * @return string|void String or nothing, depending on $return.
- */
-function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $CFG, $DB, $OUTPUT;
-
-    $needrec = false;
-    // only touch the DB if we are missing data...
-    if (is_object($user)) {
-        // Note - both picture and imagealt _can_ be empty
-        // what we are trying to see here is if they have been fetched
-        // from the DB. We should use isset() _except_ that some installs
-        // have those fields as nullable, and isset() will return false
-        // on null. The only safe thing is to ask array_key_exists()
-        // which works on objects. property_exists() isn't quite
-        // what we want here...
-        if (! (array_key_exists('picture', $user)
-               && ($alttext && array_key_exists('imagealt', $user)
-                   || (isset($user->firstname) && isset($user->lastname)))) ) {
-            $needrec = true;
-            $user = $user->id;
-        }
-    } else {
-        if ($alttext) {
-            // we need firstname, lastname, imagealt, can't escape...
-            $needrec = true;
-        } else {
-            $userobj = new StdClass; // fake it to save DB traffic
-            $userobj->id = $user;
-            $userobj->picture = $picture;
-            $user = clone($userobj);
-            unset($userobj);
-        }
-    }
-    if ($needrec) {
-        $user = $DB->get_record('user', array('id'=>$user), 'id,firstname,lastname,imagealt');
-    }
-
-    if ($link) {
-        $url = '/user/view.php?id='. $user->id .'&amp;course='. $courseid ;
-        if ($target) {
-            $target='onclick="return openpopup(\''.$url.'\');"';
-        }
-        $output = '<a '.$target.' href="'. $CFG->wwwroot . $url .'">';
-    } else {
-        $output = '';
-    }
-    if (empty($size)) {
-        $file = 'f2';
-        $size = 35;
-    } else if ($size === true or $size == 1) {
-        $file = 'f1';
-        $size = 100;
-    } else if ($size >= 50) {
-        $file = 'f1';
-    } else {
-        $file = 'f2';
-    }
-    $class = "userpicture";
-
-    if (is_null($picture)) {
-        $picture = $user->picture;
-    }
-
-    if ($picture) {  // Print custom user picture
-        require_once($CFG->libdir.'/filelib.php');
-        $src = get_file_url($user->id.'/'.$file.'.jpg', null, 'user');
-    } else {         // Print default user pictures (use theme version if available)
-        $class .= " defaultuserpic";
-        $src =  $OUTPUT->old_icon_url('u/' . $file);
-    }
-    $imagealt = '';
-    if ($alttext) {
-        if (!empty($user->imagealt)) {
-            $imagealt = $user->imagealt;
-        } else {
-            $imagealt = get_string('pictureof','',fullname($user));
-        }
-    }
-
-    $output .= "<img class=\"$class\" src=\"$src\" height=\"$size\" width=\"$size\" alt=\"".s($imagealt).'"  />';
-    if ($link) {
-        $output .= '</a>';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
  * Prints a summary of a user in a nice little box.
  *
  * @global object
@@ -3599,43 +3249,6 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
 }
 
-/**
- * Print a png image.
- *
- * @global object
- * @staticvar bool $recentIE
- * @param string $url The URL of the image to display
- * @param int $sizex The width of the image in pixels
- * @param int $sizey The height of the image in pixels
- * @param boolean $return If true the HTML is returned rather than echo'd
- * @param string $parameters Additional HTML attributes to set
- * @return string|bool Depending on $return
- */
-function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
-    global $OUTPUT;
-    static $recentIE;
-
-    if (!isset($recentIE)) {
-        $recentIE = check_browser_version('MSIE', '5.0');
-    }
-
-    if ($recentIE) {  // work around the HORRIBLE bug IE has with alpha transparencies
-        $output .= '<img src="'. $OUTPUT->old_icon_url('spacer') . '" width="'. $sizex .'" height="'. $sizey .'"'.
-                   ' class="png" style="width: '. $sizex .'px; height: '. $sizey .'px; '.
-                   ' filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.
-                   "'$url', sizingMethod='scale') ".
-                   ' '. $parameters .' />';
-    } else {
-        $output .= '<img src="'. $url .'" style="width: '. $sizex .'px; height: '. $sizey .'px; '. $parameters .' />';
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
 
 /**
  * Display a recent activity note
@@ -3675,69 +3288,6 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
     }
 }
 
-
-/**
- * Prints a basic textarea field.
- *
- * When using this function, you should
- *
- * @global object
- * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
- * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
- * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
- * @param null $width (Deprecated) Width of the element; if a value is passed, the minimum value for $cols will be 65. Value is otherwise ignored.
- * @param null $height (Deprecated) Height of the element; if a value is passe, the minimum value for $rows will be 10. Value is otherwise ignored.
- * @param string $name Name to use for the textarea element.
- * @param string $value Initial content to display in the textarea.
- * @param int $obsolete deprecated
- * @param bool $return If false, will output string. If true, will return string value.
- * @param string $id CSS ID to add to the textarea element.
- * @return string|void depending on the value of $return
- */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
-    /// $width and height are legacy fields and no longer used as pixels like they used to be.
-    /// However, you can set them to zero to override the mincols and minrows values below.
-
-    global $CFG;
-
-    $mincols = 65;
-    $minrows = 10;
-    $str = '';
-
-    if ($id === '') {
-        $id = 'edit-'.$name;
-    }
-
-    if ($usehtmleditor) {
-        if ($height && ($rows < $minrows)) {
-            $rows = $minrows;
-        }
-        if ($width && ($cols < $mincols)) {
-            $cols = $mincols;
-        }
-    }
-
-    if ($usehtmleditor) {
-        editors_head_setup();
-        $editor = get_preferred_texteditor(FORMAT_HTML);
-        $editor->use_editor($id, array('legacy'=>true));
-    } else {
-        $editorclass = '';
-    }
-
-    $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
-    if ($usehtmleditor) {
-        $str .= htmlspecialchars($value); // needed for editing of cleaned text!
-    } else {
-        $str .= s($value);
-    }
-    $str .= '</textarea>'."\n";
-
-    if ($return) {
-        return $str;
-    }
-    echo $str;
-}
 
 /**
  * Returns a turn edit on/off button for course in a self contained form.
@@ -4313,6 +3863,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * Showing all possible numerical grades and scales
  *
  * @todo Finish documenting this function
+ * @todo Deprecate: this is only used in a few contrib modules
  *
  * @global object
  * @param int $courseid The course ID
@@ -4346,35 +3897,6 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                                      $linkobject, 400, 500, $strscales, 'none', true);
 
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
- * Prints a scale menu (as part of an existing form) including help button
- * Just like {@link print_grade_menu()} but without the numeric grades
- *
- * @global object
- * @param int $courseid ?
- * @param string $name ?
- * @param string $current ?
- * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return
- */
-function print_scale_menu($courseid, $name, $current, $return=false) {
-
-    global $CFG, $OUTPUT;
-
-    $output = '';
-    $strscales = get_string('scales');
-    $output .= choose_from_menu(get_scales_menu($courseid), $name, $current, '', '', 0, true);
-
-    $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
-    $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
-                                     $linkobject, 400, 500, $strscales, 'none', true);
     if ($return) {
         return $output;
     } else {
@@ -4493,95 +4015,6 @@ function editorhelpbutton(){
 /**
  * Print a help button.
  *
- * @global object
- * @global object
- * @uses DEBUG_DEVELOPER
- * @param string $page  The keyword that defines a help page
- * @param string $title The title of links, rollover tips, alt tags etc
- *           'Help with' (or the language equivalent) will be prefixed and '...' will be stripped.
- * @param string $module Which module is the page defined in
- * @param mixed $image Use a help image for the link?  (true/false/"both")
- * @param boolean $linktext If true, display the title next to the help icon.
- * @param string $text If defined then this text is used in the page, and
- *           the $page variable is ignored.
- * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
- * @param string $imagetext The full text for the helpbutton icon. If empty use default help.gif
- * @return string|void Depending on value of $return
- */
-function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
-                     $imagetext='') {
-    global $CFG, $COURSE, $OUTPUT;
-
-    //warning if ever $text parameter is used
-    //$text option won't work properly because the text needs to be always cleaned and,
-    // when cleaned... html tags always break, so it's unusable.
-    if ( isset($text) && $text!='') {
-        debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
-    }
-
-    // Catch references to the old text.html and emoticons.html help files that
-    // were renamed in MDL-13233.
-    if (in_array($page, array('text', 'emoticons', 'richtext'))) {
-        $oldname = $page;
-        $page .= '2';
-        debugging("You are referring to the old help file '$oldname'. " .
-                "This was renamed to '$page' becuase of MDL-13233. " .
-                "Please update your code.", DEBUG_DEVELOPER);
-    }
-
-    if ($module == '') {
-        $module = 'moodle';
-    }
-
-    if ($title == '' && $linktext == '') {
-        debugging('Error in call to helpbutton function: at least one of $title and $linktext is required');
-    }
-
-    // Warn users about new window for Accessibility
-    $tooltip = get_string('helpprefix2', '', trim($title, ". \t")) .' ('.get_string('newwindow').')';
-
-    $linkobject = '';
-
-    if ($image) {
-        if ($linktext) {
-            // MDL-7469 If text link is displayed with help icon, change to alt to "help with this".
-            $linkobject .= $title.'&nbsp;';
-            $tooltip = get_string('helpwiththis');
-        }
-        if ($imagetext) {
-            $linkobject .= $imagetext;
-        } else {
-            $linkobject .= '<img class="iconhelp" alt="'.s(strip_tags($tooltip)).'" src="'.
-                $OUTPUT->old_icon_url('help') . '" />';
-        }
-    } else {
-        $linkobject .= $tooltip;
-    }
-
-    // fix for MDL-7734
-    if ($text) {
-        $url = '/help.php?text='. s(urlencode($text));
-    } else {
-        $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
-        // fix for MDL-7734
-        if (!empty($COURSE->lang)) {
-            $url .= '&amp;forcelang=' . $COURSE->lang;
-        }
-    }
-
-    $link = '<span class="helplink">' . link_to_popup_window($url, 'popup',
-            $linkobject, 400, 500, $tooltip, 'none', true) . '</span>';
-
-    if ($return) {
-        return $link;
-    } else {
-        echo $link;
-    }
-}
-
-/**
- * Print a help button.
- *
  * Prints a special help button that is a link to the "live" emoticon popup
  *
  * @todo Finish documenting this function
@@ -4662,36 +4095,6 @@ function notice ($message, $link='', $course=NULL) {
         print_footer($course);
     }
     exit(1); // general error code
-}
-
-/**
- * Print a message along with "Yes" and "No" links for the user to continue.
- *
- * @global object
- * @param string $message The text to display
- * @param string $linkyes The link to take the user to if they choose "Yes"
- * @param string $linkno The link to take the user to if they choose "No"
- * @param string $optionyes The yes option to show on the notice
- * @param string $optionsno The no option to show
- * @param string $methodyes Form action method to use if yes [post, get]
- * @param string $methodno Form action method to use if no [post, get]
- * @return void Output is echo'd
- */
-function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
-
-    global $CFG;
-
-    $message = clean_text($message);
-    $linkyes = clean_text($linkyes);
-    $linkno = clean_text($linkno);
-
-    print_box_start('generalbox', 'notice');
-    echo '<p>'. $message .'</p>';
-    echo '<div class="buttons">';
-    print_single_button($linkyes, $optionsyes, get_string('yes'), $methodyes, $CFG->framename);
-    print_single_button($linkno,  $optionsno,  get_string('no'),  $methodno,  $CFG->framename);
-    echo '</div>';
-    print_box_end();
 }
 
 /**
@@ -4854,93 +4257,6 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
     return sprintf("<a href=\"%s:%s\" $dimmed title=\"$title\">%s</a>",
                     obfuscate_text('mailto'), obfuscate_email($email),
                     obfuscate_text($label));
-}
-
-/**
- * Prints a single paging bar to provide access to other pages  (usually in a search)
- *
- * @param int $totalcount Thetotal number of entries available to be paged through
- * @param int $page The page you are currently viewing
- * @param int $perpage The number of entries that should be shown per page
- * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
- *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
- * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
- * @param bool $nocurr do not display the current page as a link
- * @param bool $return whether to return an output string or echo now
- * @return bool|string depending on $result
- */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
-    $maxdisplay = 18;
-    $output = '';
-
-    if ($totalcount > $perpage) {
-        $output .= '<div class="paging">';
-        $output .= get_string('page') .':';
-        if ($page > 0) {
-            $pagenum = $page - 1;
-            if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;(<a class="previous" href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
-            } else {
-                $output .= '&nbsp;(<a class="previous" href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
-            }
-        }
-        if ($perpage > 0) {
-            $lastpage = ceil($totalcount / $perpage);
-        } else {
-            $lastpage = 1;
-        }
-        if ($page > 15) {
-            $startpage = $page - 10;
-            if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
-            } else {
-                $output .= '&nbsp;<a href="'. $baseurl->out(false, array($pagevar => 0)).'">1</a>&nbsp;...';
-            }
-        } else {
-            $startpage = 0;
-        }
-        $currpage = $startpage;
-        $displaycount = $displaypage = 0;
-        while ($displaycount < $maxdisplay and $currpage < $lastpage) {
-            $displaypage = $currpage+1;
-            if ($page == $currpage && empty($nocurr)) {
-                $output .= '&nbsp;&nbsp;'. $displaypage;
-            } else {
-                if (!is_a($baseurl, 'moodle_url')){
-                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
-                } else {
-                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl->out(false, array($pagevar => $currpage)).'">'. $displaypage .'</a>';
-                }
-
-            }
-            $displaycount++;
-            $currpage++;
-        }
-        if ($currpage < $lastpage) {
-            $lastpageactual = $lastpage - 1;
-            if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
-            } else {
-                $output .= '&nbsp;...<a href="'. $baseurl->out(false, array($pagevar => $lastpageactual)).'">'. $lastpage .'</a>&nbsp;';
-            }
-        }
-        $pagenum = $page + 1;
-        if ($pagenum != $displaypage) {
-            if (!is_a($baseurl, 'moodle_url')){
-                $output .= '&nbsp;&nbsp;(<a class="next" href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
-            } else {
-                $output .= '&nbsp;&nbsp;(<a class="next" href="'. $baseurl->out(false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
-            }
-        }
-        $output .= '</div>';
-    }
-
-    if ($return) {
-        return $output;
-    }
-
-    echo $output;
-    return true;
 }
 
 /**
@@ -5186,42 +4502,6 @@ function get_docs_url($path) {
     return $CFG->docroot . '/' . str_replace('_utf8', '', current_language()) . '/' . $path;
 }
 
-/**
- * Returns a string containing a link to the user documentation.
- * Also contains an icon by default. Shown to teachers and admin only.
- *
- * @global object
- * @param string $path The page link after doc root and language, no leading slash.
- * @param string $text The text to be displayed for the link
- * @param string $iconpath The path to the icon to be displayed
- * @return string Either the link or an empty string
- */
-function doc_link($path='', $text='', $iconpath='') {
-    global $CFG;
-
-    if (empty($CFG->docroot)) {
-        return '';
-    }
-
-    $url = get_docs_url($path);
-
-    $target = '';
-    if (!empty($CFG->doctonewwindow)) {
-        $target = " onclick=\"window.open('$url'); return false;\"";
-    }
-
-    $str = "<a href=\"$url\"$target>";
-
-    if (empty($iconpath)) {
-        $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
-    }
-
-    // alt left blank intentionally to prevent repetition in screenreaders
-    $str .= '<img class="iconhelp" src="' .$iconpath. '" alt="" />' .$text. '</a>';
-
-    return $str;
-}
-
 
 /**
  * Standard Debugging Function
@@ -5324,58 +4604,6 @@ function print_location_comment($file, $line, $return = false)
     }
 }
 
-
-/**
- * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
- * provide this function with the language strings for sortasc and sortdesc.
- *
- * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
- *
- * @global object
- * @param string $direction 'up' or 'down'
- * @param string $strsort The language string used for the alt attribute of this image
- * @param bool $return Whether to print directly or return the html string
- * @return string|void depending on $return
- *
- */
-function print_arrow($direction='up', $strsort=null, $return=false) {
-    global $OUTPUT;
-
-    if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
-        return null;
-    }
-
-    $return = null;
-
-    switch ($direction) {
-        case 'up':
-            $sortdir = 'asc';
-            break;
-        case 'down':
-            $sortdir = 'desc';
-            break;
-        case 'move':
-            $sortdir = 'asc';
-            break;
-        default:
-            $sortdir = null;
-            break;
-    }
-
-    // Prepare language string
-    $strsort = '';
-    if (empty($strsort) && !empty($sortdir)) {
-        $strsort  = get_string('sort' . $sortdir, 'grades');
-    }
-
-    $return = ' <img src="'.$OUTPUT->old_icon_url('t/' . $direction) . '" alt="'.$strsort.'" /> ';
-
-    if ($return) {
-        return $return;
-    } else {
-        echo $return;
-    }
-}
 
 /**
  * @return boolean true if the current language is right-to-left (Hebrew, Arabic etc)

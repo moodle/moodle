@@ -578,7 +578,7 @@ class template_renderer_factory_test extends UnitTestCase {
         $this->make_theme_template_dir('mytheme');
         $this->make_theme_template_dir('parenttheme');
         $this->make_theme_template_dir('standardtemplate');
-                
+
         // Exercise SUT.
         $factory = new testable_template_renderer_factory($theme, $this->page);
 
@@ -597,7 +597,7 @@ class template_renderer_factory_test extends UnitTestCase {
         $theme->parent = 'parenttheme';
         $this->make_theme_template_dir('mytheme');
         $this->make_theme_template_dir('standardtemplate');
-                
+
         // Exercise SUT.
         $factory    = new testable_template_renderer_factory($theme, $this->page);
         $subfactory = new testable_template_renderer_factory($theme, $this->page, 'subtype');
@@ -904,5 +904,253 @@ class moodle_core_renderer_test extends UnitTestCase {
     public function test_error_text_blank() {
         $html = $this->renderer->error_text('');
         $this->assertEqual('', $html);
+    }
+
+    public function test_link_to_popup_empty_link() {
+        // Empty link object: link MUST have a text value
+        $link = new html_link();
+        $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
+        $link->add_action_object($popupaction);
+        $this->expectException();
+        $html = $this->renderer->link_to_popup($link);
+    }
+
+    public function test_link_to_popup() {
+        $link = new html_link();
+        $link->text = 'Click here';
+        $link->url = 'http://test.com';
+        $link->title = 'Popup window';
+        $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
+        $link->add_action_object($popupaction);
+
+        $html = $this->renderer->link_to_popup($link);
+        $expectedattributes = array('title' => 'Popup window', 'href' => 'http://test.com');
+        $this->assert(new ContainsTagWithAttributes('a', $expectedattributes), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
+
+        // Try a different url for the link than for the popup
+        $link->url = 'http://otheraddress.com';
+        $html = $this->renderer->link_to_popup($link);
+
+        $this->assert(new ContainsTagWithAttribute('a', 'title', 'Popup window'), $html);
+        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://otheraddress.com'), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
+
+        // Give it a moodle_url object instead of a string
+        $link->url = new moodle_url('http://otheraddress.com');
+        $html = $this->renderer->link_to_popup($link);
+        $this->assert(new ContainsTagWithAttribute('a', 'title', 'Popup window'), $html);
+        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://otheraddress.com'), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Click here'), $html);
+
+    }
+
+    public function test_button() {
+        global $CFG;
+        $originalform = new html_form();
+        $originalform->button->label = 'Click Here';
+        $originalform->url = '/index.php';
+
+        $form = clone($originalform);
+
+        $html = $this->renderer->button($form);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'singlebutton'), $html);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => $CFG->wwwroot . '/index.php')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('value' => 'Click Here', 'type' => 'submit')), $html);
+
+        $form = clone($originalform);
+        $form->button->confirmmessage = 'Are you sure?';
+
+        $html = $this->renderer->button($form);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'singlebutton'), $html);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => $CFG->wwwroot . '/index.php')), $html);
+        $this->assert(new ContainsTagWithAttribute('input', 'type', 'submit'), $html);
+
+        $form = clone($originalform);
+        $form->url = new moodle_url($form->url, array('var1' => 'value1', 'var2' => 'value2'));
+        $html = $this->renderer->button($form);
+        $this->assert(new ContainsTagWithAttributes('input', array('name' => 'var1', 'type' => 'hidden', 'value' => 'value1')), $html);
+
+    }
+
+    public function test_link() {
+        $link = new html_link();
+        $link->url = 'http://test.com';
+        $link->text = 'Resource 1';
+
+        $html = $this->renderer->link($link);
+        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://test.com'), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
+
+        // Add a title
+        $link->title = 'Link to resource 1';
+        $html = $this->renderer->link($link);
+        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'href' => 'http://test.com')), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
+
+        // Use a moodle_url object instead of string
+        $link->url = new moodle_url($link->url);
+        $html = $this->renderer->link($link);
+        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'href' => 'http://test.com')), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
+
+        // Add a few classes to the link object
+        $link->add_classes('cool blue');
+        $html = $this->renderer->link($link);
+        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'class' => 'link cool blue', 'href' => 'http://test.com')), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
+
+        // Simple use of link() without a html_link object
+        $html = $this->renderer->link($link->url->out(), $link->text);
+        $expected_html = '<a href="http://test.com">Resource 1</a>';
+        $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://test.com'), $html);
+        $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
+
+        // Missing second param when first is a string: exception
+        $this->expectException();
+        $html = $this->renderer->link($link->url->out());
+    }
+    
+    /**
+     * NOTE: consider the degree of detail in which we test HTML output, because 
+     * the unit tests may be run under a different theme, with different HTML
+     * renderers. Maybe we should limit unit tests to standardwhite.
+     */
+    public function test_confirm() {
+        // Basic test with string URLs
+        $continueurl = 'http://www.test.com/index.php?continue=1';
+        $cancelurl = 'http://www.test.com/index.php?cancel=1';
+        $message = 'Are you sure?';
+
+        $html = $this->renderer->confirm($message, $continueurl, $cancelurl);
+        $this->assert(new ContainsTagWithAttributes('div', array('id' => 'notice', 'class' => 'box generalbox')), $html);
+        $this->assert(new ContainsTagWithContents('p', $message), $html);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'buttons'), $html);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'singlebutton'), $html);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        
+        // Use html_forms with default values, should produce exactly the same output as above
+        $formcontinue = new html_form();
+        $formcancel = new html_form();
+        $formcontinue->url = new moodle_url($continueurl);
+        $formcancel->url = new moodle_url($cancelurl);
+        $html = $this->renderer->confirm($message, $formcontinue, $formcancel);
+        $this->assert(new ContainsTagWithAttributes('div', array('id' => 'notice', 'class' => 'box generalbox')), $html);
+        $this->assert(new ContainsTagWithContents('p', $message), $html);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'buttons'), $html);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'singlebutton'), $html);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        
+        // Give the buttons some different labels
+        $formcontinue = new html_form();
+        $formcancel = new html_form();
+        $formcontinue->url = new moodle_url($continueurl);
+        $formcancel->url = new moodle_url($cancelurl);
+        $formcontinue->button->label = 'Continue anyway';
+        $formcancel->button->label = 'Wow OK, I get it, backing out!';
+        $html = $this->renderer->confirm($message, $formcontinue, $formcancel);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => $formcontinue->button->label, 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => $formcancel->button->label, 'class' => 'singlebutton')), $html);
+        
+        // Change the method and add extra variables
+        $formcontinue = new html_form();
+        $formcancel = new html_form();
+        $formcontinue->url = new moodle_url($continueurl, array('var1' => 'val1', 'var2' => 'val2'));
+        $formcancel->url = new moodle_url($cancelurl, array('var3' => 'val3', 'var4' => 'val4'));
+        $html = $this->renderer->confirm($message, $formcontinue, $formcancel);
+        $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var1', 'value' => 'val1')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var2', 'value' => 'val2')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var3', 'value' => 'val3')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var4', 'value' => 'val4')), $html);
+
+    }
+
+    public function test_spacer() {
+        global $CFG;
+
+        $spacer = new html_image();
+
+        $html = $this->renderer->spacer($spacer);
+        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'image spacer',
+                 'src' => $CFG->wwwroot . '/pix/spacer.gif',
+                 'alt' => ''
+                 )), $html);
+        $spacer = new html_image();
+        $spacer->src = $this->renderer->old_icon_url('myspacer');
+        $spacer->alt = 'sometext';
+        $spacer->add_class('my');
+
+        $html = $this->renderer->spacer($spacer);
+
+        $this->assert(new ContainsTagWithAttributes('img', array(
+                 'class' => 'my image spacer',
+                 'src' => $this->renderer->old_icon_url('myspacer'),
+                 'alt' => 'sometext')), $html);
+
+    }
+
+    public function test_paging_bar() {
+        global $CFG, $OUTPUT;
+
+        $totalcount = 5;
+        $perpage = 4;
+        $page = 1;
+        $baseurl = new moodle_url($CFG->wwwroot.'/index.php');
+        $pagevar = 'mypage';
+
+        $pagingbar = new moodle_paging_bar();
+        $pagingbar->totalcount = $totalcount;
+        $pagingbar->page = $page;
+        $pagingbar->perpage = $perpage;
+        $pagingbar->baseurl = $baseurl;
+        $pagingbar->pagevar = $pagevar;
+        $pagingbar->nocurr = true;
+
+        $originalbar = clone($pagingbar);
+
+        $html = $OUTPUT->paging_bar($pagingbar);
+
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
+        $this->assert(new ContainsTagWithAttributes('a', array('class' => 'previous', 'href' => $baseurl->out().'?mypage=0')), $html);
+        // One of the links to the previous page must not have the 'previous' class
+        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=0'), array('class' => 'previous')), $html);
+        // The link to the current page must not have the 'next' class: it's the last page
+        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array('class' => 'next')), $html);
+
+        $pagingbar = clone($originalbar); // clone the original bar before each output and set of assertions
+        $pagingbar->nocurr = false;
+        $html = $OUTPUT->paging_bar($pagingbar);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
+        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=0'), array('class' => 'previous')), $html);
+        $this->assert(new ContainsTagWithAttributes('a', array('class' => 'previous', 'href' => $baseurl->out().'?mypage=0')), $html);
+        $expectation = new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array('class' => 'next'));
+        $this->assertFalse($expectation->test($html));
+
+        // TODO test with more different parameters
     }
 }
