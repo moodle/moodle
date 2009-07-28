@@ -19,3 +19,10 @@ function checkchecked(form) {
     }
     return checked;
 }
+
+function conditionalsubmit(event, args) {
+    var form = document.getElementById(args.formid);
+    if (checksubmit(form)) {
+        form.submit();
+    }
+}

@@ -22,6 +22,8 @@
 
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
+    
+    $PAGE->set_url('user/index.php', compact('page', 'perpage', 'mode', 'accesssince', 'search', 'roleid', 'contextid', 'courseid'));
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
@@ -849,7 +851,12 @@
         }
 
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
+        $selectmenu = new moodle_select_menu();
+        $selectmenu->options = $displaylist;
+        $selectmenu->name = "formaction";
+        $selectmenu->label = get_string("withselectedusers");
+        $selectmenu->add_action('change', 'conditionalsubmit', array('formid' => 'participantsform'));
+        echo $OUTPUT->select_menu($selectmenu);
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<div id="noscriptparticipantsform" style="display: inline;">';
         echo '<input type="submit" value="'.get_string('ok').'" /></div>';

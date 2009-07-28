@@ -2031,8 +2031,7 @@ function update_category_button($categoryid = 0) {
     } else {
         $page = 'index.php';
     }
-    return print_single_button($CFG->wwwroot . '/course/' . $page, $options,
-            $label, 'get', '', true);
+    return print_single_button($CFG->wwwroot . '/course/' . $page, $options, $label, 'get', '', true);
 }
 
 /**

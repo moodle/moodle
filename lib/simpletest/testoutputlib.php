@@ -1153,4 +1153,12 @@ class moodle_core_renderer_test extends UnitTestCase {
 
         // TODO test with more different parameters
     }
+
+    public function test_html_list() {
+        $htmllist = new html_list();
+        $data = array('item1', 'item2', array('item1-1', 'item1-2'));
+        $htmllist->load_data($data);
+        $htmllist->items[2]->type = 'ordered';
+        $html = $this->renderer->htmllist($htmllist);
+    }
 }

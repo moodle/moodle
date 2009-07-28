@@ -1816,6 +1816,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         $this->page->requires->js('lib/javascript-static.js')->in_head();
+        $this->page->requires->js('lib/javascript-deprecated.js')->in_head();
         $this->page->requires->js('lib/javascript-mod.php')->in_head();
         $this->page->requires->js('lib/overlib/overlib.js')->in_head();
         $this->page->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
@@ -2677,6 +2678,40 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $output;
     }
 
+    /**
+     * Outputs a HTML nested list
+     *
+     * @param html_list $list A html_list object
+     * @return string HTML structure
+     */
+    public function htmllist($list) {
+        $list->prepare();
+
+        $this->prepare_event_handlers($list);
+
+        if ($list->type == 'ordered') {
+            $tag = 'ol';
+        } else if ($list->type == 'unordered') {
+            $tag = 'ul';
+        }
+
+        $output = $this->output_start_tag($tag, array('class' => $list->get_classes_string()));
+
+        foreach ($list->items as $listitem) {
+            if ($listitem instanceof html_list) {
+                $output .= $this->output_start_tag('li');
+                $output .= $this->htmllist($listitem);
+                $output .= $this->output_end_tag('li');
+            } else if ($listitem instanceof html_list_item) {
+                $listitem->prepare();
+                $this->prepare_event_handlers($listitem);
+                $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value);
+            }
+        }
+
+        return $output . $this->output_end_tag($tag);
+    }
+
     public function close_window_button($buttontext = null, $reloadopener = false) {
         if (empty($buttontext)) {
             $buttontext = get_string('closewindow');
@@ -2702,6 +2737,8 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function select_menu($selectmenu) {
         $selectmenu = clone($selectmenu);
         $selectmenu->prepare();
+    
+        $this->prepare_event_handlers($selectmenu);
 
         if ($selectmenu->nothinglabel) {
             $selectmenu->options = array($selectmenu->nothingvalue => $selectmenu->nothinglabel) +
@@ -2715,8 +2752,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $attributes = array(
             'name' => $selectmenu->name,
             'id' => $selectmenu->id,
-            'class' => $selectmenu->get_classes_string(),
-            'onchange' => $selectmenu->script,
+            'class' => $selectmenu->get_classes_string()
         );
         if ($selectmenu->disabled) {
             $attributes['disabled'] = 'disabled';
@@ -2736,8 +2772,14 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $attributes['multiple'] = 'multiple';
             }
         }
+        
+        $html = '';
 
-        $html = $this->output_start_tag('select', $attributes) . "\n";
+        if (!empty($selectmenu->label)) {
+            $html .= $this->output_tag('label', array('for' => $selectmenu->name), $selectmenu->label);
+        }
+
+        $html .= $this->output_start_tag('select', $attributes) . "\n";
         foreach ($selectmenu->options as $value => $label) {
             $attributes = array('value' => $value);
             if ((string) $value == (string) $selectmenu->selectedvalue ||
@@ -3225,7 +3267,7 @@ class moodle_html_component {
      * @return void
      */
     public function add_action($event, $jsfunction, $jsfunctionargs=array()) {
-        while (empty($this->id) || in_array($this->id, moodle_html_component::$generated_ids)) {
+        while (empty($this->id) || !in_array($this->id, moodle_html_component::$generated_ids)) {
             $this->generate_id();
         }
         $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
@@ -3292,12 +3334,16 @@ class moodle_select_menu extends moodle_html_component {
      */
     public $options;
     /**
-     * @var string the name of this form control. That is, the name of the GET/POST
+     * @var string $name the name of this form control. That is, the name of the GET/POST
      * variable that will be set if this select is submitted as part of a form.
      */
     public $name;
     /**
-     * @var string the option to select initially. Should match one
+     * @var string $label The label for that component
+     */
+    public $label;
+    /**
+     * @var string $selectedvalue the option to select initially. Should match one
      * of the $options array keys. Default none.
      */
     public $selectedvalue;
@@ -3335,18 +3381,13 @@ class moodle_select_menu extends moodle_html_component {
      * @var boolean if true, allow multiple selection. Only used if $listbox is true.
      */
     public $multiple = false;
-    /**
-     * @deprecated
-     * @var string JavaScript to add as an onchange attribute. Do not use this.
-     * Use the YUI even library instead.
-     */
-    public $script = '';
 
     /**
      * @see moodle_html_component::prepare()
      * @return void
      */
     public function prepare() {
+        // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
         if (empty($this->id)) {
             $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
         }
@@ -4345,6 +4386,101 @@ class moodle_paging_bar extends moodle_html_component {
         }
     }
 
+}
+
+/**
+ * Component representing a list.
+ *
+ * The advantage of using this object instead of a flat array is that you can load it
+ * with metadata (CSS classes, event handlers etc.) which can be used by the renderers.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_list extends moodle_html_component {
+
+    /**
+     * @var array $items An array of html_list_item or html_list objects
+     */
+    public $items = array();
+
+    /**
+     * @var string $type The type of list (ordered|unordered), definition type not yet supported
+     */
+    public $type = 'unordered';
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+
+    /**
+     * This function takes a nested array of data and maps it into this list's $items array
+     * as proper html_list_item and html_list objects, with appropriate metadata.
+     *
+     * @param array $tree A nested array (array keys are ignored);
+     * @param int $row Used in identifying the iteration level and in ul classes
+     * @return void
+     */
+    public function load_data($tree, $level=0) {
+
+        $this->add_class("list-$level");
+
+        foreach ($tree as $key => $element) {
+            if (is_array($element)) {
+                $newhtmllist = new html_list();
+                $newhtmllist->load_data($element, $level + 1);
+                $this->items[] = $newhtmllist;
+            } else {
+                $listitem = new html_list_item();
+                $listitem->value = $element;
+                $listitem->add_class("list-item-$level-$key");
+                $this->items[] = $listitem;
+            }
+        }
+    }
+
+    /**
+     * Adds a html_list_item or html_list to this list. 
+     * If the param is a string, a html_list_item will be added.
+     * @param mixed $item String, html_list or html_list_item object
+     * @return void
+     */
+    public function add_item($item) {
+        if ($item instanceof html_list_item || $item instanceof html_list) {
+            $this->items[] = $item;
+        } else {
+            $listitem = new html_list_item();
+            $listitem->value = $item;
+            $this->items[] = $item;
+        }
+    }
+}
+
+/**
+ * Component representing a list item.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_list_item extends moodle_html_component {
+    /**
+     * @var string $value The value of the list item
+     */
+    public $value;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
 }
 
 /// ACTIONS
