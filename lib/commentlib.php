@@ -396,6 +396,7 @@ EOD;
                 $userpic->user = $user;
                 $userpic->courseid = $this->course->id;
                 $userpic->link = true;
+                $userpic->size = 18;
                 $userpic->alttext = true;
                 $c->avatar = $OUTPUT->user_picture($userpic);
                 if (($USER->id == $c->userid) || !empty($candelete)) {
