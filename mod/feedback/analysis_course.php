@@ -97,7 +97,7 @@
         $items=array();
     }
 
-    echo '<form name="report" method="post">';
+    echo '<form name="report" method="post" id="analysis-form">';
     echo '<div class="mdl-align"><table width="80%" cellpadding="10">';
     if ($courseitemfilter > 0) {
         $avgvalue = 'avg(value)';
@@ -146,7 +146,12 @@
         if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
              echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-             choose_from_menu ($courses, 'coursefilter', $coursefilter, 'choose', 'this.form.submit()');
+             $selectmenu = new moodle_select_menu();
+             $selectmenu->options = $courses;
+             $selectmenu->name = 'coursefilter';
+             $selectmenu->selectedvalue = $coursefilter;
+             $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'analysis-form'));
+             echo $OUTPUT->select_menu($selectmenu);
         }
         echo '<hr />';
         $itemnr = 0;
