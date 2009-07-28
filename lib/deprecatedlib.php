@@ -3043,7 +3043,5 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         return $output;
     } else {
         echo $output;
-        die();
     }
-
 }
