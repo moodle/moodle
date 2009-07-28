@@ -2550,7 +2550,8 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $icon->prepare();
 
-        $icon->link->add_action_object(new popup_action('click', $icon->link->url));
+        $popup = new popup_action('click', $icon->link->url);
+        $icon->link->add_action($popup);
 
         $image = null;
 
@@ -2690,7 +2691,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $link = new html_link();
                 $link->url = $userpic->url;
                 $link->text = fullname($userpic->user);
-                $link->add_action_object($actions[0]);
+                $link->add_action($actions[0]);
                 $output = $this->link_to_popup($link);
             } else {
                 $output = $this->link(prepare_url($userpic->url), $output);
@@ -2759,7 +2760,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function select_menu($selectmenu) {
         $selectmenu = clone($selectmenu);
         $selectmenu->prepare();
-    
+
         $this->prepare_event_handlers($selectmenu);
 
         if ($selectmenu->nothinglabel) {
@@ -2794,7 +2795,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $attributes['multiple'] = 'multiple';
             }
         }
-        
+
         $html = '';
 
         if (!empty($selectmenu->label)) {
@@ -3281,7 +3282,7 @@ class moodle_html_component {
     /**
      * Adds a JS action to this component.
      * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
-     * If you want to add an instantiated component_action (or one of its subclasses), use $component->add_action_object($action)
+     * If you want to add an instantiated component_action (or one of its subclasses), give the object as the only parameter
      *
      * @param mixed  $event a DOM event (click, mouseover etc.) or a component_action object
      * @param string $jsfunction The name of the JS function to call. required if argument 1 is a string (event)
@@ -3289,35 +3290,18 @@ class moodle_html_component {
      * @return void
      */
     public function add_action($event, $jsfunction=null, $jsfunctionargs=array()) {
+        if (empty($this->id) || in_array($this->id, moodle_html_component::$generated_ids)) {
+            $this->generate_id();
+        }
+
         if ($event instanceof component_action) {
             $this->actions[] = $event;
         } else {
             if (empty($jsfunction)) {
                 throw new coding_exception('moodle_html_component::add_action requires a JS function argument if the first argument is a string event');
             }
-            while (empty($this->id) || !in_array($this->id, moodle_html_component::$generated_ids)) {
-                $this->generate_id();
-            }
             $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
         }
-    }
-
-    /**
-     * Adds an instantiated component_action to this component.
-     * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
-     *
-     * @param component_action $action An instantiated component_action or one of its subclasses
-     * @return void
-     */
-    public function add_action_object($action) {
-        if (!($action instanceof component_action)) {
-            throw new coding_exception('moodle_html_component::add_action_object($action) only takes an instance of component_action.');
-        }
-
-        while (empty($this->id) && !in_array($this->id, moodle_html_component::$generated_ids)) {
-            $this->generate_id();
-        }
-        $this->actions[] = $action;
     }
 
     /**
@@ -3325,8 +3309,10 @@ class moodle_html_component {
      * @return void;
      */
     protected function generate_id() {
-        $this->id = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 5);
-        if (!in_array($this->id, moodle_html_component::$generated_ids)) {
+        $this->id = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 6);
+        if (in_array($this->id, moodle_html_component::$generated_ids)) {
+            $this->generate_id();
+        } else {
             moodle_html_component::$generated_ids[] = $this->id;
         }
     }
@@ -4146,7 +4132,7 @@ class user_picture extends moodle_html_component {
 
         $this->add_class('userpicture');
 
-        if (empty($this->image->src)) {
+        if (empty($this->image->src) && !empty($this->user->picture)) {
             $this->image->src = $this->user->picture;
         }
 
@@ -4482,7 +4468,7 @@ class html_list extends moodle_html_component {
     }
 
     /**
-     * Adds a html_list_item or html_list to this list. 
+     * Adds a html_list_item or html_list to this list.
      * If the param is a string, a html_list_item will be added.
      * @param mixed $item String, html_list or html_list_item object
      * @return void

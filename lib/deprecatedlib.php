@@ -2438,7 +2438,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     $popupaction = new popup_action('click', $url, $name, $popupparams);
-    $link->add_action_object($popupaction);
+    $link->add_action($popupaction);
 
     // Call the output method
     $output = $OUTPUT->link_to_popup($link);
@@ -2518,7 +2518,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     $popupaction = new popup_action('click', $url, $name, $popupparams);
-    $button->add_action_object($popupaction);
+    $button->add_action($popupaction);
     $output = $OUTPUT->button($button);
 
     if ($return) {
@@ -2564,7 +2564,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
 
     if ($jsconfirmmessage) {
         $confirmaction = new component_action('click', 'confirm_dialog', array($jsconfirmmessage));
-        $form->button->add_action_object($confirmaction);
+        $form->button->add_action($confirmaction);
     }
 
     $output = $OUTPUT->button($form);
@@ -2657,7 +2657,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
 
     if (!empty($target)) {
         $popupaction = new popup_action('click', new moodle_url($target));
-        $userpic->add_action_object($popupaction);
+        $userpic->add_action($popupaction);
     }
 
     $output = $OUTPUT->user_picture($userpic);
@@ -2958,13 +2958,11 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
 
     $formcontinue = new html_form();
     $formcontinue->url = new moodle_url($linkyes, $optionsyes);
-    $formcontinue->button = new html_button();
     $formcontinue->button->label = get_string('yes');
     $formcontinue->method = $methodyes;
 
     $formcancel = new html_form();
     $formcancel->url = new moodle_url($linkno, $optionsno);
-    $formcancel->button = new html_button();
     $formcancel->button->label = get_string('no');
     $formcancel->method = $methodno;
     
