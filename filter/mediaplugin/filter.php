@@ -60,6 +60,9 @@ function mediaplugin_filter($courseid, $text) {
 
         $search = '/<a.*?href="([^<]+\.m4v)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
+
+        $search = '/<a.*?href="([^<]+\.m4a)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_wmv) {

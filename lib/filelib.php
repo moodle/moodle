@@ -384,6 +384,8 @@ function get_mimetypes_array() {
         'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio.gif'),
         'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio.gif'),
         'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video.gif'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video.gif'),
+        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio.gif'),
         'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
         'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
         'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
