@@ -2597,6 +2597,10 @@ function print_spacer($height=1, $width=1, $br=true, $return=false) {
 
     $output = $OUTPUT->spacer($spacer);
 
+    if ($br) {
+        $output .= '<br />';
+    }
+
     if ($return) {
         return $output;
     } else {
