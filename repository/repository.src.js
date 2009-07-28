@@ -336,6 +336,12 @@ repository_client.print_login = function(id, data) {
             has_pop = true;
         }else if(login[k].type=='textarea') {
             str += '<td colspan="2"><p><textarea id="'+login[k].id+'" name="'+login[k].name+'"></textarea></p></td>';
+        }else if(login[k].type=='select') {
+            str += '<td align="right"><label>'+login[k].label+':</label></td><td align="left"><select id="'+login[k].id+'" name="'+login[k].name+'">';
+            for (i in login[k].options) {
+                str += '<option value="'+login[k].options[i].value+'">'+login[k].options[i].label+'</option>';
+            }
+            str += '</select></td>';
         }else{
             var label_id = '';
             var field_id = '';
