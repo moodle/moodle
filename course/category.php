@@ -26,21 +26,28 @@
     }
 
     $PAGE->set_category_by_id($id);
+    $urlparams = array('id' => $id);
+    if ($page) {
+        $urlparams['page'] = $page;
+    }
+    if ($perpage) {
+        $urlparams['perpage'] = $perpage;
+    }
+    $PAGE->set_url('course/category.php', $urlparams);
     $context = $PAGE->context;
     $category = $PAGE->category;
 
-    if (update_category_button($category->id)) {
+    $canedit = can_edit_in_category($category->id);
+    if ($canedit) {
         if ($categoryedit !== -1) {
             $USER->editing = $categoryedit;
         }
         require_login();
-        $navbaritem = update_category_button($category->id); // Must call this again after updating the state.
         $editingon = $PAGE->user_is_editing();
     } else {
         if ($CFG->forcelogin) {
             require_login();
         }
-        $navbaritem = print_course_search('', true, 'navbar');
         $editingon = false;
     }
 
@@ -140,14 +147,14 @@
     $navlinks[] = array('name' => format_string($category->name), 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
-    if ($editingon && update_category_button()) {
+    if ($editingon && can_edit_in_category()) {
         // Integrate into the admin tree only if the user can edit categories at the top level,
         // otherwise the admin block does not appear to this user, and you get an error.
-        require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt', $navbaritem, array('id' => $id,
-                'page' => $page, 'perpage' => $perpage), $CFG->wwwroot . '/course/category.php');
+        require_once($CFG->libdir . '/adminlib.php');
+        admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         admin_externalpage_print_header();
     } else {
+        $navbaritem = print_course_search('', true, 'navbar');
         print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", $navigation, '', '', true, $navbaritem);
     }
 
