@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,14 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Block Class and Functions
  *
- * This file defines the {@link block_manager} class, 
+ * This file defines the {@link block_manager} class,
  *
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
@@ -273,7 +273,7 @@ class block_manager {
      * output the blocks anyway, so we are not doing wasted effort.)
      *
      * @param string $region a block region that exists on this page.
-     * @param object $output a moodle_core_renderer. normally the global $OUTPUT. 
+     * @param object $output a moodle_core_renderer. normally the global $OUTPUT.
      * @return boolean Whether there is anything in this region.
      */
     public function region_has_content($region, $output) {
@@ -570,7 +570,7 @@ class block_manager {
     }
 
     /**
-     * Find a given block by its instance id 
+     * Find a given block by its instance id
      *
      * @param integer $instanceid
      * @return object
@@ -701,7 +701,7 @@ class block_manager {
 
     /**
      * Ensure block instances exist for a given region
-     * 
+     *
      * @param string $region Check for bi's with the instance with this name
      */
     protected function ensure_instances_exist($region) {
@@ -732,6 +732,224 @@ class block_manager {
                 }
             }
             $this->visibleblockcontent[$region] = $contents;
+        }
+    }
+
+/// Process actions from the URL ===============================================
+
+    /**
+     * Process any block actions that were specified in the URL.
+     *
+     * This can only be done given a valid $page object.
+     *
+     * @param moodle_page $page the page to add blocks to.
+     * @return boolean true if anything was done. False if not.
+     */
+    public function process_url_actions() {
+        return $this->process_url_add() || $this->process_url_delete() ||
+            $this->process_url_show_hide() || $this->process_url_edit();
+    }
+
+    /**
+     * Handle adding a block.
+     * @return boolean true if anything was done. False if not.
+     */
+    public function process_url_add() {
+        $blocktype = optional_param('bui_addblock', null, PARAM_SAFEDIR);
+        if (!$blocktype) {
+            return false;
+        }
+
+        confirm_sesskey();
+
+        if (!$page->user_is_editing() && !$this->page->user_can_edit_blocks()) {
+            throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
+        }
+
+        if (!array_key_exists($blocktype, $this->get_addable_blocks())) {
+            throw new moodle_exception('cannotaddthisblocktype', '', $this->page->url->out(), $blocktype);
+        }
+
+        $this->add_block_at_end_of_default_region($blocktype);
+
+        // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+        $this->page->ensure_param_not_in_url('bui_addblock');
+
+        return true;
+    }
+
+    /**
+     * Handle deleting a block.
+     * @return boolean true if anything was done. False if not.
+     */
+    public function process_url_delete() {
+        $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
+        if (!$blockid) {
+            return false;
+        }
+
+        confirm_sesskey();
+
+        $block = $this->page->blocks->find_instance($blockid);
+
+        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks() || !$block->user_can_addto($page)) {
+            throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('deleteablock'));
+        }
+
+        blocks_delete_instance($block->instance);
+
+        // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+        $this->page->ensure_param_not_in_url('bui_deleteid');
+
+        return true;
+    }
+
+    /**
+     * Handle showing or hiding a block.
+     * @return boolean true if anything was done. False if not.
+     */
+    public function process_url_show_hide() {
+        if ($blockid = optional_param('bui_hideid', null, PARAM_INTEGER)) {
+            $newvisibility = 0;
+        } else if ($blockid = optional_param('bui_showid', null, PARAM_INTEGER)) {
+            $newvisibility = 1;
+        } else {
+            return false;
+        }
+
+        confirm_sesskey();
+
+        $block = $this->page->blocks->find_instance($blockid);
+
+        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks()) {
+            throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('hideshowblocks'));
+        }
+
+        blocks_set_visibility($block->instance, $this->page, $newvisibility);
+
+        // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
+        $this->page->ensure_param_not_in_url('bui_hideid');
+        $this->page->ensure_param_not_in_url('bui_showid');
+
+        return true;
+    }
+
+    /**
+     * Handle showing/processing the submission from the block editing form.
+     * @return boolean true if the form was submitted and the new config saved. Does not
+     *      return if the editing form was displayed. False otherwise.
+     */
+    public function process_url_edit() {
+        global $CFG, $DB, $PAGE;
+
+        $blockid = optional_param('bui_editid', null, PARAM_INTEGER);
+        if (!$blockid) {
+            return false;
+        }
+
+        confirm_sesskey();
+        require_once($CFG->dirroot . '/blocks/edit_form.php');
+
+        $block = $this->find_instance($blockid);
+
+        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks()) {
+            throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('editblock'));
+        }
+
+        $editpage = new moodle_page();
+        $editpage->set_generaltype('form');
+        $editpage->set_course($this->page->course);
+        $editpage->set_context($this->page->context);
+        $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out(true));
+        $editurlparams = $this->page->url->params();
+        $editurlparams['bui_editid'] = $blockid;
+        $editpage->set_url($editurlbase, $editurlparams);
+        $editpage->_block_actions_done = true;
+        // At this point we are either going to redirect, or display the form, so
+        // overwrite global $PAGE ready for this. (Formslib refers to it.)
+        $PAGE = $editpage;
+
+        $formfile = $CFG->dirroot . '/blocks/' . $block->name() . '/edit_form.php';
+        if (is_readable($formfile)) {
+            require_once($formfile);
+            $classname = 'block_' . $block->name() . '_edit_form';
+        } else {
+            $classname = 'block_edit_form';
+        }
+
+        $mform = new $classname($editpage->url, $block, $this->page);
+        $mform->set_data($block->instance);
+
+        if ($mform->is_cancelled()) {
+            redirect($this->page->url);
+
+        } else if ($data = $mform->get_data()) {
+            $bi = new stdClass;
+            $bi->id = $block->instance->id;
+            $bi->showinsubcontexts = $data->bui_showinsubcontexts;
+            $bi->pagetypepattern = $data->bui_pagetypepattern;
+            if (empty($data->bui_subpagepattern) || $data->bui_subpagepattern == '%@NULL@%') {
+                $bi->subpagepattern = null;
+            } else {
+                $bi->subpagepattern = $data->bui_subpagepattern;
+            }
+            $bi->defaultregion = $data->bui_defaultregion;
+            $bi->defaultweight = $data->bui_defaultweight;
+            $DB->update_record('block_instances', $bi);
+
+            $config = clone($block->config);
+            foreach ($data as $configfield => $value) {
+                if (strpos($configfield, 'config_') !== 0) {
+                    continue;
+                }
+                $field = substr($configfield, 7);
+                $config->$field = $value;
+            }
+            $block->instance_config_save($config);
+
+            $bp = new stdClass;
+            $bp->visible = $data->bui_visible;
+            $bp->region = $data->bui_region;
+            $bp->weight = $data->bui_weight;
+            $needbprecord = !$data->bui_visible || $data->bui_region != $data->bui_defaultregion ||
+                    $data->bui_weight != $data->bui_defaultweight;
+
+            if ($block->instance->blockpositionid && !$needbprecord) {
+                $DB->delete_records('block_positions', array('id' => $block->instance->blockpositionid));
+
+            } else if ($block->instance->blockpositionid && $needbprecord) {
+                $bp->id = $block->instance->blockpositionid;
+                $DB->update_record('block_positions', $bp);
+
+            } else if ($needbprecord) {
+                $bp->blockinstanceid = $block->instance->id;
+                $bp->contextid = $this->page->contextid;
+                $bp->pagetype = $this->page->pagetype;
+                if ($this->page->subpage) {
+                    $bp->subpage = $this->page->subpage;
+                } else {
+                    $bp->subpage = null;
+                }
+                $DB->insert_record('block_positions', $bp);
+            }
+
+            redirect($this->page->url);
+
+        } else {
+            $strheading = get_string('editinga', $block->name());
+            if (strpos($strheading, '[[') === 0) {
+                $strheading = get_string('blockconfiga', 'moodle', $block->get_title());
+            }
+
+            $editpage->set_title($strheading);
+            $editpage->set_heading($strheading);
+
+            $output = $editpage->theme->get_renderer('core', $editpage);
+            echo $output->header();
+            echo $output->heading($strheading, 2);
+            $mform->display();
+            echo $output->footer();
+            exit;
         }
     }
 }
@@ -959,7 +1177,7 @@ function block_edit_controls($block, $page) {
         }
 
         // Edit config icon - always show - needed for positioning UI.
-        $controls[] = array('url' => block_edit_url($block, $page)->out(),
+        $controls[] = array('url' => $actionurl . '&amp;bui_editid=' . $block->instance->id,
                 'icon' => 't/edit', 'caption' => get_string('configuration'));
 
         // Delete icon.
@@ -975,135 +1193,6 @@ function block_edit_controls($block, $page) {
 
     return $controls;
 }
-
-/**
- * Get the URL for editing a particular block instance.
- * @param block_base $block a block object.
- * @return moodle_url the url.
- */
-function block_edit_url($block, $page) {
-    global $CFG;
-    $urlparams = array(
-        'id' => $block->instance->id,
-        'pagecontextid' => $page->context->id,
-        'pagetype' => $page->pagetype,
-        'returnurl' => $page->url->out_returnurl(),
-    );
-    if ($page->subpage) {
-        $urlparams['subpage'] = $page->subpage;
-    }
-    return new moodle_url($CFG->wwwroot . '/blocks/edit.php', $urlparams);
-}
-
-/**
- * Process any block actions that were specified in the URL.
- * 
- * This can only be done given a valid $page object.
- *
- * @param moodle_page $page the page to add blocks to.
- * @return boolean true if anything was done. False if not.
- */
-function block_process_url_actions($page) {
-    return block_process_url_add($page) ||
-        block_process_url_delete($page) ||
-        block_process_url_show_hide($page);
-}
-
-/**
- * Handle adding a block.
- * @param moodle_page $page the page to add blocks to.
- * @return boolean true if anything was done. False if not.
- */
-function block_process_url_add($page) {
-    $blocktype = optional_param('bui_addblock', null, PARAM_SAFEDIR);
-    if (!$blocktype) {
-        return false;
-    }
-
-    confirm_sesskey();
-
-    if (!$page->user_is_editing() && !$page->user_can_edit_blocks()) {
-        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('addblock'));
-    }
-
-    if (!array_key_exists($blocktype, $page->blocks->get_addable_blocks())) {
-        throw new moodle_exception('cannotaddthisblocktype', '', $page->url->out(), $blocktype);
-    }
-
-    $page->blocks->add_block_at_end_of_default_region($blocktype);
-
-    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
-    $page->ensure_param_not_in_url('bui_addblock');
-
-    return true;
-}
-
-/**
- * Handle deleting a block.
- * @param moodle_page $page the page to add blocks to.
- * @return boolean true if anything was done. False if not.
- */
-function block_process_url_delete($page) {
-    $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
-    if (!$blockid) {
-        return false;
-    }
-
-    confirm_sesskey();
-
-    $block = $page->blocks->find_instance($blockid);
-
-    if (!$block->user_can_edit() || !$page->user_can_edit_blocks() || !$block->user_can_addto($page)) {
-        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('deleteablock'));
-    }
-
-    blocks_delete_instance($block->instance);
-
-    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
-    $page->ensure_param_not_in_url('bui_deleteid');
-
-    return true;
-}
-
-/**
- * Handle showing or hiding a block.
- * @param moodle_page $page the page to add blocks to.
- * @return boolean true if anything was done. False if not.
- */
-function block_process_url_show_hide($page) {
-    if ($blockid = optional_param('bui_hideid', null, PARAM_INTEGER)) {
-        $newvisibility = 0;
-    } else if ($blockid = optional_param('bui_showid', null, PARAM_INTEGER)) {
-        $newvisibility = 1;
-    } else {
-        return false;
-    }
-
-    confirm_sesskey();
-
-    $block = $page->blocks->find_instance($blockid);
-
-    if (!$block->user_can_edit() || !$page->user_can_edit_blocks()) {
-        throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('hideshowblocks'));
-    }
-
-    blocks_set_visibility($block->instance, $page, $newvisibility);
-
-    // If the page URL was a guses, it will contain the bui_... param, so we must make sure it is not there.
-    $page->ensure_param_not_in_url('bui_hideid');
-    $page->ensure_param_not_in_url('bui_showid');
-
-    return true;
-}
-
-///**
-// * Handle deleting a block.
-// * @param moodle_page $page the page to add blocks to.
-// * @return boolean true if anything was done. False if not.
-// */
-//function block_process_url_delete($page) {
-//    
-//}
 
 // Functions that have been deprecated by block_manager =======================
 
@@ -1339,384 +1428,6 @@ function blocks_find_block($blockid, $blocksarray) {
         }
     }
     return false;
-}
-
-/**
- * TODO Document this function, description
- *
- * @param object $page The page object
- * @param object $blockmanager The block manager object
- * @param string $blockaction One of [config, add, delete]
- * @param int|object $instanceorid The instance id or a block_instance object
- * @param bool $pinned
- * @param bool $redirect To redirect or not to that is the question but you should stick with true
- */
-function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
-    global $CFG, $USER, $DB;
-
-    if (!in_array($blockaction, array('config', 'add', 'delete'))) {
-        throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
-    }
-
-    if (is_int($instanceorid)) {
-        $blockid = $instanceorid;
-    } else if (is_object($instanceorid)) {
-        $instance = $instanceorid;
-    }
-
-    switch($blockaction) {
-        case 'config':
-            // First of all check to see if the block wants to be edited
-            if(!$instance->user_can_edit()) {
-                break;
-            }
-
-            // Now get the title and AFTER that load up the instance
-            $blocktitle = $instance->get_title();
-
-            // Define the data we're going to silently include in the instance config form here,
-            // so we can strip them from the submitted data BEFORE serializing it.
-            $hiddendata = array(
-                'sesskey' => sesskey(),
-                'instanceid' => $instance->instance->id,
-                'blockaction' => 'config'
-            );
-
-            // To this data, add anything the page itself needs to display
-            $hiddendata = $page->url->params($hiddendata);
-
-            if ($data = data_submitted()) {
-                $remove = array_keys($hiddendata);
-                foreach($remove as $item) {
-                    unset($data->$item);
-                }
-                $instance->instance_config_save($data);
-                redirect($page->url->out());
-
-            } else {
-                // We need to show the config screen, so we highjack the display logic and then die
-                $strheading = get_string('blockconfiga', 'moodle', $blocktitle);
-                $nav = build_navigation($strheading, $page->cm);
-                print_header($strheading, $strheading, $nav);
-
-                echo '<div class="block-config" id="'.$instance->name().'">';   /// Make CSS easier
-
-                print_heading($strheading);
-                echo '<form method="post" name="block-config" action="'. $page->url->out(false) .'">';
-                echo '<p>';
-                echo $page->url->hidden_params_out(array(), 0, $hiddendata);
-                echo '</p>';
-                $instance->instance_config_print();
-                echo '</form>';
-
-                echo '</div>';
-                global $PAGE;
-                $PAGE->set_docs_path('blocks/' . $instance->name());
-                print_footer();
-                die; // Do not go on with the other page-related stuff
-            }
-        break;
-        case 'toggle':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-            $instance->visible = ($instance->visible) ? 0 : 1;
-            if (!empty($pinned)) {
-                $DB->update_record('block_pinned_old', $instance);
-            } else {
-                $DB->update_record('block_instance_old', $instance);
-            }
-        break;
-        case 'delete':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-            blocks_delete_instance($instance->instance, $pinned);
-        break;
-        case 'moveup':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-
-            if($instance->weight == 0) {
-                // The block is the first one, so a move "up" probably means it changes position
-                // Where is the instance going to be moved?
-                $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_UP);
-                $newweight = (empty($blockmanager[$newpos]) ? 0 : max(array_keys($blockmanager[$newpos])) + 1);
-
-                blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
-            }
-            else {
-                // The block is just moving upwards in the same position.
-                // This configuration will make sure that even if somehow the weights
-                // become not continuous, block move operations will eventually bring
-                // the situation back to normal without printing any warnings.
-                if(!empty($blockmanager[$instance->position][$instance->weight - 1])) {
-                    $other = $blockmanager[$instance->position][$instance->weight - 1];
-                }
-                if(!empty($other)) {
-                    ++$other->weight;
-                    if (!empty($pinned)) {
-                        $DB->update_record('block_pinned_old', $other);
-                    } else {
-                        $DB->update_record('block_instance_old', $other);
-                    }
-                }
-                --$instance->weight;
-                if (!empty($pinned)) {
-                    $DB->update_record('block_pinned_old', $instance);
-                } else {
-                    $DB->update_record('block_instance_old', $instance);
-                }
-            }
-        break;
-        case 'movedown':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-
-            if($instance->weight == max(array_keys($blockmanager[$instance->position]))) {
-                // The block is the last one, so a move "down" probably means it changes position
-                // Where is the instance going to be moved?
-                $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_DOWN);
-                $newweight = (empty($blockmanager[$newpos]) ? 0 : max(array_keys($blockmanager[$newpos])) + 1);
-
-                blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
-            }
-            else {
-                // The block is just moving downwards in the same position.
-                // This configuration will make sure that even if somehow the weights
-                // become not continuous, block move operations will eventually bring
-                // the situation back to normal without printing any warnings.
-                if(!empty($blockmanager[$instance->position][$instance->weight + 1])) {
-                    $other = $blockmanager[$instance->position][$instance->weight + 1];
-                }
-                if(!empty($other)) {
-                    --$other->weight;
-                    if (!empty($pinned)) {
-                        $DB->update_record('block_pinned_old', $other);
-                    } else {
-                        $DB->update_record('block_instance_old', $other);
-                    }
-                }
-                ++$instance->weight;
-                if (!empty($pinned)) {
-                    $DB->update_record('block_pinned_old', $instance);
-                } else {
-                    $DB->update_record('block_instance_old', $instance);
-                }
-            }
-        break;
-        case 'moveleft':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-
-            // Where is the instance going to be moved?
-            $newpos = $page->blocks_move_position($instance, BLOCK_MOVE_LEFT);
-            $newweight = (empty($blockmanager[$newpos]) ? 0 : max(array_keys($blockmanager[$newpos])) + 1);
-
-            blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
-        break;
-        case 'moveright':
-            if(empty($instance))  {
-                print_error('invalidblockinstance', '', '', $blockaction);
-            }
-
-            // Where is the instance going to be moved?
-            $newpos    = $page->blocks_move_position($instance, BLOCK_MOVE_RIGHT);
-            $newweight = (empty($blockmanager[$newpos]) ? 0 : max(array_keys($blockmanager[$newpos])) + 1);
-
-            blocks_execute_repositioning($instance, $newpos, $newweight, $pinned);
-        break;
-        case 'add':
-            // Add a new instance of this block, if allowed
-            $block = blocks_get_record($blockid);
-
-            if (empty($block) || !$block->visible) {
-                // Only allow adding if the block exists and is enabled
-                break;
-            }
-
-            if (!$block->multiple && blocks_find_block($blockid, $blockmanager) !== false) {
-                // If no multiples are allowed and we already have one, return now
-                break;
-            }
-
-            if (!block_method_result($block->name, 'user_can_addto', $page)) {
-                // If the block doesn't want to be added...
-                break;
-            }
-
-            $region = $page->blocks->get_default_region();
-            $weight = $DB->get_field_sql("SELECT MAX(defaultweight) FROM {block_instances} 
-                    WHERE parentcontextid = ? AND defaultregion = ?", array($page->context->id, $region));
-            $pagetypepattern = $page->pagetype;
-            if (strpos($pagetypepattern, 'course-view') === 0) {
-                $pagetypepattern = 'course-view-*';
-            }
-            $page->blocks->add_block($block->name, $region, $weight, false, $pagetypepattern);
-        break;
-    }
-
-    if ($redirect) {
-        // In order to prevent accidental duplicate actions, redirect to a page with a clean url
-        redirect($page->url->out());
-    }
-}
-
-/**
- * TODO deprecate
- *
- * You can use this to get the blocks to respond to URL actions without much hassle
- *
- * @param object $PAGE
- * @param object $blockmanager
- * @param bool $pinned
- */
-function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
-    $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
-
-    if (empty($blockaction) || !$PAGE->user_allowed_editing() || !confirm_sesskey()) {
-        return;
-    }
-
-    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
-    $blockid     = optional_param('blockid',    0, PARAM_INT);
-
-    if (!empty($blockid)) {
-        blocks_execute_action($PAGE, $blockmanager, strtolower($blockaction), $blockid, $pinned);
-    } else if (!empty($instanceid)) {
-        $instance = $blockmanager->find_instance($instanceid);
-        blocks_execute_action($PAGE, $blockmanager, strtolower($blockaction), $instance, $pinned);
-    }
-}
-
-/**
- * TODO deprecate
- * This shouldn't be used externally at all, it's here for use by blocks_execute_action()
- * in order to reduce code repetition.
- *
- * @todo Remove exception when MDL-19010 is fixed
- *
- * global object
- * @param $instance
- * @param $newpos
- * @param string|int $newweight
- * @param bool $pinned
- */
-function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
-    global $DB;
-
-    throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
-
-    // If it's staying where it is, don't do anything, unless overridden
-    if ($newpos == $instance->position) {
-        return;
-    }
-
-    // Close the weight gap we 'll leave behind
-    if (!empty($pinned)) {
-        $sql = "UPDATE {block_instance_old}
-                   SET weight = weight - 1
-                 WHERE pagetype = ? AND position = ? AND weight > ?";
-        $params = array($instance->pagetype, $instance->position, $instance->weight);
-
-    } else {
-        $sql = "UPDATE {block_instance_old}
-                   SET weight = weight - 1
-                 WHERE pagetype = ? AND pageid = ?
-                       AND position = ? AND weight > ?";
-        $params = array($instance->pagetype, $instance->pageid, $instance->position, $instance->weight);
-    }
-    $DB->execute($sql, $params);
-
-    $instance->position = $newpos;
-    $instance->weight   = $newweight;
-
-    if (!empty($pinned)) {
-        $DB->update_record('block_pinned_old', $instance);
-    } else {
-        $DB->update_record('block_instance_old', $instance);
-    }
-}
-
-
-/**
- * TODO deprecate
- * Moves a block to the new position (column) and weight (sort order).
- *
- * @param object $instance The block instance to be moved.
- * @param string $destpos BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
- * @param string $destweight The destination sort order. If NULL, we add to the end
- *                    of the destination column.
- * @param bool $pinned Are we moving pinned blocks? We can only move pinned blocks
- *                to a new position withing the pinned list. Likewise, we
- *                can only moved non-pinned blocks to a new position within
- *                the non-pinned list.
- * @return boolean success or failure
- */
-function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
-    global $CFG, $DB;
-
-    throw new moodle_exception('Sorry, blocks editing is currently broken. Will be fixed. See MDL-19010.');
-
-    if ($pinned) {
-        $blocklist = array(); //blocks_get_pinned($page);
-    } else {
-        $blocklist = array(); //blocks_get_by_page($page);
-    }
-
-    if ($blocklist[$instance->position][$instance->weight]->id != $instance->id) {
-        // The source block instance is not where we think it is.
-        return false;
-    }
-
-    // First we close the gap that will be left behind when we take out the
-    // block from it's current column.
-    if ($pinned) {
-        $closegapsql = "UPDATE {block_instance_old}
-                           SET weight = weight - 1
-                         WHERE weight > ? AND position = ? AND pagetype = ?";
-        $params = array($instance->weight, $instance->position, $instance->pagetype);
-    } else {
-        $closegapsql = "UPDATE {block_instance_old}
-                           SET weight = weight - 1
-                         WHERE weight > ? AND position = ?
-                               AND pagetype = ? AND pageid = ?";
-        $params = array($instance->weight, $instance->position, $instance->pagetype, $instance->pageid);
-    }
-    if (!$DB->execute($closegapsql, $params)) {
-        return false;
-    }
-
-    // Now let's make space for the block being moved.
-    if ($pinned) {
-        $opengapsql = "UPDATE {block_instance_old}
-                           SET weight = weight + 1
-                         WHERE weight >= ? AND position = ? AND pagetype = ?";
-        $params = array($destweight, $destpos, $instance->pagetype);
-    } else {
-        $opengapsql = "UPDATE {block_instance_old}
-                          SET weight = weight + 1
-                        WHERE weight >= ? AND position = ?
-                              AND pagetype = ? AND pageid = ?";
-        $params = array($destweight, $destpos, $instance->pagetype, $instance->pageid);
-    }
-    if (!$DB->execute($opengapsql, $params)) {
-        return false;
-    }
-
-    // Move the block.
-    $instance->position = $destpos;
-    $instance->weight   = $destweight;
-
-    if ($pinned) {
-        $table = 'block_pinned_old';
-    } else {
-        $table = 'block_instance_old';
-    }
-    return $DB->update_record($table, $instance);
 }
 
 // Functions for programatically adding default blocks to pages ================

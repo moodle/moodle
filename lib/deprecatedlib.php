@@ -2348,6 +2348,68 @@ function blocks_preferred_width($instances) {
 }
 
 /**
+ * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
+ *
+ * @param object $page The page object
+ * @param object $blockmanager The block manager object
+ * @param string $blockaction One of [config, add, delete]
+ * @param int|object $instanceorid The instance id or a block_instance object
+ * @param bool $pinned
+ * @param bool $redirect To redirect or not to that is the question but you should stick with true
+ */
+function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
+    throw new coding_exception('blocks_execute_action is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
+}
+
+/**
+ * You can use this to get the blocks to respond to URL actions without much hassle
+ *
+ * @deprecated since Moodle 2.0. Blocks have been changed. {@link block_manager::process_url_actions} is the closest replacement.
+ *
+ * @param object $PAGE
+ * @param object $blockmanager
+ * @param bool $pinned
+ */
+function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
+    throw new coding_exception('blocks_execute_url_action is no longer used. It has been replaced by methods of block_manager.');
+}
+
+/**
+ * This shouldn't be used externally at all, it's here for use by blocks_execute_action()
+ * in order to reduce code repetition.
+ *
+ * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
+ *
+ * @param $instance
+ * @param $newpos
+ * @param string|int $newweight
+ * @param bool $pinned
+ */
+function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
+    throw new coding_exception('blocks_execute_repositioning is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
+}
+
+
+/**
+ * Moves a block to the new position (column) and weight (sort order).
+ *
+ * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
+ *
+ * @param object $instance The block instance to be moved.
+ * @param string $destpos BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
+ * @param string $destweight The destination sort order. If NULL, we add to the end
+ *                    of the destination column.
+ * @param bool $pinned Are we moving pinned blocks? We can only move pinned blocks
+ *                to a new position withing the pinned list. Likewise, we
+ *                can only moved non-pinned blocks to a new position within
+ *                the non-pinned list.
+ * @return boolean success or failure
+ */
+function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
+    throw new coding_exception('blocks_move_block is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
+}
+
+/**
  * Print a nicely formatted table.
  *
  * @deprecated since Moodle 2.0

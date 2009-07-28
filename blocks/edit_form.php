@@ -47,11 +47,11 @@ class block_edit_form extends moodleform {
      */
     public $page;
 
-    function __construct($block, $page) {
+    function __construct($actionurl, $block, $page) {
         global $CFG;
         $this->block = $block;
         $this->page = $page;
-        parent::moodleform(block_edit_url($block, $page));
+        parent::moodleform($actionurl);
     }
 
     function definition() {
@@ -85,18 +85,18 @@ class block_edit_form extends moodleform {
         $parentcontext = get_context_instance_by_id($this->block->instance->parentcontextid);
         $mform->addElement('static', 'contextname', get_string('thisblockbelongsto', 'block'), print_context_name($parentcontext));
 
-        $mform->addElement('selectyesno', 'showinsubcontexts', get_string('appearsinsubcontexts', 'block'));
+        $mform->addElement('selectyesno', 'bui_showinsubcontexts', get_string('appearsinsubcontexts', 'block'));
 
         $pagetypeoptions = matching_page_type_patterns($this->page->pagetype);
         $pagetypeoptions = array_combine($pagetypeoptions, $pagetypeoptions);
-        $mform->addElement('select', 'pagetypepattern', get_string('pagetypes', 'block'), $pagetypeoptions);
+        $mform->addElement('select', 'bui_pagetypepattern', get_string('pagetypes', 'block'), $pagetypeoptions);
 
         if ($this->page->subpage) {
             $subpageoptions = array(
                 '%@NULL@%' => get_string('anypagematchingtheabove', 'block'),
                 $this->page->subpage => get_string('thisspecificpage', 'block', $this->page->subpage),
             );
-            $mform->addElement('select', 'subpagepattern', get_string('subpages', 'block'), $subpageoptions);
+            $mform->addElement('select', 'bui_subpagepattern', get_string('subpages', 'block'), $subpageoptions);
         }
 
         $defaultregionoptions = $regionoptions;
@@ -104,22 +104,22 @@ class block_edit_form extends moodleform {
         if (!array_key_exists($defaultregion, $defaultregionoptions)) {
             $defaultregionoptions[$defaultregion] = $defaultregion;
         }
-        $mform->addElement('select', 'defaultregion', get_string('defaultregion', 'block'), $defaultregionoptions);
+        $mform->addElement('select', 'bui_defaultregion', get_string('defaultregion', 'block'), $defaultregionoptions);
 
-        $mform->addElement('select', 'defaultweight', get_string('defaultweight', 'block'), $weightoptions);
+        $mform->addElement('select', 'bui_defaultweight', get_string('defaultweight', 'block'), $weightoptions);
 
         // Where this block is positioned on this page.
         $mform->addElement('header', 'whereheader', get_string('onthispage', 'block'));
 
-        $mform->addElement('selectyesno', 'visible', get_string('visible', 'block'));
+        $mform->addElement('selectyesno', 'bui_visible', get_string('visible', 'block'));
 
         $blockregion = $this->block->instance->region;
         if (!array_key_exists($blockregion, $regionoptions)) {
             $regionoptions[$blockregion] = $blockregion;
         }
-        $mform->addElement('select', 'region', get_string('region', 'block'), $regionoptions);
+        $mform->addElement('select', 'bui_region', get_string('region', 'block'), $regionoptions);
 
-        $mform->addElement('select', 'weight', get_string('weight', 'block'), $weightoptions);
+        $mform->addElement('select', 'bui_weight', get_string('weight', 'block'), $weightoptions);
 
         $this->add_action_buttons();
     }

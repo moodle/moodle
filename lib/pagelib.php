@@ -893,9 +893,11 @@ class moodle_page {
 
         if (!during_initial_install()) {
             $this->blocks->load_blocks();
-            if (empty($this->_block_actions_done) && block_process_url_actions($this)) {
+            if (empty($this->_block_actions_done)) {
                 $this->_block_actions_done = true;
-                redirect($this->url->out(false, array(), false));
+                if ($this->blocks->process_url_actions($this)) {
+                    redirect($this->url->out(false, array(), false));
+                }
             }
             $this->blocks->create_all_block_instances();
         }
