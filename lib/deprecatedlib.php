@@ -2591,17 +2591,11 @@ function print_spacer($height=1, $width=1, $br=true, $return=false) {
 
     // debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
 
-    $spacer = new html_spacer();
+    $spacer = new html_image();
     $spacer->height = $height;
     $spacer->width = $width;
 
     $output = $OUTPUT->spacer($spacer);
-
-    $output .= '<img class="spacer" height="'. $height .'" width="'. $width .'" src="'. $CFG->wwwroot .'/pix/spacer.gif" alt="" />';
-
-    if ($br) {
-        $output .= '<br />';
-    }
 
     if ($return) {
         return $output;
@@ -2981,3 +2975,71 @@ function print_scale_menu() {
     throw new coding_exception('print_scale_menu() has been deprecated since the Jurassic period. Get with the times!.');
 }
 
+/**
+ * Given an array of values, output the HTML for a select element with those options.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * Normally, you only need to use the first few parameters.
+ *
+ * @param array $options The options to offer. An array of the form
+ *      $options[{value}] = {text displayed for that option};
+ * @param string $name the name of this form control, as in &lt;select name="..." ...
+ * @param string $selected the option to select initially, default none.
+ * @param string $nothing The label for the 'nothing is selected' option. Defaults to get_string('choose').
+ *      Set this to '' if you don't want a 'nothing is selected' option.
+ * @param string $script if not '', then this is added to the &lt;select> element as an onchange handler.
+ * @param string $nothingvalue The value corresponding to the $nothing option. Defaults to 0.
+ * @param boolean $return if false (the default) the the output is printed directly, If true, the
+ *      generated HTML is returned as a string.
+ * @param boolean $disabled if true, the select is generated in a disabled state. Default, false.
+ * @param int $tabindex if give, sets the tabindex attribute on the &lt;select> element. Default none.
+ * @param string $id value to use for the id attribute of the &lt;select> element. If none is given,
+ *      then a suitable one is constructed.
+ * @param mixed $listbox if false, display as a dropdown menu. If true, display as a list box.
+ *      By default, the list box will have a number of rows equal to min(10, count($options)), but if
+ *      $listbox is an integer, that number is used for size instead.
+ * @param boolean $multiple if true, enable multiple selections, else only 1 item can be selected. Used
+ *      when $listbox display is enabled
+ * @param string $class value to use for the class attribute of the &lt;select> element. If none is given,
+ *      then a suitable one is constructed.
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
+                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
+                           $id='', $listbox=false, $multiple=false, $class='') {
+    
+    global $OUTPUT;
+    // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    $selectmenu = new moodle_select_menu();
+    $selectmenu->options = $options;
+    $selectmenu->name = $name;
+    $selectmenu->selectedvalue = $selected;
+    $selectmenu->nothinglabel = $nothing;
+    $selectmenu->nothingvalue = $nothingvalue;
+    $selectmenu->disabled = $disabled;
+    $selectmenu->tabindex = $tabindex;
+    $selectmenu->id = $id;
+    $selectmenu->listbox = $listbox;
+    $selectmenu->multiple = $multiple;
+    $selectmenu->add_classes($class);
+
+    if (!empty($script)) {
+        $onchange = new component_action('change', $script);
+        $selectmenu->add_action($onchange);
+    }
+
+    if ($nothing == 'choose') {
+        $selectmenu->nothinglabel = '';
+    }
+    
+    $output = $OUTPUT->select_menu($selectmenu);
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+        die();
+    }
+
+}
