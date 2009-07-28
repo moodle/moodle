@@ -300,8 +300,12 @@
 
         echo '<td class="sideblockheading">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
-        $script = 'self.location=getElementById(\'otherwikis\').wikiselect.options[getElementById(\'otherwikis\').wikiselect.selectedIndex].value';
-        choose_from_menu($wiki_list, "wikiselect", $selected, "choose", $script);
+        $selectmenu = new moodle_select_menu();
+        $selectmenu->options = $wiki_list;
+        $selectmenu->name = 'wikiselect';
+        $selectmenu->selectedvalue = $selected;
+        $selectmenu->add_action('change', 'go_to_wiki');
+        echo $OUTPUT->select_menu($selectmenu);
         echo '</td>';
         echo '</tr></table>';
         echo '</form>';

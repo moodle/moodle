@@ -285,7 +285,12 @@
         while(list($key,$val)=each($wiki_list)) {
           $wiki_admin_list[$key."&amp;action=$action"]=$val;
         }
-        choose_from_menu($wiki_admin_list, "wikiselect", $selected, "choose", $script);
+        $selectmenu = new moodle_select_menu();
+        $selectmenu->options = $wiki_admin_list;
+        $selectmenu->name = 'wikiselect';
+        $selectmenu->selectedvalue = $selected;
+        $selectmenu->add_action('change', 'go_to_wiki');
+        echo $OUTPUT->select_menu($selectmenu);
         echo '</td>';
         echo '</tr></table>';
         echo '</fieldset></form>';
