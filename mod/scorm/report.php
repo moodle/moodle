@@ -198,13 +198,12 @@
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
-                    $PAGE->requires->js('mod/scorm/scorm.js');
                     $selectmenu = new moodle_select_menu();
                     $selectmenu->options = array('delete' => get_string('delete'));
                     $selectmenu->name = 'action';
                     $selectmenu->button->label = get_string('withselected', 'quiz');
                     $selectmenu->id = 'menuaction';
-                    $selectmenu->add_action('change', 'submit_attempts_form');
+                    $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'attemptsform', 'selectid' => 'menuaction'));
                     echo $OUTPUT->select_menu($selectmenu);
                     echo '<noscript id="noscriptmenuaction" style="display: inline;">';
                     echo '<div>';
