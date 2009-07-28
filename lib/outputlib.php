@@ -3261,16 +3261,23 @@ class moodle_html_component {
      * Note: the JS function you write must have only two arguments: (string)event and (object|array)args
      * If you want to add an instantiated component_action (or one of its subclasses), use $component->add_action_object($action)
      *
-     * @param string $event a DOM event (click, mouseover etc.)
-     * @param string $jsfunction The name of the JS function to call
+     * @param mixed  $event a DOM event (click, mouseover etc.) or a component_action object
+     * @param string $jsfunction The name of the JS function to call. required if argument 1 is a string (event)
      * @param array  $jsfunctionargs An optional array of JS arguments to pass to the function
      * @return void
      */
-    public function add_action($event, $jsfunction, $jsfunctionargs=array()) {
-        while (empty($this->id) || !in_array($this->id, moodle_html_component::$generated_ids)) {
-            $this->generate_id();
+    public function add_action($event, $jsfunction=null, $jsfunctionargs=array()) {
+        if ($event instanceof component_action) {
+            $this->actions[] = $event;
+        } else {
+            if (empty($jsfunction)) {
+                throw new coding_exception('moodle_html_component::add_action requires a JS function argument if the first argument is a string event');
+            }
+            while (empty($this->id) || !in_array($this->id, moodle_html_component::$generated_ids)) {
+                $this->generate_id();
+            }
+            $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
         }
-        $this->actions[] = new component_action($event, $jsfunction, $jsfunctionargs);
     }
 
     /**
@@ -3393,6 +3400,9 @@ class moodle_select_menu extends moodle_html_component {
         }
         if (empty($this->classes)) {
             $this->set_classes(array('menu' . str_replace(array('[', ']'), '', $this->name)));
+        }
+        if (is_null($this->nothinglabel)) {
+            $this->nothinglabel = get_string('choosedots');
         }
         $this->add_class('select');
         parent::prepare();
