@@ -1382,7 +1382,7 @@ class moodle_renderer_base {
      * @param moodle_html_component $component
      * @return void;
      */
-    public function prepare_event_handlers(&$component) {
+    protected function prepare_event_handlers(&$component) {
         $actions = $component->get_actions();
         if (!empty($actions) && is_array($actions) && $actions[0] instanceof component_action) {
             foreach ($actions as $action) {
@@ -1391,6 +1391,28 @@ class moodle_renderer_base {
                 }
             }
         }
+    }
+
+    /**
+     * Given a moodle_html_component with height and/or width set, translates them
+     * to appropriate CSS rules.
+     *
+     * @param moodle_html_component $component
+     * @return string CSS rules
+     */
+    protected function prepare_legacy_width_and_height($component) {
+        $output = '';
+        if (!empty($component->height)) {
+            // We need a more intelligent way to handle these warnings. If $component->height have come from
+            // somewhere in deprecatedlib.php, then there is no point outputting a warning here.
+            // debugging('Explicit height given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+            $output .= "height: {$component->height}px;";
+        }
+        if (!empty($component->width)) {
+            // debugging('Explicit width given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
+            $output .= "width: {$component->width}px;";
+        }
+        return $output;
     }
 }
 
@@ -2614,7 +2636,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $image->prepare();
 
         $attributes = array('class' => $image->get_classes_string(),
-                            'style' => prepare_legacy_width_and_height($image),
+                            'style' => $this->prepare_legacy_width_and_height($image),
                             'src' => prepare_url($image->src),
                             'alt' => $image->alt,
                             'title' => $image->title);
@@ -4091,8 +4113,8 @@ class user_picture extends moodle_html_component {
                 $needrec = true;
             } else {
                 $userobj = new StdClass; // fake it to save DB traffic
-                $userobj->id = $user;
-                $userobj->picture = $picture;
+                $userobj->id = $this->user;
+                $userobj->picture = $this->image->src;
                 $this->user = clone($userobj);
                 unset($userobj);
             }
@@ -4115,6 +4137,11 @@ class user_picture extends moodle_html_component {
             $file = 'f1';
         } else {
             $file = 'f2';
+        }
+
+        if (!empty($this->size)) {
+            $this->image->width = $this->size;
+            $this->image->height = $this->size;
         }
 
         $this->add_class('userpicture');
@@ -4821,24 +4848,4 @@ function output_css_for_css_edit($files, $toreplace) {
         }
         echo "/* @end */\n\n";
     }
-}
-
-/**
- * Given a moodle_html_component with height and/or width set, translates them
- * to appropriate CSS rules.
- *
- * @param moodle_html_component $component
- * @return string CSS rules
- */
-function prepare_legacy_width_and_height($component) {
-    $output = '';
-    if (!empty($component->height)) {
-        debugging('Explicit height given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
-        $output = "height: {$component->height}px;";
-    }
-    if (!empty($component->width)) {
-        debugging('Explicit width given to moodle_html_component leads to inline css. Use a proper CSS class instead.', DEBUG_DEVELOPER);
-        $output .= "width: {$component->width}px;";
-    }
-    return $output;
 }
