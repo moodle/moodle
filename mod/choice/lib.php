@@ -411,7 +411,7 @@ function choice_show_reportlink($user, $cm) {
  * @return void Output is echo'd
  */
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
-    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE;
+    global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE, $OUTPUT, $DB;
 
     print_heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
@@ -544,8 +544,14 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                $options = array('delete' => get_string('delete'));
-                echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
+                $PAGE->requires->js('mod/choice/choice.js');
+                $selectmenu = new moodle_select_menu();
+                $selectmenu->options = array('delete' => get_string('delete'));
+                $selectmenu->name = 'action';
+                $selectmenu->button->label = get_string('withselected', 'quiz');
+                $selectmenu->id = 'menuaction';
+                $selectmenu->add_action('change', 'submit_attempts_form');
+                echo $OUTPUT->select_menu($selectmenu);
                 echo '<noscript id="noscriptmenuaction" style="display: inline;">';
                 echo '<div>';
                 echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';
