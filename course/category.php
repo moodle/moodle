@@ -440,10 +440,5 @@
 
     print_course_search();
 
-    if ($editingon && update_category_button()) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer();
-    }
+    print_footer();
 
-?>

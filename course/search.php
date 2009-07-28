@@ -29,11 +29,23 @@
 
     $site = get_site();
 
+    $urlparams = array();
+    foreach (array('search', 'page', 'blocklist', 'modulelist') as $param) {
+        if (!empty($$param)) {
+            $urlparams[$param] = $$param;
+        }
+    }
+    if ($perpage != 10) {
+        $urlparams['perpage'] = $perpage;
+    }
+    $PAGE->set_url('course/search.php', $urlparams);
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
     if ($CFG->forcelogin) {
         require_login();
     }
 
-    if (update_category_button()) {
+    if (can_edit_in_category()) {
         if ($edit !== -1) {
             $USER->editing = $edit;
         }
