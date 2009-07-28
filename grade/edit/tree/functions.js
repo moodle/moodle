@@ -216,3 +216,13 @@ YAHOO.namespace('grade_edit_tree');
     });
     // YAHOO.util.Event.onDOMReady(gretree.DDApp.init, gretree.DDApp, true); // Uncomment this line when dragdrop is fully implemented
 })();
+
+function submit_bulk_move(e, args) {
+    document.getElementById('bulkmoveinput').value = 1;
+    document.getElementById('gradetreeform').submit();
+}
+
+function update_category_aggregation(e, args) {
+    var selectmenu = e.target;
+    window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.value+'&sesskey='+args.sesskey;
+}

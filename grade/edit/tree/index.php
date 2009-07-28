@@ -309,8 +309,13 @@ if (!$moving && count($categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
-    echo choose_from_menu($categories, 'moveafter', '', 'choose',
-            'document.getElementById(\'bulkmoveinput\').value=1;document.getElementById(\'gradetreeform\').submit()', 0, true, true);
+    $selectmenu = new moodle_select_menu();
+    $selectmenu->options = $categories;
+    $selectmenu->name = 'moveafter';
+    $selectmenu->disabled = true;
+    $selectmenu->id = 'menumoveafter';
+    $selectmenu->add_action('change', 'submit_bulk_move');
+    echo $OUTPUT->select_menu($selectmenu);
     echo '<div id="noscriptgradetreeform" style="display: inline;">
             <input type="submit" value="'.get_string('go').'" />
           </div>';

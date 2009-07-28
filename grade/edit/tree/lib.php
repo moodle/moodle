@@ -542,7 +542,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        global $CFG;
+        global $CFG, $OUTPUT;
         if (empty($params['id'])) {
             throw new Exception('Array key (id) missing from 3rd param of grade_edit_tree_column_aggregation::get_category_cell($category, $levelclass, $params)');
         }
@@ -564,8 +564,12 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             }
         }
 
-        $script = "window.location='index.php?id={$params['id']}&amp;category={$category->id}&amp;aggregationtype='+this.value+'&amp;sesskey=" . sesskey()."';";
-        $aggregation = choose_from_menu($options, 'aggregation_'.$category->id, $category->aggregation, null, $script, 0, true);
+        $selectmenu = new moodle_select_menu();
+        $selectmenu->options = $options;
+        $selectmenu->name = 'aggregation_'.$category->id;
+        $selectmenu->selectedvalue = $category->aggregation;
+        $selectmenu->add_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
+        $aggregation = $OUTPUT->select_menu($selectmenu);
 
         if ($this->forced) {
             $aggregation = $options[$category->aggregation];
