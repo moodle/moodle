@@ -716,7 +716,7 @@ function scorm_course_format_display($user,$course) {
 }
 
 function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
-    global $CFG, $DB;
+    global $CFG, $DB, $PAGE, $OUTPUT;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
@@ -739,7 +739,14 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
             <div class='scorm-center'>
                 <?php print_string('organizations','scorm') ?>
                 <form id='changeorg' method='post' action='<?php echo $action ?>'>
-                    <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
+                    <?php 
+                    $selectmenu = new moodle_select_menu();
+                    $selectmenu->options = $orgs;
+                    $selectmenu->name = 'organization';
+                    $selectmenu->selectedvalue = $organization;
+                    $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'changeorg'));
+                    echo $OUTPUT->select_menu($selectmenu); 
+                    ?>
                 </form>
             </div>
 <?php
