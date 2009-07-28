@@ -275,9 +275,12 @@
                  '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
                  '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
              
-            $options = array();
-            $options['delete'] = get_string('deleteselected');
-            choose_from_menu($options, 'attemptaction', 0, 'choose', 'submitFormById(\'theform\')');
+            $selectmenu = new moodle_select_menu();
+            $selectmenu->options = array('delete' => get_string('deleteselected'));
+            $selectmenu->name = 'attemptaction';
+            $selectmenu->selectedvalue = 0;
+            $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'theform'));
+            echo $OUTPUT->select_menu($selectmenu); 
         
             echo '</td></tr></table></form>';
         }
