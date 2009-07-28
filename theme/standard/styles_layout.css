@@ -219,21 +219,21 @@ div.groupselector {
 }
 
 .collapsibleregion {
-    overflow: hidden;
-    padding: 1px;
+  overflow: hidden;
+  padding: 1px;
 }
 .collapsibleregioncaption {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 .collapsibleregioncaption img {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 div.collapsibleregion div.collapsibleregioncaption a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 .jsenabled .collapsed .collapsibleregioninner {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .noticebox {
@@ -485,19 +485,19 @@ form.popupform label {
   text-align: center;
 }
 .groupmanagementtable #buttonscell input {
-    width: 80%;
-    padding: 1em 0;
+  width: 80%;
+  padding: 1em 0;
 }
 .groupmanagementtable #buttonscell #remove {
-    margin: 7em 0;
+  margin: 7em 0;
 }
 .groupmanagementtable #backcell {
-    padding-top: 2em;
-    text-align: center;
+  padding-top: 2em;
+  text-align: center;
 }
 .groupmanagementtable #removeselect_wrapper,
 .groupmanagementtable #addselect_wrapper {
-    width: 100%;
+  width: 100%;
 }
 .groupmanagementtable #removeselect_wrapper label,
 .groupmanagementtable #addselect_wrapper label {
@@ -586,14 +586,14 @@ div.hide {
   margin-right: 0.3em;
 }
 #userselector_options {
-    font-size: 0.75em;
+  font-size: 0.75em;
 }
 #userselector_options .collapsibleregioncaption {
-    font-weight: bold;
+  font-weight: bold;
 }
 #userselector_options p {
-    margin:0.2em 0pt;
-    text-align:left;
+  margin:0.2em 0pt;
+  text-align:left;
 }
 #help_icon_tooltip {
   font-size: 0.7em;
@@ -634,9 +634,9 @@ div.hide {
   width: auto;
 }
 .mform ul.file-list{
-    padding:0;
-    margin:0;
-    list-style:none;
+  padding:0;
+  margin:0;
+  list-style:none;
 }
 .mform fieldset legend {
   font-weight: bold;
@@ -676,21 +676,21 @@ fieldset.fdate_selector label {
 }
 
 #date_selector_calendar_panel .bd {
-    padding: 0;
+  padding: 0;
 }
 #date_selector_calendar_panel .yui-calcontainer {
-    border: none;
-    float: none;
+  border: none;
+  float: none;
 }
 /* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
 #date_selector_calendar_panel.yui-overlay-hidden table {
-    *display:none;
+  *display:none;
 }
 #date_selector_calendar_panel th.calhead {
-    padding-right: 2em;
+  padding-right: 2em;
 }
 #date_selector_calendar_panel a.container-close {
-    top: 10px;
+  top: 10px;
 }
 
 .mform div.felement,  .mform fieldset.felement{
@@ -715,7 +715,7 @@ fieldset.fdate_selector label {
   width: auto;
 }
 .mform .ftextarea #id_alltext {
-    width: 100%;
+  width: 100%;
 }
 .mform br {
   clear: left;
@@ -1092,7 +1092,7 @@ body#admin-modules table.generaltable td.c0
   text-align: left;
 }
 #admin-report-capability-index #settingsform h2 {
-    margin-top: 0;
+  margin-top: 0;
 }
 #admin-report-capability-index #settingsform p {
   margin-bottom: 0;
@@ -1108,7 +1108,7 @@ body#admin-modules table.generaltable td.c0
   margin-bottom: 0;
 }
 #admin-report-questioninstances-index #settingsform h2 {
-    margin-top: 0;
+  margin-top: 0;
 }
 #admin-report-questioninstances-index #settingsform p {
   margin-bottom: 0;
@@ -1153,53 +1153,53 @@ body#admin-modules table.generaltable td.c0
   margin: 1em 0 2em;
 }
 .roleassigntable {
-    width: 100%;
+  width: 100%;
 }
 .roleassigntable td {
-    vertical-align: top;
-    padding: 0.2em 0.3em;
+  vertical-align: top;
+  padding: 0.2em 0.3em
 }
 .roleassigntable p {
-    text-align: left;
-    margin: 0.2em 0;
+  text-align: left;
+  margin: 0.2em 0;
 }
 .roleassigntable #existingcell,
 .roleassigntable #potentialcell {
-    width: 42%;
+  width: 42%;
 }
 .roleassigntable #existingcell label,
 .roleassigntable #potentialcell label {
-    font-weight: bold;
+  font-weight: bold;
 }
 .roleassigntable #buttonscell {
-    width: 16%;
+  width: 16%;
 }
 .roleassigntable #buttonscell #add,
 .roleassigntable #buttonscell #remove {
-    width: 100%;
-    margin: 0.3em 0;
-    padding: 0.5em 0;
+  width: 100%;
+  margin: 0.3em 0;
+  padding: 0.5em 0;
 }
 .roleassigntable #buttonscell p {
-    margin: 0.3em 0;
+  margin: 0.3em 0;
 }
 .roleassigntable #buttonscell #assignoptions {
-    font-size: 0.75em;
+  font-size: 0.75em;
 }
 .roleassigntable #buttonscell #assignoptions .collapsibleregioncaption {
-    font-weight: bold;
+  font-weight: bold;
 }
 .roleassigntable #buttonscell #addcontrols {
-    margin-top: 3em;
-    height: 13em;
+  margin-top: 3em;
+  height: 13em;
 }
 .roleassigntable #removeselect_wrapper,
 .roleassigntable #addselect_wrapper {
-    width: 100%;
+  width: 100%;
 }
 .roleassigntable #removeselect_wrapper label,
 .roleassigntable #addselect_wrapper label {
-    font-weight: normal;
+  font-weight: normal;
 }
 #admin-roles-define .mform {
   width: 100%;
@@ -1270,8 +1270,8 @@ table.rolecap label {
 
 #admin-roles-override .overridenotice,
 #admin-roles-define .definenotice {
-    margin: 1em 10% 2em;
-    text-align: left;
+  margin: 1em 10% 2em;
+  text-align: left;
 }
 
 table.explainpermissions {
@@ -1289,7 +1289,7 @@ table.explainpermissions td.cell {
 }
 table.explainpermissions .newcontext .cell,
 table.explainpermissions .row2 th.header {
-    border-top: 1px solid black;
+  border-top: 1px solid black;
 }
 table.explainpermissions .cell.inherit,
 table.explainpermissions .cell.noroles {
@@ -1356,7 +1356,7 @@ table.explainpermissions .cell {
 }
 
 .plugincheckwrapper{
-    width: 100%;
+  width: 100%;
 }
 /* Admin settings */
 #adminsettings div.form-item {
@@ -2163,9 +2163,9 @@ border-width:0px;
   font-size:0.85em;
 }
 .course-view .completionprogress {
-    font-size:0.80em;
-    float:right;
-    padding:8px 26px 5px 5px; ;
+  font-size:0.80em;
+  float:right;
+  padding:8px 26px 5px 5px; ;
 }
 .course-view .completionprogress img.iconhelp {
   vertical-align:top;
@@ -2187,7 +2187,7 @@ border-width:0px;
 }
 
 .weeks-format, .topics-format {
-    margin-top: 8px;
+  margin-top: 8px;
 }
 
 /*.course-view ul.section li.activity ul li,
@@ -2541,7 +2541,7 @@ body#group-index #groupeditform {
 }
 
 #add, #remove{
-    text-align:center;
+  text-align:center;
 }
 
 /***
@@ -2589,14 +2589,14 @@ body#doc-contents ul {
 }
 
 div.allcoursegrades {
-    width: 100%;
-    text-align: right;
-    padding: 4px 0px 5px 0px;
+  width: 100%;
+  text-align: right;
+  padding: 4px 0px 5px 0px;
 }
 
 .importoutcomenofile .singlebutton {
-    text-align: center;
-    margin-top: 5px;
+  text-align: center;
+  margin-top: 5px;
 }
 /* gradebook edit tree */
 
@@ -2656,16 +2656,16 @@ div.allcoursegrades {
 }
 
 #grade-aggregation-help dt {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 #grade-aggregation-help dd.example {
-    margin-top: 7px;
+  margin-top: 7px;
 }
 
 #grade-aggregation-help code {
-    display: block;
-    margin-top: 7px;
+  display: block;
+  margin-top: 7px;
 }
 
 /***
@@ -4624,15 +4624,15 @@ table.quizreviewsummary td.cell {
   white-space: normal;
 }
 #quiznavigation #user-picture {
-    margin: 0.5em 0;
+  margin: 0.5em 0;
 }
 #quiznavigation #user-picture img {
-    width: auto;
-    height: auto;
-    float: left;
+  width: auto;
+  height: auto;
+  float: left;
 }
 #quiznavigation .othernav {
-    clear: both;
+  clear: both;
 }
 #quiznavigation .othernav a,
 #quiznavigation .othernav input {
@@ -4640,253 +4640,253 @@ table.quizreviewsummary td.cell {
   margin: 0.5em 0;
 }
 #quiznojswarning {
-    font-size: 0.7em;
-    line-height: 1.1;
+  font-size: 0.7em;
+  line-height: 1.1;
 }
 .jsenabled #quiznojswarning {
-    display: none;
+  display: none;
 }
 .mod-quiz div.tabtree a span img.iconsmall {
   vertical-align: baseline;
 }
 #mod-quiz-edit div.sideblock{
-    float:right;
-    width:30%;
-    right:0.3em;
-    padding-bottom:0.5em;
-    display:block;
+  float:right;
+  width:30%;
+  right:0.3em;
+  padding-bottom:0.5em;
+  display:block;
 }
 
 #mod-quiz-edit div.quizcontents{
-    float:left;
-    width:70%;
-    display:block;
+  float:left;
+  width:70%;
+  display:block;
 }
 
 #mod-quiz-edit div.quizwhenbankcollapsed{
-    width:100%;
+  width:100%;
 }
 
 #mod-quiz-edit div.quizcontents,h2.main{
-    clear:left;
+  clear:left;
 }
 
 #mod-quiz-edit .addpage{
-    clear:both;
-    padding-top:0.3em;
-    float:right;
-    margin-right:2em;
+  clear:both;
+  padding-top:0.3em;
+  float:right;
+  margin-right:2em;
 }
 
 #mod-quiz-edit h2.main{
-    display:inline;
-    padding-right:1em;
+  display:inline;
+  padding-right:1em;
 }
 
 #mod-quiz-edit .statusdisplay {
-    clear: both;
-    margin: 0.3em 1em 0.3em 0;
-    padding: 1px ; /* Stop margin collapse. */
+  clear: both;
+  margin: 0.3em 1em 0.3em 0;
+  padding: 1px ; /* Stop margin collapse. */
 }
 #mod-quiz-edit .statusdisplay p {
-    margin: 0.4em;
+  margin: 0.4em;
 }
 
 #mod-quiz-edit div.quizpage{
-    display:block;
-    clear:both;
-    width:100%;
+  display:block;
+  clear:both;
+  width:100%;
 }
 
 #mod-quiz-edit div.quizpage span.pagetitle{
-    margin-top:0.3em;
-    float:left;
-    display:block;
+  margin-top:0.3em;
+  float:left;
+  display:block;
 }
 
 #mod-quiz-edit div.reorder .reordercontrols .moveselectedonpage{
-    clear:right;
-    float:right;
-    padding:0.5em 0.3em;
+  clear:right;
+  float:right;
+  padding:0.5em 0.3em;
 }
 
 #mod-quiz-edit div.reorder .reordercontrols .addnewpagesafterselected,#mod-quiz-edit .repaginatecommand{
-    float:right;
-    clear:right;
-    padding-right:1em;
+  float:right;
+  clear:right;
+  padding-right:1em;
 }
 
 #mod-quiz-edit div.reorder .reordercontrols .deleteselected{
-    float:right;
-    margin-right:1em;
+  float:right;
+  margin-right:1em;
 }
 
 #mod-quiz-edit div.reorder .reordercontrols{
-    clear:both;
-    padding-right:1em;
-    margin-top:0.5em;
-    padding-top:0.5em;
-    padding-bottom:0.5em;
+  clear:both;
+  padding-right:1em;
+  margin-top:0.5em;
+  padding-top:0.5em;
+  padding-bottom:0.5em;
 }
 
 #mod-quiz-edit div.quizpage .pagecontent{
-    margin-top:0.3em;
-    display:block;
-    float:left;
-    position:relative;
-    margin-left:0.3em;
-    margin-bottom:0.2em;
-    border-left:solid #777 thin;
-    line-height:1.3em;
-    -webkit-border-radius:0.6em;
-    -webkit-border-radius-bottomleft:0;
-    -webkit-border-radius-topleft:0;
-    border-radius:0.6em;
-    border-radius-bottomleft:0;
-    border-radius-topleft:0;
-    width:88%;
-    padding:0.15em 0 0.3em;
+  margin-top:0.3em;
+  display:block;
+  float:left;
+  position:relative;
+  margin-left:0.3em;
+  margin-bottom:0.2em;
+  border-left:solid #777 thin;
+  line-height:1.3em;
+  -webkit-border-radius:0.6em;
+  -webkit-border-radius-bottomleft:0;
+  -webkit-border-radius-topleft:0;
+  border-radius:0.6em;
+  border-radius-bottomleft:0;
+  border-radius-topleft:0;
+  width:88%;
+  padding:0.15em 0 0.3em;
 }
 
 #mod-quiz-edit div.question{
-    clear:left;
-    width:100%;
+  clear:left;
+  width:100%;
 }
 
 #mod-quiz-edit div.question div.qnum{
-    display:block;
-    float:left;
-    width:1.4em;
-    padding-right:0.3em;
-    padding-left:0;
-    z-index:99;
+  display:block;
+  float:left;
+  width:1.4em;
+  padding-right:0.3em;
+  padding-left:0;
+  z-index:99;
 }
 
 #mod-quiz-edit div.reorder div.question div.qnum{
-    width:2.9em;
-    padding-top:0.1em;
+  width:2.9em;
+  padding-top:0.1em;
 }
 /*edit tab*/
 #mod-quiz-edit div.editq div.question div.qnum{
-    padding-top:0.2em;
+  padding-top:0.2em;
 }
 
 #mod-quiz-edit div.editq div.question{
-    padding-top:0.3em;
+  padding-top:0.3em;
 }
 
 #mod-quiz-edit div.reorder div.question{
-    padding-top:0.2em;
+  padding-top:0.2em;
 }
 
 #mod-quiz-edit div.question div.questioncontainer{
-    background-color:#ffc;
+  background-color:#ffc;
 }
 
 #mod-quiz-edit div.editq div.question div.content{
-    width:87%;
-    float:left;
-    position:relative;
-    -webkit-border-radius:0.6em;
-    -webkit-border-radius-bottomleft:0;
-    -webkit-border-radius-topleft:0;
-    border-radius:0.6em;
-    border-radius-bottomleft:0;
-    border-radius-topleft:0;
-    line-height:1.4em;
-    padding:0.5em;
+  width:87%;
+  float:left;
+  position:relative;
+  -webkit-border-radius:0.6em;
+  -webkit-border-radius-bottomleft:0;
+  -webkit-border-radius-topleft:0;
+  border-radius:0.6em;
+  border-radius-bottomleft:0;
+  border-radius-topleft:0;
+  line-height:1.4em;
+  padding:0.5em;
 }
 
 #mod-quiz-edit .reorder div.question div.content{
-    width:87%;
-    float:left;
-    position:relative;
-    -webkit-border-radius:0.3em;
-    -webkit-border-radius-bottomleft:0;
-    -webkit-border-radius-topleft:0;
-    border-radius:0.3em;
-    border-radius-bottomleft:0;
-    border-radius-topleft:0;
-    line-height:1.2em;
-    padding:0.1em;
+  width:87%;
+  float:left;
+  position:relative;
+  -webkit-border-radius:0.3em;
+  -webkit-border-radius-bottomleft:0;
+  -webkit-border-radius-topleft:0;
+  border-radius:0.3em;
+  border-radius-bottomleft:0;
+  border-radius-topleft:0;
+  line-height:1.2em;
+  padding:0.1em;
 }
 
 #mod-quiz-edit div.question div.content div.points{
-    top:0.5em;
-    border-left:#FFF solid 0.4em;
-    width:8.5em;
-    padding:0.2em;
+  top:0.5em;
+  border-left:#FFF solid 0.4em;
+  width:8.5em;
+  padding:0.2em;
 }
 #mod-quiz-edit div.question div.content div.points input{
-    width:2em;
-    padding:0;
+  width:2em;
+  padding:0;
 }
 #mod-quiz-edit div.question div.content div.points input.pointssubmitbutton{
-    width:auto;
+  width:auto;
 }
 
 #mod-quiz-edit .questionbankwindow select#catmenu_jump{
-    /* In Opera9, IE6 the width of the
-    select obeys the width of its content
-    by default. This prevents that. */
-    width:100%;
+  /* In Opera9, IE6 the width of the
+  select obeys the width of its content
+  by default. This prevents that. */
+  width:100%;
 }
 
 #mod-quiz-edit .collapsed .container{
-    display: none;
+  display: none;
 }
 
 #mod-quiz-edit .collapsed .container{
-    display: none;
+  display: none;
 }
 #mod-quiz-edit .questionbankwindow #showbankcmd{
-    display:none;
+  display:none;
 }
 #mod-quiz-edit .collapsed #showbankcmd{
-    display:inline;
+  display:inline;
 }
 #mod-quiz-edit .questionbankwindow #hidebankcmd{
-    display:inline;
+  display:inline;
 }
 #mod-quiz-edit .collapsed #hidebankcmd{
-    display:none;
+  display:none;
 }
 
 #mod-quiz-edit .questionbankwindow div.header{
-    padding-top:0.2em;
+  padding-top:0.2em;
 }
 
 #randomquestiondialog_c select{
-    width:100%;
+  width:100%;
 }
 
 
 #mod-quiz-edit div.question div.content div.points,
 #mod-quiz-edit div.question div.content div.qorder{
-    line-height:1em;
-    max-width:30%;
-    position:absolute;
-    right:50px;
-    -webkit-border-radius:0.2em;
-    -webkit-border-radius-bottomleft:0;
-    -webkit-border-radius-topleft:0;
-    border-radius:0.2em;
-    border-radius-bottomleft:0;
-    border-radius-topleft:0;
-    z-index:900;
-    display:block;
-    margin:0;
+  line-height:1em;
+  max-width:30%;
+  position:absolute;
+  right:50px;
+  -webkit-border-radius:0.2em;
+  -webkit-border-radius-bottomleft:0;
+  -webkit-border-radius-topleft:0;
+  border-radius:0.2em;
+  border-radius-bottomleft:0;
+  border-radius-topleft:0;
+  z-index:900;
+  display:block;
+  margin:0;
 }
 
 
 #mod-quiz-edit div.question div.content .editicon{
-    width:15px;
+  width:15px;
 }
 
 #mod-quiz-edit .editq div.questioncontentcontainer  div.singlequestion img{
-    float:left;
-    padding-top:0.3em;
-    padding-right:0.3em;
+  float:left;
+  padding-top:0.3em;
+  padding-right:0.3em;
 }
 
 #categoryquestions .header {
@@ -4902,103 +4902,103 @@ table.quizreviewsummary td.cell {
 
 #mod-quiz-edit div.question div.content .questionname,
 #categoryquestions .questionname{
-    white-space:nowrap;
-    overflow:hidden;
-    zoom:1;
-    position:relative;
-    max-width:20%;
+  white-space:nowrap;
+  overflow:hidden;
+  zoom:1;
+  position:relative;
+  max-width:20%;
 }
 #mod-quiz-edit div.question div.content .singlequestion .questionname,
 #mod-quiz-edit div.question div.content .singlequestion .questiontext{
-    display:inline-block;
+  display:inline-block;
 }
 
 #mod-quiz-edit div.editq div.question div.content .singlequestion a .questionname,
 #mod-quiz-edit div.editq div.question div.content .singlequestion a .questiontext{
-    float:left;
+  float:left;
 }
 
 #mod-quiz-edit .quizquestionlistcontrols{
-    display:inline;
+  display:inline;
 }
 
 #mod-quiz-edit div.question div.content .questiontext,
 #categoryquestions .questiontext{
-    -o-text-overflow:ellipsis;
-    text-overflow:ellipsis;
-    position:relative;
-    zoom:1;
-    padding-left:0.3em;
-    max-width:40%;
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  text-overflow:ellipsis;
+  position:relative;
+  zoom:1;
+  padding-left:0.3em;
+  max-width:40%;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 #mod-quiz-edit div.editq div.question div.description div.content .questiontext {
-    max-width: 75%;
+  max-width: 75%;
 }
 
 #mod-quiz-edit div.quizpage .pagecontent .pagestatus{
-    -webkit-border-radius-bottomright:0.3em;
-    -webkit-border-radius-topright:0.3em;
-    border-radius-bottomright:0.3em;
-    border-radius-topright:0.3em;
-    margin:0.3em;
-    padding:0.1em 0.1em 0.1em 0.3em;
+  -webkit-border-radius-bottomright:0.3em;
+  -webkit-border-radius-topright:0.3em;
+  border-radius-bottomright:0.3em;
+  border-radius-topright:0.3em;
+  margin:0.3em;
+  padding:0.1em 0.1em 0.1em 0.3em;
 }
 
 #mod-quiz-edit div.question div.content .questiontype{
-    display:block;
-    clear:left;
-    float:left;
+  display:block;
+  clear:left;
+  float:left;
 }
 
 #mod-quiz-edit div.question div.content .questionpreview{
-    display:block;
-    float:left;
-    margin-left:0.3em;
-    padding-left:0.2em;
-    padding-right:0.2em;
+  display:block;
+  float:left;
+  margin-left:0.3em;
+  padding-left:0.2em;
+  padding-right:0.2em;
 }
 
 #mod-quiz-edit div.question div.content div.quiz_randomquestion .questionpreview{
-    display:inline;
-    float:none;
+  display:inline;
+  float:none;
 }
 
 #mod-quiz-edit div.question div.content div.questioncontrols{
-    float:right;
-    width:45px;
-    position:absolute;
-    right:0.3em;
-    top:0;
-    z-index:900;
-    display:block;
-    padding:0.2em;
+  float:right;
+  width:45px;
+  position:absolute;
+  right:0.3em;
+  top:0;
+  z-index:900;
+  display:block;
+  padding:0.2em;
 }
 
 #mod-quiz-edit div.question div.content div.questioncontrols img.upwithoutdown{
-    padding-right:12px;
-    display:inline;
+  padding-right:12px;
+  display:inline;
 }
 
 #mod-quiz-edit .quizpagedelete{
-    position:absolute;
-    top:0.2em;
-    right:0.2em;
-    display:inline;
-    z-index:900;
+  position:absolute;
+  top:0.2em;
+  right:0.2em;
+  display:inline;
+  z-index:900;
 }
 
 #mod-quiz-edit .quizpagedelete img {
-    background-color:#d6d6d6;
-    padding:0.6em;
+  background-color:#d6d6d6;
+  padding:0.6em;
 }
 
 #mod-quiz-edit .pagecontrols {
-    clear:both;
-    margin-left:0.5em;
-    padding-top:0.5em;
+  clear:both;
+  margin-left:0.5em;
+  padding-top:0.5em;
 }
 
 #mod-quiz-edit .pagecontrols .singlebutton {
@@ -5010,142 +5010,142 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div{
-    /* it is a mystery why this has to be inline-table but
-       otherwise the layout gets screwed, even if
-       it is "inline" */
-    display: inline-table;
+  /* it is a mystery why this has to be inline-table but
+     otherwise the layout gets screwed, even if
+     it is "inline" */
+  display: inline-table;
 }
 
 #mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div input{
-    display: inline;
+  display: inline;
 }
 
 /* a CSS class YUI container creates on the fly: */
 #mod-quiz-edit div#randomquestiondialog_c{
-    width:90%;
+  width:90%;
 }
 
 
 #mod-quiz-edit div#randomquestiondialog_c .mform,
 #mod-quiz-edit div#repaginatedialog .mform{
-    margin-left:auto;
-    margin-right:auto;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 #mod-quiz-edit div.container div.generalbox{
-    position:relative;
-    display:block;
-    border:0 none;
-    margin:0;
-    padding:0;
+  position:relative;
+  display:block;
+  border:0 none;
+  margin:0;
+  padding:0;
 }
 
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist{
-    padding-left:0.2em;
-    padding-right:0.2em;
-    clear:both;
-    margin:0.5em;
-    margin-top:0.8em;
+  padding-left:0.2em;
+  padding-right:0.2em;
+  clear:both;
+  margin:0.5em;
+  margin-top:0.8em;
 }
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist .totalquestionsinrandomqcategory{
-    overflow:auto;
-    white-space:normal;
+  overflow:auto;
+  white-space:normal;
 }
 
 
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul{
-    list-style-type:none;
-    margin:0;
-    padding:0;
+  list-style-type:none;
+  margin:0;
+  padding:0;
 }
 #mod-quiz-edit .reorder .questioncontentcontainer .quiz_randomquestion{
 
-    position:relative;
+  position:relative;
 }
 
 #mod-quiz-edit .reorder div.question div.content div.quiz_randomquestion{
-    line-height:1em;
+  line-height:1em;
 }
 
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{
-    max-width: 25%;
-    overflow:hidden;
-    padding-left:0.3em;
-    white-space:nowrap;
-    display:inline-block;
+  max-width: 25%;
+  overflow:hidden;
+  padding-left:0.3em;
+  white-space:nowrap;
+  display:inline-block;
 }
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory label{
-    overflow:hidden;
-    white-space:nowrap;
-    display:inline-block;
+  overflow:hidden;
+  white-space:nowrap;
+  display:inline-block;
 }
 
 #mod-quiz-edit .editq div.question div.content .randomquestioncategory{
-    margin-top:0.4em;
-    position:relative;
-    display:inline-block;
+  margin-top:0.4em;
+  position:relative;
+  display:inline-block;
 
 }
 
 #mod-quiz-edit .editq div.question div.content .randomquestioncategory a{
-    display:block;
-    max-width:15em;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    -o-text-overflow:ellipsis;
-    white-space: nowrap;
-    float:left;
-    position:relative;
+  display:block;
+  max-width:15em;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  -o-text-overflow:ellipsis;
+  white-space: nowrap;
+  float:left;
+  position:relative;
 }
 #mod-quiz-edit .editq div.question div.content .questionpreview{
-    float:left;
+  float:left;
 }
 #mod-quiz-edit .editq div.question div.content .questionpreview a{
-    font-weight:normal;
-    margin-left:0em;
-    display:inline;
-    float:none;
+  font-weight:normal;
+  margin-left:0em;
+  display:inline;
+  float:none;
 }
 #mod-quiz-edit .editq div.question div.content .randomquestioncategory .questionpreview img{
-    padding-right:0.3em;
+  padding-right:0.3em;
 }
 
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li img{
-    padding-right:0.3em;
+  padding-right:0.3em;
 }
 
 
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory,
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestionfromcategory,
 #mod-quiz-edit .reorder div.question div.content .questionpreview{
-    display:inline;
-    float:none;
+  display:inline;
+  float:none;
 }
 
 #mod-quiz-edit .reorder .questioncontentcontainer{
-    position:relative;
-    overflow:hidden;
-    white-space:nowrap;
+  position:relative;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
 #mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory{
-    overflow:hidden;
-    white-space:nowrap;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
 #mod-quiz-edit .reorder fieldset{
-    display:inline;
+  display:inline;
 }
 
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li{
-    clear:left;
-    width:100%;
-    overflow:hidden;
-    white-space:nowrap;
+  clear:left;
+  width:100%;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
 #mod-quiz-edit .questioncontentcontainer div.randomquestionqlist ul li span{
-    display:inline;
+  display:inline;
 }
 
 /*start question bank*/
@@ -5165,14 +5165,14 @@ table.quizreviewsummary td.cell {
   width: 100%;
 }
 table#categoryquestions {
-    width: 100%;
-    overflow: hidden;
-    table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+  table-layout: fixed;
 }
 
 table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
-    overflow:hidden;
-    white-space:nowrap;
+  overflow:hidden;
+  white-space:nowrap;
 }
 
 #categoryquestions .iconcol {
@@ -5200,72 +5200,72 @@ table#categoryquestions td,#mod-quiz-edit table#categoryquestions th{
   margin: 0;
 }
 .categoryinfo {
-    padding: 0.3em;
+  padding: 0.3em;
 }
 
 #mod-quiz-edit .paging{
-    margin-top:0;
-    margin-bottom:0;
-    display:block;
+  margin-top:0;
+  margin-bottom:0;
+  display:block;
 }
 
 #mod-quiz-edit .pagingbottom{
-    padding-bottom:0.3em;
+  padding-bottom:0.3em;
 }
 
 #mod-quiz-edit div.questionbank form .invisiblefieldset{
-    clear:both;
+  clear:both;
 }
 
 #mod-quiz-edit .sideblock .content{
-    padding:0;
+  padding:0;
 }
 
 #mod-quiz-edit .questionbank .categorysortopotionscontainer{
-    padding-top:0.5em;
-    margin-top:0.3em;
+  padding-top:0.5em;
+  margin-top:0.3em;
 }
 
 .questionbank div.categoryquestionscontainer,
 .questionbank .categorysortopotionscontainer,
 .questionbank .categorypagingbarcontainer,
 .questionbank .categoryselectallcontainer{
-    padding-left:0.3em;
-    padding-right:0.3em;
+  padding-left:0.3em;
+  padding-right:0.3em;
 }
 
 .noquestionsincategory{
-    clear:both;
-    padding-top:1em;
-    padding-bottom:1em;
+  clear:both;
+  padding-top:1em;
+  padding-bottom:1em;
 }
 
 .modulespecificbuttonscontainer{
-    padding-left:0.3em;
-    padding-right:0.3em;
+  padding-left:0.3em;
+  padding-right:0.3em;
 }
 
 #mod-quiz-edit div#footer{
-    clear:both;
-    padding-top:1em;
+  clear:both;
+  padding-top:1em;
 }
 
 
 /* these will toggle if js is enabled */
 body #quizcontentsblock #repaginatedialog{
-    display: none;
+  display: none;
 }
 body.jsenabled #quizcontentsblock #repaginatedialog{
-    display: block;
+  display: block;
 }
 body.jsenabled #quizcontentsblock #repaginatedialog .hd{
-    display:block;
+  display:block;
 }
 body.jsenabled #quizcontentsblock #repaginatedialog .bd{
-    padding:1em;
+  padding:1em;
 }
 body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{
-    display:block;
+  display:block;
 }
 
 /***
@@ -5498,98 +5498,98 @@ wikiadminactions {
   padding: 3px;
 }
 #help #emoticons{
-    text-align: center;clear:both;width: 300px;margin-right: auto; margin-left:auto;
+  text-align: center;clear:both;width: 300px;margin-right: auto; margin-left:auto;
 }
 #help #emoticons ul{
-    list-style-type: none;
+  list-style-type: none;
 }
 #help #emoticons li{
-    margin-bottom: 3px;
-    width: 120px;
-    border-left: 3px solid gray;
-    padding-left: 7px;
-    float: left;
+  margin-bottom: 3px;
+  width: 120px;
+  border-left: 3px solid gray;
+  padding-left: 7px;
+  float: left;
 }
 /**
  * comments 2.0
  *
  */
 .comment-ctrl {
-    max-width: 200px;
-    font-size: 12px;
-    display: none;
-    margin:0;
-    padding:0;
+  max-width: 200px;
+  font-size: 12px;
+  display: none;
+  margin:0;
+  padding:0;
 }
 .comment-ctrl h5 {
-    margin:0;
-    padding: 5px;
+  margin:0;
+  padding: 5px;
 }
 
 .comment-area {
-    padding: 5px;
+  padding: 5px;
 }
-.comment-area .bd{
+.comment-area .bd {
 }
-.comment-area textarea{
-    width:100%;
-    border: 2px solid grey;
-    overflow:auto;
+.comment-area textarea {
+  width:100%;
+  border: 1px solid grey;
+  overflow:auto;
 }
 
-.comment-area .fd{
-    text-align:right;
+.comment-area .fd {
+  text-align:right;
 }
-.comment-meta span{
-    color:grey
+.comment-meta span {
+  color:grey;
 }
 
 .comment-list-wrapper {
 }
 
 .comment-list {
-    /*height: 150px;*/
-    font-size: 11px;
-    overflow:auto;
-    list-style:none;
-    padding:0;
-    margin:0;
+  /*height: 150px;*/
+  font-size: 11px;
+  overflow:auto;
+  list-style:none;
+  padding:0;
+  margin:0;
 }
-.comment-list li{
-    background: #ECEFF5;
-    margin: 5px;
-    clear:both;
+.comment-list li {
+  margin: 2px;
+  margin-bottom:5px;
+  clear:both;
 }
 
 .comment-paging{
-    /*background: #d8d8da;*/
-    text-align:center;
+  /*background: #d8d8da;*/
+  text-align:center;
 }
 .comment-paging .pageno{
-    padding: 2px;
+  padding: 2px;
 }
 .comment-userpicture {
-    width: 20px;
-    float:left;
+  width: 20px;
+  float:left;
 }
 .comment-content{
-    margin-left: 22px;
+  margin-left: 22px;
 }
 .comment-content div{
-    margin:0;
-    padding:0;
+  margin:0;
+  padding:0;
 }
 .comment-content p{
-    padding:0;
-    margin:0 18px 0 0;
+  padding:0;
+  margin:0 18px 0 0;
 }
 .comment-delete{
-    float:right;
-    text-align:right;
+  float:right;
+  text-align:right;
 }
 .comment-container {
-    float:left;
-    width: 305px;
-    margin: 4px;
+  float:left;
+  width: 305px;
+  margin: 4px;
 }
 
