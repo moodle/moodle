@@ -14,7 +14,9 @@
     $show      = optional_param('show', 0, PARAM_INT);
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
     $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
-
+    
+    $PAGE->set_url('course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
     if ($search) {
@@ -307,7 +309,12 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
-            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
+            $selectmenu = new moodle_select_menu();
+            $selectmenu->options = $displaylist;
+            $selectmenu->name = "moveto";
+            $selectmenu->label = get_string("moveselectedcoursesto");
+            $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
+            echo $OUTPUT->select_menu($selectmenu);
             echo "</td>\n</tr>\n";
             echo "</table>\n</form>";
 

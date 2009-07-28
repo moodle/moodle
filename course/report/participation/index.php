@@ -13,6 +13,8 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
+    
+    $PAGE->set_url('course/report/participation/index.php', compact('id', 'roleid', 'instanceid', 'timefrom', 'page', 'perpage'));
 
     if ($action != 'view' and $action != 'post') {
         $action = ''; // default to all (don't restrict)
@@ -271,7 +273,12 @@
             echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />'."\n";
         }
         $displaylist['messageselect.php'] = get_string('messageselectadd');
-        choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
+        $selectmenu = new moodle_select_menu();
+        $selectmenu->options = $displaylist;
+        $selectmenu->name = "formaction";
+        $selectmenu->label = get_string("withselectedusers");
+        $selectmenu->add_action('change', 'conditionalsubmit', array('formid' => 'studentsform'));
+        echo $OUTPUT->select_menu($selectmenu);
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
         echo '</div>'."\n";
