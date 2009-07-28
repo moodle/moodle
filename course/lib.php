@@ -1999,6 +1999,17 @@ function print_course_request_buttons($systemcontext) {
 }
 
 /**
+ * Does the user have permission to edit things in this category?
+ *
+ * @param integer $categoryid The id of the category we are showing, or 0 for system context.
+ * @return boolean has_any_capability(array(...), ...); in the appropriate context.
+ */
+function can_edit_in_category($categoryid = 0) {
+    $context = get_category_or_system_context($categoryid);
+    return has_any_capability(array('moodle/category:manage', 'moodle/course:create'), $context);
+}
+
+/**
  * Prints the turn editing on/off button on course/index.php or course/category.php.
  *
  * @param integer $categoryid The id of the category we are showing, or 0 for system context.
@@ -2009,8 +2020,7 @@ function update_category_button($categoryid = 0) {
     global $CFG, $PAGE;
 
     // Check permissions.
-    $context = get_category_or_system_context($categoryid);
-    if (!has_any_capability(array('moodle/category:manage', 'moodle/course:create'), $context)) {
+    if (!can_edit_in_category($categoryid)) {
         return '';
     }
 

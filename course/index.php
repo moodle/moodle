@@ -23,7 +23,7 @@
     $PAGE->set_url('course/index.php');
     $PAGE->set_context($systemcontext);
 
-    if (update_category_button()) {
+    if (can_edit_in_category()) {
         if ($categoryedit !== -1) {
             $USER->editing = $categoryedit;
         }
@@ -90,7 +90,7 @@
     }
 /// Everything else is editing on mode.
     require_once($CFG->libdir.'/adminlib.php');
-    admin_externalpage_setup('coursemgmt', update_category_button());
+    admin_externalpage_setup('coursemgmt');
 
 /// Delete a category.
     if (!empty($delete) and confirm_sesskey()) {
