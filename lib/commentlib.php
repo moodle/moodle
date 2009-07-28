@@ -324,8 +324,15 @@ EOD;
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
         <a href="###" onclick="post_comment('{$this->cid}')"> {$strsubmit} </a>
+EOD;
+        if ($this->env != 'block_comments') {
+            $html .= <<<EOD
         <span> | </span>
         <a href="###" onclick="view_comments('{$this->cid}')"> {$strcancel} </a>
+EOD;
+        }
+
+        $html .= <<<EOD
     </div>
 </div>
 <div style="clear:both"></div>
@@ -352,7 +359,7 @@ EOD;
      * @return mixed
      */
     public function get_comments($page = '') {
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $OUTPUT;
         if (empty($this->viewcap)) {
             return false;
         }
@@ -377,7 +384,7 @@ EOD;
             foreach ($records as &$c) {
                 $url = $CFG->httpswwwroot.'/user/view.php?id='.$c->userid.'&amp;course='.$this->course->id;
                 $c->username = '<a href="'.$url.'">'.fullname($c).'</a>';
-                $c->time = userdate($c->timecreated);
+                $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
                 $user = new stdclass;
                 $user->id = $c->userid;
                 $user->picture = $c->picture;
@@ -385,7 +392,12 @@ EOD;
                 $user->lastname  = $c->lastname;
                 $user->imagealt  = $c->imagealt;
                 $c->content = format_text($c->content, $c->format);
-                $c->avatar = print_user_picture($user, $this->course->id, NULL, NULL, true);
+                $userpic = new user_picture();
+                $userpic->user = $user;
+                $userpic->courseid = $this->course->id;
+                $userpic->link = true;
+                $userpic->alttext = true;
+                $c->avatar = $OUTPUT->user_picture($userpic);
                 if (($USER->id == $c->userid) || !empty($candelete)) {
                     $c->delete = true;
                 }
@@ -459,7 +471,7 @@ EOD;
         $cmt_id = $DB->insert_record('comments', $newcmt);
         if (!empty($cmt_id)) {
             $newcmt->id = $cmt_id;
-            $newcmt->time = userdate($now);
+            $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
             $newcmt->username = fullname($USER);
             $newcmt->content = format_text($newcmt->content);
             $newcmt->avatar = print_user_picture($USER, $this->course->id, NULL, 16, true);
@@ -545,7 +557,7 @@ EOD;
         $replacements[] = $cmt->avatar;
         $replacements[] = fullname($cmt);
         $replacements[] = $cmt->content;
-        $replacements[] = userdate($cmt->timecreated);
+        $replacements[] = userdate($cmt->timecreated, get_string('strftimerecent', 'langconfig'));
 
         // use html template to format a single comment.
         return str_replace($patterns, $replacements, $this->template);

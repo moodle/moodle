@@ -12,7 +12,7 @@ function cmt_replace(client_id,list,newcmt) {
         var val = template.innerHTML;
         val = val.replace('___name___', list[i].username);
         if (list[i]['delete']||newcmt) {
-            list[i].time += ' <a href="###" title="'+mstr.moodle.delete+'" onclick="delete_comment(\''+client_id+'\',\''+list[i].id+'\')"><img src="'+moodle_cfg.wwwroot+'/pix/t/delete.gif" /></a>';
+            list[i].content = '<div class="comment-delete"><a href="###" title="'+mstr.moodle.delete+'" onclick="delete_comment(\''+client_id+'\',\''+list[i].id+'\')"><img src="'+moodle_cfg.wwwroot+'/pix/t/delete.gif" /></a></div>' + list[i].content;
         }
         val = val.replace('___time___', list[i].time);
         val = val.replace('___picture___', list[i].avatar);

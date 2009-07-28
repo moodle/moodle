@@ -5568,15 +5568,27 @@ wikiadminactions {
     padding: 2px;
 }
 .comment-userpicture {
-    width: 45px;
+    width: 20px;
     float:left;
 }
-.comment-userpicture img.userpicture{
-    width: 35px;
-    height: 35px;
+.comment-userpicture img.image{
+    width: 18px;
+    height: 18px;
 }
 .comment-content{
-    margin-left: 50px;
+    margin-left: 22px;
+}
+.comment-content div{
+    margin:0;
+    padding:0;
+}
+.comment-content p{
+    padding:0;
+    margin:0 18px 0 0;
+}
+.comment-delete{
+    float:right;
+    text-align:right;
 }
 .comment-container {
     float:left;
