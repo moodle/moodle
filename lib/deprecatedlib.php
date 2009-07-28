@@ -2305,7 +2305,7 @@ function blocks_have_content(&$blockmanager, $region) {
 
 /**
  * This was used by old code to print the blocks in a region.
- * 
+ *
  * We don't ever want old code to print blocks, so this is now a no-op.
  * The function only exists to avoid fatal errors in old code.
  *
@@ -2483,7 +2483,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
 
     // Parse the $options string
     $popupparams = array();
-    if (!empty($options)) { 
+    if (!empty($options)) {
         $optionsarray = explode(',', $options);
         foreach ($optionsarray as $option) {
             if (strstr($option, '=')) {
@@ -2508,7 +2508,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
     if ($return) {
         return $output;
     } else {
-        echo $output; 
+        echo $output;
     }
 }
 
@@ -2556,7 +2556,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
 
     // Parse the $options string
     $popupparams = array();
-    if (!empty($options)) { 
+    if (!empty($options)) {
         $optionsarray = explode(',', $options);
         foreach ($optionsarray as $option) {
             if (strstr($option, '=')) {
@@ -2586,7 +2586,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     if ($return) {
         return $output;
     } else {
-        echo $output; 
+        echo $output;
     }
 }
 
@@ -3027,7 +3027,7 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
     $formcancel->url = new moodle_url($linkno, $optionsno);
     $formcancel->button->label = get_string('no');
     $formcancel->method = $methodno;
-    
+
     echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
 }
 
@@ -3072,9 +3072,13 @@ function print_scale_menu() {
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
                            $id='', $listbox=false, $multiple=false, $class='') {
-    
+
     global $OUTPUT;
     // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+
+    if ($script) {
+        debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
+    }
     $selectmenu = new moodle_select_menu();
     $selectmenu->options = $options;
     $selectmenu->name = $name;
@@ -3088,20 +3092,107 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     $selectmenu->multiple = $multiple;
     $selectmenu->add_classes($class);
 
-    if (!empty($script)) {
-        $onchange = new component_action('change', $script);
-        $selectmenu->add_action($onchange);
-    }
-
     if ($nothing == 'choose') {
         $selectmenu->nothinglabel = '';
     }
-    
+
     $output = $OUTPUT->select_menu($selectmenu);
-    
+
     if ($return) {
         return $output;
     } else {
         echo $output;
     }
 }
+
+/**
+ * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
+ * Other options like choose_from_menu.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * Calls {@link choose_from_menu()} with preset arguments
+ * @see choose_from_menu()
+ *
+ * @param string $name the name of this form control, as in &lt;select name="..." ...
+ * @param string $selected the option to select initially, default none.
+ * @param string $script if not '', then this is added to the &lt;select> element as an onchange handler.
+ * @param boolean $return Whether this function should return a string or output it (defaults to false)
+ * @param boolean $disabled (defaults to false)
+ * @param int $tabindex
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function choose_from_menu_yesno($name, $selected, $script = '',
+        $return = false, $disabled = false, $tabindex = 0) {
+    // debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    global $OUTPUT;
+
+    if ($script) {
+        debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
+    }
+
+    $selectmenu = moodle_select_menu::make_yes_no($name, $selected);
+    $selectmenu->disabled = $disabled;
+    $selectmenu->tabindex = $tabindex;
+    $output = $OUTPUT->select_menu($select_menu);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
+ * including option headings with the first level.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * This function is very similar to {@link choose_from_menu_yesno()}
+ * and {@link choose_from_menu()}
+ *
+ * @todo Add datatype handling to make sure $options is an array
+ *
+ * @param array $options An array of objects to choose from
+ * @param string $name The XHTML field name
+ * @param string $selected The value to select by default
+ * @param string $nothing The label for the 'nothing is selected' option.
+ *                        Defaults to get_string('choose').
+ * @param string $script If not '', then this is added to the &lt;select> element
+ *                       as an onchange handler.
+ * @param string $nothingvalue The value for the first `nothing` option if $nothing is set
+ * @param bool $return Whether this function should return a string or output
+ *                     it (defaults to false)
+ * @param bool $disabled Is the field disabled by default
+ * @param int|string $tabindex Override the tabindex attribute [numeric]
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
+                                 $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
+
+    // debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    global $OUTPUT;
+
+    if ($script) {
+        debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
+    }
+    $selectmenu = moodle_select_menu::make($options, $name, $selected);
+    $selectmenu->tabindex = $tabindex;
+    $selectmenu->disabled = $disabled;
+    $selectmenu->nothingvalue = $nothingvalue;
+    $selectmenu->nested = true;
+
+    if ($nothing == 'choose') {
+        $selectmenu->nothinglabel = '';
+    }
+
+    $output = $OUTPUT->select_menu($selectmenu);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+

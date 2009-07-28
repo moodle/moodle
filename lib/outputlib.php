@@ -2803,13 +2803,42 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         $html .= $this->output_start_tag('select', $attributes) . "\n";
-        foreach ($selectmenu->options as $value => $label) {
-            $attributes = array('value' => $value);
-            if ((string) $value == (string) $selectmenu->selectedvalue ||
-                    (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
-                $attributes['selected'] = 'selected';
+
+        if ($selectmenu->nested) {
+            foreach ($selectmenu->options as $section => $values) {
+                $html .= $this->output_start_tag('optgroup', array('label' => $section));
+                if (!is_array($values)) {
+                    var_dump($values);
+                }
+                foreach ($values as $value => $label) {
+                    $attributes = array('value' => $value);
+
+                    if ((string) $value == (string) $selectmenu->selectedvalue ||
+                            (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
+                        $attributes['selected'] = 'selected';
+                    }
+
+                    $html .= $this->output_start_tag('option', $attributes);
+
+                    if ($label === '') {
+                        $html .= $value;
+                    } else {
+                        $html .= $label;
+                    }
+
+                    $html .= $this->output_end_tag('option');
+                }
+                $html .= $this->output_end_tag('optgroup');
             }
-            $html .= '    ' . $this->output_tag('option', $attributes, s($label)) . "\n";
+        } else {
+            foreach ($selectmenu->options as $value => $label) {
+                $attributes = array('value' => $value);
+                if ((string) $value == (string) $selectmenu->selectedvalue ||
+                        (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
+                    $attributes['selected'] = 'selected';
+                }
+                $html .= '    ' . $this->output_tag('option', $attributes, s($label)) . "\n";
+            }
         }
         $html .= $this->output_end_tag('select') . "\n";
 
@@ -2926,7 +2955,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Print a continue button that goes to a particular URL.
+     * Prints a single paging bar to provide access to other pages  (usually in a search)
      *
      * @param string|moodle_url $link The url the button goes to.
      * @return string the HTML to output.
@@ -3396,6 +3425,10 @@ class moodle_select_menu extends moodle_html_component {
      * @var boolean if true, allow multiple selection. Only used if $listbox is true.
      */
     public $multiple = false;
+    /**
+     * @var boolean $nested if true, uses $options' keys as option headings (optgroup)
+     */
+    public $nested = false;
 
     /**
      * @see moodle_html_component::prepare()
@@ -3412,7 +3445,14 @@ class moodle_select_menu extends moodle_html_component {
         if (is_null($this->nothinglabel)) {
             $this->nothinglabel = get_string('choosedots');
         }
+
+        // If nested is on, remove the default Choose option
+        if ($this->nested) {
+            $this->nothinglabel = '';
+        }
+
         $this->add_class('select');
+
         parent::prepare();
     }
 
