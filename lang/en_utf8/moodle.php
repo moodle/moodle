@@ -422,6 +422,7 @@ $string['deletecheckfiles'] = 'Are you absolutely sure you want to delete these 
 $string['deletecheckfull'] = 'Are you absolutely sure you want to completely delete $a ?';
 $string['deletecheckwarning'] = 'You are about to delete these files';
 $string['deletecompletely'] = 'Delete completely';
+$string['deletecomment'] = 'Delete this comment';
 $string['deletecourse'] = 'Delete a course';
 $string['deletecoursecheck'] = 'Are you absolutely sure you want to completely delete this course and all the data it contains?';
 $string['deleted'] = 'Deleted';

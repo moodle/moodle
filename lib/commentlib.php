@@ -184,7 +184,7 @@ EOD;
         $PAGE->requires->yui_lib('connection')->in_head();
         $PAGE->requires->js('comment/comment.js')->in_head();
         $PAGE->requires->string_for_js('addcomment', 'moodle');
-        $PAGE->requires->string_for_js('delete', 'moodle');
+        $PAGE->requires->string_for_js('deletecomment', 'moodle');
     }
 
     private function _setup_course($courseid) {
