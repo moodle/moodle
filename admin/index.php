@@ -54,6 +54,8 @@ $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 
 // Check some PHP server settings
 
+$PAGE->set_url($CFG->admin . '/index.php');
+
 $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 
 if (ini_get_bool('session.auto_start')) {
