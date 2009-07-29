@@ -300,6 +300,26 @@ class moodle_page_test extends UnitTestCase {
         $this->assertEqual($CFG->wwwroot . '/mod/quiz/attempt.php?attempt=123&amp;page=7', $this->testpage->url->out());
     }
 
+    public function test_set_url_using_moodle_url() {
+        global $CFG;
+        // Fixture setup
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
+        // Exercise SUT
+        $this->testpage->set_url($url);
+        // Validate
+        $this->assertEqual($CFG->wwwroot . '/mod/workshop/allocation.php?cmid=29&amp;method=manual', $this->testpage->url->out());
+    }
+
+    public function test_set_url_using_moodle_url_and_params() {
+        global $CFG;
+        // Fixture setup
+        $url = new moodle_url($CFG->wwwroot . '/mod/workshop/allocation.php', array('cmid' => 29, 'method' => 'manual'));
+        // Set expectation
+        $this->expectException('coding_exception');
+        // Exercise SUT
+        $this->testpage->set_url($url, array('notallowed' => 666));
+    }
+
     public function test_set_url_sets_page_type() {
         // Exercise SUT
         $this->testpage->set_url('mod/quiz/attempt.php', array('attempt' => 123, 'page' => 7));

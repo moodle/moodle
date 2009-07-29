@@ -720,17 +720,26 @@ class moodle_page {
      * For example, course/view.php does:
      *      $id = optional_param('id', 0, PARAM_INT);
      *      $PAGE->set_url('course/view.php', array('id' => $id));
-     * @param string $url a URL, relative to $CFG->wwwroot.
-     * @param array $params paramters to add ot the URL.
+     * @param mixed $url moodle_url|string URL relative to $CFG->wwwroot or {@link moodle_url} instance
+     * @param array $params paramters to add to the URL (allowed only if $url is string)
      */
     public function set_url($url, $params = array()) {
         global $CFG;
-        $this->_url = new moodle_url($CFG->wwwroot . '/' . $url, $params);
+        if ($url instanceof moodle_url) {
+            $shorturl = str_replace($CFG->wwwroot, '', $url->out(true));
+            $this->_url = clone($url);
+            if (!empty($params)) {
+                throw new coding_exception('Cannot pass params together with moodle_url to moodle_page::set_url().');
+            }
+        } else {
+            $shorturl = $url;
+            $this->_url = new moodle_url($CFG->wwwroot . '/' . $url, $params);
+        }
         if (is_null($this->_pagetype)) {
-            $this->initialise_default_pagetype($url);
+            $this->initialise_default_pagetype($shorturl);
         }
         if (!is_null($this->_legacypageobject)) {
-            $this->_legacypageobject->set_url($url, $params);
+            $this->_legacypageobject->set_url($shorturl, $params);
         }
     }
 
