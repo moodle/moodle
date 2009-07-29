@@ -276,20 +276,15 @@ if ($act == 'updfeed') {
             print '<a href="'. $rss->items[$y]['link'] .'" target="_blank"><strong>'. $rss->items[$y]['title'];
             print '</strong></a>'."\n";
             print '</td>'."\n";
-            if (file_exists($CFG->dirroot .'/blog/lib.php')) {
-                //Blog module is installed - provide "blog this" link
-                print '<td align="right">'."\n";
+            print '<td align="right">'."\n";
 
-                /// MDL-9291, blog this feature needs further discussion/implementation
-                /// temporarily disabling for now.
+            // MDL-9291, blog this feature needs further discussion/implementation
+            // temporarily disabling for now.
 
-                // print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
-                //print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $USER->id .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
-            } else {
-                print '<td>&nbsp;';
-            }
+            // print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
+            // print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $USER->id .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
             print '</td></tr>'."\n";
-            print '<tr><td colspan=2><small>';
+            print '<tr><td colspan="2"><small>';
             print $rss->items[$y]['description'] .'</small></td></tr>'."\n";
         }
         print '</table>'."\n";
