@@ -878,7 +878,6 @@ class block_manager {
         }
 
         $mform = new $classname($editpage->url, $block, $this->page);
-        print_object($block); // DONOTCOMMIT
         $mform->set_data($block->instance);
 
         if ($mform->is_cancelled()) {
