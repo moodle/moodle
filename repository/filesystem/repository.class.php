@@ -130,12 +130,14 @@ class repository_filesystem extends repository {
         $path = $CFG->dataroot . '/repository/';
         if ($handle = opendir($path)) {
             $fieldname = get_string('path', 'repository_filesystem');
+            $choices = array();
             while (false !== ($file = readdir($handle))) {
                 if (is_dir($path.$file) && $file != '.' && $file!= '..') {
-                    $mform->addElement('radio', 'fs_path', $fieldname, $file, $file);
+                    $choices[$file] = $file;
                     $fieldname = '';
                 }
             }
+            $mform->addElement('select', 'fs_path', $fieldname, $choices);
             closedir($handle);
         }
         $mform->addElement('static', null, '',  get_string('information','repository_filesystem'));
