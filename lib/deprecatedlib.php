@@ -3196,3 +3196,106 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
 }
 
+/**
+ * Prints a help button about a scale
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @param id $courseid
+ * @param object $scale
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
+ */
+function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
+    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselectmenu).');
+    global $OUTPUT;
+
+    $helpbutton = help_button::make_scale_menu($courseid, $scale);
+
+    $output = $OUTPUT->help_button($helpbutton);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
+ * Prints time limit value selector
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * Uses {@link choose_from_menu()} to generate HTML
+ * @see choose_from_menu()
+ *
+ * @global object
+ * @param int $timelimit default
+ * @param string $unit
+ * @param string $name
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
+ */
+function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
+    throw new coding_exception('print_timer_selector is completely deprecated. Please use $OUTPUT->select_menu($selectmenu) instead');
+}
+
+/**
+ * Prints form items with the names $hour and $minute
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $hour  fieldname
+ * @param string $minute  fieldname
+ * @param int $currenttime A default timestamp in GMT
+ * @param int $step minute spacing
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return 
+ */
+function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
+    // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($timeselector).');
+    global $OUTPUT;    
+    $hourselector = moodle_select_menu::make_time_selector('hours', $hour, $currenttime);
+    $minuteselector = moodle_select_menu::make_time_selector('minutes', $minute, $currenttime, $step);
+    
+    $output = $OUTPUT->select_menu($hourselector) . $OUTPUT->select_menu($minuteselector);
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Prints form items with the names $day, $month and $year
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $day   fieldname
+ * @param string $month  fieldname
+ * @param string $year  fieldname
+ * @param int $currenttime A default timestamp in GMT
+ * @param boolean $return If set to true returns rather than echo's
+ * @return string|bool Depending on value of $return
+ */
+function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
+
+    // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($dateselector).');
+    global $OUTPUT;    
+    
+    $dayselector = moodle_select_menu::make_time_selector('days', $day, $currenttime);
+    $monthselector = moodle_select_menu::make_time_selector('months', $month, $currenttime);
+    $yearselector = moodle_select_menu::make_time_selector('years', $year, $currenttime);
+    
+    $output = $OUTPUT->select_menu($dayselector) . $OUTPUT->select_menu($monthselector) . $OUTPUT->select_menu($yearselector);
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
