@@ -5,6 +5,7 @@
 $string['addfeed'] = 'Add a news feed URL:';
 $string['addheadlineblock'] = 'Add RSS headline block';
 $string['addnew'] = 'Add New';
+$string['addnewfeed'] = 'Add a new feed';
 $string['blockname'] = 'RSS Client';
 $string['cannotmakemodification'] = 'You are not allowed to make modifications to this RSS feed at this time.';
 $string['choosefeedlabel'] = 'Choose the feeds which you would like to make available in this block:';
@@ -17,17 +18,21 @@ $string['couldnotfindfeed'] = 'Could not find feed with id';
 $string['customtitlelabel'] = 'Custom title (leave blank to use title supplied by feed):';
 $string['deletefeedconfirm'] = 'Are you sure you want to delete this feed?';
 $string['displaydescriptionlabel'] = 'Display each link\'s description?';
+$string['editafeed'] = 'Edit a feed';
 $string['editfeeds'] = 'Edit, subscribe or unsubsribe from RSS/Atom news feeds';
 $string['editnewsfeeds'] = 'Edit news feeds';
 $string['editrssblock'] = 'Edit RSS Headline Block';
+$string['errorloadingfeed'] = 'Error loading this RSS feed ($a)';
 $string['feed'] = 'Feed';
 $string['feedadded'] = 'News feed added';
 $string['feeddeleted'] = 'News feed deleted';
 $string['feeds'] = 'News Feeds';
 $string['feedsaddedit'] = 'Add/Edit Feeds';
 $string['feedsconfigurenewinstance'] = 'Click here to configure this block to display RSS feeds.';
+$string['feedsconfigurenewinstance2'] = 'Click the edit icon above to configure this block to display RSS feeds.';
 $string['feedstitle'] = 'Remote RSS Feeds';
 $string['feedupdated'] = 'News feed updated';
+$string['feedurl'] = 'Feed URL';
 $string['findmorefeeds'] = 'Find more rss feeds';
 $string['managefeeds'] = 'Manage all my feeds';
 $string['numentries'] = 'Entries per feed';
@@ -48,5 +53,6 @@ $string['timeout2'] = 'Timeout';
 $string['timeoutdesc'] = 'Time in minutes for an RSS feed to live in cache.';
 $string['updatefeed'] = 'Update a news feed URL:';
 $string['validatefeed'] = 'Validate feed';
+$string['viewfeed'] = 'View feed';
 
 ?>

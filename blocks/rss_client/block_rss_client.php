@@ -19,7 +19,7 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2007101511;
+        $this->version = 2009072900;
         $this->cron = 300; /// Set min time between cron executions to 300 secs (5 mins)
     }
 
@@ -80,52 +80,23 @@
             $shownumentries = 5; //default to 5 entries is not specified in admin section or instance
         }
 
-        if (!empty($this->config)) {
-            if (!empty($this->config->rssid)) {
-                if (is_array($this->config->rssid)) {
-                    $rssidarray = $this->config->rssid;
-                } else {     // Make an array of the single value
-                    $rssidarray = array($this->config->rssid);
-                }
-            }
-            if (!empty($this->config->display_description)) {
-                $display_description = intval($this->config->display_description);
-            }
-            if (!empty($this->config->shownumentries)) {
-                $shownumentries = intval($this->config->shownumentries);
-            }
+        if (empty($this->config)) {
+            $this->content->text = get_string('feedsconfigurenewinstance2', 'block_rss_client');
+            return $this->content;
         }
 
-        if (has_any_capability(array('block/rss_client:createsharedfeeds', 'block/rss_client:createprivatefeeds'), $this->context)) {
-
-            $page = $this->page;
-            //if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
-            if (isset($this->config)) {
-                // This instance is configured - show Add/Edit feeds link.
-                $script = $page->url->out(
-                                    array('instanceid' => $this->instance->id,
-                                          'sesskey' => sesskey(),
-                                          'blockaction' => 'config',
-                                          'currentaction' => 'managefeeds',
-                                          'id' => $this->courseid,
-                                          'section' => 'rss'
-                                          ));
-                $output .= '<div class="info"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
-            } else {
-                // This instance has not been configured yet - show configure link?
-                if (has_capability('block/rss_client:manageanyfeeds', $this->context)) {
-                    $script = $page->url->out(
-                                    array('instanceid' => $this->instance->id,
-                                          'sesskey' => sesskey(),
-                                          'blockaction' => 'config',
-                                          'currentaction' => 'configblock',
-                                          'id' => $this->page->course->id,
-                                          'section' => 'rss'
-                                          ));
-                    $output .= '<div class="info"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
-                }
+        if (!empty($this->config->rssid)) {
+            if (is_array($this->config->rssid)) {
+                $rssidarray = $this->config->rssid;
+            } else {     // Make an array of the single value
+                $rssidarray = array($this->config->rssid);
             }
-            //}
+        }
+        if (!empty($this->config->display_description)) {
+            $display_description = intval($this->config->display_description);
+        }
+        if (!empty($this->config->shownumentries)) {
+            $shownumentries = intval($this->config->shownumentries);
         }
 
         // Daryl Hawes note: if count of rssidarray is greater than 1 
@@ -172,9 +143,6 @@
         $now = time();
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
-        if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-            define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
-        }
 
         $rss_record = $DB->get_record('block_rss_client', array('id'=>$rssid));
         if (isset($rss_record) && isset($rss_record->id)) {
@@ -187,10 +155,7 @@
             ob_end_clean();
 
             if ($rss === false) {
-                if (debugging() && !empty($rsserror)) {
-                    // There was a failure in loading the rss feed, print link to full error text
-                    return '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
-                }
+                debugging($rsserror);
             }
 
             // first we must verify that the rss feed is loaded
@@ -309,10 +274,6 @@
     /// We require some stuff
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
-
-        if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-            define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
-        }
 
     /// Fetch all site feeds.
         $rs = $DB->get_recordset('block_rss_client');

@@ -33,29 +33,6 @@
 
 $block_rss_client_capabilities = array(
 
-    'block/rss_client:createprivatefeeds' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'block/rss_client:createsharedfeeds' => array(
-
-        'riskbitmask' => RISK_SPAM,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'block/rss_client:manageownfeeds' => array(
 
         'captype' => 'write',
