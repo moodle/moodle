@@ -2618,7 +2618,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     $form = new html_form();
     $form->url = new moodle_url($link, $options);
     $form->button = new html_button();
-    $form->button->label = $label;
+    $form->button->text = $label;
     $form->button->disabled = $disabled;
     $form->button->title = $tooltip;
     $form->method = $method;
@@ -3020,12 +3020,12 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
 
     $formcontinue = new html_form();
     $formcontinue->url = new moodle_url($linkyes, $optionsyes);
-    $formcontinue->button->label = get_string('yes');
+    $formcontinue->button->text = get_string('yes');
     $formcontinue->method = $methodyes;
 
     $formcancel = new html_form();
     $formcancel->url = new moodle_url($linkno, $optionsno);
-    $formcancel->button->label = get_string('no');
+    $formcancel->button->text = get_string('no');
     $formcancel->method = $methodno;
 
     echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
