@@ -125,6 +125,14 @@ class block_edit_form extends moodleform {
     }
 
     function set_data($defaults) {
+        // Prefix bui_ on all the core field names.
+        $blockfields = array('showinsubcontexts', 'pagetypepattern', 'subpagepattern',
+                'defaultregion', 'defaultweight', 'visible', 'region', 'weight');
+        foreach ($blockfields as $field) {
+            $newname = 'bui_' . $field;
+            $defaults->$newname = $defaults->$field;
+        }
+
         // Copy block config into config_ fields.
         if (!empty($this->block->config)) {
             foreach ($this->block->config as $field => $value) {
@@ -134,8 +142,8 @@ class block_edit_form extends moodleform {
         }
 
         // Munge ->subpagepattern becuase HTML selects don't play nicely with NULLs.
-        if (empty($defaults->subpagepattern)) {
-            $defaults->subpagepattern = '%@NULL@%';
+        if (empty($defaults->bui_subpagepattern)) {
+            $defaults->bui_subpagepattern = '%@NULL@%';
         }
 
         parent::set_data($defaults);

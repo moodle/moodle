@@ -878,6 +878,7 @@ class block_manager {
         }
 
         $mform = new $classname($editpage->url, $block, $this->page);
+        print_object($block); // DONOTCOMMIT
         $mform->set_data($block->instance);
 
         if ($mform->is_cancelled()) {
@@ -897,7 +898,11 @@ class block_manager {
             $bi->defaultweight = $data->bui_defaultweight;
             $DB->update_record('block_instances', $bi);
 
-            $config = clone($block->config);
+            if (!empty($block->config)) {
+                $config = clone($block->config);
+            } else {
+                $config = new stdClass;
+            }
             foreach ($data as $configfield => $value) {
                 if (strpos($configfield, 'config_') !== 0) {
                     continue;
@@ -923,12 +928,12 @@ class block_manager {
 
             } else if ($needbprecord) {
                 $bp->blockinstanceid = $block->instance->id;
-                $bp->contextid = $this->page->contextid;
+                $bp->contextid = $this->page->context->id;
                 $bp->pagetype = $this->page->pagetype;
                 if ($this->page->subpage) {
                     $bp->subpage = $this->page->subpage;
                 } else {
-                    $bp->subpage = null;
+                    $bp->subpage = '';
                 }
                 $DB->insert_record('block_positions', $bp);
             }
