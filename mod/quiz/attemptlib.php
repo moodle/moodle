@@ -1053,7 +1053,7 @@ abstract class quiz_nav_panel_base {
 
     protected function get_question_button($number, $question) {
         $strstate = get_string($this->attemptobj->get_question_status($question->id), 'quiz');
-        return '<a href="' . $this->get_question_url($question) .
+        return '<a href="' . s($this->get_question_url($question)) .
                 '" class="qnbutton ' . $this->get_question_state_classes($question) .
                 '" id="quiznavbutton' . $question->id . '" title="' . $strstate . '">' .
                 $number . ' <span class="accesshide"> (' . $strstate . ')</span></a>';
@@ -1133,7 +1133,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     protected function get_end_bits() {
         global $PAGE;
         $output = '';
-        $output .= '<a href="' . $this->attemptobj->summary_url() . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
+        $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
         $output .= $this->attemptobj->get_timer_html();
         $output .= $PAGE->requires->js_function_call('quiz_init_attempt_nav')->now();
         return $output;
@@ -1156,9 +1156,9 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         $html = '';
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {
-                $html = '<a href="' . $this->attemptobj->review_url(0, 0, false) . '">' . get_string('showeachpage', 'quiz') . '</a>';
+                $html = '<a href="' . s($this->attemptobj->review_url(0, 0, false)) . '">' . get_string('showeachpage', 'quiz') . '</a>';
             } else {
-                $html = '<a href="' . $this->attemptobj->review_url(0, 0, true) . '">' . get_string('showall', 'quiz') . '</a>';
+                $html = '<a href="' . s($this->attemptobj->review_url(0, 0, true)) . '">' . get_string('showall', 'quiz') . '</a>';
             }
         }
         $accessmanager = $this->attemptobj->get_access_manager(time());
