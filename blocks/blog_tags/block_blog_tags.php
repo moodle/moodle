@@ -150,38 +150,6 @@ class block_blog_tags extends block_base {
         }
         return $this->content;
     }
-
-    function instance_config_print() {
-        global $CFG;
-
-    /// set up the numberoftags select field
-        $numberoftags = array();
-        for($i=1;$i<=50;$i++) $numberoftags[$i] = $i;
-
-    //// set up the timewithin select field
-        $timewithin = array();
-        $timewithin[10]  = get_string('numdays', '', 10);
-        $timewithin[30]  = get_string('numdays', '', 30);
-        $timewithin[60]  = get_string('numdays', '', 60);
-        $timewithin[90]  = get_string('numdays', '', 90);
-        $timewithin[120] = get_string('numdays', '', 120);
-        $timewithin[240] = get_string('numdays', '', 240);
-        $timewithin[365] = get_string('numdays', '', 365);
-
-    /// set up sort select field
-        $sort = array();
-        $sort['name'] = get_string('tagtext', 'blog');
-        $sort['id']   = get_string('tagdatelastused', 'blog');
-
-
-        if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
-            print_simple_box_start('center', '', '', 5, 'blockconfigglobal');
-            include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
-            print_simple_box_end();
-        } else {
-            notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
-        }
-    }
 }
 
 function blog_tags_sort($a, $b) {
