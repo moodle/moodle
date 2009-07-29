@@ -1161,32 +1161,32 @@ function block_edit_controls($block, $page) {
     global $CFG;
 
     $controls = array();
-    $actionurl = $page->url->out_action();
+    $actionurl = $page->url->out(false, array('sesskey'=> sesskey()), false);
 
     // Assign roles icon.
     if (has_capability('moodle/role:assign', $block->context)) {
         $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
-                '/roles/assign.php?contextid=' . $block->context->id . '&amp;returnurl=' . urlencode($page->url->out_returnurl()),
+                '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($page->url->out_returnurl()),
                 'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
     }
 
     if ($block->user_can_edit() && $page->user_can_edit_blocks()) {
         // Show/hide icon.
         if ($block->instance->visible) {
-            $controls[] = array('url' => $actionurl . '&amp;bui_hideid=' . $block->instance->id,
+            $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
                     'icon' => 't/hide', 'caption' => get_string('hide'));
         } else {
-            $controls[] = array('url' => $actionurl . '&amp;bui_showid=' . $block->instance->id,
+            $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
                     'icon' => 't/show', 'caption' => get_string('show'));
         }
 
         // Edit config icon - always show - needed for positioning UI.
-        $controls[] = array('url' => $actionurl . '&amp;bui_editid=' . $block->instance->id,
+        $controls[] = array('url' => $actionurl . '&bui_editid=' . $block->instance->id,
                 'icon' => 't/edit', 'caption' => get_string('configuration'));
 
         // Delete icon.
         if ($block->user_can_addto($page)) {
-            $controls[] = array('url' => $actionurl . '&amp;bui_deleteid=' . $block->instance->id,
+            $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
                 'icon' => 't/delete', 'caption' => get_string('delete'));
         }
 
