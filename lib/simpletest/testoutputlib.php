@@ -998,7 +998,7 @@ class moodle_core_renderer_test extends UnitTestCase {
         // Add a few classes to the link object
         $link->add_classes('cool blue');
         $html = $this->renderer->link($link);
-        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'class' => 'link cool blue', 'href' => 'http://test.com')), $html);
+        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Link to resource 1', 'class' => 'cool blue', 'href' => 'http://test.com')), $html);
         $this->assert(new ContainsTagWithContents('a', 'Resource 1'), $html);
 
         // Simple use of link() without a html_link object

@@ -277,7 +277,7 @@ class ContainsTagWithAttributes extends SimpleExpectation {
             $allattributesmatch = true;
 
             foreach ($this->expectedvalues as $expectedattribute => $expectedvalue) {
-                if (!$node->getAttribute($expectedattribute)) {
+                if (!$node->getAttribute($expectedattribute) && $expectedvalue != '') {
                     $this->failurereason = 'nomatch';
                     continue 2; // Skip this tag, it doesn't have all the expected attributes
                 }
