@@ -24,8 +24,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir .'/rsslib.php');
-require_once(MAGPIE_DIR .'rss_fetch.inc');
+require_once($CFG->libdir .'/simplepie/moodle_simplepie.php');
 
 require_login();
 if (isguest()) {
@@ -68,12 +67,10 @@ $PAGE->set_generaltype('popup');
 
 $rssrecord = $DB->get_record('block_rss_client', array('id' => $rssid), '*', MUST_EXIST);
 
-ob_start();
-$rss = fetch_rss($rssrecord->url);
-$rsserrors = ob_get_clean();
+$rss = new moodle_simplepie($rssrecord->url);
 
-if (!$rss) {
-    debugging($rsserrors);
+if ($rss->error()) {
+    debugging($rss->error());
     print_error('errorfetchingrssfeed');
 }
 
@@ -98,26 +95,18 @@ echo $OUTPUT->header($navigation);
 if (!empty($rssrecord->preferredtitle)) {
     $feedtitle = $rssrecord->preferredtitle;
 } else {
-    $feedtitle =  $rss->channel['title'];
+    $feedtitle =  $rss->get_title();
 }
 echo '<table align="center" width="50%" cellspacing="1">'."\n";
 echo '<tr><td colspan="2"><strong>'. $feedtitle .'</strong></td></tr>'."\n";
-foreach ($rss->items as $item) {
-    if ($item['link'] == '') {
-        $item['link'] = $item['guid'];
-    }
-
-    if ($item['title'] == '') {
-        $item['title'] = '&gt;&gt;';
-    }
-
+foreach ($rss->get_items() as $item) {
     echo '<tr><td valign="middle">'."\n";
-    echo '<a href="'. $item['link'] .'" target="_blank"><strong>'. $item['title'];
+    echo '<a href="'. $item->get_description() .'" target="_blank"><strong>'. $item->get_title();
     echo '</strong></a>'."\n";
     echo '</td>'."\n";
     echo '</tr>'."\n";
     echo '<tr><td colspan="2"><small>';
-    echo $item['description'] .'</small></td></tr>'."\n";
+    echo $item->get_description() .'</small></td></tr>'."\n";
 }
 echo '</table>'."\n";
 

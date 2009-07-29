@@ -1,20 +1,28 @@
-<?php //$Id$
+<?php 
 
-/*******************************************************************
-* This file contains one class which defines a block for display on
-* any Moodle page. This block can be configured to display the contents
-* of a remote RSS news feed in your web site.
-*
-* @author Daryl Hawes
-* @version  $Id$
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package base
-******************************************************************/
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This class is for a block which defines a block for display on
- * any Moodle page.
+ * A block which displays Remote feeds
+ *
+ * @package    rss_client
+ * @copyright  Daryl Hawes
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  */
+
  class block_rss_client extends block_base {
 
     function init() {
@@ -43,80 +51,69 @@
     }
 
     function get_content() {
-        global $CFG, $editing, $USER;
+        global $CFG, $DB;
 
-        if (!empty($this->page->course)) {
-            $this->courseid = $this->page->course->id;
-        }
-
-    /// When displaying feeds in block, we double $CFG->block_rss_client_timeout
-    /// so those feeds retrieved and cached by the cron() process will have a
-    /// better chance to be used
-        if (!empty($CFG->block_rss_client_timeout)) {
-            $CFG->block_rss_client_timeout *= 2;
-        }
-
-        require_once($CFG->libdir .'/rsslib.php');
-
-        if($this->content !== NULL) {
+        if ($this->content !== NULL) {
             return $this->content;
         }
 
+        // initalise block content object
         $this->content = new stdClass;
         $this->content->text   = '';
         $this->content->footer = '';
 
         if (empty($this->instance)) {
-            // We're being asked for content without an associated instance
             return $this->content;
         }
+
+        if (!isset($this->config)) {
+            // The block has yet to be configured - just display configure message in
+            // the block if user has permission to configure it
+
+            if (has_capability('block/rss_client:manageanyfeeds', $this->context)) {
+                $this->content->text = get_string('feedsconfigurenewinstance2', 'block_rss_client');
+            }
+
+            return $this->content;
+        }
+
+        // How many feed items should we display?
+        $maxentries = 5;
+        if ( !empty($this->config->shownumentries) ) {
+            $maxentries = intval($this->config->shownumentries);
+        }elseif( isset($CFG->block_rss_client_num_entries) ) {
+            $maxentries = intval($CFG->block_rss_client_num_entries);
+        }
+
+
+        /* ---------------------------------
+         * Begin Normal Display of Block Content
+         * --------------------------------- */
 
         $output = '';
-        $rssid = -1;
-        $display_description = false;
-        if (isset($CFG->block_rss_client_num_entries) && is_numeric($CFG->block_rss_client_num_entries) ) {
-            $shownumentries = intval($CFG->block_rss_client_num_entries);
-        } else {
-            $shownumentries = 5; //default to 5 entries is not specified in admin section or instance
-        }
 
-        if (empty($this->config)) {
-            $this->content->text = get_string('feedsconfigurenewinstance2', 'block_rss_client');
-            return $this->content;
-        }
 
         if (!empty($this->config->rssid)) {
-            if (is_array($this->config->rssid)) {
-                $rssidarray = $this->config->rssid;
-            } else {     // Make an array of the single value
-                $rssidarray = array($this->config->rssid);
-            }
-        }
-        if (!empty($this->config->display_description)) {
-            $display_description = intval($this->config->display_description);
-        }
-        if (!empty($this->config->shownumentries)) {
-            $shownumentries = intval($this->config->shownumentries);
-        }
+            list($rss_ids_sql, $params) = $DB->get_in_or_equal($this->config->rssid);
 
-        // Daryl Hawes note: if count of rssidarray is greater than 1 
-        // we should possibly display a drop down menu of selected feed titles
-        // so user can select a single feed to view (similar to RSSFeed)
-        if (!empty($rssidarray)) {
-            $numids = count($rssidarray);
-            $count = 0;
-            foreach ($rssidarray as $rssid) {
-                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
-                if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
-                    $output .= '<hr style="width=:80%" />';
-                }
-                $count ++;
+            $rss_feeds = $DB->get_records_select('block_rss_client', "id $rss_ids_sql", $params);
+
+            $showtitle = false;
+            if (count($rss_feeds) > 1) {
+                // when many feeds show the title for each feed
+                $showtitle = true;
+            }
+
+            foreach($rss_feeds as $feed){
+                $output.= $this->get_feed_html($feed, $maxentries, $showtitle);
             }
         }
 
         $this->content->text = $output;
+
         return $this->content;
     }
+
 
     function instance_allow_multiple() {
         return true;
@@ -131,127 +128,145 @@
     }
 
     /**
-     * @param int $rssid The feed to be displayed
-     * @param bool $display_description Should the description information from the feed be displayed or simply the title?
-     * @param int $shownumentries The maximum number of feed entries to be displayed.
-     * @param bool $showtitle True if the feed title should be displayed above the feed entries.
-     * @return string|NULL
+     * Returns the html of a feed to be displaed in the block
+     *
+     * @param mixed feedrecord The feed record from the database
+     * @param int maxentries The maximum number of entries to be displayed
+     * @param boolean showtitle Should the feed title be displayed in html
+     * @return string html representing the rss feed content
      */
-    function get_rss_by_id($rssid, $display_description, $shownumentries, $showtitle=false) {
-        global $CFG, $DB;
-        $returnstring = '';
-        $now = time();
-        require_once($CFG->libdir .'/rsslib.php');
-        require_once(MAGPIE_DIR .'rss_fetch.inc');
+    function get_feed_html($feedrecord, $maxentries, $showtitle){
+        global $CFG;
+        require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
-        $rss_record = $DB->get_record('block_rss_client', array('id'=>$rssid));
-        if (isset($rss_record) && isset($rss_record->id)) {
-            // By capturing the output from fetch_rss this way
-            // error messages do not display and clutter up the moodle interface
-            // however, we do lose out on seeing helpful messages like "cache hit", etc.
-            ob_start();
-            $rss = fetch_rss($rss_record->url);
-            $rsserror = ob_get_contents();
-            ob_end_clean();
+        $feed = new moodle_simplepie($feedrecord->url);
 
-            if ($rss === false) {
-                debugging($rsserror);
-            }
+        if(isset($CFG->block_rss_client_timeout)){
+            $feed->set_cache_duration($CFG->block_rss_client_timeout*60);
+        }
 
-            // first we must verify that the rss feed is loaded
-            // by checking $rss and $rss->items exist before using them
-            if (empty($rss) || empty($rss->items)) {
-                return '';
-            }
+        if(debugging() && $feed->error()){
+            return '<p>'. $feedrecord->url .' Failed with code: '.$feed->error().'</p>';
+        }
 
-            if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
-                $rss->items = array_slice($rss->items, 0, $shownumentries);
-            }
+        $r = ''; // return string
 
-            if (empty($rss_record->preferredtitle)) {
-                if (isset($rss->channel['title'])) {  // Just in case feed is dead
-                    $feedtitle = $this->format_title($rss->channel['title']);
-                } else {
-                    $feedtitle = '';
+        if($this->config->block_rss_client_show_channel_image){
+            if($image = $feed->get_image_url()){
+                $imagetitle = s($feed->get_image_title());
+                $imagelink  = $feed->get_image_link();
+
+                $r.='<div class="image" title="'.$imagetitle.'">'."\n";
+                if($imagelink){
+                    $r.='<a href="'.$imagelink.'">';
                 }
-            } else {
-                $feedtitle = $this->format_title($rss_record->preferredtitle);
-            }
-
-            if (isset($this->config) &&
-                    isset($this->config->block_rss_client_show_channel_image) &&
-                        $this->config->block_rss_client_show_channel_image &&
-                            isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
-
-                    $rss->image['title'] = s($rss->image['title']);
-                    $returnstring .= "\n".'<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'" /></a></div>';
-
-            }
-
-            if ($showtitle) {
-                $returnstring .= '<div class="title">'. $feedtitle .'</div>';
-            }
-
-            $formatoptions->para = false;
-
-
-            /// Accessibility: markup as a list.
-            $returnstring .= '<ul class="list">'."\n";
-
-            foreach ($rss->items as $item) {
-                if ($item['title'] == '') {
-                    // no title present, use portion of description
-                    $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
-                } else {
-                    $item['title'] = break_up_long_words($item['title'], 30);
+                $r.='<img src="'.$image.'" alt="'.$imagetitle.'" />'."\n";
+                if($imagelink){
+                    $r.='</a>';
                 }
-
-                if ($item['link'] == '') {
-                    $item['link'] = $item['guid'];
-                }
-                $item['title'] = s($item['title']);
-
-                $item['link'] = str_replace('&', '&amp;', $item['link']);
-
-                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'" onclick="this.target=\'_blank\'" >'. $item['title'] . "</a></div>\n";
-
-                if ($display_description && !empty($item['description'])) {
-                    $item['description'] = break_up_long_words($item['description'], 30);
-                    $returnstring .= '<div class="description">'.
-                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) .
-                                     '</div>';
-                }
-                $returnstring .= "</li>\n";
-            }
-            $returnstring .= "</ul>\n";
-
-            if (!empty($rss->channel['link'])) {
-                $rss->channel['link'] = str_replace('&', '&amp;', $rss->channel['link']);
-
-                if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
-                    $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
-                } 
-                if (!empty($feedtitle) ) {
-                    $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $feedtitle .'</a>';
-                }
+                $r.= '</div>';
             }
         }
 
-        // if block has no custom title
-        if (empty($this->config) || (!empty($this->config) && empty($this->config->title))) {
-            // if the feed has a title
-            if (!empty($feedtitle) and ($feedtitle != '<a href="'. $rss->channel['link'] .'"></a>')) {
-                // set the block's title to the feed's title
-                $this->title = strip_tags($feedtitle);
+        if(empty($feedrecord->preferredtitle)){
+            $feedtitle = $this->format_title($feed->get_title());
+        }else{
+            $feedtitle = $this->format_title($feedrecord->preferredtitle);
+        }
+
+        if($showtitle){
+            $r.='<div class="title">'.$feedtitle.'</div>';
+        }
+
+
+        $r.='<ul class="list">'."\n";
+
+        $feeditems = $feed->get_items(0, $maxentries);
+        foreach($feeditems as $item){
+            $r.= $this->get_item_html($item);
+        }
+
+        $r.='</ul>';
+
+
+        if ($this->config->block_rss_client_show_channel_link) {
+
+            $channellink = str_replace('&', '&amp;', $feed->get_link());
+
+            if (!empty($channellink)){
+                //NOTE: this means the 'last feed' display wins the block title - but
+                //this is exiting behaviour..
+                $this->content->footer = '<a href="'. $channellink.'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
             }
         }
-        return $returnstring;
+
+        if (empty($this->config->title)){
+            //NOTE: this means the 'last feed' displayed wins the block title - but
+            //this is exiting behaviour..
+            $this->title = strip_tags($feedtitle);
+        }
+
+        return $r;
     }
 
-    // just strips the title down and adds ... for excessively long titles.
+
+    /**
+     * Returns the html list item of a feed item
+     *
+     * @param mixed item simplepie_item representing the feed item
+     * @return string html li representing the rss feed item
+     */
+    function get_item_html($item){
+
+        $link        = $item->get_link();
+        $title       = $item->get_title();
+        $description = $item->get_description();
+
+
+        if(empty($title)){
+            // no title present, use portion of description
+            $title = substr(strip_tags($description), 0, 20) . '...';
+        }else{
+            $title = break_up_long_words($title, 30);
+        }
+
+        if(empty($link)){
+            $link = $item->get_id();
+        }
+
+
+        $r = "<li>\n";
+        $r.= '<div class="link"><a href="'.$link.'" onclick="this.target=\'_blank\'" >'."\n";
+        $r.= s($title);
+        $r.= "</a></div>\n";
+
+        if($this->config->display_description && !empty($description)){
+
+            $description = break_up_long_words($description, 30);
+
+            $formatoptions = new object;
+            $formatoptions->para = false;
+
+            $r.= '<div class="description">';
+            $r.= format_text($description, FORMAT_MOODLE, $formatoptions, $this->page->course->id);
+            $r.= '</div>';
+        }
+
+        $r.= '</li>';
+
+        return $r;
+    }
+
+    /**
+     * Strips a large title to size and adds ... if title too long
+     *
+     * @param string title to shorten
+     * @param int max character length of title
+     * @return string title s() quoted and shortened if necessary
+     */
     function format_title($title,$max=64) {
 
-    /// Loading the textlib singleton instance. We are going to need it.
+        // Loading the textlib singleton instance. We are going to need it.
         $textlib = textlib_get_instance();
 
         if ($textlib->strlen($title) <= $max) {
@@ -261,45 +276,53 @@
         }
     }
 
-    // cron function, used to refresh all the RSS feeds from Moodle cron
+    /**
+     * cron - goes through all feeds and retrieves them with the cache 
+     * duration set to 0 in order to force the retrieval of the item and
+     * refresh the cache
+     *
+     * @return boolean true if all feeds were retrieved succesfully
+     */
     function cron() {
         global $CFG, $DB;
+        require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
-    /// We are going to measure execution times
+        // We are going to measure execution times
         $starttime =  microtime();
 
-    /// And we have one initial $status
+        // And we have one initial $status
         $status = true;
 
-    /// We require some stuff
-        require_once($CFG->libdir .'/rsslib.php');
-        require_once(MAGPIE_DIR .'rss_fetch.inc');
-
-    /// Fetch all site feeds.
+        // Fetch all site feeds.
         $rs = $DB->get_recordset('block_rss_client');
         $counter = 0;
         mtrace('');
         foreach ($rs as $rec) {
             mtrace('    ' . $rec->url . ' ', '');
-        /// Fetch the rss feed, using standard magpie caching
-        /// so feeds will be renewed only if cache has expired
-            // sometimes the cron times out on moodle.org during fetching,
-            // there is a 5s limit in magpie which should work, but does not sometimes :-(
+            // Fetch the rss feed, using standard simplepie caching
+            // so feeds will be renewed only if cache has expired
             @set_time_limit(60);
-            if ($rss = fetch_rss($rec->url)) {
-                mtrace ('ok');
-            } else {
+
+            $feed =  new moodle_simplepie();
+            $feed->set_cache_duration(0);
+            $feed->set_feed_url($rec->url);
+            $feed->init();
+
+            if ($feed->error()) {
                 mtrace ('error');
+                mtrace ('SimplePie failed with error:'.$feed->error());
                 $status = false;
+            } else {
+                mtrace ('ok');
             }
             $counter ++;
         }
         $rs->close();
 
-    /// Show times
+        // Show times
         mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');
 
-    /// And return $status
+        // And return $status
         return $status;
     }
 }

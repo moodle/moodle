@@ -26,8 +26,7 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->libdir .'/rsslib.php');
-require_once(MAGPIE_DIR .'rss_fetch.inc');
+require_once($CFG->libdir .'/simplepie/moodle_simplepie.php');
 
 class feed_edit_form extends moodleform {
     protected $isadding;
@@ -75,15 +74,13 @@ class feed_edit_form extends moodleform {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        ob_start();
-        $rss = fetch_rss($data['url']);
-        $rsserrors = ob_get_clean();
+        $rss = new moodle_simplepie($data['url']);
 
-        if (!$rss) {
-            $errors['url'] = get_string('errorloadingfeed', 'block_rss_client', $rsserrors);
+        if ($rss->error()) {
+            $errors['url'] = get_string('errorloadingfeed', 'block_rss_client', $rss->error());
         } else {
-            $this->title = $rss->channel['title'];
-            $this->description = $rss->channel['description'];
+            $this->title = $rss->get_title();
+            $this->description = $rss->get_description();
         }
 
         return $errors;
