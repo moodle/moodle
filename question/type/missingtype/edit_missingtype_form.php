@@ -27,7 +27,8 @@ class question_edit_missingtype_form extends question_edit_form {
     function set_data($question) {
         if (isset($question->options)){
             $answers = $question->options->answers;
-            if (count($answers)) {
+            $default_values = array();
+            if (is_array($answers) && count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
