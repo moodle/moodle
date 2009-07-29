@@ -103,7 +103,7 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $rssid = optional_param('rssid', 0, PARAM_INTEGER); // 0 mean create new.
 
-if ($courseid = SITEID) {
+if ($courseid == SITEID) {
     $courseid = 0;
 }
 if ($courseid) {
