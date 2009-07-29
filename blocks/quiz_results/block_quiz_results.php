@@ -17,6 +17,33 @@ class block_quiz_results extends block_base {
         return array('course' => true, 'mod-quiz' => true);
     }
 
+    /**
+     * If this block belongs to a quiz context, then return that quiz's id.
+     * Otherwise, return 0.
+     * @return integer the quiz id.
+     */
+    public function get_owning_quiz() {
+        if (empty($this->instance->parentcontextid)) {
+            return 0;
+        }
+        $parentcontext = get_context_instance_by_id($this->instance->parentcontextid);
+        if ($parentcontext->contextlevel != CONTEXT_MODULE) {
+            return 0;
+        }
+        $cm = get_coursemodule_from_id('quiz', $parentcontext->instanceid);
+        if (!$cm) {
+            return 0;
+        }
+        return $cm->instance;
+    }
+
+    function instance_config_save($data) {
+        if (empty($data->quizid)) {
+            $data->quizid = $this->get_owning_quiz();
+        }
+        parent::instance_config_save($data);
+    }
+
     function get_content() {
         global $USER, $CFG, $DB;
 
@@ -32,7 +59,7 @@ class block_quiz_results extends block_base {
             return $this->content;
         }
 
-        if ($this->page->activityname == 'quiz') {
+        if ($this->page->activityname == 'quiz' && $this->page->context->id == $this->instance->parentcontextid) {
             $quiz = $this->page->activityrecord;
             $quizid = $quiz->id;
             $courseid = $this->page->course->id;
