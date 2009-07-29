@@ -39,6 +39,13 @@ function xmldb_block_rss_client_upgrade($oldversion) {
         upgrade_block_savepoint($result, 2007080100, 'rss_client');
     }
 
+    if ($result && $oldversion < 2009072901) {
+        // Remove config variable which is no longer used..
+        $result = $result && $DB->delete_records('config', array('name' =>'block_rss_client_submitters'));
+        upgrade_block_savepoint($result, 2009072901, 'rss_client');
+    }
+
+
     return $result;
 }
 
