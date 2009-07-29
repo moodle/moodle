@@ -183,5 +183,6 @@ print_box_start();
   rss_display_feeds($id, $USER->id, '', $context);
   rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
   print_box_end();
+  print '<div><form><div>';   // Reopen page form to keep XHTML strict.
 }
 ?>
