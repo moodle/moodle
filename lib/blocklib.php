@@ -792,7 +792,7 @@ class block_manager {
 
         $block = $this->page->blocks->find_instance($blockid);
 
-        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks() || !$block->user_can_addto($page)) {
+        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks() || !$block->user_can_addto($this->page)) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('deleteablock'));
         }
 
@@ -859,7 +859,7 @@ class block_manager {
         $editpage = new moodle_page();
         $editpage->set_generaltype('form');
         $editpage->set_course($this->page->course);
-        $editpage->set_context($this->page->context);
+        $editpage->set_context($block->context);
         $editurlbase = str_replace($CFG->wwwroot . '/', '', $this->page->url->out(true));
         $editurlparams = $this->page->url->params();
         $editurlparams['bui_editid'] = $blockid;
