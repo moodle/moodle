@@ -2407,12 +2407,13 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         if (is_a($link, 'html_link')) {
             $link->prepare();
+            $this->prepare_event_handlers($link);
             $attributes['href'] = prepare_url($link->url);
-            $text = $link->text;
-
             $attributes['class'] = $link->get_classes_string();
             $attributes['title'] = $link->title;
             $attributes['id'] = $link->id;
+
+            $text = $link->text;
 
         } else if (empty($text)) {
             throw new coding_exception('$OUTPUT->link() must have a string as second parameter if the first param ($link) is a string');
@@ -2529,17 +2530,12 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function action_icon($icon) {
-
         $icon->prepare();
-
-        $this->prepare_event_handlers($icon);
-
         $imageoutput = $this->image($icon->image);
 
         if ($icon->linktext) {
             $imageoutput .= $icon->linktext;
         }
-
         $icon->link->text = $imageoutput;
 
         return $this->link($icon->link);
@@ -3332,10 +3328,9 @@ class moodle_html_component {
      * @param mixed  $event a DOM event (click, mouseover etc.) or a component_action object
      * @param string $jsfunction The name of the JS function to call. required if argument 1 is a string (event)
      * @param array  $jsfunctionargs An optional array of JS arguments to pass to the function
-     * @return void
      */
     public function add_action($event, $jsfunction=null, $jsfunctionargs=array()) {
-        if (empty($this->id) || in_array($this->id, moodle_html_component::$generated_ids)) {
+        if (empty($this->id)) {
             $this->generate_id();
         }
 
@@ -3351,15 +3346,14 @@ class moodle_html_component {
 
     /**
      * Internal method for generating a unique ID for the purpose of event handlers.
-     * @return void;
      */
     protected function generate_id() {
-        $this->id = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 6);
-        if (in_array($this->id, moodle_html_component::$generated_ids)) {
-            $this->generate_id();
-        } else {
-            moodle_html_component::$generated_ids[] = $this->id;
-        }
+        // Generate an id that is not already used.
+        do {
+            $newid = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 6);
+        } while (in_array($this->id, moodle_html_component::$generated_ids));
+        $this->id = $newid;
+        moodle_html_component::$generated_ids[] = $newid;
     }
 
     /**
