@@ -318,6 +318,13 @@ class theme_config {
      */
     public $layouts = array();
 
+    /* 
+     * Time in seconds to cache the CSS style sheets for the chosen theme
+     * 
+     * @var integer
+     */
+    public $csslifetime = 1800;
+
     /**
      * With this you can control the colours of the big MP3 player
      * that is used for MP3 resources.

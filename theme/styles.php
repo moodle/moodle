@@ -57,7 +57,9 @@ require_once(dirname(__FILE__) . '/../config.php');
 $fortheme = required_param('for', PARAM_FILE);
 $pluginsheets = optional_param('pluginsheets', '', PARAM_BOOL);
 
-$CACHE_LIFETIME = 1800; // Cache stylesheets for half an hour.
+// Load the configuration of the selected theme. (See comment at the top of the file.)
+$PAGE->force_theme($fortheme);
+
 $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
 
 // Fix for IE6 caching - we don't want the filemtime('styles.php'), instead use now.
@@ -65,13 +67,19 @@ $lastmodified = time();
 
 // Set the correct content type. (Should we also be specifying charset here?)
 header('Content-type: text/css'); 
-if (!debugging('', DEBUG_DEVELOPER)) {
-    // Do not send caching headers for developer. (This makes it easy to edit themes.
-    // You don't have to keep clearing the browser cache.)
-    header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
-    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + $CACHE_LIFETIME) . ' GMT');
-    header('Cache-Control: max-age=' . $lifetime);
-    header('Pragma: ');
+header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
+header('Pragma: ');
+
+// Set the caching for these style sheets
+if (debugging('', DEBUG_DEVELOPER)) {        // Use very short caching time
+    header('Cache-Control: max-age=60');     // One minute
+    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + 60) . ' GMT');
+} else if ($themename == 'standard') {       // Give this one extra long caching MDL-19953
+    header('Cache-Control: max-age=172801'); // Two days plus one second
+    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + 172801) . ' GMT');
+} else {                                     // Use whatever time the theme has set
+    header('Cache-Control: max-age='.$THEME->csslifetime);
+    header('Expires: ' . gmdate("D, d M Y H:i:s", $lastmodified + $THEME->csslifetime) . ' GMT');
 }
 
 if (!empty($showdeprecatedstylesheetsetupwarning)) {
@@ -100,8 +108,6 @@ END;
 echo '/*';
 
 
-// Load the configuration of the selected theme. (See comment at the top of the file.)
-$PAGE->force_theme($fortheme);
 
 // We will build up a list of CSS file path names, then concatenate them all.
 $files = array();
