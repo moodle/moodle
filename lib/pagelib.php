@@ -739,7 +739,7 @@ class moodle_page {
             $this->initialise_default_pagetype($shorturl);
         }
         if (!is_null($this->_legacypageobject)) {
-            $this->_legacypageobject->set_url($shorturl, $params);
+            $this->_legacypageobject->set_url($url, $params);
         }
     }
 
