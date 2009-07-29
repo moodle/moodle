@@ -1028,6 +1028,9 @@ repository_client.download_cb = {
 }
 repository_client.end = function(client_id, obj) {
     var fp = repository_client.fp[client_id];
+    if (repository_client.files[client_id] == undefined) {
+        repository_client.files[client_id] = 0;
+    }
     if(fp.env=='filepicker') {
         fp.target.value = obj['id'];
     }else if(fp.env=='editor'){
@@ -1038,6 +1041,7 @@ repository_client.end = function(client_id, obj) {
         }
         fp.target.onchange();
     }
+    obj.maxfileslimit = (repository_client.files[client_id]>=fp.maxfiles);
     fp.formcallback(obj);
     fp.hide();
     repository_client.viewfiles(client_id);

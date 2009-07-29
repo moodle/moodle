@@ -73,6 +73,7 @@ $string['manageuserrepository'] = 'Manage individual repository';
 $string['noenter'] = 'Nothing entered';
 $string['nofilesattached'] = 'No files attached';
 $string['nopermissiontoaccess'] = 'No permission to access this repository';
+$string['nomorefiles'] = 'No more attachments allowed';
 $string['notyourinstances'] = 'You can not view/edit repository instances of another user';
 $string['noresult'] = 'No search result';
 $string['operation'] = 'Operation';
