@@ -910,7 +910,7 @@ class moodle_core_renderer_test extends UnitTestCase {
         // Empty link object: link MUST have a text value
         $link = new html_link();
         $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
-        $link->add_action_object($popupaction);
+        $link->add_action($popupaction);
         $this->expectException();
         $html = $this->renderer->link_to_popup($link);
     }
@@ -921,7 +921,7 @@ class moodle_core_renderer_test extends UnitTestCase {
         $link->url = 'http://test.com';
         $link->title = 'Popup window';
         $popupaction = new popup_action('click', 'http://test.com', 'my_popup');
-        $link->add_action_object($popupaction);
+        $link->add_action($popupaction);
 
         $html = $this->renderer->link_to_popup($link);
         $expectedattributes = array('title' => 'Popup window', 'href' => 'http://test.com');

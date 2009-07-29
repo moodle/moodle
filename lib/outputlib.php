@@ -2722,7 +2722,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         foreach ($list->items as $listitem) {
             if ($listitem instanceof html_list) {
-                $output .= $this->output_start_tag('li');
+                $output .= $this->output_start_tag('li', array());
                 $output .= $this->htmllist($listitem);
                 $output .= $this->output_end_tag('li');
             } else if ($listitem instanceof html_list_item) {
