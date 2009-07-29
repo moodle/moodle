@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing HTML block instances.
+ * Form for editing Blog tags block instances.
  *
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
@@ -24,7 +24,7 @@
  */
 
 /**
- * Form for editing HTML block instances.
+ * Form for editing Blog tags block instances.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
