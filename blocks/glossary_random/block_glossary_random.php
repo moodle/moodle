@@ -72,7 +72,7 @@ class block_glossary_random extends block_base {
                     break;
             }
 
-            if ($entry = $DB->get_records_sql("SELECT concept, definition, definitionformat
+            if ($entry = $DB->get_records_sql("SELECT concept, definition, definitionformat, definitiontrust
                                                  FROM {glossary_entries}
                                                 WHERE glossaryid = ? AND approved = 1
                                              ORDER BY timemodified $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
@@ -104,50 +104,6 @@ class block_glossary_random extends block_base {
     function instance_allow_multiple() {
     // Are you going to allow multiple instances of each block?
     // If yes, then it is assumed that the block WILL USE per-instance configuration
-        return true;
-    }
-
-    function instance_config_print() {
-        global $CFG, $DB;
-
-        if (!isset($this->config)) {
-            // ... teacher has not yet configured the block, let's put some default values here to explain things
-            $this->config->title = get_string('blockname','block_glossary_random');
-            $this->config->refresh = 0;
-            $this->config->showconcept = 1;
-            $this->config->cache= get_string('notyetconfigured','block_glossary_random');
-            $this->config->addentry=get_string('addentry', 'block_glossary_random');
-            $this->config->viewglossary=get_string('viewglossary', 'block_glossary_random');
-            $this->config->invisible=get_string('invisible', 'block_glossary_random');
-        }
-
-        // select glossaries to put in dropdown box ...
-        $glossaries = $DB->get_records_menu('glossary', array('course'=>$this->course->id),'name','id,name');
-
-        //format menu texts to avoid html and to filter multilang values
-        if(!empty($glossaries)) {
-            foreach($glossaries as $key => $value) {
-                $glossaries[$key] = strip_tags(format_string($value,true));
-            }
-        }
-
-        // and select quotetypes to put in dropdown box
-        $type[0] = get_string('random','block_glossary_random');
-        $type[1] = get_string('lastmodified','block_glossary_random');
-        $type[2] = get_string('nextone','block_glossary_random');
-
-        $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
-
-        // display the form
-
-        if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
-            print_simple_box_start('center', '', '', 5, 'blockconfigglobal');
-            include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
-            print_simple_box_end();
-        } else {
-            notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
-        }
-
         return true;
     }
 
