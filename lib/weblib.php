@@ -489,7 +489,7 @@ class moodle_url {
  *
  * @param mixed $url The URL (moodle_url or string)
  * @param bool $stripformparams Whether or not to strip the query params from the URL
- * @return string
+ * @return string the URL. &s are unescaped. You must use s(...) to output this to XHTML. ($OUTPUT normally does this automatically.)
  */
 function prepare_url($url, $stripformparams=false) {
     global $CFG, $PAGE;
@@ -497,7 +497,7 @@ function prepare_url($url, $stripformparams=false) {
     $output = $url;
 
     if ($url instanceof moodle_url) {
-        $output = $url->out($stripformparams);
+        $output = $url->out($stripformparams, array(), false);
     }
 
     // Handle relative URLs

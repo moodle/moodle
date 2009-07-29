@@ -1314,7 +1314,7 @@ class moodle_renderer_base {
     /**
      * Outputs a HTML attribute and value
      * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
-     * @param string $value The value of the attribute
+     * @param string $value The value of the attribute. The value will be escaped with {@link s()}
      * @return string HTML fragment
      */
     protected function output_attribute($name, $value) {
@@ -1322,13 +1322,14 @@ class moodle_renderer_base {
         if ($value == HTML_ATTR_EMPTY) {
             return ' ' . $name . '=""';
         } else if ($value || is_numeric($value)) { // We want 0 to be output.
-            return ' ' . $name . '="' . $value . '"';
+            return ' ' . $name . '="' . s($value) . '"';
         }
     }
 
     /**
      * Outputs a list of HTML attributes and values
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
+     *       The values will be escaped with {@link s()}
      * @return string HTML fragment
      */
     protected function output_attributes($attributes) {
