@@ -63,12 +63,7 @@ $PAGE->set_url('blocks/rss_client/managefeeds.php', $urlparams);
 
 // Process any actions
 if ($deleterssid && confirm_sesskey()) {
-    $DB->delete_records('block_rss_client', array('id'=>$rssid));
-
-    $file = $CFG->dataroot . '/cache/rsscache/' . $rssid .'.xml';
-    if (file_exists($file)) {
-        unlink($file);
-    }
+    $DB->delete_records('block_rss_client', array('id'=>$deleterssid));
 
     redirect($PAGE->url, get_string('feeddeleted', 'block_rss_client'));
 }
