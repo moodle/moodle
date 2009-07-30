@@ -880,7 +880,7 @@ class block_manager {
 
         confirm_sesskey();
 
-        if ($this->page->user_can_edit_blocks()) {
+        if (!$this->page->user_can_edit_blocks()) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
         }
 
