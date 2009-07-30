@@ -821,7 +821,7 @@ class block_manager {
 
         $block = $this->page->blocks->find_instance($blockid);
 
-        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks()) {
+        if (!$this->page->user_can_edit_blocks()) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('hideshowblocks'));
         }
 
@@ -852,7 +852,7 @@ class block_manager {
 
         $block = $this->find_instance($blockid);
 
-        if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks()) {
+        if (!$block->user_can_edit() && !$this->page->user_can_edit_blocks()) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('editblock'));
         }
 
@@ -1170,7 +1170,7 @@ function block_edit_controls($block, $page) {
                 'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
     }
 
-    if ($block->user_can_edit() && $page->user_can_edit_blocks()) {
+    if ($page->user_can_edit_blocks()) {
         // Show/hide icon.
         if ($block->instance->visible) {
             $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
@@ -1179,17 +1179,21 @@ function block_edit_controls($block, $page) {
             $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
                     'icon' => 't/show', 'caption' => get_string('show'));
         }
+    }
 
+    if ($page->user_can_edit_blocks() || $block->user_can_edit()) {
         // Edit config icon - always show - needed for positioning UI.
         $controls[] = array('url' => $actionurl . '&bui_editid=' . $block->instance->id,
                 'icon' => 't/edit', 'caption' => get_string('configuration'));
+    }
 
+    if ($page->user_can_edit_blocks() && $block->user_can_edit() && $block->user_can_addto($page)) {
         // Delete icon.
-        if ($block->user_can_addto($page)) {
-            $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
+        $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
                 'icon' => 't/delete', 'caption' => get_string('delete'));
-        }
+    }
 
+    if ($page->user_can_edit_blocks()) {
         // Move icon.
         $controls[] = array('url' => $page->url->out(false, array('moveblockid' => $block->instance->id)),
                 'icon' => 't/move', 'caption' => get_string('move'));

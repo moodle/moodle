@@ -121,6 +121,14 @@ class block_edit_form extends moodleform {
 
         $mform->addElement('select', 'bui_weight', get_string('weight', 'block'), $weightoptions);
 
+        $pagefields = array('bui_visible', 'bui_region', 'bui_weight');
+        if (!$this->block->user_can_edit()) {
+            $mform->hardFreezeAllVisibleExcept($pagefields);
+        }
+        if (!$this->page->user_can_edit_blocks()) {
+            $mform->hardFreeze($pagefields);
+        }
+
         $this->add_action_buttons();
     }
 

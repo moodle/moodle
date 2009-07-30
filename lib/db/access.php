@@ -1322,6 +1322,17 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/block:edit' => array(
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW
+        )
+    ),
+
     'moodle/portfolio:export' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
