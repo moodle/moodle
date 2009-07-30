@@ -71,13 +71,6 @@
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
-    <location>magpie</location>
-    <name>Magpie</name>
-    <license>GPL</license>
-    <version>0.72</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>mp3player</location>
     <name></name>
     <license></license>
