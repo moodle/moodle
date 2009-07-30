@@ -2322,6 +2322,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output .= $this->output_end_tag('div');
         $output .= $this->output_end_tag('div');
+
         if ($bc->annotation) {
             $output .= $this->output_tag('div', array('class' => 'blockannotation'), $bc->annotation);
         }
@@ -2378,11 +2379,28 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function blocks_for_region($region) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
+        
         $output = '';
         foreach ($blockcontents as $bc) {
-            $output .= $this->block($bc, $region);
+            if ($bc instanceof block_contents) {
+                $output .= $this->block($bc, $region);
+            } else if ($bc instanceof block_move_target) {
+                $output .= $this->block_move_target($bc);
+            } else {
+                throw new coding_exception('Unexpected type of thing (' . get_class($bc) . ') found in list of block contents.');
+            }
         }
         return $output;
+    }
+
+    /**
+     * Output a place where the block that is currently being moved can be dropped.
+     * @param block_move_target $target with the necessary details.
+     * @return string the HTML to be output.
+     */
+    public function block_move_target($target) {
+        return $this->output_tag('a', array('href' => $target->url, 'class' => 'blockmovetarget'),
+                $this->output_tag('span', array('class' => 'accesshide'), $target->text));
     }
 
     /**
@@ -2404,7 +2422,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function link($link, $text=null) {
-        $attributes = array('href' => $link);
+        $attributes = array();
 
         if (is_a($link, 'html_link')) {
             $link->prepare();
@@ -2418,6 +2436,9 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         } else if (empty($text)) {
             throw new coding_exception('$OUTPUT->link() must have a string as second parameter if the first param ($link) is a string');
+
+        } else {
+            $attributes['href'] = prepare_url($link);
         }
 
         return $this->output_tag('a', $attributes, $text);
@@ -3989,6 +4010,31 @@ class block_contents extends moodle_html_component {
         }
         parent::prepare();
     }
+}
+
+
+/**
+ * This class represents a target for where a block can go when it is being moved.
+ *
+ * This needs to be rendered as a form with the given hidden from fields, and
+ * clicking anywhere in the form should submit it. The form action should be
+ * $PAGE->url.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class block_move_target extends moodle_html_component {
+    /**
+     * List of hidden form fields.
+     * @var array
+     */
+    public $url = array();
+    /**
+     * List of hidden form fields.
+     * @var array
+     */
+    public $text = '';
 }
 
 

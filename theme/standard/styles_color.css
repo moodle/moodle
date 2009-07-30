@@ -491,7 +491,21 @@ table.flexible .r1 {
 .block-region .hidden .header {
   border-bottom-color: #dddddd;
 }
+.blockannotation {
+  color:#aaa;
+}
 
+.blockmovetarget {
+  background-color: #fcc;
+  border-color: #f88;
+}
+.blockmovetarget:hover {
+  background-color: #f88;
+  border-color: #c00;
+}
+.sideblock.beingmoved {
+  border-color: #f88;
+}
 
 /***
  *** Blogs

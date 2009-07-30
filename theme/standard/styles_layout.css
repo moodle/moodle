@@ -1610,6 +1610,22 @@ a.skip:focus, a.skip:active {
 .sideblock .header .icon.edit {
   margin-right: 6px;
 }
+.blockannotation {
+  font-size:0.75em;
+  margin: -1em 0 1em;
+}
+
+.blockmovetarget {
+  display: block;
+  height: 1em;
+  margin-bottom: 1em;
+  border-width: 2px;
+  border-style: dashed;
+}
+.sideblock.beingmoved {
+  border-width: 2px;
+  border-style: dashed;
+}
 
 .sideblock .content {
   padding: 4px;
