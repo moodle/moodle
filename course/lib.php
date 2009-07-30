@@ -1598,13 +1598,13 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 
     if (!empty($resources)) {
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=".sesskey()."&amp;add=",
+        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=",
                               $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     }
 
     if (!empty($activities)) {
         $output .= ' ';
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=".sesskey()."&amp;add=",
+        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=",
                     $activities, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
     }
 

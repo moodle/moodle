@@ -318,9 +318,9 @@ class theme_config {
      */
     public $layouts = array();
 
-    /* 
+    /*
      * Time in seconds to cache the CSS style sheets for the chosen theme
-     * 
+     *
      * @var integer
      */
     public $csslifetime = 1800;
@@ -2436,16 +2436,25 @@ class moodle_core_renderer extends moodle_renderer_base {
             $continueform = new html_form();
             $continueform->url = new moodle_url($continue);
             $continue = $continueform;
-        } else if (!is_object($continue)) {
-            throw new coding_exception('The 2nd param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+        } else if ($continue instanceof moodle_url) {
+            $continueform = new html_form();
+            $continueform->url = $continue;
+            $continue = $continueform;
+        } else {
+            throw new coding_exception('The continue param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+
         }
 
         if (!($cancel instanceof html_form) && !is_object($cancel)) {
             $cancelform = new html_form();
             $cancelform->url = new moodle_url($cancel);
             $cancel = $cancelform;
-        } else if (!is_object($cancel)) {
-            throw new coding_exception('The 3rd param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
+        } else if ($cancel instanceof moodle_url) {
+            $cancelform = new html_form();
+            $cancelform->url = $cancel;
+            $cancel = $cancelform;
+        } else {
+            throw new coding_exception('The cancel param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
         }
 
         if (empty($continue->button->text)) {
@@ -2640,11 +2649,14 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function image($image) {
         $image->prepare();
 
+        $this->prepare_event_handlers($image);
+
         $attributes = array('class' => $image->get_classes_string(),
                             'style' => $this->prepare_legacy_width_and_height($image),
                             'src' => prepare_url($image->src),
                             'alt' => $image->alt,
-                            'title' => $image->title);
+                            'title' => $image->title,
+                            'id' => $image->id);
 
         return $this->output_empty_tag('img', $attributes);
     }
@@ -2752,6 +2764,20 @@ class moodle_core_renderer extends moodle_renderer_base {
 
     /**
      * Output a <select> menu.
+     *
+     * This method is extremely versatile, and can be used to output yes/no menus,
+     * form-enclosed menus with automatic redirects when an option is selected,
+     * descriptive labels and help icons. By default it just outputs a select
+     * menu.
+     *
+     * To add a descriptive label, use moodle_select_menu::set_label($text, $for) or
+     * moodle_select_menu::set_label($label) passing a html_label object
+     *
+     * To add a help icon, use moodle_select_menu::set_help($page, $text, $linktext) or
+     * moodle_select_menu::set_help($helpicon) passing a help_icon object
+     *
+     * To surround the menu with a form, simply set moodle_select_menu->form as a
+     * valid html_form object.
      *
      * You can either call this function with a single moodle_select_menu argument
      * or, with a list of parameters, in which case those parameters are sent to
@@ -3457,7 +3483,7 @@ class moodle_select_menu extends moodle_html_component {
      */
     public function prepare() {
         global $CFG;
-        
+
         // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
         if (empty($this->id)) {
             $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
@@ -3697,6 +3723,71 @@ class moodle_select_menu extends moodle_html_component {
         $selectmenu->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $selectmenu->id));
 
         return $selectmenu;
+    }
+
+    /**
+     * Adds a descriptive label to the select menu.
+     *
+     * This can be used in two ways:
+     *
+     * <pre>
+     * $selectmenu->set_label($elementid, $elementlabel);
+     * // OR
+     * $label = new html_label();
+     * $label->for = $elementid;
+     * $label->text = $elementlabel;
+     * $selectmenu->set_label($label);
+     * </pre>
+     *
+     * Use the second form when you need to add additional HTML attributes
+     * to the label and/or JS actions.
+     *
+     * @param mixed $text Either the text of the label or a html_label object
+     * @param text  $for The value of the "for" attribute (the associated element's id)
+     * @return void
+     */
+    public function set_label($text, $for=null) {
+        if ($text instanceof html_label) {
+            $this->label = $text;
+        } else if (!empty($text)) {
+            $this->label = new html_label();
+            $this->label->for = $for;
+            $this->label->text = $text;
+        }
+    }
+
+    /**
+     * Adds a help icon next to the select menu.
+     *
+     * This can be used in two ways:
+     *
+     * <pre>
+     * $selectmenu->set_help_icon($page, $text, $linktext);
+     * // OR
+     * $helpicon = new help_icon();
+     * $helpicon->page = $page;
+     * $helpicon->text = $text;
+     * $helpicon->linktext = $linktext;
+     * $selectmenu->set_help_icon($helpicon);
+     * </pre>
+     *
+     * Use the second form when you need to add additional HTML attributes
+     * to the label and/or JS actions.
+     *
+     * @param mixed $page Either the keyword that defines a help page or a help_icon object
+     * @param text  $text The text of the help icon
+     * @param boolean $linktext Whether or not to show text next to the icon
+     * @return void
+     */
+    public function set_help_icon($page, $text, $linktext=false) {
+        if ($page instanceof help_icon) {
+            $this->helpicon = $page;
+        } else if (!empty($page)) {
+            $this->helpicon = new html_label();
+            $this->helpicon->page = $page;
+            $this->helpicon->text = $text;
+            $this->helpicon->linktext = $linktext;
+        }
     }
 }
 
@@ -4606,11 +4697,11 @@ class html_form extends moodle_html_component {
      * @return void
      */
     public function __construct() {
-        static $go;
+        static $yes;
         $this->button = new html_button();
-        if (!isset($go)) {
-            $go = get_string('go');
-            $this->button->text = $go;
+        if (!isset($yes)) {
+            $yes = get_string('yes');
+            $this->button->text = $yes;
         }
     }
 

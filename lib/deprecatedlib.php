@@ -2070,6 +2070,8 @@ function notify($message, $classes = 'notifyproblem', $align = 'center', $return
 /**
  * Print a continue button that goes to a particular URL.
  *
+ * @deprecated since Moodle 2.0
+ *
  * @param string $link The url to create a link to.
  * @param bool $return If set to true output is returned rather than echoed, default false
  * @return string|void HTML String if return=true nothing otherwise
@@ -2097,6 +2099,8 @@ function print_continue($link, $return = false) {
 /**
  * Returns a string containing a link to the user documentation for the current
  * page. Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @deprecated since Moodle 2.0
  *
  * @global object
  * @global object
@@ -3310,8 +3314,6 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
  * submits the form (while avoiding the usual acessibility problems with this appoach).
  * With JavaScript off, a 'Go' button is printed.
  *
- * @todo Finish documenting this function
- *
  * @global object
  * @global object
  * @param string $baseurl The target URL up to the point of the variable that changes
@@ -3359,18 +3361,8 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
         $selectmenu->nothinglabel = $nothing;
     }
 
-    if ($selectlabel) {
-        $selectmenu->label = new html_label();
-        $selectmenu->label->text = $selectlabel;
-        $selectmenu->label->for = $selectmenu->id;
-    }
-
-    if ($help) {
-        $selectmenu->helpicon = new help_icon();
-        $selectmenu->helpicon->page = $help;
-        $selectmenu->helpicon->text = $helptext;
-        $selectmenu->helpicon->linktext = false;
-    }
+    $selectmenu->set_label($selectlabel, $selectmenu->id);
+    $selectmenu->set_help_icon($help, $helptext);
 
     $output = $OUTPUT->select_menu($selectmenu);
 
