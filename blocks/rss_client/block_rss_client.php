@@ -304,6 +304,9 @@
             @set_time_limit(60);
 
             $feed =  new moodle_simplepie();
+            // set timeout for longer than normal to be agressive at 
+            // fetching feeds if possible..
+            $feed->set_timeout(40);
             $feed->set_cache_duration(0);
             $feed->set_feed_url($rec->url);
             $feed->init();

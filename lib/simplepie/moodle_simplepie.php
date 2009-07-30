@@ -62,8 +62,21 @@ class moodle_simplepie extends SimplePie
         $cachedir = moodle_simplepie::get_cache_directory();
         check_dir_exists($cachedir, true, true);
 
-        parent::__construct($feedurl, $cachedir);
-        parent::set_output_encoding('UTF-8');
+        parent::__construct(null, $cachedir);
+        // Match moodle encoding
+        $this->set_output_encoding('UTF-8');
+
+        // default to a short timeout as most operations will be interactive
+        $this->set_timeout(2);
+
+        // 1 hour default cache
+        $this->set_cache_duration(3600);
+
+        // init the feed url if passed in constructor
+        if ($feedurl !== null) {
+                $this->set_feed_url($feedurl);
+                $this->init();
+        }
     }
 
     /**
@@ -111,7 +124,11 @@ class moodle_simplepie_file extends SimplePie_File
         $this->method = SIMPLEPIE_FILE_SOURCE_REMOTE | SIMPLEPIE_FILE_SOURCE_CURL;
 
         $curl = new curl();
-        $curl->setopt(array('CURLOPT_HEADER'=>true));
+        $curl->setopt( array( 
+                'CURLOPT_HEADER' => true,
+                'CURLOPT_TIMEOUT' => $timeout,
+                'CURLOPT_CONNECTTIMEOUT' => $timeout ));
+
 
         if ($headers !== null) {
             // translate simplepie headers to those class curl expects
