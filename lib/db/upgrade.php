@@ -2208,8 +2208,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // standardizing plugin names
         if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'quizreport_%'")) {
             foreach ($configs as $config) {
+                $result = $result && unset_config($config->name, $config->plugin); /// unset old config
                 $config->plugin = str_replace('quizreport_', 'quiz_', $config->plugin);
-                $DB->update_record('config_plugins', $config);
+                $result = $result && set_config($config->name, $config->value, $config->plugin); /// set new config
             }
         }
         unset($configs);
@@ -2220,8 +2221,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // standardizing plugin names
         if ($configs = $DB->get_records_select('config_plugins', "plugin LIKE 'assignment_type_%'")) {
             foreach ($configs as $config) {
+                $result = $result && unset_config($config->name, $config->plugin); /// unset old config
                 $config->plugin = str_replace('assignment_type_', 'assignment_', $config->plugin);
-                $DB->update_record('config_plugins', $config);
+                $result = $result && set_config($config->name, $config->value, $config->plugin); /// set new config
             }
         }
         unset($configs);
