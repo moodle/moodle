@@ -636,6 +636,8 @@ class database_manager {
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
+    /// Check for dependencies in the DB before performing any action
+        $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getAlterFieldSQL($xmldb_table, $xmldb_field)) {
             return; // probably nothing to do
@@ -696,6 +698,8 @@ class database_manager {
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
+    /// Check for dependencies in the DB before performing any action
+        $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
             return; //Empty array = nothing to do = no error
