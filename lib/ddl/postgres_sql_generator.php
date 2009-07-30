@@ -181,56 +181,6 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to add the field to the table
-     * PostgreSQL is pretty standard but with one severe restriction under 7.4 that forces us to overload
-     * this function: Default clause is not allowed when adding fields.
-     *
-     * This function can be safely removed once min req. for PG will be 8.0
-     */
-    public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
-
-        $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
-        $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
-        $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
-
-        $results = array();
-
-        $tablename = $this->getTableName($xmldb_table);
-        $fieldname = $this->getEncQuoted($xmldb_field->getName());
-
-        $defaultvalue = $xmldb_field->getDefault();
-
-        $results = parent::getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_default_clause, $skip_notnull_clause);
-
-    /// Add default (only if not skip_default)
-        if (!$skip_default_clause) {
-            $default_clause = $this->getDefaultClause($xmldb_field);
-            if ($default_clause) {
-                $sql = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause; /// Add default clause
-                $results[] = $sql;
-            }
-
-        /// Update default value (if exists) to all the records
-            if ($defaultvalue !== null) {
-                if (!is_numeric($defaultvalue)) {
-                    $defaultvalue = "'".$this->addslashes($defaultvalue)."'";
-                }
-                $sql = 'UPDATE ' . $tablename . ' SET ' . $fieldname . '=' . $defaultvalue;
-                $results[] = $sql;
-            }
-        }
-
-    /// Add not null (only if no skip_notnull)
-        if (!$skip_notnull_clause) {
-            if ($xmldb_field->getNotnull()) {
-                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL'; /// Add not null
-            }
-        }
-
-        return $results;
-    }
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      * PostgreSQL has some severe limits:
      *     - Any change of type or precision requires a new temporary column to be created, values to
@@ -303,59 +253,43 @@ class postgres_sql_generator extends sql_generator {
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-    /// TODO: Some combinations like
-    /// TODO: integer->integer
-    /// TODO: integer->text
-    /// TODO: number->text
-    /// TODO: text->text
-    /// TODO: do not require the use of temp columns, because PG 8.0 supports them automatically
-    /// TODO: with a simple "alter table zzz alter column yyy type new specs"
-    /// TODO: Must be implemented that way. Eloy 09/2007
+    /// Decide if we have changed the column specs (type/precision/decimals)
+        $specschanged = $typechanged || $precisionchanged || $decimalchanged;
 
-    /// If the type or the precision or the decimals have changed, then we need to:
-    ///     - create one temp column with the new specs
-    ///     - fill the new column with the values from the old one (casting if needed)
-    ///     - drop the old column
-    ///     - rename the temp column to the original name
-        if ($typechanged || $precisionchanged || $decimalchanged) {
-            $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
-            $xmldb_field->setName($tempcolname);
-        /// Create the temporal column
-        /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
-            $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field, NULL, true, true));
-        /// Detect some basic casting options
-            if ((substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_NUMBER) ||
-                (substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
-                $copyorigin = 'CAST(CAST('.$fieldname.' AS TEXT) AS REAL)'; //From char to number or float
-            } else if ((substr($oldmetatype, 0, 1) == 'C' && $xmldb_field->getType() == XMLDB_TYPE_INTEGER)) {
-                $copyorigin = 'CAST(CAST('.$fieldname.' AS TEXT) AS INTEGER)'; //From char to integer
-            } else {
-                $copyorigin = $fieldname; //Direct copy between columns
+    /// if specs have changed, need to alter column
+        if ($specschanged) {
+        /// Always drop any exiting default before alter column (some type changes can cause casting error in default for column)
+            if ($olddefault !== null) {
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT'; /// Drop default clause
             }
-        /// Copy contents from original col to the temporal one
-            $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $copyorigin;
-        /// Drop the old column
-            $xmldb_field->setName($fieldname); //Set back the original field name
-            $results = array_merge($results, $this->getDropFieldSQL($xmldb_table, $xmldb_field));
-        /// Rename the temp column to the original one
-            $results[] = 'ALTER TABLE ' . $tablename . ' RENAME COLUMN ' . $tempcolname . ' TO ' . $fieldname;
-        /// Mark we have performed one change based in temp fields
-            $from_temp_fields = true;
+            $alterstmt = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $this->getEncQuoted($xmldb_field->getName()) .
+                         ' TYPE' . $this->getFieldSQL($xmldb_field, null, true, true, null, false);
+        /// Some castings must be performed explicity (mainly from text|char to numeric|integer)
+            if (($oldmetatype == 'C' || $oldmetatype == 'X') &&
+                ($xmldb_field->getType() == XMLDB_TYPE_NUMBER || $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
+                $alterstmt .= ' USING CAST('.$fieldname.' AS NUMERIC)'; // from char or text to number or float
+            } else if (($oldmetatype == 'C' || $oldmetatype == 'X') &&
+                $xmldb_field->getType() == XMLDB_TYPE_INTEGER) {
+                $alterstmt .= ' USING CAST(CAST('.$fieldname.' AS NUMERIC) AS INTEGER)'; // From char to integer
+            }
+            $results[] = $alterstmt;
         }
-    /// If the default has changed or we have used one temp field
-        if ($defaultchanged || $from_temp_fields) {
+
+    /// If the default has changed or we have performed one change in specs
+        if ($defaultchanged || $specschanged) {
             $default_clause = $this->getDefaultClause($xmldb_field);
             if ($default_clause) {
                 $sql = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause; /// Add default clause
                 $results[] = $sql;
             } else {
-                if (!$from_temp_fields) { /// Only drop default if we haven't used the temp field, i.e. old column
+                if (!$specschanged) { /// Only drop default if we haven't performed one specs change
                     $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT'; /// Drop default clause
                 }
             }
         }
-    /// If the not null has changed or we have used one temp field
-        if ($notnullchanged || $from_temp_fields) {
+
+    /// If the not null has changed
+        if ($notnullchanged) {
             if ($xmldb_field->getNotnull()) {
                 $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL';
             } else {

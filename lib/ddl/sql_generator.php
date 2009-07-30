@@ -401,7 +401,7 @@ abstract class sql_generator {
     /**
      * Given one correct xmldb_field, returns the complete SQL line to create it
      */
-    public function getFieldSQL($xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL)  {
+    public function getFieldSQL($xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL, $specify_field_name = true)  {
 
         $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
         $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
@@ -421,8 +421,11 @@ abstract class sql_generator {
             }
         }
 
+        $field = ''; // Let's accumulate the whole expression based on params and settings
     /// The name
-        $field = $this->getEncQuoted($xmldb_field->getName());
+        if ($specify_field_name) {
+            $field .= $this->getEncQuoted($xmldb_field->getName());
+        }
     /// The type and length only if we don't want to skip it
         if (!$skip_type_clause) {
         /// The type and length
