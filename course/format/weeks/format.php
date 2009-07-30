@@ -150,7 +150,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
             if ($showsection) {
-                $sectionmenu['week='.$section] = s("$strweek $section |     $weekday - $endweekday");
+                $sectionmenu[$section] = s("$strweek $section |     $weekday - $endweekday");
             }
             $section++;
             $weekdate = $nextweekdate;
@@ -244,7 +244,7 @@
 
     if (!empty($sectionmenu)) {
         echo '<div class="jumpmenu">';
-        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;', $sectionmenu,
+        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;week=', $sectionmenu,
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';
     }

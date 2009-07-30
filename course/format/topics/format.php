@@ -155,7 +155,7 @@
 		} else {
 		    $strsummary = ' - '.substr($strsummary, 0, 60).'...';
 		}
-                $sectionmenu['topic='.$section] = s($section.$strsummary);
+                $sectionmenu[$section] = s($section.$strsummary);
             }
             $section++;
             continue;
@@ -252,7 +252,7 @@
 
     if (!empty($sectionmenu)) {
         echo '<div class="jumpmenu">';
-        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;', $sectionmenu,
+        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;topic=', $sectionmenu,
                    'sectionmenu', '', get_string('jumpto'), '', '', true);
         echo '</div>';
     }
