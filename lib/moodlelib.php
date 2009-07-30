@@ -2232,17 +2232,6 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
 
 /**
- * Prints error if the user is logged in as guest user with username 'guest'.
- *
- * @return void
- */
-function require_real_user($user=NULL) {
-    if (isguestuser($user)) {
-        print_error('guestsarenotallowed');
-    }
-}
-
-/**
  * This function just makes sure a user is logged out.
  *
  * @global object
@@ -7671,7 +7660,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
     // if the words shouldn't be cut in the middle...
     if (!$exact) {
         // ...search the last occurance of a space...
-		for ($k=strlen($truncate);$k>0;$k--) {
+        for ($k=strlen($truncate);$k>0;$k--) {
             if (!empty($truncate[$k]) && ($char = $truncate[$k])) {
                 if ($char == '.' or $char == ' ') {
                     $breakpos = $k+1;
@@ -7681,23 +7670,23 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                     break;                        // character boundary.
                 }
             }
-		}
+        }
 
-		if (isset($breakpos)) {
+        if (isset($breakpos)) {
             // ...and cut the text in this position
             $truncate = substr($truncate, 0, $breakpos);
-		}
-	}
+        }
+    }
 
     // add the defined ending to the text
-	$truncate .= $ending;
+    $truncate .= $ending;
 
     // close all unclosed html-tags
     foreach ($open_tags as $tag) {
         $truncate .= '</' . $tag . '>';
     }
 
-	return $truncate;
+    return $truncate;
 }
 
 
