@@ -59,7 +59,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
     // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
     $requires->yui_lib('container');
     $requires->yui_lib('connection');
-    $requires->string_for_js('confirmation', 'moodle');
+    $requires->string_for_js('confirmation', 'admin');
     $requires->string_for_js('cancel', 'moodle');
     $requires->string_for_js('yes', 'moodle');
     $requires->js_function_call('init_help_icons'); 
