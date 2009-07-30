@@ -2453,7 +2453,9 @@ class moodle_core_renderer extends moodle_renderer_base {
     * @return string HTML fragment
     */
     public function confirm($message, $continue, $cancel) {
-        if (!($continue instanceof html_form) && !is_object($continue)) {
+        if ($continue instanceof html_form) {
+            // ok
+        } else if (is_string($continue)) {
             $continueform = new html_form();
             $continueform->url = new moodle_url($continue);
             $continue = $continueform;
@@ -2462,11 +2464,14 @@ class moodle_core_renderer extends moodle_renderer_base {
             $continueform->url = $continue;
             $continue = $continueform;
         } else {
+            var_dump($continue);
             throw new coding_exception('The continue param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
 
         }
 
-        if (!($cancel instanceof html_form) && !is_object($cancel)) {
+        if ($cancel instanceof html_form) {
+            //ok
+        } else if (is_string($cancel)) {
             $cancelform = new html_form();
             $cancelform->url = new moodle_url($cancel);
             $cancel = $cancelform;
