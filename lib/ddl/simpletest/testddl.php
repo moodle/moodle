@@ -84,6 +84,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null);
         $table->add_field('gradefloat', XMLDB_TYPE_FLOAT, '20,0', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('percentfloat', XMLDB_TYPE_FLOAT, '5,2', null, null, null, 99.9);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('course', XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'test_table0', array('course'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
@@ -94,11 +95,11 @@ class ddl_test extends UnitTestCase {
         $this->records[$table->getName()] = array(
                 (object)array(
                         'course' => '1',
-                        'secondname'   => 'second record',
+                        'secondname'   => 'first record', // > 10 cc, please don't modify. Some tests below depend of this
                         'intro'  => 'first record'),
                 (object)array(
                         'course'       => '2',
-                        'secondname'   => 'second record',
+                        'secondname'   => 'second record', // > 10 cc, please don't modify. Some tests below depend of this
                         'intro'  => 'second record'));
 
         // make sure no tables are present!
@@ -517,7 +518,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onebinary']->default_value, null);
         $this->assertEqual($columns['onebinary']->meta_type    ,'B');
 
-        // TODO: Check datetime type. Alhough unused should be fully supported.
+        // TODO: check datetime type. Although unused should be fully supported.
     }
 
     /**
@@ -554,6 +555,16 @@ class ddl_test extends UnitTestCase {
         }
         $this->assertTrue($dbman->field_exists($table, $field)); // continues existing, drop aborted
 
+        // drop one non-existing field, must return exception
+        $field = new xmldb_field('nonexistingfield');
+        $this->assertFalse($dbman->field_exists($table, $field));
+        try {
+            $dbman->drop_field($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_field_missing_exception);
+        }
+
         // drop field with simple xmldb_field, not having related indexes
         $field = new xmldb_field('forcesubscribe'); // Field has default clause
         $this->assertTrue($dbman->field_exists($table, 'forcesubscribe'));
@@ -568,86 +579,259 @@ class ddl_test extends UnitTestCase {
         $this->assertFalse($dbman->field_exists($table, $field));
     }
 
-    public function testChangeFieldType() {
+    /**
+     * Test behaviour of change_field_type()
+     */
+    public function test_change_field_type() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
+        // create table with indexed field and not indexed field to
+        // perform tests in both fields, both having defaults
         $table = new xmldb_table('test_table_cust0');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_field('anothernumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '4');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('onenumber', XMLDB_INDEX_NOTUNIQUE, array('onenumber'));
         $dbman->create_table($table);
 
         $record = new object();
         $record->onenumber = 2;
-        $DB->insert_record('test_table_cust0', $record);
+        $record->anothernumber = 4;
+        $recoriginal = $DB->insert_record('test_table_cust0', $record);
 
+        // change column from integer to varchar. Must return exception because of dependent index
         $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, '0');
-        $dbman->change_field_type($table, $field);
-
-        $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'C');
-
-        $field = new xmldb_field('onenumber');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $dbman->change_field_type($table, $field);
-
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'test');
+        try {
+            $dbman->change_field_type($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_dependency_exception);
+        }
+        // column continues being integer 10 not null default 2
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'I');
+        //TODO: chek the rest of attributes
 
-        $field = new xmldb_field('onenumber');
+        // change column from integer to varchar. Must work because column has no dependencies
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'test');
+        $dbman->change_field_type($table, $field);
+        // column is char 30 not null default 'test' now
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'C');
+        //TODO: chek the rest of attributes
+
+        // change column back from char to integer
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '8', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '5');
+        $dbman->change_field_type($table, $field);
+        // column is integer 8 not null default 5 now
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'I');
+        //TODO: chek the rest of attributes
+
+        // change column once more from integer to char
+        $field = new xmldb_field('anothernumber');
         $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, "test'n drop");
         $dbman->change_field_type($table, $field);
-
+        // column is char 30 not null default "test'n drop" now
         $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'C');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'C');
+        //TODO: chek the rest of attributes
 
-        $field = new xmldb_field('onenumber');
+        // insert one string value and try to convert to integer. Must throw exception
+        $record = new object();
+        $record->onenumber = 7;
+        $record->anothernumber = 'string value';
+        $rectodrop = $DB->insert_record('test_table_cust0', $record);
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '5');
+        try {
+            $dbman->change_field_type($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_change_structure_exception);
+        }
+        // column continues being char 30 not null default "test'n drop" now
+        $this->assertEqual($columns['anothernumber']->meta_type, 'C');
+        //TODO: chek the rest of attributes
+        $DB->delete_records('test_table_cust0', array('id' => $rectodrop)); // Delete the string record
+
+        // change the column from varchar to float
+        $field = new xmldb_field('anothernumber');
         $field->set_attributes(XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null);
         $dbman->change_field_type($table, $field);
-
+        // column is float 20,10 null default null
         $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'N');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'N'); // floats are seen as number
+        //TODO: chek the rest of attributes
 
-        $field = new xmldb_field('onenumber');
+        // change the column back from float to varchar
+        $field = new xmldb_field('anothernumber');
         $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'test');
         $dbman->change_field_type($table, $field);
-
+        // column is char 20 not null default "test" now
         $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'C');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'C');
+        //TODO: chek the rest of attributes
 
-        $field = new xmldb_field('onenumber');
+        // change the column from varchar to number
+        $field = new xmldb_field('anothernumber');
         $field->set_attributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null);
         $dbman->change_field_type($table, $field);
-
+        // column is number 20,10 null default null now
         $columns = $DB->get_columns('test_table_cust0');
-        $this->assertEqual($columns['onenumber']->meta_type, 'N');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'N');
+        //TODO: chek the rest of attributes
+
+        // change the column from number to integer
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
+        $dbman->change_field_type($table, $field);
+        // column is integer 2 null default null now
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'I');
+        //TODO: chek the rest of attributes
+
+        // change the column from number to text
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null);
+        $dbman->change_field_type($table, $field);
+        // column is char text not null default null
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'X');
+
+        // change the column back from text to number
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null);
+        $dbman->change_field_type($table, $field);
+        // column is number 20,10 null default null now
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'N');
+        //TODO: chek the rest of attributes
+
+        // change the column from number to text
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null);
+        $dbman->change_field_type($table, $field);
+        // column is char text not null default "test" now
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'X');
+        //TODO: chek the rest of attributes
+
+        // change the column back from text to integer
+        $field = new xmldb_field('anothernumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 10);
+        $dbman->change_field_type($table, $field);
+        // column is integer 10 not null default 10
+        $columns = $DB->get_columns('test_table_cust0');
+        $this->assertEqual($columns['anothernumber']->meta_type, 'I');
+        //TODO: chek the rest of attributes
+
+        // check original value has survived to all the type changes
+        $this->assertTrue($rec = $DB->get_record('test_table_cust0', array('id' => $recoriginal)));
+        $this->assertEqual($rec->anothernumber, 4);
 
         $dbman->drop_table($table);
+        $this->assertFalse($dbman->table_exists($table));
     }
 
-    public function testChangeFieldPrecision() {
+    /**
+     * Test behaviour of test_change_field_precision()
+     */
+    public function test_change_field_precision() {
+        $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
-// TODO: verify the precision is changed in db
 
         $table = $this->create_deftable('test_table1');
+
+        // fill the table with some records before dropping fields
+        $this->fill_deftable('test_table1');
+
+        // change text field from medium to big
         $field = new xmldb_field('intro');
         $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_precision($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        // cannot check the text type, only the metatype
+        $this->assertEqual($columns['intro']->meta_type, 'X');
+        //TODO: chek the rest of attributes
 
+        // change char field from 30 to 20
+        $field = new xmldb_field('secondname');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $dbman->change_field_precision($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['secondname']->meta_type, 'C');
+        //TODO: chek the rest of attributes
+
+        // change char field from 20 to 10, having contents > 10cc. Throw exception
         $field = new xmldb_field('secondname');
         $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
-        $dbman->change_field_precision($table, $field);
+        try {
+            $dbman->change_field_precision($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_change_structure_exception);
+        }
+        // No changes in field specs at all
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['secondname']->meta_type, 'C');
+        //TODO: chek the rest of attributes
 
+        // change number field from 20,10 to 10,2
         $field = new xmldb_field('grade');
         $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
         $dbman->change_field_precision($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['grade']->meta_type, 'N');
+        //TODO: chek the rest of attributes
 
-        $field = new xmldb_field('course');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        // change integer field from 10 to 6
+        $field = new xmldb_field('userid');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->change_field_precision($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['userid']->meta_type, 'I');
+        //TODO: chek the rest of attributes
 
+        // insert one record with 6-digit field
+        $record = new object();
+        $record->course = 10;
+        $record->secondname  = 'third record';
+        $record->intro  = 'third record';
+        $record->userid = 123456;
+        $DB->insert_record('test_table1', $record);
+        // change integer field from 6 to 2, contents are bigger. must drop exception
+        $field = new xmldb_field('userid');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_precision($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_change_structure_exception);
+        }
+        // No changes in field specs at all
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['userid']->meta_type, 'I');
+        //TODO: chek the rest of attributes
+
+        // change integer field from 10 to 3, in field used by index. must drop exception.
+        $field = new xmldb_field('course');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_precision($table, $field);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_dependency_exception);
+        }
+        // No changes in field specs at all
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEqual($columns['course']->meta_type, 'I');
+        //TODO: chek the rest of attributes
     }
 
     public function testChangeFieldSign() {
