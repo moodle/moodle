@@ -2231,6 +2231,16 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 }
 
 
+/**
+ * Prints error if the user is logged in as guest user with username 'guest'.
+ *
+ * @return void
+ */
+function require_real_user($user=NULL) {
+    if (isguestuser($user)) {
+        print_error('guestsarenotallowed');
+    }
+}
 
 /**
  * This function just makes sure a user is logged out.
