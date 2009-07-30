@@ -2767,11 +2767,6 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $this->prepare_event_handlers($selectmenu);
 
-        if ($selectmenu->nothinglabel) {
-            $selectmenu->options = array($selectmenu->nothingvalue => $selectmenu->nothinglabel) +
-                    $selectmenu->options;
-        }
-
         if (empty($selectmenu->id)) {
             $selectmenu->id = 'menu' . str_replace(array('[', ']'), '', $selectmenu->name);
         }
@@ -2806,47 +2801,50 @@ class moodle_core_renderer extends moodle_renderer_base {
             $html .= $this->label($selectmenu->label);
         }
 
+        if (!empty($selectmenu->helpicon) && $selectmenu->helpicon instanceof help_icon) {
+            $html .= $this->help_icon($selectmenu->helpicon);
+        }
+
         $html .= $this->output_start_tag('select', $attributes) . "\n";
 
-        if ($selectmenu->nested) {
-            foreach ($selectmenu->options as $section => $values) {
-                $html .= $this->output_start_tag('optgroup', array('label' => $section));
-                if (!is_array($values)) {
-                    var_dump($values);
-                }
-                foreach ($values as $value => $display) {
-                    $attributes = array('value' => $value);
-
-                    if ((string) $value == (string) $selectmenu->selectedvalue ||
-                            (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
-                        $attributes['selected'] = 'selected';
-                    }
-
-                    $html .= $this->output_start_tag('option', $attributes);
-
-                    if ($display === '') {
-                        $html .= $value;
-                    } else {
-                        $html .= $display;
-                    }
-
-                    $html .= $this->output_end_tag('option');
-                }
-                $html .= $this->output_end_tag('optgroup');
-            }
-        } else {
-            foreach ($selectmenu->options as $value => $display) {
-                $attributes = array('value' => $value);
-                if ((string) $value == (string) $selectmenu->selectedvalue ||
-                        (is_array($selectmenu->selectedvalue) && in_array($value, $selectmenu->selectedvalue))) {
-                    $attributes['selected'] = 'selected';
-                }
-                $html .= '    ' . $this->output_tag('option', $attributes, s($display)) . "\n";
-            }
+        foreach ($selectmenu->options as $option) {
+            // $OUTPUT->select_option detects if $option is an option or an optgroup
+            $html .= $this->select_option($option);
         }
+
         $html .= $this->output_end_tag('select') . "\n";
 
+        if (!empty($selectmenu->form) && $selectmenu->form instanceof html_form) {
+            $html = $this->form($selectmenu->form, $html);
+        }
+
         return $html;
+    }
+
+    /**
+     * Output an <option> or <optgroup> element. If an optgroup element is detected,
+     * this will recursively output its options as well.
+     *
+     * @param mixed $option a moodle_select_option or moodle_select_optgroup
+     * @return string the HTML for the <option> or <optgroup>
+     */
+    public function select_option($option) {
+        $option->prepare();
+        $this->prepare_event_handlers($option);
+
+        if ($option instanceof html_select_option) {
+            return $this->output_tag('option', array(
+                    'value' => $option->value,
+                    'class' => $option->get_classes_string(),
+                    'selected' => $option->selected), $option->text);
+        } else if ($option instanceof html_select_optgroup) {
+            $output = $this->output_start_tag('optgroup', array('label' => $option->text, 'class' => $option->get_classes_string()));
+            foreach ($option->options as $selectoption) {
+                $output .= $this->select_option($selectoption);
+            }
+            $output .= $this->output_end_tag('optgroup');
+            return $output;
+        }
     }
 
     /**
@@ -3385,7 +3383,9 @@ class moodle_html_component {
  */
 class moodle_select_menu extends moodle_html_component {
     /**
-     * @var array the choices to show in the menu. An array $value => $display.
+     * The moodle_select_menu object parses an array of options into component objects
+     * @see nested attribute
+     * @var mixed $options the choices to show in the menu. An array $value => $display, of html_select_option or of html_select_optgroup objects.
      */
     public $options;
     /**
@@ -3437,15 +3437,27 @@ class moodle_select_menu extends moodle_html_component {
      */
     public $multiple = false;
     /**
+     * Another way to use nested menu is to prefix optgroup labels with -- and end the optgroup with --
+     * Leave this setting to false if you are using the latter method.
      * @var boolean $nested if true, uses $options' keys as option headings (optgroup)
      */
     public $nested = false;
+    /**
+     * @var html_form $form An optional html_form component
+     */
+    public $form;
+    /**
+     * @var help_icon $form An optional help_icon component
+     */
+    public $helpicon;
 
     /**
      * @see moodle_html_component::prepare()
      * @return void
      */
     public function prepare() {
+        global $CFG;
+        
         // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
         if (empty($this->id)) {
             $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
@@ -3462,7 +3474,7 @@ class moodle_select_menu extends moodle_html_component {
             $this->nothinglabel = '';
         }
 
-        if (!($this->label instanceof html_label)) {
+        if (!empty($this->label) && !($this->label instanceof html_label)) {
             $label = new html_label();
             $label->text = $this->label;
             $label->for = $this->name;
@@ -3470,6 +3482,100 @@ class moodle_select_menu extends moodle_html_component {
         }
 
         $this->add_class('select');
+
+        $firstoption = reset($this->options);
+        if (is_object($firstoption)) {
+            parent::prepare();
+            return true;
+        }
+
+        $options = $this->options;
+        $this->options = array();
+
+        if ($this->nested) {
+            foreach ($options as $section => $values) {
+                $optgroup = new html_select_optgroup();
+                $optgroup->text = $section;
+
+                foreach ($values as $value => $display) {
+                    $option = new html_select_option();
+                    $option->value = s($value);
+                    $option->text = $display;
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $optgroup->options[] = $option;
+                }
+
+                $this->options[] = $optgroup;
+            }
+        } else {
+            $inoptgroup = false;
+            $optgroup = false;
+            foreach ($options as $value => $display) {
+                if ($display == '--') { /// we are ending previous optgroup
+                    $this->options[] = $optgroup;
+                    $inoptgroup = false;
+                    continue;
+                } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
+                    if (!empty($optgroup->options)) {
+                        $this->options[] = $optgroup;
+                    }
+
+                    $optgroup = new html_select_optgroup();
+                    $optgroup->text = substr($display,2); // stripping the --
+
+                    $inoptgroup = true; /// everything following will be in an optgroup
+                    continue;
+
+                } else {
+                    // Add $nothing option if there are not optgroups
+                    if ($this->nothinglabel && empty($this->options[0]) && !$inoptgroup) {
+                        $nothingoption = new html_select_option();
+                        $nothingoption->value = 0;
+                        if (!empty($this->nothingvalue)) {
+                            $nothingoption->value = $this->nothingvalue;
+                        }
+                        $nothingoption->text = $this->nothinglabel;
+                        $this->options = array($nothingoption) + $this->options;
+                    }
+
+                    $option = new html_select_option();
+                    $option->text = $display;
+
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $option->value = s($value);
+
+                    if (!empty($optionsextra[$value])) {
+                        $optstr .= ' '.$optionsextra[$value];
+                    }
+
+                    if ($inoptgroup) {
+                        $optgroup->options[] = $option;
+                    } else {
+                        $this->options[] = $option;
+                    }
+                }
+            }
+
+            if ($optgroup) {
+                $this->options[] = $optgroup;
+            }
+        }
 
         parent::prepare();
     }
@@ -3562,10 +3668,40 @@ class moodle_select_menu extends moodle_html_component {
 
         return $timerselector;
     }
+
+    /**
+     * This is a shortcut for making a select popup form.
+     * @param string $baseurl The target URL up to the point of the variable that changes
+     * @param array $options A list of value-label pairs for the popup list
+     * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
+     * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
+     * @param string $selected The option that is initially selected
+     * @return moodle_select_menu A menu initialised as a popup form.
+     */
+    public function make_popup_form($baseurl, $options, $formid, $submitvalue='', $selected=null) {
+        $selectmenu = self::make($options, 'jump', $selected);
+        $selectmenu->form = new html_form();
+        $selectmenu->form->id = $formid;
+        $selectmenu->form->method = 'get';
+        $selectmenu->form->add_class('popupform');
+        $selectmenu->form->url = new moodle_url($baseurl);
+        $selectmenu->form->button->text = get_string('go');
+
+        if (!empty($submitvalue)) {
+            $selectmenu->form->button->text = $submitvalue;
+        }
+
+        $selectmenu->id = $formid . '_jump';
+        $selectmenu->baseurl = $baseurl;
+
+        $selectmenu->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $selectmenu->id));
+
+        return $selectmenu;
+    }
 }
 
 /**
- * This class represents how a block appears on a page.
+ * This class represents a label element
  *
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -3581,7 +3717,75 @@ class html_label extends moodle_html_component {
      */
     public $for;
 
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
     public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_label must have a $text value.');
+        }
+        parent::prepare();
+    }
+}
+
+/**
+ * This class represents a select option element
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_select_option extends moodle_html_component {
+    /**
+     * @var string $value The value of this option (will be sent with form)
+     */
+    public $value;
+    /**
+     * @var string $text The display value of the option
+     */
+    public $text;
+    /**
+     * @var boolean $selected Whether or not this option is selected
+     */
+    public $selected = false;
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_select_option requires a $text value.');
+        }
+        parent::prepare();
+    }
+}
+
+/**
+ * This class represents a select optgroup element
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_select_optgroup extends moodle_html_component {
+    /**
+     * @var string $text The display value of the optgroup
+     */
+    public $text;
+    /**
+     * @var array $options An array of html_select_option objects
+     */
+    public $options = array();
+
+    public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_select_optgroup requires a $text value.');
+        }
+        if (empty($this->options)) {
+            throw new coding_exception('html_select_optgroup requires at least one html_select_option object');
+        }
         parent::prepare();
     }
 }
@@ -4041,7 +4245,7 @@ class help_icon extends moodle_html_component {
     }
 
     public static function make_scale_menu($courseid, $scale) {
-        $helpbutton = new help_button();
+        $helpbutton = new help_icon();
         $strscales = get_string('scales');
         $helpbutton->image->alt = $scale->name;
         $helpbutton->link->url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));

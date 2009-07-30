@@ -2625,11 +2625,13 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     $form->id = $formid;
 
     if ($jsconfirmmessage) {
-        $confirmaction = new component_action('click', 'confirm_dialog', array($jsconfirmmessage));
+        $confirmaction = new component_action('click', 'confirm_dialog', array('message' => $jsconfirmmessage));
         $form->button->add_action($confirmaction);
     }
 
     $output = $OUTPUT->button($form);
+    
+    $icon = new action_icon();
 
     if ($return) {
         return $output;
@@ -2843,8 +2845,8 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
 
     $helpicon = new help_icon();
     $helpicon->page = $page;
-    $helpicon->module = $module;
     $helpicon->text = $title;
+    $helpicon->module = $module;
     $helpicon->linktext = $linktext;
 
     // If image is true, the defaults are handled by the helpicon's prepare method
@@ -3252,16 +3254,16 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * @param int $currenttime A default timestamp in GMT
  * @param int $step minute spacing
  * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return 
+ * @return string|bool Depending on value of $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
     // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($timeselector).');
-    global $OUTPUT;    
+    global $OUTPUT;
     $hourselector = moodle_select_menu::make_time_selector('hours', $hour, $currenttime);
     $minuteselector = moodle_select_menu::make_time_selector('minutes', $minute, $currenttime, $step);
-    
+
     $output = $OUTPUT->select_menu($hourselector) . $OUTPUT->select_menu($minuteselector);
-    
+
     if ($return) {
         return $output;
     } else {
@@ -3284,14 +3286,94 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
     // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($dateselector).');
-    global $OUTPUT;    
-    
+    global $OUTPUT;
+
     $dayselector = moodle_select_menu::make_time_selector('days', $day, $currenttime);
     $monthselector = moodle_select_menu::make_time_selector('months', $month, $currenttime);
     $yearselector = moodle_select_menu::make_time_selector('years', $year, $currenttime);
-    
+
     $output = $OUTPUT->select_menu($dayselector) . $OUTPUT->select_menu($monthselector) . $OUTPUT->select_menu($yearselector);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Implements a complete little form with a dropdown menu.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * When JavaScript is on selecting an option from the dropdown automatically
+ * submits the form (while avoiding the usual acessibility problems with this appoach).
+ * With JavaScript off, a 'Go' button is printed.
+ *
+ * @todo Finish documenting this function
+ *
+ * @global object
+ * @global object
+ * @param string $baseurl The target URL up to the point of the variable that changes
+ * @param array $options A list of value-label pairs for the popup list
+ * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
+ * @param string $selected The option that is initially selected
+ * @param string $nothing The label for the "no choice" option
+ * @param string $help The name of a help page if help is required
+ * @param string $helptext The name of the label for the help button
+ * @param boolean $return Indicates whether the function should return the HTML
+ *         as a string or echo it directly to the page being rendered
+ * @param string $targetwindow The name of the target page to open the linked page in.
+ * @param string $selectlabel Text to place in a [label] element - preferred for accessibility.
+ * @param array $optionsextra an array with the same keys as $options. The values are added within the corresponding <option ...> tag.
+ * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
+ * @param boolean $disabled If true, the menu will be displayed disabled.
+ * @param boolean $showbutton If true, the button will always be shown even if JavaScript is available
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
+    $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
+    global $OUTPUT;
+
+    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select_menu($dateselector).');
+
+    if (!empty($optionsextra)) {
+        debugging('the optionsextra param has been deprecated in popup_form, it will be ignored.', DEBUG_DEVELOPER);
+    }
+
+    if (empty($options)) {
+        return '';
+    }
+    $selectmenu = moodle_select_menu::make_popup_form($baseurl, $options, $formid, $submitvalue, $selected);
+    $selectmenu->disabled = $disabled;
     
+    // Extract the last param of the baseurl for the name of the select
+    if (preg_match('/([a-z_]*)=$/', $baseurl, $matches)) {
+        $selectmenu->name = $matches[1];
+        $selectmenu->form->url->remove_params(array($matches[1]));
+    }
+
+    if ($nothing == 'choose') {
+        $selectmenu->nothinglabel = '';
+    } else {
+        $selectmenu->nothinglabel = $nothing;
+    }
+
+    if ($selectlabel) {
+        $selectmenu->label = new html_label();
+        $selectmenu->label->text = $selectlabel;
+        $selectmenu->label->for = $selectmenu->id;
+    }
+
+    if ($help) {
+        $selectmenu->helpicon = new help_icon();
+        $selectmenu->helpicon->page = $help;
+        $selectmenu->helpicon->text = $helptext;
+        $selectmenu->helpicon->linktext = false;
+    }
+
+    $output = $OUTPUT->select_menu($selectmenu);
+
     if ($return) {
         return $output;
     } else {
