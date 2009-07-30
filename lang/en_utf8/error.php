@@ -424,6 +424,7 @@ $string['unknowaction']= 'Unknown action!';
 $string['unknowcategory'] = 'Category not known!';
 $string['unknowcontext'] = 'This is an unknown context ($a) in get_child_contexts!';
 $string['unknowformat'] = 'Format not known ($a)';
+$string['unknownblockregion'] = 'The block region \'$a\' is not recognised on this page.';
 $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['unknowncourseidnumber'] = 'Unknown Course ID \"$a\"';
 $string['unknowncourserequest'] = 'Unknown course request';

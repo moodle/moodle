@@ -82,6 +82,11 @@ class block_not_on_page_exception extends moodle_exception {
  * @since     Moodle 2.0
  */
 class block_manager {
+    /**
+     * The UI normally only shows block weights between -MAX_WEIGHT and MAX_WEIGHT,
+     * although other weights are valid.
+     */
+    const MAX_WEIGHT = 10;
 
 /// Field declarations =========================================================
 
@@ -587,6 +592,67 @@ class block_manager {
             foreach ($regionblocks as $blockname) {
                 $this->add_block($blockname, $region, $weight, false, $pagetypepattern, $subpagepattern);
                 $weight += 1;
+            }
+        }
+    }
+
+    /**
+     * Move a block to a new position on this page.
+     *
+     * If this block cannot appear on any other pages, then we change defaultposition/weight
+     * in the block_instances table. Otherwise we just set the postition on this page.
+     *
+     * @param $blockinstanceid the block instance id.
+     * @param $newregion the new region name.
+     * @param $newweight the new weight.
+     */
+    public function reposition_block($blockinstanceid, $newregion, $newweight) {
+        global $DB;
+
+        $this->check_region_is_known($newregion);
+        $inst = $this->find_instance($blockinstanceid);
+
+        $bi = $inst->instance;
+        if ($bi->weight == $bi->defaultweight && $bi->region == $bi->defaultregion &&
+                !$bi->showinsubcontexts && strpos($bi->pagetypepattern, '*') === false &&
+                (!$this->page->subpage || $bi->subpagepattern)) {
+
+            // Set default position
+            $newbi = new stdClass;
+            $newbi->id = $bi->id;
+            $newbi->defaultregion = $newregion;
+            $newbi->defaultweight = $newweight;
+            $DB->update_record('block_instances', $newbi);
+
+            if ($bi->blockpositionid) {
+                $bp = new stdClass;
+                $bp->id = $bi->blockpositionid;
+                $bp->region = $newregion;
+                $bp->weight = $newweight;
+                $DB->update_record('block_positions', $bp);
+            }
+
+        } else {
+            // Just set position on this page.
+            $bp = new stdClass;
+            $bp->region = $newregion;
+            $bp->weight = $newweight;
+
+            if ($bi->blockpositionid) {
+                $bp->id = $bi->blockpositionid;
+                $DB->update_record('block_positions', $bp);
+
+            } else {
+                $bp->blockinstanceid = $bi->id;
+                $bp->contextid = $this->page->context->id;
+                $bp->pagetype = $this->page->pagetype;
+                if ($this->page->subpage) {
+                    $bp->subpage = $this->page->subpage;
+                } else {
+                    $bp->subpage = '';
+                }
+                $bp->visible = $bi->visible;
+                $DB->insert_record('block_positions', $bp);
             }
         }
     }
@@ -1105,8 +1171,63 @@ class block_manager {
             return false;
         }
 
-        // Work out if we should be setting defaultposition or just position on this page.
-        // TODO$block = $this->
+        if (!$this->is_known_region($newregion)) {
+            throw new moodle_exception('unknownblockregion', '', $this->page->url, $newregion);
+        }
+
+        // Move this block. This may involve moving other nearby blocks.
+        $blocks = $this->birecordsbyregion[$newregion];
+
+        // First we find the nearest gap in the list of weights.
+        $spareweights = array();
+        $usedweights = array();
+        for ($i = -self::MAX_WEIGHT; $i <= self::MAX_WEIGHT; $i++) {
+            $spareweights[$i] = $i;
+            $usedweights[$i] = array();
+        }
+        foreach ($blocks as $bi) {
+            if ($bi->id == $block->instance->id) {
+                continue;
+            }
+            unset($spareweights[$bi->weight]);
+            $usedweights[$bi->weight][] = $bi->id;
+        }
+
+        $bestdistance = max(abs($newweight - self::MAX_WEIGHT), abs($newweight + self::MAX_WEIGHT)) + 1;
+        $bestgap = null;
+        foreach ($spareweights as $spareweight) {
+            if (abs($newweight - $spareweight) < $bestdistance) {
+                $bestdistance = abs($newweight - $spareweight);
+                $bestgap = $spareweight;
+            }
+        }
+
+        // If there is no gap, we have to go outside -self::MAX_WEIGHT .. self::MAX_WEIGHT.
+        if (is_null($bestgap)) {
+            $bestgap = self::MAX_WEIGHT + 1;
+            while (!empty($usedweights[$bestgap])) {
+                $bestgap++;
+            }
+        }
+
+        // Now we know the gap we are aiming for, so move all the blocks along.
+        if ($bestgap < $newweight) {
+            $newweight = floor($newweight);
+            for ($weight = $bestgap + 1; $weight <= $newweight; $weight++) {
+                foreach ($usedweights[$weight] as $biid) {
+                    $this->reposition_block($biid, $newregion, $weight - 1);
+                }
+            }
+            $this->reposition_block($block->instance->id, $newregion, $newweight);
+        } else {
+            $newweight = ceil($newweight);
+            for ($weight = $bestgap - 1; $weight >= $newweight; $weight--) {
+                foreach ($usedweights[$weight] as $biid) {
+                    $this->reposition_block($biid, $newregion, $weight + 1);
+                }
+            }
+            $this->reposition_block($block->instance->id, $newregion, $newweight);
+        }
 
         $this->page->ensure_param_not_in_url('bui_moveid');
         $this->page->ensure_param_not_in_url('bui_newregion');
