@@ -113,6 +113,14 @@ class moodle_simplepie_file extends SimplePie_File
         $curl = new curl();
         $curl->setopt(array('CURLOPT_HEADER'=>true));
 
+        if ($headers !== null) {
+            // translate simplepie headers to those class curl expects
+            foreach($headers as $headername => $headervalue){
+                $headerstr = "{$headername}: {$headervalue}";
+                $curl->setHeader($headerstr);
+            }
+        }
+
         $this->headers = $curl->get($url);
 
         if ($curl->error) {
