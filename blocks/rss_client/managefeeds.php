@@ -138,7 +138,7 @@ foreach($feeds as $feed) {
     $deleteaction->link->title = get_string('delete');
     $deleteaction->image->src = $OUTPUT->old_icon_url('t/delete');
     $deleteaction->image->alt = get_string('delete');
-    $deleteaction->link->add_action('click', 'confirm_dialog', array(get_string('deletefeedconfirm', 'block_rss_client')));
+    $deleteaction->link->add_action('click', 'confirm_dialog', array('message' => get_string('deletefeedconfirm', 'block_rss_client')));
 
     $feedicons = $OUTPUT->action_icon($editaction) . ' ' . $OUTPUT->action_icon($deleteaction);
 
