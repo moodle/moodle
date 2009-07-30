@@ -211,8 +211,6 @@ class postgres_sql_generator extends sql_generator {
         $defaultchanged = true;  //By default, assume that the column default has changed
         $notnullchanged = true;  //By default, assume that the column notnull has changed
 
-        $from_temp_fields = false; //By default don't assume we are going to use temporal fields
-
     /// Detect if we are changing the type of the column
         if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') ||
             ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
