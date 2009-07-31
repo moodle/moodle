@@ -2379,7 +2379,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function blocks_for_region($region) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
-        
+
         $output = '';
         foreach ($blockcontents as $bc) {
             if ($bc instanceof block_contents) {
@@ -2727,14 +2727,18 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output = $this->image($userpic->image);
 
-        if (!empty($userpic->link) && !empty($userpic->url)) {
+        if (!empty($userpic->url)) {
             $actions = $userpic->get_actions();
-            if (!empty($actions)) {
+            if ($userpic->popup && !empty($actions)) {
                 $link = new html_link();
                 $link->url = $userpic->url;
                 $link->text = fullname($userpic->user);
-                $link->add_action($actions[0]);
-                $output = $this->link_to_popup($link);
+                $link->title = fullname($userpic->user);
+
+                foreach ($actions as $action) {
+                    $link->add_action($action);
+                }
+                $output = $this->link_to_popup($link, $userpic->image);
             } else {
                 $output = $this->link(prepare_url($userpic->url), $output);
             }
@@ -4550,6 +4554,10 @@ class user_picture extends moodle_html_component {
      * @var boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
      */
     public $alttext = true;
+    /**
+     * @var boolean $popup Whether or not to open the link in a popup window
+     */
+    public $popup = false;
 
     /**
      * Constructor: sets up the other components in case they are needed
@@ -4610,8 +4618,12 @@ class user_picture extends moodle_html_component {
             $this->user = $DB->get_record('user', array('id' => $this->user), 'id,firstname,lastname,imagealt');
         }
 
-        if (!empty($this->link) && empty($this->url)) {
+        if ($this->url === true) {
             $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $this->courseid));
+        }
+
+        if (!empty($this->url) && $this->popup) {
+            $this->add_action(new popup_action('click', $this->url));
         }
 
         if (empty($this->size)) {

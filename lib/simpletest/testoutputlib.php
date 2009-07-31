@@ -1187,4 +1187,23 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithContents('option', 'value3'), $html);
         $this->assert(new ContainsTagWithContents('option', 'value4'), $html);
     }
+    
+    public function test_userpicture() {
+        global $CFG;
+        // Set up the user with the required fields
+        $user = new stdClass();
+        $user->firstname = 'Test';
+        $user->lastname = 'User';
+        $user->picture = false;
+        $user->imagealt = false;
+        $user->id = 1;
+        $userpic = new user_picture();
+        $userpic->user = $user;
+        $userpic->courseid = 1;
+        $userpic->url = true;
+        // Setting popup to true adds JS for the link to open in a popup
+        $userpic->popup = true;
+        $html = $this->renderer->user_picture($userpic);
+        $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Test User', 'href' => $CFG->wwwroot.'/user/view.php?id=1&course=1')), $html);
+    }
 }
