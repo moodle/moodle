@@ -169,7 +169,7 @@ function rss_file_name($modname, $mod) {
  * @global object
  */
 function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     $status = true;
     $result = "";
