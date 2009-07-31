@@ -171,7 +171,7 @@ class quiz_overview_report extends quiz_default_report {
             $this->regrade_all_needed($quiz, $groupstudents);
         }
         if ($regradeall || $regradealldry || $regradealldrydo){
-            redirect($reporturl->out(false, $displayoptions), '', 5);
+            redirect($reporturl->out(false, $displayoptions, false), '', 5);
         }
         
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used

@@ -413,7 +413,7 @@ class question_category_object {
         if ($return) {
             return $categoryid;
         } else {
-            redirect($this->pageurl->out());//always redirect after successful action
+            redirect($this->pageurl);//always redirect after successful action
         }
     }
 
@@ -469,7 +469,7 @@ class question_category_object {
 
         // Then redirect to an appropriate place.
         if ($oldcat->contextid == $tocontextid) { // not moving contexts
-            redirect($this->pageurl->out());
+            redirect($this->pageurl);
         } else {
             redirect($CFG->wwwroot.'/question/contextmove.php?' .
                     $this->pageurl->get_query_string(array(

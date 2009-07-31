@@ -443,7 +443,7 @@ class moodle_list {
             return false;
         }
 
-        redirect($this->pageurl->out());
+        redirect($this->pageurl);
     }
 
     /**

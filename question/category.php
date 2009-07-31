@@ -54,30 +54,30 @@
         $qcobject->moveform = new question_move_form($thispageurl,
                     array('contexts'=>array($categorycontext), 'currentcat'=>$param->delete));
         if ($qcobject->moveform->is_cancelled()){
-            redirect($thispageurl->out());
+            redirect($thispageurl);
         }  elseif ($formdata = $qcobject->moveform->get_data()) {
             /// 'confirm' is the category to move existing questions to
             list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
             $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
             $thispageurl->remove_params('cat', 'category');
-            redirect($thispageurl->out());
+            redirect($thispageurl);
         }
     } else {
         $questionstomove = 0;
     }
     if ($qcobject->catform->is_cancelled()) {
-        redirect($thispageurl->out());
+        redirect($thispageurl);
     } else if ($catformdata = $qcobject->catform->get_data()) {
         if (!$catformdata->id) {//new category
             $qcobject->add_category($catformdata->parent, $catformdata->name, $catformdata->info);
         } else {
             $qcobject->update_category($catformdata->id, $catformdata->parent, $catformdata->name, $catformdata->info);
         }
-        redirect($thispageurl->out());
+        redirect($thispageurl);
     } else if ((!empty($param->delete) and (!$questionstomove) and confirm_sesskey())) {
         $qcobject->delete_category($param->delete);//delete the category now no questions to move
         $thispageurl->remove_params('cat', 'category');
-        redirect($thispageurl->out());
+        redirect($thispageurl);
     }
     $navlinks = array();
     if ($cm!==null) {

@@ -86,7 +86,7 @@ class quiz_statistics_report extends quiz_default_report {
                     print_error('errordeleting', 'quiz_statistics', '', 'quiz_question_response_stats');
                 }
             }
-            redirect($reporturl->out());
+            redirect($reporturl);
         }
         
         

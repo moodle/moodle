@@ -56,7 +56,7 @@
         unset($SESSION->quizpreview);
         // Redirect to ourselves but with continue=1; prevents refreshing the page
         // from restarting an attempt (needed so that random questions don't change)
-        redirect($url->out());
+        redirect($url);
     }
     // Load the question information
     if (!$questions = $DB->get_records('question', array('id' =>  $id))) {

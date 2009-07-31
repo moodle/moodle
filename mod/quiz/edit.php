@@ -190,13 +190,13 @@ foreach ($params as $key => $value) {
 if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
     $quiz->questions = quiz_move_question_up($quiz->questions, $up);
     quiz_save_new_layout($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
     $quiz->questions = quiz_move_question_down($quiz->questions, $down);
     quiz_save_new_layout($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -212,7 +212,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -226,7 +226,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     }
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl,
@@ -307,7 +307,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL) || $newrandomcategory) && co
 
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (optional_param('addnewpagesafterselected', null) && !empty($selectedquestionids) && confirm_sesskey()) {
@@ -315,21 +315,21 @@ if (optional_param('addnewpagesafterselected', null) && !empty($selectedquestion
         $quiz->questions = quiz_add_page_break_after($quiz->questions, $questionid);
     }
     quiz_save_new_layout($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 $addpage = optional_param('addpage', false, PARAM_INT);
 if ($addpage !== false && confirm_sesskey()) {
     $quiz->questions = quiz_add_page_break_at($quiz->questions, $addpage);
     quiz_save_new_layout($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 $deleteemptypage = optional_param('deleteemptypage', false, PARAM_INT);
 if (($deleteemptypage !== false) && confirm_sesskey()) {
     $quiz->questions = quiz_delete_empty_page($quiz->questions, $deleteemptypage);
     quiz_save_new_layout($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 $remove = optional_param('remove', false, PARAM_INT);
@@ -337,7 +337,7 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     quiz_remove_question($quiz, $remove);
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedquestionids) && confirm_sesskey()) {
@@ -346,7 +346,7 @@ if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedq
     }
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -426,7 +426,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         quiz_set_grade($maxgrade, $quiz);
     }
 
-    redirect($thispageurl->out());
+    redirect($thispageurl);
 }
 
 $questionbank->process_actions($thispageurl, $cm);
