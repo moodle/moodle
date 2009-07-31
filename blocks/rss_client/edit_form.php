@@ -33,7 +33,7 @@ class block_rss_client_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
         global $CFG, $DB, $USER;
 
-        // Fields for editing HTML block title and contents.
+        // Fields for editing block contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('selectyesno', 'config_display_description', get_string('displaydescriptionlabel', 'block_rss_client'));
@@ -68,7 +68,7 @@ class block_rss_client_edit_form extends block_edit_form {
                     get_string('feedsaddedit', 'block_rss_client') . '</a>');
         }
 
-        $mform->addElement('selectyesno', 'config_title', get_string('uploadlabel'));
+        $mform->addElement('text', 'config_title', get_string('uploadlabel'));
         $mform->setType('config_title', PARAM_NOTAGS);
 
         $mform->addElement('selectyesno', 'config_block_rss_client_show_channel_link', get_string('clientshowchannellinklabel', 'block_rss_client'));
