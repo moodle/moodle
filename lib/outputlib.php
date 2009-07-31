@@ -2536,7 +2536,9 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $this->prepare_event_handlers($form);
 
-        if (empty($contents)) {
+        if (empty($contents) && !empty($form->button)) {
+            debugging("You probably want to use \$OUTPUT->button(\$form), please read that function's documentation", DEBUG_DEVELOPER);
+        } else if (empty($contents)) {
             $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
         }
 
