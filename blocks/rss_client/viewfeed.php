@@ -101,7 +101,7 @@ echo '<table align="center" width="50%" cellspacing="1">'."\n";
 echo '<tr><td colspan="2"><strong>'. $feedtitle .'</strong></td></tr>'."\n";
 foreach ($rss->get_items() as $item) {
     echo '<tr><td valign="middle">'."\n";
-    echo '<a href="'. $item->get_description() .'" target="_blank"><strong>'. $item->get_title();
+    echo '<a href="'. $item->get_link() .'" target="_blank"><strong>'. $item->get_title();
     echo '</strong></a>'."\n";
     echo '</td>'."\n";
     echo '</tr>'."\n";
