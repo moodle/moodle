@@ -356,6 +356,15 @@ class block_base {
         $bc->blockinstanceid = $this->instance->id;
         $bc->blockpositionid = $this->instance->blockpositionid;
 
+        if ($this->instance->visible) {
+            $bc->content = $this->formatted_contents($output);
+            if (!empty($this->content->footer)) {
+                $bc->footer = $this->content->footer;
+            }
+        } else {
+            $bc->add_class('invisible');
+        }
+
         $attributes = $this->html_attributes();
         if (isset($attributes['id'])) {
             $bc->id = $attributes['id'];
@@ -369,15 +378,6 @@ class block_base {
 
         if (!$this->hide_header()) {
             $bc->title = $this->title;
-        }
-
-        if ($this->instance->visible) {
-            $bc->content = $this->formatted_contents($output);
-            if (!empty($this->content->footer)) {
-                $bc->footer = $this->content->footer;
-            }
-        } else {
-            $bc->add_class('invisible');
         }
 
         if ($this->page->user_is_editing()) {
