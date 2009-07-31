@@ -74,7 +74,11 @@ class feed_edit_form extends moodleform {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $rss = new moodle_simplepie($data['url']);
+        $rss =  new moodle_simplepie();
+        // set timeout for longer than normal to try and grab the feed
+        $rss->set_timeout(10);
+        $rss->set_feed_url($data['url']);
+        $rss->init();
 
         if ($rss->error()) {
             $errors['url'] = get_string('errorloadingfeed', 'block_rss_client', $rss->error());
