@@ -125,7 +125,7 @@ $urlparams = array('rssid' => $rssid);
 $manageparams = array();
 if ($courseid) {
     $urlparams['courseid'] = $courseid;
-    $manageparams[] = 'courseid=$courseid';
+    $manageparams[] = 'courseid=' . $courseid;
 }
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
