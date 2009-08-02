@@ -499,6 +499,9 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             $cleanValue = null;
             foreach ($value as $v) {
                 foreach ($this->_optGroups as $optGroup){
+                    if (empty($optGroup['options'])) {
+                        continue;
+                    }
                     for ($i = 0, $optCount = count($optGroup['options']); $i < $optCount; $i++) {
                         if ($v == $optGroup['options'][$i]['attr']['value']) {
                             $cleanValue[] = $v;
