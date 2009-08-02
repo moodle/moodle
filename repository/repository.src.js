@@ -1041,7 +1041,7 @@ repository_client.end = function(client_id, obj) {
         }
         fp.target.onchange();
     }
-    obj.maxfileslimit = (repository_client.files[client_id]>=fp.maxfiles);
+    obj.maxfileslimit = (fp.maxfiles!=-1 && repository_client.files[client_id]>=fp.maxfiles);
     fp.formcallback(obj);
     fp.hide();
     repository_client.viewfiles(client_id);
