@@ -58,10 +58,10 @@
         $type = repository::get_type_by_typename($new);
     } else if (!empty($edit)){
         $instance = repository::get_instance($edit);
-        $type = repository::get_type_by_id($instance->typeid);
+        $type = repository::get_type_by_id($instance->options['typeid']);
     } else if (!empty($delete)){
         $instance = repository::get_instance($delete);
-        $type = repository::get_type_by_id($instance->typeid);
+        $type = repository::get_type_by_id($instance->options['typeid']);
     }
     if (isset($type) && ( !$type->get_visible() || (!$type->get_contextvisibility($context->contextlevel)) ) ) {
         print_error('typenotvisible', 'repository', $baseurl);
@@ -108,11 +108,11 @@
             if ($instance->readonly) {
                 throw new repository_exception('readonlyinstance', 'repository');
             }
-            $instancetype = repository::get_type_by_id($instance->typeid);
+            $instancetype = repository::get_type_by_id($instance->options['typeid']);
             $classname = 'repository_' . $instancetype->get_typename();
             $configs  = $instance->get_instance_option_names();
             $plugin = $instancetype->get_typename();
-            $typeid = $instance->typeid;
+            $typeid = $instance->options['typeid'];
         } else {
             $plugin = $new;
             $typeid = $new;
