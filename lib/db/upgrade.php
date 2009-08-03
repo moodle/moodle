@@ -2441,7 +2441,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             // Find a category to put the courses in:
             $categories = $DB->get_records_sql('SELECT * ' .
                     'FROM {course_categories} ' .
-                    'WHERE name ilike \'misc%\' ' .
+                    'WHERE name like \'misc%\' ' .
                     'ORDER BY id asc');
             if (!empty($categories)) {
                 $category = array_shift($categories);
