@@ -109,7 +109,9 @@
         <FIELD NAME="enrolenddate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="enrolstartdate" NEXT="enrol"/>
         <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="enrolenddate" NEXT="defaultrole"/>
         <FIELD NAME="defaultrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The default role given to participants who self-enrol" PREVIOUS="enrol" NEXT="enablecompletion"/>
-        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="defaultrole"/>
+        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="defaultrole" NEXT="mnetpeer"/>
+        <FIELD NAME="mnetpeer" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="enablecompletion" NEXT="remotecourseid"/>
+        <FIELD NAME="remotecourseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="mnetpeer"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -117,7 +119,8 @@
       <INDEXES>
         <INDEX NAME="category" UNIQUE="false" FIELDS="category" NEXT="idnumber"/>
         <INDEX NAME="idnumber" UNIQUE="false" FIELDS="idnumber" PREVIOUS="category" NEXT="shortname"/>
-        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname" PREVIOUS="idnumber"/>
+        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname" PREVIOUS="idnumber" NEXT="coursecontent"/>
+        <INDEX NAME="coursecontent" UNIQUE="true" FIELDS="remotecourseid, mnetpeer" PREVIOUS="shortname"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_categories" COMMENT="Course categories" PREVIOUS="course" NEXT="course_display">
@@ -2217,7 +2220,7 @@
         <INDEX NAME="blockinstanceid-contextid-pagetype-subpage" UNIQUE="true" FIELDS="blockinstanceid, contextid, pagetype, subpage"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_positions">
+    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_positions" NEXT="mnet_role_management_queue">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="commentarea"/>
@@ -2231,6 +2234,48 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="mnet_role_management_queue" COMMENT="track users who need their role updated on remote courses" PREVIOUS="comments" NEXT="mnet_role_mapping">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="localcourse"/>
+        <FIELD NAME="localcourse" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="mnetpeer"/>
+        <FIELD NAME="mnetpeer" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="localcourse" NEXT="remotecourseid"/>
+        <FIELD NAME="remotecourseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="mnetpeer"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-localcourse-mnetpeer-remotecourseid" UNIQUE="true" FIELDS="userid, localcourse, mnetpeer, remotecourseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="mnet_role_mapping" COMMENT="how our local roles map to roles on remote sites" PREVIOUS="mnet_role_management_queue" NEXT="mnet_role_published">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="mnethost"/>
+        <FIELD NAME="mnethost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="localrole"/>
+        <FIELD NAME="localrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="mnethost" NEXT="remoterole"/>
+        <FIELD NAME="remoterole" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="localrole"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="mnethost-localrole" UNIQUE="true" FIELDS="mnethost, localrole"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="mnet_role_published" COMMENT="Which roles we allow remote admins to allocate" PREVIOUS="mnet_role_mapping">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="mnethost"/>
+        <FIELD NAME="mnethost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="localrole"/>
+        <FIELD NAME="localrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="mnethost"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="mnethost-localrole" UNIQUE="true" FIELDS="mnethost, localrole"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

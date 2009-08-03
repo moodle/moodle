@@ -41,6 +41,8 @@ $strmnetservices   = get_string('mnetservices', 'mnet');
 $strmnetlog        = get_string('mnetlog', 'mnet');
 $strmnetedithost   = get_string('reviewhostdetails', 'mnet');
 $strmnetthemes     = get_string('mnetthemes', 'mnet');
+$strrolespermitted = get_string('mnetrolespermitted');
+$strrolemapping = get_string('mnetrolemapping');
 
 if (!isset($CFG->mnet_dispatcher_mode)) set_config('mnet_dispatcher_mode', 'off');
 

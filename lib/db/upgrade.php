@@ -2362,11 +2362,160 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009072400);
     }
 
+
+    if ($result && $oldversion < 2009073101) {
+        // Add details to record that course is a shell of remote mnet peer, which course on that peer supplies the content
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('mnetpeer', XMLDB_TYPE_INTEGER, '10', false, null, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('remotecourseid', XMLDB_TYPE_INTEGER, '10', false, null, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Each mnetpeer/remote course can only be mapped to by one local course:
+        $index = new xmldb_index('coursecontent', XMLDB_INDEX_UNIQUE, array('remotecourseid','mnetpeer'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Place to track which mnet peer we need to talk to about recent changes:
+        $table = new xmldb_table('mnet_role_management_queue');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('localcourse', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('mnetpeer', XMLDB_TYPE_INTEGER, '10', false, null, null, null, null, null);
+        $table->add_field('remotecourseid', XMLDB_TYPE_INTEGER, '10', false, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('userid-localcourse-mnetpeer-remotecourseid', XMLDB_INDEX_UNIQUE, array('userid', 'localcourse', 'mnetpeer', 'remotecourseid'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Create table to record how our local roles map to roles on remote sites
+        $table = new XMLDBTable('mnet_role_mapping');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('mnethost', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('localrole', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('remoterole', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('mnethost-localrole', XMLDB_INDEX_UNIQUE, array('mnethost', 'localrole'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Table to record which roles we allow remote admins to allocate
+        $table = new XMLDBTable('mnet_role_published');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('mnethost', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('localrole', XMLDB_TYPE_INTEGER, '10', false, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('mnethost-localrole', XMLDB_INDEX_UNIQUE, array('mnethost', 'localrole'));
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        // Need to convert old mnet's records of "enrol_courses" (remote courses) and "enrol_assignments"
+        // (enrolments of local users in remote courses) to
+        // courses and role assignments.
+        // And set default role sharing and role mapping to match pre-upgrade setup
+        $existinghostssql =
+                'SELECT h2s.hostid, h2s.hostid as hostid2 ' .
+                'FROM {mnet_service} s ' .
+                ' INNER JOIN {mnet_host2service} h2s on h2s.serviceid=s.id ' .
+                'WHERE s.name=\'sso_sp\' and h2s.publish = 1 ';
+        $existingssohosts = $DB->get_records_sql($existinghostssql);
+        if ($existingssohosts) {
+            $publication = new stdclass;
+            $publication->localrole = $CFG->defaultcourseroleid;
+            $mapping = new stdclass;
+            $mapping->localrole = $CFG->defaultcourseroleid;
+            $mapping->remoterole = 0; //For now assume that the other mnet peer isn't updated too
+
+            require_once($CFG->dirroot . '/course/lib.php');
+
+            // Find a category to put the courses in:
+            $categories = $DB->get_records_sql('SELECT * ' .
+                    'FROM {course_categories} ' .
+                    'WHERE name ilike \'misc%\' ' .
+                    'ORDER BY id asc');
+            if (!empty($categories)) {
+                $category = array_shift($categories);
+            } else {
+                $categorysql = 'SELECT * ' .
+                        'FROM ' . $CFG->prefix . 'course_categories ' .
+                        'ORDER BY id asc';
+                $category = array_shift($DB->get_records_sql($categorysql));
+            }
+
+            foreach ($existingssohosts as $existingssohost) {
+                $publication->mnethost = $existingssohost->hostid;
+                $mapping->mnethost = $existingssohost->hostid;
+                $DB->insert_record('mnet_role_published', $publication);
+                $DB->insert_record('mnet_role_mapping', $mapping);
+
+                $enrolledcoursessql = 'SELECT distinct courseid ' .
+                        'FROM {mnet_enrol_assignments} ' .
+                        'WHERE ' .
+                        " (enroltype like 'mnet' or enroltype like '')" .
+                        ' AND hostid = ? ';
+                $params = array($existingssohost->hostid);
+                $activecoursessql =
+                        'SELECT '.
+                        ' c.id, c.remoteid, c.fullname, c.shortname,' .
+                        ' c.idnumber, c.summary, c.remoteid ' .
+                        'FROM {mnet_enrol_course} c ' .
+                        ' INNER JOIN ( ' . $enrolledcoursessql . ' ) as ec on ec.courseid = c.id ' .
+                        ' INNER JOIN {mnet_host} h' .
+                        '  on h.id=c.hostid and h.deleted = 0 ' .
+                        'ORDER BY c.hostid, c.id';
+                $activecourses = $DB->get_records_sql($activecoursessql, $params);
+                if (empty($activecourses)) {
+                    continue;
+                }
+                foreach ($activecourses as $coursedata) {
+                    $coursedata->category = $category->id;
+                    $coursedata->startdate = time();
+                    $coursedata->idnumber = '';
+                    $oldmnetcourseid = $coursedata->id;
+
+                    $newcourse = create_course($coursedata);
+                    $newcourse->mnetpeer = $existingssohost->hostid;
+                    $newcourse->remotecourseid = $coursedata->remoteid;
+                    update_record('course', $newcourse);
+
+                    $contextsql = 'SELECT * ' .
+                            'FROM {context} ' .
+                            'WHERE instanceid = ? ' .
+                            ' AND contextlevel = 50';
+                    $contextparams = array($newcourse->id);
+                    $context = array_shift($DB->get_records_sql($contextsql, $contextparams));
+
+                    // Get a list of user enrolments in the old mnet 'course' and apply them to the new course
+                    $oldenrolmentssql =
+                            'SELECT * ' .
+                            'FROM {mnet_enrol_assignments} ' .
+                            'WHERE hostid = ? ' .
+                            ' AND courseid =  ? ';
+                    $oldenrolmentparams = array($existingssohost->hostid, $oldmnetcourseid);
+                    $courseenrolments = $DB->get_records_sql($oldenrolmentssql, $oldenrolmentparams);
+                    foreach($courseenrolments as $enrolment) {
+                        role_assign($CFG->defaultcourseroleid, $enrolment->userid, 0, $context->id);
+                    }
+
+                    $DB->delete_records('mnet_enrol_assignments',
+                            array('hostid' => $existingssohost->hostid, 'courseid' => $oldmnetcourseid));
+                }
+
+            }
+            $DB->delete_records('mnet_enrol_course', array('hostid' => $existingssohost->hostid));
+        }
+        upgrade_main_savepoint($result, 2009073101);
+    }
     return $result;
 }
 

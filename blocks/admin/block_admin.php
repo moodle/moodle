@@ -54,6 +54,15 @@ class block_admin extends block_list {
             }
         }
 
+    /// Configure Mnet content provider:
+        if ($course->id != SITEID) {
+            if (has_capability('moodle/course:linkmnetcourse', $this->page->context)) {
+                $this->content->items[] = '<a href="' . $CFG->wwwroot . '/course/mnet.php?id=' . $course->id . '">' .
+                        get_string('mnetcontentsource') . '</a>';
+                $this->content->icons[] = '<img src="' . $OUTPUT->old_icon_url('i/content') . '" class="icon" alt="" />';
+            }
+        }
+
     /// View course grades (or just your own grades, same link)
     /// find all accessible reports
         if ($course->id !== SITEID) {

@@ -3004,6 +3004,11 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         }
     }
 
+    if ($context->contextlevel <= CONTEXT_COURSE) {
+        update_mnet_cp_roles($userid, $context);
+    }
+
+
     events_trigger('role_assigned', $ra);
 
     return $ra->id;
@@ -3105,6 +3110,10 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                             sync_metacourse($parent->parent_course);
                         }
                     }
+                }
+
+                if ($context->contextlevel <= CONTEXT_COURSE) {
+                    update_mnet_cp_roles($userid, $context);
                 }
 
                 if ($fireevent) {
@@ -6284,6 +6293,92 @@ function role_cap_duplicate($sourcerole, $targetrole) {
         $cap->roleid = $targetrole;
         $DB->insert_record('role_capabilities', $cap);
     }
+}
+
+/**
+ * Enqueue users to get role updated on mnet content providers (CPs)
+ *
+ * @param int $userid id of local user whose role has changed
+ * @param object $context where the user has had a role change
+ *
+ * @return bool true on success, false on failure.
+ */
+function update_mnet_cp_roles($userid, $context) {
+    global $DB;
+    // Prepare an object to insert once for each relevant course at or below the specified context
+    $rolemanagementobj = new stdClass();
+    $rolemanagementobj->userid = $userid;
+    // Actual cp details to be determined when the update gets to the front of the queue
+    $rolemanagementobj->mnetpeer = null;
+    $rolemanagementobj->remotecourseid = null;
+
+    //SQL to select courses at or below the specifed context which have a content provider.
+    $queryparams = array();
+    $coursessql =
+            "SELECT " .
+            " c.id, c.id as junk " .
+            "FROM {context} cx " .
+            " INNER JOIN {course} c ON c.id = cx.instanceid " .
+            "WHERE " .
+            " cx.contextlevel = 50 " .
+            " AND c.mnetpeer IS NOT NULL " .
+            " AND c.remotecourseid IS NOT NULL ";
+    if ($context->contextlevel < CONTEXT_COURSE) {
+        $coursessql .= " AND cx.path like ?";
+        $queryparams[] = $context->path . '/%';
+    } else {
+        $coursessql .= " AND cx.id = ? ";
+        $queryparams[] = $context->id;
+    }
+    $coursestoupdate = $DB->get_records_sql($coursessql, $queryparams);
+    if (empty ($coursestoupdate)) {
+        return true; // All required courses have been processed
+    }
+
+    foreach ($coursestoupdate as $courseid => $junk) {
+        $rolemanagementobj->localcourse = $courseid;
+        if (!mnet_enqueue_role_update($rolemanagementobj)) {
+            return false;
+        }
+    }
+}
+
+/**
+ * Assert than queue object is present in role management queue
+ *
+ * @param object $rolemanagementobj (rmo) what we want to make sure is in the db
+ *
+ * @return bool true on success, false if object not in db, and unable to insert
+ */
+function mnet_enqueue_role_update($rolemanagementobj) {
+    global $DB;
+    // Form where clause to determine if rmo is already in queue
+    $queryparams = array((int)$rolemanagementobj->userid, (int)$rolemanagementobj->localcourse);
+    $whereclause = 'WHERE userid = ? AND localcourse = ? ';
+
+    if (!empty($rolemanagementobj->mnetpeer)) {
+        $whereclause .= ' AND mnetpeer = ? ';
+        $queryparams[] = $rolemanagementobj->mnetpeer;
+    } else {
+        $whereclause .= ' AND mnetpeer is null';
+    }
+
+    if (!empty($rolemanagementobj->remotecourseid)) {
+        $whereclause .= ' AND remotecourseid = ?';
+        $queryparams[] = $rolemanagementobj->remotecourseid;
+    } else {
+        $whereclause .= ' AND remotecourseid is null';
+    }
+    $queueobjectsql = "SELECT * FROM {mnet_role_management_queue} " . $whereclause;
+
+    $preexisting = $DB->get_records_sql($queueobjectsql, $queryparams);
+    if (empty($preexisting)) {
+        // If we couldn't find the object in the queue,
+        // put it in the queue
+        $insertresult = $DB->insert_record('mnet_role_management_queue', $rolemanagementobj, false);
+        return $insertresult;
+    }
+    return true; // role update already in queue
 }
 
 ?>

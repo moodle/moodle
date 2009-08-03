@@ -47,7 +47,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $sso_sp = array();
         $sso_sp['name']         = 'sso_sp'; // Name & Description go in lang file
         $sso_sp['apiversion']   = 1;
-        $sso_sp['methods']      = array('keepalive_client','kill_child');
+        $sso_sp['methods']      = array('keepalive_client','kill_child','createupdate_user_bool');
 
         return array($sso_idp, $sso_sp);
     }
@@ -264,6 +264,11 @@ class auth_plugin_mnet extends auth_plugin_base {
         // Thunderbirds are go! Do RPC call and store response
         if ($mnetrequest->send($remotepeer) === true) {
             $remoteuser = (object) $mnetrequest->response;
+            if (!empty($mnetrequest->response['session.gc_maxlifeime'])) {
+                $session_gc_maxlifetime = $mnetrequest->response['session.gc_maxlifeime'];
+            } else {
+                $session_gc_maxlifetime = 1440;
+            }
         } else {
             foreach ($mnetrequest->error as $errormessage) {
                 list($code, $message) = array_map('trim',explode(':', $errormessage, 2));
@@ -1188,6 +1193,83 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
+     * Create or update remote mnet user
+     * Create mnet user record in db populated from userinfo or update existing mnet user record.
+     * @param userinfo array - current information about the user to be created or updated (unescaped)
+     * @return bool false on failure, true on success
+     */
+    function createupdate_user_bool($userinfo) {
+        $userinfo = (object)$userinfo;
+        $updateresult = $this->createupdate_user($userinfo);
+        if (!empty($updateresult)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Create or update remote mnet user
+     * Create mnet user record in db populated from userinfo or update existing mnet user record.
+     * @param userinfo object - current information about the user to be created or updated (unescaped)
+     * @return mixed false on failure, user object on success.
+     */
+    function createupdate_user($userinfo) {
+        global $CFG, $MNET_REMOTE_CLIENT, $DB;
+        if (!empty($MNET_REMOTE_CLIENT->id)) {
+            $userinfo->mnethostid = $MNET_REMOTE_CLIENT->id;
+        } else {
+            if (empty($userinfo->mnethostid)) {
+                // No information available about where user is from - unable to proceed.
+                return false;
+            }
+        }
+
+        // get the local record for the remote user
+        $userspec = array('username' => $userinfo->username, 'mnethostid' => $userinfo->mnethostid);
+        $localuser = $DB->get_record('user', $userspec);
+
+        if (empty($localuser->id)) {
+            // No pre-existing local record of this user
+            if (empty($MNET_REMOTE_CLIENT->id)) {
+                // Local call - could be user trying to log-in cold
+                // (prior to their idp requesting any enrolment or account creation)
+                if (empty($this->config->auto_add_remote_users)) {
+                    // Users aren't allowed to log in cold.
+                    print_error('nolocaluser', 'mnet');
+                }
+            }
+            $userinfo->id = $DB->insert_record('user', $userinfo);
+            if (!$userinfo->id) {
+                print_error('databaseerror', 'mnet');
+            }
+            if (! $localuser = $DB->get_record('user', $userspec)) {
+                print_error('nolocaluser', 'mnet');
+            }
+            $localuser->newrecord = true;
+        } else {
+            // update the local user record with remote user data
+            foreach ((array) $localuser as $key => $val) {
+                if ($key == 'id') {
+                    continue;
+                }
+                if (isset($userinfo->{$key})) {
+                    $localuser->{$key} = $userinfo->{$key};
+                }
+            }
+            $localuser->newrecord = false;
+        }
+        if (!empty($userinfo->imagehash)) {
+            $localuser->picture = $this->createupdate_user_image($localuser, $userinfo->imagehash);
+        }
+
+        $bool = $DB->update_record('user', $localuser);
+        if (!$bool) {
+            error("updating user failed in mnet/auth/confirm_mnet_session ");
+        }
+        return $localuser;
+    }
+
+    /**
      * To delete a host, we must delete all current sessions that users from
      * that host are currently engaged in.
      *
@@ -1347,7 +1429,52 @@ class auth_plugin_mnet extends auth_plugin_base {
         return $logline;
     }
 
+    /**
+     * Retreive a new copy of user profile image over mnet
+     *
+     * @param object $user userobject for user we want to update the image for
+     * @param string $newimagehash sha1 hash of the latest available image on the idp
+     * @return bool true if new primary image has been retreived & saved, false otherwise
+     */
+    function createupdate_user_image($user, $newimagehash) {
+        global $CFG;
+        //Establish what the user's directory would be named (no create)
+        $dirname = make_user_directory($user->id, true);
+        $filename = "$dirname/f1.jpg";
 
+        $localhash = '';
+        if (file_exists($filename)) {
+            $localhash = sha1(file_get_contents($filename));
+        } elseif (!file_exists($dirname)) {
+            mkdir($dirname);
+        }
+
+        $picture = 0;
+        if ($localhash != $newimagehash) {
+            require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
+            $remotepeer = new mnet_peer();
+            $remotepeer->set_id($user->mnethostid);
+
+            // fetch image from remote host
+            $fetchrequest = new mnet_xmlrpc_client();
+            $fetchrequest->set_method('auth/mnet/auth.php/fetch_user_image');
+            $fetchrequest->add_param($user->username);
+            if ($fetchrequest->send($remotepeer) === true) {
+                if (strlen($fetchrequest->response['f1']) > 0) {
+                    $imagecontents = base64_decode($fetchrequest->response['f1']);
+                    file_put_contents($filename, $imagecontents);
+                    $picture = 1;
+                } else {
+                    $picture = 0;
+                }
+                if (strlen($fetchrequest->response['f2']) > 0) {
+                    $imagecontents = base64_decode($fetchrequest->response['f2']);
+                    file_put_contents($dirname.'/f2.jpg', $imagecontents);
+                }
+            }
+        }
+        return $picture;
+    }
 }
 
 ?>

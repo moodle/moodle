@@ -510,6 +510,27 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/course:linkmnetcourse' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/course:seemnetshell' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
+        )
+    ),
+
     'moodle/course:delete' => array(
 
         'riskbitmask' => RISK_DATALOSS,
