@@ -189,7 +189,10 @@ if ($version > $CFG->version) {  // upgrade
     if (empty($confirmupgrade)) {
         $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
         print_header($strdatabasechecking, $stradministration, $navigation, '', '', false, '&nbsp;', '&nbsp;');
-        echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), new moodle_url('index.php', array('confirmupgrade' => 1)), 'index.php');
+        $continueform = new html_form();
+        $continueform->method = 'get';
+        $continueform->url = new moodle_url('index.php', array('confirmupgrade' => 1));
+        echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueform, 'index.php');
         print_footer();
         exit;
 
