@@ -18,7 +18,6 @@
 define('COMMENT_ERROR_DB', 1);
 define('COMMENT_ERROR_INSUFFICIENT_CAPS', 2);
 define('COMMENT_ERROR_MODULE_REJECT', 3);
-require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
  * comment is class to process moodle comments
@@ -172,9 +171,6 @@ EOD;
         self::$comment_itemid  = optional_param('comment_itemid',  '', PARAM_INT);
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
         self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
-        if (!empty(self::$nonjs)) {
-            //self::$commentform = new comment_form($CFG->httpswwwroot . '/comment/comment_post.php?action=add');
-        }
 
         $PAGE->requires->yui_lib('yahoo')->in_head();
         $PAGE->requires->yui_lib('dom')->in_head();
@@ -536,14 +532,9 @@ EOD;
 </form>
 EOD;
         if ($return) {
-            //ob_start();
-            //self::$commentform->display();
-            //$formhtml = ob_get_contents();
-            //return $html . $formhtml;
             return $html;
         } else {
             echo $html;
-            self::$commentform->display();
         }
     }
 
