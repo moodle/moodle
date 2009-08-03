@@ -13,8 +13,6 @@ if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
     $tabs[] = new tabobject('mnetthemes', 'mnet_themes.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetthemes, $strmnetthemes, false);
     if ($mnet_peer->application->name == 'moodle') {
         $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
-        $tabs[] = new tabobject('rolespermitted', 'mnet_rolespermitted.php?hostid='.$mnet_peer->id, $strrolespermitted, $strrolespermitted, false);
-        $tabs[] = new tabobject('rolemapping', 'mnet_rolemapping.php?hostid='.$mnet_peer->id, $strrolemapping, $strrolemapping, false);
     }
 } else {
     $tabs[] = new tabobject('mnetdetails', '#', $strmnetedithost, $strmnetedithost, false);

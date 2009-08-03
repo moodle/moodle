@@ -2110,21 +2110,10 @@ function print_course($course, $highlightterms = '') {
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
-    if (empty($course->mnetpeer) || empty($course->remotecourseid)
-        || has_capability('moodle/course:seemnetshell', $context)) {
-        $linkurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-    } else {
-        // Course has content provided by remote mnet host, and user not permitted to view the local
-        // shell course - link should direct them to jump to the content provider.
-        $linkurl = $CFG->wwwroot . '/auth/mnet/jump.php' .
-                '?hostid=' . $course->mnetpeer .
-                '&wantsurl=' . urlencode('/course/view.php?id=' . $course->remotecourseid);
-    }
-
     echo '<div class="coursebox clearfix">';
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
-         $linkcss.' href="' . $linkurl . '">'.
+         $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
          highlight($highlightterms, format_string($course->fullname)).'</a></div>';
 
     /// first find all roles that are supposed to be displayed
@@ -2229,19 +2218,42 @@ function print_my_moodle() {
     }
 
     $courses  = get_my_courses($USER->id, 'visible DESC,sortorder ASC', array('summary'));
-    if (!empty($courses)) {
-        echo '<ul class="unlist">';
-        foreach ($courses as $course) {
-            if ($course->id == SITEID) {
-                continue;
-            }
-            echo '<li>';
-            print_course($course);
-            echo "</li>\n";
-        }
-        echo "</ul>\n";
+    $rhosts   = array();
+    $rcourses = array();
+    if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {
+        $rcourses = get_my_remotecourses($USER->id);
+        $rhosts   = get_my_remotehosts();
+    }
 
+    if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
+
+        if (!empty($courses)) {
+            echo '<ul class="unlist">';
+            foreach ($courses as $course) {
+                if ($course->id == SITEID) {
+                    continue;
+                }
+                echo '<li>';
+                print_course($course);
+                echo "</li>\n";
+            }
+            echo "</ul>\n";
+        }
+
+        // MNET
+        if (!empty($rcourses)) {
+            // at the IDP, we know of all the remote courses
+            foreach ($rcourses as $course) {
+                print_remote_course($course, "100%");
+            }
+        } elseif (!empty($rhosts)) {
+            // non-IDP, we know of all the remote servers, but not courses
+            foreach ($rhosts as $host) {
+                print_remote_host($host, "100%");
+            }
+        }
         unset($course);
+        unset($host);
 
         if ($DB->count_records("course") > (count($courses) + 1) ) {  // Some courses not being displayed
             echo "<table width=\"100%\"><tr><td align=\"center\">";
@@ -3508,244 +3520,4 @@ function get_course_by_idnumber ($idnumber) {
     return $DB->get_record('course', array('idnumber' => $idnumber));
 }
 
-/**
- * Get array of enrolable courses from $mnetpeerid that are candidates to link to $courseid
- * remote courses already linked to other local courses are not candidates
- * @param mnetpeerid integer the id number of the peer we are interested in
- * @param courseid the local course under consideration
- * @return array courses that are are available for linking to local courses
- */
-function mnet_get_available_courses($mnetpeerid, $courseid = 0) {
-    global $DB;
-    //Get records of those courses related to the target mnet peer which are already linked to a
-    //local course
-    $sql = 'SELECT remotecourseid ' .
-        ' FROM {course} c' .
-        ' WHERE c.mnetpeer = ? ' .
-        ' AND c.id <> ? ';
-    $params = array($mnetpeerid, $courseid);
-    $linkedcourses = $DB->get_records_sql($sql, $params);
-
-    //Get records of the courses the mnet peer offers us and trim out pre-linked courses
-    $availablecourses = mnet_get_courses($mnetpeerid);
-    foreach ($availablecourses as $remotecourseid => $course) {
-        if (isset($linkedcourses[$remotecourseid])) {
-            unset($availablecourses[$remotecourseid]);
-        }
-    }
-    return $availablecourses;
-}
-
-
-/**
- * Get array of enrolable courses from an mnet peer
- * @param mnetpeerid integer the id number of the peer we are interested in
- * @return array enrolable courses from the mnet peer
- */
-function mnet_get_courses($mnetpeerid) {
-    // Set up the content provider connection
-    $new_cp = new mnet_peer();
-    $new_cp->set_id($mnetpeerid);
-
-    // set up the RPC request
-    $mnetrequest = new mnet_xmlrpc_client();
-    $mnetrequest->set_method('enrol/mnet/enrol.php/available_courses');
-
-    // Initialise $message
-    $message = '';
-
-    if ($mnetrequest->send($new_cp) !== true) {
-        print_error("mnetpeeruncontactable");
-    }
-    $peercourses = array();
-    if (is_array($mnetrequest->response)) {
-        foreach($mnetrequest->response as $peercourse) {
-            $peercourses[$peercourse['remoteid']] = $peercourse;
-        }
-    }
-    return $peercourses;
-}
-
-
-/**
- * Update enrolments in a course provided over mnet.
- * - Make necessary enrolments/unenrolments so that the right students can access
- * the specified course on the specified peer
- *
- * @param course course object
- * @param integer selectedpeer - the id of the mnet peer that will be providing content
- * @param integer selectedcourse - the id of the specific course on the remote peer
- * @return array how many users have been enqueued, and if unenrolment took place.
- */
-function mnet_update_enrolments(&$course, $selectedpeer, $selectedcourse) {
-    global $DB, $CFG;
-    require_once($CFG->libdir.'/accesslib.php');
-    $result = array('enqueued users'=>0,'oldcp unenroled'=> false);
-
-    if ($course->mnetpeer) {
-        // Set up connection to the old CP
-        $old_cp = new mnet_peer();
-        $old_cp->set_id($course->mnetpeer);
-    }
-    $oldmnetpeer = $course->mnetpeer;
-    $oldcourseid = $course->remotecourseid;
-
-    //Get a list of users who we want to get/retain their role on the remote course
-    $courseusers = mnet_get_courseusers($course->id, $selectedpeer);
-
-    if (($selectedpeer == $course->mnetpeer) && ($selectedcourse == $course->remotecourseid)) {
-        // the new course is the same as the old course, this is essentially a resync
-        // the remote peer should be told whose enrolments to not delete.
-        $keepusers = $courseusers;
-    } else {
-        // If there is currently a remote course configured, and we're changing to a different one
-        // we don't want to keep any existing enrolments in the current remote course
-        $keepusers = array();
-
-        // Update the local record in the course table with new info
-        if ($selectedpeer == 0 || $selectedcourse == 0) {
-            $course->mnetpeer = null;
-            $course->remotecourseid = null;
-        } else {
-            $course->mnetpeer = $selectedpeer;
-            $course->remotecourseid = $selectedcourse;
-        }
-        $courseupdated = $DB->update_record('course', $course);
-    }
-
-    if ($oldmnetpeer) {
-        $result['oldcp unenroled'] = mnet_unenrol_course_users_bulk($old_cp, $oldcourseid, $keepusers);
-    }
-    if (!empty($selectedpeer) && !empty($selectedcourse)) {
-        if (($course->mnetpeer != $oldmnetpeer) || ($course->remotecourseid != $oldcourseid)) {
-            // Safety check - send a message to the new CP asking them to unenrol all our users
-            // (except $courseusers)
-            $new_cp = new mnet_peer();
-            $new_cp->set_id($course->mnetpeer);
-            mnet_unenrol_course_users_bulk($new_cp, $selectedcourse, $courseusers);
-        }
-        $rolemanagementobj = new stdClass();
-        $rolemanagementobj->localcourse = $course->id;
-        $rolemanagementobj->mnetpeer = null;
-        $rolemanagementobj->remotecourseid = null;
-        foreach ($courseusers as $userid => $username) {
-            $rolemanagementobj->userid = $userid;
-            mnet_enqueue_role_update($rolemanagementobj);
-            $result['enqueued users']++;
-        }
-    }
-    return $result;
-}
-
-/**
- * Get a list of any users that have a relevant role assigned which relates to the local course of interest
- *
- * @param integer courseid the id of the local course
- * @param integer selectedpeer - the id of the mnet peer that will be providing content
- * @return array keyed on userid, value of username, empty if there are no users with a relevant role
- */
-function mnet_get_courseusers($courseid, $selectedpeer) {
-    global $DB;
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-    $contexts = explode('/', substr($coursecontext->path, 1));
-    list($contextfragment, $courseusersparams) = $DB->get_in_or_equal($contexts);
-    $courseuserssql =
-            'SELECT DISTINCT ra.userid, u.username ' .
-            'FROM {role_assignments} ra ' .
-            ' INNER JOIN {user} u on u.id = ra.userid ' .
-            ' INNER JOIN {mnet_role_mapping} rm ON rm.localrole = ra.roleid ' .
-            'WHERE ra.contextid ' . $contextfragment .
-            ' AND rm.mnethost = ?';
-    $courseusersparams[] = $selectedpeer;
-
-    $courseuserobjects = $DB->get_records_sql($courseuserssql, $courseusersparams);
-
-    //Clean up the results and return an array
-    if (!empty($courseuserobjects)) {
-        foreach ($courseuserobjects as $userid=>$courseuserobject) {
-            $courseusers[$userid] = $courseuserobject->username;
-        }
-    } else {
-        $courseusers = array();
-    }
-    return $courseusers;
-}
-
-/**
- * Try calling a new service on remote peer to unenrol our users from a specified course, leaving a specified list
- * - if this doesn't seem to work, try to acheive the same thing with 1-at-a-time calls.
- * @param object $mnetpeer object containing details about the mnet peer to be contacted
- * @param integer $courseid - the id of the course we need to tweak enrolments for
- * @param array $keepusers - keyed by userid, array containing usernames of users to not unenrol
- * @return mixed true if immediately successful, int if eventually successful, false on fail
- */
-function mnet_unenrol_course_users_bulk($mnetpeer, $courseid, $keepusers = array()) {
-    // Send a message to the mnet peer:
-    // Unenrol all my users from course x except $users
-    $mnetrequest = new mnet_xmlrpc_client();
-    $mnetrequest->set_method('enrol/mnet/enrol.php/abridge_course_enrolments');
-    $mnetrequest->add_param($keepusers);
-    $mnetrequest->add_param($courseid);
-
-    if ($mnetrequest->send($mnetpeer) == true) {
-        return true;
-    }
-    // Remote mnet host didn't respond to:
-    // "unenrol all my users from this course except $keepusers".
-    // Try falling back to older mnet methods -
-    return mnet_unenrol_course_users($mnetpeer, $courseid, $keepusers);
-}
-
-/**
- * Ask mnetpeer for a list of our users enroled in $oldcourseid,
- * - and request everyone not in $keepusers be unenroled
- * @param object $mnetpeer object containing details about the mnet peer to be contacted
- * @param integer $courseid - the id of the course we need to tweak enrolments for
- * @param array $keepusers - keyed by userid, array containing usernames of users to not unenrol
- * @return mixed false on problem, int if no problem - the # of users unenrolled
- */
-function mnet_unenrol_course_users($mnetpeer, $courseid, $keepusers = array()) {
-    $unenrolledusers = 0;
-    //Request a list of enrolments
-    $listenrolmentsrq = new mnet_xmlrpc_client();
-    $listenrolmentsrq->set_method('enrol/mnet/enrol.php/course_enrolments');
-    $listenrolmentsrq->add_param($courseid);
-    if($listenrolmentsrq->send($mnetpeer)) {
-        if (is_array($listenrolmentsrq->response)) {
-            foreach($listenrolmentsrq->response as $existingusername => $existinguser) {
-                if (in_array($existingusername, $keepusers)) {
-                    continue;
-                }
-                if (!mnet_unenrol_course_username($mnetpeer, $courseid, $existingusername)) {
-                    //TODO add full details to role management queue for later processing
-                    break;
-                }
-                $unenrolledusers++;
-            }
-        }
-    } else {
-        print_error("mnetpeeruncontactable");
-        // Failed to get list from remote host describing which of our users it has enrolled
-        //TODO as a best guess, for all users enrolled in this course
-        // -  add full detail to role management queue for later processing
-        return false;
-    }
-    return $unenrolledusers;
-}
-
-
-/**
- * Ask $mnetpeer to unenrol our user named $username from course $courseid
- * @param object $mnetpeer object containing details about the mnet peer to be contacted
- * @param integer $courseid - the id of the course we need to tweak enrolments for
- * @return boolean true on success
- */
-function mnet_unenrol_course_username($mnetpeer, $courseid, $username) {
-    $mnetrequest = new mnet_xmlrpc_client();
-    $mnetrequest->set_method('enrol/mnet/enrol.php/unenrol_user');
-    $mnetrequest->add_param($username);
-    $mnetrequest->add_param($courseid);
-    $rqresult = $mnetrequest->send($mnetpeer);
-    return $rqresult;
-}
 ?>

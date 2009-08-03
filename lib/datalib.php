@@ -624,7 +624,6 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
                         'shortname', 'fullname', 'idnumber',
                         'guest', 'startdate', 'visible',
                         'newsitems',  'cost', 'enrol',
-                        'mnetpeer', 'remotecourseid',
                         'groupmode', 'groupmodeforce');
 
     if (!is_null($fields) && is_string($fields)) {
@@ -839,7 +838,6 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                         'shortname', 'fullname', 'idnumber',
                         'guest', 'startdate', 'visible',
                         'newsitems',  'cost', 'enrol',
-                        'mnetpeer', 'remotecourseid',
                         'groupmode', 'groupmodeforce');
 
     if (!is_null($fields) && is_string($fields)) {

@@ -18,11 +18,7 @@ if (is_array($mnethosts)) {
 <tr valign="top">
     <td align="right">allow_allcourses:</td>
     <td>
-    <?php 
-        global $OUTPUT;
-        $selectmenu = moodle_select_menu::make_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses);
-        echo $OUTPUT->select_menu($selectmenu);
-    ?>
+    <?php print choose_from_menu_yesno('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses); ?>
     </td>
     <td>
     <?php  print_string("allow_allcourses", "enrol_mnet") ?>

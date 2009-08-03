@@ -138,16 +138,7 @@
         // This course is not a real course.
         redirect($CFG->wwwroot .'/');
     }
-    // If this course is just an mnet shell (content provided by a course on a remote mnet host)
-    // direct anyone that isn't permitted to see the shell course directly to the content provider
-    if (!empty($course->mnetpeer) && !empty($course->remotecourseid)) {
-        $jumpurl = $CFG->wwwroot . '/auth/mnet/jump.php' .
-                '?hostid=' . $course->mnetpeer .
-                '&wantsurl=' . urlencode('/course/view.php?id=' . $course->remotecourseid);
-        if (!has_capability('moodle/course:seemnetshell', $context)) {
-            redirect($jumpurl);
-        }
-    }
+
 
     // AJAX-capable course format?
     $useajax = false; 
@@ -206,12 +197,6 @@
     $navigation = build_navigation(array());
     print_header($title, $course->fullname, $navigation, '', '', true,
                  $buttons, user_login_string($course, $USER), false, $bodytags);
-
-    // If we are displaying a shell course, let the user know that this isn't what all users see
-    if (!empty($course->mnetpeer) && !empty($course->remotecourseid)
-        && has_capability('moodle/course:seemnetshell', $context)) {
-        print_box(get_string('thiscourseisshell', 'moodle', $jumpurl), 'noticebox');
-    }
 
     if ($completion->is_enabled() && ajaxenabled()) {
         // This value tracks whether there has been a dynamic change to the page.

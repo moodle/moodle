@@ -121,16 +121,6 @@
         $title = get_string('editingrolex', 'role', $rolenames[$roleid]->localname);
     }
     print_heading_with_help($title, 'roles');
-    $rolepublishedsql =
-             'SELECT distinct(localrole), localrole ' .
-             'FROM {mnet_role_published} ' .
-             'WHERE localrole = ? ';
-    $params = array($roleid);
-    $rolepublished = $DB->get_records_sql($rolepublishedsql, $params);
-
-    if (!empty($rolepublished)) {
-        print_box(get_string('mnetroleispublished','moodle'), 'generalbox', 'notice');
-    }
 
 /// Work out some button labels.
     if ($action == 'add' || $action == 'duplicate') {

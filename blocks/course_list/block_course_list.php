@@ -26,13 +26,8 @@ class block_course_list extends block_list {
 
         $icon  = "<img src=\"" . $OUTPUT->old_icon_url('i/course') . "\"".
                  " class=\"icon\" alt=\"".get_string("coursecategory")."\" />";
-        $networkicon  = '<img src="' . $OUTPUT->old_icon_url('i/mnethost') . "\"".
-                 " class=\"icon\" alt=\"".get_string('course')."\" />";
        
         $adminseesall = true;
-
-        $mneturl = array($CFG->wwwroot . '/auth/mnet/jump.php?hostid=', '&wantsurl=' . urlencode('/course/view.php?id='));
-        $localurl = $CFG->wwwroot . '/course/view.php?id=';
         if (isset($CFG->block_course_list_adminview)) {
            if ( $CFG->block_course_list_adminview == 'own'){
                $adminseesall = false;
@@ -48,22 +43,10 @@ class block_course_list extends block_list {
                     if ($course->id == SITEID) {
                         continue;
                     }
-                    $linkclasses = $course->visible ? "" : "dimmed";
-                    if (empty($course->mnetpeer)
-                            || empty($course->remotecourseid)
-                            || has_capability('moodle/course:seemnetshell', $course->context)) {
-                        $linkclasses .= ' local';
-                        $contentlink = $localurl . $course->id;
-                        $this->content->icons[]=$icon;
-                    } else {
-                        $linkclasses .= ' remote';
-                        $contentlink = $mneturl[0] . $course->mnetpeer . $mneturl[1] . $course->remotecourseid;
-                        $this->content->icons[]=$networkicon;
-                    }
-                    $linkcss = ' classes="' . $linkclasses . '" ';
-                    $contentitem = '<a ' . $linkcss . 'title="' . format_string($course->shortname) . '" href="';
-                    $contentitem .= $contentlink . '">' . format_string($course->fullname) . '</a>';
-                    $this->content->items[] = $contentitem;
+                    $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                    $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname) . "\" ".
+                               "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">" . format_string($course->fullname) . "</a>";
+                    $this->content->icons[]=$icon;
                 }
                 $this->title = get_string('mycourses');
             /// If we can update any course of the view all isn't hidden, show the view all courses link
@@ -71,6 +54,7 @@ class block_course_list extends block_list {
                     $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a> ...";
                 }
             }
+            $this->get_remote_courses();
             if ($this->content->items) { // make sure we don't return an empty list
                 return $this->content;
             }
@@ -107,6 +91,7 @@ class block_course_list extends block_list {
                     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
                         $this->content->footer .= "<a href=\"$CFG->wwwroot/course/index.php\">".get_string('fulllistofcourses').'</a> ...';
                     }
+                    $this->get_remote_courses();
                 } else {
                     
                     $this->content->icons[] = '';
@@ -114,6 +99,7 @@ class block_course_list extends block_list {
                     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
                         $this->content->footer = '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a> ...';
                     }
+                    $this->get_remote_courses();
                 }
                 $this->title = get_string('courses');
             }
@@ -121,6 +107,49 @@ class block_course_list extends block_list {
 
         return $this->content;
     }
+
+    function get_remote_courses() {
+        global $CFG, $USER, $OUTPUT;
+
+        if (!is_enabled_auth('mnet')) {
+            // no need to query anything remote related
+            return;
+        }
+
+        $icon  = '<img src="'.$OUTPUT->old_icon_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
+
+        // only for logged in users!
+        if (!isloggedin() || isguest()) {
+            return false;
+        }
+
+        if ($courses = get_my_remotecourses()) {
+            $this->content->items[] = get_string('remotecourses','mnet');
+            $this->content->icons[] = '';
+            foreach ($courses as $course) {
+                $this->content->items[]="<a title=\"" . format_string($course->shortname) . "\" ".
+                    "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">" 
+                    . format_string($course->fullname) . "</a>";
+                $this->content->icons[]=$icon;
+            }
+            // if we listed courses, we are done
+            return true;
+        }
+
+        if ($hosts = get_my_remotehosts()) {
+            $this->content->items[] = get_string('remotemoodles','mnet'); 
+            $this->content->icons[] = '';
+            foreach($USER->mnet_foreign_host_array as $somehost) {
+                $this->content->items[] = $somehost['count'].get_string('courseson','mnet').'<a title="'.$somehost['name'].'" href="'.$somehost['url'].'">'.$somehost['name'].'</a>';
+                $this->content->icons[] = $icon;
+            }
+            // if we listed hosts, done
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
 ?>
