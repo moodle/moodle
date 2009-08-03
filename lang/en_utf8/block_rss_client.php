@@ -22,6 +22,7 @@ $string['editafeed'] = 'Edit a feed';
 $string['editfeeds'] = 'Edit, subscribe or unsubsribe from RSS/Atom news feeds';
 $string['editnewsfeeds'] = 'Edit news feeds';
 $string['editrssblock'] = 'Edit RSS Headline Block';
+$string['enableautodiscovery'] = 'Enable auto-discovery of feeds?';
 $string['errorloadingfeed'] = 'Error loading this RSS feed ($a)';
 $string['feed'] = 'Feed';
 $string['feedadded'] = 'News feed added';

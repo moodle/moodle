@@ -50,11 +50,10 @@ class feed_edit_form extends moodleform {
         $mform->setType('url', PARAM_URL);
         $mform->addRule('url', null, 'required');
 
-        $validatejs = "window.open('http://feedvalidator.org/check.cgi?url='+" .
-                "getElementById('id_url').value, 'validate', " .
-                "'width=640,height=480,scrollbars=yes,status=yes,resizable=yes'); return true;";
-        $validatelink = '<a href="#" onclick="' . $validatejs . '">' . get_string('validatefeed', 'block_rss_client') . '</a>';
-        $mform->addElement('static', 'validatelink', '', $validatelink);
+        $mform->addElement('checkbox', 'autodiscovery', get_string('enableautodiscovery', 'block_rss_client'));
+        $mform->setDefault('autodiscovery', 1);
+        $mform->setAdvanced('autodiscovery');
+        $mform->setHelpButton('autodiscovery', array('feedautodiscovery',  get_string('validatefeed', 'block_rss_client'), 'rss_client'), true);
 
         $mform->addElement('text', 'preferredtitle', get_string('customtitlelabel', 'block_rss_client'), array('size' => 60));
         $mform->setType('preferredtitle', PARAM_NOTAGS);
@@ -71,6 +70,14 @@ class feed_edit_form extends moodleform {
         $this->add_action_buttons(true, $submitlabal);
     }
 
+    function definition_after_data(){
+        $mform =& $this->_form;
+
+        if($mform->getElementValue('autodiscovery')){
+            $mform->applyFilter('url', 'feed_edit_form::autodiscover_feed_url');
+        }
+    }
+
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -78,6 +85,8 @@ class feed_edit_form extends moodleform {
         // set timeout for longer than normal to try and grab the feed
         $rss->set_timeout(10);
         $rss->set_feed_url($data['url']);
+        $rss->set_autodiscovery_cache_duration(0);
+        $rss->set_autodiscovery_level(SIMPLEPIE_LOCATOR_NONE);
         $rss->init();
 
         if ($rss->error()) {
@@ -93,10 +102,45 @@ class feed_edit_form extends moodleform {
     function get_data() {
         $data = parent::get_data();
         if ($data) {
-            $data->title = $this->title;
-            $data->description = $this->description;
+            $data->title = '';
+            $data->description = '';
+
+            if($this->title){
+                $data->title = $this->title;
+            }
+
+            if($this->description){
+                $data->description = $this->description;
+            }
         }
         return $data;
+    }
+
+    /**
+     * Autodiscovers a feed url from a given url, to be used by the formslibs 
+     * filter function
+     *
+     * Uses simplepie with autodiscovery set to maximum level to try and find
+     * a feed to subscribe to.
+     * See: http://simplepie.org/wiki/reference/simplepie/set_autodiscovery_level
+     *
+     * @param string URL to autodiscover a url
+     * @return string URL of feed or original url if none found
+     */
+    public static function autodiscover_feed_url($url){
+            $rss =  new moodle_simplepie();
+            $rss->set_feed_url($url);
+            $rss->set_autodiscovery_level(SIMPLEPIE_LOCATOR_ALL);
+            // When autodiscovering an RSS feed, simplepie will try lots of
+            // rss links on a page, so set the timeout high
+            $rss->set_timeout(20);
+            $rss->init();
+
+            if($rss->error()){
+                return $url;
+            }
+
+            return $rss->subscribe_url();
     }
 }
 
