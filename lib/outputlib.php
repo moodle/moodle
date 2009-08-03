@@ -2782,12 +2782,21 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         return $output . $this->output_end_tag($tag);
     }
-
-    public function close_window_button($buttontext = null, $reloadopener = false) {
-        if (empty($buttontext)) {
-            $buttontext = get_string('closewindow');
-        }
-        // TODO
+    
+    /**
+     * Prints a simple button to close a window
+     *
+     * @global objec)t
+     * @param string $text The lang string for the button's label (already output from get_string())
+     * @return string|void if $return is true, void otherwise
+     */
+    public function close_window_button($text) {
+        $closeform = new html_form();
+        $closeform->url = '#';
+        $closeform->button->text = $text;
+        $closeform->button->add_action('click', 'close_window');
+        $closeform->button->prepare();
+        return $this->container($this->button($closeform), 'closewindow');
     }
 
     public function close_window($delay = 0, $reloadopener = false) {

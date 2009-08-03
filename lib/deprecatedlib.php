@@ -3373,3 +3373,27 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     }
 }
 
+/**
+ * Prints a simple button to close a window
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @global object
+ * @param string $name Name of the window to close
+ * @param boolean $return whether this function should return a string or output it.
+ * @param boolean $reloadopener if true, clicking the button will also reload
+ *      the page that opend this popup window.
+ * @return string|void if $return is true, void otherwise
+ */
+function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
+    global $OUTPUT;
+    
+    // debugging('close_window_button() has been deprecated. Please change your code to use $OUTPUT->close_window_button().');
+    $output = $OUTPUT->close_window_button(get_string($name));
+    
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
