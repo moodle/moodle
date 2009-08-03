@@ -415,7 +415,7 @@ class file_info_stored extends file_info {
         if ($existing = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
             $existing->delete();
         }
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$fileapth, 'filename'=>$filename);
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
         $fs->create_file_from_storedfile($file_record, $this->lf);
 
         return true;
