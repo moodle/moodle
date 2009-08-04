@@ -2689,7 +2689,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                             'style' => $image->style,
                             'title' => $image->title,
                             'id' => $image->id);
-        
+
         if (!empty($image->height) || !empty($image->width)) {
             $attributes['style'] .= $this->prepare_legacy_width_and_height($image);
         }
@@ -2966,7 +2966,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         $option->prepare();
-        $option->generate_id();
+
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
@@ -3699,9 +3699,11 @@ class moodle_select extends moodle_html_component {
         if (empty($this->id)) {
             $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
         }
+
         if (empty($this->classes)) {
             $this->set_classes(array('menu' . str_replace(array('[', ']'), '', $this->name)));
         }
+
         if (is_null($this->nothinglabel)) {
             $this->nothinglabel = get_string('choosedots');
         }
@@ -3765,7 +3767,7 @@ class moodle_select extends moodle_html_component {
 
             foreach ($options as $value => $display) {
                 if ($display == '--') { /// we are ending previous optgroup
-                    $this->options[] = $optgroup;
+                    // $this->options[] = $optgroup;
                     $inoptgroup = false;
                     continue;
                 } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
@@ -3804,10 +3806,6 @@ class moodle_select extends moodle_html_component {
                     }
 
                     $option->value = s($value);
-
-                    if (!empty($optionsextra[$value])) {
-                        $optstr .= ' '.$optionsextra[$value];
-                    }
 
                     if ($inoptgroup) {
                         $optgroup->options[] = $option;
