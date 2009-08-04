@@ -2583,6 +2583,22 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $this->link($icon->link);
     }
 
+    /*
+     * Centered heading with attached help button (same title text)
+     * and optional icon attached
+     * @param help_icon $helpicon A help_icon object
+     * @param mixed $image An image URL or a html_image object
+     * @return string HTML fragment
+     */
+    public function heading_with_help($helpicon, $image=false) {
+        if (!($image instanceof html_image) && !empty($image)) {
+            $htmlimage = new html_image();
+            $htmlimage->src = $image;
+            $image = $htmlimage;
+        }
+        return $this->container($this->image($image) . $this->heading($helpicon->text, 2, 'main help') . $this->help_icon($helpicon), 'heading-with-help');
+    }
+
     /**
      * Print a help icon.
      *
@@ -2679,6 +2695,10 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function image($image) {
+        if ($image === false) {
+            return false;
+        }
+
         $image->prepare();
 
         $this->prepare_event_handlers($image);
@@ -4626,6 +4646,9 @@ class help_icon extends moodle_html_component {
             }
             $this->image->add_class('iconhelp');
         } else if (empty($this->image->src)) {
+            if (!($this->image instanceof html_image)) {
+                $this->image = new html_image();
+            }
             $this->image->src = $OUTPUT->old_icon_url('help');
         }
 

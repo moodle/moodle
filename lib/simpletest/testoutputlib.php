@@ -1206,4 +1206,28 @@ class moodle_core_renderer_test extends UnitTestCase {
         $html = $this->renderer->user_picture($userpic);
         $this->assert(new ContainsTagWithAttributes('a', array('title' => 'Test User', 'href' => $CFG->wwwroot.'/user/view.php?id=1&course=1')), $html);
     }
+
+    public function test_heading_with_help() {
+        $originalicon = new help_icon();
+        $originalicon->page = 'myhelppage';
+        $originalicon->text = 'Cool help text';
+
+        $helpicon = clone($originalicon);
+        $html = $this->renderer->heading_with_help($helpicon);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'heading-with-help'), $html);
+        $this->assert(new ContainsTagWithAttribute('span', 'class', 'helplink'), $html);
+        $this->assert(new ContainsTagWithAttribute('h2', 'class', 'main help'), $html);
+        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->old_icon_url('help'))), $html);
+        $this->assert(new ContainsTagWithContents('h2', 'Cool help text'), $html);
+
+        $helpicon = clone($originalicon);
+        $helpicon->image = false;
+
+        $html = $this->renderer->heading_with_help($helpicon);
+        $this->assert(new ContainsTagWithAttribute('div', 'class', 'heading-with-help'), $html);
+        $this->assert(new ContainsTagWithAttribute('span', 'class', 'helplink'), $html);
+        $this->assert(new ContainsTagWithAttribute('h2', 'class', 'main help'), $html);
+        $this->assert(new ContainsTagWithAttributes('img', array('class' => 'iconhelp image', 'src' => $this->renderer->old_icon_url('help'))), $html);
+        $this->assert(new ContainsTagWithContents('h2', 'Cool help text'), $html);
+    }
 }

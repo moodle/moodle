@@ -3505,3 +3505,41 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
 
 }
 
+
+/**
+ * Centered heading with attached help button (same title text)
+ * and optional icon attached
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $text The text to be displayed
+ * @param string $helppage The help page to link to
+ * @param string $module The module whose help should be linked to
+ * @param string $icon Image to display if needed
+ * @param bool $return If set to true output is returned rather than echoed, default false
+ * @return string|void String if return=true nothing otherwise
+ */
+function print_heading_with_help($text, $helppage, $module='moodle', $icon=false, $return=false) {
+
+    // debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+
+    global $OUTPUT;
+
+    $helpicon = new help_icon();
+    $helpicon->page = $helppage;
+    $helpicon->text = $text;
+    $helpicon->module = $module;
+    
+    // Extract the src from $icon if it exists
+    if (preg_match('/src="([^"]*)"/', $icon, $matches)) {
+        $icon = $matches[1];
+    }
+
+    $output = $OUTPUT->heading_with_help($helpicon, $icon);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
