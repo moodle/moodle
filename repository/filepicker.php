@@ -38,9 +38,12 @@ $page        = optional_param('page', '',         PARAM_RAW);
 $callback    = optional_param('callback', '',      PARAM_CLEANHTML);
 $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 
+$PAGE->set_url('/repository/filepicker.php');
+
 // init repository plugin
 $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
        'WHERE i.id=? AND i.typeid=r.id';
+
 if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     $type = $repository->type;
     if (file_exists($CFG->dirroot.'/repository/'.$type.'/repository.class.php')) {
@@ -55,8 +58,8 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
         print_error('invalidplugin', 'repository');
     }
 }
-$url = $CFG->httpswwwroot."/repository/filepicker.php?ctx_id=$ctx_id&amp;itemid=$itemid";
-$home_url = $url.'&amp;action=embedded';
+$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $ctx_id, 'itemid' => $itemid));
+$home_url = new moodle_url($url, array('action' => 'embedded'));
 
 switch ($action) {
 case 'upload':
@@ -71,7 +74,7 @@ case 'deletedraft':
     $fs = get_file_storage();
     if ($file = $fs->get_file($contextid, 'user_draft', $itemid, '/', $title)) {
         if($result = $file->delete()) {
-            header("Location: {$home_url}");
+            header('Location: ' . $home_url->out(false, array(), false));
         } else {
             print_error('cannotdelete', 'repository');
         }
@@ -79,15 +82,21 @@ case 'deletedraft':
     exit;
     break;
 case 'search':
-    echo "<div><a href='{$home_url}'>".get_string('back', 'repository')."</a></div>";
+    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     try {
         $search_result = $repo->search($search_text);
         $search_result['search_result'] = true;
         $search_result['repo_id'] = $repo_id;
 
         // TODO: need a better solution
-        print_paging_bar($search_result['total'], $search_result['page']-1,
-            $search_result['perpage'], "{$url}&amp;search_paging=1&amp;action=search&amp;repo_id={$repo_id}&amp;", 'p');
+        $pagingbar = new moodle_paging_bar();
+        $pagingbar->totalcount = $search_result['total'];
+        $pagingbar->page = $search_result['page'] - 1;
+        $pagingbar->perpage = $search_result['perpage'];
+        $pagingbar->baseurl = clone($url);
+        $pagingbar->baseurl->params(array('search_paging' => 1, 'action' => 'search', 'repo_id' => $repo_id));
+        $pagingbar->pagevar = 'p';
+        echo $OUTPUT->paging_bar($pagingbar);
 
         echo '<table>';
         foreach ($search_result['list'] as $item) {
@@ -118,12 +127,12 @@ case 'search':
 case 'list':
 case 'sign':
     print_header();
-    echo "<div><a href='{$home_url}'>".get_string('back', 'repository')."</a></div>";
+    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     if ($repo->check_login()) {
         $list = $repo->get_listing($req_path, $page);
         $dynload = !empty($list['dynload'])?true:false;
         if (!empty($list['upload'])) {
-            echo '<form action="'.$url.'" method="post" enctype="multipart/form-data" style="display:inline">';
+            echo '<form action="'.$url->out(false).'" method="post" enctype="multipart/form-data" style="display:inline">';
             echo '<label>'.$list['upload']['label'].': </label>';
             echo '<input type="file" name="repo_upload_file" /><br />';
             echo '<input type="hidden" name="action" value="upload" /><br />';
@@ -226,7 +235,13 @@ case 'plugins':
     echo '<div><ul>';
     foreach($repos as $repo) {
         $info = $repo->get_meta();
-        echo '<li><img src="'.$info->icon.'" width="16px" height="16px"/> <a href="'.$url.'&amp;action=list&amp;repo_id='.$info->id.'">'.$info->name.'</a></li>';
+        $icon = new action_icon();
+        $icon->image->src = $info->icon;
+        $icon->image->style = 'height: 16px; width: 16px;';
+        $icon->link->url = clone($url);
+        $icon->link->url->params(array('action' => 'list', 'repo_id' => $info->id));
+        $icon->linktext = $info->name;
+        echo '<li>' . $OUTPUT->action_icon($icon) . '</li>';
     }
     echo '</ul></div>';
     break;
@@ -243,14 +258,15 @@ default:
         echo '<ul>';
         foreach ($files as $file) {
             if ($file->get_filename()!='.') {
-                $drafturl = $CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename();
-                echo '<li><a href="'.$drafturl.'">'.$file->get_filename().'</a> ';
+                $drafturl = new moodle_url($CFG->httpswwwroot.'/draftfile.php/'.$context->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
+                echo '<li><a href="'.$drafturl->out().'">'.$file->get_filename().'</a> ';
                 echo '<a href="'.$CFG->httpswwwroot.'/repository/filepicker.php?action=deletedraft&amp;itemid='.$itemid.'&amp;ctx_id='.$ctx_id.'&amp;title='.$file->get_filename().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" /></a></li>';
             }
         }
         echo '</ul>';
     }
-    echo '<div><a href="'.$url.'&amp;action=plugins">'.get_string('addfile', 'repository').'</a></div>';
+    $url->param('action', 'plugins');
+    echo '<div><a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a></div>';
     print_footer('empty');
     break;
 }
