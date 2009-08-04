@@ -211,11 +211,19 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
 }
 
 /**
- * Prepares editing with File manager formslib element
+ * Prepares the content of the 'editor' form element with embeded media files to be saved in database
  *
- * @param object $data $database entry field
- * @param string $field name of data field
- * @param array $options various options
+ * This function moves files from draft area to the destination area and
+ * encodes URLs to the draft files so they can be safely saved into DB. The
+ * form has to contain the 'editor' element named foobar_editor, where 'foobar'
+ * is the name of the database field to hold the wysiwyg editor content. The
+ * editor data comes as an array with text, format and itemid properties. This
+ * function automatically adds $data properties foobar, foobarformat and
+ * foobartrust, where foobar has URL to embeded files encoded.
+ *
+ * @param object $data raw data submitted by the form
+ * @param string $field name of the database field containing the html with embeded media files
+ * @param array $options editor options (trusttext, subdirs, maxfiles, maxbytes etc.)
  * @param object $context context, required for existing data
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
@@ -240,9 +248,9 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     }
 
     if ($options['trusttext']) {
-        $data->definitiontrust = trusttext_trusted($context);
+        $data->{$field.'trust'} = trusttext_trusted($context);
     } else {
-        $data->definitiontrust = 0;
+        $data->{$field.'trust'} = 0;
     }
 
     $editor = $data->{$field.'_editor'};
