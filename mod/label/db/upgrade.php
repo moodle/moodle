@@ -51,13 +51,29 @@ function xmldb_label_upgrade($oldversion) {
 
     /// Define field introformat to be added to label
         $table = new xmldb_table('label');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '4', 'intro');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', 'intro');
 
     /// Launch add field introformat
         $dbman->add_field($table, $field);
 
     /// label savepoint reached
         upgrade_mod_savepoint($result, 2009042201, 'label');
+    }
+
+    if ($result && $oldversion < 2009080400) {
+
+    /// Define field introformat to be added to label
+        $table = new xmldb_table('label');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', 'intro');
+
+    /// Launch add field introformat
+        $dbman->change_field_default($table, $field);
+
+    /// Convert existing markdown formats to 0 (due to an existing bug in early versions of label upgrade, defaulting to 4)
+        $DB->set_field('label', 'introformat', 0, array('introformat' => 4));
+
+    /// label savepoint reached
+        upgrade_mod_savepoint($result, 2009080400, 'label');
     }
 
     return $result;
