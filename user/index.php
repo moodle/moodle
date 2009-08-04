@@ -851,12 +851,12 @@
         }
 
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        $selectmenu = new moodle_select_menu();
-        $selectmenu->options = $displaylist;
-        $selectmenu->name = "formaction";
-        $selectmenu->label = get_string("withselectedusers");
-        $selectmenu->add_action('change', 'conditionalsubmit', array('formid' => 'participantsform'));
-        echo $OUTPUT->select_menu($selectmenu);
+        $select = new moodle_select();
+        $select->options = $displaylist;
+        $select->name = "formaction";
+        $select->label = get_string("withselectedusers");
+        $select->add_action('change', 'conditionalsubmit', array('formid' => 'participantsform'));
+        echo $OUTPUT->select($select);
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<div id="noscriptparticipantsform" style="display: inline;">';
         echo '<input type="submit" value="'.get_string('ok').'" /></div>';

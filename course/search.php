@@ -309,12 +309,12 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
-            $selectmenu = new moodle_select_menu();
-            $selectmenu->options = $displaylist;
-            $selectmenu->name = "moveto";
-            $selectmenu->label = get_string("moveselectedcoursesto");
-            $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
-            echo $OUTPUT->select_menu($selectmenu);
+            $select = new moodle_select();
+            $select->options = $displaylist;
+            $select->name = "moveto";
+            $select->label = get_string("moveselectedcoursesto");
+            $select->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
+            echo $OUTPUT->select($select);
             echo "</td>\n</tr>\n";
             echo "</table>\n</form>";
 

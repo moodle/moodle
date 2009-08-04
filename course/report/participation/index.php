@@ -273,12 +273,12 @@
             echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />'."\n";
         }
         $displaylist['messageselect.php'] = get_string('messageselectadd');
-        $selectmenu = new moodle_select_menu();
-        $selectmenu->options = $displaylist;
-        $selectmenu->name = "formaction";
-        $selectmenu->label = get_string("withselectedusers");
-        $selectmenu->add_action('change', 'conditionalsubmit', array('formid' => 'studentsform'));
-        echo $OUTPUT->select_menu($selectmenu);
+        $select = new moodle_select();
+        $select->options = $displaylist;
+        $select->name = "formaction";
+        $select->label = get_string("withselectedusers");
+        $select->add_action('change', 'conditionalsubmit', array('formid' => 'studentsform'));
+        echo $OUTPUT->select($select);
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
         echo '</div>'."\n";

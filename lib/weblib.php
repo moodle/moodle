@@ -228,19 +228,19 @@ function qualified_me() {
  *
  * It can be used in moodle pages where config.php has been included without any further includes.
  *
- * It is useful for manipulating urls with long lists of params. 
- * One situation where it will be useful is a page which links to itself to perfrom various actions 
+ * It is useful for manipulating urls with long lists of params.
+ * One situation where it will be useful is a page which links to itself to perfrom various actions
  * and / or to process form data. A moodle_url object :
- * can be created for a page to refer to itself with all the proper get params being passed from page call to 
- * page call and methods can be used to output a url including all the params, optionally adding and overriding 
+ * can be created for a page to refer to itself with all the proper get params being passed from page call to
+ * page call and methods can be used to output a url including all the params, optionally adding and overriding
  * params and can also be used to
  *     - output the url without any get params
- *     - and output the params as hidden fields to be output within a form 
+ *     - and output the params as hidden fields to be output within a form
  *
  * One important usage note is that data passed to methods out, out_action, get_query_string and
- * hidden_params_out affect what is returned by the function and do not change the data stored in the object. 
- * This is to help with typical usage of these objects where one object is used to output urls 
- * in many places in a page. 
+ * hidden_params_out affect what is returned by the function and do not change the data stored in the object.
+ * This is to help with typical usage of these objects where one object is used to output urls
+ * in many places in a page.
  *
  * @link http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url See short write up here
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -259,13 +259,13 @@ class moodle_url {
     protected $path = '';
     protected $fragment = '';
     /**
-     * @var array 
+     * @var array
      * @access protected
      */
     protected $params = array(); // Associative array of query string params
 
     /**
-     * Pass no arguments to create a url that refers to this page. 
+     * Pass no arguments to create a url that refers to this page.
      * Use empty string to create empty url.
      *
      * @global string
@@ -314,7 +314,7 @@ class moodle_url {
     }
 
     /**
-     * Add an array of params to the params for this page. 
+     * Add an array of params to the params for this page.
      *
      * The added params override existing ones if they have the same name.
      *
@@ -330,8 +330,8 @@ class moodle_url {
     }
 
     /**
-     * Remove all params if no arguments passed. 
-     * Remove selected params if arguments are passed. 
+     * Remove all params if no arguments passed.
+     * Remove selected params if arguments are passed.
      *
      * Can be called as either remove_params('param1', 'param2')
      * or remove_params(array('param1', 'param2')).
@@ -355,7 +355,7 @@ class moodle_url {
     }
 
     /**
-     * Add a param to the params for this page. 
+     * Add a param to the params for this page.
      *
      * The added param overrides existing one if theyhave the same name.
      *
@@ -503,7 +503,7 @@ function prepare_url($url, $stripformparams=false) {
     // Handle relative URLs
     if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
-            
+
             return $matches[1] . "/$output";
         } else {
             throw new coding_exception('Your page uses bizarre relative URLs which Moodle cannot handle. Please use absolute URLs.');
@@ -622,105 +622,6 @@ function close_window($delay = 0, $reloadopener = false) {
 
 
 /**
- * Given an array of values, creates a group of radio buttons to be part of a form
- *
- * @staticvar int $idcounter
- * @param array  $options  An array of value-label pairs for the radio group (values as keys)
- * @param string $name     Name of the radiogroup (unique in the form)
- * @param string $checked  The value that is already checked
- * @param bool $return Whether this function should return a string or output 
- *                     it (defaults to false)
- * @return string|void If $return=true returns string, else echo's and returns void
- */
-function choose_from_radio ($options, $name, $checked='', $return=false) {
-
-    static $idcounter = 0;
-
-    if (!$name) {
-        $name = 'unnamed';
-    }
-
-    $output = '<span class="radiogroup '.$name."\">\n";
-
-    if (!empty($options)) {
-        $currentradio = 0;
-        foreach ($options as $value => $label) {
-            $htmlid = 'auto-rb'.sprintf('%04d', ++$idcounter);
-            $output .= ' <span class="radioelement '.$name.' rb'.$currentradio."\">";
-            $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="radio" value="'.$value.'"';
-            if ($value == $checked) {
-                $output .= ' checked="checked"';
-            }
-            if ($label === '') {
-                $output .= ' /> <label for="'.$htmlid.'">'.  $value .'</label></span>' .  "\n";
-            } else {
-                $output .= ' /> <label for="'.$htmlid.'">'.  $label .'</label></span>' .  "\n";
-            }
-            $currentradio = ($currentradio + 1) % 2;
-        }
-    }
-
-    $output .= '</span>' .  "\n";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/** 
- * Display an standard html checkbox with an optional label
- *
- * @staticvar int $idcounter
- * @param string $name    The name of the checkbox
- * @param string $value   The valus that the checkbox will pass when checked
- * @param bool $checked The flag to tell the checkbox initial state
- * @param string $label   The label to be showed near the checkbox
- * @param string $alt     The info to be inserted in the alt tag
- * @param string $script If not '', then this is added to the checkbox element 
- *                       as an onchange handler.
- * @param bool $return Whether this function should return a string or output 
- *                     it (defaults to false)
- * @return string|void If $return=true returns string, else echo's and returns void
- */
-function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
-
-    static $idcounter = 0;
-
-    if (!$name) {
-        $name = 'unnamed';
-    }
-
-    if ($alt) {
-        $alt = strip_tags($alt);
-    } else {
-        $alt = 'checkbox';
-    }
-
-    if ($checked) {
-        $strchecked = ' checked="checked"';
-    } else {
-        $strchecked = '';
-    }
-
-    $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
-    $output  = '<span class="checkbox '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' '.((!empty($script)) ? ' onclick="'.$script.'" ' : '').' />';
-    if(!empty($label)) {
-        $output .= ' <label for="'.$htmlid.'">'.$label.'</label>';
-    }
-    $output .= '</span>'."\n";
-
-    if (empty($return)) {
-        echo $output;
-    } else {
-        return $output;
-    }
-
-}
-
-/**
  * Display an standard html text field with an optional label
  *
  * @param string $name    The name of the text field
@@ -728,7 +629,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
  * @param string $alt     The info to be inserted in the alt tag
  * @param int $size Sets the size attribute of the field. Defaults to 50
  * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
- * @param bool $return Whether this function should return a string or output 
+ * @param bool $return Whether this function should return a string or output
  *                     it (defaults to false)
  * @return string|void If $return=true returns string, else echo's and returns void
  */
@@ -1028,12 +929,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         }
     }
     return $text.$cmt;
-                
+
 }
 
 /**
  * Converts the text format from the value to the 'internal'
- * name or vice versa. 
+ * name or vice versa.
  *
  * $key can either be the value or the name and you get the other back.
  *
@@ -1078,7 +979,7 @@ function reset_text_filters_cache() {
     remove_dir($purifdir, true);
 }
 
-/** 
+/**
  * Given a simple string, this function returns the string
  * processed by enabled string filters if $CFG->filterall is enabled
  *
@@ -1160,7 +1061,7 @@ function replace_ampersands_not_followed_by_entity($string) {
 
 /**
  * Given a string, replaces all <a>.*</a> by .* and returns the string.
- * 
+ *
  * @param string $string
  * @return string
  */
@@ -1180,13 +1081,13 @@ function wikify_links($string) {
 
 /**
  * Replaces non-standard HTML entities
- * 
+ *
  * @param string $string
  * @return string
  */
 function fix_non_standard_entities($string) {
     $text = preg_replace('/(&#[0-9]+)(;?)/', '$1;', $string);
-    $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', '$1;', $text); 
+    $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', '$1;', $text);
     return $text;
 }
 
@@ -1304,8 +1205,8 @@ function trusttext_strip($text) {
  */
 function trusttext_pre_edit($object, $field, $context) {
     $trustfield  = $field.'trust';
-    $formatfield = $field.'format'; 
-    
+    $formatfield = $field.'format';
+
     if (!$object->$trustfield or !trusttext_trusted($context)) {
         $object->$field = clean_text($object->$field, $object->$formatfield);
     }
@@ -1322,7 +1223,7 @@ function trusttext_pre_edit($object, $field, $context) {
  * @return bool true if user trusted
  */
 function trusttext_trusted($context) {
-    return (trusttext_active() and has_capability('moodle/site:trustcontent', $context)); 
+    return (trusttext_active() and has_capability('moodle/site:trustcontent', $context));
 }
 
 /**
@@ -1335,7 +1236,7 @@ function trusttext_trusted($context) {
 function trusttext_active() {
     global $CFG;
 
-    return !empty($CFG->enabletrusttext); 
+    return !empty($CFG->enabletrusttext);
 }
 
 /**
@@ -2425,7 +2326,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $
 /**
  * Print (or return) a collapisble region, that has a caption that can
  * be clicked to expand or collapse the region.
- * 
+ *
  * If JavaScript is off, then the region will always be exanded.
  *
  * @param string $contents the contents of the box.
@@ -2630,7 +2531,7 @@ function _print_custom_corners_end($idbase) {
  * @uses SITEID
  * @param object $user A {@link $USER} object representing a user
  * @param object $course A {@link $COURSE} object representing a course
- * @param bool $messageselect 
+ * @param bool $messageselect
  * @param bool $return If set to true then the HTML is returned rather than echo'd
  * @return string|void Depending on the setting of $return
  */
@@ -2821,7 +2722,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
 
 /**
  * Display a recent activity note
- * 
+ *
  * @uses CONTEXT_SYSTEM
  * @staticvar string $strftimerecent
  * @param object A time object
@@ -3317,8 +3218,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
  *
  * @global object
  * @param int $courseid The course ID
- * @param string $name 
- * @param string $current 
+ * @param string $name
+ * @param string $current
  * @param boolean $includenograde Include those with no grades
  * @param boolean $return If set to true returns rather than echo's
  * @return string|bool Depending on value of $return
@@ -3530,7 +3431,7 @@ function notice ($message, $link='', $course=NULL) {
  * <strong>Good practice:</strong> You should call this method before starting page
  * output by using any of the OUTPUT methods.
  *
- * @param mixed $url either a string URL, or a moodle_url to redirect to
+ * @param moodle_url $url A moodle_url to redirect to. Strings are not to be trusted!
  * @param string $message The message to display to the user
  * @param int $delay The delay before redirecting
  * @return void
@@ -3540,6 +3441,8 @@ function redirect($url, $message='', $delay=-1) {
 
     if ($url instanceof moodle_url) {
         $url = $url->out(false, array(), false);
+    } else {
+        debugging("String URLs are not safe in redirect(), please use a moodle_url object.", DEBUG_DEVELOPER);
     }
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
@@ -3699,7 +3602,7 @@ function rebuildnolinktag($text) {
 
 /**
  * Prints a maintenance message from $CFG->maintenance_message or default if empty
- * @return void 
+ * @return void
  */
 function print_maintenance_message() {
     global $CFG, $SITE, $PAGE;
@@ -3751,9 +3654,9 @@ class tabobject {
      */
     var $linkedwhenselected;
 
-    /** 
+    /**
      * A constructor just because I like constructors
-     * 
+     *
      * @param string $id
      * @param string $link
      * @param string $text
@@ -3883,7 +3786,7 @@ function convert_tree_to_html($tree, $row=0) {
  * @param string $selected The tabrow to select (by id)
  * @param array $inactive An array of tabrow id's to make inactive
  * @param array $activated An array of tabrow id's to make active
- * @return array The nested array 
+ * @return array The nested array
  */
 function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 
@@ -4140,7 +4043,7 @@ class progress_bar {
     }
     /**
       * Create a new progress bar, this function will output html.
-      * 
+      *
       * @return void Echo's output
       */
     function create(){

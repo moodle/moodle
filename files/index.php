@@ -46,7 +46,7 @@ if ($courseid) {
     if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         print_error('invalidcontext');
     }
-    redirect('index.php?contextid='.$context->id.'&amp;itemid=0&amp;filearea=course_content');
+    redirect(new moodle_url('index.php', array('contextid' => $context->id, 'itemid'=> 0, 'filearea' => 'course_content')));
 }
 
 if (!$context = get_context_instance_by_id($contextid)) {
@@ -82,8 +82,7 @@ $file_info = $browser->get_file_info($context, $filearea, $itemid, $filepath, $f
 if ($file_info and $file_info->is_directory() and $file_info->is_writable() and $newdirname !== '' and data_submitted() and confirm_sesskey()) {
     if ($newdir_info = $file_info->create_directory($newdirname, $USER->id)) {
         $params = $newdir_info->get_params_rawencoded();
-        $params = implode('&amp;', $params);
-        redirect("index.php?$params");
+        redirect(new moodle_url('index.php', $params));
     } else {
         $error = "Could not create new dir"; // TODO: localise
     }
@@ -96,8 +95,7 @@ if ($file_info and $file_info->is_directory() and $file_info->is_writable() and 
         try {
             if ($newfile = $file_info->create_file_from_pathname($newfilename, $_FILES['newfile']['tmp_name'], $USER->id)) {
                 $params = $file_info->get_params_rawencoded();
-                $params = implode('&amp;', $params);
-                redirect("index.php?$params");
+                redirect(new moodle_url('index.php', $params));
 
             } else {
                 $error = "Could not create upload file"; // TODO: localise
@@ -129,8 +127,7 @@ if ($file_info and $delete) {
             $error = "Could not delete file!"; // TODO: localise
         }
         $params = $parent_info->get_params_rawencoded();
-        $params = implode('&amp;', $params);
-        redirect("index.php?$params", $error);
+        redirect(new moodle_url('index.php', $params));
     }
 }
 

@@ -2634,7 +2634,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     }
 
     $output = $OUTPUT->button($form);
-    
+
     $icon = new action_icon();
 
     if ($return) {
@@ -3080,29 +3080,29 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
                            $id='', $listbox=false, $multiple=false, $class='') {
 
     global $OUTPUT;
-    // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $selectmenu = new moodle_select_menu();
-    $selectmenu->options = $options;
-    $selectmenu->name = $name;
-    $selectmenu->selectedvalue = $selected;
-    $selectmenu->nothinglabel = $nothing;
-    $selectmenu->nothingvalue = $nothingvalue;
-    $selectmenu->disabled = $disabled;
-    $selectmenu->tabindex = $tabindex;
-    $selectmenu->id = $id;
-    $selectmenu->listbox = $listbox;
-    $selectmenu->multiple = $multiple;
-    $selectmenu->add_classes($class);
+    $select = new moodle_select();
+    $select->options = $options;
+    $select->name = $name;
+    $select->selectedvalue = $selected;
+    $select->nothinglabel = $nothing;
+    $select->nothingvalue = $nothingvalue;
+    $select->disabled = $disabled;
+    $select->tabindex = $tabindex;
+    $select->id = $id;
+    $select->listbox = $listbox;
+    $select->multiple = $multiple;
+    $select->add_classes($class);
 
     if ($nothing == 'choose') {
-        $selectmenu->nothinglabel = '';
+        $select->nothinglabel = '';
     }
 
-    $output = $OUTPUT->select_menu($selectmenu);
+    $output = $OUTPUT->select($select);
 
     if ($return) {
         return $output;
@@ -3130,17 +3130,17 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  */
 function choose_from_menu_yesno($name, $selected, $script = '',
         $return = false, $disabled = false, $tabindex = 0) {
-    // debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    // debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
 
-    $selectmenu = moodle_select_menu::make_yes_no($name, $selected);
-    $selectmenu->disabled = $disabled;
-    $selectmenu->tabindex = $tabindex;
-    $output = $OUTPUT->select_menu($select_menu);
+    $select = moodle_select::make_yes_no($name, $selected);
+    $select->disabled = $disabled;
+    $select->tabindex = $tabindex;
+    $output = $OUTPUT->select($select);
 
     if ($return) {
         return $output;
@@ -3177,23 +3177,23 @@ function choose_from_menu_yesno($name, $selected, $script = '',
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
 
-    // debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select_menu($selectmenu).');
+    // debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $selectmenu = moodle_select_menu::make($options, $name, $selected);
-    $selectmenu->tabindex = $tabindex;
-    $selectmenu->disabled = $disabled;
-    $selectmenu->nothingvalue = $nothingvalue;
-    $selectmenu->nested = true;
+    $select = moodle_select::make($options, $name, $selected);
+    $select->tabindex = $tabindex;
+    $select->disabled = $disabled;
+    $select->nothingvalue = $nothingvalue;
+    $select->nested = true;
 
     if ($nothing == 'choose') {
-        $selectmenu->nothinglabel = '';
+        $select->nothinglabel = '';
     }
 
-    $output = $OUTPUT->select_menu($selectmenu);
+    $output = $OUTPUT->select($select);
 
     if ($return) {
         return $output;
@@ -3214,7 +3214,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
  * @return string|bool Depending on value of $return
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
-    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselectmenu).');
+    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselect).');
     global $OUTPUT;
 
     $helpbutton = help_button::make_scale_menu($courseid, $scale);
@@ -3245,7 +3245,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @return string|bool Depending on value of $return
  */
 function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
-    throw new coding_exception('print_timer_selector is completely deprecated. Please use $OUTPUT->select_menu($selectmenu) instead');
+    throw new coding_exception('print_timer_selector is completely deprecated. Please use $OUTPUT->select($select) instead');
 }
 
 /**
@@ -3261,12 +3261,12 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * @return string|bool Depending on value of $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
-    // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($timeselector).');
+    // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
     global $OUTPUT;
-    $hourselector = moodle_select_menu::make_time_selector('hours', $hour, $currenttime);
-    $minuteselector = moodle_select_menu::make_time_selector('minutes', $minute, $currenttime, $step);
+    $hourselector = moodle_select::make_time_selector('hours', $hour, $currenttime);
+    $minuteselector = moodle_select::make_time_selector('minutes', $minute, $currenttime, $step);
 
-    $output = $OUTPUT->select_menu($hourselector) . $OUTPUT->select_menu($minuteselector);
+    $output = $OUTPUT->select($hourselector) . $OUTPUT->select($minuteselector);
 
     if ($return) {
         return $output;
@@ -3289,14 +3289,14 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
-    // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select_menu($dateselector).');
+    // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
     global $OUTPUT;
 
-    $dayselector = moodle_select_menu::make_time_selector('days', $day, $currenttime);
-    $monthselector = moodle_select_menu::make_time_selector('months', $month, $currenttime);
-    $yearselector = moodle_select_menu::make_time_selector('years', $year, $currenttime);
+    $dayselector = moodle_select::make_time_selector('days', $day, $currenttime);
+    $monthselector = moodle_select::make_time_selector('months', $month, $currenttime);
+    $yearselector = moodle_select::make_time_selector('years', $year, $currenttime);
 
-    $output = $OUTPUT->select_menu($dayselector) . $OUTPUT->select_menu($monthselector) . $OUTPUT->select_menu($yearselector);
+    $output = $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
 
     if ($return) {
         return $output;
@@ -3337,7 +3337,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
     global $OUTPUT;
 
-    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select_menu($dateselector).');
+    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
 
     if (!empty($optionsextra)) {
         debugging('the optionsextra param has been deprecated in popup_form, it will be ignored.', DEBUG_DEVELOPER);
@@ -3346,25 +3346,25 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     if (empty($options)) {
         return '';
     }
-    $selectmenu = moodle_select_menu::make_popup_form($baseurl, $options, $formid, $submitvalue, $selected);
-    $selectmenu->disabled = $disabled;
-    
+    $select = moodle_select::make_popup_form($baseurl, $options, $formid, $submitvalue, $selected);
+    $select->disabled = $disabled;
+
     // Extract the last param of the baseurl for the name of the select
     if (preg_match('/([a-z_]*)=$/', $baseurl, $matches)) {
-        $selectmenu->name = $matches[1];
-        $selectmenu->form->url->remove_params(array($matches[1]));
+        $select->name = $matches[1];
+        $select->form->url->remove_params(array($matches[1]));
     }
 
     if ($nothing == 'choose') {
-        $selectmenu->nothinglabel = '';
+        $select->nothinglabel = '';
     } else {
-        $selectmenu->nothinglabel = $nothing;
+        $select->nothinglabel = $nothing;
     }
 
-    $selectmenu->set_label($selectlabel, $selectmenu->id);
-    $selectmenu->set_help_icon($help, $helptext);
+    $select->set_label($selectlabel, $select->id);
+    $select->set_help_icon($help, $helptext);
 
-    $output = $OUTPUT->select_menu($selectmenu);
+    $output = $OUTPUT->select($select);
 
     if ($return) {
         return $output;
@@ -3387,13 +3387,86 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
  */
 function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
     global $OUTPUT;
-    
+
     // debugging('close_window_button() has been deprecated. Please change your code to use $OUTPUT->close_window_button().');
     $output = $OUTPUT->close_window_button(get_string($name));
-    
+
     if ($return) {
         return $output;
     } else {
         echo $output;
     }
+}
+
+/**
+ * Given an array of values, creates a group of radio buttons to be part of a form
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @staticvar int $idcounter
+ * @param array  $options  An array of value-label pairs for the radio group (values as keys)
+ * @param string $name     Name of the radiogroup (unique in the form)
+ * @param string $checked  The value that is already checked
+ * @param bool $return Whether this function should return a string or output
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function choose_from_radio ($options, $name, $checked='', $return=false) {
+
+    // debugging('choose_from_radio() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    global $OUTPUT;
+
+    $select = moodle_select::make($options, $name, $checked);
+    $select->rendertype = 'radio';
+
+    $output = $OUTPUT->select($select);
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Display an standard html checkbox with an optional label
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @staticvar int $idcounter
+ * @param string $name    The name of the checkbox
+ * @param string $value   The valus that the checkbox will pass when checked
+ * @param bool $checked The flag to tell the checkbox initial state
+ * @param string $label   The label to be showed near the checkbox
+ * @param string $alt     The info to be inserted in the alt tag
+ * @param string $script If not '', then this is added to the checkbox element
+ *                       as an onchange handler.
+ * @param bool $return Whether this function should return a string or output
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
+
+    // debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
+    global $OUTPUT;
+    
+    if (!empty($script)) {
+        debugging('The use of the $script param in print_checkbox has not been migrated into $OUTPUT->checkbox. Please use $checkbox->add_action().', DEBUG_DEVELOPER);
+    }
+
+    $checkbox = new html_select_option();
+    $checkbox->value = $value;
+    $checkbox->selected = $checked;
+    $checkbox->text = $label;
+    $checkbox->label->text = $label;
+    $checkbox->alt = $alt;
+
+    $output = $OUTPUT->checkbox($checkbox, $name);
+
+    if (empty($return)) {
+        echo $output;
+    } else {
+        return $output;
+    }
+
 }

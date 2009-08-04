@@ -740,12 +740,12 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                 <?php print_string('organizations','scorm') ?>
                 <form id='changeorg' method='post' action='<?php echo $action ?>'>
                     <?php 
-                    $selectmenu = new moodle_select_menu();
-                    $selectmenu->options = $orgs;
-                    $selectmenu->name = 'organization';
-                    $selectmenu->selectedvalue = $organization;
-                    $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'changeorg'));
-                    echo $OUTPUT->select_menu($selectmenu); 
+                    $select = new moodle_select();
+                    $select->options = $orgs;
+                    $select->name = 'organization';
+                    $select->selectedvalue = $organization;
+                    $select->add_action('change', 'submit_form_by_id', array('id' => 'changeorg'));
+                    echo $OUTPUT->select($select); 
                     ?>
                 </form>
             </div>

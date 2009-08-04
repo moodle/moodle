@@ -883,9 +883,9 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->renderer = new moodle_core_renderer(new moodle_page);
     }
 
-    public function test_select_menu_simple() {
-        $selectmenu = moodle_select_menu::make(array(10 => 'ten', 'c2' => 'two'), 'mymenu');
-        $html = $this->renderer->select_menu($selectmenu);
+    public function test_select_simple() {
+        $select = moodle_select::make(array(10 => 'ten', 'c2' => 'two'), 'mymenu');
+        $html = $this->renderer->select($select);
         $this->assert(new ContainsTagWithAttributes('select', array('class' => 'menumymenu select', 'name' => 'mymenu', 'id' => 'menumymenu')), $html);
         $this->assert(new ContainsTagWithContents('option', 'ten'), $html);
         $this->assert(new ContainsTagWithAttribute('option', 'value', '10'), $html);
@@ -1160,10 +1160,10 @@ class moodle_core_renderer_test extends UnitTestCase {
         $html = $this->renderer->htmllist($htmllist);
     }
 
-    public function test_moodle_select_menu() {
+    public function test_moodle_select() {
         $options = array('var1' => 'value1', 'var2' => 'value2', 'var3' => 'value3');
-        $selectmenu = moodle_select_menu::make($options, 'mymenu', 'var2');
-        $html = $this->renderer->select_menu($selectmenu);
+        $select = moodle_select::make($options, 'mymenu', 'var2');
+        $html = $this->renderer->select($select);
         $this->assert(new ContainsTagWithAttributes('select', array('name' => 'mymenu')), $html);
         $this->assert(new ContainsTagWithAttributes('option', array('value' => 'var1'), array('selected' => 'selected')), $html);
         $this->assert(new ContainsTagWithAttributes('option', array('value' => 'var2', 'selected' => 'selected')), $html);
@@ -1173,8 +1173,8 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithContents('option', 'value3'), $html);
 
         $options = array('group1' => '--group1', 'var1' => 'value1', 'var2' => 'value2', 'group2' => '--', 'group2' => '--group2', 'var3' => 'value3', 'var4' => 'value4');
-        $selectmenu = moodle_select_menu::make($options, 'mymenu', 'var2');
-        $html = $this->renderer->select_menu($selectmenu);
+        $select = moodle_select::make($options, 'mymenu', 'var2');
+        $html = $this->renderer->select($select);
         $this->assert(new ContainsTagWithAttributes('select', array('name' => 'mymenu')), $html);
         $this->assert(new ContainsTagWithAttributes('optgroup', array('label' => 'group1')), $html);
         $this->assert(new ContainsTagWithAttributes('optgroup', array('label' => 'group2')), $html);

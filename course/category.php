@@ -406,12 +406,12 @@
             make_categories_list($movetocategories, $notused, 'moodle/category:manage');
             $movetocategories[$category->id] = get_string('moveselectedcoursesto');
             echo '<tr><td colspan="3" align="right">';
-            $selectmenu = new moodle_select_menu();
-            $selectmenu->options = $movetocategories;
-            $selectmenu->name = 'moveto';
-            $selectmenu->selectedvalue = $category->id;
-            $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
-            echo $OUTPUT->select_menu($selectmenu);
+            $select = new moodle_select();
+            $select->options = $movetocategories;
+            $select->name = 'moveto';
+            $select->selectedvalue = $category->id;
+            $select->add_action('change', 'submit_form_by_id', array('id' => 'movecourses'));
+            echo $OUTPUT->select($select);
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo '</td></tr>';
         }

@@ -146,12 +146,12 @@
         if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
              echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-             $selectmenu = new moodle_select_menu();
-             $selectmenu->options = $courses;
-             $selectmenu->name = 'coursefilter';
-             $selectmenu->selectedvalue = $coursefilter;
-             $selectmenu->add_action('change', 'submit_form_by_id', array('id' => 'analysis-form'));
-             echo $OUTPUT->select_menu($selectmenu);
+             $select = new moodle_select();
+             $select->options = $courses;
+             $select->name = 'coursefilter';
+             $select->selectedvalue = $coursefilter;
+             $select->add_action('change', 'submit_form_by_id', array('id' => 'analysis-form'));
+             echo $OUTPUT->select($select);
         }
         echo '<hr />';
         $itemnr = 0;

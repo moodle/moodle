@@ -285,12 +285,12 @@
         while(list($key,$val)=each($wiki_list)) {
           $wiki_admin_list[$key."&amp;action=$action"]=$val;
         }
-        $selectmenu = new moodle_select_menu();
-        $selectmenu->options = $wiki_admin_list;
-        $selectmenu->name = 'wikiselect';
-        $selectmenu->selectedvalue = $selected;
-        $selectmenu->add_action('change', 'go_to_wiki');
-        echo $OUTPUT->select_menu($selectmenu);
+        $select = new moodle_select();
+        $select->options = $wiki_admin_list;
+        $select->name = 'wikiselect';
+        $select->selectedvalue = $selected;
+        $select->add_action('change', 'go_to_wiki');
+        echo $OUTPUT->select($select);
         echo '</td>';
         echo '</tr></table>';
         echo '</fieldset></form>';

@@ -564,12 +564,12 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             }
         }
 
-        $selectmenu = new moodle_select_menu();
-        $selectmenu->options = $options;
-        $selectmenu->name = 'aggregation_'.$category->id;
-        $selectmenu->selectedvalue = $category->aggregation;
-        $selectmenu->add_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
-        $aggregation = $OUTPUT->select_menu($selectmenu);
+        $select = new moodle_select();
+        $select->options = $options;
+        $select->name = 'aggregation_'.$category->id;
+        $select->selectedvalue = $category->aggregation;
+        $select->add_action('change', 'update_category_aggregation', array('courseid' => $params['id'], 'category' => $category->id, 'sesskey' => sesskey()));
+        $aggregation = $OUTPUT->select($select);
 
         if ($this->forced) {
             $aggregation = $options[$category->aggregation];
