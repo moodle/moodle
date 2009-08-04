@@ -152,6 +152,7 @@
         // otherwise the admin block does not appear to this user, and you get an error.
         require_once($CFG->libdir . '/adminlib.php');
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
+        $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
         admin_externalpage_print_header();
     } else {
         $navbaritem = print_course_search('', true, 'navbar');
