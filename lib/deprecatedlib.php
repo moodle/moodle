@@ -3449,7 +3449,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
 
     // debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
     global $OUTPUT;
-    
+
     if (!empty($script)) {
         debugging('The use of the $script param in print_checkbox has not been migrated into $OUTPUT->checkbox. Please use $checkbox->add_action().', DEBUG_DEVELOPER);
     }
@@ -3470,3 +3470,38 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
     }
 
 }
+
+
+/**
+ * Display an standard html text field with an optional label
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $name    The name of the text field
+ * @param string $value   The value of the text field
+ * @param string $alt     The info to be inserted in the alt tag
+ * @param int $size Sets the size attribute of the field. Defaults to 50
+ * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
+ * @param bool $return Whether this function should return a string or output
+ *                     it (defaults to false)
+ * @return string|void If $return=true returns string, else echo's and returns void
+ */
+function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
+
+    // debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+
+    global $OUTPUT;
+
+    $field = html_field::make_text($name, $value, $alt, $maxlength);
+    $field->style = "width: {$size}px;";
+
+    $output = $OUTPUT->textfield($field);
+
+    if (empty($return)) {
+        echo $output;
+    } else {
+        return $output;
+    }
+
+}
+

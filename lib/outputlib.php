@@ -2924,7 +2924,6 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         $option->prepare();
-        $option->generate_id();
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
@@ -3013,6 +3012,28 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= $this->output_end_tag('optgroup');
             return $output;
         }
+    }
+
+    /**
+     * Output an <input type="text"> element
+     *
+     * @param html_field $field a html_field object
+     * @return string the HTML for the <input>
+     */
+    public function textfield($field) {
+        $field->prepare();
+        $this->prepare_event_handlers($field);
+        $output = $this->output_start_tag('span', array('class' => "textfield $field->name"));
+        $output .= $this->output_empty_tag('input', array(
+                'type' => 'text',
+                'name' => $field->name,
+                'id' => $field->id,
+                'value' => $field->value,
+                'style' => $field->style,
+                'alt' => $field->alt,
+                'maxlength' => $field->maxlength));
+        $output .= $this->output_end_tag('span');
+        return $output;
     }
 
     /**
@@ -3518,7 +3539,7 @@ class moodle_html_component {
     /**
      * Internal method for generating a unique ID for the purpose of event handlers.
      */
-    public function generate_id() {
+    protected function generate_id() {
         // Generate an id that is not already used.
         do {
             $newid = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 6);
@@ -4022,6 +4043,9 @@ class html_select_option extends moodle_html_component {
         } else if (!($this->label instanceof html_label)) {
             $this->set_label($this->label);
         }
+        if (empty($this->id)) {
+            $this->generate_id();
+        }
 
         parent::prepare();
     }
@@ -4052,6 +4076,75 @@ class html_select_optgroup extends moodle_html_component {
             throw new coding_exception('html_select_optgroup requires at least one html_select_option object');
         }
         parent::prepare();
+    }
+}
+
+/**
+ * This class represents an input field
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_field extends moodle_html_component {
+    /**
+     * @var string $name The name attribute of the field
+     */
+    public $name;
+    /**
+     * @var string $value The value attribute of the field
+     */
+    public $value;
+    /**
+     * @var string $type The type attribute of the field (text, submit, checkbox etc)
+     */
+    public $type;
+    /**
+     * @var string $maxlength The maxlength attribute of the field (only applies to text type)
+     */
+    public $maxlength;
+    /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+
+    public function __construct() {
+        $this->label = new html_label();
+    }
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (empty($this->style)) {
+            $this->style = 'width: 4em;';
+        }
+        if (empty($this->id)) {
+            $this->generate_id();
+        }
+        parent::prepare();
+    }
+
+    /**
+     * Shortcut for creating a text input component.
+     * @param string $name    The name of the text field
+     * @param string $value   The value of the text field
+     * @param string $alt     The info to be inserted in the alt tag
+     * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
+     * @return html_field The field component
+     */
+    public static function make_text($name='unnamed', $value, $alt, $maxlength=0) {
+        $field = new html_field();
+        if (empty($alt)) {
+            $alt = get_string('textfield');
+        }
+        $field->type = 'text';
+        $field->name = $name;
+        $field->value = $value;
+        $field->alt = $alt;
+        $field->maxlength = $maxlength;
+        return $field;
     }
 }
 

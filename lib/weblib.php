@@ -622,50 +622,6 @@ function close_window($delay = 0, $reloadopener = false) {
 
 
 /**
- * Display an standard html text field with an optional label
- *
- * @param string $name    The name of the text field
- * @param string $value   The value of the text field
- * @param string $alt     The info to be inserted in the alt tag
- * @param int $size Sets the size attribute of the field. Defaults to 50
- * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
- * @param bool $return Whether this function should return a string or output
- *                     it (defaults to false)
- * @return string|void If $return=true returns string, else echo's and returns void
- */
-function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
-
-    static $idcounter = 0;
-
-    if (empty($name)) {
-        $name = 'unnamed';
-    }
-
-    if (empty($alt)) {
-        $alt = 'textfield';
-    }
-
-    if (!empty($maxlength)) {
-        $maxlength = ' maxlength="'.$maxlength.'" ';
-    }
-
-    $htmlid = 'auto-tf'.sprintf('%04d', ++$idcounter);
-    $output  = '<span class="textfield '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="text" value="'.$value.'" size="'.$size.'" '.$maxlength.' alt="'.$alt.'" />';
-
-    $output .= '</span>'."\n";
-
-    if (empty($return)) {
-        echo $output;
-    } else {
-        return $output;
-    }
-
-}
-
-
-
-/**
  * Validates an email to make sure it makes sense.
  *
  * @param string $address The email address to validate.
