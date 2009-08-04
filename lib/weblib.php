@@ -3397,8 +3397,6 @@ function redirect($url, $message='', $delay=-1) {
 
     if ($url instanceof moodle_url) {
         $url = $url->out(false, array(), false);
-    } else {
-        debugging("String URLs are not safe in redirect(), please use a moodle_url object.", DEBUG_DEVELOPER);
     }
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
