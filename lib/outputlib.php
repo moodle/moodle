@@ -2684,12 +2684,15 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->prepare_event_handlers($image);
 
         $attributes = array('class' => $image->get_classes_string(),
-                            'style' => $this->prepare_legacy_width_and_height($image),
                             'src' => prepare_url($image->src),
                             'alt' => $image->alt,
+                            'style' => $image->style,
                             'title' => $image->title,
                             'id' => $image->id);
-
+        
+        if (!empty($image->height) || !empty($image->width)) {
+            $attributes['style'] .= $this->prepare_legacy_width_and_height($image);
+        }
         return $this->output_empty_tag('img', $attributes);
     }
 
@@ -3418,6 +3421,10 @@ class moodle_html_component {
      */
     public $alt = '';
     /**
+     * @var string $style value to use for the style attribute of this HTML tag.
+     */
+    public $style = '';
+    /**
      * @var array class names to add to this HTML element.
      */
     public $classes = array();
@@ -3755,6 +3762,7 @@ class moodle_select extends moodle_html_component {
         } else {
             $inoptgroup = false;
             $optgroup = false;
+
             foreach ($options as $value => $display) {
                 if ($display == '--') { /// we are ending previous optgroup
                     $this->options[] = $optgroup;
@@ -3813,7 +3821,6 @@ class moodle_select extends moodle_html_component {
                 $this->options[] = $optgroup;
             }
         }
-
         parent::prepare();
     }
 
@@ -3915,13 +3922,14 @@ class moodle_select extends moodle_html_component {
      * @param string $selected The option that is initially selected
      * @return moodle_select A menu initialised as a popup form.
      */
-    public function make_popup_form($baseurl, $options, $formid, $submitvalue='', $selected=null) {
+    public function make_popup_form($options, $formid, $submitvalue='', $selected=null) {
+        global $CFG;
         $select = self::make($options, 'jump', $selected);
         $select->form = new html_form();
         $select->form->id = $formid;
         $select->form->method = 'get';
         $select->form->add_class('popupform');
-        $select->form->url = new moodle_url($baseurl);
+        $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
         $select->form->button->text = get_string('go');
 
         if (!empty($submitvalue)) {
@@ -3929,7 +3937,6 @@ class moodle_select extends moodle_html_component {
         }
 
         $select->id = $formid . '_jump';
-        $select->baseurl = $baseurl;
 
         $select->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $select->id));
 

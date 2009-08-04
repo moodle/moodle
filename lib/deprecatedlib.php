@@ -3339,21 +3339,21 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 
     // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
 
-    if (!empty($optionsextra)) {
-        debugging('the optionsextra param has been deprecated in popup_form, it will be ignored.', DEBUG_DEVELOPER);
-    }
-
     if (empty($options)) {
         return '';
     }
-    $select = moodle_select::make_popup_form($baseurl, $options, $formid, $submitvalue, $selected);
-    $select->disabled = $disabled;
 
-    // Extract the last param of the baseurl for the name of the select
-    if (preg_match('/([a-z_]*)=$/', $baseurl, $matches)) {
-        $select->name = $matches[1];
-        $select->form->url->remove_params(array($matches[1]));
+    foreach ($options as $var => $val) {
+        $url = new moodle_url($baseurl . $var);
+        if (!empty($optionsextra[$var])) {
+            new moodle_url($baseurl . $var . $optionsextra[$var]);
+        }
+        $options[$url->out(false, array(), false)] = $val;
+        unset($options[$var]);
     }
+
+    $select = moodle_select::make_popup_form($options, $formid, $submitvalue, $selected);
+    $select->disabled = $disabled;
 
     if ($nothing == 'choose') {
         $select->nothinglabel = '';
