@@ -28,7 +28,19 @@
         $USER->editing = $edit;
     }
 
-    $button = update_mymoodle_icon($USER->id);
+    if (!empty($USER->editing)) {
+        $string = get_string('updatemymoodleoff');
+        $edit = '0';
+    } else {
+        $string = get_string('updatemymoodleon');
+        $edit = '1';
+    }
+
+    $form = new html_form();
+    $form->url = new moodle_url("$CFG->wwwroot/my/index.php", array('edit' => $edit));
+    $form->button->text = $string;
+    $button = $OUTPUT->button($form);
+
     $header = $SITE->shortname . ': ' . $strmymoodle;
     $navigation = build_navigation($strmymoodle);
     $loggedinas = user_login_string();

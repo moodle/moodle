@@ -2765,33 +2765,6 @@ function switchroles_form($courseid) {
 
 
 /**
- * Returns a turn edit on/off button for course in a self contained form.
- * Used to be an icon, but it's now a simple form button
- *
- * @global object
- * @global object
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function update_mymoodle_icon() {
-
-    global $CFG, $USER;
-
-    if (!empty($USER->editing)) {
-        $string = get_string('updatemymoodleoff');
-        $edit = '0';
-    } else {
-        $string = get_string('updatemymoodleon');
-        $edit = '1';
-    }
-
-    return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
-           "<div>".
-           "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-           "<input type=\"submit\" value=\"$string\" /></div></form>";
-}
-
-/**
  * Returns a turn edit on/off button for tag in a self contained form.
  *
  * @global object
