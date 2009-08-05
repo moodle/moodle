@@ -176,7 +176,29 @@
     $searchform = print_course_search($search, true, "navbar");
 
     if (!empty($courses) && has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
-        $searchform .= update_categories_search_button($search,$page,$perpage);
+        $searchform = '';
+        // not sure if this capability is the best  here
+        if (has_capability('moodle/category:manage', get_context_instance(CONTEXT_SYSTEM))) {
+            if ($PAGE->user_is_editing()) {
+                $string = get_string("turneditingoff");
+                $edit = "off";
+                $perpage = 30;
+            } else {
+                $string = get_string("turneditingon");
+                $edit = "on";
+            }
+
+            $form = new html_form();
+            $form->url = new moodle_url("$CFG->wwwroot/course/search.php", array(
+                    'edit' => $edit, 
+                    'sesskey' => sesskey(),
+                    'search' => s($search, true),
+                    'page' => $page,
+                    'perpage' => $perpage));
+            $form->method = 'get';
+            $form->button->text = s($string);
+            $searchform = $OUTPUT->button($form);
+        }
     }
 
     $navlinks = array();

@@ -705,7 +705,108 @@
                     $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
                     $user = make_context_subobj($user);
-                    print_user($user, $course, $bulkoperations);
+
+                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                    if (isset($user->context->id)) {
+                        $usercontext = $user->context;
+                    } else {
+                        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                    }
+
+                    $countries = get_list_of_countries();
+
+                    /// Get the hidden field list
+                    if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                        $hiddenfields = array();
+                    } else {
+                        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+                    }
+                    $table = new html_table();
+                    $table->add_class('userinfobox');
+
+                    $row = new html_table_row();
+                    $row->cells[0] = new html_table_cell();
+                    $row->cells[0]->add_class('left side');
+                    $row->cells[0]->text = print_user_picture($user, $course->id, $user->picture, true, true);
+                    $row->cells[1] = new html_table_cell();
+                    $row->cells[1]->add_class('content');
+
+                    $row->cells[1]->text = $OUTPUT->container(fullname($user, has_capability('moodle/site:viewfullnames', $context)), 'username');
+                    $row->cells[1]->text .= $OUTPUT->container_start('info');
+
+                    if (!empty($user->role)) {
+                        $row->cells[1]->text .= get_string('role') .': '. $user->role .'<br />';
+                    }
+                    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
+                                has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                        $link = new html_link();
+                        $link->url = "mailto:$user->email";
+                        $link->text = $user->email;
+                        $row->cells[1]->text .= get_string('email') .': ' . $OUTPUT->link($link) . '<br />';
+                    }
+                    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
+                        $row->cells[1]->text .= get_string('city') .': ';
+                        if ($user->city && !isset($hiddenfields['city'])) {
+                            $row->cells[1]->text .= $user->city;
+                        }
+                        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
+                            if ($user->city && !isset($hiddenfields['city'])) {
+                                $row->cells[1]->text .= ', ';
+                            }
+                            $row->cells[1]->text .= $countries[$user->country];
+                        }
+                        $row->cells[1]->text .= '<br />';
+                    }
+
+                    if (!isset($hiddenfields['lastaccess'])) {
+                        if ($user->lastaccess) {
+                            $row->cells[1]->text .= get_string('lastaccess') .': '. userdate($user->lastaccess);
+                            $row->cells[1]->text .= '&nbsp; ('. format_time(time() - $user->lastaccess, $datestring) .')';
+                        } else {
+                            $row->cells[1]->text .= get_string('lastaccess') .': '. get_string('never');
+                        }
+                    }
+
+                    $row->cells[1]->text .= $OUTPUT->container_end();
+                    
+                    $row->cells[2] = new html_table_cell();
+                    $row->cells[2]->add_class('links');
+                    $row->cells[2]->text = '';
+                    
+                    $links = array();
+
+                    if ($CFG->bloglevel > 0) {
+                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/blog/index.php?userid='.$user->id), get_string('blogs','blog'));
+                    }
+
+                    if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
+                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&user='.$user->id), get_string('notes','notes'));
+                    }
+
+                    if (has_capability('moodle/site:viewreports', $context) or has_capability('moodle/user:viewuseractivitiesreport', $usercontext)) {
+                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/user.php?id='. $course->id .'&user='. $user->id), get_string('activity'));
+                    }
+
+                    if (has_capability('moodle/role:assign', $context) and get_user_roles($context, $user->id, false)) {  // I can unassign and user has some role
+                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/unenrol.php?id='. $course->id .'&user='. $user->id), get_string('unenrol'));
+                    }
+
+                    if ($USER->id != $user->id && !session_is_loggedinas() && has_capability('moodle/user:loginas', $context) &&
+                                                 ! has_capability('moodle/site:doanything', $context, $user->id, false)) {
+                        $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/course/loginas.php?id='. $course->id .'&user='. $user->id .'&sesskey='. sesskey()), get_string('loginas'));
+                    }
+
+                    $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
+                    
+                    foreach ($links as $link) {
+                        $row->cells[2]->text .= $OUTPUT->link($link);
+                    }
+
+                    if (!empty($messageselect)) {
+                        $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
+                    }
+                    $table->data = array($row);
+                    echo $OUTPUT->print_table($table);
                 }
 
             } else {

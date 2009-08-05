@@ -2777,6 +2777,27 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Prints the 'update this xxx' button that appears on module pages.
+     *
+     * @param string $cmid the course_module id.
+     * @param string $modulename the module name - get_string('modulename', 'xxx')
+     * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
+     */
+    public function update_module_button($cmid, $modulename) {
+        global $CFG;
+        if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
+            $string = get_string('updatethis', '', $modulename);
+
+            $form = new html_form();
+            $form->url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
+            $form->button->text = $modulename;
+            return $this->button($form);
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Outputs a HTML nested list
      *
      * @param html_list $list A html_list object
@@ -3278,43 +3299,62 @@ class moodle_core_renderer extends moodle_renderer_base {
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
             $output .= $this->output_start_tag('tbody', array()) . "\n";
+
             foreach ($table->data as $key => $row) {
-                $oddeven = $oddeven ? 0 : 1;
-                if (isset($table->rowclasses[$key])) {
-                    $classes = array_unique(moodle_html_component::clean_classes($table->rowclasses[$key]));
-                } else {
-                    $classes = array();
-                }
-                $classes[] = 'r' . $oddeven;
-                if ($key == $lastrowkey) {
-                    $classes[] = 'lastrow';
-                }
-                $output .= $this->output_start_tag('tr', array('class' => moodle_renderer_base::prepare_classes($classes))) . "\n";
                 if (($row === 'hr') && ($countcols)) {
                     $output .= $this->output_tag('td', array('colspan' => $countcols),
                                                  $this->output_tag('div', array('class' => 'tabledivider'), '')) . "\n";
-                } else {  /// it's a normal row of data
-                    $keys2 = array_keys($row);
-                    $lastkey = end($keys2);
-                    foreach ($row as $key => $item) {
-                        if (isset($table->colclasses[$key])) {
-                            $classes = array_unique(moodle_html_component::clean_classes($table->colclasses[$key]));
-                        } else {
-                            $classes = array();
+                } else {
+                    // Convert array rows to html_table_rows and cell strings to html_table_cell objects
+                    if (!($row instanceof html_table_row)) {
+                        $newrow = new html_table_row();
+
+                        foreach ($row as $key => $item) {
+                            $cell = new html_table_cell();
+                            $cell->text = $item;
+                            $newrow->cells[] = $cell;
                         }
-                        $classes[] = 'cell';
-                        $classes[] = 'c' . $key;
+                        $row = $newrow;
+                    }
+
+                    $oddeven = $oddeven ? 0 : 1;
+                    if (isset($table->rowclasses[$key])) {
+                        $row->add_classes(array_unique(moodle_html_component::clean_classes($table->rowclasses[$key])));
+                    }
+
+                    $row->add_class('r' . $oddeven);
+                    if ($key == $lastrowkey) {
+                        $row->add_class('lastrow');
+                    }
+
+                    $output .= $this->output_start_tag('tr', array('class' => $row->get_classes_string(), 'style' => $row->style, 'id' => $row->id)) . "\n";
+                    $keys2 = array_keys($row->cells);
+                    $lastkey = end($keys2);
+
+                    foreach ($row->cells as $key => $cell) {
+                        if (isset($table->colclasses[$key])) {
+                            $cell->add_classes(array_unique(moodle_html_component::clean_classes($table->colclasses[$key])));
+                        }
+
+                        $cell->add_classes('cell');
+                        $cell->add_classes('c' . $key);
                         if ($key == $lastkey) {
-                            $classes[] = 'lastcol';
+                            $cell->add_classes('lastcol');
                         }
                         $tdstyle = '';
                         $tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
                         $tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
                         $tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
-                        $output .= $this->output_tag('td',
-                                                     array('style' => $tdstyle,
-                                                           'class' => moodle_renderer_base::prepare_classes($classes)),
-                                                     $item) . "\n";
+                        $tdattributes = array(
+                                'style' => $tdstyle . $cell->style,
+                                'colspan' => $cell->colspan,
+                                'rowspan' => $cell->rowspan,
+                                'id' => $cell->id,
+                                'class' => $cell->get_classes_string(),
+                                'abbr' => $cell->abbr,
+                                'scope' => $cell->scope);
+
+                        $output .= $this->output_tag('td', $tdattributes, $cell->text) . "\n";
                     }
                 }
                 $output .= $this->output_end_tag('tr') . "\n";
@@ -4371,13 +4411,27 @@ class html_table extends moodle_html_component {
      */
     public $wrap;
     /**
-     * @var array of arrays containing the data. Alternatively, if you have
+     * @var array of arrays or html_table_row objects containing the data. Alternatively, if you have
      * $head specified, the string 'hr' (for horizontal ruler) can be used
      * instead of an array of cells data resulting in a divider rendered.
      *
-     * Example if usage:
+     * Example of usage with array of arrays:
      * $row1 = array('Harry Potter', '76 %');
      * $row2 = array('Hermione Granger', '100 %');
+     * $t->data = array($row1, $row2);
+     *
+     * Example with array of html_table_row objects: (used for more fine-grained control)
+     * $cell1 = new html_table_cell();
+     * $cell1->text = 'Harry Potter';
+     * $cell1->colspan = 2;
+     * $row1 = new html_table_row();
+     * $row1->cells[] = $cell1;
+     * $cell2 = new html_table_cell();
+     * $cell2->text = 'Hermione Granger';
+     * $cell3 = new html_table_cell();
+     * $cell3->text = '100 %';
+     * $row2 = new html_table_row();
+     * $row2->cells = array($cell2, $cell3);
      * $t->data = array($row1, $row2);
      */
     public $data;
@@ -4507,6 +4561,66 @@ class html_table extends moodle_html_component {
 }
 
 /**
+ * Component representing a table row.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table_row extends moodle_html_component {
+    /**
+     * @var array $cells Array of html_table_cell objects
+     */
+    public $cells = array();
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a table cell.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table_cell extends moodle_html_component {
+    /**
+     * @var string $text The contents of the cell
+     */
+    public $text;
+    /**
+     * @var string $abbr Abbreviated version of the contents of the cell
+     */
+    public $abbr = '';
+    /**
+     * @var int $colspan Number of columns this cell should span
+     */
+    public $colspan = '';
+    /**
+     * @var int $rowspan Number of rows this cell should span
+     */
+    public $rowspan = '';
+    /**
+     * @var string $scope Defines a way to associate header cells and data cells in a table
+     */
+    public $scope = '';
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/**
  * Component representing a XHTML link.
  *
  * @copyright 2009 Nicolas Connault
@@ -4536,6 +4650,19 @@ class html_link extends moodle_html_component {
         }
 
         parent::prepare();
+    }
+
+    /**
+     * Shortcut for creating a link component.
+     * @param mixed  $url String or moodle_url
+     * @param string $text The text of the link
+     * @return html_link The link component
+     */
+    public function make($url, $text) {
+        $link = new html_link();
+        $link->url = $url;
+        $link->text = $text;
+        return $link;
     }
 }
 

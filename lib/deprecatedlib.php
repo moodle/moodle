@@ -3529,7 +3529,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
     $helpicon->page = $helppage;
     $helpicon->text = $text;
     $helpicon->module = $module;
-    
+
     // Extract the src from $icon if it exists
     if (preg_match('/src="([^"]*)"/', $icon, $matches)) {
         $icon = $matches[1];
@@ -3547,14 +3547,52 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
 /**
  * Returns a turn edit on/off button for course in a self contained form.
  * Used to be an icon, but it's now a simple form button
- *
  * @deprecated since Moodle 2.0
- *
- * @global object
- * @global object
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
  */
 function update_mymoodle_icon() {
     throw new coding_exception('update_mymoodle_icon() has been completely deprecated.');
+}
+
+/**
+ * Returns a turn edit on/off button for tag in a self contained form.
+ * @deprecated since Moodle 2.0
+ */
+function update_tag_button() {
+    throw new coding_exception('update_tag_button() has been completely deprecated.');
+}
+
+
+/**
+ * Prints the 'update this xxx' button that appears on module pages.
+ *
+ * @deprecated since Moodle 2.0
+ *
+ * @param string $cmid the course_module id.
+ * @param string $ignored not used any more. (Used to be courseid.)
+ * @param string $string the module name - get_string('modulename', 'xxx')
+ * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
+ */
+function update_module_button($cmid, $ignored, $string) {
+    global $OUTPUT;
+
+    // debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
+
+    return $OUTPUT->update_module_button($cmid, $string);
+}
+
+/**
+ * Prints the editing button on search results listing
+ * For bulk move courses to another category
+ * @deprecated since Moodle 2.0
+ */
+function update_categories_search_button($search,$page,$perpage) {
+    throw new coding_exception('update_tag_button() has been completely deprecated.');
+}
+
+/**
+ * Prints a summary of a user in a nice little box.
+ * @deprecated since Moodle 2.0
+ */
+function print_user($user, $course, $messageselect=false, $return=false) {
+    throw new coding_exception('print_user() has been completely deprecated. See user/index.php for new usage.');
 }

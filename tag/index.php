@@ -51,7 +51,18 @@ $title = get_string('tag', 'tag') .' - '. $tagname;
 
 $button = '';
 if ($PAGE->user_allowed_editing() ) {
-    $button = update_tag_button($tag->id);
+    if (!empty($USER->editing)) {
+        $string = get_string('turneditingoff');
+        $edit = '0';
+    } else {
+        $string = get_string('turneditingon');
+        $edit = '1';
+    }
+
+    $form = new html_form();
+    $form->url = new moodle_url("$CFG->wwwroot/tag/index.php", array('edit' => $edit, 'id' => $tagid));
+    $form->button->text = $string;
+    $button = $OUTPUT->button($form);
 }
 print_header_simple($title, '', $navigation, '', '', '', $button);
 
