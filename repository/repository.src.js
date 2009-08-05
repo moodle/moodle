@@ -1063,7 +1063,7 @@ repository_client.create_upload_form = function(client_id) {
         str += '<form id="'+id+'" onsubmit="return false">';
         str += '<label for="'+id+'_file">'+fs.upload.label+': </label>';
         str += '<input type="file" id="'+id+'_file" name="repo_upload_file" />';
-        str += '<p class="fp-upload-btn"><a href="###" onclick="return repository_client.upload(\''+client_id+'\');">'+fp_lang.upload+'</a></p>';
+        str += '<div class="fp-upload-btn"><a href="###" onclick="return repository_client.upload(\''+client_id+'\');">'+fp_lang.upload+'</a></div>';
         str += '</form>';
         str += '</div>';
     }
