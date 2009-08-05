@@ -143,12 +143,19 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
 }
 
 /**
- * Prepares standardised text field fro editing with Editor formslib element
+ * Prepares 'editor' formslib element from data in database
  *
- * @param object $data $database entry field
- * @param string $field name of data field
- * @param array $options various options
- * @param object $context context, required for existing data
+ * The passed $data record must contain field foobar, foobarformat and optionally foobartrust. This
+ * function then copies the embeded files into draft area (assigning itemids automatically),
+ * creates the form element foobar_editor and rewrites the URLs so the embeded images can be
+ * displayed.
+ * In your mform definition, you must have an 'editor' element called foobar_editor. Then you call
+ * your mform's set_data() supplying the object returned by this function.
+ *
+ * @param object $data database field that holds the html text with embeded media
+ * @param string $field the name of the database field that holds the html text with embeded media
+ * @param array $options editor options (like maxifiles, maxbytes etc.)
+ * @param object $context context of the editor
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
  * @return object modified data object
