@@ -52,27 +52,6 @@ class repository_local extends repository {
         $ret['nosearch'] = true;
         $list = array();
 
-        // list draft files
-        if ($encodedpath == 'draft') {
-            $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
-            $files = $fs->get_area_files($context->id, 'user_draft');
-            foreach ($files as $file) {
-                if ($file->get_filename()!='.') {
-                    $node = array(
-                        'title' => $file->get_filename(),
-                        'size' => 0,
-                        'date' => '',
-                        'source'=> $file->get_id(),
-                        'thumbnail' => $OUTPUT->old_icon_url('f/text-32')
-                    );
-                    $list[] = $node;
-                }
-            }
-            $ret['list'] = $list;
-            return $ret;
-        }
-
         if (!empty($encodedpath)) {
             $params = unserialize(base64_decode($encodedpath));
             if (is_array($params)) {
@@ -88,16 +67,6 @@ class repository_local extends repository {
             $filearea = null;
             $filepath = null;
             $context  = get_system_context();
-            // append draft files directory
-            $node = array(
-                'title' => get_string('currentusefiles', 'repository_local'),
-                'size' => 0,
-                'date' => '',
-                'path' => 'draft',
-                'children'=>array(),
-                'thumbnail' => $OUTPUT->old_icon_url('f/folder-32') . ''
-            );
-            $list[] = $node;
         }
 
         try {
@@ -140,8 +109,7 @@ class repository_local extends repository {
                     }
                 }
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw new repository_exception('emptyfilelist', 'repository_local');
         }
         $ret['list'] = $list;
@@ -161,25 +129,20 @@ class repository_local extends repository {
     public function get_file($encoded, $title = '', $itemid = '') {
         global $USER, $DB;
         $ret = array();
+
         $browser = get_file_browser();
         $params = unserialize(base64_decode($encoded));
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-        if (!$params) {
-            $fs = get_file_storage();
-            // change draft file itemid
-            $file_record = array('contextid'=>$user_context->id, 'filearea'=>'user_draft', 'itemid'=>$itemid);
-            $fs->create_file_from_storedfile($file_record, $encoded);
-        } else {
-            // the final file
-            $contextid = $params['contextid'];
-            $filearea  = $params['filearea'];
-            $filepath  = $params['filepath'];
-            $filename  = $params['filename'];
-            $fileitemid = $params['itemid'];
-            $context  = get_context_instance_by_id($contextid);
-            $file_info = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-            $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, '/', $title);
-        }
+        // the final file
+        $contextid  = $params['contextid'];
+        $filearea   = $params['filearea'];
+        $filepath   = $params['filepath'];
+        $filename   = $params['filename'];
+        $fileitemid = $params['itemid'];
+        $context    = get_context_instance_by_id($contextid);
+        $file_info  = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
+        $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, '/', $title);
+
         $ret['itemid'] = $itemid;
         $ret['title']  = $title;
         $ret['contextid'] = $user_context->id;
