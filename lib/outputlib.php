@@ -2806,20 +2806,21 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Prints the 'update this xxx' button that appears on module pages.
+     * Prints the 'Update this Modulename' button that appears on module pages.
      *
      * @param string $cmid the course_module id.
-     * @param string $modulename the module name - get_string('modulename', 'xxx')
+     * @param string $modulename the module name, eg. "forum", "quiz" or "workshop"
      * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
      */
     public function update_module_button($cmid, $modulename) {
         global $CFG;
         if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
+            $modulename = get_string('modulename', $modulename);
             $string = get_string('updatethis', '', $modulename);
 
             $form = new html_form();
             $form->url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
-            $form->button->text = $modulename;
+            $form->button->text = $string;
             return $this->button($form);
         } else {
             return '';
