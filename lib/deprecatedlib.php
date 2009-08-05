@@ -2097,35 +2097,6 @@ function print_continue($link, $return = false) {
 }
 
 /**
- * Returns a string containing a link to the user documentation for the current
- * page. Also contains an icon by default. Shown to teachers and admin only.
- *
- * @deprecated since Moodle 2.0
- *
- * @global object
- * @global object
- * @param string $text The text to be displayed for the link
- * @param string $iconpath The path to the icon to be displayed
- * @return string The link to user documentation for this current page
- */
-function page_doc_link($text='', $iconpath='') {
-    global $CFG, $PAGE;
-
-    if (empty($CFG->docroot) || during_initial_install()) {
-        return '';
-    }
-    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
-        return '';
-    }
-
-    $path = $PAGE->docspath;
-    if (!$path) {
-        return '';
-    }
-    return doc_link($path, $text, $iconpath);
-}
-
-/**
  * Print a standard header
  *
  * @param string  $title Appears at the top of the window
@@ -2423,7 +2394,7 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
 function print_table($table, $return=false) {
     global $OUTPUT;
     // TODO MDL-19755 turn debugging on once we migrate the current core code to use the new API
-    // debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
+    debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
     $newtable = new html_table();
     foreach ($table as $property => $value) {
         if (property_exists($newtable, $property)) {
@@ -2469,7 +2440,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
                                $options=null, $return=false) {
     global $OUTPUT;
 
-    // debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
+    debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
 
     if ($options == 'none') {
         $options = null;
@@ -2480,9 +2451,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     // Create a html_link object
-    $link = new html_link();
-    $link->text = $linkname;
-    $link->url = $url;
+    $link = html_link::make($url, $linkname);
     $link->title = $title;
 
     // Parse the $options string
@@ -2539,7 +2508,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
                                  $id=null, $class=null) {
     global $OUTPUT;
 
-    // debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
+    debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
 
     if ($options == 'none') {
         $options = null;
@@ -2550,13 +2519,12 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
     }
 
     // Create a html_button object
-    $button = new html_button();
-    $button->value = $linkname;
-    $button->url = $url;
-    $button->id = $id;
-    $button->add_class($class);
-    $button->method = 'post';
-    $button->title = $title;
+    $form = new html_form();
+    $form->button->text = $linkname;
+    $form->button->title = $title;
+    $form->button->id = $id;
+    $form->url = $url;
+    $form->add_class($class);
 
     // Parse the $options string
     $popupparams = array();
@@ -2583,9 +2551,8 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
         $popupparams['width'] = $width;
     }
 
-    $popupaction = new popup_action('click', $url, $name, $popupparams);
-    $button->add_action($popupaction);
-    $output = $OUTPUT->button($button);
+    $form->button->add_action(new popup_action('click', $url, $name, $popupparams));
+    $output = $OUTPUT->button($form);
 
     if ($return) {
         return $output;
@@ -2615,13 +2582,12 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
         $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
     global $OUTPUT;
 
-    // debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
+    debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
 
     // Cast $options to array
     $options = (array) $options;
     $form = new html_form();
     $form->url = new moodle_url($link, $options);
-    $form->button = new html_button();
     $form->button->text = $label;
     $form->button->disabled = $disabled;
     $form->button->title = $tooltip;
@@ -2634,8 +2600,6 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     }
 
     $output = $OUTPUT->button($form);
-
-    $icon = new action_icon();
 
     if ($return) {
         return $output;
@@ -2657,7 +2621,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
 function print_spacer($height=1, $width=1, $br=true, $return=false) {
     global $CFG, $OUTPUT;
 
-    // debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
+    debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
 
     $spacer = new html_image();
     $spacer->height = $height;
@@ -2709,7 +2673,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG, $DB, $OUTPUT;
 
-    // debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $link, $popup).');
+    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $link, $popup).');
 
     $userpic = new user_picture();
     $userpic->user = $user;
@@ -2719,13 +2683,11 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     $userpic->alttext = $alttext;
 
     if (!empty($picture)) {
-        $userpic->image = new html_image();
         $userpic->image->src = $picture;
     }
 
     if (!empty($target)) {
-        $popupaction = new popup_action('click', new moodle_url($target));
-        $userpic->add_action($popupaction);
+        $userpic->add_action(new popup_action('click', new moodle_url($target)));
     }
 
     $output = $OUTPUT->user_picture($userpic);
@@ -2834,7 +2796,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    // debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
+    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
 
     global $OUTPUT;
 
@@ -2940,30 +2902,13 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG, $OUTPUT;
 
-    // debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->action_icon().');
+    debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->action_icon().');
 
     if (empty($CFG->docroot)) {
         return '';
     }
 
-    $icon = new action_icon();
-    $icon->linktext = $text;
-
-    if (!empty($iconpath)) {
-        $icon->image->src = $iconpath;
-        $icon->image->alt = $text;
-        $icon->image->add_class('iconhelp');
-    } else {
-        $icon->image->src = $CFG->httpswwwroot . '/pix/docs.gif';
-    }
-
-    $icon->link->url = new moodle_url(get_docs_url($path));
-
-    if (!empty($CFG->doctonewwindow)) {
-        $icon->actions[] = new popup_action('click', $icon->link->url);
-    }
-
-    return $OUTPUT->action_icon($icon);
+    return $OUTPUT->doc_link($path, $text, $iconpath);
 }
 
 /**
@@ -2984,7 +2929,7 @@ function doc_link($path='', $text='', $iconpath='') {
 function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
     global $OUTPUT;
 
-    // debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
+    debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
 
     $pagingbar = new moodle_paging_bar();
     $pagingbar->totalcount = $totalcount;
@@ -3020,7 +2965,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
  */
 function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
 
-    // debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
+    debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
 
     global $OUTPUT;
 
@@ -3080,15 +3025,12 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
                            $id='', $listbox=false, $multiple=false, $class='') {
 
     global $OUTPUT;
-    // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $select = new moodle_select();
-    $select->options = $options;
-    $select->name = $name;
-    $select->selectedvalue = $selected;
+    $select = moodle_select::make($options, $name, $selected);
     $select->nothinglabel = $nothing;
     $select->nothingvalue = $nothingvalue;
     $select->disabled = $disabled;
@@ -3128,9 +3070,8 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * @param int $tabindex
  * @return string|void If $return=true returns string, else echo's and returns void
  */
-function choose_from_menu_yesno($name, $selected, $script = '',
-        $return = false, $disabled = false, $tabindex = 0) {
-    // debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+function choose_from_menu_yesno($name, $selected, $script = '', $return = false, $disabled = false, $tabindex = 0) {
+    debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
     if ($script) {
@@ -3177,7 +3118,7 @@ function choose_from_menu_yesno($name, $selected, $script = '',
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
 
-    // debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu_nested() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
     if ($script) {
@@ -3214,7 +3155,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
  * @return string|bool Depending on value of $return
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
-    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselect).');
+    debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselect).');
     global $OUTPUT;
 
     $helpbutton = help_button::make_scale_menu($courseid, $scale);
@@ -3261,7 +3202,7 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
  * @return string|bool Depending on value of $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
-    // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
+    debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
     global $OUTPUT;
     $hourselector = moodle_select::make_time_selector('hours', $hour, $currenttime);
     $minuteselector = moodle_select::make_time_selector('minutes', $minute, $currenttime, $step);
@@ -3289,7 +3230,7 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
-    // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
+    debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
     global $OUTPUT;
 
     $dayselector = moodle_select::make_time_selector('days', $day, $currenttime);
@@ -3337,7 +3278,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
     global $OUTPUT;
 
-    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
+    debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
 
     if (empty($options)) {
         return '';
@@ -3388,7 +3329,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
     global $OUTPUT;
 
-    // debugging('close_window_button() has been deprecated. Please change your code to use $OUTPUT->close_window_button().');
+    debugging('close_window_button() has been deprecated. Please change your code to use $OUTPUT->close_window_button().');
     $output = $OUTPUT->close_window_button(get_string($name));
 
     if ($return) {
@@ -3413,7 +3354,7 @@ function close_window_button($name='closewindow', $return=false, $reloadopener =
  */
 function choose_from_radio ($options, $name, $checked='', $return=false) {
 
-    // debugging('choose_from_radio() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_radio() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
     $select = moodle_select::make($options, $name, $checked);
@@ -3447,7 +3388,7 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
  */
 function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
 
-    // debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
+    debugging('print_checkbox() has been deprecated. Please change your code to use $OUTPUT->checkbox($checkbox).');
     global $OUTPUT;
 
     if (!empty($script)) {
@@ -3488,7 +3429,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
  */
 function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
 
-    // debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+    debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
 
     global $OUTPUT;
 
@@ -3521,7 +3462,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon=false, $return=false) {
 
-    // debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+    debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
 
     global $OUTPUT;
 
@@ -3560,7 +3501,7 @@ function update_mymoodle_icon() {
  * @return string
  */
 function update_tag_button($tagid) {
-    // debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
+    debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
     return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/tag/index.php', array('id' => $tagid)));
 }
 
@@ -3578,7 +3519,7 @@ function update_tag_button($tagid) {
 function update_module_button($cmid, $ignored, $string) {
     global $OUTPUT;
 
-    // debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
+    debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
 
     return $OUTPUT->update_module_button($cmid, $string);
 }
@@ -3614,7 +3555,7 @@ function print_user($user, $course, $messageselect=false, $return=false) {
 function update_course_icon($courseid) {
     global $CFG, $OUTPUT;
 
-    // debugging('update_course_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
+    debugging('update_course_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
 
     return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $courseid)));
 }

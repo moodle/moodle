@@ -620,6 +620,33 @@ function close_window($delay = 0, $reloadopener = false) {
     exit;
 }
 
+/**
+ * Returns a string containing a link to the user documentation for the current
+ * page. Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @global object
+ * @global object
+ * @param string $text The text to be displayed for the link
+ * @param string $iconpath The path to the icon to be displayed
+ * @return string The link to user documentation for this current page
+ */
+function page_doc_link($text='', $iconpath='') {
+    global $CFG, $PAGE, $OUTPUT;
+
+    if (empty($CFG->docroot) || during_initial_install()) {
+        return '';
+    }
+    if (!has_capability('moodle/site:doclinks', $PAGE->context)) {
+        return '';
+    }
+
+    $path = $PAGE->docspath;
+    if (!$path) {
+        return '';
+    }
+    return $OUTPUT->doc_link($path, $text, $iconpath);
+}
+
 
 /**
  * Validates an email to make sure it makes sense.

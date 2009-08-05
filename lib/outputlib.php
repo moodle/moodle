@@ -2566,6 +2566,35 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Returns a string containing a link to the user documentation.
+     * Also contains an icon by default. Shown to teachers and admin only.
+     * @param string $path The page link after doc root and language, no leading slash.
+     * @param string $text The text to be displayed for the link
+     * @param string $iconpath The path to the icon to be displayed
+     */
+    public function doc_link($path, $text=false, $iconpath=false) {
+        global $CFG, $OUTPUT;
+        $icon = new action_icon();
+        $icon->linktext = $text;
+        $icon->image->alt = $text;
+        $icon->image->add_class('iconhelp');
+        $icon->link->url = new moodle_url(get_docs_url($path));
+
+        if (!empty($iconpath)) {
+            $icon->image->src = $iconpath;
+        } else {
+            $icon->image->src = $this->old_icon_url('docs');
+        }
+
+        if (!empty($CFG->doctonewwindow)) {
+            $icon->actions[] = new popup_action('click', $icon->link->url);
+        }
+
+        return $this->action_icon($icon);
+
+    }
+
+    /**
      * Given a action_icon object, outputs an image linking to an action (URL or AJAX).
      *
      * @param action_icon $icon An action_icon object
@@ -5268,6 +5297,18 @@ class moodle_paging_bar extends moodle_html_component {
      * @return void
      */
     public function prepare() {
+        if (empty($this->totalcount)) {
+            throw new coding_exception('moodle_paging_bar requires a totalcount value.');
+        }
+        if (empty($this->page)) {
+            throw new coding_exception('moodle_paging_bar requires a page value.');
+        }
+        if (empty($this->perpage)) {
+            throw new coding_exception('moodle_paging_bar requires a perpage value.');
+        }
+        if (empty($this->baseurl)) {
+            throw new coding_exception('moodle_paging_bar requires a baseurl value.');
+        }
         if (!($this->baseurl instanceof moodle_url)) {
             $this->baseurl = new moodle_url($this->baseurl);
         }
