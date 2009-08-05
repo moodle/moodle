@@ -248,7 +248,7 @@
             $formatoptions->para = false;
 
             $r.= '<div class="description">';
-            $r.= format_text($description, FORMAT_MOODLE, $formatoptions, $this->page->course->id);
+            $r.= format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
             $r.= '</div>';
         }
 
