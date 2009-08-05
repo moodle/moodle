@@ -2550,38 +2550,6 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
     }
 }
 
-
-/**
- * Returns a turn edit on/off button for course in a self contained form.
- * Used to be an icon, but it's now a simple form button
- *
- * Note that the caller is responsible for capchecks.
- *
- * @global object
- * @global object
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function update_course_icon($courseid) {
-    global $CFG, $USER;
-
-    if (!empty($USER->editing)) {
-        $string = get_string('turneditingoff');
-        $edit = '0';
-    } else {
-        $string = get_string('turneditingon');
-        $edit = '1';
-    }
-
-    return '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/course/view.php">'.
-           '<div>'.
-           '<input type="hidden" name="id" value="'.$courseid.'" />'.
-           '<input type="hidden" name="edit" value="'.$edit.'" />'.
-           '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
-           '<input type="submit" value="'.$string.'" />'.
-           '</div></form>';
-}
-
 /**
  * Returns a little popup menu for switching roles
  *

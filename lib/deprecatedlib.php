@@ -3556,9 +3556,12 @@ function update_mymoodle_icon() {
 /**
  * Returns a turn edit on/off button for tag in a self contained form.
  * @deprecated since Moodle 2.0
+ * @param string $tagid The ID attribute
+ * @return string
  */
-function update_tag_button() {
-    throw new coding_exception('update_tag_button() has been completely deprecated.');
+function update_tag_button($tagid) {
+    // debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
+    return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/tag/index.php', array('id' => $tagid)));
 }
 
 
@@ -3596,3 +3599,23 @@ function update_categories_search_button($search,$page,$perpage) {
 function print_user($user, $course, $messageselect=false, $return=false) {
     throw new coding_exception('print_user() has been completely deprecated. See user/index.php for new usage.');
 }
+
+/**
+ * Returns a turn edit on/off button for course in a self contained form.
+ * Used to be an icon, but it's now a simple form button
+ *
+ * Note that the caller is responsible for capchecks.
+ *
+ * @global object
+ * @global object
+ * @param int $courseid The course  to update by id as found in 'course' table
+ * @return string
+ */
+function update_course_icon($courseid) {
+    global $CFG, $OUTPUT;
+
+    // debugging('update_course_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
+
+    return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $courseid)));
+}
+

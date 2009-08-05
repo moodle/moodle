@@ -2798,6 +2798,29 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
+     * Prints a "Turn editing on/off" button in a form.
+     * @param moodle_url $url The URL + params to send through when clicking the button
+     * @return string HTML the button
+     */
+    public function edit_button(moodle_url $url) {
+        global $USER;
+        if (!empty($USER->editing)) {
+            $string = get_string('turneditingoff');
+            $edit = '0';
+        } else {
+            $string = get_string('turneditingon');
+            $edit = '1';
+        }
+
+        $form = new html_form();
+        $form->url = $url;
+        $form->url->param('edit', $edit);
+        $form->button->text = $string;
+
+        return $this->button($form);
+    }
+
+    /**
      * Outputs a HTML nested list
      *
      * @param html_list $list A html_list object
