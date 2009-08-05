@@ -2673,7 +2673,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG, $DB, $OUTPUT;
 
-    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $link).');
+    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $courseid).');
 
     $userpic = new user_picture();
     $userpic->user = $user;
