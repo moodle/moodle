@@ -558,7 +558,7 @@
     echo '</td>';
     echo '</tr></table>';
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 
 function validate_form(&$form, &$err) {

@@ -215,7 +215,7 @@
 
     echo '</tr></table>';
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 
 
