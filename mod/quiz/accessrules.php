@@ -727,8 +727,13 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * @return string HTML for the link.
      */
     public function make_review_link($linktext, $attemptid) {
-        return button_to_popup_window($this->_quizobj->review_url($attemptid),
-                'quizpopup', $linktext, '', '', '', $this->windowoptions, true);
+        global $OUTPUT;
+        $form = new html_form();
+        $form->button->text = $linktext;
+        $form->button->title = $form->button->text;
+        $form->url = $this->_quizobj->review_url($attemptid);
+        $form->button->add_action(new popup_action('click', $form->url, 'quizpopup', $this->windowoptions));
+        return $OUTPUT->button($form);
     }
 
     /**
