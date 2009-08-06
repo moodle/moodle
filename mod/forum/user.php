@@ -37,7 +37,7 @@ if (!$DB->get_record('role_assignments', array('userid' => $USER->id, 'contextid
 if ($user->deleted) {
     print_header();
     echo $OUTPUT->heading(get_string('userdeleted'));
-    print_footer($course);
+    echo $OUTPUT->footer();
     die;
 }
 
@@ -175,6 +175,6 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
     }
 }
 echo '</div>';
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

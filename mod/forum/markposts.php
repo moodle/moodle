@@ -37,7 +37,7 @@
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
         notice_yesno(get_string('noguesttracking', 'forum').'<br /><br />'.get_string('liketologin'),
                      get_login_url(), $returnto);
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 

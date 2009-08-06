@@ -108,7 +108,7 @@
                   "", "", "&nbsp;", navmenu($course));
 
         forum_print_big_search_form($course);
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -135,7 +135,7 @@
 
         forum_print_big_search_form($course);
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -238,7 +238,7 @@
 
     print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 
 

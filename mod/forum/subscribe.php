@@ -52,7 +52,7 @@
 
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      get_login_url(), $_SERVER['HTTP_REFERER']);
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 

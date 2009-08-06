@@ -26,7 +26,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
     print_box(get_string('unsubscribealldone', 'forum'));
     print_continue($return);
-    print_footer();
+    echo $OUTPUT->footer();
     die;
 
 } else {
@@ -35,13 +35,13 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     if ($a) {
         $msg = get_string('unsubscribeallconfirm', 'forum', $a);
         notice_yesno($msg, 'unsubscribeall.php', $return, array('confirm'=>1, 'sesskey'=>sesskey()), NULL, 'post', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
 
     } else {
         print_box(get_string('unsubscribeallempty', 'forum'));
         print_continue($return);
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 }

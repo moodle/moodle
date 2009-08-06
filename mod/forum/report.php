@@ -82,5 +82,5 @@
     }
 
     echo $OUTPUT->close_window_button();
-    print_footer('none');
+    echo $OUTPUT->footer();
 ?>

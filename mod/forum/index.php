@@ -402,6 +402,6 @@
         print_table($learningtable);
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

@@ -240,7 +240,7 @@
     $canrate = has_capability('mod/forum:rate', $modcontext);
     forum_print_discussion($course, $cm, $forum, $discussion, $post, $displaymode, $canreply, $canrate);
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 
 ?>

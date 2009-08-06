@@ -77,7 +77,7 @@
             echo "</table>";
         }
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -151,6 +151,6 @@
 
     print_simple_box_end();
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>
