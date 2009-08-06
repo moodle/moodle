@@ -39,7 +39,7 @@ if ($choose and confirm_sesskey()) {
     set_config('theme', $choose);
 
     admin_externalpage_print_header();
-    print_heading(get_string('themesaved'));
+    echo $OUTPUT->heading(get_string('themesaved'));
 
     $readmehtml = $CFG->themedir . '/' . $choose . '/README.html';
     $readmetxt = $CFG->themedir . '/' . $choose . '/README.txt';
@@ -63,7 +63,7 @@ if ($choose and confirm_sesskey()) {
 
 // Otherwise, show a list of themes.
 admin_externalpage_print_header('themeselector');
-print_heading(get_string('themes'));
+echo $OUTPUT->heading(get_string('themes'));
 
 $table = new stdClass;
 $table->id = 'adminthemeselector';

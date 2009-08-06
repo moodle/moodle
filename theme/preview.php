@@ -43,7 +43,7 @@ $navigation = build_navigation($navlinks);
 print_header("$SITE->shortname: $strpreview", $SITE->fullname, $navigation);
 
 print_box_start();
-print_heading($preview);
+echo $OUTPUT->heading($preview);
 print_box_end();
 
 print_footer();
