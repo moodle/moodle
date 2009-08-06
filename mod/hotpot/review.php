@@ -58,7 +58,7 @@
     $button = update_module_button($cm->id, $course->id, $strmodulename);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-    print_heading($hotpot->name);
+    echo $OUTPUT->heading($hotpot->name);
     hotpot_print_attempt_summary($hotpot, $attempt);
     hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
     $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action', '', PARAM_ALPHA) : '';

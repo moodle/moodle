@@ -154,7 +154,7 @@
         $user_ids = join(',', array_keys($users));
     }
     if (empty($user_ids)) {
-        print_heading(get_string('nousersyet'));
+        echo $OUTPUT->heading(get_string('nousersyet'));
         print_footer($course);
         exit;
     }
@@ -249,7 +249,7 @@
 
     // stop now if no attempts were found
     if (empty($attempts)) {
-        print_heading(get_string('noattemptstoshow','quiz'));
+        echo $OUTPUT->heading(get_string('noattemptstoshow','quiz'));
         print_footer($course);
         exit;
     }
@@ -423,6 +423,7 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
 /// report selector menus
 
 function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
+    global $OUTPUT;
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
 
@@ -449,7 +450,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
         echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
             . get_string('seeallcoursegrades', 'grades') . '</a></div>';
     }
-    print_heading($hotpot->name);
+    echo $OUTPUT->heading($hotpot->name);
 }
 function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     global $CFG, $DB;

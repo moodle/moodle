@@ -66,7 +66,7 @@
         // get password
         } else if ($hotpot->password && empty($hppassword)) {
             print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
-            print_heading($hotpot->name);
+            echo $OUTPUT->heading($hotpot->name);
             $boxalign = 'center';
             $boxwidth = 500;
             if (trim(strip_tags($hotpot->summary))) {
