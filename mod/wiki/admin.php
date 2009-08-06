@@ -153,7 +153,7 @@
               if(!$confirm && $form->pagestodelete) {
                 notice_yesno(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
                   $link."&amp;confirm=".urlencode(join(" ",$form->pagestodelete)), $link);
-                print_footer($course);
+                echo $OUTPUT->footer();
                 exit;
               }
             }
@@ -174,7 +174,7 @@
                   }
                   notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $pagestostrip),
                       $link.$confirm, $link);
-                  print_footer($course);
+                  echo $OUTPUT->footer();
                   exit;
                 }
               }
@@ -186,7 +186,7 @@
                 $confirm="&amp;confirm=".$form->pagetocheck;
                 notice_yesno(get_string("checklinkscheck", "wiki").$form->pagetocheck,
                     $link.$confirm, $link);
-                print_footer($course);
+                echo $OUTPUT->footer();
                 exit;
               }
             }
@@ -206,7 +206,7 @@
                   if($revertedpages) {
                     notice_yesno(get_string("revertpagescheck", "wiki")."<br />".$revertedpages,
                       $link.$confirm, $link);
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                     exit;
                   } else {
                     $err->remark=get_string("nochangestorevert","wiki");
@@ -346,7 +346,7 @@
     print_simple_box_end();
 
 /// Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
     exit;
 
 ?>

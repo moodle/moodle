@@ -484,5 +484,5 @@ $strnojslockwarning
     </div>
     ';
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>
