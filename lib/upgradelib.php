@@ -43,7 +43,7 @@ class upgrade_exception extends moodle_exception {
     function __construct($plugin, $version) {
         global $CFG;
         $a = (object)array('plugin'=>$plugin, 'version'=>$version);
-        parent::__construct('upgradeerror', 'error', "$CFG->wwwroot/$CFG->admin/index.php", $a);
+        parent::__construct('upgradeerror', 'admin', "$CFG->wwwroot/$CFG->admin/index.php", $a);
     }
 }
 
