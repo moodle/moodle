@@ -111,6 +111,6 @@
 
     /// Finish the page
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

@@ -141,7 +141,7 @@
     echo '<div class="mdl-align">';
     print_single_button('edit.php', array('id'=>$id, 'do_show'=>'templates'), get_string('cancel'));
     echo '</div>';
-    print_footer($course);
+    echo $OUTPUT->footer();
   
     function feedback_load_xml_data($filename) {
         global $CFG;

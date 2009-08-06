@@ -123,6 +123,6 @@
         print_box(get_string('no_items_available_at_this_template','feedback'),'generalbox boxaligncenter boxwidthwide');
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

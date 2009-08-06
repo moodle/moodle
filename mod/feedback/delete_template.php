@@ -131,6 +131,6 @@
 <?php
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>
