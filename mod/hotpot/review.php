@@ -146,7 +146,10 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     }
     print "</td>\n</tr>\n";
     print '<tr><td colspan="'.$colspan.'">';
-    print_spacer(4, 1, false); // height=4, width=1, no <br />
+    $spacer = new html_image();
+    $spacer->height = 4;
+    $spacer->width = 1;
+    echo $OUTPUT->spacer($spacer);
     print "</td></tr>\n";
     print "</table>\n";
 }

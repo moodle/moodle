@@ -340,6 +340,7 @@ class hotpot_default_report {
 /// print an html report
 
     function print_html_report(&$tables) {
+        global $OUTPUT;
         $count = count($tables);
         foreach($tables as $i=>$table) {
 
@@ -351,7 +352,10 @@ class hotpot_default_report {
             $this->print_html_finish($table);
 
             if (($i+1)<$count) {
-                print_spacer(30, 10, true);
+                $spacer = new html_image();
+                $spacer->height = 30;
+                $spacer->width = 10;
+                echo $OUTPUT->spacer($spacer) . '<br />';
             }
         }
     }
