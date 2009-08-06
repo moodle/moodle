@@ -218,7 +218,7 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
  * @param string $help
  */
 function install_print_help_page($help) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     @header('Content-Type: text/html; charset=UTF-8');
     @header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -248,7 +248,7 @@ function install_print_help_page($help) {
         default:
             print_string($help, 'install');
     }
-    close_window_button();
+    echo $OUTPUT->close_window_button();
     echo '</body></html>';
     die;
 }

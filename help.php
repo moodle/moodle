@@ -107,7 +107,7 @@ if (!$helpfound) {
 }
 
 // End of page.
-close_window_button();
+echo $OUTPUT->close_window_button();
 echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
 
 // Offer a link to the alternative help file language

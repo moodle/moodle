@@ -43,5 +43,5 @@
       </form>
 <br />
 <?php
-    close_window_button();
+    echo $OUTPUT->close_window_button();
 ?>

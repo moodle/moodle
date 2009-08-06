@@ -66,7 +66,7 @@ foreach ($topics as $i => $topic){
 echo '</ul>';
 print_simple_box_end();
 // End of page.
-close_window_button();
+echo $OUTPUT->close_window_button();
 global $CFG;
 echo '<p align="center"><a href="'.$CFG->wwwroot.'/help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
 
