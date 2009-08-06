@@ -240,5 +240,5 @@
         print_box(get_string('movingcategorynofiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
     }
     $contextmoveform->display();
-    print_footer($COURSE);
+    echo $OUTPUT->footer();
 ?>

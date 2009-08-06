@@ -152,7 +152,7 @@
 
             echo "<hr />";
             print_continue("edit.php?".($thispageurl->get_query_string(array('category'=>"{$qformat->category->id},{$qformat->category->contextid}"))));
-            print_footer($COURSE);
+            echo $OUTPUT->footer();
             exit;
         }
     }
@@ -161,6 +161,6 @@
 
     /// Print upload form
     $import_form->display();
-    print_footer($COURSE);
+    echo $OUTPUT->footer();
 
 ?>

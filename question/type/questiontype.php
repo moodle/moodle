@@ -291,7 +291,7 @@ class default_questiontype {
     *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
     */
     function save_question($question, $form, $course) {
-        global $USER, $DB;
+        global $USER, $DB, $OUTPUT;
         // This default implementation is suitable for most
         // question types.
 
@@ -368,7 +368,7 @@ class default_questiontype {
         if (!empty($result->noticeyesno)) {
             notice_yesno($result->noticeyesno, "question.php?id=$question->id&amp;courseid={$course->id}",
                 "edit.php?courseid={$course->id}");
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit;
         }
 

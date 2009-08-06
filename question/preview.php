@@ -241,5 +241,5 @@
      get_string('closepreview', 'quiz') . "\" />";
     echo '</div>';
     echo '</form>';
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

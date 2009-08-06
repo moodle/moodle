@@ -127,5 +127,5 @@
         // display the user interface
         $qcobject->display_user_interface();
     }
-    print_footer($COURSE);
+    echo $OUTPUT->footer();
 ?>

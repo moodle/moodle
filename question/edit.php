@@ -77,5 +77,5 @@
             $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
     echo "</div>\n";
 
-    print_footer($COURSE);
+    echo $OUTPUT->footer();
 ?>

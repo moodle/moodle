@@ -100,5 +100,5 @@ print_box_start('generalbox boxwidthnormal boxaligncenter', 'chooseqtypebox');
 print_choose_qtype_to_add_form($hiddenparams);
 print_box_end();
 
-print_footer($COURSE);
+echo $OUTPUT->footer();
 ?>

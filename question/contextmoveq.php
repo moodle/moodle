@@ -240,5 +240,5 @@ if (count($urls)){
     print_box(get_string('movingquestionsnofiles', 'question', $questionsstr), 'boxwidthnarrow boxaligncenter generalbox');
 }
 $contextmoveform->display();
-print_footer($COURSE);
+echo $OUTPUT->footer();
 ?>

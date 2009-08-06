@@ -123,7 +123,7 @@
         }
 
         print_continue('edit.php?' . $thispageurl->get_query_string());
-        print_footer($COURSE);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -132,5 +132,5 @@
 
     $export_form->display();
 
-    print_footer($COURSE);
+    echo $OUTPUT->footer();
 ?>
