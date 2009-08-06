@@ -66,7 +66,7 @@
               ."<a href='tests/index.php'>Test indexing</a> or "
               ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
               ."</pre>");
-        print_footer();
+        echo $OUTPUT->footer();
     } else {
         header('Location: indexer.php?areyousure=yes');
     }

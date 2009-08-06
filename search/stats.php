@@ -165,5 +165,5 @@ require_once($CFG->dirroot.'/search/lib.php');
     
     print_box_end();
     print_box_end();
-    print_footer();
+    echo $OUTPUT->footer();
 ?>
