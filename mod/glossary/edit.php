@@ -169,7 +169,7 @@ $navigation = build_navigation($stredit, $cm);
 print_header_simple(format_string($glossary->name), "", $navigation, "",
               "", true, "", navmenu($course, $cm));
 
-print_heading(format_string($glossary->name));
+echo $OUTPUT->heading(format_string($glossary->name));
 
 $mform->display();
 

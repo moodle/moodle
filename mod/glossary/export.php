@@ -42,7 +42,7 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    print_heading($strexportentries);
+    echo $OUTPUT->heading($strexportentries);
 
     print_box_start('glossarydisplay generalbox');
     ?>

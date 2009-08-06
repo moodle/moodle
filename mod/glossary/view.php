@@ -233,7 +233,7 @@
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
-        print_heading($strwaitingapproval);
+        echo $OUTPUT->heading($strwaitingapproval);
     } else { /// Print standard header
         $navigation = build_navigation('', $cm);
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
@@ -447,7 +447,7 @@
                         echo '<th >';
                     }
 
-                    print_heading($pivottoshow);
+                    echo $OUTPUT->heading($pivottoshow);
                     echo "</th></tr></table></div>\n";
 
                 }

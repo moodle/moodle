@@ -45,7 +45,7 @@
 
     admin_externalpage_print_header();
 
-    print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
+    echo $OUTPUT->heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
     print_simple_box("<center>".get_string("configwarning", 'admin')."</center>", "center", "60%");
     echo "<br />";

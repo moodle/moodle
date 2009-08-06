@@ -53,10 +53,10 @@
 
 /// comments
 
-    print_heading(format_string(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>"));
+    echo $OUTPUT->heading(format_string(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>"));
 
     if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
-        print_heading("<a href=\"comment.php?action=add&amp;entryid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" class=\"iconsmall\" alt=\"$straddcomment\" /></a>");
+        echo $OUTPUT->heading("<a href=\"comment.php?action=add&amp;entryid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" class=\"iconsmall\" alt=\"$straddcomment\" /></a>");
     }
 
     if ($comments = $DB->get_records("glossary_comments", array("entryid"=>$entry->id), "timemodified ASC")) {
@@ -65,7 +65,7 @@
             echo '<br />';
         }
     } else {
-        print_heading(get_string("nocomments","glossary"));
+        echo $OUTPUT->heading(get_string("nocomments","glossary"));
     }
 
 

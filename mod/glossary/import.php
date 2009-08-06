@@ -49,7 +49,7 @@
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 
-    print_heading($strimportentries);
+    echo $OUTPUT->heading($strimportentries);
 
     if ( !$step ) {
         print_box_start('glossarydisplay generalbox');
