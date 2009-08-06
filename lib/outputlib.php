@@ -5268,7 +5268,7 @@ class moodle_paging_bar extends moodle_html_component {
     /**
      * @var int $page The page you are currently viewing
      */
-    public $page;
+    public $page = 0;
     /**
      * @var int $perpage The number of entries that should be shown per page
      */
@@ -5315,7 +5315,7 @@ class moodle_paging_bar extends moodle_html_component {
         if (empty($this->totalcount)) {
             throw new coding_exception('moodle_paging_bar requires a totalcount value.');
         }
-        if (empty($this->page)) {
+        if (!isset($this->page) || is_null($this->page)) {
             throw new coding_exception('moodle_paging_bar requires a page value.');
         }
         if (empty($this->perpage)) {
