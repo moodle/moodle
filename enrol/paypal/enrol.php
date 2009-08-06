@@ -9,7 +9,7 @@ class enrolment_plugin_paypal {
 
 /// Override the base print_entry() function
 function print_entry($course) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
 
     $strloginto = get_string("loginto", "", $course->shortname);
@@ -38,7 +38,7 @@ function print_entry($course) {
         print_course($course, "80%");
 
         if ($course->password) {  // Presenting two options
-            print_heading(get_string('costorkey', 'enrol_paypal'), 'center');
+            echo $OUTPUT->heading(get_string('costorkey', 'enrol_paypal'), null, 'mdl-align');
         }
 
         print_simple_box_start("center");

@@ -67,7 +67,7 @@ class enrolment_plugin_authorize
         print_course($course, '80%');
 
         if ($course->password) {
-            print_heading(get_string('choosemethod', 'enrol_authorize'), 'center');
+            echo $OUTPUT->heading(get_string('choosemethod', 'enrol_authorize'), null, 'mdl-align');
         }
 
         if ($USER->username == 'guest') { // only real guest user, not for users with guest role
