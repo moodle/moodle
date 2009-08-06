@@ -104,10 +104,10 @@ echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 print_heading($formheader);
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
-echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
-echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
+echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showpasses, get_string('showpasses', $langfile)), 'showpasses') ; echo '</p>';
+echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showsearch, get_string('showsearch', $langfile)), 'showsearch') ; echo '</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
-    echo '<p>'; print_checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')); echo '</p>';
+    echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')), 'codecoverage') ; echo '</p>';
 } else {
     echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
