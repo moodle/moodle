@@ -101,7 +101,7 @@
             }
         }
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -156,7 +156,7 @@
     if (isguest()) {
         echo '</div>';  
         echo "</form>";
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -176,6 +176,6 @@
     echo '</div>';
     echo "</form>";
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>
