@@ -438,9 +438,9 @@ function profile_edit_category($id, $redirect) {
 
         /// Print the page
         admin_externalpage_print_header();
-        echo $OUPTUT->heading($strheading);
+        echo $OUTPUT->heading($strheading);
         $categoryform->display();
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -482,9 +482,9 @@ function profile_edit_field($id, $datatype, $redirect) {
 
         /// Print the page
         admin_externalpage_print_header();
-        echo $OUPTUT->heading($strheading);
+        echo $OUTPUT->heading($strheading);
         $fieldform->display();
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 }

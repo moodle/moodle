@@ -53,7 +53,7 @@ print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname
 
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 
-echo $OUPTUT->heading($straddnote);
+echo $OUTPUT->heading($straddnote);
 echo '<form method="post" action="groupaddnote.php" >';
 echo '<div style="width:100%;text-align:center;">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
@@ -93,4 +93,4 @@ choose_from_menu($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $st
 echo '</p>';
 
 echo '<input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
-print_footer($course);
+echo $OUTPUT->footer();

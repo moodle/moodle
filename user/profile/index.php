@@ -52,9 +52,9 @@ switch ($action) {
         $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
-        echo $OUPTUT->heading('profiledeletecategory', 'admin');
+        echo $OUTPUT->heading('profiledeletecategory', 'admin');
         notice_yesno(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         die;
         break;
     case 'deletefield':
@@ -70,9 +70,9 @@ switch ($action) {
         $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
-        echo $OUPTUT->heading('profiledeletefield', 'admin');
+        echo $OUTPUT->heading('profiledeletefield', 'admin');
         notice_yesno(get_string('profileconfirmfielddeletion', 'admin', $datacount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         die;
         break;
     case 'editfield':
@@ -94,7 +94,7 @@ switch ($action) {
 
 /// Print the header
 admin_externalpage_print_header();
-echo $OUPTUT->heading(get_string('profilefields', 'admin'));
+echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
 /// Check that we have at least one category defined
 if ($DB->count_records('user_info_category') == 0) {
@@ -122,7 +122,7 @@ foreach ($categories as $category) {
         }
     }
 
-    echo $OUPTUT->heading(format_string($category->name) .' '.profile_category_icons($category));
+    echo $OUTPUT->heading(format_string($category->name) .' '.profile_category_icons($category));
     if (count($table->data)) {
         print_table($table);
     } else {
@@ -147,7 +147,7 @@ print_single_button('index.php', $options, get_string('profilecreatecategory', '
 
 echo '</div>';
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 die;
 
 
