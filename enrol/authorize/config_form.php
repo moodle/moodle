@@ -108,7 +108,12 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">an_cutoff:</td>
-    <td><?php print_time_selector("an_cutoff_hour","an_cutoff_min",make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min),5); ?><br />
+    <td><?php 
+        $curtime = make_timestamp(2000,1,1,$frm->an_cutoff_hour,$frm->an_cutoff_min);
+        $hourselector = moodle_select::make_time_selector('hours', 'an_cutoff_hour', $curtime);
+        $minselector = moodle_select::make_time_selector('minutes', 'an_cutoff_min', $curtime);
+        echo $OUTPUT->select($hourselector) . $OUTPUT->select($minselector);
+        ?><br />
         <?php print_string("cutofftime", "enrol_authorize") ?></td>
 </tr>
 
