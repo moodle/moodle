@@ -246,7 +246,7 @@
  * @todo Document this function
  */
 function forum_print_big_search_form($course) {
-    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $PAGE;
+    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $PAGE, $OUTPUT;
 
     print_simple_box(get_string('searchforumintro', 'forum'), 'center', '', '', 'searchbox', 'intro');
 
@@ -291,9 +291,10 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
-    print_date_selector('fromday', 'frommonth', 'fromyear', $datefrom);
-    print_time_selector('fromhour', 'fromminute', $datefrom);
-
+    $selectors = moodle_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear', 'hours' => 'fromhour', 'minutes' => 'fromminute'), $datefrom);
+    foreach ($selectors as $select) {
+        echo $OUTPUT->select($select);
+    }
     echo '<input type="hidden" name="hfromday" value="0" />';
     echo '<input type="hidden" name="hfrommonth" value="0" />';
     echo '<input type="hidden" name="hfromyear" value="0" />';
