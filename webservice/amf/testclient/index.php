@@ -21,4 +21,4 @@ print_header_simple('Test Client', 'Test Client');
 echo '<div id="moodletestclient">
       <p>You need to install Flash 9.0</p>
     </div>';
-print_footer();
+echo $OUTPUT->footer();

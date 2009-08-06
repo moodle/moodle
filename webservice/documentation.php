@@ -35,7 +35,7 @@ print_header(get_string('wspagetitle','webservice'), get_string('wspagetitle','w
 webservice_lib::display_webservices_availability($protocol);
 generate_documentation($protocol);
 generate_functionlist();
-print_footer();
+echo $OUTPUT->footer();
 
 
 

@@ -42,7 +42,7 @@ print_header('Soap test client', 'Soap test client'.":", true);
 if (!webservice_lib::display_webservices_availability("soap")) {
     echo "<br/><br/>";
     echo "Please fix the previous problem(s), the testing session has been interupted.";
-    print_footer();
+    echo $OUTPUT->footer();
     exit();
 }
 
@@ -130,7 +130,7 @@ try {
 print "</pre>";
 
 /// Display Moodle page footer
-print_footer();
+echo $OUTPUT->footer();
 
 
 /**
