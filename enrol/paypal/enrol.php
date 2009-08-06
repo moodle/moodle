@@ -38,7 +38,7 @@ function print_entry($course) {
         print_course($course, "80%");
 
         if ($course->password) {  // Presenting two options
-            echo $OUTPUT->heading(get_string('costorkey', 'enrol_paypal'), null, 'mdl-align');
+            echo $OUTPUT->heading(get_string('costorkey', 'enrol_paypal'));
         }
 
         print_simple_box_start("center");

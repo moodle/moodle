@@ -154,10 +154,10 @@
                 $grades = array();
             }
         
-            echo $OUTPUT->heading(get_string("topscorestitle", "lesson", $lesson->maxhighscores), 4, 'mdl-align');
+            echo $OUTPUT->heading(get_string("topscorestitle", "lesson", $lesson->maxhighscores), 4);
 
             if (!$highscores = $DB->get_records_select("lesson_high_scores", "lessonid = :lessonid", $params)) {
-                echo $OUTPUT->heading(get_string("nohighscores", "lesson"), 3, 'mdl-align');
+                echo $OUTPUT->heading(get_string("nohighscores", "lesson"), 3);
             } else {
                 foreach ($highscores as $highscore) {
                     $grade = $grades[$highscore->gradeid]->grade;

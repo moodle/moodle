@@ -615,7 +615,7 @@
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             $heading .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
         }
-        echo $OUTPUT->heading($heading, 3, 'mdl-align');
+        echo $OUTPUT->heading($heading, 3);
     } else {
         if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
             $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';

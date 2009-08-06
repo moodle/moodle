@@ -149,7 +149,7 @@ if (ajaxenabled()) {
     $deletegroup_disabled = '';
 }
 
-echo $OUTPUT->heading(format_string($course->shortname) .' '.$strgroups, 3, 'mdl-align');
+echo $OUTPUT->heading(format_string($course->shortname) .' '.$strgroups, 3);
 echo '<form id="groupeditform" action="index.php" method="post">'."\n";
 echo '<div>'."\n";
 echo '<input type="hidden" name="id" value="' . $courseid . '" />'."\n";

@@ -119,7 +119,7 @@ $currenttab = 'overview';
 require('tabs.php');
 
 /// Print overview
-echo $OUTPUT->heading(format_string($course->shortname) .' '.$stroverview, 3, 'mdl-align');
+echo $OUTPUT->heading(format_string($course->shortname) .' '.$stroverview, 3);
 
 echo $strfiltergroups;
 

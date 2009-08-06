@@ -241,7 +241,7 @@ class default_questiontype {
             }
         }
         if (!$question->formoptions->movecontext  && count($permissionstrs)){
-            echo $OUTPUT->heading(get_string('permissionto', 'question'), 3, 'mdl-align');
+            echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
             $html = '<ul>';
             foreach ($permissionstrs as $permissionstr){
                 $html .= '<li>'.$permissionstr.'</li>';

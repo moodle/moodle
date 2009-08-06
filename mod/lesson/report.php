@@ -835,7 +835,7 @@
                 //$headingobject->firstname = $students[$userid]->firstname;
                 //$headingobject->attempt = $try + 1;
                 //print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
-            print_heading(get_string('attempt', 'lesson', $try+1));
+            echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1));
             
             $table->head = array();
             $table->align = array("right", "left");
