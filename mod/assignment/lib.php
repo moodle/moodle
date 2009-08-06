@@ -2550,7 +2550,7 @@ function assignment_refresh_events($courseid = 0) {
  * This is used by the recent activity block
  */
 function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     // do not use log table if possible, it may be huge
 
@@ -2627,7 +2627,7 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    print_headline(get_string('newsubmissions', 'assignment').':');
+    echo $OUTPUT->heading(get_string('newsubmissions', 'assignment').':');
 
     foreach ($show as $submission) {
         $cm = $modinfo->cms[$submission->cmid];
