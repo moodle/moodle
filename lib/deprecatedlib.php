@@ -3521,7 +3521,7 @@ function update_module_button($cmid, $ignored, $string) {
 
     // debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
 
-    return $OUTPUT->update_module_button($cmid, $string);
+    return $OUTPUT->update_module_button($cmid, strtolower($string));
 }
 
 /**
