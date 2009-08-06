@@ -110,7 +110,7 @@
         echo "</p>";
         echo "</center>";
         print_simple_box_end();
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -360,7 +360,7 @@
 
     print_course_search($search);
 
-    print_footer();
+    echo $OUTPUT->footer();
 
    /**
      * Print a list navigation bar

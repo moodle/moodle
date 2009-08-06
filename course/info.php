@@ -87,6 +87,6 @@
 
     echo $OUTPUT->close_window_button();
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

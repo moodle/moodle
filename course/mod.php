@@ -70,7 +70,7 @@
             print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
             notice_yesno($strdeletecheckfull, 'mod.php', $return, $optionsyes, $optionsno, 'post', 'get');
             print_simple_box_end();
-            print_footer($course);
+            echo $OUTPUT->footer();
 
             exit;
         }

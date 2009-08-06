@@ -584,5 +584,5 @@
 
         print_heading_with_help($pageheading, 'mods', $module->name, $icon);
         $mform->display();
-        print_footer($course);
+        echo $OUTPUT->footer();
     }

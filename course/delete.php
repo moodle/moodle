@@ -46,7 +46,7 @@
                      "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=".sesskey(),
                      "category.php?id=$course->category");
 
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -81,6 +81,6 @@
 
     print_continue("category.php?id=$course->category");
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

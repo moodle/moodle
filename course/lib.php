@@ -270,12 +270,12 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
 
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (!$logs = build_logs_array($course, $user, $date, $order, $page*$perpage, $perpage,
                        $modname, $modid, $modaction, $groupid)) {
         notify("No logs found!");
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -391,12 +391,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
 
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (!$logs = build_mnet_logs_array($hostid, $course, $user, $date, $order, $page*$perpage, $perpage,
                        $modname, $modid, $modaction, $groupid)) {
         notify("No logs found!");
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 

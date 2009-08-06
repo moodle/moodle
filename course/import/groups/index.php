@@ -197,7 +197,7 @@
 /// Print the form
     require('mod.php');
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 function my_file_get_contents($filename, $use_include_path = 0) {
 /// Returns the file as one big long string

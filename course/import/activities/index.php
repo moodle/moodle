@@ -68,5 +68,5 @@
     print_header("$course->shortname: $strimportactivities", $course->fullname, $navigation);
     require_once('mod.php');
 
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

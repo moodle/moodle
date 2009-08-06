@@ -261,7 +261,7 @@
 
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 function compare_activities_by_time_desc($a, $b) {
     // make sure the activities actually have a timestamp property

@@ -133,7 +133,7 @@ if(!$csv) {
     if(count($progress->users)==0) {
         print '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
         print '<p><a href="'.$reportsurl.'">'.get_string('continue').'</a></p>';
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
     print $pagingbar;
@@ -274,5 +274,5 @@ print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
     get_string('excelcsvdownload','completion').'</a></li></ul>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

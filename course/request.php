@@ -94,6 +94,6 @@
     print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
     echo $OUTPUT->heading($strtitle);
     $requestform->display();
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

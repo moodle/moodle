@@ -54,6 +54,6 @@
 
     print_heading_with_help($strsummaryof, 'summaries');
     $mform->display();
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 

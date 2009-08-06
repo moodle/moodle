@@ -446,5 +446,5 @@
 
     print_course_search();
 
-    print_footer();
+    echo $OUTPUT->footer();
 

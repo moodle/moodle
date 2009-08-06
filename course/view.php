@@ -255,6 +255,6 @@
     }
 
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

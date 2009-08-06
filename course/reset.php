@@ -68,7 +68,7 @@ if ($mform->is_cancelled()) {
         print_table($table);
 
         print_continue('view.php?id='.$course->id);  // Back to course page
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 }
@@ -79,6 +79,6 @@ echo $OUTPUT->heading($strresetcourse);
 print_simple_box(get_string('resetinfo'), 'center', '60%');
 
 $mform->display();
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

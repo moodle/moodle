@@ -38,6 +38,6 @@
     link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
     echo '<div>';
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

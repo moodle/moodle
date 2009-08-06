@@ -102,6 +102,6 @@
                                       $_SERVER['HTTP_REFERER']);
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

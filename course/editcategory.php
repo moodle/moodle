@@ -112,5 +112,5 @@ echo $OUTPUT->heading($strtitle);
 
 $mform->display();
 
-print_footer();
+echo $OUTPUT->footer();
 ?>

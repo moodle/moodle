@@ -146,6 +146,6 @@
 
     $editform->display();
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

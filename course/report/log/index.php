@@ -103,21 +103,21 @@
                 if (!print_log_csv($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
                     notify("No logs found!");
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                 }
                 exit;
             case 'downloadasods':
                 if (!print_log_ods($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
                     notify("No logs found!");
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                 }
                 exit;
             case 'downloadasexcel':
                 if (!print_log_xls($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
                     notify("No logs found!");
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                 }
                 exit;
         }
@@ -139,7 +139,7 @@
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
     exit;
 ?>

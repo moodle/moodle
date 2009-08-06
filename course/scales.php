@@ -42,7 +42,7 @@
                 echo text_to_html($scale->description);
                 print_simple_box_end();
                 echo $OUTPUT->close_window_button();
-                print_footer('empty');
+                echo $OUTPUT->footer();
                 exit;
             }
         }
@@ -95,6 +95,6 @@
     }
 
     echo $OUTPUT->close_window_button();
-    print_footer('empty');
+    echo $OUTPUT->footer();
 
 ?>

@@ -45,5 +45,5 @@
         echo '</div>';
     }
 
-    print_footer();
+    echo $OUTPUT->footer();
 ?>
