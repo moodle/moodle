@@ -170,7 +170,7 @@
 
     echo '</div></div>';
 
-    print_footer('none');
+    echo $OUTPUT->footer();
 
 
 

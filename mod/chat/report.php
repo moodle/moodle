@@ -97,7 +97,7 @@
             print_continue("report.php?id=$cm->id");
         }
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -144,7 +144,7 @@
     if (empty($messages)) {   /// May have already got them above
         if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $params, "timestamp DESC")) {
             echo $OUTPUT->heading(get_string('nomessages', 'chat'));
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit;
         }
     }
@@ -233,6 +233,6 @@
 
 
 /// Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

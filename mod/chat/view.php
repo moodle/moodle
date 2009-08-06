@@ -52,7 +52,7 @@
         notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
                 get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
 
     }
@@ -184,6 +184,6 @@
         print_simple_box_end();
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

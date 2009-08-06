@@ -99,7 +99,7 @@
     }
     // added 2 </div>s, xhtml strict complaints
     echo '</table>';
-    print_footer('empty');
+    echo $OUTPUT->footer();
 
     //
     // Support HTTP Keep-Alive by printing Content-Length

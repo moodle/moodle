@@ -48,5 +48,5 @@
         <input type="hidden" name="chat_message" />
     </form>
 <?php
-    print_footer('empty');
+    echo $OUTPUT->footer();
 ?>

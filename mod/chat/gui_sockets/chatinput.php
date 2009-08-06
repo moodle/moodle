@@ -36,5 +36,5 @@
         <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
     </form>
 <?php
-    print_footer('empty');
+    echo $OUTPUT->footer();
 ?>
