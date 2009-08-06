@@ -3232,6 +3232,11 @@ function complete_user_login($user) {
 
     $USER = $user; // this is required because we need to access preferences here!
 
+    if (!empty($CFG->regenloginsession)) {
+        // please note this setting may break some auth plugins
+        session_regenerate_id();
+    }
+
     reload_user_preferences();
 
     update_user_login_times();
