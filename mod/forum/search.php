@@ -315,8 +315,10 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
-    print_date_selector('today', 'tomonth', 'toyear', $dateto);
-    print_time_selector('tohour', 'tominute', $dateto);
+    $selectors = moodle_select::make_time_selectors(array('days' => 'today','months' => 'tomonth', 'years' => 'toyear', 'hours' => 'tohour', 'minutes' => 'tominute'), $dateto);
+    foreach ($selectors as $select) {
+        echo $OUTPUT->select($select);
+    }
 
     echo '<input type="hidden" name="htoday" value="0" />';
     echo '<input type="hidden" name="htomonth" value="0" />';
