@@ -187,8 +187,8 @@ abstract class grade_export {
      * @param bool $require_user_idnumber true means skip users without idnumber
      */
     public function display_preview($require_user_idnumber=false) {
-
-        print_heading(get_string('previewrows', 'grades'));
+        global $OUTPUT;
+        echo $OUTPUT->heading(get_string('previewrows', 'grades'));
 
         echo '<table>';
         echo '<tr>';
@@ -286,12 +286,12 @@ abstract class grade_export {
      * @return void
      */
     public function print_continue() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $params = $this->get_export_params();
 
 
-        print_heading(get_string('export', 'grades'));
+        echo $OUTPUT->heading(get_string('export', 'grades'));
 
         echo '<div class="gradeexportlink">';
         if (!$this->userkey) {      // this button should trigger a download prompt

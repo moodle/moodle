@@ -106,7 +106,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         while ($userdata = $gui->next_user()) {
             $user = $userdata->user;
             $report = new grade_report_user($courseid, $gpr, $context, $user->id);
-            print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+            echo $OUTPUT->heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
 
             if ($report->fill_table()) {
                 echo '<br />'.$report->print_table(true);

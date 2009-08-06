@@ -255,7 +255,7 @@ $navigation = grade_build_nav(__FILE__, $strgradeedit, array('courseid' => $cour
 print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit,
     ': ' . $strgradeedit , $navigation, '', '', true, '', navmenu($course));
 
-print_heading($strgradeedit);
+echo $OUTPUT->heading($strgradeedit);
 
 print_simple_box_start("center");
 

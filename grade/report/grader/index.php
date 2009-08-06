@@ -34,6 +34,8 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
+$PAGE->set_url('grade/report/grader/index.php', compact('courseid', 'page', 'perpageurl', 'edit', 'sortitemid'));
+
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -123,7 +125,7 @@ if ($report->get_pref('enableajax')) {
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
     print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
-    print_heading(get_string("notingroup"));
+    echo $OUTPUT->heading(get_string("notingroup"));
     print_footer($course);
     exit;
 }

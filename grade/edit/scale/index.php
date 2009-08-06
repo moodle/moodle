@@ -144,9 +144,9 @@ if ($courseid) {
     print_grade_page_head($courseid, 'scale', null, get_string('coursescales', 'grades'));
 }
 
-print_heading($strcustomscales, '', 3, 'main');
+echo $OUTPUT->heading($strcustomscales, 3, 'main');
 print_table($table);
-print_heading($strstandardscale, '', 3, 'main');
+echo $OUTPUT->heading($strstandardscale, 3, 'main');
 print_table($table2);
 echo '<div class="buttons">';
 print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale);

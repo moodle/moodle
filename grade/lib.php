@@ -812,7 +812,7 @@ class grade_plugin_info {
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
                                $buttons=false, $extracss=array()) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $OUTPUT;
     $strgrades = get_string('grades');
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
     
@@ -876,7 +876,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_DROPDOWN) {
         $returnval .= print_grade_plugin_selector($plugin_info, $return);
     }
-    $returnval .= print_heading($heading);
+    $returnval .= $OUTPUT->heading($heading);
 
     if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
         $returnval .= grade_print_tabs($active_type, $active_plugin, $plugin_info, $return);
