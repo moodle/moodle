@@ -92,7 +92,7 @@
             print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
                      '', '', true);
         }
-        print_heading(format_string($scorm->name));
+        echo $OUTPUT->heading(format_string($scorm->name));
     }
 
     if ($action == 'delete' && has_capability('mod/scorm:deleteresponses',$contextmodule)) {
@@ -284,7 +284,7 @@
         if (!empty($userdata)) {
             print_simple_box_start('center');
             //print_heading(format_string($sco->title));
-            print_heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
+            echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
             print_user_picture($user, $course->id, $userdata->picture, false, false);
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
