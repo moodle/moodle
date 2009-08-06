@@ -129,7 +129,7 @@
     switch ($action) {
 
       case "summary":
-        print_heading($strsummary);
+        echo $OUTPUT->heading($strsummary);
 
         if (survey_count_responses($survey->id, $currentgroup, $groupingid)) {
             echo "<div class='reportsummary'><a href=\"report.php?action=scales&amp;id=$id\">";
@@ -141,7 +141,7 @@
         break;
 
       case "scales":
-        print_heading($strscales);
+        echo $OUTPUT->heading($strscales);
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
             notify(get_string("nobodyyet","survey"));
@@ -182,16 +182,16 @@
 
             if ($scale = $DB->get_records("survey_questions", array("multi"=>$qid))) {
                 $scale = array_pop($scale);
-                print_heading("$scale->text - $strselectedquestions");
+                echo $OUTPUT->heading("$scale->text - $strselectedquestions");
             } else {
-                print_heading($strselectedquestions);
+                echo $OUTPUT->heading($strselectedquestions);
             }
 
         } else {        // get all top-level questions
             $questions = $DB->get_records_list("survey_questions", "id", explode(',',$survey->questions));
             $questionorder = explode(",", $survey->questions);
 
-            print_heading($strallquestions);
+            echo $OUTPUT->heading($strallquestions);
         }
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
@@ -270,7 +270,7 @@
 
         $answers =  explode(",", get_string($question->options, "survey"));
 
-        print_heading("$strquestion: $question->text");
+        echo $OUTPUT->heading("$strquestion: $question->text");
 
 
         $strname = get_string("name", "survey");
@@ -312,7 +312,7 @@
 
       case "students":
 
-         print_heading(get_string("analysisof", "survey", get_string('participants')));
+         echo $OUTPUT->heading(get_string("analysisof", "survey", get_string('participants')));
 
          if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
              notify(get_string("nobodyyet","survey"));
@@ -327,7 +327,7 @@
              print_error('invaliduserid');
          }
 
-         print_heading(get_string("analysisof", "survey", fullname($user)));
+         echo $OUTPUT->heading(get_string("analysisof", "survey", fullname($user)));
 
          if ($notes != '' and confirm_sesskey()) {
              if (survey_get_analysis($survey->id, $user->id)) {
@@ -424,7 +424,7 @@
          break;
 
       case "download":
-        print_heading($strdownload);
+        echo $OUTPUT->heading($strdownload);
 
         require_capability('mod/survey:download', $context);
 

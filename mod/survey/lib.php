@@ -520,14 +520,14 @@ function survey_shorten_name ($name, $numwords) {
  * @param object $question
  */
 function survey_print_multi($question) {
-    global $USER, $DB, $qnum, $checklist, $DB;
+    global $USER, $DB, $qnum, $checklist, $DB, $OUTPUT;
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
     $strdefault    = get_string('default');
     $strresponses  = get_string('responses', 'survey');
 
-    print_heading($question->text, null, 3, 'questiontext');
+    echo $OUTPUT->heading($question->text, 3, 'questiontext');
     echo "\n<table width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\">";
 
     $options = explode( ",", $question->options);

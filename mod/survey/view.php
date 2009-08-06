@@ -71,8 +71,8 @@
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
 
         if ($showscales) {
-            print_heading(get_string("surveycompleted", "survey"));
-            print_heading(get_string("peoplecompleted", "survey", $numusers));
+            echo $OUTPUT->heading(get_string("surveycompleted", "survey"));
+            echo $OUTPUT->heading(get_string("peoplecompleted", "survey", $numusers));
             echo '<div class="resultgraph">';
             survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
             echo '</div>';
