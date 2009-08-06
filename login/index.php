@@ -126,7 +126,7 @@
 
             if (empty($user->confirmed)) {       // This account was never confirmed
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") );
-                print_heading(get_string("mustconfirm"));
+                echo $OUTPUT->heading(get_string("mustconfirm"));
                 print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
                 print_footer();
                 die;
