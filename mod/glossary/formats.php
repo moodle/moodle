@@ -251,5 +251,5 @@
 
     echo '</table></form>';
 
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

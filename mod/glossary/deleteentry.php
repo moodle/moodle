@@ -103,6 +103,6 @@
 
         notice_yesno($areyousure, $linkyes, $linkno, $optionsyes, $optionsno, 'post', 'get');
 
-        print_footer($course);
+        echo $OUTPUT->footer();
     }
 ?>

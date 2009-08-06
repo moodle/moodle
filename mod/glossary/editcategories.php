@@ -77,7 +77,7 @@
                 $name = $category->name;
                 $usedynalink = $category->usedynalink;
                 require "editcategories.html";
-                print_footer();
+                echo $OUTPUT->footer();
                 die;
             }
 
@@ -90,7 +90,7 @@
                 echo "<div style=\"text-align:center\">" . get_string("categorydeleted","glossary") ."</div>";
                 echo "</center>";
                 print_simple_box_end();
-                print_footer($course);
+                echo $OUTPUT->footer();
 
                 add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
 
@@ -167,7 +167,7 @@
     }
 
     if ( $action ) {
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -241,4 +241,5 @@
 
 </form>
 
-<?php print_footer() ?>
+<?php 
+echo $OUTPUT->footer();

@@ -517,7 +517,7 @@
     glossary_print_tabbed_table_end();
 
 /// Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 /// Mark as viewed
     $completion=new completion_info($course);

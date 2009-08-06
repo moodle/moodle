@@ -81,7 +81,7 @@ function glossary_comment_add() {
     } else {
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'add');
         $mform->display();
-        print_footer($course);
+        echo $OUTPUT->footer();
         die;
     }
 }
@@ -90,7 +90,7 @@ function glossary_comment_add() {
  * Deleting existing comments
  */
 function glossary_comment_delete() {
-    global $USER, $DB;
+    global $USER, $DB, $OUTPUT;
 
     $id      = optional_param('id', 0, PARAM_INT);      // Comment ID
     $confirm = optional_param('confirm', 0, PARAM_BOOL); // delete confirmation
@@ -135,7 +135,7 @@ function glossary_comment_delete() {
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'delete');
         glossary_print_comment($course, $cm, $glossary, $entry, $comment);
         notice_yesno($strdeletewarning, $linkyes, $linkno, $optionsyes, $optionsno, 'post', 'get');
-        print_footer($course);
+        echo $OUTPUT->footer();
         die;
     }
 }
@@ -144,7 +144,7 @@ function glossary_comment_delete() {
  * Edit existing comments
  */
 function glossary_comment_edit() {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     $id = optional_param('id', 0, PARAM_INT); // Comment ID
 
@@ -197,7 +197,7 @@ function glossary_comment_edit() {
     } else {
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'edit');
         $mform->display();
-        print_footer($course);
+        echo $OUTPUT->footer();
         die;
     }
 }

@@ -173,5 +173,5 @@ echo $OUTPUT->heading(format_string($glossary->name));
 
 $mform->display();
 
-print_footer($course);
+echo $OUTPUT->footer();
 

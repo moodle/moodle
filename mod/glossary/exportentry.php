@@ -66,7 +66,7 @@
             nootify(get_string('errconceptalreadyexists', 'glossary'));
             print_continue($returnurl);
             print_simple_box_end();
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         }
     }
@@ -82,7 +82,7 @@
 
         notice_yesno($areyousure, $linkyes, $linkno, $optionsyes, $optionsno, 'post', 'get');
         echo '</div>';
-        print_footer();
+        echo $OUTPUT->footer();
         die;
 
     } else {

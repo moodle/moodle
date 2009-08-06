@@ -181,5 +181,5 @@
         }
     }
 
-    print_footer('empty');
+    echo $OUTPUT->footer();
 ?>
