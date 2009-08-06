@@ -155,7 +155,7 @@
 
         print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
         echo $OUTPUT->heading(get_string("notingroup"));
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -981,7 +981,7 @@
         echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
     if ($userlist) {
         $userlist->close();

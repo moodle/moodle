@@ -55,6 +55,6 @@
     $optionsno  = array('sesskey'=>sesskey());
     notice_yesno($strpolicyagree, $linkyes, $linkno, $optionsyes, $optionsno);
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

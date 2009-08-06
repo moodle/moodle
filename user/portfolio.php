@@ -96,6 +96,6 @@ if ($display) {
 
     print_table($table);
 }
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

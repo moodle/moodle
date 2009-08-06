@@ -51,4 +51,4 @@ if (empty($preferences['newemailattemptsleft'])) {
     print_box($strinvalidkey, 'center');
 }
 
-print_footer('none');
+echo $OUTPUT->footer();

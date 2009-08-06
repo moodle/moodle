@@ -155,5 +155,5 @@ echo '</strong><br />';
 echo '<input type="submit" value="'.get_string('savechanges').'" />';
 echo '</div></form>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

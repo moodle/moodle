@@ -84,7 +84,7 @@
     if ($user->deleted) {
         print_header();
         echo $OUTPUT->heading(get_string('userdeleted'));
-        print_footer($course);
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -231,6 +231,6 @@
     }
 
 /// and proper footer
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

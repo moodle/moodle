@@ -90,5 +90,5 @@ foreach ($users as $k => $v) {
 }
 print_table($table);
 echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

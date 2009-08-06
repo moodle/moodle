@@ -157,5 +157,5 @@ foreach ($_POST as $k => $v) {
 print_table($table);
 echo "\n<div style=\"width:100%;text-align:center;\"><input type=\"submit\" value=\"".get_string('savechanges')."\" /></div>\n</form>\n";
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>
