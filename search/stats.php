@@ -104,7 +104,9 @@ require_once($CFG->dirroot.'/search/lib.php');
         }
     
         print_table($admin_table);
-        print_spacer(20);
+        $spacer = new html_image();
+        $spacer->height = 20;
+        echo $OUTPUT->spacer(clone($spacer)) . '<br />';
         print_heading($solutionsstr);
         
         unset($admin_table->data);
@@ -119,6 +121,7 @@ require_once($CFG->dirroot.'/search/lib.php');
         $admin_table->data[] = array($runindexerstr, '<a href="indexersplash.php" target="_blank">indexersplash.php</a>');
         
         print_table($admin_table);
+        echo $OUTPUT->spacer($spacer) . '<br />';
         print_spacer(20);
     } 
     
