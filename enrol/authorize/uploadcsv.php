@@ -48,7 +48,7 @@
     echo '</div></form></center><br />';
 
 /// Print footer
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?><?php
 

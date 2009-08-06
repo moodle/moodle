@@ -208,7 +208,7 @@ function authorize_print_orders($courseid, $userid) {
     }
 
     $table->print_html();
-    print_footer();
+    echo $OUTPUT->footer();
 }
 
 /**
@@ -218,7 +218,7 @@ function authorize_print_orders($courseid, $userid) {
  */
 function authorize_print_order($orderid)
 {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
     global $strs, $authstrs;
 
     $do = optional_param('do', '', PARAM_ALPHA);
@@ -505,7 +505,7 @@ function authorize_print_order($orderid)
         }
     }
 
-    print_footer();
+    echo $OUTPUT->footer();
 }
 
 /**

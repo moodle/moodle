@@ -107,7 +107,7 @@ class enrolment_plugin_authorize
             include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
-        print_footer();
+        echo $OUTPUT->footer();
     }
 
 
@@ -322,7 +322,7 @@ class enrolment_plugin_authorize
                     print_single_button("$CFG->wwwroot/course/view.php", array('id'=>$course->id), $course->fullname);
                     echo '</div>';
                     $OUTPUT->box_end();
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                     exit; // break;
                 }
             }

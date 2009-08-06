@@ -75,7 +75,7 @@ function print_entry($course) {
             include($CFG->dirroot.'/enrol/manual/enrol.html');
         }
 
-        print_footer();
+        echo $OUTPUT->footer();
 
     }
 } // end of function print_entry()

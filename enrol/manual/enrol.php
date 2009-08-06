@@ -73,7 +73,7 @@ function print_entry($course) {
             echo '<br />';
             notice_yesno(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&amp;confirm=1",
                                                               "enrol.php?id=$course->id&amp;cancel=1");
-            print_footer();
+            echo $OUTPUT->footer();
             exit;
 
         } else if (!empty($_GET['confirm'])) {
@@ -117,7 +117,7 @@ function print_entry($course) {
 
     include("$CFG->dirroot/enrol/manual/enrol.html");
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 }
 

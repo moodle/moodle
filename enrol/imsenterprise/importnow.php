@@ -29,7 +29,7 @@ problems that might require attention).</p>
 //error_reporting(E_ALL);
 $enrol->cron();
 ?></pre><?php
-print_footer();
+echo $OUTPUT->footer();
 
 exit;
 ?>
