@@ -2282,7 +2282,7 @@ function feedback_send_email_html($info, $course, $cm) {
  */
 function feedback_print_errors() {
 
-    global $SESSION;
+    global $SESSION, $OUTPUT;
 
     if(empty($SESSION->feedback->errors)) {
 		return;
@@ -2290,7 +2290,7 @@ function feedback_print_errors() {
 
     // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
     print_box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
-    print_heading(get_string('handling_error', 'feedback'));
+    echo $OUTPUT->heading(get_string('handling_error', 'feedback'));
 
     echo '<p align="center"><b><font color="black"><pre>';
     print_r($SESSION->feedback->errors) . "\n";

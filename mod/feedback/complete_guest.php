@@ -224,7 +224,7 @@
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
-        print_heading(format_text($feedback->name));
+        echo $OUTPUT->heading(format_text($feedback->name));
         
         if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
             echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';

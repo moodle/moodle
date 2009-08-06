@@ -214,9 +214,9 @@
             
             $helpbutton = helpbutton('preview', get_string('preview','feedback'), 'feedback',true,false,'',true);
             
-            print_heading($helpbutton . get_string('preview', 'feedback'));
+            echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-                print_heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
+                echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
             }
             // print_simple_box_start('center', '80%');
             print_box_start('generalbox boxaligncenter boxwidthwide');

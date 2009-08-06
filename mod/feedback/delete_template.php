@@ -88,12 +88,12 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    print_heading(get_string('delete_template','feedback'));
+    echo $OUTPUT->heading(get_string('delete_template','feedback'));
     if($shoulddelete == 1) {
     
         // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
         print_box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
-        print_heading(get_string('confirmdeletetemplate', 'feedback'));
+        echo $OUTPUT->heading(get_string('confirmdeletetemplate', 'feedback'));
         $mform->display();
         // print_simple_box_end();
         print_box_end();

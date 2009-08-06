@@ -78,7 +78,7 @@
     ///////////////////////////////////////////////////////////////////////////
     include('tabs.php');
     
-    print_heading(format_text($feedback->name));
+    echo $OUTPUT->heading(format_text($feedback->name));
     
     print_continue(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
     //print the list with anonymous completeds
