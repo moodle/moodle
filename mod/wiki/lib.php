@@ -266,7 +266,7 @@ function wiki_user_complete($course, $user, $mod, $wiki) {
  * @return bool
  */
 function wiki_print_recent_activity($course, $isteacher, $timestart) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     
     $sql = "SELECT l.*, cm.instance
               FROM {log} l JOIN {course_modules} cm ON l.cmid = cm.id 
@@ -300,7 +300,7 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
     if (!$wikis) {
         return false;
     }
-    print_headline(get_string('updatedwikipages', 'wiki').':', 3);
+    echo $OUTPUT->heading(get_string("updatedwikipages", 'wiki').':', 3);
     foreach ($wikis as $wiki) {
         print_recent_activity_note($wiki->time, $wiki, $wiki->pagename,
                                    $CFG->wwwroot.'/mod/wiki/'.$wiki->url);
