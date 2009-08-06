@@ -168,7 +168,7 @@
     }
     
     print_box_start();
-    print_heading($strquery);
+    echo $OUTPUT->heading($strquery);
     
     print_box_start();
     
