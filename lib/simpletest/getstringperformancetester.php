@@ -55,7 +55,7 @@ foreach ($requiredlangs as $lang) {
 }
 
 time_for_loop();
-print_heading('Timing calling functions');
+echo $OUTPUT->heading('Timing calling functions');
 time_function_call('dummy_function');
 time_function_call('simple_eval');
 time_function_call('simple_eval_with_interp');
@@ -76,7 +76,7 @@ if (isset($SESSION->lang)) {
 try {
 
     foreach ($TEST_LANGUAGES as $lang) {
-        print_heading("Language '$lang'");
+        echo $OUTPUT->heading("Language '$lang'");
         $SESSION->lang = $lang;
 
         time_log_file('admin_index.php_get_string.log.php');
@@ -109,8 +109,8 @@ print_footer();
  * @return unknown_type
  */
 function time_log_file($filename) {
-    global $CFG;
-    print_heading("Playing back calls from $filename", '', 3);
+    global $CFG, $OUTPUT;
+    echo $OUTPUT->heading("Playing back calls from $filename", '', 3);
     $fullpath = $CFG->libdir . '/simpletest/get_string_fixtures/pagelogs/' . $filename;
     for ($i = 0; $i < NUM_REPITITIONS; ++$i) {
         set_time_limit(60);
@@ -129,7 +129,8 @@ function time_log_file($filename) {
  * @param $a
  */
 function test_one_case($string, $module, $a) {
-    print_heading("get_string('$string', '$module', " . print_r($a, true) . ")", '', 3);
+    global $OUTPUT;
+    echo $OUTPUT->heading("get_string('$string', '$module', " . print_r($a, true) . ")", 3);
     echo '<p>Resulting string: ' . get_string($string, $module, $a) . "</p>\n";
     for ($i = 0; $i < NUM_REPITITIONS; ++$i) {
         set_time_limit(60);
@@ -143,7 +144,8 @@ function test_one_case($string, $module, $a) {
 }
 
 function time_for_loop() {
-    print_heading('Timing an empty for loop');
+    global $OUTPUT;
+    echo $OUTPUT->heading('Timing an empty for loop');
     $startime = microtime(true);
     for ($i = 0; $i < NUM_CALLS; $i++) {
     }

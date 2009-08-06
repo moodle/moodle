@@ -365,7 +365,7 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_confirm() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $previous = $DB->get_records(
             'portfolio_log',
@@ -383,7 +383,7 @@ class portfolio_exporter {
         $nourl  = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
         $this->print_header('confirmexport');
         print_simple_box_start();
-        print_heading(get_string('confirmsummary', 'portfolio'), '', 4);
+        echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 4);
         $mainsummary = array();
         if (!$this->instance->get_export_config('hideformat')) {
             $mainsummary[get_string('selectedformat', 'portfolio')] = get_string('format_' . $this->instance->get_export_config('format'), 'portfolio');
@@ -571,6 +571,7 @@ class portfolio_exporter {
     * @param string $headerstring key for a portfolio language string
     */
     public function print_header($headingstr, $summary=true) {
+        global $OUTPUT;
         $titlestr = get_string('exporting', 'portfolio');
         $headerstr = get_string('exporting', 'portfolio');
 
@@ -579,7 +580,7 @@ class portfolio_exporter {
         if (strpos($hstr, '[[') === 0) {
             $hstr = $headingstr;
         }
-        print_heading($hstr);
+        echo $OUTPUT->heading($hstr);
 
         if (!$summary) {
             return;

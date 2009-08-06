@@ -3271,12 +3271,12 @@ function rebuildnolinktag($text) {
  * @return void
  */
 function print_maintenance_message() {
-    global $CFG, $SITE, $PAGE;
+    global $CFG, $SITE, $PAGE, $OUTPUT;
 
     $PAGE->set_pagetype('maintenance-message');
     $PAGE->set_generaltype('maintenance');
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
-    print_heading(get_string('sitemaintenance', 'admin'));
+    echo $OUTPUT->heading(get_string('sitemaintenance', 'admin'));
     if (isset($CFG->maintenance_message) and !html_is_blank($CFG->maintenance_message)) {
         print_box_start('maintenance_message generalbox boxwidthwide boxaligncenter');
         echo $CFG->maintenance_message;

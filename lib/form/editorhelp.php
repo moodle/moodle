@@ -56,7 +56,7 @@ for ($i=1; ; $i++){
 }
 print_header();
 print_simple_box_start('center', '96%');
-print_heading(get_string('editorhelptopics'));
+echo $OUTPUT->heading(get_string('editorhelptopics'));
 
 
 echo '<ul>';

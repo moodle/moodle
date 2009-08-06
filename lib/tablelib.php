@@ -868,9 +868,10 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_nothing_to_display(){
+        global $OUTPUT;
         $this->print_initials_bar();
 
-        print_heading(get_string('nothingtodisplay'));
+        echo $OUTPUT->heading(get_string('nothingtodisplay'));
     }
 
     /**

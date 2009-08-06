@@ -308,10 +308,10 @@ function print_moodle_environment($result, $environment_results) {
     $othertable->data = array_merge($otherdata['error'], $otherdata['warn'], $otherdata['ok']);
 
 /// Print table
-    print_heading(get_string('serverchecks', 'admin'));
+    echo $OUTPUT->heading(get_string('serverchecks', 'admin'));
     print_table($servertable);
     if (count($othertable->data)){
-        print_heading(get_string('customcheck', 'admin'));
+        echo $OUTPUT->heading(get_string('customcheck', 'admin'));
         print_table($othertable);
     }
 

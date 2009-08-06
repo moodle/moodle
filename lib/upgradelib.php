@@ -815,15 +815,16 @@ function print_upgrade_separator() {
  * @param bool $installation true if installation, false menas upgrade
  */
 function print_upgrade_part_start($plugin, $installation, $verbose) {
+    global $OUTPUT;
     if (empty($plugin) or $plugin == 'moodle') {
         upgrade_started($installation); // does not store upgrade running flag yet
         if ($verbose) {
-            print_heading(get_string('coresystem'));
+            echo $OUTPUT->heading(get_string('coresystem'));
         }
     } else {
         upgrade_started();
         if ($verbose) {
-            print_heading($plugin);
+            echo $OUTPUT->heading($plugin);
         }
     }
     if ($installation) {
@@ -883,7 +884,7 @@ function upgrade_get_javascript() {
  * @global object
  */
 function upgrade_language_pack($lang='') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (empty($lang)) {
         $lang = current_language();
@@ -894,7 +895,7 @@ function upgrade_language_pack($lang='') {
     }
 
     upgrade_started(false);
-    print_heading(get_string('langimport', 'admin').': '.$lang);
+    echo $OUTPUT->heading(get_string('langimport', 'admin').': '.$lang);
 
     @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
     @mkdir ($CFG->dataroot.'/lang/');
