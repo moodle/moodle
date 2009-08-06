@@ -2348,13 +2348,17 @@ function add_indented_names($categories, $nochildrenof = -1) {
  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
  */
 function question_category_select_menu($contexts, $top = false, $currentcat = 0, $selected = "", $nochildrenof = -1) {
+    global $OUTPUT;
     $categoriesarray = question_category_options($contexts, $top, $currentcat, false, $nochildrenof);
     if ($selected) {
         $nothing = '';
     } else {
-        $nothing = 'choose';
+        $nothing = 'choosedots';
     }
-    choose_from_menu_nested($categoriesarray, 'category', $selected, $nothing);
+    $select = moodle_select::make($categoriesarray, 'category', $selected);
+    $select->nothingvalue = $nothing;
+    $select->nested = true;
+    echo $OUTPUT->select($select);
 }
 
 /**
