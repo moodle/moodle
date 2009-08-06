@@ -55,7 +55,7 @@ if (count($queued) > 0) {
         );
         unset($e); // this could potentially be quite big, so free it.
     }
-    print_heading(get_string('queuesummary', 'portfolio'));
+    echo $OUPTUT->heading(get_string('queuesummary', 'portfolio'));
     print_table($table);
 }
 $logcount = $DB->count_records('portfolio_log', array('userid' => $USER->id));
@@ -84,7 +84,7 @@ if ($logcount > 0) {
             userdate($log->time),
         );
     }
-    print_heading(get_string('logsummary', 'portfolio'));
+    echo $OUPTUT->heading(get_string('logsummary', 'portfolio'));
     print_paging_bar($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
     print_table($table);
     print_paging_bar($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');

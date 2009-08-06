@@ -154,7 +154,7 @@
         $navigation = build_navigation($navlinks);
 
         print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
-        print_heading(get_string("notingroup"));
+        echo $OUTPUT->heading(get_string("notingroup"));
         print_footer($course);
         exit;
     }
@@ -615,7 +615,7 @@
             $heading .= ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?roleid='.$roleid.'&amp;contextid='.$context->id.'">';
             $heading .= '<img src="'.$OUTPUT->old_icon_url('i/edit') . '" class="icon" alt="" /></a>';
         }
-        print_heading($heading, 'center', 3);
+        echo $OUTPUT->heading($heading, 3, 'mdl-align');
     } else {
         if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
             $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
@@ -629,9 +629,9 @@
             $strallparticipants = get_string('allparticipants');
         }
         if ($matchcount < $totalcount) {
-            print_heading($strallparticipants.': '.$matchcount.'/'.$totalcount . $editlink, '', 3);
+            echo $OUTPUT->heading($strallparticipants.': '.$matchcount.'/'.$totalcount . $editlink, 3);
         } else {
-            print_heading($strallparticipants.': '.$matchcount . $editlink, '', 3);
+            echo $OUTPUT->heading($strallparticipants.': '.$matchcount . $editlink, 3);
         }
     }
 
@@ -650,7 +650,7 @@
 
     if ($mode===MODE_USERDETAILS) {    // Print simple listing
         if ($totalcount < 1) {
-            print_heading(get_string('nothingtodisplay'));
+            echo $OUTPUT->heading(get_string('nothingtodisplay'));
         } else {
             if ($totalcount > $perpage) {
 
@@ -810,7 +810,7 @@
                 }
 
             } else {
-                print_heading(get_string('nothingtodisplay'));
+                echo $OUTPUT->heading(get_string('nothingtodisplay'));
             }
         }
 

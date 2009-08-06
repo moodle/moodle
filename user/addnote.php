@@ -55,7 +55,7 @@ print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname
 
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 
-print_heading($straddnote);
+echo $OUTPUT->heading($straddnote);
 echo '<form method="post" action="addnote.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';

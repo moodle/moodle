@@ -32,7 +32,7 @@ print_header("$course->fullname: $fullname: $strrepos", $course->fullname,
 $currenttab = 'repositories';
 include('tabs.php');
 
-print_heading($configstr);
+echo $OUTPUT->heading($configstr);
 print_simple_box_start();
 
 if (!$instances = repository::get_instances($COURSE->context, $USER->id)) {

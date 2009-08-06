@@ -34,7 +34,7 @@
     if ($filtertype == 'site') {
 
         $site = get_site();
-        print_heading(format_string($site->fullname));
+        echo $OUTPUT->heading(format_string($site->fullname));
 
         if ($CFG->bloglevel >= 4) {
             if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
@@ -53,7 +53,7 @@
 
         $course = $DB->get_record('course', array('id'=>$filterselect));
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        print_heading(format_string($course->fullname));
+        echo $OUTPUT->heading(format_string($course->fullname));
 
         $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect,
             get_string('participants'));
@@ -72,7 +72,7 @@
     } else if ($filtertype == 'group' && $filterselect) {
 
         $group_name = groups_get_group_name($filterselect);
-        print_heading($group_name);
+        echo $OUTPUT->heading($group_name);
 
         if ($CFG->bloglevel >= 2) {
 
@@ -90,7 +90,7 @@
         if (isset($userid)) {
             $user = $DB->get_record('user', array('id'=>$userid));
         }
-        print_heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
+        echo $OUTPUT->heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
 
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);

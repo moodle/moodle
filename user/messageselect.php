@@ -82,7 +82,7 @@
         } else {
             $heading = get_string('addedrecips','moodle',$count);
         }
-        print_heading($heading);
+        echo $OUPTUT->heading($heading);
     }
 
     if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
@@ -103,11 +103,11 @@
                     $good = $good && message_post_message($USER,$user,$messagebody,$format,'direct');
                 }
                 if (!empty($good)) {
-                    print_heading(get_string('messagedselectedusers'));
+                    echo $OUPTUT->heading(get_string('messagedselectedusers'));
                     unset($SESSION->emailto[$id]);
                     unset($SESSION->emailselect[$id]);
                 } else {
-                    print_heading(get_string('messagedselectedusersfailed'));
+                    echo $OUPTUT->heading(get_string('messagedselectedusersfailed'));
                 }
                 echo '<p align="center"><a href="index.php?id='.$id.'">'.get_string('backtoparticipants').'</a></p>';
             }

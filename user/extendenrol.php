@@ -112,7 +112,7 @@ if($course->enrollable == 2) {
 }
 
 $title = get_string('extendenrol');
-print_heading($title . helpbutton('extendenrol', $title, 'moodle', true, false, '', true));
+echo $OUTPUT->heading($title . helpbutton('extendenrol', $title, 'moodle', true, false, '', true));
 echo "<form method=\"post\" action=\"extendenrol.php\">\n";
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

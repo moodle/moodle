@@ -35,7 +35,7 @@
 
     print_header($strpolicyagreement, $SITE->fullname, build_navigation(array(array('name'=>$strpolicyagreement, 'link'=>null, 'type'=>'misc'))));
 
-    print_heading($strpolicyagreement);
+    echo $OUTPUT->heading($strpolicyagreement);
 
     $mimetype = mimeinfo('type', $CFG->sitepolicy);
     if ($mimetype == 'document/unknown') {

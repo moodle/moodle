@@ -52,7 +52,7 @@ switch ($action) {
         $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
-        print_heading('profiledeletecategory', 'admin');
+        echo $OUPTUT->heading('profiledeletecategory', 'admin');
         notice_yesno(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
         admin_externalpage_print_footer();
         die;
@@ -70,7 +70,7 @@ switch ($action) {
         $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
-        print_heading('profiledeletefield', 'admin');
+        echo $OUPTUT->heading('profiledeletefield', 'admin');
         notice_yesno(get_string('profileconfirmfielddeletion', 'admin', $datacount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
         admin_externalpage_print_footer();
         die;
@@ -94,7 +94,7 @@ switch ($action) {
 
 /// Print the header
 admin_externalpage_print_header();
-print_heading(get_string('profilefields', 'admin'));
+echo $OUPTUT->heading(get_string('profilefields', 'admin'));
 
 /// Check that we have at least one category defined
 if ($DB->count_records('user_info_category') == 0) {
@@ -122,7 +122,7 @@ foreach ($categories as $category) {
         }
     }
 
-    print_heading(format_string($category->name) .' '.profile_category_icons($category));
+    echo $OUPTUT->heading(format_string($category->name) .' '.profile_category_icons($category));
     if (count($table->data)) {
         print_table($table);
     } else {

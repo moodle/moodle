@@ -61,7 +61,7 @@ if (!empty($config)) {
         }
         exit;
     } else {
-        print_heading(get_string('configplugin', 'portfolio'));
+        echo $OUTPUT->heading(get_string('configplugin', 'portfolio'));
         print_simple_box_start();
         $mform->display();
         print_simple_box_end();
@@ -74,7 +74,7 @@ if (!empty($config)) {
 }
 
 if ($display) {
-    print_heading($configstr);
+    echo $OUTPUT->heading($configstr);
     print_simple_box_start();
 
     if (!$instances = portfolio_instances(true, false)) {
