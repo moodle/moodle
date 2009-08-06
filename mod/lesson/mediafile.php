@@ -202,7 +202,7 @@
 
     if ($lesson->mediaclose) {
        echo '<div class="lessonmediafilecontrol">';
-       close_window_button();
+       echo $OUTPUT->close_window_button();
        echo '</div>';
     }
     
