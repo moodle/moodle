@@ -1110,7 +1110,7 @@ function hotpot_format_status($record, $undefined='&nbsp;') {
  * @return bool
  */
 function hotpot_print_recent_activity($course, $isteacher, $timestart) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $result = false;
 
@@ -1149,7 +1149,7 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
             }
         }
         if (count($names) > 0) {
-            print_headline(get_string('modulenameplural', 'hotpot').':');
+            echo $OUTPUT->heading(get_string('modulenameplural', 'hotpot').':');
 
             if ($CFG->version >= 2005050500) { // Moodle 1.5+
                 echo '<div class="head"><div class="name">'.implode('<br />', $names).'</div></div>';
