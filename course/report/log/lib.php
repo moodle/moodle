@@ -221,7 +221,9 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
         $cid = empty($course->id)? '1' : $course->id; 
-        choose_from_menu_nested($dropdown, "host_course", $hostid.'/'.$cid, "");
+        $select = moodle_select::make($dropdown, "host_course", $hostid.'/'.$cid);
+        $select->nested = true;
+        echo $OUTPUT->select($select);
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
