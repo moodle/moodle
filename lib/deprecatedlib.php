@@ -3393,14 +3393,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
         debugging('The use of the $script param in print_checkbox has not been migrated into $OUTPUT->checkbox. Please use $checkbox->add_action().', DEBUG_DEVELOPER);
     }
 
-    $checkbox = new html_select_option();
-    $checkbox->value = $value;
-    $checkbox->selected = $checked;
-    $checkbox->text = $label;
-    $checkbox->label->text = $label;
-    $checkbox->alt = $alt;
-
-    $output = $OUTPUT->checkbox($checkbox, $name);
+    $output = $OUTPUT->checkbox(html_select_option::make_checkbox($value, $checked, $label, $alt), $name);
 
     if (empty($return)) {
         echo $output;
