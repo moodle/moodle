@@ -148,6 +148,6 @@ myAutoComp.formatResult = function(aResultItem, sQuery) {
 
 <?php
 }
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

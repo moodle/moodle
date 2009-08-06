@@ -278,6 +278,6 @@ if ($perpage == SHOW_ALL_PAGE_SIZE) {
 
 echo '<br/>';
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

@@ -150,5 +150,5 @@ if ($usercount > 0) {
     print_box_end();
 }
 
-print_footer();
+echo $OUTPUT->footer();
 ?>

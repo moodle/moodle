@@ -187,5 +187,5 @@ $outstr = '
     </div>';
 echo $outstr;
 
-print_footer();
+echo $OUTPUT->footer();
 ?>

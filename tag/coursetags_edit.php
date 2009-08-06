@@ -175,5 +175,5 @@ EOT2;
         echo $outstr;
     }
 
-print_footer();
+echo $OUTPUT->footer();
 ?>
