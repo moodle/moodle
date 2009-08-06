@@ -228,7 +228,7 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
  * @param integer $lessonpageid if $extraeditbuttons is true then you must pass the page id here.
  **/
 function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraeditbuttons = false, $lessonpageid = NULL) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $OUTPUT;
 
     $activityname = format_string($lesson->name, true, $course->id);
 
@@ -270,7 +270,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
             include($CFG->dirroot.'/mod/lesson/tabs.php');
         }
     } else {
-        print_heading($activityname);
+        echo $OUTPUT->heading($activityname);
     }
 
     lesson_print_messages();

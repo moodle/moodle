@@ -9,7 +9,7 @@
    
     $pageid = required_param('pageid', PARAM_INT);
     $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
-    print_heading(get_string("moving", "lesson", format_string($title)));
+    echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)));
    
     $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
     if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {

@@ -315,7 +315,7 @@
         }
 
         // output the stats
-        print_heading(get_string('lessonstats', 'lesson'));
+        echo $OUTPUT->heading(get_string('lessonstats', 'lesson'));
         $stattable = new stdClass;
         $stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'),
                                 get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),

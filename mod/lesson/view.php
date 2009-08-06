@@ -511,7 +511,7 @@
         lesson_print_header($cm, $course, $lesson, 'view', 'true', $page->id);
 
         if ($attemptflag) {
-            print_heading(get_string('attempt', 'lesson', $retries + 1));
+            echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries + 1));
         }
 
         /// This calculates and prints the ongoing score
@@ -530,7 +530,7 @@
 
         // now starting to print the page's contents   
         if ($page->qtype == LESSON_BRANCHTABLE) {
-            print_heading(format_string($page->title));
+            echo $OUTPUT->heading(format_string($page->title));
         } else {
             $lesson->slideshow = false; // turn off slide show for all pages other than LESSON_BRANTCHTABLE
         }
@@ -846,7 +846,7 @@
 
         lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
         lesson_print_header($cm, $course, $lesson, 'view');
-        print_heading(get_string("congratulations", "lesson"));
+        echo $OUTPUT->heading(get_string("congratulations", "lesson"));
         print_box_start('generalbox boxaligncenter');
         $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         if (isset($USER->modattempts[$lesson->id])) {
