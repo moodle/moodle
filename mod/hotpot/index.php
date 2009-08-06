@@ -127,7 +127,7 @@
                 ;
 
                 print_simple_box_end();
-                print_footer($course);
+                echo $OUTPUT->footer();
                 exit;
 
             } else { // regrade has been confirmed, so proceed
@@ -402,5 +402,5 @@
     print_table($table);
 
     // Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

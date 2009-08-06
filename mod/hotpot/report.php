@@ -155,7 +155,7 @@
     }
     if (empty($user_ids)) {
         echo $OUTPUT->heading(get_string('nousersyet'));
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -250,7 +250,7 @@
     // stop now if no attempts were found
     if (empty($attempts)) {
         echo $OUTPUT->heading(get_string('noattemptstoshow','quiz'));
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -350,7 +350,7 @@
     }
 
     if ($formdata['reportformat']=='htm') {
-        print_footer($course);
+        echo $OUTPUT->footer();
     }
 
 //////////////////////////////////////////////

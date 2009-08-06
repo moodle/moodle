@@ -85,7 +85,7 @@
             print "</div>\n";
             print_simple_box_end();
             print "</form>\n";
-            print_footer();
+            echo $OUTPUT->footer();
             exit;
         // check password
         } else if ($hotpot->password && strcmp($hotpot->password, $hppassword)) {

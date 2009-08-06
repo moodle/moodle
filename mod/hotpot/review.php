@@ -83,7 +83,7 @@
         hotpot_print_attempt_details($hotpot, $attempt);
     }
     hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
-    print_footer($course);
+    echo $OUTPUT->footer();
 ///////////////////////////
 //    functions
 ///////////////////////////
