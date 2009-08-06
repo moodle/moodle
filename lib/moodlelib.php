@@ -3497,6 +3497,10 @@ function authenticate_user_login($username, $password) {
 function complete_user_login($user, $setcookie=true) {
     global $CFG, $USER, $SESSION;
 
+    // regenerate session id and delete old session,
+    // this helps prevent session fixation attacks from the same domain
+    session_regenerate_id(true);
+    
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
 
