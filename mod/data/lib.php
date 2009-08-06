@@ -1477,7 +1477,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
  * @return void Output echo'd
  */
 function data_print_ratings($data, $record) {
-    global $USER, $DB;
+    global $USER, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1502,7 +1502,7 @@ function data_print_ratings($data, $record) {
 
             if ($data->scale < 0) {
                 if ($scale = $DB->get_record('scale', array('id'=>abs($data->scale)))) {
-                    print_scale_menu_helpbutton($data->course, $scale );
+                    echo $OUTPUT->help_button(helpbutton::make_scale_menu($data->course, $scale));
                 }
             }
 
