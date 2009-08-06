@@ -97,7 +97,7 @@
         include($CFG->dirroot.'/user/tabs.php');
     }
 
-    print_heading($pagename);
+    echo $OUTPUT->heading($pagename);
 
     $return = true;
 
@@ -145,7 +145,7 @@
             if ($success) {
                 $savedstr = get_string('configsaved', 'repository');
                 //admin_externalpage_print_header();
-                print_heading($savedstr);
+                echo $OUTPUT->heading($savedstr);
                 redirect($baseurl, $savedstr, 3);
             } else {
                 print_error('instancenotsaved', 'repository', $baseurl);
@@ -153,7 +153,7 @@
             exit;
         } else {     // Display the form
             // admin_externalpage_print_header();
-            print_heading(get_string('configplugin', 'repository_'.$plugin));
+            echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
             $OUTPUT->box_start();
             $mform->display();
             $OUTPUT->box_end();
@@ -172,7 +172,7 @@
             }
             if ($instance->delete()) {
                 $deletedstr = get_string('instancedeleted', 'repository');
-                print_heading($deletedstr);
+                echo $OUTPUT->heading($deletedstr);
                 redirect($baseurl, $deletedstr, 3);
             } else {
                 print_error('instancenotdeleted', 'repository', $baseurl);
