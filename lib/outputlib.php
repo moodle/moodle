@@ -3144,8 +3144,6 @@ class moodle_core_renderer extends moodle_renderer_base {
         return $this->output_tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
     }
 
-    // TODO choose_from_radio
-
     /**
      * Output an error message. By default wraps the error message in <span class="error">.
      * If the error message is blank, nothing is output.
