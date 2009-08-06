@@ -47,7 +47,7 @@
     $navigation = build_navigation($navlinks);
 
     print_header("$site->shortname: $strblogs : $strpreferences", $strblogs, $navigation);
-    print_heading($strpreferences);
+    echo $OUTPUT->heading($strpreferences);
 
     print_simple_box_start('center', '', '');
     require('./preferences.html');
