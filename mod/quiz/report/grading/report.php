@@ -28,7 +28,7 @@ class quiz_grading_report extends quiz_default_report {
      * Displays the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $QTYPES, $DB;
+        global $CFG, $QTYPES, $DB, $OUTPUT;
 
         $viewoptions = array('mode'=>'grading', 'q'=>$quiz->id);
 
@@ -74,7 +74,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         if (empty($gradeableqs)) {
-            print_heading(get_string('noessayquestionsfound', 'quiz'));
+            echo $OUTPUT->heading(get_string('noessayquestionsfound', 'quiz'));
             return true;
         } else if (count($gradeableqs)==1){
             $questionid = array_shift(array_keys($gradeableqs));
@@ -198,7 +198,7 @@ class quiz_grading_report extends quiz_default_report {
         $a->totalattempts =$qattempts[$question->id]->totalattempts;
         $a->openspan ='<span class="highlightgraded">';
         $a->closespan ='</span>';
-        print_heading(get_string('questiontitle', 'quiz_grading', $a));
+        echo $OUTPUT->heading(get_string('questiontitle', 'quiz_grading', $a));
 
         // our 2 different views
 
@@ -331,7 +331,7 @@ class quiz_grading_report extends quiz_default_report {
      * @todo Finish documenting this function
      **/
     function print_questions_and_form($quiz, $question, $userid, $attemptid, $gradeungraded, $gradenextungraded, $ungraded) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
@@ -351,18 +351,18 @@ class quiz_grading_report extends quiz_default_report {
             $firstattempt = current($attempts);
             $fullname = fullname($firstattempt);
             if ($gradeungraded) { // getting all ungraded attempts
-                print_heading(get_string('gradingungraded','quiz_grading', $ungraded), '', 3);
+                echo $OUTPUT->heading(get_string('gradingungraded','quiz_grading', $ungraded), 3);
             } else if ($gradenextungraded) { // getting next ungraded attempts
-                print_heading(get_string('gradingnextungraded','quiz_grading', QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE), '', 3);
+                echo $OUTPUT->heading(get_string('gradingnextungraded','quiz_grading', QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE), 3);
             } else if ($userid){
-                print_heading(get_string('gradinguser','quiz_grading', $fullname), '', 3);
+                echo $OUTPUT->heading(get_string('gradinguser','quiz_grading', $fullname), 3);
             } else if ($attemptid){
                 $a = new object();
                 $a->fullname = $fullname;
                 $a->attempt = $firstattempt->attempt;
-                print_heading(get_string('gradingattempt','quiz_grading', $a), '', 3);
+                echo $OUTPUT->heading(get_string('gradingattempt','quiz_grading', $a), 3);
             } else {
-                print_heading(get_string('gradingall','quiz_grading', count($attempts)), '', 3);
+                echo $OUTPUT->heading(get_string('gradingall','quiz_grading', count($attempts)), 3);
             }
 
             // Display the form with one part for each selected attempt
@@ -398,7 +398,7 @@ class quiz_grading_report extends quiz_default_report {
 
                 // print the user name, attempt count, the question, and some more hidden fields
                 echo '<div class="boxaligncenter" width="80%" style="clear:left;padding:15px;">';
-                print_heading(get_string('gradingattempt', 'quiz_grading', $a) . $gradedstring, '', 3, $gradedclass);
+                echo $OUTPUT->heading(get_string('gradingattempt', 'quiz_grading', $a) . $gradedstring, 3, $gradedclass);
 
                 // Print the question, without showing any previous comment.
                 $copy = $state->manualcomment;

@@ -23,7 +23,7 @@ class quiz_statistics_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $DB, $QTYPES;
+        global $CFG, $DB, $QTYPES, $OUTPUT;
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -120,7 +120,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         if (!$this->table->is_downloading()){
             if ($s==0){
-                print_heading(get_string('noattempts','quiz'));
+                echo $OUTPUT->heading(get_string('noattempts','quiz'));
             }
         }
         if ($s){
@@ -133,7 +133,7 @@ class quiz_statistics_report extends quiz_default_report {
             if (!$this->table->is_downloading() || ($everything && $this->table->is_downloading() == 'xhtml')){
                 if ($s > 1){
                     $imageurl = $CFG->wwwroot.'/mod/quiz/report/statistics/statistics_graph.php?id='.$quizstats->id;
-                    print_heading(get_string('statisticsreportgraph', 'quiz_statistics'));
+                    echo $OUTPUT->heading(get_string('statisticsreportgraph', 'quiz_statistics'));
                     echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('statisticsreportgraph', 'quiz_statistics').'" /></div>';
                 }
             }
@@ -225,12 +225,12 @@ class quiz_statistics_report extends quiz_default_report {
             foreach ($datumfromtable as $item => $value){
                 $questionstatstable->data[] = array($labels[$item], $value);
             }
-            print_heading(get_string('questioninformation', 'quiz_statistics'));
+            echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
             print_table($questioninfotable);
             
             print_box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
     
-            print_heading(get_string('questionstatistics', 'quiz_statistics'));
+            echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
             print_table($questionstatstable);
             
         } else {
@@ -246,7 +246,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
         if ($QTYPES[$question->qtype]->show_analysis_of_responses()){
             if (!$this->table->is_downloading()){
-                print_heading(get_string('analysisofresponses', 'quiz_statistics'));
+                echo $OUTPUT->heading(get_string('analysisofresponses', 'quiz_statistics'));
             }
             $teacherresponses = $QTYPES[$question->qtype]->get_possible_responses($question);
             $this->qtable->setup($reporturl, $question, count($teacherresponses)>1);
@@ -324,9 +324,10 @@ class quiz_statistics_report extends quiz_default_report {
     }
         
     function output_quiz_structure_analysis_table($s, $questions, $subquestions){
+        global $OUTPUT;
         if ($s){
             if (!$this->table->is_downloading()){
-                print_heading(get_string('quizstructureanalysis', 'quiz_statistics'));
+                echo $OUTPUT->heading(get_string('quizstructureanalysis', 'quiz_statistics'));
             }
             foreach ($questions as $question){
                 $this->table->add_data_keyed($this->table->format_row($question));
@@ -345,9 +346,9 @@ class quiz_statistics_report extends quiz_default_report {
     
     function output_quiz_info_table($course, $cm, $quiz, $quizstats, $usingattemptsstring,
                     $currentgroup, $groupstudents, $useallattempts, $download, $reporturl, $everything){
-        global $DB;
+        global $DB, $OUTPUT;
         // Print information on the number of existing attempts
-        $quizinformationtablehtml = print_heading(get_string('quizinformation', 'quiz_statistics'), '', 2, 'main', true);
+        $quizinformationtablehtml = $OUTPUT->heading(get_string('quizinformation', 'quiz_statistics'), 2, 'main');
         $quizinformationtable = new object();
         $quizinformationtable->align = array('center', 'center');
         $quizinformationtable->width = '60%';

@@ -78,7 +78,7 @@ if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instanc
             print_error('invalidcoursemodule');
 }
 
-print_heading(get_string('addrandomquestiontoquiz', 'quiz', $quizname), 'left', 2);
+echo $OUTPUT->heading(get_string('addrandomquestiontoquiz', 'quiz', $quizname), 2, 'mdl-left');
 
 $addonpage = optional_param('addonpage_form', 0, PARAM_SEQUENCE);
 $qcobject->display_randomquestion_user_interface($addonpage);

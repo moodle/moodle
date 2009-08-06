@@ -18,7 +18,7 @@ class quiz_overview_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE, $DB, $OUTPUT;
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -406,14 +406,14 @@ class quiz_overview_report extends quiz_default_report {
                 if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?", $params)) {
                      $imageurl = "{$CFG->wwwroot}/mod/quiz/report/overview/overviewgraph.php?id={$quiz->id}&amp;groupid=$currentgroup";
                      $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
-                     print_heading($graphname);
+                     echo $OUTPUT->heading($graphname);
                      echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
                 }
             }
             if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))){
                  $graphname = get_string('overviewreportgraph', 'quiz_overview');
                  $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
-                 print_heading($graphname);
+                 echo $OUTPUT->heading($graphname);
                  echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
             }
         }
@@ -424,7 +424,7 @@ class quiz_overview_report extends quiz_default_report {
      * tables.
      */
     function regrade_all($dry, $quiz, $groupstudents){
-        global $DB;
+        global $DB, $OUTPUT;
         if (!has_capability('mod/quiz:regrade', $this->context)) {
             notify(get_string('regradenotallowed', 'quiz'));
             return true;
@@ -440,7 +440,7 @@ class quiz_overview_report extends quiz_default_report {
         $select .= "quiz = ? AND preview = 0";
         $params[] = $quiz->id;
         if (!$attempts = $DB->get_records_select('quiz_attempts', $select, $params)) {
-            print_heading(get_string('noattempts', 'quiz'));
+            echo $OUTPUT->heading(get_string('noattempts', 'quiz'));
             return true;
         }
 
@@ -451,7 +451,7 @@ class quiz_overview_report extends quiz_default_report {
             '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
 
         // Print heading
-        print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
+        echo $OUTPUT->heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
         $qstodo = count($questions);
         $qsdone = 0;
         if ($qstodo > 1){
@@ -507,7 +507,7 @@ class quiz_overview_report extends quiz_default_report {
         return $DB->get_field_sql('SELECT COUNT(1) FROM {quiz_attempts} qa, {quiz_question_regrade} qqr WHERE '. $where, $params);
     }
     function regrade_all_needed($quiz, $groupstudents){
-        global $DB;
+        global $DB, $OUTPUT;
         if (!has_capability('mod/quiz:regrade', $this->context)) {
             notify(get_string('regradenotallowed', 'quiz'));
             return;
@@ -523,7 +523,7 @@ class quiz_overview_report extends quiz_default_report {
         $where .= "qa.quiz = ? AND qa.preview = 0 AND qa.uniqueid = qqr.attemptid AND qqr.regraded = 0";
         $params[] = $quiz->id;
         if (!$attempts = $DB->get_records_sql('SELECT qa.*, qqr.questionid FROM {quiz_attempts} qa, {quiz_question_regrade} qqr WHERE '. $where, $params)) {
-            print_heading(get_string('noattemptstoregrade', 'quiz_overview'));
+            echo $OUTPUT->heading(get_string('noattemptstoregrade', 'quiz_overview'));
             return true;
         }
         $this->clear_regrade_table($quiz, $groupstudents);
@@ -532,7 +532,7 @@ class quiz_overview_report extends quiz_default_report {
             '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
 
         // Print heading
-        print_heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
+        echo $OUTPUT->heading(get_string('regradingquiz', 'quiz', format_string($quiz->name)));
 
         $apb = new progress_bar('aregradingbar', 500, true);
 

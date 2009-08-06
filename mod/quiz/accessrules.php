@@ -692,7 +692,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * a JavaScript altert before the button submits.
      */
     public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
-        global $CFG, $SESSION, $PAGE;
+        global $CFG, $SESSION, $PAGE, $OUTPUT;
 
         $attempturl = $this->_quizobj->start_attempt_url() . '?cmid=' . $this->_quizobj->get_cmid() .
                 '&sesskey=' . sesskey();
@@ -715,7 +715,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
 
     /// A noscript tag to explains that this quiz only works with JavaScript enabled.
         echo '<noscript>';
-        print_heading(get_string('noscript', 'quiz'));
+        echo $OUTPUT->heading(get_string('noscript', 'quiz'));
         echo "</noscript>\n";
     }
 

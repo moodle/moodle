@@ -91,7 +91,7 @@
     include('tabs.php');
 
 /// Print quiz name and description
-    print_heading(format_string($quiz->name));
+    echo $OUTPUT->heading(format_string($quiz->name));
     if (trim(strip_tags($quiz->intro))) {
         print_box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
     }
@@ -164,7 +164,7 @@
 /// Print table with existing attempts
     if ($attempts) {
 
-        print_heading(get_string('summaryofattempts', 'quiz'));
+        echo $OUTPUT->heading(get_string('summaryofattempts', 'quiz'));
 
         // Work out which columns we need, taking account what data is available in each attempt.
         list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
@@ -301,7 +301,7 @@
 /// Print information about the student's best score for this quiz if possible.
     $moreattempts = $unfinished || !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
     if (!$moreattempts) {
-        print_heading(get_string("nomoreattempts", "quiz"));
+        echo $OUTPUT->heading(get_string("nomoreattempts", "quiz"));
     }
 
     if ($numattempts && $gradecolumn && !is_null($mygrade)) {
@@ -313,10 +313,10 @@
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
                 $a->mygrade = quiz_format_grade($quiz, $mygrade);
                 $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
-                $resultinfo .= print_heading(get_string('gradesofar', 'quiz', $a), '', 2, 'main', true);
+                $resultinfo .= $OUTPUT->heading(get_string('gradesofar', 'quiz', $a), 2, 'main');
             } else {
                 $a = quiz_format_grade($quiz, $mygrade) . '/' . quiz_format_grade($quiz, $quiz->grade);
-                $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', $a), '', 2, 'main', true);
+                $resultinfo .= $OUTPUT->heading(get_string('yourfinalgradeis', 'quiz', $a), 2, 'main');
             }
         }
 
@@ -324,11 +324,11 @@
             $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
         }
         if ($gradebookfeedback) {
-            $resultinfo .= print_heading(get_string('comment', 'quiz'), '', 3, 'main', true);
+            $resultinfo .= $OUTPUT->heading(get_string('comment', 'quiz'), 3, 'main');
             $resultinfo .= '<p class="quizteacherfeedback">'.$gradebookfeedback."</p>\n";
         }
         if ($feedbackcolumn) {
-            $resultinfo .= print_heading(get_string('overallfeedback', 'quiz'), '', 3, 'main', true);
+            $resultinfo .= $OUTPUT->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
             $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id)."</p>\n";
         }
 
@@ -342,7 +342,7 @@
     print_box_start('quizattempt');
     $buttontext = ''; // This will be set something if as start/continue attempt button should appear.
     if (!$quiz->questions) {
-        print_heading(get_string("noquestions", "quiz"));
+        echo $OUTPUT->heading(get_string("noquestions", "quiz"));
     } else {
         if ($unfinished) {
             if ($canattempt) {

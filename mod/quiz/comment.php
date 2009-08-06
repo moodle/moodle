@@ -36,7 +36,7 @@
 
 /// Print the page header
     print_header();
-    print_heading(format_string($attemptobj->get_question($questionid)->name));
+    echo $OUTPUT->heading(format_string($attemptobj->get_question($questionid)->name));
 
 /// Process any data that was submitted.
     if ($data = data_submitted() and confirm_sesskey()) {

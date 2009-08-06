@@ -101,7 +101,7 @@
     if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         $attemptobj->print_restart_preview_button();
     }
-    print_heading($strreviewtitle);
+    echo $OUTPUT->heading($strreviewtitle);
 
 /// Summary table start ============================================================================
 

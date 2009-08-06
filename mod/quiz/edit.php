@@ -518,7 +518,7 @@ if ($quiz_reordertool) {
             get_string('repaginatecommand', 'quiz').'...</button>';
     echo '</div>';
 }
-print_heading($pagetitle.": ".$quiz->name, '', 2);
+echo $OUTPUT->heading($pagetitle.": ".$quiz->name, 2);
 helpbutton('editconcepts', get_string('basicideasofquiz', 'quiz'), 'quiz',
         true, get_string('basicideasofquiz', 'quiz'));
 quiz_print_status_bar($quiz);
