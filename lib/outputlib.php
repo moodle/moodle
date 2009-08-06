@@ -4023,6 +4023,22 @@ class moodle_select extends moodle_html_component {
     }
 
     /**
+     * Given an associative array of type => fieldname and an optional timestamp,
+     * returns an array of moodle_select components representing date/time selectors.
+     * @param array $selectors Arrays of type => fieldname. Selectors will be returned in the order of the types given
+     * @param int $currenttime A UNIX timestamp
+     * @param int $step minute spacing
+     * @return array Instantiated date/time selectors
+     */
+    public function make_time_selectors($selectors, $currenttime=0, $step=5) {
+        $selects = array();
+        foreach ($selectors as $type => $name) {
+            $selects[] = moodle_select::make_time_selector($type, $name, $currenttime, $step);
+        }
+        return $selects;
+    }
+
+    /**
      * This is a shortcut for making a select popup form.
      * @param string $baseurl The target URL up to the point of the variable that changes
      * @param array $options A list of value-label pairs for the popup list
