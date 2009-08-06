@@ -1,3 +1,18 @@
+<?php
+$startselectors = moodle_select::make_time_selectors(array(
+        'days' => 'startday',
+        'months' => 'startmon', 
+        'years' => 'startyr', 
+        'hours' => 'starthr',
+        'minutes' => 'startmin'), $form->timestart);
+
+$endselectors = moodle_select::make_time_selectors(array(
+        'days' => 'endday',
+        'months' => 'endmon', 
+        'years' => 'endyr', 
+        'hours' => 'endhr',
+        'minutes' => 'endmin'), $form->timestart + $form->timeduration);
+?>
 <form method="post" action="event.php" id="eventform">
 <table cellpadding="5" cellspacing="0">
   <tr>
@@ -23,9 +38,9 @@
   <tr>
     <td style="vertical-align: top; text-align: right;"><?php print_string('eventdate', 'calendar'); ?>:</td>
     <td>
-      <?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?>
+      <?php echo $OUTPUT->select($startselectors[0]) . $OUTPUT->select($startselectors[1]) . $OUTPUT->select($startselectors[2]);?>
       <?php print_string('eventtime', 'calendar');?>
-      <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>
+      <?php echo $OUTPUT->select($startselectors[3]) . $OUTPUT->select($startselectors[4]);?>
       <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
     </td>
   </tr>
@@ -45,9 +60,9 @@
         <label for="duration_yes">
           <?php print_string('durationuntil', 'calendar'); ?>
         </label>
-        <?php print_date_selector('endday', 'endmon', 'endyr', $form->timestart + $form->timeduration);?>
+        <?php echo $OUTPUT->select($endselectors[0]) . $OUTPUT->select($endselectors[1]) . $OUTPUT->select($endselectors[2]);?>
         <?php print_string('eventtime', 'calendar');?>
-        <?php print_time_selector('endhr', 'endmin', $form->timestart + $form->timeduration) ?>
+        <?php echo $OUTPUT->select($endselectors[3]) . $OUTPUT->select($endselectors[4]);?>
         <?php if (isset($err['timeduration'])) formerr($err['timeduration']); ?>
       </div>
       <div>

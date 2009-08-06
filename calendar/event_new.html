@@ -1,6 +1,19 @@
 <?php
     // The following is a hack to fix bug 1488
     $course = $DB->get_record('course', array('id'=>($form->courseid ? $form->courseid : $site->id)));
+    $startselectors = moodle_select::make_time_selectors(array(
+            'days' => 'startday',
+            'months' => 'startmon', 
+            'years' => 'startyr', 
+            'hours' => 'starthr',
+            'minutes' => 'startmin'), (int) $form->timestart);
+
+    $endselectors = moodle_select::make_time_selectors(array(
+            'days' => 'endday',
+            'months' => 'endmon', 
+            'years' => 'endyr', 
+            'hours' => 'endhr',
+            'minutes' => 'endmin'), $form->timestart + $form->timeduration);
 ?>
 <form method="post" action="event.php" id="eventform">
 <table cellpadding="5">
@@ -29,9 +42,9 @@
       <?php print_string('eventdate', 'calendar'); ?>:
     </td>
     <td>
-      <?php print_date_selector('startday', 'startmon', 'startyr', (int)$form->timestart);?>
+      <?php echo $OUTPUT->select($startselectors[0]) . $OUTPUT->select($startselectors[1]) . $OUTPUT->select($startselectors[2]);?>
       <?php print_string('eventtime', 'calendar');?>
-      <?php print_time_selector('starthr', 'startmin', (int)$form->timestart) ?>
+      <?php echo $OUTPUT->select($startselectors[3]) . $OUTPUT->select($startselectors[4]);?>
       <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
     </td>
   </tr>
@@ -47,9 +60,9 @@
       <div>
         <input type="radio" name="duration" value="1" id="duration_yes" <?php if($form->duration == 1) echo 'checked="checked"'; ?>/>
         <label for="duration_yes"><?php print_string('durationuntil', 'calendar'); ?></label>
-        <?php print_date_selector('endday', 'endmon', 'endyr', $form->timestart + $form->timeduration);?>
+        <?php echo $OUTPUT->select($endselectors[0]) . $OUTPUT->select($endselectors[1]) . $OUTPUT->select($endselectors[2]);?>
         <?php print_string('eventtime', 'calendar');?>
-        <?php print_time_selector('endhr', 'endmin', $form->timestart + $form->timeduration) ?>
+        <?php echo $OUTPUT->select($endselectors[3]) . $OUTPUT->select($endselectors[4]);?>
         <?php if (isset($err['timeduration'])) formerr($err['timeduration']); ?>
       </div>
       <div>
