@@ -3158,9 +3158,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
     // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_button($scaleselect).');
     global $OUTPUT;
 
-    $helpbutton = help_button::make_scale_menu($courseid, $scale);
-
-    $output = $OUTPUT->help_button($helpbutton);
+    $output = $OUTPUT->help_button(help_button::make_scale_menu($courseid, $scale));
 
     if ($return) {
         return $output;
