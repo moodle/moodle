@@ -30,7 +30,7 @@
 
     $capabilities = feedback_load_capabilities($cm->id);
 
-    if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES AND !$capabilities->edititems) {
+    if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
         $capabilities->complete = true;
     }
     
@@ -158,7 +158,7 @@
     //####### mapcourse-end
 
     //####### completed-start
-    if($capabilities->complete AND !$capabilities->edititems) {
+    if($capabilities->complete) {
         // print_simple_box_start('center', '80%');
         print_box_start('generalbox boxaligncenter boxwidthwide');
         //check, whether the feedback is open (timeopen, timeclose)
