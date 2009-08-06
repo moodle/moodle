@@ -83,7 +83,7 @@
 
     print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
 
-    print_heading(fullname($user));
+    echo $OUTPUT->heading(fullname($user));
 
     $noteform->display();
     print_footer();
