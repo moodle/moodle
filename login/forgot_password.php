@@ -152,6 +152,6 @@ print_header($strforgotten, $strforgotten, $navigation, 'id_email');
 print_box(get_string('passwordforgotteninstructions'), 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

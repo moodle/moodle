@@ -94,7 +94,7 @@
 
         notice($strpasswordchanged, $returnto);
 
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -112,6 +112,6 @@
         notify(get_string('forcepasswordchangenotice'));
     }
     $mform->display();
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

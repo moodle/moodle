@@ -37,7 +37,7 @@
             echo "<p>".get_string("alreadyconfirmed")."</p>\n";
             print_single_button("$CFG->wwwroot/course/", null, get_string('courses'));
             print_box_end();
-            print_footer();
+            echo $OUTPUT->footer();
             exit;
 
         } else if ($confirmed == AUTH_CONFIRM_OK) {
@@ -62,7 +62,7 @@
             echo "<p>".get_string("confirmed")."</p>\n";
             print_single_button("$CFG->wwwroot/course/", null, get_string('courses'));
             print_box_end();
-            print_footer();
+            echo $OUTPUT->footer();
             exit;
         } else {
             print_error('invalidconfirmdata');

@@ -128,7 +128,7 @@
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") );
                 echo $OUTPUT->heading(get_string("mustconfirm"));
                 print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
-                print_footer();
+                echo $OUTPUT->footer();
                 die;
             }
 
@@ -181,12 +181,12 @@
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                     print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
-                    print_footer();
+                    echo $OUTPUT->footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
                     print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
                     notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
-                    print_footer();
+                    echo $OUTPUT->footer();
                     exit;
                 }
             }
@@ -284,7 +284,7 @@
 
     include("index_form.html");
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 
 ?>

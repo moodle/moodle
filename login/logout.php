@@ -16,7 +16,7 @@
     } else if (!confirm_sesskey($sesskey)) {
         print_header($SITE->fullname, $SITE->fullname, 'home');
         notice_yesno(get_string('logoutconfirm'), 'logout.php', $CFG->wwwroot.'/', array('sesskey'=>sesskey()), null, 'post', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 

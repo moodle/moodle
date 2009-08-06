@@ -61,7 +61,7 @@
     print_header($newaccount, $newaccount, $navigation, $mform_signup->focus(), "", true, "<div class=\"langmenu\">$langmenu</div>");
     
     $mform_signup->display();
-    print_footer();
+    echo $OUTPUT->footer();
 
 
 ?>
