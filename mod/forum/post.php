@@ -410,7 +410,7 @@
             $navigation = build_navigation($navlinks, $cm);
             print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
 
-            print_heading(get_string('pruneheading', 'forum'));
+            echo $OUTPUT->heading(get_string('pruneheading', 'forum'));
             echo '<center>';
 
             include('prune.html');

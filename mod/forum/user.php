@@ -36,7 +36,7 @@ if (!$DB->get_record('role_assignments', array('userid' => $USER->id, 'contextid
 
 if ($user->deleted) {
     print_header();
-    print_heading(get_string('userdeleted'));
+    echo $OUTPUT->heading(get_string('userdeleted'));
     print_footer($course);
     die;
 }
@@ -169,9 +169,9 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
             "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
 } else {
     if ($mode == 'posts') {
-        print_heading(get_string('noposts', 'forum'));
+        echo $OUTPUT->heading(get_string('noposts', 'forum'));
     } else {
-        print_heading(get_string('nodiscussionsstartedby', 'forum'));
+        echo $OUTPUT->heading(get_string('nodiscussionsstartedby', 'forum'));
     }
 }
 echo '</div>';

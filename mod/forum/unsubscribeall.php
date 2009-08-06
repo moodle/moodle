@@ -19,7 +19,7 @@ $navlinks = array(array('name' => get_string('modulename', 'forum'), 'link' => n
 $navigation = build_navigation($navlinks);
 
 print_header($strunsubscribeall, format_string($COURSE->fullname), $navigation);
-print_heading($strunsubscribeall);
+echo $OUTPUT->heading($strunsubscribeall);
 
 if (data_submitted() and $confirm and confirm_sesskey()) {
     $DB->delete_records('forum_subscriptions', array('userid'=>$USER->id));

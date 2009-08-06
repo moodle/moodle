@@ -127,7 +127,7 @@
 
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
         print_header_simple("$strsearchresults", "", $navigation, 'search.words', "", "", "&nbsp;", navmenu($course));
-        print_heading(get_string("nopostscontaining", "forum", $search));
+        echo $OUTPUT->heading(get_string("nopostscontaining", "forum", $search));
 
         if (!$individualparams) {
             $words = $search;
@@ -158,7 +158,7 @@
                              '">'.get_string('advancedsearch','forum').'...</a>';
     echo '</div>';
 
-    print_heading("$strsearchresults: $totalcount");
+    echo $OUTPUT->heading("$strsearchresults: $totalcount");
 
     print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
