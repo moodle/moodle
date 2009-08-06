@@ -342,8 +342,6 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         echo "</td><td>";
                         $restore_options[1] = get_string("yes");
                         $restore_options[0] = get_string("no");
-                        //choose_from_menu($restore_options, $restore_var, $$restore_var, "");
-                        //choose_from_radio($restore_options, $restore_var, $$restore_var);
                         //Print the checkbox
                         print_checkbox($restore_var, $$restore_var, $$restore_var, get_string("modulenameplural",$modname),'','selectItemInCheckboxByName(\'form1\',\'restore_'.$modname.'\',this.checked)');
                         //If backup contains user data, then show menu, else fix it to
@@ -353,8 +351,6 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         if ($info->mods[$modname]->userinfo == "true") {
                             $restore_user_options[1] = get_string("yes");
                             $restore_user_options[0] = get_string("no");
-                            //choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
-                            //choose_from_radio($restore_user_options, $user_info_var, $$user_info_var);
                             print_checkbox($user_info_var, $$user_info_var, $$user_info_var, get_string("userdata"),'','selectItemInCheckboxByName(\'form1\',\'restore_user_info_'.$modname.'\',this.checked)');
                         } else {
                             //Module haven't userdata
