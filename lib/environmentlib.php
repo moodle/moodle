@@ -154,7 +154,7 @@ function check_moodle_environment($version, &$environment_results, $print_table=
  * @return void
  */
 function print_moodle_environment($result, $environment_results) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
 /// Get some strings
     $strname = get_string('name');
@@ -273,7 +273,7 @@ function print_moodle_environment($result, $environment_results) {
             if (empty($CFG->docroot)) {
                 $report = get_string($stringtouse, 'admin', $rec);
             } else {
-                $report = doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+                $report = $OUTPUT->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
             }
 
 
