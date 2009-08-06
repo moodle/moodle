@@ -71,7 +71,7 @@
     $completioninfo = new completion_info($course);
     $completioninfo->print_help_icon();
 
-    print_heading_block(get_string('topicoutline'), 'outline');
+    echo $OUTPUT->heading(get_string('topicoutline'), 2, 'headingblock header outline');
 
     // Note, an ordered list would confuse - "1" could be the clipboard or summary.
     echo "<ul class='topics'>\n";
