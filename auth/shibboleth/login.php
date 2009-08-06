@@ -76,6 +76,6 @@ httpsrequired();
                  '', true, '<div class="langmenu">'.$langmenu.'</div>');
 
     include("index_form.html");
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

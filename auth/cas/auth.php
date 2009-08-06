@@ -86,7 +86,7 @@ class auth_plugin_cas extends auth_plugin_base {
     function loginpage_hook() {
       global $frm;
       global $CFG;
-	  global $SESSION;
+	  global $SESSION, $OUTPUT;
 
       $site = get_site();
       $CASform = get_string("CASform","auth_cas");
@@ -138,7 +138,7 @@ class auth_plugin_cas extends auth_plugin_base {
 
             print_header("$site->fullname: $CASform", $site->fullname, $navigation);
             include($CFG->dirroot."/auth/cas/cas_form.html");
-            print_footer();
+            echo $OUTPUT->footer();
             exit();
 		 }
      }
