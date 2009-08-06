@@ -60,7 +60,7 @@ if ($msgform->is_cancelled()) {
     $optionsyes['sesskey'] = sesskey();
     $optionsyes['msg']     = $msg;
     admin_externalpage_print_header();
-    print_heading(get_string('confirmation', 'admin'));
+    echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     print_box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
     notice_yesno(get_string('confirmmessage', 'bulkusers', $usernames), 'user_bulk_message.php', 'user_bulk.php', $optionsyes, NULL, 'post', 'get');
     admin_externalpage_print_footer();

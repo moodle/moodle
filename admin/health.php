@@ -105,7 +105,7 @@ STYLES;
 
 function health_find_problems() {
 
-    print_heading(get_string('healthcenter'));
+    echo $OUTPUT->heading(get_string('healthcenter'));
 
     $issues   = array(
         SEVERITY_CRITICAL    => array(),
@@ -139,7 +139,7 @@ function health_find_problems() {
         echo '</div>';
     }
     else {
-        print_heading(get_string('healthproblemsdetected'));
+        echo $OUTPUT->heading(get_string('healthproblemsdetected'));
         $severities = array(SEVERITY_CRITICAL, SEVERITY_SIGNIFICANT, SEVERITY_ANNOYANCE, SEVERITY_NOTICE);
         foreach($severities as $severity) {
             if(!empty($issues[$severity])) {
@@ -158,6 +158,7 @@ function health_find_problems() {
 }
 
 function health_print_solution($classname) {
+    global $OUTPUT;
     $problem = new $classname;
     $data = array(
         'title'       => $problem->title(),
@@ -166,8 +167,8 @@ function health_print_solution($classname) {
         'solution'    => $problem->solution()
     );
 
-    print_heading(get_string('healthcenter'));
-    print_heading(get_string('healthproblemsolution'));
+    echo $OUTPUT->heading(get_string('healthcenter'));
+    echo $OUTPUT->heading(get_string('healthproblemsolution'));
     echo '<dl class="healthissues '.$data['severity'].'">';
     echo '<dt>'.$data['title'].'</dt>';
     echo '<dd>'.$data['description'].'</dd>';

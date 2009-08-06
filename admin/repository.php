@@ -97,7 +97,7 @@ if (!empty($edit) || !empty($new)) {
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
             admin_externalpage_print_header();
-            print_heading($savedstr);
+            echo $OUTPUT->heading($savedstr);
             redirect($baseurl, $savedstr, 3);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
@@ -105,7 +105,7 @@ if (!empty($edit) || !empty($new)) {
         exit;
     } else {
         admin_externalpage_print_header();
-        print_heading(get_string('configplugin', 'repository_'.$plugin));
+        echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
         $displaysettingform = true;
         if ($edit) {
             $typeoptionnames = repository::static_function($edit, 'get_type_option_names');
@@ -149,7 +149,7 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($repositorytype->delete()) {
             $deletedstr = get_string('removed', 'repository');
-            print_heading($deletedstr);
+            echo $OUTPUT->heading($deletedstr);
             redirect($baseurl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);

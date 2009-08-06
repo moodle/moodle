@@ -30,7 +30,7 @@ foreach ($QTYPES as $qtype) {
 // Print the settings form.
 print_box_start('generalbox boxwidthwide boxaligncenter centerpara');
 echo '<form method="get" action="." id="settingsform"><div>';
-print_heading(get_string('reportsettings', 'report_questioninstances'));
+echo $OUTPUT->heading(get_string('reportsettings', 'report_questioninstances'));
 echo '<p id="intro">', get_string('intro', 'report_questioninstances') , '</p>';
 echo '<p><label for="menuqtype"> ' . get_string('questiontype', 'admin') . '</label> ';
 choose_from_menu($qtypechoices, 'qtype', $requestedqtype, get_string('all'), '', '_all_');
@@ -73,7 +73,7 @@ if ($requestedqtype) {
             ORDER BY numquestions DESC, numhidden ASC, con.contextlevel ASC, con.id ASC", $params);
 
     // Print the report heading.
-    print_heading($title);
+    echo $OUTPUT->heading($title);
 
     // Initialise the table.
     $table = new stdClass;

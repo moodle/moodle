@@ -130,7 +130,7 @@ if ($formdata = $mform->is_cancelled()) {
 } else if ($formdata = $mform->get_data()) {
     // Print the header
     admin_externalpage_print_header();
-    print_heading(get_string('uploadusersresult', 'admin'));
+    echo $OUTPUT->heading(get_string('uploadusersresult', 'admin'));
 
     $optype = $formdata->uutype;
 

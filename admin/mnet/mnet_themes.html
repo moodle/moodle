@@ -1,6 +1,6 @@
 <?php
 admin_externalpage_print_header();
-print_heading(get_string('themes'));
+echo $OUTPUT->heading(get_string('themes'));
 $original_theme = fullclone($THEME);
 $logurl = $CFG->wwwroot.
           '/course/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.

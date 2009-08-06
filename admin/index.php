@@ -121,8 +121,8 @@ if (!core_tables_exist()) {
         $strlicense = get_string('license');
         $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
         print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
-        print_heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
-        print_heading(get_string('copyrightnotice'));
+        echo $OUTPUT->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
+        echo $OUTPUT->heading(get_string('copyrightnotice'));
         $copyrightnotice = text_to_html(get_string('gpl'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
         print_box($copyrightnotice, 'copyrightnotice');
@@ -136,7 +136,7 @@ if (!core_tables_exist()) {
         $strcurrentrelease = get_string('currentrelease');
         $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
         print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
-        print_heading("Moodle $release");
+        echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
         print_box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
@@ -200,7 +200,7 @@ if ($version > $CFG->version) {  // upgrade
         $strcurrentrelease = get_string('currentrelease');
         $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
         print_header($strcurrentrelease, $strcurrentrelease, $navigation, '', '', false, '&nbsp;', '&nbsp;');
-        print_heading("Moodle $release");
+        echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
         print_box($releasenoteslink);
@@ -225,7 +225,7 @@ if ($version > $CFG->version) {  // upgrade
         $strplugincheck = get_string('plugincheck');
         $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
         print_header($strplugincheck, $strplugincheck, $navigation, '', '', false, '&nbsp;', '&nbsp;');
-        print_heading($strplugincheck);
+        echo $OUTPUT->heading($strplugincheck);
         print_box_start('generalbox', 'notice');
         print_string('pluginchecknotice');
         print_box_end();

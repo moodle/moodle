@@ -160,7 +160,7 @@ $acl = $DB->get_records('mnet_sso_access_control', null, "$sort $dir", '*'); //,
 $aclcount = $DB->count_records('mnet_sso_access_control');
 
 if (!$acl) {
-    print_heading(get_string('noaclentries','mnet'));
+    echo $OUTPUT->heading(get_string('noaclentries','mnet'));
     $table = NULL;
 } else {
     $table->head = $headings;

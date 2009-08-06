@@ -18,7 +18,7 @@
     $deletedir = $CFG->dataroot;   // The directory to delete!
 
     admin_externalpage_print_header();
-    print_heading('Purge moodledata');
+    echo $OUTPUT->heading('Purge moodledata');
 
     if (empty($sure)) {
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey());

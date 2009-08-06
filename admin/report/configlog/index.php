@@ -12,7 +12,7 @@ $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 admin_externalpage_setup('reportconfiglog');
 admin_externalpage_print_header();
 
-print_heading(get_string('configlog', 'report_configlog'));
+echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
 
 $changescount = $DB->count_records('config_log');
 

@@ -13,7 +13,7 @@ $replace = optional_param('replace', '', PARAM_RAW);
 ###################################################################
 admin_externalpage_print_header();
 
-print_heading('Search and replace text throughout the whole database');
+echo $OUTPUT->heading('Search and replace text throughout the whole database');
 
 
 if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Print a form

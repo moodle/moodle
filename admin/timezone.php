@@ -20,7 +20,7 @@
 
     print_header($strtimezone, $strtimezone, build_navigation(array(array('name' => $strtimezone, 'link' => null, 'type' => 'misc'))));
 
-    print_heading("");
+    echo $OUTPUT->heading("");
 
     if (data_submitted() and !empty($zone) and confirm_sesskey()) {
         echo "<center>";

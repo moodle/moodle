@@ -115,7 +115,7 @@
 
     echo '<form '.$CFG->frametarget.' id="adminsettings" method="post" action="enrol.php">';
     echo '<div class="settingsform clearfix">';
-    print_heading(get_string('commonsettings', 'admin'));
+    echo $OUTPUT->heading(get_string('commonsettings', 'admin'));
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="savesettings" value="1" />';
     echo '<fieldset>';

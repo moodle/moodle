@@ -49,7 +49,7 @@
 
 /// Print current enrolment type description
     print_simple_box_start("center", "80%");
-    print_heading($options[$enrol]);
+    echo $OUTPUT->heading($options[$enrol]);
 
     print_simple_box_start("center", "60%", '', 5, 'informationbox');
     print_string("description", "enrol_$enrol");

@@ -71,7 +71,7 @@
         if ($confirm != md5($delete)) {
             admin_externalpage_print_header();
             $fullname = fullname($user, true);
-            print_heading(get_string('deleteuser', 'admin'));
+            echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
             notice_yesno(get_string('deletecheckfull', '', "'$fullname'"), 'user.php', 'user.php', $optionsyes, NULL, 'post', 'get');
             admin_externalpage_print_footer();
@@ -156,10 +156,10 @@
     $usersearchcount = get_users(false, '', true, null, "", '', '', '', '', '*', $extrasql, $params);
 
     if ($extrasql !== '') {
-        print_heading("$usersearchcount / $usercount ".get_string('users'));
+        echo $OUTPUT->heading("$usersearchcount / $usercount ".get_string('users'));
         $usercount = $usersearchcount;
     } else {
-        print_heading("$usercount ".get_string('users'));
+        echo $OUTPUT->heading("$usercount ".get_string('users'));
     }
 
     $alphabet = explode(',', get_string('alphabet'));
@@ -173,7 +173,7 @@
 
     if (!$users) {
         $match = array();
-        print_heading(get_string('nousersfound'));
+        echo $OUTPUT->heading(get_string('nousersfound'));
 
         $table = NULL;
 
@@ -293,14 +293,14 @@
     $ufiltering->display_active();
 
     if (has_capability('moodle/user:create', $sitecontext)) {
-        print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
+        echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
     }
     if (!empty($table)) {
         print_table($table);
         print_paging_bar($usercount, $page, $perpage,
                          "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;");
         if (has_capability('moodle/user:create', $sitecontext)) {
-            print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
+            echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
         }
     }
 

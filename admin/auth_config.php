@@ -65,7 +65,7 @@ echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
 // auth plugin description
 print_simple_box_start('center', '80%');
-print_heading($authtitle);
+echo $OUTPUT->heading($authtitle);
 print_simple_box_start('center', '80%', '', 5, 'informationbox');
 echo $authdescription;
 print_simple_box_end();
@@ -89,9 +89,9 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
 
     echo '<tr><td colspan="3">';
     if ($retrieveopts) {
-        print_heading(get_string('auth_data_mapping', 'auth'));
+        echo $OUTPUT->heading(get_string('auth_data_mapping', 'auth'));
     } else {
-        print_heading(get_string('auth_fieldlocks', 'auth'));
+        echo $OUTPUT->heading(get_string('auth_fieldlocks', 'auth'));
     }
     echo '</td></tr>';
 

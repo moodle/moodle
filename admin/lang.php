@@ -323,9 +323,9 @@
 
         if ($totalcounter->missing > 0) {
             $totalcounter->missingpercent = sprintf('%02.1f', ($totalcounter->missing / $totalcounter->strings * 100));
-            print_heading(get_string('numberofstrings', 'admin', $totalcounter), '', 4);
+            echo $OUTPUT->heading(get_string('numberofstrings', 'admin', $totalcounter), 4);
         } else {
-            print_heading($strnomissingstrings, '', 4, 'notifysuccess');
+            echo $OUTPUT->heading($strnomissingstrings, 4, 'notifysuccess');
         }
 
         if ($m <> '') {
@@ -501,14 +501,14 @@
             if (!isset($editable) || $editable) {
                 if (!file_exists("$saveto/$currentfile")) {
                     if (!@touch("$saveto/$currentfile")) {
-                        print_heading(get_string("filemissing", "", "$saveto/$currentfile"), '', 4, 'error');
+                        echo $OUTPUT->heading(get_string("filemissing", "", "$saveto/$currentfile"), 4, 'error');
                     } else {
-                        print_heading($strfilecreated, '', 4, 'notifysuccess');
+                        echo $OUTPUT->heading($strfilecreated, 4, 'notifysuccess');
                     }
                 }
                 if ($currentlang == "en_utf8" && !$uselocal) {
                     $editable = false;
-                    print_heading($streditennotallowed, '', 4);
+                    echo $OUTPUT->heading($streditennotallowed, 4);
                 } elseif ($f = fopen("$saveto/$currentfile","r+")) {
                     $editable = true;
                     fclose($f);
@@ -684,12 +684,12 @@
 
             if (LANG_DISPLAY_MISSING_LINKS) {
                 if ($missingcounter > 0) {
-                    print_heading(get_string('numberofmissingstrings', 'admin', $missingcounter), '', 4);
+                    echo $OUTPUT->heading(get_string('numberofmissingstrings', 'admin', $missingcounter), 4);
                     if ($editable) {
-                        print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
+                        echo $OUTPUT->heading('<a href="#missing1">'.$strgotofirst.'</a>', 4);
                     }
                 } else {
-                    print_heading($strnomissingstrings, '', 4, 'notifysuccess');
+                    echo $OUTPUT->heading($strnomissingstrings, 4, 'notifysuccess');
                 }
             }
             echo $o;
@@ -885,7 +885,7 @@
 
         if (false && $CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) ) {
             echo '<hr />';
-            print_heading('Debugging info');
+            echo $OUTPUT->heading('Debugging info');
             echo '<pre class="notifytiny">';
             print_r($dbg);
             print_r("\n\$currentfile = $currentfile");

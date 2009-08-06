@@ -36,7 +36,7 @@
     $navlinks[] = array('name' => $strregistration, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
-    print_heading($strregistration);
+    echo $OUTPUT->heading($strregistration);
 
     print_simple_box($strregistrationinfo, "center", "70%");
 

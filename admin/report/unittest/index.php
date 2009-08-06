@@ -58,7 +58,7 @@ if (!is_null($path)) {
     $reporter = new ExHtmlReporter($showpasses);
 
     if ($showsearch) {
-        print_heading('Searching for test cases');
+        echo $OUTPUT->heading('Searching for test cases');
     }
     flush();
 
@@ -88,7 +88,7 @@ if (!is_null($path)) {
         } else {
             $title = get_string('moodleunittests', $langfile, $displaypath);
         }
-        print_heading($title);
+        echo $OUTPUT->heading($title);
         set_time_limit(300); // 5 mins
         $test->run($reporter);
     }
@@ -101,7 +101,7 @@ if (!is_null($path)) {
 }
 // Print the form for adjusting options.
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-print_heading($formheader);
+echo $OUTPUT->heading($formheader);
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
 echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showpasses, get_string('showpasses', $langfile)), 'showpasses') ; echo '</p>';
@@ -125,12 +125,12 @@ if (true) {
     echo "<p>Fake test tables are disabled for now, sorry</p>"; // DO NOT LOCALISE!!! to be removed soon
 
 } else if (empty($CFG->unittestprefix)) {
-    print_heading(get_string('testdboperations', 'simpletest'));
+    echo $OUTPUT->heading(get_string('testdboperations', 'simpletest'));
     // TODO: localise
     echo '<p>Please add $CFG->unittestprefix="tst_"; or some other unique test table prefix if you want to execute all tests';
 
 } else {
-    print_heading(get_string('testdboperations', 'simpletest'));
+    echo $OUTPUT->heading(get_string('testdboperations', 'simpletest'));
     echo '<p>'.get_string('unittestprefixsetting', 'simpletest', $CFG).'</p>';
 
     echo '<form style="display:inline" method="get" action="index.php">';

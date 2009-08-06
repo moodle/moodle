@@ -121,7 +121,7 @@
         if (!optional_param('confirm', '', PARAM_BOOL)) {
             $qtypename = $QTYPES[$delete]->local_name();
             admin_externalpage_print_header();
-            print_heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
+            echo $OUTPUT->heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
             notice_yesno(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
                     admin_url('qtypes.php?delete=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
                     admin_url('qtypes.php'), NULL, NULL, 'post', 'get');
@@ -131,7 +131,7 @@
 
         // Do the deletion.
         admin_externalpage_print_header();
-        print_heading(get_string('deletingqtype', 'admin', $qtypename));
+        echo $OUTPUT->heading(get_string('deletingqtype', 'admin', $qtypename));
 
         // Delete any configuration records.
         if (!unset_all_config_for_plugin('qtype_' . $delete)) {
@@ -158,7 +158,7 @@
 
 /// Print the page heading.
     admin_externalpage_print_header();
-    print_heading(get_string('manageqtypes', 'admin'));
+    echo $OUTPUT->heading(get_string('manageqtypes', 'admin'));
 
 /// Set up the table.
     $table = new flexible_table('qtypeadmintable');

@@ -12,7 +12,7 @@ $go = optional_param('go', 0, PARAM_BOOL);
 ###################################################################
 admin_externalpage_print_header();
 
-print_heading(get_string('multilangupgrade', 'admin'));
+echo $OUTPUT->heading(get_string('multilangupgrade', 'admin'));
 
 $strmultilangupgrade = get_String('multilangupgradeinfo', 'admin');
 

@@ -178,7 +178,7 @@ $strperm = array(
 
 // Start the output.
 print_header(get_string('explainpermission', 'role'));
-print_heading(get_string('explainpermission', 'role'));
+echo $OUTPUT->heading(get_string('explainpermission', 'role'));
 
 // Print a summary of what we are doing.
 $a = new stdClass;

@@ -71,7 +71,7 @@ if (count($cleanedroleids) == count($allroles)) {
 // Print the settings form.
 print_box_start('generalbox boxwidthwide boxaligncenter centerpara');
 echo '<form method="get" action="." id="settingsform">';
-print_heading(get_string('reportsettings', 'report_capability'));
+echo $OUTPUT->heading(get_string('reportsettings', 'report_capability'));
 echo '<p id="intro">', get_string('intro', 'report_capability') , '</p>';
 echo '<p><label for="menucapability"> ' . get_string('capabilitylabel', 'report_capability') . '</label></p>';
 choose_from_menu($capabilitychoices, 'capability', $capability, 'choose', '', '', false, false, 0, '', true);
@@ -143,8 +143,7 @@ if ($capability) {
     }
 
     // Print the report heading.
-    print_heading(get_string('reportforcapability', 'report_capability', get_capability_string($capability)),
-            '', 2, 'main', false, 'report');
+    echo $OUTPUT->heading(get_string('reportforcapability', 'report_capability', get_capability_string($capability)), 2, 'main', 'report');
     if (count($cleanedroleids) != count($allroles)) {
         $rolenames = array();
         foreach ($cleanedroleids as $roleid) {

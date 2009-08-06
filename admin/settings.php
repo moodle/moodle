@@ -118,7 +118,7 @@ if (empty($SITE->fullname)) {
     echo $PAGE->url->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="return" value="'.$return.'" />';
-    print_heading($settingspage->visiblename);
+    echo $OUTPUT->heading($settingspage->visiblename);
 
     echo $settingspage->output_html();
 

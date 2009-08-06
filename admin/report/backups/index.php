@@ -43,7 +43,7 @@
 /// Decide when to show last execution logs or detailed logs
 /// Lastlog view
     if (!$courseid) {
-        print_heading($backuploglaststatus);
+        echo $OUTPUT->heading($backuploglaststatus);
         print_simple_box_start('center');
     /// Now, get every record from backup_courses
         $courses = $DB->get_records("backup_courses");
@@ -85,10 +85,10 @@
         print_simple_box_end();
 /// Detailed View !!
     } else {
-        print_heading($backuplogdetailed);
+        echo $OUTPUT->heading($backuplogdetailed);
 
         $coursename = $DB->get_field("course", "fullname", array("id"=>"$courseid"));
-        print_heading("$strcourse: $coursename");
+        echo $OUTPUT->heading("$strcourse: $coursename");
 
         print_simple_box_start('center');
 

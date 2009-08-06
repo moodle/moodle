@@ -72,7 +72,7 @@ foreach($users as $user) {
     );
 }
 
-print_heading("$usercount / $usertotal ".get_string('users'));
+echo $OUTPUT->heading("$usercount / $usertotal ".get_string('users'));
 print_table($table);
 
 print_continue($return);

@@ -62,12 +62,12 @@ if (!empty($edit) || !empty($new)) {
         }
         $savedstr = get_string('instancesaved', 'portfolio');
         admin_externalpage_print_header();
-        print_heading($savedstr);
+        echo $OUTPUT->heading($savedstr);
         redirect($baseurl, $savedstr, 3);
         exit;
     } else {
         admin_externalpage_print_header();
-        print_heading(get_string('configplugin', 'portfolio'));
+        echo $OUTPUT->heading(get_string('configplugin', 'portfolio'));
         print_simple_box_start();
         $mform->display();
         print_simple_box_end();
@@ -94,7 +94,7 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($instance->delete()) {
             $deletedstr = get_string('instancedeleted', 'portfolio');
-            print_heading($deletedstr);
+            echo $OUTPUT->heading($deletedstr);
             redirect($baseurl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'portfolio', $baseurl);

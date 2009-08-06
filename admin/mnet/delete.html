@@ -6,7 +6,7 @@ $navlinks[] = array('name' => get_string('deletehost', 'mnet'), 'link' => null, 
 $navigation = build_navigation($navlinks);
 print_header("$site->shortname: $strmnetsettings", "$site->fullname", $navigation);
 
-print_heading(get_string('mnetsettings', 'mnet'));
+echo $OUTPUT->heading(get_string('mnetsettings', 'mnet'));
 ?>
 <div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
     <table class="generalbox standard" border="0" cellpadding="5" cellspacing="0">

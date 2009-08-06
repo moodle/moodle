@@ -25,7 +25,7 @@ if ($data = $form->get_data()) {
     // Start output.
     admin_externalpage_print_header();
     $data->dbtype = $dbtype;
-    print_heading(get_string('transferringdbto', 'dbtransfer', $data));
+    echo $OUTPUT->heading(get_string('transferringdbto', 'dbtransfer', $data));
 
     // Do the transfer.
     $feedback = new html_list_progress_trace();
@@ -41,7 +41,7 @@ if ($data = $form->get_data()) {
 
 // Otherwise display the settings form.
 admin_externalpage_print_header();
-print_heading(get_string('transferdbtoserver', 'dbtransfer'));
+echo $OUTPUT->heading(get_string('transferdbtoserver', 'dbtransfer'));
 echo '<p>', get_string('transferdbintro', 'dbtransfer'), "</p>\n\n";
 $form->display();
 admin_externalpage_print_footer();

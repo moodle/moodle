@@ -59,7 +59,7 @@
     echo '</div>';
     echo '</form>';
 
-    print_heading($reportoptions[$report]);
+    echo $OUTPUT->heading($reportoptions[$report]);
 
 
     if (!empty($report) && !empty($time)) {

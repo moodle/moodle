@@ -54,7 +54,7 @@ if ($format) {
 }
 
 admin_externalpage_print_header();
-print_heading(get_string('download', 'admin'));
+echo $OUTPUT->heading(get_string('download', 'admin'));
 
 print_box_start();
 echo '<ul>';

@@ -18,7 +18,7 @@
 
     admin_externalpage_print_header();
 
-    print_heading($strimporttimezones);
+    echo $OUTPUT->heading($strimporttimezones);
 
     if (!$ok or !confirm_sesskey()) {
         $message = '<br /><br />';
@@ -92,7 +92,7 @@
         $a = null;
         $a->count = count($timezones);
         $a->source  = $importdone;
-        print_heading(get_string('importtimezonescount', 'admin', $a), '', 3);
+        echo $OUTPUT->heading(get_string('importtimezonescount', 'admin', $a), 3);
 
         print_continue('index.php');
 
@@ -117,7 +117,7 @@
         print_simple_box_end();
 
     } else {
-        print_heading(get_string('importtimezonesfailed', 'admin'), '', 3);
+        echo $OUTPUT->heading(get_string('importtimezonesfailed', 'admin'), 3);
         print_continue('index.php');
     }
 

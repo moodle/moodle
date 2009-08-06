@@ -380,7 +380,7 @@
 
     } else if (empty($assignableroles)) {
     /// Print a message that there are no roles that can me assigned here.
-        print_heading(get_string('notabletoassignroleshere', 'role'), '', 3);
+        echo $OUTPUT->heading(get_string('notabletoassignroleshere', 'role'), 3);
 
     } else {
     /// Show UI for choosing a role to assign.
@@ -391,7 +391,7 @@
         }
 
         // Print instruction
-        print_heading(get_string('chooseroletoassign', 'role'), '', 3);
+        echo $OUTPUT->heading(get_string('chooseroletoassign', 'role'), 3);
 
         // sync metacourse enrolments if needed
         if ($inmeta) {

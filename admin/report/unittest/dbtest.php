@@ -76,7 +76,7 @@ if (!empty($tests)) {
 
         $UNITTEST->func_test_db = $database; // pass the db to the tests through global
 
-        print_heading('Running tests on: '.$dbinfo['name'], '', 3); // TODO: localise
+        echo $OUTPUT->heading('Running tests on: '.$dbinfo['name'], 3); // TODO: localise
 
         // Create the group of tests.
         $test = new autogroup_test_coverage(false, true, $codecoverage);
@@ -106,7 +106,7 @@ if (!empty($tests)) {
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="post" action="dbtest.php">';
 echo '<div>';
-print_heading("Run functional database tests"); // TODO: localise
+echo $OUTPUT->heading("Run functional database tests"); // TODO: localise
 echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $showpasses, get_string('showpasses', 'simpletest')), 'showpasses') ; echo '</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
     echo '<p>'; echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')), 'codecoverage') ; echo '</p>';
