@@ -72,14 +72,14 @@
         print_header("$site->shortname: $strcoursebackup", $site->fullname, $navigation);
 
         if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
-            print_heading(get_string("choosecourse"));
+            echo $OUTPUT->heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
                 echo '<a href="backup.php?id='.$course->id.'">'.format_string($course->fullname).' ('.format_string($course->shortname).')</a><br />'."\n";
             }
             print_simple_box_end();
         } else {
-            print_heading(get_string("nocoursesyet"));
+            echo $OUTPUT->heading(get_string("nocoursesyet"));
             print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         }
         print_footer();
@@ -107,7 +107,7 @@
     }
 
     //Print form
-    print_heading(format_string("$strcoursebackup: $course->fullname ($course->shortname)"));
+    echo $OUTPUT->heading(format_string("$strcoursebackup: $course->fullname ($course->shortname)"));
     print_simple_box_start("center");
 
     //Adjust some php variables to the execution of this script

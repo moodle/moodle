@@ -600,7 +600,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 <hr />
 <?php
 
-print_heading(get_string('rolemappings'));
+echo $OUTPUT->heading(get_string('rolemappings'));
 $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
 
 $info = restore_read_xml_info($xml_file);

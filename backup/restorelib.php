@@ -496,7 +496,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function prints the contents from the info parammeter passed
     function restore_print_info ($info) {
 
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $status = true;
         if ($info) {
@@ -530,7 +530,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
             //Print title
-            print_heading(get_string("backup").":");
+            echo $OUTPUT->heading(get_string("backup").":");
             $table->data = $tab;
             //Print backup general info
             print_table($table);
@@ -641,7 +641,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             $table->data = $tab;
             //Print title
-            print_heading(get_string("backupdetails").":");
+            echo $OUTPUT->heading(get_string("backupdetails").":");
             //Print backup general info
             print_table($table);
         } else {
@@ -653,7 +653,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function prints the contents from the course_header parammeter passed
     function restore_print_course_header ($course_header) {
-
+        global $OUTPUT;
         $status = true;
         if ($course_header) {
             $table = new object();
@@ -670,7 +670,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $tab[1][1] = $course_header->course_summary;
             $table->data = $tab;
             //Print title
-            print_heading(get_string("course").":");
+            echo $OUTPUT->heading(get_string("course").":");
             //Print backup course header info
             print_table($table);
         } else {

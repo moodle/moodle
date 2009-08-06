@@ -104,7 +104,7 @@
 
     if (!$file) {
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
-        print_heading(get_string("nofilesselected"));
+        echo $OUTPUT->heading(get_string("nofilesselected"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
         exit;
@@ -113,7 +113,7 @@
     //If cancel has been selected, inform and end
     if ($cancel) {
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
-        print_heading(get_string("restorecancelled"));
+        echo $OUTPUT->heading(get_string("restorecancelled"));
         print_continue("$CFG->wwwroot/course/view.php?id=".$id);
         print_footer();
         exit;
@@ -135,7 +135,7 @@
         print_header("$course->shortname: $strcourserestore", $course->fullname, $navigation);
     }
     //Print form
-    print_heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
+    echo $OUTPUT->heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
     print_simple_box_start('center');
 
     //Adjust some php variables to the execution of this script

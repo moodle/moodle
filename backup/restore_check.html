@@ -237,7 +237,7 @@
     if (empty($restore->course_id) && ($restore->restoreto == RESTORETO_EXISTING_DELETING || $restore->restoreto == RESTORETO_EXISTING_ADDING)) {
 
         if ($courses = $mycourses) {
-            print_heading(get_string("choosecourse"));
+            echo $OUTPUT->heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
                 if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -252,7 +252,7 @@
             }
             print_simple_box_end();
         } else {
-            print_heading(get_string("nocoursesyet"));
+            echo $OUTPUT->heading(get_string("nocoursesyet"));
             print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         }
     //Checks everything and execute restore
