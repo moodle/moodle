@@ -67,5 +67,5 @@
     }
     print_simple_box_end();
     print '<br />';
-    close_window_button();
+    echo $OUTPUT->close_window_button();
 ?>
