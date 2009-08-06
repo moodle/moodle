@@ -82,7 +82,7 @@
             echo $OUTPUT->heading(get_string("nocoursesyet"));
             print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         }
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -129,5 +129,5 @@
     print_simple_box_end();
 
     //Print footer
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

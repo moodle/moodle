@@ -106,7 +106,7 @@
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
         echo $OUTPUT->heading(get_string("nofilesselected"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -115,7 +115,7 @@
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
         echo $OUTPUT->heading(get_string("restorecancelled"));
         print_continue("$CFG->wwwroot/course/view.php?id=".$id);
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -174,6 +174,6 @@
     print_simple_box_end();
 
     //Print footer
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>
