@@ -563,7 +563,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents, $courseid) {
-    global $USER;
+    global $USER, $OUTPUT;
 
     $events = calendar_get_upcoming($courses, $groups, $users, $futuredays, $maxevents);
 
@@ -596,7 +596,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
         }
         echo '</div>';
     } else {
-        print_heading(get_string('noupcomingevents', 'calendar'));
+        echo $OUTPUT->heading(get_string('noupcomingevents', 'calendar'));
     }
 }
 

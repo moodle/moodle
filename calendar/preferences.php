@@ -71,7 +71,7 @@
                  '', '', true, '', user_login_string($site));
 
 
-    print_heading($strpreferences);
+    echo $OUTPUT->heading($strpreferences);
 
     print_simple_box_start("center");
 
