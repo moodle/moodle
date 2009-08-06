@@ -91,5 +91,5 @@
     if ($scormopen) {
         scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
     }
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

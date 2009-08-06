@@ -65,7 +65,7 @@
         print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
         notice(get_string("activityiscurrentlyhidden"));
-        print_footer($course);
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -78,7 +78,7 @@
             print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
             print_simple_box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "center");
-            print_footer($course);
+            echo $OUTPUT->footer();
             die;
         } elseif ($timenow > $scorm->timeclose) {
             $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
@@ -86,7 +86,7 @@
             print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
             print_simple_box(get_string("expired", "scorm", userdate($scorm->timeclose)), "center");
-            print_footer($course);
+            echo $OUTPUT->footer();
             die;
         }
     }
@@ -325,4 +325,4 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM page -->
-<?php print_footer('none'); ?>
+<?php echo $OUTPUT->footer(); ?>

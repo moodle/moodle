@@ -462,6 +462,6 @@
 
 
     if (empty($noheader)) {
-        print_footer($course);
+        echo $OUTPUT->footer();
     }
 ?>
