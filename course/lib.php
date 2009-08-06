@@ -1304,7 +1304,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($mod->indent) {
-                print_spacer(12, 20 * $mod->indent, false);
+                $spacer = new html_image();
+                $spacer->height = 12;
+                $spacer->width = 20 * $mod->indent;
+                echo $OUTPUT->spacer($spacer);
             }
 
             $extra = '';
@@ -1910,7 +1913,10 @@ function print_category_info($category, $depth, $showcourses = false) {
             $indent = $depth*30;
             $rows = count($courses) + 1;
             echo '<td class="category indentation" rowspan="'.$rows.'" valign="top">';
-            print_spacer(10, $indent);
+            $spacer = new html_image();
+            $spacer->height = 10;
+            $spacer->width = $indent;
+            echo $OUTPUT->spacer($spacer) . '<br />';
             echo '</td>';
         }
 
@@ -1962,7 +1968,10 @@ function print_category_info($category, $depth, $showcourses = false) {
         if ($depth) {
             $indent = $depth*20;
             echo '<td class="category indentation" valign="top">';
-            print_spacer(10, $indent);
+            $spacer = new html_image();
+            $spacer->height = 10;
+            $spacer->width = $indent;
+            echo $OUTPUT->spacer($spacer) . '<br />';
             echo '</td>';
         }
 

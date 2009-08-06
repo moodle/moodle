@@ -204,7 +204,9 @@
             if (($activity->type == 'section') && ($param->sortby == 'default')) {
                 if ($inbox) {
                     print_simple_box_end();
-                    print_spacer(30);
+                    $spacer = new html_image();
+                    $spacer->height = 30;
+                    echo $OUTPUT->spacer($spacer) . '<br />';
                 }
                 print_simple_box_start('center', '90%');
                 echo "<h2>$activity->name</h2>";

@@ -229,7 +229,10 @@
                 $course->summary .= $displaylist[$course->category];
                 $course->summary .= "</a></p>";
                 print_course($course, $search);
-                print_spacer(5,5);
+                $spacer = new html_image();
+                $spacer->height = 5;
+                $spacer->width = 5;
+                echo $OUTPUT->spacer($spacer) . '<br />';
             }
         } else {
         /// Show editing UI.
