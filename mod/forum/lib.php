@@ -5816,7 +5816,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
             }
             if ($forum->scale < 0) {
                 if ($scale = $DB->get_record("scale", array("id" => abs($forum->scale)))) {
-                    print_scale_menu_helpbutton($course->id, $scale );
+                    echo $OUTPUT->help_button(help_button::make_scale_menu($course->id, $scale));
                 }
             }
             echo '</div>';
