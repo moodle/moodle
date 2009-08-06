@@ -209,5 +209,5 @@ if (!$isfrontpage && ($url = get_context_url($context))) {
         get_string('backto', '', $contextname) . '</a></div>';
 }
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>
