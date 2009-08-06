@@ -187,7 +187,7 @@
 
             if (data_atmaxentries($data) and !has_capability('mod/data:manageentries',$context)){
                 notify (get_string('atmaxentry','data'));
-                print_footer($course);
+                echo $OUTPUT->footer();
                 exit;
             }
 
@@ -347,5 +347,5 @@
         $field->print_after_form();
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

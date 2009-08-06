@@ -117,7 +117,7 @@
                   'comment.php?rid='.$record->id.'&amp;commentid='.$comment->id.'&amp;page='.$page.
                               '&amp;sesskey='.sesskey().'&amp;mode=delete&amp;confirm=1',
                   'view.php?rid='.$record->id.'&amp;page='.$page);
-                print_footer();
+                echo $OUTPUT->footer();
             }
             die;
         break;
@@ -126,7 +126,7 @@
 
     print_header();
     data_print_comments($data, $record, $page, $mform);
-    print_footer();
+    echo $OUTPUT->footer();
 
 
 ?>

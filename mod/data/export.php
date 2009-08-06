@@ -67,7 +67,7 @@ if($mform->is_cancelled()) {
     $currenttab = 'export';
     include('tabs.php');
     $mform->display();
-    print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 

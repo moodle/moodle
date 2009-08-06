@@ -188,7 +188,7 @@
                                  'field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
                                  'field.php?d='.$data->id);
 
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                     exit;
                 }
             }
@@ -334,7 +334,7 @@
     }
 
 /// Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 
 ?>

@@ -100,7 +100,7 @@ switch ($action) {
         $optionsno = new object();
         $optionsno->d = $data->id;
         notice_yesno($strwarning, 'preset.php', 'preset.php', $options, $optionsno, 'post', 'get');
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit(0);
         break;
 
@@ -135,7 +135,7 @@ switch ($action) {
         $pimporter = new PresetImporter($course, $cm, $data, $userid, $shortname);
         $pimporter->import_options();
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit(0);
         break;
 
@@ -159,7 +159,7 @@ switch ($action) {
         $pimporter = new PresetImporter($course, $cm, $data, -$USER->id, $shortname);
         $pimporter->import_options();
 
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit(0);
         break;
 
@@ -219,7 +219,7 @@ switch ($action) {
         echo '<input type="hidden" name="d" value="'.$data->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
         echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit(0);
         break;
 
@@ -254,7 +254,7 @@ switch ($action) {
             echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
             echo '<input type="submit" value="'.$stroverwrite.'" /></div></form>';
             echo '</div>';
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit(0);
             break;
         }
@@ -369,7 +369,7 @@ echo '</td></tr>';
 echo '</table>';
 echo '</div>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 exit(0);
 
 ################################################################################

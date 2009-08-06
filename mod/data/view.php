@@ -345,7 +345,7 @@
                     $records[] = $deleterecord;
                     echo data_print_template('singletemplate', $records, $data, '', 0, true);
 
-                    print_footer($course);
+                    echo $OUTPUT->footer();
                     exit;
                 }
             }
@@ -668,5 +668,5 @@
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>
