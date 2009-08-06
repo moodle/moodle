@@ -3437,12 +3437,12 @@ class moodle_core_renderer extends moodle_renderer_base {
     /**
      * Outputs a heading
      * @param string $text The text of the heading
-     * @param int $level The level of importance of the heading
+     * @param int $level The level of importance of the heading. Defaulting to 2
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
      * @return string the HTML to output.
      */
-    public function heading($text, $level, $classes = 'main', $id = '') {
+    public function heading($text, $level = 2, $classes = 'main', $id = '') {
         $level = (integer) $level;
         if ($level < 1 or $level > 6) {
             throw new coding_exception('Heading level must be an integer between 1 and 6.');
