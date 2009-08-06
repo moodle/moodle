@@ -6015,7 +6015,7 @@ class admin_setting_managewsusersettings extends admin_setting {
      * @return string XHTML
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $output = "";
 
         //search all web service users
@@ -6031,7 +6031,9 @@ class admin_setting_managewsusersettings extends admin_setting {
                 $wsusersetting = ' <a href="' . $this->baseurl . '&amp;username=' . $user->username . '">'
                 . get_string("settings")
                           .'</a>' . "\n";
-                $textfield = print_textfield('whitelist_'.$user->username, '', '', 50, 0, true);
+                $field = html_field::make_text('whitelist_'.$user->username);
+                $field->style = "width: {$size}px;";
+                $textfield = $OUTPUT->textfield($field);
                 $table->data[] = array($user->username, $wsusersetting);
             }
         }
