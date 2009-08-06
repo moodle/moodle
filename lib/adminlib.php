@@ -4547,7 +4547,7 @@ class admin_setting_manageauths extends admin_setting {
             }
         }
 
-        $return = echo $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main', true);
+        $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
         $return .= print_box_start('generalbox authsui', '', true);
 
         $table = new object();
