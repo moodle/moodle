@@ -254,7 +254,7 @@ function chat_user_complete($course, $user, $mod, $chat) {
  * @return bool
  */
 function chat_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     // this is approximate only, but it is really fast ;-)
     $timeout = $CFG->chat_old_ping * 10;
@@ -334,7 +334,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
     $strftimerecent = get_string('strftimerecent');
 
     if ($past) {
-        print_headline(get_string('pastchats', 'chat').':');
+        echo $OUTPUT->heading(get_string("pastchats", 'chat').':');
 
         foreach ($past as $cm) {
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
@@ -345,7 +345,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
     }
 
     if ($current) {
-        print_headline(get_string('currentchats', 'chat').':');
+        echo $OUTPUT->heading(get_string("currentchats", 'chat').':');
 
         $oldest = floor((time()-$CFG->chat_old_ping)/10)*10;  // better db caching
 
