@@ -212,7 +212,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
  * @return bool
  */
 function survey_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $modinfo = get_fast_modinfo($course);
     $ids = array();
@@ -256,7 +256,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    print_headline(get_string('newsurveyresponses', 'survey').':');
+    echo $OUTPUT->heading(get_string('newsurveyresponses', 'survey').':');
     foreach ($surveys as $survey) {
         $url = $CFG->wwwroot.'/mod/survey/view.php?id='.$survey->cmid;
         print_recent_activity_note($survey->time, $survey, $survey->name, $url, false, $viewfullnames);
