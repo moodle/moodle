@@ -12,7 +12,7 @@
     if (empty($SESSION->HIVE_SESSION)) {
         print_header();
         notify('You do not have access to the Hive repository. Moodle signs you into Hive when you log in. This process may have failed.');
-        close_window_button();
+        echo $OUTPUT->close_window_button();
         print_footer();
         die;
     }

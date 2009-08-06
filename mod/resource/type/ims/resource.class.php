@@ -315,7 +315,7 @@ class resource_ims extends resource_base {
      * @param    CFG     global object
      */
     function display() {
-        global $CFG, $THEME, $USER, $PAGE;
+        global $CFG, $THEME, $USER, $PAGE, $OUTPUT;
 
         require_once($CFG->libdir.'/filelib.php');
 
@@ -397,7 +397,7 @@ class resource_ims extends resource_base {
             print_simple_box_end();
         /// Close button if inpopup
             if ($inpopup) {
-                close_window_button();
+                echo $OUTPUT->close_window_button();
             }
 
             print_footer();

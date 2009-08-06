@@ -181,7 +181,7 @@ function _postprocess(&$resource) {
 * @param    CFG     global object
 */
 function display() {
-    global $CFG, $THEME, $SESSION;
+    global $CFG, $THEME, $SESSION, $OUTPUT;
 
 /// Set up generic stuff first, including checking for access
     parent::display();
@@ -271,7 +271,7 @@ function display() {
         }
         notify('You do not have access to HarvestRoad Hive. This resource is unavailable.');
         if ($inpopup) {
-            close_window_button();
+            echo $OUTPUT->close_window_button();
         }
         print_footer('none');
         die;
@@ -290,7 +290,7 @@ function display() {
         }
         notify(get_string('notallowedlocalfileaccess', 'resource', ''));
         if ($inpopup) {
-            close_window_button();
+            echo $OUTPUT->close_window_button();
         }
         print_footer('none');
         die;

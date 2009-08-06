@@ -344,7 +344,7 @@ class resource_file extends resource_base {
             }
             notify(get_string('notallowedlocalfileaccess', 'resource', ''));
             if ($inpopup) {
-                close_window_button();
+                echo $OUTPUT->close_window_button();
             }
             print_footer('none');
             die;
