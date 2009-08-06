@@ -42,7 +42,7 @@
     if ($submission = $assignmentinstance->get_submission($user->id)
       and !empty($submission->data1)) {
         print_header(fullname($user,true).': '.$assignment->name);
-        print_heading(get_string('notes', 'assignment').' - '.fullname($user,true));
+        echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
         print_simple_box(format_text($submission->data1, FORMAT_HTML), 'center', '100%');
         if ($mode != 'single') {
             echo $OUTPUT->close_window_button();
@@ -52,7 +52,7 @@
         print_footer('none');
     } else {
         print_header(fullname($user,true).': '.$assignment->name);
-        print_heading(get_string('notes', 'assignment').' - '.fullname($user,true));
+        echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
         print_simple_box(get_string('notesempty', 'assignment'), 'center', '100%');
         if ($mode != 'single') {
             echo $OUTPUT->close_window_button();

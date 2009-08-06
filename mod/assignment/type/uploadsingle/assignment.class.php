@@ -76,7 +76,7 @@ class assignment_uploadsingle extends assignment_base {
 
 
     function upload() {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
@@ -107,7 +107,7 @@ class assignment_uploadsingle extends assignment_base {
                                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                             $this->update_grade($submission);
                             $this->email_teachers($submission);
-                            print_heading(get_string('uploadedfile'));
+                            echo $OUTPUT->heading(get_string('uploadedfile'));
                             redirect('view.php?id='.$this->cm->id);
                         } else {
                             notify(get_string("uploadnotregistered", "assignment", $newfile_name) );

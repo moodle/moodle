@@ -259,7 +259,7 @@ class assignment_base {
      * @param object $submission The submission object or NULL in which case it will be loaded
      */
     function view_feedback($submission=NULL) {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!has_capability('mod/assignment:submit', $this->context, $USER->id, false)) {
@@ -292,7 +292,7 @@ class assignment_base {
         }
 
     /// Print the feedback
-        print_heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
+        echo $OUTPUT->heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
 
         echo '<table cellspacing="0" class="feedback">';
 
@@ -558,7 +558,7 @@ class assignment_base {
         ///3) Save and Skip to the next one on the popup
 
         //make user global so we can use the id
-        global $USER;
+        global $USER, $OUTPUT;
 
         $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
         if (is_null($mailinfo)) {
@@ -572,7 +572,7 @@ class assignment_base {
                 if ($submission = $this->process_feedback()) {
                     //IE needs proper header with encoding
                     print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
-                    print_heading(get_string('changessaved'));
+                    echo $OUTPUT->heading(get_string('changessaved'));
                     print $this->update_main_listing($submission);
                 }
                 close_window();
@@ -1064,7 +1064,7 @@ class assignment_base {
      * @return bool|void
      */
     function display_submissions($message='') {
-        global $CFG, $DB, $USER, $DB;
+        global $CFG, $DB, $USER, $DB, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
 
         /* first we check to see if the form has just been submitted
@@ -1195,7 +1195,7 @@ class assignment_base {
         $table->setup();
 
         if (empty($users)) {
-            print_heading(get_string('nosubmitusers','assignment'));
+            echo $OUTPUT->heading(get_string('nosubmitusers','assignment'));
             return true;
         }
 

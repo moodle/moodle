@@ -17,7 +17,7 @@ class assignment_upload extends assignment_base {
     }
 
     function view() {
-        global $USER;
+        global $USER, $OUTPUT;
 
         require_capability('mod/assignment:view', $this->context);
 
@@ -44,9 +44,9 @@ class assignment_upload extends assignment_base {
             $this->view_feedback();
 
             if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
-                print_heading(get_string('submission', 'assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('submission', 'assignment'), 3);
             } else {
-                print_heading(get_string('submissiondraft', 'assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('submissiondraft', 'assignment'), 3);
             }
 
             if ($filecount and $submission) {
@@ -62,7 +62,7 @@ class assignment_upload extends assignment_base {
             $this->view_upload_form();
 
             if ($this->notes_allowed()) {
-                print_heading(get_string('notes', 'assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('notes', 'assignment'), 3);
                 $this->view_notes();
             }
 
@@ -73,7 +73,7 @@ class assignment_upload extends assignment_base {
 
 
     function view_feedback($submission=NULL) {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!$submission) { /// Get submission for this assignment
@@ -82,7 +82,7 @@ class assignment_upload extends assignment_base {
 
         if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
             if ($this->count_responsefiles($USER->id)) {
-                print_heading(get_string('responsefiles', 'assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('responsefiles', 'assignment'), 3);
                 $responsefiles = $this->print_responsefiles($USER->id, true);
                 print_simple_box($responsefiles, 'center');
             }
@@ -110,7 +110,7 @@ class assignment_upload extends assignment_base {
         }
 
     /// Print the feedback
-        print_heading(get_string('submissionfeedback', 'assignment'), '', 3);
+        echo $OUTPUT->heading(get_string('submissionfeedback', 'assignment'), 3);
 
         echo '<table cellspacing="0" class="feedback">';
 
@@ -186,13 +186,13 @@ class assignment_upload extends assignment_base {
     }
 
     function view_final_submission() {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $submission = $this->get_submission($USER->id);
 
         if ($this->isopen() and $this->can_finalize($submission)) {
             //print final submit button
-            print_heading(get_string('submitformarking','assignment'), '', 3);
+            echo $OUTPUT->heading(get_string('submitformarking','assignment'), 3);
             echo '<div style="text-align:center">';
             echo '<form method="post" action="upload.php">';
             echo '<fieldset class="invisiblefieldset">';
@@ -203,13 +203,13 @@ class assignment_upload extends assignment_base {
             echo '</form>';
             echo '</div>';
         } else if (!$this->isopen()) {
-            print_heading(get_string('nomoresubmissions','assignment'), '', 3);
+            echo $OUTPUT->heading(get_string('nomoresubmissions','assignment'), 3);
 
         } else if ($this->drafts_tracked() and $state = $this->is_finalized($submission)) {
             if ($state == ASSIGNMENT_STATUS_SUBMITTED) {
-                print_heading(get_string('submitedformarking','assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('submitedformarking','assignment'), 3);
             } else {
-                print_heading(get_string('nomoresubmissions','assignment'), '', 3);
+                echo $OUTPUT->heading(get_string('nomoresubmissions','assignment'), 3);
             }
         } else {
             //no submission yet
@@ -457,7 +457,7 @@ class assignment_upload extends assignment_base {
     }
 
     function upload_notes() {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $action = required_param('action', PARAM_ALPHA);
 
@@ -513,7 +513,7 @@ class assignment_upload extends assignment_base {
         /// show notes edit form
         $this->view_header(get_string('notes', 'assignment'));
 
-        print_heading(get_string('notes', 'assignment'), '');
+        echo $OUTPUT->heading(get_string('notes', 'assignment'));
 
         $mform->display();
 
@@ -631,7 +631,7 @@ class assignment_upload extends assignment_base {
     }
 
     function finalize() {
-        global $USER, $DB;
+        global $USER, $DB, $OUTPUT;
 
         $confirm    = optional_param('confirm', 0, PARAM_BOOL);
         $returnurl  = 'view.php?id='.$this->cm->id;
@@ -645,7 +645,7 @@ class assignment_upload extends assignment_base {
             $optionsno = array('id'=>$this->cm->id);
             $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize');
             $this->view_header(get_string('submitformarking', 'assignment'));
-            print_heading(get_string('submitformarking', 'assignment'));
+            echo $OUTPUT->heading(get_string('submitformarking', 'assignment'));
             notice_yesno(get_string('onceassignmentsent', 'assignment'), 'upload.php', 'view.php', $optionsyes, $optionsno, 'post', 'get');
             $this->view_footer();
             die;
@@ -748,7 +748,7 @@ class assignment_upload extends assignment_base {
 
 
     function delete_responsefile() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
@@ -768,7 +768,7 @@ class assignment_upload extends assignment_base {
         if (!data_submitted() or !$confirm) {
             $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset);
             print_header(get_string('delete'));
-            print_heading(get_string('delete'));
+            echo $OUTPUT->heading(get_string('delete'));
             notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
             print_footer('none');
             die;
@@ -792,7 +792,7 @@ class assignment_upload extends assignment_base {
 
 
     function delete_file() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
@@ -828,7 +828,7 @@ class assignment_upload extends assignment_base {
             } else {
                 print_header(get_string('delete'));
             }
-            print_heading(get_string('delete'));
+            echo $OUTPUT->heading(get_string('delete'));
             notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
             if (empty($mode)) {
                 $this->view_footer();
