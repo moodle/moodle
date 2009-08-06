@@ -26,18 +26,18 @@
     /// Can't review during the attempt - send them back to the attempt page.
         if (!$attemptobj->is_finished()) {
             notify(get_string('cannotreviewopen', 'quiz'));
-            close_window_button();
+            echo $OUTPUT->close_window_button();
         }
     /// Can't review other users' attempts.
         if (!$attemptobj->is_own_attempt()) {
             notify(get_string('notyourattempt', 'quiz'));
-            close_window_button();
+            echo $OUTPUT->close_window_button();
         }
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
             $accessmanager = $attemptobj->get_access_manager(time());
             notify($accessmanager->cannot_review_message($attemptobj->get_review_options()));
-            close_window_button();
+            echo $OUTPUT->close_window_button();
         }
     }
 
