@@ -58,7 +58,7 @@ if ($courseid) {
 }
 $nav = build_navigation($navigation);
 print_header_simple($title, '', $nav, '', '', false);
-print_heading($title, 'centre');
+echo $OUTPUT->heading($title, 'centre');
 
 // Prepare data for tags
 $courselink = '';

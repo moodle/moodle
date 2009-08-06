@@ -66,7 +66,7 @@ if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
     $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
 }
 
-print_heading($tagname, '', 2, 'headingblock header tag-heading');
+echo $OUTPUT->heading($tagname, 2, 'headingblock header tag-heading');
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 
@@ -83,7 +83,7 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
 
     $heading = get_string('courses') . ' ' . get_string('taggedwith', 'tag', $tagname) .': '. $totalcount;
     echo "<a name='course'></a>";
-    print_heading($heading, '', 3);
+    echo $OUTPUT->heading($heading, 3);
 
     foreach ($courses as $course) {
         print_course($course);
@@ -105,7 +105,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
         print_box_start('generalbox', 'tag-blogs');
         $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
         echo "<a name='blog'></a>";
-        print_heading($heading, '', 3);
+        echo $OUTPUT->heading($heading, 3);
 
         echo '<ul id="tagblogentries">';
         foreach ($blogs as $blog) {
@@ -141,7 +141,7 @@ if ($usercount > 0) {
 
     $heading = get_string('users'). ' ' . get_string('taggedwith', 'tag', $tagname) . ': ' . $usercount;
     echo "<a name='user'></a>";
-    print_heading($heading, '', 3);
+    echo $OUTPUT->heading($heading, 3);
 
     $baseurl = $CFG->wwwroot.'/tag/index.php?id=' . $tag->id;
 

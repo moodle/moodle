@@ -222,7 +222,7 @@ function tag_print_search_box($return=false) {
  */
 function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     $query = array_shift(tag_normalize($query, TAG_CASE_ORIGINAL));
 
@@ -244,7 +244,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
     }
 
     if ( !empty($tags) ) { // there are results to display!!
-        $output .= print_heading(get_string('searchresultsfor', 'tag', htmlspecialchars($query)) ." : {$count}", '', 3, 'main', true);
+        $output .= $OUTPUT->heading(get_string('searchresultsfor', 'tag', htmlspecialchars($query)) ." : {$count}", 3, 'main');
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
@@ -269,7 +269,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
         $output .= print_paging_bar($count, $page, $perpage, $baseurl .'&amp;', 'page', false, true);
     }
     else { //no results were found!!
-        $output .= print_heading(get_string('noresultsfor', 'tag', htmlspecialchars($query)), '', 3, 'main' , true);
+        $output .= $OUTPUT->heading(get_string('noresultsfor', 'tag', htmlspecialchars($query)), 3, 'main');
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {

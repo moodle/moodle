@@ -116,7 +116,7 @@ $navlinks[] = array('name' => $tagname, 'link' => '', 'type' => '');
 $navigation = build_navigation($navlinks);
 print_header_simple(get_string('tag', 'tag') . ' - '. $tagname, '', $navigation);
 
-print_heading($tagname, '', 2);
+echo $OUTPUT->heading($tagname, 2);
 
 if (!empty($errorstring)) {
     notify($errorstring);
