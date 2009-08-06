@@ -88,7 +88,10 @@ function display() {
 
     if (trim(strip_tags($resource->intro))) {
         print_simple_box(format_module_intro('resource', $resource, $cm->id), "center");
-        print_spacer(10,10);
+        $spacer = new html_image();
+        $spacer->height = 10;
+        $spacer->width = 10;
+        echo $OUTPUT->spacer($spacer) . '<br />';
     }
 
     $files = get_directory_list("$CFG->dataroot/$relativepath", array($CFG->moddata, 'backupdata'), false, true, true);

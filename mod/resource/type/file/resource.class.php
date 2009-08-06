@@ -192,7 +192,7 @@ class resource_file extends resource_base {
     * @param    CFG     global object
     */
     function display() {
-        global $CFG, $THEME, $USER, $PAGE;
+        global $CFG, $THEME, $USER, $PAGE, $OUTPUT;
     ///Yahoo javascript libaries for updating embedded object size
         $PAGE->requires->yui_lib('container');
 
@@ -690,7 +690,10 @@ class resource_file extends resource_base {
                 echo "<div class=\"popupnotice\">(<a href=\"$fullurl\">$strdirectlink</a>)</div>";
                 print_footer($course); // MDL-12098
             } else {
-                print_spacer(20,20);
+                $spacer = new html_image();
+                $spacer->height = 20;
+                $spacer->width = 20;
+                echo $OUTPUT->spacer($spacer) . '<br />';
                 print_footer($course);
             }
 

@@ -470,7 +470,10 @@ function display() {
         if ($inpopup) {
             echo "<center><p>(<a href=\"$fullurl\">$strdirectlink</a>)</p></center>";
         } else {
-            print_spacer(20,20);
+            $spacer = new html_image();
+            $spacer->height = 20;
+            $spacer->width = 20;
+            echo $OUTPUT->spacer($spacer) . '<br />';
             print_footer($course);
         }
 
