@@ -13,10 +13,9 @@ define('ORDER_VOID',    'void');
  * authorize_print_orders
  *
  */
-function authorize_print_orders($courseid, $userid)
-{
+function authorize_print_orders($courseid, $userid) {
     global $course;
-    global $CFG, $USER, $SITE, $DB;
+    global $CFG, $USER, $SITE, $DB, $OUTPUT, $PAGE;
     global $strs, $authstrs;
     require_once($CFG->libdir.'/tablelib.php');
 
@@ -69,10 +68,10 @@ function authorize_print_orders($courseid, $userid)
     $popupmenu .= popup_form($baseurl.'&amp;course='.$courseid.'&amp;status=',$statusmenu,'statusmenu',$status,'','','',true);
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
-        $popupmenu .= print_checkbox('showonlymy', '1', $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), '',
-        "var locationtogo = '{$CFG->wwwroot}/enrol/authorize/index.php?status=$status';
-                                  locationtogo += '&amp;user=' + (this.checked ? '$USER->id' : '0');
-                                  top.location.href = locationtogo;", true);
+        $checkbox = html_select_option::make_checkbox(1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'));
+        $PAGE->requires->js('enrol/authorize/authorize.js');
+        $checkbox->add_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status));
+        $popupmenu .= $OUTPUT->checkbox($checkbox, 'showonlymy');
     }
 
     $navlinks = array();
@@ -666,7 +665,7 @@ function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=fa
         $ret .= '<input type="hidden" name="confirm" value="1" />';
     }
     if (!empty($unenrol)) {
-        $ret .= print_checkbox('unenrol', '1', false, $unenrol, '', '', true) . '<br />';
+        $ret .= $OUTPUT->checkbox(html_select_option::make_checkbox(1, false, $unenrol), 'unenrol') . '<br />';
     }
     $ret .= $extrahtml;
     $ret .= '<input type="submit" value="'.$authstrs->$do.'" />' .
