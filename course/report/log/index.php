@@ -88,7 +88,7 @@
                     print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation);
                 }
 
-                print_heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")");
+                echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")");
                 print_mnet_log_selector_form($hostid, $course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
 
                 if($hostid == $CFG->mnet_localhost_id) {
@@ -134,7 +134,7 @@
             print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation, '');
         }
 
-        print_heading(get_string('chooselogs') .':');
+        echo $OUTPUT->heading(get_string('chooselogs') .':');
 
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
     }

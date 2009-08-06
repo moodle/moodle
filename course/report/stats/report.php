@@ -106,7 +106,7 @@
 
             $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)));
 
-            print_heading(format_string($course->shortname).' - '.get_string('statsreport'.$report)
+            echo $OUTPUT->heading(format_string($course->shortname).' - '.get_string('statsreport'.$report)
                     .((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,true) : '')
                     .((!empty($roleid)) ? ' '.$DB->get_field('role','name', array('id'=>$roleid)) : ''));
 

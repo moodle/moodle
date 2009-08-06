@@ -142,7 +142,7 @@
 
     $navigation = build_navigation($navlinks);
     print_header($title, $fullname, $navigation, $editform->focus());
-    print_heading($streditcoursesettings);
+    echo $OUTPUT->heading($streditcoursesettings);
 
     $editform->display();
 

@@ -35,7 +35,7 @@
     
     print_header(get_string("summaryof", "", $course->fullname));
 
-    print_heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
+    echo $OUTPUT->heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
 
     if ($course->guest || $course->password) {
         print_box_start('generalbox icons');

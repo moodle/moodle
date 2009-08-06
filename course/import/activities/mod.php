@@ -37,7 +37,7 @@
         $cat_courses = array();
     }
 
-    print_heading(get_string("importactivities"));
+    echo $OUTPUT->heading(get_string("importactivities"));
 
     $options = array();
     foreach ($taught_courses as $tcourse) {

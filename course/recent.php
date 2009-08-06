@@ -57,7 +57,7 @@
     $navlinks[] = array('name' => $userinfo, 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
     print_header("$course->shortname: $strrecentactivity", $course->fullname, $navigation, '', $meta);
-    print_heading(format_string($course->fullname) . ": $userinfo", '', 3);
+    echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo", 3);
 
     $mform->display();
 

@@ -156,9 +156,9 @@
 
     $pending = $DB->get_records('course_request');
     if (empty($pending)) {
-        print_heading(get_string('nopendingcourses'));
+        echo $OUTPUT->heading(get_string('nopendingcourses'));
     } else {
-        print_heading(get_string('coursespending'));
+        echo $OUTPUT->heading(get_string('coursespending'));
 
     /// Build a table of all the requests.
         $table->class = 'pendingcourserequests generaltable';

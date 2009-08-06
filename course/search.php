@@ -211,7 +211,7 @@
 
     $lastcategory = -1;
     if ($courses) {
-        print_heading("$strsearchresults: $totalcount");
+        echo $OUTPUT->heading("$strsearchresults: $totalcount");
         $encodedsearch = urlencode($search);
 
      ///add the module parameter to the paging bar if they exists
@@ -349,10 +349,10 @@
 
     } else {
         if (!empty($search)) {
-            print_heading(get_string("nocoursesfound", "", s($search)));
+            echo $OUTPUT->heading(get_string("nocoursesfound", s($search)));
         }
         else {
-            print_heading( $strnovalidcourses );
+            echo $OUTPUT->heading( $strnovalidcourses );
         }
     }
 

@@ -8,13 +8,13 @@
     require_once($CFG->dirroot.'/course/report/log/lib.php');
 
     if (has_capability('coursereport/log:view', $context)) {
-        print_heading(get_string('chooselogs') .':');
+        echo $OUTPUT->heading(get_string('chooselogs') .':');
 
         print_log_selector_form($course);
     }
 
     if (has_capability('coursereport/log:viewlive', $context)) {
-        print_heading(get_string('chooselivelogs') .':');
+        echo $OUTPUT->heading(get_string('chooselivelogs') .':');
         echo '<p>';
         link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
         echo '</p>';

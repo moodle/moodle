@@ -58,7 +58,7 @@
 
     } else if ($data = $requestform->get_data()) {
         print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
-        print_heading($strtitle);
+        echo $OUTPUT->heading($strtitle);
 
     /// Record the request.
         $data->requester = $USER->id;
@@ -92,7 +92,7 @@
 
 /// Show the request form.
     print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
-    print_heading($strtitle);
+    echo $OUTPUT->heading($strtitle);
     $requestform->display();
     print_footer();
 

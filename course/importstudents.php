@@ -50,7 +50,7 @@
 
 /// Print a help notice about the need to use this page
 
-    print_heading(get_string('childcourses'));
+    echo $OUTPUT->heading(get_string('childcourses'));
 
     if (!$frm = data_submitted()) {
         $note = get_string("importmetacoursenote");

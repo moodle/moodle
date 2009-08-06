@@ -37,7 +37,7 @@
 
     print_header("$course->shortname: $stractivityreport", $course->fullname, $navigation);
 
-    print_heading(format_string($course->fullname));
+    echo $OUTPUT->heading(format_string($course->fullname));
 
     if (!$logstart = $DB->get_field_sql("SELECT MIN(time) FROM {log}")) {
         print_error('logfilenotavailable');

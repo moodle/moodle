@@ -45,7 +45,7 @@ if ($mform->is_cancelled()) {
 
     } else {
         print_header($course->fullname.': '.$strresetcourse, $course->fullname.': '.$strresetcourse, $navigation);
-        print_heading($strresetcourse);
+        echo $OUTPUT->heading($strresetcourse);
 
         $data->reset_start_date_old = $course->startdate;
         $status = reset_course_userdata($data);
@@ -74,7 +74,7 @@ if ($mform->is_cancelled()) {
 }
 
 print_header($course->fullname.': '.$strresetcourse, $course->fullname.': '.$strresetcourse, $navigation);
-print_heading($strresetcourse);
+echo $OUTPUT->heading($strresetcourse);
 
 print_simple_box(get_string('resetinfo'), 'center', '60%');
 

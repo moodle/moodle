@@ -59,7 +59,7 @@
             $navlinks[] = array('name'=>$strcategories,'link'=>'','type'=>'misc');
             $navigation = build_navigation($navlinks);
             print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_category_button());
-            print_heading($strcategories);
+            echo $OUTPUT->heading($strcategories);
             echo skip_main_destination();
             print_box_start('categorybox');
             print_whole_category_list();
@@ -101,7 +101,7 @@
         require_capability('moodle/category:manage', $context);
         require_capability('moodle/category:manage', get_category_or_system_context($deletecat->parent));
 
-        $heading = get_string('deletecategory', '', format_string($deletecat->name));
+        $heading = get_string('deletecategory', format_string($deletecat->name));
         require_once('delete_category_form.php');
         $mform = new delete_category_form(null, $deletecat);
         $mform->set_data(array('delete'=>$delete));
@@ -112,14 +112,14 @@
         } else if (!$data= $mform->get_data()) {
             require_once($CFG->libdir . '/questionlib.php');
             admin_externalpage_print_header();
-            print_heading($heading);
+            echo $OUTPUT->heading($heading);
             $mform->display();
             admin_externalpage_print_footer();
             exit();
         }
 
         admin_externalpage_print_header();
-        print_heading($heading);
+        echo $OUTPUT->heading($heading);
 
         if ($data->fulldelete) {
             $deletedcourses = category_delete_full($deletecat, true);
@@ -214,7 +214,7 @@
 
 /// Print headings
     admin_externalpage_print_header();
-    print_heading($strcategories);
+    echo $OUTPUT->heading($strcategories);
 
 /// Print out the categories with all the knobs
     $strcategories = get_string('categories');

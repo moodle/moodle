@@ -809,7 +809,7 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 
 
 function print_overview($courses) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     $htmlarray = array();
     if ($modules = $DB->get_records('modules')) {
@@ -829,7 +829,7 @@ function print_overview($courses) {
         if (empty($course->visible)) {
             $linkcss = 'class="dimmed"';
         }
-        print_heading('<a title="'. format_string($course->fullname).'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>');
+        echo $OUTPUT->heading('<a title="'. format_string($course->fullname).'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>');
         if (array_key_exists($course->id,$htmlarray)) {
             foreach ($htmlarray[$course->id] as $modname => $html) {
                 echo $html;
@@ -2090,7 +2090,7 @@ function print_courses($category) {
         }
         echo "</ul>\n";
     } else {
-        print_heading(get_string("nocoursesyet"));
+        echo $OUTPUT->heading(get_string("nocoursesyet"));
         $context = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/course:create', $context)) {
             $options = array();

@@ -226,7 +226,7 @@
 
     if (!$courses) {
         if (empty($subcategorieswereshown)) {
-            print_heading(get_string("nocoursesyet"));
+            echo $OUTPUT->heading(get_string("nocoursesyet"));
         }
 
     } else if ($numcourses <= COURSE_MAX_SUMMARIES_PER_PAGE and !$page and !$editingon) {

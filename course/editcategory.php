@@ -108,7 +108,7 @@ if ($id) {
 
 $navigation = build_navigation($navlinks);
 print_header($title, $fullname, $navigation, $mform->focus());
-print_heading($strtitle);
+echo $OUTPUT->heading($strtitle);
 
 $mform->display();
 

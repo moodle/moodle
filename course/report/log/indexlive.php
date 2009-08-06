@@ -32,7 +32,7 @@
         print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation, '');
     }
 
-    print_heading(get_string('loglive', 'coursereport_log'));
+    echo $OUTPUT->heading(get_string('loglive', 'coursereport_log'));
 
     echo '<div class="info">';
     link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
