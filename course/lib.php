@@ -846,7 +846,7 @@ function print_overview($courses) {
  */
 function print_recent_activity($course) {
     // $course is an object
-    global $CFG, $USER, $SESSION, $DB;
+    global $CFG, $USER, $SESSION, $DB, $OUTPUT;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
@@ -880,7 +880,7 @@ function print_recent_activity($course) {
     //Accessibility: new users now appear in an <OL> list.
     if ($users) {
         echo '<div class="newusers">';
-        print_headline(get_string("newusers").':', 3);
+        echo $OUTPUT->heading(get_string("newusers").':', 3);
         $content = true;
         echo "<ol class=\"list\">\n";
         foreach ($users as $user) {
@@ -954,7 +954,7 @@ function print_recent_activity($course) {
     }
 
     if (!empty($changelist)) {
-        print_headline(get_string('courseupdates').':', 3);
+        echo $OUTPUT->heading(get_string("courseupdates").':', 3);
         $content = true;
         foreach ($changelist as $changeinfo => $change) {
             echo '<p class="activity">'.$change['text'].'</p>';
