@@ -49,7 +49,7 @@
         } else {
             print_continue($returnurl);
         }
-        print_footer('none');
+        echo $OUTPUT->footer();
     } else {
         print_header(fullname($user,true).': '.$assignment->name);
         echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
@@ -59,7 +59,7 @@
         } else {
             print_continue($returnurl);
         }
-        print_footer('none');
+        echo $OUTPUT->footer();
     }
 
 ?>

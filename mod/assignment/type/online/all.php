@@ -161,5 +161,5 @@
         print_container_end();
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

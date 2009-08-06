@@ -116,5 +116,5 @@
 
     print_table($table);
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

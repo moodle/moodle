@@ -522,7 +522,7 @@ class assignment_upload extends assignment_base {
     }
 
     function upload_responsefile() {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $userid = required_param('userid', PARAM_INT);
         $mode   = required_param('mode', PARAM_ALPHA);
@@ -545,7 +545,7 @@ class assignment_upload extends assignment_base {
         print_header(get_string('upload'));
         notify(get_string('uploaderror', 'assignment'));
         print_continue($returnurl);
-        print_footer('none');
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -770,7 +770,7 @@ class assignment_upload extends assignment_base {
             print_header(get_string('delete'));
             echo $OUTPUT->heading(get_string('delete'));
             notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
-            print_footer('none');
+            echo $OUTPUT->footer();
             die;
         }
 
@@ -785,7 +785,7 @@ class assignment_upload extends assignment_base {
         print_header(get_string('delete'));
         notify(get_string('deletefilefailed', 'assignment'));
         print_continue($returnurl);
-        print_footer('none');
+        echo $OUTPUT->footer();
         die;
 
     }
@@ -833,7 +833,7 @@ class assignment_upload extends assignment_base {
             if (empty($mode)) {
                 $this->view_footer();
             } else {
-                print_footer('none');
+                echo $OUTPUT->footer();
             }
             die;
         }
@@ -862,7 +862,7 @@ class assignment_upload extends assignment_base {
         if (empty($mode)) {
             $this->view_footer();
         } else {
-            print_footer('none');
+            echo $OUTPUT->footer();
         }
         die;
     }

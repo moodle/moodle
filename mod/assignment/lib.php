@@ -244,7 +244,8 @@ class assignment_base {
      * This will be suitable for most assignment types
      */
     function view_footer() {
-        print_footer($this->course);
+        global $OUTPUT;
+        echo $OUTPUT->footer();
     }
 
     /**
@@ -847,7 +848,7 @@ class assignment_base {
      * @param string $extra_javascript
      */
     function display_submission($extra_javascript = '') {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $OUTPUT;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
 
@@ -1039,7 +1040,7 @@ class assignment_base {
 
         echo '</table>';
 
-        print_footer('none');
+        echo $OUTPUT->footer();
     }
 
     /**
@@ -1422,7 +1423,7 @@ class assignment_base {
         echo '</td></tr></table>';
         echo '</div></form></div>';
         ///End of mini form
-        print_footer($this->course);
+        echo $OUTPUT->footer();
     }
 
     /**
