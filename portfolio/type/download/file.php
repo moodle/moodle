@@ -35,6 +35,6 @@ echo '<div id="redirect">
         f.submit();
     </script>';
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

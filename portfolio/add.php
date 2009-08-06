@@ -203,7 +203,7 @@ if (!$exporter->get('instance')) {
         print_simple_box_start();
         $mform->display();
         print_simple_box_end();
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 }

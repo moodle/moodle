@@ -75,6 +75,6 @@ if (count($table->data) > 0) {
     print_table($table);
 }
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>
