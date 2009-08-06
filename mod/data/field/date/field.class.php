@@ -35,7 +35,7 @@ class data_field_date extends data_field_base {
     var $year  = 0;
 
     function display_add_field($recordid=0) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         if ($recordid) {
             $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
@@ -44,8 +44,10 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $str .= print_date_selector('field_'.$this->field->id.'_day', 'field_'.$this->field->id.'_month',
-                                    'field_'.$this->field->id.'_year', $content, true);
+        $dayselector = moodle_select::make_time_selector('days', 'field_'.$this->field->id.'_day', $content);
+        $monthselector = moodle_select::make_time_selector('months', 'field_'.$this->field->id.'_month', $content);
+        $yearselector = moodle_select::make_time_selector('years', 'field_'.$this->field->id.'_year', $content);
+        $str .= $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
         $str .= '</div>';
 
         return $str;
