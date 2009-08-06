@@ -1097,7 +1097,7 @@ class question_bank_view {
      */
     public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         if ($this->process_actions_needing_ui()) {
             return;
@@ -1106,7 +1106,7 @@ class question_bank_view {
         $PAGE->requires->js('question/qbank.js');
 
         // Category selection form
-        print_heading(get_string('questionbank', 'question'), '', 2);
+        echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
 
         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat);
@@ -1837,10 +1837,10 @@ function require_login_in_context($contextorid = null){
  * the qtype radio buttons.
  */
 function print_choose_qtype_to_add_form($hiddenparams) {
-    global $CFG, $QTYPES, $PAGE;
+    global $CFG, $QTYPES, $PAGE, $OUTPUT;
     $PAGE->requires->js('question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
-    print_heading(get_string('chooseqtypetoadd', 'question'), '', 3);
+    echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
     echo "</div>\n";
     echo '<div id="chooseqtype">' . "\n";
     echo '<form action="' . $CFG->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";

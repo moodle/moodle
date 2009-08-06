@@ -255,12 +255,13 @@ class question_category_object {
      *
      */
     public function output_edit_lists() {
+        global $OUTPUT;
         print_heading_with_help(get_string('editcategories', 'quiz'), 'categories', 'question');
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
                 print_box_start('boxwidthwide boxaligncenter generalbox questioncategories contextlevel' . $list->context->contextlevel);
-                print_heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), '', 3);
+                echo $OUTPUT->heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), 3);
                 echo $listhtml;
                 print_box_end();
             }

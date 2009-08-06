@@ -225,6 +225,7 @@ class default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
+        global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
         print_heading_with_help($heading, $this->name(), $this->plugin_name());
         $permissionstrs = array();
@@ -240,7 +241,7 @@ class default_questiontype {
             }
         }
         if (!$question->formoptions->movecontext  && count($permissionstrs)){
-            print_heading(get_string('permissionto', 'question'), 'center', 3);
+            echo $OUTPUT->heading(get_string('permissionto', 'question'), 3, 'mdl-align');
             $html = '<ul>';
             foreach ($permissionstrs as $permissionstr){
                 $html .= '<li>'.$permissionstr.'</li>';

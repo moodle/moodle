@@ -202,7 +202,7 @@
     $questionlist = array($id);
     $headtags = get_html_head_contributions($questionlist, $questions, $states[$historylength]);
     print_header($strpreview, '', '', '', $headtags);
-    print_heading($strpreview);
+    echo $OUTPUT->heading($strpreview);
 
     if (!empty($quizid)) {
         echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
