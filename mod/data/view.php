@@ -297,7 +297,7 @@
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-    print_heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name));
 
     // Do we need to show a link to the RSS feed for the records?
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {

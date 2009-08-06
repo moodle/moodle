@@ -65,7 +65,7 @@
         }
 
         if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid AND timestamp >= :start AND timestamp <= :end $groupselect", $params, "timestamp ASC")) {
-            print_heading(get_string('nomessages', 'chat'));
+            echo $OUTPUT->heading(get_string('nomessages', 'chat'));
 
         } else {
             echo '<p class="boxaligncenter">'.userdate($start).' --> '. userdate($end).'</p>';
@@ -107,7 +107,7 @@
     print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                   '', '', true, '', navmenu($course, $cm));
 
-    print_heading(format_string($chat->name).': '.get_string('sessions', 'chat'));
+    echo $OUTPUT->heading(format_string($chat->name).': '.get_string('sessions', 'chat'));
 
 
 /// Check to see if groups are being used here
@@ -143,7 +143,7 @@
 
     if (empty($messages)) {   /// May have already got them above
         if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $params, "timestamp DESC")) {
-            print_heading(get_string('nomessages', 'chat'));
+            echo $OUTPUT->heading(get_string('nomessages', 'chat'));
             print_footer($course);
             exit;
         }

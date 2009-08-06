@@ -84,7 +84,7 @@
                         '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', $bodytag);
 
-    print_heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name));
 
 
 /// Groups needed for Add entry tab

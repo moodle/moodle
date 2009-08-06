@@ -67,7 +67,7 @@
     
     $navigation = build_navigation('', $cm);
     print_header_simple($data->name, "", $navigation, "", "", true, "", navmenu($course));
-    print_heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
     $currentgroup = groups_get_activity_group($cm);

@@ -255,7 +255,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @return void Output is echo'd
      */
     function display_edit_field() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         if (empty($this->field)) {   // No field has been defined yet, try and make one
             $this->define_default_field();
@@ -275,7 +275,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
 
-        print_heading($this->name());
+        echo $OUTPUT->heading($this->name());
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
@@ -2044,14 +2044,14 @@ function data_get_available_presets($context) {
  */
 function data_print_header($course, $cm, $data, $currenttab='') {
 
-    global $CFG, $displaynoticegood, $displaynoticebad;
+    global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT;
 
     $navigation = build_navigation('', $cm);
     print_header_simple($data->name, '', $navigation,
             '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
             navmenu($course, $cm));
 
-    print_heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name));
 
 // Groups needed for Add entry tab
     $currentgroup = groups_get_activity_group($cm);
