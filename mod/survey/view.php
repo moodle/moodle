@@ -80,7 +80,9 @@
         } else {
 
             print_box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
-            print_spacer(30);
+            $spacer = new html_image();
+            $spacer->height = 30;
+            echo $OUTPUT->spacer(clone($spacer)) . '<br />';
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
@@ -93,7 +95,7 @@
                         $table->align = array ("left");
                         $table->data[] = array(s($answer->answer1));//no html here, just plain text
                         print_table($table);
-                        print_spacer(30);
+                        echo $OUTPUT->spacer(clone($spacer)) . '<br />';
                     }
                 }
             }

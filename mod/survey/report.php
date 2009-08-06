@@ -116,7 +116,10 @@
     }
     print_simple_box_end();
 
-    print_spacer(30,30);
+    $spacer = new html_image();
+    $spacer->height = 30;
+    $spacer->width = 30;
+    echo $OUTPUT->spacer($spacer) . '<br />';
 
 
 /// Print the menu across the top
