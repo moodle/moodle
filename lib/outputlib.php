@@ -3363,7 +3363,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                     if (!($row instanceof html_table_row)) {
                         $newrow = new html_table_row();
 
-                        foreach ($row as $key => $item) {
+                        foreach ($row as $unused => $item) {
                             $cell = new html_table_cell();
                             $cell->text = $item;
                             $newrow->cells[] = $cell;
