@@ -103,13 +103,13 @@
 /// Check that the user is not blocking us!!
     if ($contact = $DB->get_record('message_contacts', array('userid'=>$user->id, 'contactid'=>$USER->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
-            print_heading(get_string('userisblockingyou', 'message'));
+            echo $OUTPUT->heading(get_string('userisblockingyou', 'message'));
             exit;
         }
     }
     if (get_user_preferences('message_blocknoncontacts', 0, $user->id)) {  // User is blocking non-contacts
         if (empty($contact)) {   // We are not a contact!
-            print_heading(get_string('userisblockingyounoncontact', 'message'));
+            echo $OUTPUT->heading(get_string('userisblockingyounoncontact', 'message'));
             exit;
         }
     }
