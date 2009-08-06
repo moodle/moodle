@@ -75,7 +75,7 @@
 
             echo "<hr>";
             print_continue("view.php?id=$cm->id");
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit;
         }
     }
@@ -110,6 +110,6 @@
     echo "</form>";
     print_simple_box_end();
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

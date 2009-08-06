@@ -58,6 +58,6 @@
             print_error('unknowaction');
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
  
 ?>

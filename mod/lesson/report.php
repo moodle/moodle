@@ -119,7 +119,7 @@
 
     if ($nothingtodisplay) {
         notify(get_string('nolessonattempts', 'lesson'));
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit();
     }
 
@@ -923,6 +923,6 @@
     }
 
 /// Finish the page
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

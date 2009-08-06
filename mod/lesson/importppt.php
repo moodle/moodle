@@ -76,7 +76,7 @@
 
             echo "<hr>";
             print_continue("$CFG->wwwroot/mod/$modname/view.php?id=$cm->id");
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit;
         }
     }
@@ -103,7 +103,7 @@
     echo "</form>";
     print_simple_box_end();
 
-    print_footer($course);
+    echo $OUTPUT->footer();
     
 // START OF FUNCTIONS
 
