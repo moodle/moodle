@@ -248,5 +248,5 @@ if($preview !== '') {
     echo $preview;
 }
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

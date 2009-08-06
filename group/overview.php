@@ -190,5 +190,5 @@ foreach ($members as $gpgid=>$groupdata) {
     $printed = true;
 }
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

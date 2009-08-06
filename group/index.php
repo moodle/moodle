@@ -258,7 +258,7 @@ if (ajaxenabled()) {
             array($CFG->httpswwwroot, $course->id));
 }
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 /**
  * Returns the first button action with the given prefix, taken from

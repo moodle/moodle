@@ -67,6 +67,6 @@ if ($confirm && data_submitted()) {
         $message.='</ul>';
     }
     notice_yesno($message, 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-    print_footer();
+    echo $OUTPUT->footer();
 }
 ?>

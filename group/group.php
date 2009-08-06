@@ -61,7 +61,7 @@ if ($id and $delete) {
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
         notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'group.php', 'index.php', $optionsyes, $optionsno, 'get', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
 
     } else if (confirm_sesskey()){
@@ -116,5 +116,5 @@ if ($id) {
 }
 echo '</div>';
 $editform->display();
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

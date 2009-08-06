@@ -124,5 +124,5 @@ check_theme_arrows();
 </div>
 
 <?php
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

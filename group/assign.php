@@ -151,7 +151,7 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
 </div>
 
 <?php
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 
 ?>

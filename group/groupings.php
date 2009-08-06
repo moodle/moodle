@@ -79,6 +79,6 @@ echo '<div class="buttons">';
 print_single_button('grouping.php', array('courseid'=>$courseid), $srtnewgrouping);
 echo '</div>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>
