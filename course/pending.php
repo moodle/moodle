@@ -147,7 +147,7 @@
     /// Display the form for giving a reason for rejecting the request.
         admin_externalpage_print_header($rejectform->focus());
         $rejectform->display();
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -209,5 +209,5 @@
 
 /// Finish off the page.
     print_single_button($CFG->wwwroot . '/course/index.php', array(), get_string('backtocourselisting'));
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 ?>

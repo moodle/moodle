@@ -85,7 +85,7 @@
         }
         print_course_request_buttons($systemcontext);
         echo '</div>';
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 /// Everything else is editing on mode.
@@ -114,7 +114,7 @@
             admin_externalpage_print_header();
             echo $OUTPUT->heading($heading);
             $mform->display();
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             exit();
         }
 
@@ -140,7 +140,7 @@
 
         print_continue('index.php');
 
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -256,7 +256,7 @@
     print_course_request_buttons($systemcontext);
     echo '</div>';
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
