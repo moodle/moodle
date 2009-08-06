@@ -106,7 +106,7 @@ $navigation = build_navigation($navlinks);
 print_header_simple($strgroupings, ': '.$strgroupings, $navigation, '', '', true, '', navmenu($course));
 
 
-print_heading($strheading);
+echo $OUTPUT->heading($strheading);
 $editform->display();
 print_footer($course);
 

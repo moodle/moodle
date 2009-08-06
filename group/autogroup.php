@@ -233,7 +233,7 @@ if ($editform->is_cancelled()) {
 
 /// Print header
 print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
-print_heading($strautocreategroups);
+echo $OUTPUT->heading($strautocreategroups);
 
 if ($error != '') {
     notify($error);
@@ -243,7 +243,7 @@ if ($error != '') {
 $editform->display();
 
 if($preview !== '') {
-	print_heading(get_string('groupspreview', 'group'));
+	echo $OUTPUT->heading(get_string('groupspreview', 'group'));
 
     echo $preview;
 }

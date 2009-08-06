@@ -119,7 +119,7 @@ $currenttab = 'overview';
 require('tabs.php');
 
 /// Print overview
-print_heading(format_string($course->shortname) .' '.$stroverview, 'center', 3);
+echo $OUTPUT->heading(format_string($course->shortname) .' '.$stroverview, 3, 'mdl-align');
 
 echo $strfiltergroups;
 
@@ -180,9 +180,9 @@ foreach ($members as $gpgid=>$groupdata) {
     }
     if (!empty($CFG->enablegroupings)) {
         if ($gpgid < 0) {
-            print_heading($strnotingrouping, '', 3);
+            echo $OUTPUT->heading($strnotingrouping, 3);
         } else {
-            print_heading(format_string($groupings[$gpgid]->name), '', 3);
+            echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
             print_box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }

@@ -37,7 +37,7 @@ print_header_simple($strgroupings, ': '.$strgroupings, $navigation, '', '', true
 $currenttab = 'groupings';
 require('tabs.php');
 
-print_heading($strgroupings);
+echo $OUTPUT->heading($strgroupings);
 
 $data = array();
 if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), 'name')) {
