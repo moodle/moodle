@@ -152,11 +152,4 @@ echo '<div class="buttons">';
 print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale);
 echo '</div>';
 
-if ($courseid) {
-    print_footer($course);
-} else {
-    admin_externalpage_print_footer();
-}
-
-
-?>
+echo $OUTPUT->footer(); 

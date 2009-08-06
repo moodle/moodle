@@ -253,10 +253,4 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
 // finish
 fclose($handle);
 
-if ($courseid) {
-    print_footer($course);
-} else {
-    admin_externalpage_print_footer();
-}
-
-?>
+echo $OUTPUT->footer();

@@ -104,7 +104,7 @@ switch ($action) {
                         'sesskey' =>  sesskey(),
                         'deleteconfirmed'=> 1)
                     );
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         }else{
             $outcome->delete();
@@ -254,10 +254,4 @@ echo '</div>';
 
 $upload_form->display();
 
-if ($courseid) {
-    print_footer($course);
-} else {
-    admin_externalpage_print_footer();
-}
-
-?>
+echo $OUTPUT->footer();

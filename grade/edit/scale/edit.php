@@ -124,10 +124,4 @@ if ($courseid) {
 
 $mform->display();
 
-if ($courseid) {
-    print_footer($course);
-} else {
-    admin_externalpage_print_footer();
-}
-
-?>
+echo $OUTPUT->footer();
