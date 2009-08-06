@@ -239,10 +239,5 @@
     }
     echo "</div>";
 
-    // Finish the page
-    if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-        print_footer('empty');
-    } else {
-        print_footer($attemptobj->get_course());
-    }
+    echo $OUTPUT->footer();
 ?>

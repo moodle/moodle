@@ -158,9 +158,5 @@
 
     // Finish the page
     $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
-    if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-        print_footer('empty');
-    } else {
-        print_footer($attemptobj->get_course());
-    }
+    echo $OUTPUT->footer();
 ?>

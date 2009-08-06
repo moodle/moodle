@@ -85,6 +85,6 @@
 
 /// Print footer
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 ?>

@@ -119,5 +119,5 @@
     $attemptobj->print_question($questionid, true, $baseurl);
 
 /// Finish the page
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

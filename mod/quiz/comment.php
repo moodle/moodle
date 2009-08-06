@@ -79,5 +79,5 @@
     echo '</form>';
 
 /// End of the page.
-    print_footer('empty');
+    echo $OUTPUT->footer();
 ?>

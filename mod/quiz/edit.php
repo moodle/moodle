@@ -592,5 +592,5 @@ $qcobject->display_randomquestion_user_interface();
 </div>
     <?php
 }
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

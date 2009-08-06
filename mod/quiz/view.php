@@ -117,7 +117,7 @@
     if (isguestuser()) {
         notice_yesno('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n<p>" .
                 get_string('liketologin') . "</p>\n", get_login_url(), get_referer(false));
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -126,7 +126,7 @@
         print_box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
                 print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
                 "</p>\n", 'generalbox', 'notice');
-        print_footer($course);
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -390,4 +390,4 @@
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);
 
-    print_footer($course);
+    echo $OUTPUT->footer();
