@@ -64,7 +64,7 @@ if ($action === 'delete'){
         blog_print_entry($existing);
         echo '<br />';
         notice_yesno(get_string('blogdeleteconfirm', 'blog'), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 }
@@ -136,7 +136,7 @@ $blogeditform->set_data($post);
 $blogeditform->display();
 
 
-print_footer();
+echo $OUTPUT->footer();
 
 
 die;
