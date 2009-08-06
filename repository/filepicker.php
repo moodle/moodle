@@ -195,7 +195,7 @@ case 'sign':
         $repo->print_login();
         echo '</form>';
     }
-    print_footer('empty');
+    echo $OUTPUT->footer();
     break;
 case 'download':
     $filepath = $repo->get_file($file, $title, $itemid);
@@ -226,7 +226,7 @@ case 'confirm':
     echo '<input type="submit" value="'.get_string('download', 'repository').'" />';
     echo '</div>';
     echo '</form>';
-    print_footer('empty');
+    echo $OUTPUT->footer();
     break;
 case 'plugins':
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -267,6 +267,6 @@ default:
     }
     $url->param('action', 'plugins');
     echo '<div><a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a></div>';
-    print_footer('empty');
+    echo $OUTPUT->footer();
     break;
 }
