@@ -63,6 +63,6 @@ if (data_submitted() && confirm_sesskey()) {
     notice_yesno(get_string('deleteconfirm', 'notes'), 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
     echo '<br />';
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);
-    print_footer();
+    echo $OUTPUT->footer();
 }
 ?>

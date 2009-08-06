@@ -41,7 +41,7 @@
         if ($user->deleted) {
             print_header();
             echo $OUTPUT->heading(get_string('userdeleted'));
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         }
 
@@ -120,5 +120,5 @@
 
     print_box_end();
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 ?>

@@ -86,5 +86,5 @@
     echo $OUTPUT->heading(fullname($user));
 
     $noteform->display();
-    print_footer();
+    echo $OUTPUT->footer();
 ?>
