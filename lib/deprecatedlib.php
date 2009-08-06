@@ -3528,7 +3528,7 @@ function update_module_button($cmid, $ignored, $string) {
  * @deprecated since Moodle 2.0
  */
 function update_categories_search_button($search,$page,$perpage) {
-    throw new coding_exception('update_tag_button() has been completely deprecated.');
+    throw new coding_exception('update_categories_search_button() has been completely deprecated.');
 }
 
 /**

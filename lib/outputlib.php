@@ -2892,6 +2892,9 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string|void if $return is true, void otherwise
      */
     public function close_window_button($text) {
+        if (empty($text)) {
+            $text = get_string('closewindow');
+        }
         $closeform = new html_form();
         $closeform->url = '#';
         $closeform->button->text = $text;
