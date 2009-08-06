@@ -96,7 +96,7 @@
     if ($choice->timeclose !=0) {
         if ($choice->timeopen > $timenow ) {
             print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
-            print_footer($course);
+            echo $OUTPUT->footer();
             exit;
         } else if ($timenow > $choice->timeclose) {
             print_simple_box(get_string("expired", "choice", userdate($choice->timeclose)), "center");
@@ -156,7 +156,7 @@
         print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
     }
 
-    print_footer($course);
+    echo $OUTPUT->footer();
 
 /// Mark as viewed
     $completion=new completion_info($course);
