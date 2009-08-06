@@ -63,11 +63,11 @@ if ($msgform->is_cancelled()) {
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     print_box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
     notice_yesno(get_string('confirmmessage', 'bulkusers', $usernames), 'user_bulk_message.php', 'user_bulk.php', $optionsyes, NULL, 'post', 'get');
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
 admin_externalpage_print_header();
 $msgform->display();
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 ?>

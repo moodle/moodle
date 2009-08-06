@@ -167,4 +167,4 @@ else if (!empty($move) && !empty($type)) {
 if (!empty($return)) {
     redirect($baseurl);
 }
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();

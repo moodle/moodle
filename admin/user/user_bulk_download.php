@@ -66,7 +66,7 @@ print_box_end();
 
 print_continue($return);
 
-print_footer();
+echo $OUTPUT->footer();
 
 function user_download_ods($fields) {
     global $CFG, $SESSION, $DB;

@@ -81,6 +81,6 @@ $ufiltering->display_active();
 $user_bulk_form->display();
 $action_form->display();
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 
 ?>

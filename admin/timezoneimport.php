@@ -32,7 +32,7 @@
 
         notice_yesno($message, 'timezoneimport.php?ok=1&amp;sesskey='.sesskey(), 'index.php');
 
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -121,6 +121,6 @@
         print_continue('index.php');
     }
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 ?>

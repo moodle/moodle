@@ -124,4 +124,4 @@ if ($issue and ($result = $issue(true))) {
     print_table($table);
 }
 
-print_footer();
+echo $OUTPUT->footer();

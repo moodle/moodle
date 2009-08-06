@@ -71,6 +71,6 @@
     print_box_end();
 
     echo '</form>';
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

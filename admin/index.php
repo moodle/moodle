@@ -129,7 +129,7 @@ if (!core_tables_exist()) {
         echo '<br />';
         notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                "http://docs.moodle.org/en/License");
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
     if (empty($confirmrelease)) {
@@ -149,7 +149,7 @@ if (!core_tables_exist()) {
             print_continue("index.php?agreelicense=1&amp;confirmrelease=1&amp;lang=$CFG->lang");
         }
 
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -193,7 +193,7 @@ if ($version > $CFG->version) {  // upgrade
         $continueform->method = 'get';
         $continueform->url = new moodle_url('index.php', array('confirmupgrade' => 1));
         echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueform, 'index.php');
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
 
     } else if (empty($confirmrelease)){
@@ -218,7 +218,7 @@ if ($version > $CFG->version) {  // upgrade
             print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
         }
 
-        print_footer();
+        echo $OUTPUT->footer();
         die;
 
     } elseif (empty($confirmplugins)) {
@@ -232,7 +232,7 @@ if ($version > $CFG->version) {  // upgrade
         print_plugin_tables();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
         print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
-        print_footer();
+        echo $OUTPUT->footer();
         die();
 
     } else {
@@ -381,5 +381,5 @@ $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
 print_box($copyrighttext, 'copyright');
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 

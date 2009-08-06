@@ -44,6 +44,6 @@
     echo '<input type="submit" value="'.s($strsavechanges).'" />';
     echo "</form></center>";
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

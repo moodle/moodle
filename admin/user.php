@@ -74,7 +74,7 @@
             echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
             notice_yesno(get_string('deletecheckfull', '', "'$fullname'"), 'user.php', 'user.php', $optionsyes, NULL, 'post', 'get');
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             die;
         } else if (data_submitted() and !$user->deleted) {
             if (delete_user($user)) {
@@ -304,7 +304,7 @@
         }
     }
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 
 ?>

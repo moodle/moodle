@@ -24,7 +24,7 @@
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey());
         notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?',
             'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -32,7 +32,7 @@
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey(), 'reallysure'=>'yes');
         notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?',
             'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -46,7 +46,7 @@
 
     echo '<h1 align="center">Done!</h1>';
     print_continue($CFG->wwwroot);
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     exit;
 
 

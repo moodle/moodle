@@ -107,7 +107,7 @@ if ($formdata = $mform->get_data()) {
     }
 }
 $mform->display();
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 exit;
 
 // ----------- Internal functions ----------------

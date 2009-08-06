@@ -128,6 +128,6 @@ if (empty($SITE->fullname)) {
     echo '</form>';
 }
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

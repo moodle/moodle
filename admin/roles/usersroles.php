@@ -156,7 +156,7 @@ if (!$roleassignments) {
 
 /// End of page.
 print_box_end();
-print_footer($course);
+echo $OUTPUT->footer();
 
 function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
     global $CFG, $OUTPUT;

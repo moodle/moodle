@@ -35,7 +35,7 @@ if ($data = $form->get_data()) {
     // Finish up.
     notify(get_string('success'), 'notifysuccess');
     print_continue("$CFG->wwwroot/$CFG->admin/");
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
@@ -44,4 +44,4 @@ admin_externalpage_print_header();
 echo $OUTPUT->heading(get_string('transferdbtoserver', 'dbtransfer'));
 echo '<p>', get_string('transferdbintro', 'dbtransfer'), "</p>\n\n";
 $form->display();
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();

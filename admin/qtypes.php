@@ -125,7 +125,7 @@
             notice_yesno(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
                     admin_url('qtypes.php?delete=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
                     admin_url('qtypes.php'), NULL, NULL, 'post', 'get');
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             exit;
         }
 
@@ -150,7 +150,7 @@
         $a->directory = $QTYPES[$delete]->plugin_dir();
         print_box(get_string('qtypedeletefiles', 'admin', $a), 'generalbox', 'notice');
         print_continue(admin_url('qtypes.php'));
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -259,7 +259,7 @@
 
     $table->finish_output();
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 function admin_url($endbit) {
     global $CFG;

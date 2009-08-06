@@ -50,5 +50,5 @@ if ($confirm and confirm_sesskey()) {
     notice_yesno(get_string('confirmcheckfull', '', $usernames), 'user_bulk_confirm.php', 'user_bulk.php', $optionsyes, NULL, 'post', 'get');
 }
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 ?>

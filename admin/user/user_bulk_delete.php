@@ -50,5 +50,5 @@ if ($confirm and confirm_sesskey()) {
     notice_yesno(get_string('deletecheckfull', '', $usernames), 'user_bulk_delete.php', 'user_bulk.php', $optionsyes, NULL, 'post', 'get');
 }
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 ?>

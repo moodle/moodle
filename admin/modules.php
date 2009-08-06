@@ -80,7 +80,7 @@
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename),
                          "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=".sesskey(),
                          "modules.php");
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             exit;
 
         } else {  // Delete everything!!
@@ -262,6 +262,6 @@
 
     $table->print_html();
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 ?>

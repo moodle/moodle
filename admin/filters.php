@@ -123,7 +123,7 @@
             notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $returnurl .
                     '?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
                     $returnurl, NULL, NULL, 'post', 'get');
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             exit;
         }
 
@@ -140,7 +140,7 @@
         $a->directory = $filterpath;
         print_box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
         print_continue($returnurl);
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -219,7 +219,7 @@
 
     print_table($table);
     echo '<p class="filtersettingnote">' . get_string('filterallwarning', 'filters') . '</p>';
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 /// Display helper functions ===================================================
 

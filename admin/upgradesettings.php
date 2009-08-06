@@ -65,6 +65,6 @@ echo '<div class="form-buttons"><input class="form-submit" type="submit" value="
 echo '</div>';
 echo '</form>';
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 
 ?>

@@ -1209,7 +1209,7 @@ class generator_web extends generator {
         if (!has_capability('moodle/site:doanything', $systemcontext)) {
             // If not logged in, give link to login page for current site
             notify("You must be logged in as administrator before using this script.");
-            print_footer();
+            echo $OUTPUT->footer();
             require_login();
         } else {
             $this->mform->display();
@@ -1218,7 +1218,8 @@ class generator_web extends generator {
     }
 
     public function __destroy() {
-        print_footer();
+        global $OUTPUT;
+        echo $OUTPUT->footer();
     }
 }
 

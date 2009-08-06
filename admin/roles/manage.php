@@ -90,7 +90,7 @@
                 $a->shortname = $roles[$roleid]->shortname;
                 $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
                 notice_yesno(get_string('deleterolesure', 'role', $a), $baseurl, $baseurl, $optionsyes, NULL, 'post', 'get');
-                admin_externalpage_print_footer();
+                echo $OUTPUT->footer();
                 die;
             }
             if (!delete_role($roleid)) {
@@ -170,7 +170,7 @@
                     $warning = get_string('resetrolesure', 'role', $a);
                 }
                 notice_yesno($warning, 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
-                admin_externalpage_print_footer();
+                echo $OUTPUT->footer();
                 die;
             }
 
@@ -262,7 +262,7 @@
     print_single_button($defineurl, array('action' => 'add'), get_string('addrole', 'role'), 'get');
     echo '</div>';
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     die;
 
 function get_action_icon($url, $icon, $alt, $tooltip) {

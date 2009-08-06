@@ -193,5 +193,5 @@
                 get_string('backtopageyouwereon') . '</a></div>';
     }
 
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

@@ -185,5 +185,5 @@
     echo '<p><a href="' . $manageurl . '">' . get_string('backtoallroles', 'role') . '</a></p>';
     echo '</div>';
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 ?>

@@ -32,13 +32,13 @@
         }
         notify('... done.', 'notifysuccess');
         print_continue('index.php');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
 
     } else {
         $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
         notice_yesno('Are you sure you want convert all your tables to the InnoDB format?',
                      'innodb.php', 'index.php', $optionsyes, NULL, 'post', 'get');
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
     }
 
 ?>

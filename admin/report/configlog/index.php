@@ -105,4 +105,4 @@ $rs->close();
 
 print_table($table);
 
-print_footer('none');
+echo $OUTPUT->footer();

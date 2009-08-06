@@ -14,7 +14,7 @@
     if (!empty($CFG->skiplangupgrade)) {
         admin_externalpage_print_header();
         print_box(get_string('langimportdisabled', 'admin'));
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -107,7 +107,7 @@
                 notice_yesno(get_string('uninstallconfirm', 'admin', $uninstalllang),
                              'langimport.php?mode='.DELETION_OF_SELECTED_LANG.'&amp;uninstalllang='.$uninstalllang.'&amp;confirm=1&amp;sesskey='.sesskey(),
                              'langimport.php');
-                print_footer();
+                echo $OUTPUT->footer();
                 die;
 
             } else if (confirm_sesskey()) {
@@ -391,7 +391,7 @@
     echo '</td></tr></table>';
     print_box_end();
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
     /**
      * Returns a list of available language packs from a

@@ -77,5 +77,5 @@ print_table($table);
 
 print_continue($return);
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 ?>

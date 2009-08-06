@@ -274,5 +274,5 @@ if ($userid && $capability != 'moodle/site:doanything' && !$userhascapability &&
     echo '<p>' . get_string('explainpermissionsdoanything', 'role', $capability) . '</p>';
 }
 echo $OUTPUT->close_window_button();
-print_footer('empty');
+echo $OUTPUT->footer();
 ?>

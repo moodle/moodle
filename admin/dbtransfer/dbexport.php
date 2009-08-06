@@ -18,4 +18,4 @@ if ($data = $form->get_data()) {
 admin_externalpage_print_header();
 // TODO: add some more info here
 $form->display();
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();

@@ -80,5 +80,5 @@
     echo '<div class="buttons"><input type="submit" name="submit" value="'.get_string('savechanges').'"/>';
     echo '</div></form>';
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 ?>

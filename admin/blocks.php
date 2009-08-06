@@ -60,7 +60,7 @@
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
                          'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.sesskey(),
                          'blocks.php');
-            admin_externalpage_print_footer();
+            echo $OUTPUT->footer();
             exit;
 
         } else {
@@ -212,6 +212,6 @@
         $table->print_html();
     }
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 ?>

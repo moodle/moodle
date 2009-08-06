@@ -142,7 +142,7 @@
         $langs = get_list_of_languages(false, true);
         popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", false, 'self', $strcurrentlanguage.':');
         print_box_end();
-        admin_externalpage_print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 
@@ -905,7 +905,7 @@
     } // fi $mode == 'helpfiles'
 
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 //////////////////////////////////////////////////////////////////////
 

@@ -157,7 +157,7 @@ if ($capability) {
 }
 
 // Footer.
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 
 function print_report_tree($contextid, $contexts, $allroles) {
     global $CFG;

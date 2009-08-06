@@ -102,7 +102,7 @@
                         admin_externalpage_print_header();
                         echo $OUTPUT->heading($xmldb_action->getTitle());
                         echo $xmldb_action->getOutput();
-                        admin_externalpage_print_footer();
+                        echo $OUTPUT->footer();
                         break;
                     case ACTION_GENERATE_XML:
                         header('Content-type: application/xhtml+xml');

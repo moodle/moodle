@@ -19,7 +19,7 @@ $strmultilangupgrade = get_String('multilangupgradeinfo', 'admin');
 if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
     $optionsyes = array('go'=>1, 'sesskey'=>sesskey());
     notice_yesno($strmultilangupgrade, 'multilangupgrade.php', 'index.php', $optionsyes, null, 'post', 'get');
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
@@ -102,7 +102,7 @@ notify('...finished', 'notifysuccess');
 
 print_continue('index.php');
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 die;
 
 

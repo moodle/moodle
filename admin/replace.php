@@ -28,7 +28,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
     echo '</form>';
     echo '</div>';
     print_simple_box_end();
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
@@ -57,6 +57,6 @@ notify('...finished', 'notifysuccess');
 
 print_continue('index.php');
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 
 ?>

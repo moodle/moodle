@@ -28,6 +28,6 @@
 
     echo '</div>';
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
 
 ?>
