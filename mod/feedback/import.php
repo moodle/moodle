@@ -120,8 +120,14 @@
 
                 <tr>
                      <td>&nbsp;</td>
-                     <td><?php  button_to_popup_window ("/files/index.php?id={$course->id}&amp;choose=form.choosefile", 
-                          "coursefiles", get_string('choosefile', 'feedback'), 500, 750, get_string('choosefile', 'feedback')); ?>
+                     <td><?php  
+                        $form = new html_form();
+                        $form->button->text = get_string('choosefile', 'feedback');
+                        $form->button->title = $form->button->text;
+                        $form->url = "/files/index.php?id={$course->id}&choose=form.choosefile";
+                        $form->button->add_action(new popup_action('click', $form->url, "coursefiles", array('width' => 750, 'height' => 500)));
+                        echo $OUTPUT->button($form);
+                        ?>
                           <input type="submit" name="save" value="<?php print_string('importfromthisfile', 'feedback'); ?>" />
                     </td>
                 </tr>
