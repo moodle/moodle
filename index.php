@@ -160,10 +160,10 @@
                         } else {
                             $subtext = get_string('subscribe', 'forum');
                         }
-                        print_heading_block($newsforum->name);
+                        echo $OUTPUT->heading($newsforum->name, 2, 'headingblock header');
                         echo '<div class="subscribelink"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div>';
                     } else {
-                        print_heading_block($newsforum->name);
+                        echo $OUTPUT->heading($newsforum->name, 2, 'headingblock header');
                     }
 
                     forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
@@ -173,18 +173,18 @@
             case FRONTPAGECOURSELIST:
 
                 if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest() and empty($CFG->disablemycourses)) {
-                    print_heading_block(get_string('mycourses'));
+                    echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     print_my_moodle();
                 } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
-                    print_heading_block(get_string('availablecourses'));
+                    echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
                     print_courses(0);
                 }
             break;
 
             case FRONTPAGECATEGORYNAMES:
 
-                print_heading_block(get_string('categories'));
+                echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
                 print_box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, false);
                 print_box_end();
@@ -193,7 +193,7 @@
 
             case FRONTPAGECATEGORYCOMBO:
 
-                print_heading_block(get_string('categories'));
+                echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
                 print_box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, true);
                 print_box_end();
