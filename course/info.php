@@ -85,7 +85,7 @@
 
     echo "<br />";
 
-    close_window_button();
+    echo $OUTPUT->close_window_button();
 
     print_footer();
 

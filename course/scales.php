@@ -41,7 +41,7 @@
                 echo "</center>";
                 echo text_to_html($scale->description);
                 print_simple_box_end();
-                close_window_button();
+                echo $OUTPUT->close_window_button();
                 print_footer('empty');
                 exit;
             }
@@ -94,7 +94,7 @@
         }
     }
 
-    close_window_button();
+    echo $OUTPUT->close_window_button();
     print_footer('empty');
 
 ?>
