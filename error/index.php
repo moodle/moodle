@@ -63,5 +63,5 @@
     } else {
         print_continue($CFG->wwwroot);
     }
-    print_footer();
+    echo $OUTPUT->footer();
 ?>

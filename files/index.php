@@ -118,7 +118,7 @@ if ($file_info and $delete) {
         $optionsyes['sesskey'] = sesskey();
 
         notice_yesno (get_string('deletecheckfiles'), 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -174,8 +174,9 @@ html_footer();
 /// UI functions /////////////////////////
 
 function html_footer() {
+    global $OUTPUT;
     echo '</td></tr></table>';
-    print_footer();
+    echo $OUTPUT->footer();
 }
 
 function html_header($context, $file_info){

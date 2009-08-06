@@ -13,7 +13,7 @@
         print_header($strmymoodle);
         notice_yesno(get_string('noguest', 'my') . '<br /><br />' .
                 get_string('liketologin'), get_login_url(), $CFG->wwwroot);
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 
@@ -91,6 +91,6 @@
         echo '<br />...';  
     }
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

@@ -756,7 +756,7 @@ function upgrade_finished_handler() {
  * @global object
  */
 function upgrade_finished($continueurl=null) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (!empty($CFG->upgraderunning)) {
         unset_config('upgraderunning');
@@ -764,7 +764,7 @@ function upgrade_finished($continueurl=null) {
         ignore_user_abort(false);
         if ($continueurl) {
             print_continue($continueurl);
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         }
     }

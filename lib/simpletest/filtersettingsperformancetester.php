@@ -116,7 +116,7 @@ print_single_button($baseurl, array('action' => 'teardown'), 'Drop test tables',
 print_single_button($baseurl, array('action' => 'test'), 'Run tests', 'get', '', false, '', $issetup != count($requiredtables));
 echo '</div>';
 
-print_footer();
+echo $OUTPUT->footer();
 
 function noop($context) {
 }

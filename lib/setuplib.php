@@ -785,7 +785,7 @@ function init_eaccelerator() {
  * <ol>
  * <li>We will initialise $OUTPUT the first time it is used.</li>
  * <li>If, after $OUTPUT has been initialised, the script tries to change something
- * that $OUPTUT depends on, we throw an exception making it clear that the script
+ * that $OUTPUT depends on, we throw an exception making it clear that the script
  * did something wrong.
  * </ol>
  *

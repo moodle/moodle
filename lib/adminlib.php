@@ -5096,9 +5096,9 @@ function admin_externalpage_print_header($focus='') {
  */
 function admin_externalpage_print_footer() {
 // TODO Still 103 referernces in core code. Don't do debugging output yet.
-//    debugging('admin_externalpage_print_footer is deprecated. Please  use print_footer ' .
-//            '(or even $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
-    print_footer();
+    debugging('admin_externalpage_print_footer is deprecated. Please $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
+    global $OUTPUT;
+    echo $OUTPUT->footer();
 }
 
 /**

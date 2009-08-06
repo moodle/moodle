@@ -49,7 +49,7 @@ array_pop($requiredlangs);
 foreach ($requiredlangs as $lang) {
     if (!isset($installedlangs[$lang])) {
         notify('You must install the following language packs to run these test: ' . implode(', ', $requiredlangs));
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 }
@@ -101,7 +101,7 @@ try {
     }
 }
 
-print_footer();
+echo $OUTPUT->footer();
 
 /**
  * plays back one of the files recored by turning on the logging option in string_manager.

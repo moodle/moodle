@@ -103,7 +103,7 @@ if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $fi
         $optionsno  = array('itemid'=>$itemid, 'filepath'=>$filepath, 'subdirs'=>$subdirs);
         $optionsyes = array('itemid'=>$itemid, 'filepath'=>$filepath, 'delete'=>$delete, 'sesskey'=>sesskey(), 'subdirs'=>$subdirs);
         notice_yesno (get_string('deletecheckfiles'), 'draftfiles.php', 'draftfiles.php', $optionsyes, $optionsno, 'post', 'get');
-        print_footer('empty');
+        echo $OUTPUT->footer();
         die;
 
     } else {
@@ -201,6 +201,6 @@ if ($subdirs) {
     echo '</div></form>';
 }
 
-print_footer('empty');
+echo $OUTPUT->footer();
 
 

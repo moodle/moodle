@@ -32,6 +32,6 @@
         echo "</a> \n";
     }
 
-    print_footer();
+    echo $OUTPUT->footer();
 
 ?>

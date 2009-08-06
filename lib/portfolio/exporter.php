@@ -276,7 +276,7 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_config() {
-
+        global $OUTPUT;
         $pluginobj = $callerobj = null;
         if ($this->instance->has_export_config()) {
             $pluginobj = $this->instance;
@@ -336,7 +336,7 @@ class portfolio_exporter {
                 print_simple_box_start();
                 $mform->display();
                 print_simple_box_end();
-                print_footer();
+                echo $OUTPUT->footer();
                 return false;;
             }
         } else {
@@ -418,7 +418,7 @@ class portfolio_exporter {
         print_table($table);
         notice_yesno($strconfirm, $yesurl, $nourl);
         print_simple_box_end();
-        print_footer();
+        echo $OUTPUT->footer();
         return false;
     }
 
@@ -536,6 +536,7 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_finished($queued=false) {
+        global $OUTPUT;
         $returnurl = $this->caller->get_return_url();
         $continueurl = $this->instance->get_continue_url();
         $extras = $this->instance->get_extra_finish_options();
@@ -559,7 +560,7 @@ class portfolio_exporter {
                 echo '<a href="' . $link . '">' . $string . '</a><br />';
             }
         }
-        print_footer();
+        echo $OUTPUT->footer();
         return false;
     }
 
@@ -787,12 +788,12 @@ class portfolio_exporter {
     * through the usage of the backbutton
     */
     public static function print_expired_export() {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $title = get_string('exportexpired', 'portfolio');
         print_header($title, $title, build_navigation(get_string('exportexpired', 'portfolio')));
         notify(get_string('exportexpireddesc', 'portfolio'));
         print_continue($CFG->wwwroot);
-        print_footer();
+        echo $OUTPUT->footer();
         exit;
     }
 

@@ -599,7 +599,7 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
  *      to reload the parent window before this one closes.
  */
 function close_window($delay = 0, $reloadopener = false) {
-    global $THEME, $PAGE;
+    global $THEME, $PAGE, $OUTPUT;
 
     if (!$PAGE->headerprinted) {
         print_header(get_string('closewindow'));
@@ -616,7 +616,7 @@ function close_window($delay = 0, $reloadopener = false) {
 
     $PAGE->requires->js_function_call($function)->after_delay($delay);
 
-    print_footer('empty');
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -3063,7 +3063,7 @@ function editorshortcutshelpbutton() {
  * @return void This function simply exits
  */
 function notice ($message, $link='', $course=NULL) {
-    global $CFG, $SITE, $THEME, $COURSE, $PAGE;
+    global $CFG, $SITE, $THEME, $COURSE, $PAGE, $OUTPUT;
 
     $message = clean_text($message);   // In case nasties are in here
 
@@ -3082,11 +3082,7 @@ function notice ($message, $link='', $course=NULL) {
     print_box($message, 'generalbox', 'notice');
     print_continue($link);
 
-    if (empty($course)) {
-        print_footer($COURSE);
-    } else {
-        print_footer($course);
-    }
+    echo $OUTPUT->footer();
     exit(1); // general error code
 }
 
@@ -3282,7 +3278,7 @@ function print_maintenance_message() {
         echo $CFG->maintenance_message;
         print_box_end();
     }
-    print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
