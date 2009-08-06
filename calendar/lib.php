@@ -521,7 +521,10 @@ function calendar_print_event($event) {
     if (!empty($event->icon)) {
         echo $event->icon;
     } else {
-        print_spacer(16,16);
+        $spacer = new html_image();
+        $spacer->height = 16;
+        $spacer->width = 16;
+        echo $OUTPUT->spacer($spacer) . '<br />';
     }
     echo '</td>';
     echo '<td class="topic">';
