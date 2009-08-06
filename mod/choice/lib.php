@@ -413,13 +413,13 @@ function choice_show_reportlink($user, $cm) {
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
     global $CFG, $CHOICE_COLUMN_HEIGHT, $FULLSCRIPT, $PAGE, $OUTPUT, $DB;
 
-    print_heading(get_string("responses", "choice"));
+    echo $OUTPUT->heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
         $forcepublish = $choice->publish;
     }
 
     if (empty($allresponses)) {
-        print_heading(get_string("nousersyet"));
+        echo $OUTPUT->heading(get_string("nousersyet"));
         return false;
     }
 
