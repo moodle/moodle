@@ -43,7 +43,7 @@ $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
 $currentgroup = groups_get_course_group($course, true);
 if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/site:accessallgroups', $context)) {
     echo $OUTPUT->heading(get_string("notingroup"));
-    print_footer($course);
+    echo $OUTPUT->footer();
     die;    
 }
 
@@ -55,7 +55,7 @@ if ($data = $mform->get_data()) {
     $export->process_form($data);
     $export->print_continue();
     $export->display_preview(true);
-    print_footer($course);
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -64,5 +64,5 @@ echo '<div class="clearer"></div>';
 
 $mform->display();
 
-print_footer();
+echo $OUTPUT->footer();
 ?>

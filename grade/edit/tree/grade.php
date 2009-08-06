@@ -264,5 +264,5 @@ $mform->display();
 
 print_simple_box_end();
 
-print_footer($course);
+echo $OUTPUT->footer();
 die;

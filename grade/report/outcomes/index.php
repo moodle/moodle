@@ -152,6 +152,6 @@ print_grade_page_head($courseid, 'report', 'outcomes');
 
 
 echo $html;
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

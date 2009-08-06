@@ -130,5 +130,5 @@ if ($admin) {
 
 $mform->display();
 
-print_footer($COURSE);
+echo $OUTPUT->footer();
 ?>

@@ -103,5 +103,5 @@ if (!empty($studentsperpage) && $studentsperpage >= 20) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

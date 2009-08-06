@@ -57,12 +57,12 @@ if ($data = $mform->get_data()) {
         $importcode = import_xml_grades($text, $course, $error);
         if ($importcode) {
             grade_import_commit($id, $importcode, $data->feedback, true);
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         } else {
             notify($error);
             print_continue($CFG->wwwroot.'/grade/index.php?id='.$course->id);
-            print_footer();
+            echo $OUTPUT->footer();
             die;
         }
 
@@ -80,7 +80,7 @@ if ($data = $mform->get_data()) {
         $link = $CFG->wwwroot.'/grade/import/xml/fetch.php?id='.$id.'&amp;feedback='.(int)($data->feedback).'&amp;url='.urlencode($data->url).'&amp;key='.$data->key;
         echo get_string('import', 'grades').': <a href="'.$link.'">'.$link.'</a>';
         echo '</div>';
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 }
@@ -89,6 +89,6 @@ print_grade_page_head($COURSE->id, 'import', 'xml', get_string('importxml', 'gra
 
 $mform->display();
 
-print_footer();
+echo $OUTPUT->footer();
 
 ?>

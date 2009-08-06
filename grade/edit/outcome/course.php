@@ -130,5 +130,5 @@ print_grade_page_head($COURSE->id, 'outcome', 'course');
 check_theme_arrows();
 require('course_form.html');
 
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

@@ -145,7 +145,7 @@ switch ($action) {
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);
                 notice_yesno($strdeletecheckfull, 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
-                print_footer($course);
+                echo $OUTPUT->footer();
                 die;
             }
         }
@@ -346,7 +346,7 @@ if ($moving) {
 
 echo '</div>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 // Restore original show/hide preference if moving
 if ($moving) {

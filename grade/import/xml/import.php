@@ -67,7 +67,7 @@ if ($importcode !== false) {
 
         grade_import_commit($id, $importcode, $feedback, true);
 
-        print_footer();
+        echo $OUTPUT->footer();
         die;
     }
 

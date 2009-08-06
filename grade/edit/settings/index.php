@@ -74,6 +74,6 @@ print_box_end();
 
 $mform->display();
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

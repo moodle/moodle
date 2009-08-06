@@ -126,7 +126,7 @@ if ($report->get_pref('enableajax')) {
 if ($report->currentgroup == -2) {
     print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
     echo $OUTPUT->heading(get_string("notingroup"));
-    print_footer($course);
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -361,6 +361,6 @@ YAHOO.util.Event.onDOMReady(init);
 </script>
 <?php
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

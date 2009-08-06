@@ -65,7 +65,7 @@ if ($id and $delete) {
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
         notice_yesno(get_string('deletekeyconfirm', 'userkey', $key->value), 'key.php', 'keymanager.php', $optionsyes, $optionsno, 'get', 'get');
-        print_footer();
+        echo $OUTPUT->footer();
         die;
 
     } else if (confirm_sesskey()){
@@ -115,5 +115,5 @@ $navigation = build_navigation($navlinks);
 print_header_simple($strkeys, ': '.$strkeys, $navigation, '', '', true, '', navmenu($course));
 
 $editform->display();
-print_footer($course);
+echo $OUTPUT->footer();
 ?>

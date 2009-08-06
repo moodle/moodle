@@ -205,10 +205,10 @@ print_grade_page_head($courseid, 'edittree', null, $heading);
 
 if (!grade_outcome::fetch_all_available($COURSE->id)) {
     notice_yesno(get_string('nooutcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$courseid, $returnurl);
-    print_footer($course);
+    echo $OUTPUT->footer();
     die();
 }
 
 $mform->display();
 
-print_footer($course);
+echo $OUTPUT->footer();

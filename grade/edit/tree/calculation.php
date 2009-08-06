@@ -127,7 +127,7 @@ echo '
     </div>
 </form>';
 
-print_footer($course);
+echo $OUTPUT->footer();
 die();
 
 

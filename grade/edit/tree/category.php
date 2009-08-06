@@ -208,5 +208,5 @@ print_grade_page_head($courseid, 'edittree', null, $heading);
 
 $mform->display();
 
-print_footer($course);
+echo $OUTPUT->footer();
 die;

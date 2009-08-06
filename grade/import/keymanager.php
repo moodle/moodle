@@ -63,5 +63,5 @@ echo '<div class="buttons">';
 print_single_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey'));
 echo '</div>';
 
-print_footer();
+echo $OUTPUT->footer();
 ?>

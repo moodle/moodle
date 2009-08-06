@@ -61,6 +61,6 @@ $table->width = '30%';
 $table->data  = $data;
 print_table($table);
 
-print_footer($course);
+echo $OUTPUT->footer();
 
 ?>

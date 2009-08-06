@@ -484,5 +484,5 @@ if ($formdata = $mform->get_data()) {
     $mform->display();
 }
 
-print_footer();
+echo $OUTPUT->footer();
 ?>
