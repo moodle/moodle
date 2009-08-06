@@ -46,4 +46,4 @@ print_box_start();
 echo $OUTPUT->heading($preview);
 print_box_end();
 
-print_footer();
+echo $OUTPUT->footer();

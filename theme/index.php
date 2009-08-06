@@ -57,7 +57,7 @@ if ($choose and confirm_sesskey()) {
 
     print_continue($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
 
-    admin_externalpage_print_footer();
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -140,5 +140,5 @@ foreach ($themes as $themename => $themedir) {
 
 print_table($table);
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 ?>
