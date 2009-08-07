@@ -22,7 +22,7 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
-if (!defined('MAX_MODINFO_CACHE_SIZE')) { 
+if (!defined('MAX_MODINFO_CACHE_SIZE')) {
     define('MAX_MODINFO_CACHE_SIZE', 10);
 }
 
@@ -1249,11 +1249,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 // 1) The activity is not visible to users
                 // and
                 // 2a) The 'showavailability' option is not set (if that is set,
-                //     we need to display the activity so we can show 
+                //     we need to display the activity so we can show
                 //     availability info)
                 // or
-                // 2b) The 'availableinfo' is empty, i.e. the activity was 
-                //     hidden in a way that leaves no info, such as using the 
+                // 2b) The 'availableinfo' is empty, i.e. the activity was
+                //     hidden in a way that leaves no info, such as using the
                 //     eye icon.
                 if (!$modinfo->cms[$modnumber]->uservisible &&
                     (empty($modinfo->cms[$modnumber]->showavailability) ||
@@ -1273,7 +1273,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            // In some cases the activity is visible to user, but it is 
+            // In some cases the activity is visible to user, but it is
             // dimmed. This is done if viewhiddenactivities is true and if:
             // 1. the activity is not visible, or
             // 2. the activity has dates set which do not include current, or
@@ -1289,7 +1289,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $accessiblebutdim = $accessiblebutdim ||
                         $mod->availablefrom > time() ||
                         ($mod->availableuntil && $mod->availableuntil < time()) ||
-                        count($mod->conditionsgrade) > 0 || 
+                        count($mod->conditionsgrade) > 0 ||
                         count($mod->conditionscompletion) > 0;
                 }
             }
@@ -1383,7 +1383,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
 
                     echo '<a '.$linkcss.' '.$extra.
-                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.                         
+                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
                          '<img src="'.$icon.'" class="activityicon" alt="" /> '.
                          $accesstext.'<span>'.$instancename.$altname.'</span></a>';
 
@@ -1431,7 +1431,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $completion = $hidecompletion
                 ? COMPLETION_TRACKING_NONE
                 : $completioninfo->is_enabled($mod);
-            if ($completion!=COMPLETION_TRACKING_NONE && isloggedin() && 
+            if ($completion!=COMPLETION_TRACKING_NONE && isloggedin() &&
                 !isguestuser() && $mod->uservisible) {
                 $completiondata = $completioninfo->get_data($mod,true);
                 $completionicon = '';
@@ -1476,7 +1476,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         // If this completion state is used by the
                         // conditional activities system, we need to turn
                         // off the JS.
-                        if (!empty($CFG->enableavailability) && 
+                        if (!empty($CFG->enableavailability) &&
                             condition_info::completion_value_used_as_condition(
                             $course, $mod)) {
                             $extraclass = ' preventjs';
@@ -1502,7 +1502,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            // Show availability information (for someone who isn't allowed to 
+            // Show availability information (for someone who isn't allowed to
             // see the activity itself, or for staff)
             if (!$mod->uservisible) {
                 echo '<div class="availabilityinfo">'.$mod->availableinfo.'</div>';
@@ -1510,7 +1510,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 $ci = new condition_info($mod);
                 $fullinfo = $ci->get_full_information();
                 if($fullinfo) {
-                    echo '<div class="availabilityinfo">'.get_string($mod->showavailability 
+                    echo '<div class="availabilityinfo">'.get_string($mod->showavailability
                         ? 'userrestriction_visible'
                         : 'userrestriction_hidden','condition',
                         $fullinfo).'</div>';
@@ -2057,7 +2057,7 @@ function update_category_button($categoryid = 0) {
  * Category is 0 (for all courses) or an object
  */
 function print_courses($category) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (!is_object($category) && $category==0) {
         $categories = get_child_categories(0);  // Parent = 0   ie top-level categories only
@@ -3138,7 +3138,7 @@ function category_delete_full($category, $showfeedback=true) {
 
     events_trigger('course_category_deleted', $category);
 
-    return $deletedcourses; 
+    return $deletedcourses;
 }
 
 /**
@@ -3354,7 +3354,7 @@ function create_course($data) {
             throw new moodle_exception('idnumbertaken');
         }
     }
-    
+
 
     // preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
@@ -3504,13 +3504,13 @@ function is_course_participant ($userid, $courseid) {
     $users = get_users_by_capability(
                         get_context_instance(CONTEXT_COURSE, $courseid),
                         'moodle/course:view','u.id');
-    
+
     foreach($users as $user) {
         if ($user->id == $userid) {
             return true;
         }
     }
-   
+
     return false;
 }
 
