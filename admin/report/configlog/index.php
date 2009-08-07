@@ -52,7 +52,8 @@ foreach ($columns as $column=>$strcolumn) {
     $hcolumns[$column] = "<a href=\"index.php?sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
 }
 
-print_paging_bar($changescount, $page, $perpage, "index.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;");
+$baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+echo $OUTPUT->paging_bar(moodle_paging_bar::make($changescount, $page, $perpage, $baseurl));
 
 $override = new object();
 $override->firstname = 'firstname';

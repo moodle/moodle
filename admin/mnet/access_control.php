@@ -185,7 +185,9 @@ if (!$acl) {
 if (!empty($table)) {
     print_table($table);
     echo '<p>&nbsp;</p>';
-    print_paging_bar($aclcount, $page, $perpage, "?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;");
+    $baseurl = new moodle_url(null, array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+    $pagingbar = moodle_paging_bar::make($aclcount, $page, $perpage, $baseurl);
+    echo $OUTPUT->paging_bar($pagingbar);
 }
 
 
