@@ -693,7 +693,9 @@
                 }
                 echo '</div>';
 
-                print_paging_bar($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl.'&amp;', 'spage');
+                $pagingbar = moodle_paging_bar::make($matchcount, intval($table->get_page_start() / $perpage), $perpage, $baseurl);
+                $pagingbar->pagevar = 'spage';
+                echo $OUTPUT->paging_bar($pagingbar);
             }
 
             if ($matchcount > 0) {
