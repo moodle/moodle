@@ -86,9 +86,9 @@ if ($logcount > 0) {
     }
     echo $OUTPUT->heading(get_string('logsummary', 'portfolio'));
     $pagingbar = moodle_paging_bar::make($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
-    echo $OUTPUT->paging_bar(clone($pagingbar));
+    echo $OUTPUT->paging_bar($pagingbar);
     print_table($table);
-    echo $OUTPUT->paging_bar(clone($pagingbar));
+    echo $OUTPUT->paging_bar($pagingbar);
 
 }
 
