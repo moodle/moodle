@@ -2408,17 +2408,6 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Given a html_textarea object, outputs an <a> tag that uses the object's attributes.
-     *
-     * @param mixed $link A html_link object or a string URL (text param required in second case)
-     * @param string $text A descriptive text for the link. If $link is a html_link, this is not required.
-     * @return string HTML fragment
-     */
-    public function textarea($textarea) {
-
-    }
-
-    /**
      * Given a html_link object, outputs an <a> tag that uses the object's attributes.
      *
      * @param mixed $link A html_link object or a string URL (text param required in second case)
@@ -2429,6 +2418,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $attributes = array();
 
         if (is_a($link, 'html_link')) {
+            $link = clone($link);
             $link->prepare();
             $this->prepare_event_handlers($link);
             $attributes['href'] = prepare_url($link->url);
@@ -2458,7 +2448,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     */
     public function confirm($message, $continue, $cancel) {
         if ($continue instanceof html_form) {
-            // ok
+            $continue = clone($continue);
         } else if (is_string($continue)) {
             $continueform = new html_form();
             $continueform->url = new moodle_url($continue);
@@ -2468,13 +2458,11 @@ class moodle_core_renderer extends moodle_renderer_base {
             $continueform->url = $continue;
             $continue = $continueform;
         } else {
-            var_dump($continue);
             throw new coding_exception('The continue param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
-
         }
 
         if ($cancel instanceof html_form) {
-            //ok
+            $cancel = clone($cancel);
         } else if (is_string($cancel)) {
             $cancelform = new html_form();
             $cancelform->url = new moodle_url($cancel);
@@ -2511,7 +2499,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         if (empty($form->button) or !($form->button instanceof html_button)) {
             throw new coding_exception('$OUTPUT->button($form) requires $form to have a button (html_button) value');
         }
-
+        $form = clone($form);
         $form->button->prepare();
 
         $this->prepare_event_handlers($form->button);
@@ -2536,8 +2524,8 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function form($form, $contents=null) {
+        $form = clone($form);
         $form->prepare();
-
         $this->prepare_event_handlers($form);
 
         if (empty($contents) && !empty($form->button)) {
@@ -2601,6 +2589,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function action_icon($icon) {
+        $icon = clone($icon);
         $icon->prepare();
         $imageoutput = $this->image($icon->image);
 
@@ -2637,7 +2626,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function help_icon($icon) {
         global $COURSE;
-
+        $icon = clone($icon);
         $icon->prepare();
 
         $popup = new popup_action('click', $icon->link->url);
@@ -2663,6 +2652,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function link_to_popup($link, $image=null) {
+        $link = clone($link);
         $link->prepare();
 
         $this->prepare_event_handlers($link);
@@ -2704,6 +2694,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function spacer($image) {
+        $image = clone($image);
         $image->prepare();
         $image->add_class('spacer');
 
@@ -2728,6 +2719,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             return false;
         }
 
+        $image = clone($image);
         $image->prepare();
 
         $this->prepare_event_handlers($image);
@@ -2779,6 +2771,8 @@ class moodle_core_renderer extends moodle_renderer_base {
             $userpic = new user_picture();
             $userpic->user = $user;
             $userpic->courseid = $courseid;
+        } else {
+            $userpic = clone($userpic);
         }
 
         $userpic->prepare();
@@ -2857,6 +2851,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML structure
      */
     public function htmllist($list) {
+        $list = clone($list);
         $list->prepare();
 
         $this->prepare_event_handlers($list);
@@ -3022,7 +3017,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         } else if (!($option instanceof html_select_option)) {
             throw new coding_exception('$OUTPUT->radio($option) only accepts a html_select_option object as param.');
         }
-
+        $option = clone($option);
         $option->prepare();
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
@@ -3061,7 +3056,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         } else if (!($option instanceof html_select_option)) {
             throw new coding_exception('$OUTPUT->checkbox($option) only accepts a html_select_option object as param.');
         }
-
+        $option = clone($option);
         $option->prepare();
 
         $option->label->for = $option->id;
@@ -3096,6 +3091,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string the HTML for the <option> or <optgroup>
      */
     public function select_option($option) {
+        $option = clone($option);
         $option->prepare();
         $this->prepare_event_handlers($option);
 
@@ -3121,6 +3117,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string the HTML for the <input>
      */
     public function textfield($field) {
+        $field = clone($field);
         $field->prepare();
         $this->prepare_event_handlers($field);
         $output = $this->output_start_tag('span', array('class' => "textfield $field->name"));
@@ -3142,6 +3139,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return HTML fragment
      */
     public function label($label) {
+        $label = clone($label);
         $label->prepare();
         $this->prepare_event_handlers($label);
         return $this->output_tag('label', array('for' => $label->for, 'class' => $label->get_classes_string()), $label->text);
@@ -3260,7 +3258,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function paging_bar($pagingbar) {
         $output = '';
-
+        $pagingbar = clone($pagingbar);
         $pagingbar->prepare();
 
         if ($pagingbar->totalcount > $pagingbar->perpage) {
@@ -3301,6 +3299,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string the HTML to output.
      */
     public function table(html_table $table) {
+        $table = clone($table);
         $table->prepare();
         $attributes = array(
                 'id'            => $table->id,
