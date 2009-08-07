@@ -5355,7 +5355,8 @@ class moodle_paging_bar extends moodle_html_component {
             if ($this->page > 0) {
                 $this->previouslink = new html_link();
                 $this->previouslink->add_class('previous');
-                $this->previouslink->url = $this->baseurl->out(false, array($this->pagevar => $pagenum));
+                $this->previouslink->url = clone($this->baseurl);
+                $this->previouslink->url->param($this->pagevar, $pagenum);
                 $this->previouslink->text = get_string('previous');
             }
 
@@ -5369,7 +5370,8 @@ class moodle_paging_bar extends moodle_html_component {
                 $startpage = $this->page - 10;
 
                 $this->firstlink = new html_link();
-                $this->firstlink->url = $this->baseurl->out(false, array($this->pagevar => 0));
+                $this->firstlink->url = clone($this->baseurl);
+                $this->firstlink->url->param($this->pagevar, 0);
                 $this->firstlink->text = 1;
                 $this->firstlink->add_class('first');
             } else {
@@ -5386,7 +5388,8 @@ class moodle_paging_bar extends moodle_html_component {
                     $this->pagelinks[] = $displaypage;
                 } else {
                     $pagelink = new html_link();
-                    $pagelink->url = $this->baseurl->out(false, array($this->pagevar => $currpage));
+                    $pagelink->url = clone($this->baseurl);
+                    $pagelink->url->param($this->pagevar, $currpage);
                     $pagelink->text = $displaypage;
                     $this->pagelinks[] = $pagelink;
                 }
@@ -5398,7 +5401,8 @@ class moodle_paging_bar extends moodle_html_component {
             if ($currpage < $lastpage) {
                 $lastpageactual = $lastpage - 1;
                 $this->lastlink = new html_link();
-                $this->lastlink->url = $this->baseurl->out(false, array($this->pagevar => $lastpageactual));
+                $this->lastlink->url = clone($this->baseurl);
+                $this->lastlink->url->param($this->pagevar, $lastpageactual);
                 $this->lastlink->text = $lastpage;
                 $this->lastlink->add_class('last');
             }
@@ -5407,13 +5411,31 @@ class moodle_paging_bar extends moodle_html_component {
 
             if ($pagenum != $displaypage) {
                 $this->nextlink = new html_link();
-                $this->nextlink->url = $this->baseurl->out(false, array($this->pagevar => $pagenum));
+                $this->nextlink->url = clone($this->baseurl);
+                $this->nextlink->url->param($this->pagevar, $pagenum);
                 $this->nextlink->text = get_string('next');
                 $this->nextlink->add_class('next');
             }
         }
     }
 
+    /**
+     * Shortcut for initialising a moodle_paging_bar with only the required params.
+     *
+     * @param int $totalcount Thetotal number of entries available to be paged through
+     * @param int $page The page you are currently viewing
+     * @param int $perpage The number of entries that should be shown per page
+     * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
+     *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
+     */
+    public function make($totalcount, $page, $perpage, $baseurl) {
+        $pagingbar = new moodle_paging_bar();
+        $pagingbar->totalcount = $totalcount;
+        $pagingbar->page = $page;
+        $pagingbar->perpage = $perpage;
+        $pagingbar->baseurl = $baseurl;
+        return $pagingbar;
+    }
 }
 
 /**

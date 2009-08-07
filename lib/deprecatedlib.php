@@ -2931,11 +2931,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
 
     // debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
 
-    $pagingbar = new moodle_paging_bar();
-    $pagingbar->totalcount = $totalcount;
-    $pagingbar->page = $page;
-    $pagingbar->perpage = $perpage;
-    $pagingbar->baseurl = $baseurl;
+    $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl);
     $pagingbar->pagevar = $pagevar;
     $pagingbar->nocurr = $nocurr;
     $output = $OUTPUT->paging_bar($pagingbar);
