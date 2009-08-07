@@ -159,8 +159,9 @@
     echo '</div>';
 
     echo $OUTPUT->heading("$strsearchresults: $totalcount");
-
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    
+    $url = new moodle_url('search.php', array('search' => urlencode($search), 'id' => $course->id, 'perpage' => $perpage));
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, $url));
 
     //added to implement highlighting of search terms found only in HTML markup
     //fiedorow - 9/2/2005
@@ -236,7 +237,7 @@
                 $fulllink, $strippedsearch, -99, false);
     }
 
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, $url));
 
     echo $OUTPUT->footer();
 

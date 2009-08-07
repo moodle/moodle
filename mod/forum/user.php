@@ -96,9 +96,9 @@ if ($course->id == SITEID) {
 // Get the posts.
 if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage,
             $totalcount, $extrasql)) {
-
-    print_paging_bar($totalcount, $page, $perpage,
-            "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
+    
+    $baseurl = new moodle_url('user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode, 'perpage' => $perpage));
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl));
 
     $discussions = array();
     $forums      = array();
@@ -165,8 +165,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         echo "<br />";
     }
 
-    print_paging_bar($totalcount, $page, $perpage,
-            "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl));
 } else {
     if ($mode == 'posts') {
         echo $OUTPUT->heading(get_string('noposts', 'forum'));
