@@ -4051,6 +4051,10 @@ function get_capability_string($capabilityname) {
             $string = get_string($stringname, 'quiz_'.$componentname);
         break;
 
+        case 'repository':
+            $string = get_string($stringname, 'repository_'.$componentname);
+        break;
+
         default:
             $string = get_string($stringname);
         break;
@@ -4109,11 +4113,11 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_MODULE:
-            if (preg_match('|^quizreport/([a-z_]*)|', $component, $matches)){
+            if (preg_match('|^quiz_([a-z_]*)|', $component, $matches)){
                 $langname = 'quiz_'.$matches[1];
                 $string = get_string($matches[1].':componentname', $langname);
             } else {
-                $string = get_string('modulename', basename($component));
+                $string = get_string('modulename', preg_replace('#(\w+_)#', '', basename($component)));
             }
         break;
 
@@ -4121,7 +4125,7 @@ function get_component_string($component, $contextlevel) {
             if( $component == 'moodle' ){
                 $string = get_string('block');
             }else{
-                $string = get_string('blockname', 'block_'.basename($component));
+                $string = get_string('blockname', basename($component));
             }
         break;
 
