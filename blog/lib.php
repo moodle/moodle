@@ -60,7 +60,7 @@
      */
     function blog_print_html_formatted_entries($postid, $filtertype, $filterselect, $tagid, $tag) {
 
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
         $blogpage  = optional_param('blogpage', 0, PARAM_INT);
         $bloglimit = optional_param('limit', get_user_preferences('blogpagesize', 10), PARAM_INT);
@@ -72,8 +72,10 @@
 
         $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='created DESC');
         $blogEntries = blog_fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='created DESC', true);
-
-        print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
+        
+        $pagingbar = moodle_paging_bar::make($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect));
+        $pagingbar->pagevar = 'blogpage';
+        echo $OUTPUT->paging_bar($pagingbar);
 
         if ($CFG->enablerssfeeds) {
             blog_rss_print_link($filtertype, $filterselect, $tag);
