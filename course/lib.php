@@ -304,7 +304,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     print_string("displayingrecords", "", $totalcount);
     echo "</div>\n";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 
     echo '<table class="logtable generalbox boxaligncenter" summary="">'."\n";
     // echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\" summary=\"\">\n";
@@ -384,7 +384,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
     echo "</table>\n";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 }
 
 
@@ -421,7 +421,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
     print_string("displayingrecords", "", $totalcount);
     echo "</div>\n";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 
     echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\">\n";
     echo "<tr>";
@@ -487,7 +487,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
     }
     echo "</table>\n";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "$url&perpage=$perpage"));
 }
 
 

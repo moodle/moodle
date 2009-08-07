@@ -235,7 +235,7 @@
         print_box_end();
 
     } else {
-        print_paging_bar($totalcount, $page, $perpage, "category.php?id=$category->id&amp;perpage=$perpage&amp;");
+        echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, "category.php?id=$category->id&perpage=$perpage"));
 
         $strcourses = get_string('courses');
         $strselect = get_string('select');
