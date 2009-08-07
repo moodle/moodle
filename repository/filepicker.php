@@ -152,10 +152,8 @@ case 'sign':
             }
             if (!empty($list['page'])) {
                 // TODO: need a better solution
-                print_paging_bar($list['total'], $list['page']-1,
-                    $list['perpage'], $CFG->httpswwwroot
-                    .'/repository/filepicker.php?action=list&amp;itemid='
-                    .$itemid.'&amp;ctx_id='.$ctx_id.'&amp;repo_id='.$repo_id.'&amp;', 'page', false, false, 1);
+                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$ctx_id&repo_id=$repo_id");
+                echo $OUTPUT->paging_bar(moodle_paging_bar::make($list['total'], $list['page'] - 1, $list['perpage'], $pagingurl));
             }
             echo '<table>';
             foreach ($list['list'] as $item) {
