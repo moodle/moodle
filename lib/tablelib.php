@@ -990,6 +990,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function finish_html(){
+        global $OUTPUT;
         if (!$this->started_output) {
             //no data has been added to the table.
             $this->print_nothing_to_display();

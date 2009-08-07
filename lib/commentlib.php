@@ -411,7 +411,7 @@ EOD;
     }
 
     public function get_pagination($page = 0) {
-        global $DB, $CFG;
+        global $DB, $CFG, $OUTPUT;
         if (!$count = $DB->count_records_sql("SELECT COUNT(*) from {comments} c, {user} u WHERE u.id=c.userid AND c.contextid=? AND c.commentarea=? AND c.itemid=?", array($this->contextid, $this->commentarea, $this->itemid))) {
         }
         $pages = (int)ceil($count/$CFG->commentsperpage);
@@ -420,7 +420,7 @@ EOD;
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
-            return print_paging_bar($count, $page, $CFG->commentsperpage, $this->link.'&amp;', $pagevar='page', false, true);
+            return $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $CFG->commentsperpage, $this->link));
         } else {
             // return ajax paging bar
             $str = '';
