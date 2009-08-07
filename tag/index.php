@@ -143,9 +143,10 @@ if ($usercount > 0) {
     echo "<a name='user'></a>";
     echo $OUTPUT->heading($heading, 3);
 
-    $baseurl = $CFG->wwwroot.'/tag/index.php?id=' . $tag->id;
-
-    print_paging_bar($usercount, $userpage, $perpage, $baseurl.'&amp;', 'userpage');
+    $baseurl = new moodle_url($CFG->wwwroot.'/tag/index.php', array('id' => $tag->id));
+    $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl);
+    $pagingbar->pagevar = 'userpage';
+    echo $OUTPUT->paging_bar($pagingbar);
     tag_print_tagged_users_table($tag, $userpage * $perpage, $perpage);
     print_box_end();
 }
