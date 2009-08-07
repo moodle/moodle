@@ -2,7 +2,7 @@
 
 $repository_flickr_public_capabilities = array(
 
-    'repository/flickr:view' => array(
+    'repository/flickr_public:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
