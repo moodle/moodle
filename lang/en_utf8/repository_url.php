@@ -1,6 +1,7 @@
 <?php // $Id$
-$string['repositoryname'] = 'URL Downloader';
-$string['url'] = 'URL';
-$string['rename'] = 'Name';
 $string['download'] = 'Download';
+$string['url'] = 'URL';
+$string['url:view'] = 'Use url downloader in file picker';
+$string['rename'] = 'Name';
+$string['repositoryname'] = 'URL Downloader';
 $string['validname'] = 'You must provide a valid file name';

@@ -14,6 +14,7 @@ $string['commercialuse'] = 'Allow commercial uses of your work?';
 $string['creativecommonscommercial'] = 'Only creative commons commercial';
 $string['emailaddress'] = 'Email address';
 $string['fulltext'] = 'Full text';
+$string['flickr_public:view'] = 'View flickr_public repository';
 $string['information'] = '<div>Get <a href=\"http://www.flickr.com/services/api/keys/\">Flickr API Key</a> for your Moodle site. </div>';
 $string['invalidemail'] = 'Invalid email account for flickr';
 $string['license'] = 'License';

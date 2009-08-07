@@ -623,6 +623,7 @@ abstract class repository {
             $is_supported = true;
 
             $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
+            $context = get_context_instance_by_id(CONTEXT_SYSTEM, $repo->contextid);
             if (empty($repository->super_called)) {
                 debugging('parent::__construct must be called by '.$repo->repositorytype.' plugin.');
             } else {
@@ -645,7 +646,8 @@ abstract class repository {
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
                     // super_called will make sure the parent construct function is called
                     // by repository construct function
-                    if ($is_supported) {
+                    $capability = has_capability('repository/'.$repo->repositorytype.':view', $context, $USER->id, false);
+                    if ($is_supported && $capability) {
                         $ret[] = $repository;
                     }
                 }

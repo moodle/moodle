@@ -69,7 +69,7 @@ class repository_upload extends repository {
      * @return string
      */
     public function get_name(){
-        return get_string('repositoryname', 'repository_upload');;
+        return get_string('repositoryname', 'repository_upload');
     }
 }
 ?>

@@ -1,3 +1,4 @@
 <?php
-$string['repositoryname'] = 'Wikimedia';
 $string['keyword'] = 'Image name';
+$string['repositoryname'] = 'Wikimedia';
+$string['wikimedia:view'] = 'View wikimedia repository';

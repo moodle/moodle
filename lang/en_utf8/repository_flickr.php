@@ -10,6 +10,7 @@ $string['callbackwarning'] = '<ol>
 <li>Edit your <a href=\"http://www.flickr.com/services/api/keys/\">Flickr</a> key details again and set the callback URL.</li></ol>';
 $string['configplugin'] = 'Flickr configuration';
 $string['emailaddress'] = 'Email address';
+$string['flickr:view'] = 'View Flickr repository';
 $string['invalidemail'] = 'Invalid email address for flickr';
 $string['notitle'] = 'notitle';
 $string['nullphotolist'] = 'There are no photos in this account';
