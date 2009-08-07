@@ -617,7 +617,7 @@
                 if (!empty($search)) {
                     $baseurl .= 'filter=1&amp;';
                 }
-                print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+                echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
 
                 if (empty($data->singletemplate)){
                     notify(get_string('nosingletemplate','data'));
@@ -626,7 +626,7 @@
 
                 data_print_template('singletemplate', $records, $data, $search, $page);
 
-                print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+                echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
 
             } else {                                  // List template
                 $baseurl = 'view.php?d='.$data->id.'&amp;';
@@ -638,7 +638,7 @@
                 //pass variable to allow determining whether or not we are paging through results.
                 $baseurl .= 'paging='.$paging.'&amp;';
 
-                print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+                echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
 
                 if (empty($data->listtemplate)){
                     notify(get_string('nolisttemplate','data'));
@@ -648,7 +648,7 @@
                 data_print_template('listtemplate', $records, $data, $search, $page);
                 echo $data->listtemplatefooter;
 
-                print_paging_bar($totalcount, $page, $nowperpage, $baseurl, $pagevar='page');
+                echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
             }
 
         }
