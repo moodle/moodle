@@ -3280,15 +3280,16 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 
     foreach ($options as $var => $val) {
         $url = new moodle_url($baseurl . $var);
-        if (!empty($optionsextra[$var])) {
-            new moodle_url($baseurl . $var . $optionsextra[$var]);
-        }
         $options[$url->out(false, array(), false)] = $val;
         unset($options[$var]);
     }
 
-    $select = moodle_select::make_popup_form($options, $formid, $submitvalue, $selected);
+    $select = moodle_select::make_popup_form($options, $formid, $selected, $submitvalue);
     $select->disabled = $disabled;
+
+    if (!empty($optionsextra)) {
+        debugging('The $optionsextra (11th) param to popup_form is not supported, please improve your code.', DEBUG_DEVELOPER);
+    }
 
     if ($nothing == 'choose') {
         $select->nothinglabel = '';
@@ -3296,7 +3297,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
         $select->nothinglabel = $nothing;
     }
 
-    $select->set_label($selectlabel, $select->id);
+    $select->set_label($selectlabel);
     $select->set_help_icon($help, $helptext);
 
     $output = $OUTPUT->select($select);

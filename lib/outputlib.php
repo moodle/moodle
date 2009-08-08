@@ -2512,6 +2512,9 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $buttonoutput = $this->output_empty_tag('input', $buttonattributes);
 
+        // Removing the button so it doesn't get output again
+        unset($form->button);
+
         return $this->form($form, $buttonoutput);
     }
 
@@ -2527,11 +2530,27 @@ class moodle_core_renderer extends moodle_renderer_base {
         $form = clone($form);
         $form->prepare();
         $this->prepare_event_handlers($form);
+        $buttonoutput = null;
 
         if (empty($contents) && !empty($form->button)) {
             debugging("You probably want to use \$OUTPUT->button(\$form), please read that function's documentation", DEBUG_DEVELOPER);
         } else if (empty($contents)) {
             $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
+        } else if (!empty($form->button)) {
+            $form->button->prepare();
+            $buttonoutput = $this->output_start_tag('div', array('id' => "noscript$form->id"));
+            $this->prepare_event_handlers($form->button);
+
+            $buttonattributes = array('class' => $form->button->get_classes_string(),
+                                      'type' => 'submit',
+                                      'value' => $form->button->text,
+                                      'disabled' => $form->button->disabled,
+                                      'id' => $form->button->id);
+
+            $buttonoutput .= $this->output_empty_tag('input', $buttonattributes);
+            $buttonoutput .= $this->output_end_tag('div');
+            $this->page->requires->js_function_call('hide_item', array("noscript$form->id"));
+
         }
 
         $hiddenoutput = '';
@@ -2546,7 +2565,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'id' => $form->id,
                 'class' => $form->get_classes_string());
 
-        $divoutput = $this->output_tag('div', array(), $hiddenoutput . $contents);
+        $divoutput = $this->output_tag('div', array(), $hiddenoutput . $contents . $buttonoutput);
         $formoutput = $this->output_tag('form', $formattributes, $divoutput);
         $output = $this->output_tag('div', array('class' => 'singlebutton'), $formoutput);
 
@@ -2994,7 +3013,6 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $html .= $this->checkbox($option, $select->name);
                 $currentcheckbox++;
             }
-
         }
 
         if (!empty($select->form) && $select->form instanceof html_form) {
@@ -3682,7 +3700,7 @@ class moodle_html_component {
      * This can be used in two ways:
      *
      * <pre>
-     * $component->set_label($elementid, $elementlabel);
+     * $component->set_label($elementlabel, $elementid);
      * // OR
      * $label = new html_label();
      * $label->for = $elementid;
@@ -3703,6 +3721,9 @@ class moodle_html_component {
         } else if (!empty($text)) {
             $this->label = new html_label();
             $this->label->for = $for;
+            if (empty($for) && !empty($this->id)) {
+                $this->label->for = $this->id;
+            }
             $this->label->text = $text;
         }
     }
@@ -3821,15 +3842,6 @@ class moodle_select extends moodle_html_component {
             $this->nothinglabel = get_string('choosedots');
         }
 
-        if ($this->rendertype == 'radio' && $this->multiple) {
-            $this->rendertype = 'checkbox';
-        }
-
-        // If nested is on, or if radio/checkbox rendertype is set, remove the default Choose option
-        if ($this->nested || $this->rendertype == 'radio' || $this->rendertype == 'checkbox') {
-            $this->nothinglabel = '';
-        }
-
         if (!empty($this->label) && !($this->label instanceof html_label)) {
             $label = new html_label();
             $label->text = $this->label;
@@ -3839,99 +3851,7 @@ class moodle_select extends moodle_html_component {
 
         $this->add_class('select');
 
-        $firstoption = reset($this->options);
-        if (is_object($firstoption)) {
-            parent::prepare();
-            return true;
-        }
-
-        $options = $this->options;
-
-        $this->options = array();
-
-        if ($this->nested && $this->rendertype != 'menu') {
-            throw new coding_exception('moodle_select cannot render nested options as radio buttons or checkboxes.');
-        } else if ($this->nested) {
-            foreach ($options as $section => $values) {
-                $optgroup = new html_select_optgroup();
-                $optgroup->text = $section;
-
-                foreach ($values as $value => $display) {
-                    $option = new html_select_option();
-                    $option->value = s($value);
-                    $option->text = $display;
-                    if ($display === '') {
-                        $option->text = $value;
-                    }
-
-                    if ((string) $value == (string) $this->selectedvalue ||
-                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
-                        $option->selected = 'selected';
-                    }
-
-                    $optgroup->options[] = $option;
-                }
-
-                $this->options[] = $optgroup;
-            }
-        } else {
-            $inoptgroup = false;
-            $optgroup = false;
-
-            foreach ($options as $value => $display) {
-                if ($display == '--') { /// we are ending previous optgroup
-                    // $this->options[] = $optgroup;
-                    $inoptgroup = false;
-                    continue;
-                } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
-                    if (!empty($optgroup->options)) {
-                        $this->options[] = $optgroup;
-                    }
-
-                    $optgroup = new html_select_optgroup();
-                    $optgroup->text = substr($display,2); // stripping the --
-
-                    $inoptgroup = true; /// everything following will be in an optgroup
-                    continue;
-
-                } else {
-                    // Add $nothing option if there are not optgroups
-                    if ($this->nothinglabel && empty($this->options[0]) && !$inoptgroup) {
-                        $nothingoption = new html_select_option();
-                        $nothingoption->value = 0;
-                        if (!empty($this->nothingvalue)) {
-                            $nothingoption->value = $this->nothingvalue;
-                        }
-                        $nothingoption->text = $this->nothinglabel;
-                        $this->options = array($nothingoption) + $this->options;
-                    }
-
-                    $option = new html_select_option();
-                    $option->text = $display;
-
-                    if ($display === '') {
-                        $option->text = $value;
-                    }
-
-                    if ((string) $value == (string) $this->selectedvalue ||
-                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
-                        $option->selected = 'selected';
-                    }
-
-                    $option->value = s($value);
-
-                    if ($inoptgroup) {
-                        $optgroup->options[] = $option;
-                    } else {
-                        $this->options[] = $option;
-                    }
-                }
-            }
-
-            if ($optgroup) {
-                $this->options[] = $optgroup;
-            }
-        }
+        $this->initialise_options();
         parent::prepare();
     }
 
@@ -4045,11 +3965,11 @@ class moodle_select extends moodle_html_component {
      * @param string $baseurl The target URL up to the point of the variable that changes
      * @param array $options A list of value-label pairs for the popup list
      * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
-     * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
      * @param string $selected The option that is initially selected
+     * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
      * @return moodle_select A menu initialised as a popup form.
      */
-    public function make_popup_form($options, $formid, $submitvalue='', $selected=null) {
+    public function make_popup_form($options, $formid, $selected=null, $submitvalue='') {
         global $CFG;
         $select = self::make($options, 'jump', $selected);
         $select->form = new html_form();
@@ -4097,10 +4017,122 @@ class moodle_select extends moodle_html_component {
         if ($page instanceof help_icon) {
             $this->helpicon = $page;
         } else if (!empty($page)) {
-            $this->helpicon = new html_label();
+            $this->helpicon = new help_icon();
             $this->helpicon->page = $page;
             $this->helpicon->text = $text;
             $this->helpicon->linktext = $linktext;
+        }
+    }
+
+    /**
+     * Parses the $options array and instantiates html_select_option objects in
+     * the place of the original value => label pairs. This is useful for when you
+     * need to setup extra html attributes and actions on individual options before
+     * the component is sent to the renderer
+     * @return void;
+     */
+    public function initialise_options() {
+        // If options are already instantiated objects, stop here
+        $firstoption = reset($this->options);
+        if ($firstoption instanceof html_select_option || $firstoption instanceof html_select_optgroup) {
+            return;
+        }
+
+        if ($this->rendertype == 'radio' && $this->multiple) {
+            $this->rendertype = 'checkbox';
+        }
+
+        // If nested is on, or if radio/checkbox rendertype is set, remove the default Choose option
+        if ($this->nested || $this->rendertype == 'radio' || $this->rendertype == 'checkbox') {
+            $this->nothinglabel = '';
+        }
+
+        $options = $this->options;
+
+        $this->options = array();
+
+        if ($this->nested && $this->rendertype != 'menu') {
+            throw new coding_exception('moodle_select cannot render nested options as radio buttons or checkboxes.');
+        } else if ($this->nested) {
+            foreach ($options as $section => $values) {
+                $optgroup = new html_select_optgroup();
+                $optgroup->text = $section;
+
+                foreach ($values as $value => $display) {
+                    $option = new html_select_option();
+                    $option->value = s($value);
+                    $option->text = $display;
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $optgroup->options[] = $option;
+                }
+
+                $this->options[] = $optgroup;
+            }
+        } else {
+            $inoptgroup = false;
+            $optgroup = false;
+
+            foreach ($options as $value => $display) {
+                if ($display == '--') { /// we are ending previous optgroup
+                    // $this->options[] = $optgroup;
+                    $inoptgroup = false;
+                    continue;
+                } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
+                    if (!empty($optgroup->options)) {
+                        $this->options[] = $optgroup;
+                    }
+
+                    $optgroup = new html_select_optgroup();
+                    $optgroup->text = substr($display,2); // stripping the --
+
+                    $inoptgroup = true; /// everything following will be in an optgroup
+                    continue;
+
+                } else {
+                    // Add $nothing option if there are not optgroups
+                    if ($this->nothinglabel && empty($this->options[0]) && !$inoptgroup) {
+                        $nothingoption = new html_select_option();
+                        $nothingoption->value = 0;
+                        if (!empty($this->nothingvalue)) {
+                            $nothingoption->value = $this->nothingvalue;
+                        }
+                        $nothingoption->text = $this->nothinglabel;
+                        $this->options = array($nothingoption) + $this->options;
+                    }
+
+                    $option = new html_select_option();
+                    $option->text = $display;
+
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $option->value = s($value);
+
+                    if ($inoptgroup) {
+                        $optgroup->options[] = $option;
+                    } else {
+                        $this->options[] = $option;
+                    }
+                }
+            }
+
+            if ($optgroup) {
+                $this->options[] = $optgroup;
+            }
         }
     }
 }
