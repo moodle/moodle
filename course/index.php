@@ -330,13 +330,18 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo '<td align="left">';
         if (has_capability('moodle/category:manage', $category->context)) {
             $tempdisplaylist = $displaylist;
+            $popupurl = "index.php?move=$category->id&sesskey=".sesskey()."&moveto=";
             unset($tempdisplaylist[$category->id]);
             foreach ($parentslist as $key => $parents) {
                 if (in_array($category->id, $parents)) {
                     unset($tempdisplaylist[$key]);
                 }
             }
-            popup_form ("index.php?move=$category->id&amp;sesskey=".sesskey()."&amp;moveto=", $tempdisplaylist, "moveform$category->id", $category->parent, '', '', '', false);
+            foreach ($tempdisplaylist as $key => $val) {
+                $tempdisplaylist[$popupurl.$key] = $val;
+                unset($tempdisplaylist[$key]);
+            }
+            echo $OUTPUT->select(moodle_select::make_popup_form($tempdisplaylist, "moveform$category->id", $popupurl.$category->parent));
         }
         echo '</td>';
         echo '</tr>';

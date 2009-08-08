@@ -1546,7 +1546,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
  * Prints the menus to add activities and resources.
  */
 function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     // check to see if user can add menus
     if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -1555,6 +1555,8 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
 
     static $resources = false;
     static $activities = false;
+
+    $popupurl = "$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=";
 
     if ($resources === false) {
         $resources = array();
@@ -1573,20 +1575,22 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             $gettypesfunc =  $modname.'_get_types';
             if (function_exists($gettypesfunc)) {
                 $types = $gettypesfunc();
+
                 foreach($types as $type) {
+                    $type->type = str_replace('&amp;', '&', $type->type);
                     if (!isset($type->modclass) or !isset($type->typestr)) {
                         debugging('Incorrect activity type in '.$modname);
                         continue;
                     }
                     if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $resources[$type->type] = $type->typestr;
+                        $resources[$popupurl.$type->type] = $type->typestr;
                     } else {
-                        $activities[$type->type] = $type->typestr;
+                        $activities[$popupurl.$type->type] = $type->typestr;
                     }
                 }
             } else {
                 // all mods without type are considered activity
-                $activities[$modname] = $modnamestr;
+                $activities[$popupurl.$modname] = $modnamestr;
             }
         }
     }
@@ -1599,16 +1603,19 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     if (!$vertical) {
         $output .= '<div class="horizontal">';
     }
-
+    
     if (!empty($resources)) {
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=",
-                              $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
+        $select = moodle_select::make_popup_form($resources, "ressection$section", null);
+        $select->nothinglabel = $straddresource;
+        $select->set_help_icon('resource/types', $straddresource); 
+        $output .= $OUTPUT->select($select);
     }
 
     if (!empty($activities)) {
-        $output .= ' ';
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=",
-                    $activities, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
+        $select = moodle_select::make_popup_form($activities, "section$section", null);
+        $select->nothinglabel = $straddactivity;
+        $select->set_help_icon('mods', $straddactivity); 
+        $output .= $OUTPUT->select($select);
     }
 
     if (!$vertical) {

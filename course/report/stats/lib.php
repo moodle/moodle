@@ -8,7 +8,7 @@
 
 
     function report_stats_mode_menu($course, $mode, $time, $url) {
-        global $CFG;
+        global $CFG, $OUTPUT;
         /*        
         $reportoptions = stats_get_report_options($course->id, $mode);
         $timeoptions = report_stats_timeoptions($mode);
@@ -18,13 +18,13 @@
         */
 
         $options = array();
-        $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
-        $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
+        $popupurl = $url."?course=$course->id&time=$time&mode=";
+        $options[$popupurl.STATS_MODE_GENERAL] = get_string('statsmodegeneral');
+        $options[$popupurl.STATS_MODE_DETAILED] = get_string('statsmodedetailed');
         if (has_capability('coursereport/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
-            $options[STATS_MODE_RANKED] = get_string('reports');
+            $options[$popupurl.STATS_MODE_RANKED] = get_string('reports');
         }
-        
-        return popup_form($url."?course=$course->id&amp;time=$time&amp;mode=", $options, 'switchmode', $mode, '', '', '', true);
+        return $OUTPUT->select(moodle_select::make_popup_form($options, 'switchmode', $popupurl.$mode));
     }
 
 

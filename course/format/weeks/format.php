@@ -126,6 +126,8 @@
     $weekofseconds = 604800;
     $course->enddate = $course->startdate + ($weekofseconds * $course->numsections);
 
+    $popupurl = $CFG->wwwroot.'/course/view.php?id='.$course->id.'&week=';
+
     $strftimedateshort = ' '.get_string('strftimedateshort');
 
     while ($weekdate < $course->enddate) {
@@ -150,7 +152,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {  // Check this week is visible
             if ($showsection) {
-                $sectionmenu[$section] = s("$strweek $section |     $weekday - $endweekday");
+                $sectionmenu[$popupurl.$section] = s("$strweek $section |     $weekday - $endweekday");
             }
             $section++;
             $weekdate = $nextweekdate;
@@ -244,7 +246,8 @@
 
     if (!empty($sectionmenu)) {
         echo '<div class="jumpmenu">';
-        echo popup_form($CFG->wwwroot.'/course/view.php?id='.$course->id.'&amp;week=', $sectionmenu,
-                   'sectionmenu', '', get_string('jumpto'), '', '', true);
+        $select = moodle_select::make_popup_form($sectionmenu, 'sectionmenu');
+        $select->set_label(get_string('jumpto'));
+        echo $OUTPUT->select($select);
         echo '</div>';
     }
