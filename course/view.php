@@ -240,10 +240,6 @@
     // Content wrapper end.
     echo "</div>\n\n";
 
-    $image = new html_image();
-    $image->src = $OUTPUT->old_icon_url('help');
-    $image->add_action('click', 'confirm_dialog', array('message' => 'Are you sure?'));
-    echo $OUTPUT->image($image);
     // Use AJAX?
     if ($useajax && has_capability('moodle/course:manageactivities', $context)) {
         // At the bottom because we want to process sections and activities
