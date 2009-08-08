@@ -116,7 +116,7 @@ $files = array();
 // here can be overridden by theme CSS.
 if ($pluginsheets) {
     foreach ($THEME->pluginsheets as $plugintype) {
-        $files += get_sheets_for_plugin_type($plugintype);
+        $files = array_merge($files, get_sheets_for_plugin_type($plugintype));
     }
 }
 
