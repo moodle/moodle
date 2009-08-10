@@ -2595,8 +2595,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     $form->id = $formid;
 
     if ($jsconfirmmessage) {
-        $confirmaction = new component_action('click', 'confirm_dialog', array('message' => $jsconfirmmessage));
-        $form->button->add_action($confirmaction);
+        $form->button->add_confirm_action($jsconfirmmessage);
     }
 
     $output = $OUTPUT->button($form);

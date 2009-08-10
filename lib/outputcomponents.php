@@ -220,6 +220,16 @@ class moodle_html_component {
             $this->label->text = $text;
         }
     }
+
+    /**
+     * Shortcut for adding a JS confirm dialog when the component is clicked.
+     * The message must be a yes/no question.
+     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @return void
+     */
+    public function add_confirm_action($message) {
+        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message)));
+    }
 }
 
 /// Components representing HTML elements
