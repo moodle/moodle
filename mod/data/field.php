@@ -279,8 +279,8 @@
 
         echo '<div class="fieldadd">';
         echo '<label for="fieldform_jump">'.get_string('newfield','data').'</label>';
-        popup_form($CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&amp;mode=new&amp;sesskey='.
-                sesskey().'&amp;newtype=', $menufield, 'fieldform', '', 'choose');
+        $popupurl = $CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&mode=new&sesskey='.  sesskey();
+        echo $OUTPUT->select(moodle_select::make_popup_form($popupurl, 'newtype', $menufield, "fieldform"));
         helpbutton('fields', get_string('addafield','data'), 'data');
         echo '</div>';
 
