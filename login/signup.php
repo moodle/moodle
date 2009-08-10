@@ -51,7 +51,9 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        $select = moodle_select::make_popup_form("$CFG->wwwroot/login/signup.php", 'lang', $langs, 'chooselang', $currlang);
+        $select->nothinglabel = false;
+        $langmenu = $OUTPUT->select($select);
     }
 
     $navlinks = array();
