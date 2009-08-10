@@ -601,7 +601,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 }
 
 function calendar_course_filter_selector($getvars = '') {
-    global $USER, $SESSION;
+    global $USER, $SESSION, $OUTPUT;
 
     if (empty($USER->id) or isguest()) {
         return '';
@@ -625,9 +625,9 @@ function calendar_course_filter_selector($getvars = '') {
     } else {
         $selected = '';
     }
-
-    return popup_form(CALENDAR_URL.'set.php?var=setcourse&amp;'.$getvars.'&amp;id=',
-                       $courseoptions, 'cal_course_flt', $selected, '', '', '', true);
+    $select = moodle_select::make_popup_form(CALENDAR_URL.'set.php?var=setcourse&'.$getvars, 'id', $courseoptions, 'cal_courses_flt', $selected);
+    $select->nothinglabel = false;
+    return $OUTPUT->select($select);
 }
 
 ?>
