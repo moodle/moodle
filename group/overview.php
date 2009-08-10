@@ -188,7 +188,7 @@ foreach ($members as $gpgid=>$groupdata) {
             echo $OUTPUT->heading($strnotingrouping, 3);
         } else {
             echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
-            print_box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
+            echo $OUTPUT->box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
     print_table($table, false);
