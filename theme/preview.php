@@ -42,8 +42,8 @@ $navlinks[] = array('name' => $strpreview, 'link' => null, 'type' => 'misc');
 $navigation = build_navigation($navlinks);
 print_header("$SITE->shortname: $strpreview", $SITE->fullname, $navigation);
 
-print_box_start();
+echo $OUTPUT->box_start();
 echo $OUTPUT->heading($preview);
-print_box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

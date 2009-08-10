@@ -44,15 +44,15 @@ if ($choose and confirm_sesskey()) {
     $readmehtml = $CFG->themedir . '/' . $choose . '/README.html';
     $readmetxt = $CFG->themedir . '/' . $choose . '/README.txt';
     if (is_readable($readmehtml)) {
-        print_box_start();
+        echo $OUTPUT->box_start();
         readfile($readmehtml);
-        print_box_end();
+        echo $OUTPUT->box_end();
 
     } else if (is_readable($readmetxt)) {
-        print_box_start();
+        echo $OUTPUT->box_start();
         $text = file_get_contents($readmetxt);
         echo format_text($text, FORMAT_MOODLE);
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 
     print_continue($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
@@ -128,7 +128,7 @@ foreach ($themes as $themename => $themedir) {
     if ($themename != $CFG->theme) {
         $infocell .= print_single_button('index.php', array('choose' => $themename, 'sesskey' => $sesskey),
                 get_string('choose'), 'get', null, true);
-        
+
     }
     $row[] = $infocell;
 
