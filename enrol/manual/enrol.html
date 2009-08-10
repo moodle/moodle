@@ -1,10 +1,10 @@
-<?php 
+<?php
 
     if ($course->password != '' and !(isguestuser() and !empty($USER->enrolkey[$course->id]))) {   // password
-        print_box_start('generalbox centerpara');
+        echo $OUTPUT->box_start('generalbox centerpara');
         echo '<p align="center">';
 
-        $this->print_enrolmentkeyfrom( $course );    
+        $this->print_enrolmentkeyfrom( $course );
  ?>
       </p>
 
@@ -32,15 +32,15 @@
       </form>
       </div>
 
-<?php 
-        print_box_end();
+<?php
+        echo $OUTPUT->box_end();
     }
 
 
     if (isguestuser()) {
-        print_box_start('centerpara');
+        echo $OUTPUT->box_start('centerpara');
         $loginurl = get_login_url();
         print_single_button($loginurl, null, get_string('login'));
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 ?>
