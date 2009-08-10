@@ -45,11 +45,11 @@
         $currentgroup = 0;
     }
     $groupingid = $cm->groupingid;
-    
-    if (has_capability('mod/survey:readresponses', $context) or ($groupmode == VISIBLEGROUPS)) {    
+
+    if (has_capability('mod/survey:readresponses', $context) or ($groupmode == VISIBLEGROUPS)) {
         $currentgroup = 0;
     }
-    
+
     if (has_capability('mod/survey:readresponses', $context)) {
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
         echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
@@ -79,7 +79,7 @@
 
         } else {
 
-            print_box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
+            echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
             $spacer = new html_image();
             $spacer->height = 30;
             echo $OUTPUT->spacer(clone($spacer)) . '<br />';
@@ -154,7 +154,7 @@
     }
 
     if (isguest()) {
-        echo '</div>';  
+        echo '</div>';
         echo "</form>";
         echo $OUTPUT->footer();
         exit;
