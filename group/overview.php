@@ -129,7 +129,10 @@ if (!empty($CFG->enablegroupings)) {
     foreach ($groupings as $grouping) {
         $options[$grouping->id] = strip_tags(format_string($grouping->name));
     }
-    popup_form($rooturl.'&amp;group='.$groupid.'&amp;grouping=', $options, 'selectgrouping', $groupingid, '', '', '', false, 'self', $strgrouping);
+    $popupurl = $rooturl.'&group='.$groupid;
+    $select = moodle_select::make_popup_form($popupurl, 'grouping', $options, 'selectgrouping', $groupingid);
+    $select->set_label($strgrouping);
+    echo $OUTPUT->select($select);
 }
 
 $options = array();
@@ -137,8 +140,10 @@ $options[0] = get_string('all');
 foreach ($groups as $group) {
     $options[$group->id] = strip_tags(format_string($group->name));
 }
-popup_form($rooturl.'&amp;grouping='.$groupingid.'&amp;group=', $options, 'selectgroup', $groupid, '', '', '', false, 'self', $strgroup);
-
+$popupurl = $rooturl.'&grouping='.$groupingid;
+$select = moodle_select::make_popup_form($popupurl, 'group', $options, 'selectgroup', $groupid);
+$select->set_label($strgroup);
+echo $OUTPUT->select($select);
 
 /// Print table
 $printed = false;
