@@ -110,7 +110,7 @@
             $usernew->password = hash_internal_user_password($usernew->newpassword);
             $usernew->id = $DB->insert_record('user', $usernew);
             $usercreated = true;
-            
+
         } else {
             $DB->update_record('user', $usernew);
             // pass a true $userold here
@@ -157,7 +157,7 @@
 
         // reload from db
         $usernew = $DB->get_record('user', array('id'=>$usernew->id));
-        
+
         // trigger events
         if ($usercreated) {
             //set default message preferences
@@ -182,7 +182,7 @@
                 redirect("$CFG->wwwroot/$CFG->admin/");
             } else {
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
-            }            
+            }
         } else {
             session_gc(); // remove stale sessions
             redirect("$CFG->wwwroot/$CFG->admin/user.php");
@@ -205,7 +205,7 @@
         $strprimaryadminsetup = get_string('primaryadminsetup');
         $navigation = build_navigation(array(array('name'=>$strprimaryadminsetup, 'link'=>null, 'type'=>'misc')));
         print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
-        print_box(get_string('configintroadmin', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
+        echo $OUTPUT->box(get_string('configintroadmin', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
         echo '<br />';
     } else {
         $streditmyprofile = get_string('editmyprofile');

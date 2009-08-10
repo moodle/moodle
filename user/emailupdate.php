@@ -23,7 +23,7 @@ if (empty($preferences['newemailattemptsleft'])) {
 } elseif ($preferences['newemailattemptsleft'] < 1) {
     cancel_email_update($user->id);
     $stroutofattempts = get_string('auth_outofnewemailupdateattempts', 'auth_email');
-    print_box($stroutofattempts, 'center');
+    echo $OUTPUT->box($stroutofattempts, 'center');
 
 } elseif ($key == $preferences['newemailkey']) {
     cancel_email_update($user->id);
@@ -32,7 +32,7 @@ if (empty($preferences['newemailattemptsleft'])) {
     // Detect duplicate before saving
     if ($DB->get_record('user', array('email' => $user->email))) {
         $stremailnowexists = get_string('auth_emailnowexists', 'auth_email');
-        print_box($stremailnowexists, 'center');
+        echo $OUTPUT->box($stremailnowexists, 'center');
         print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
     } else {
         // update user email
@@ -40,7 +40,7 @@ if (empty($preferences['newemailattemptsleft'])) {
         events_trigger('user_updated', $user);
         $a->email = $user->email;
         $stremailupdatesuccess = get_string('auth_emailupdatesuccess', 'auth_email', $a);
-        print_box($stremailupdatesuccess, 'center');
+        echo $OUTPUT->box($stremailupdatesuccess, 'center');
         print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
     }
 
@@ -48,7 +48,7 @@ if (empty($preferences['newemailattemptsleft'])) {
     $preferences['newemailattemptsleft']--;
     set_user_preference('newemailattemptsleft', $preferences['newemailattemptsleft'], $user->id);
     $strinvalidkey = get_string('auth_invalidnewemailkey', 'auth_email');
-    print_box($strinvalidkey, 'center');
+    echo $OUTPUT->box($strinvalidkey, 'center');
 }
 
 echo $OUTPUT->footer();
