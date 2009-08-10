@@ -75,7 +75,7 @@ define('URL_MATCH_BASE', 0);
  */
 define('URL_MATCH_PARAMS', 1);
 /**
- * A moodle_url comparison using this flag will return true if the two URLs are identical, except for the order of the params 
+ * A moodle_url comparison using this flag will return true if the two URLs are identical, except for the order of the params
  */
 define('URL_MATCH_EXACT', 2);
 
@@ -3136,7 +3136,7 @@ function notice ($message, $link='', $course=NULL) {
         print_container_end_all(false, $THEME->open_header_containers);
     }
 
-    print_box($message, 'generalbox', 'notice');
+    echo $OUTPUT->box($message, 'generalbox', 'notice');
     print_continue($link);
 
     echo $OUTPUT->footer();
@@ -3331,9 +3331,9 @@ function print_maintenance_message() {
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
     echo $OUTPUT->heading(get_string('sitemaintenance', 'admin'));
     if (isset($CFG->maintenance_message) and !html_is_blank($CFG->maintenance_message)) {
-        print_box_start('maintenance_message generalbox boxwidthwide boxaligncenter');
+        echo $OUTPUT->box_start('maintenance_message generalbox boxwidthwide boxaligncenter');
         echo $CFG->maintenance_message;
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
     echo $OUTPUT->footer();
     die;

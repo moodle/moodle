@@ -1314,7 +1314,7 @@ class admin_setting_heading extends admin_setting {
             $return .= $OUTPUT->heading('<a name="'.$this->name.'">'.highlightfast($query, $this->visiblename).'</a>', 3, 'main', true);
         }
         if ($this->description != '') {
-            $return .= print_box(highlight($query, $this->description), 'generalbox formsettingheading', '', true);
+            $return .= $OUTPUT->box(highlight($query, $this->description), 'generalbox formsettingheading');
         }
         return $return;
     }
@@ -4548,7 +4548,7 @@ class admin_setting_manageauths extends admin_setting {
         }
 
         $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
-        $return .= print_box_start('generalbox authsui', '', true);
+        $return .= $OUTPUT->box_start('generalbox authsui');
 
         $table = new object();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
@@ -4622,7 +4622,7 @@ class admin_setting_manageauths extends admin_setting {
         }
         $return .= print_table($table, true);
         $return .= get_string('configauthenticationplugins', 'admin').'<br />'.get_string('tablenosave', 'filters');
-        $return .= print_box_end(true);
+        $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
@@ -4725,7 +4725,7 @@ class admin_setting_manageeditors extends admin_setting {
         }
         $editors_available = array_reverse($editors_available, true);
         $return = $OUTPUT->heading(get_string('acteditorshhdr', 'editor'), 3, 'main', true);
-        $return .= print_box_start('generalbox editorsui', '', true);
+        $return .= $OUTPUT->box_start('generalbox editorsui');
 
         $table = new object();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
@@ -4786,7 +4786,7 @@ class admin_setting_manageeditors extends admin_setting {
         }
         $return .= print_table($table, true);
         $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'filters');
-        $return .= print_box_end(true);
+        $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
@@ -4920,7 +4920,7 @@ class admin_setting_manageportfolio extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
 
-        $output = print_box_start('generalbox','',true);
+        $output = $OUTPUT->box_start('generalbox');
 
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'portfolio');
@@ -4978,7 +4978,7 @@ class admin_setting_manageportfolio extends admin_setting {
         if ($addable) {
             $output .= $instancehtml;
         }
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
 
         return highlight($query, $output);
     }
@@ -5779,7 +5779,7 @@ class admin_setting_managerepository extends admin_setting {
      */
     public function output_html($data, $query='') {
         global $CFG, $USER, $OUTPUT;
-        $output = print_box_start('generalbox','',true);
+        $output = $OUTPUT->box_start('generalbox');
         $namestr = get_string('name');
         $settingsstr = get_string('settings');
         $updownstr = get_string('updown', 'repository');
@@ -5881,7 +5881,7 @@ class admin_setting_managerepository extends admin_setting {
             $output .= $instancehtml;
         }
 
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
         return highlight($query, $output);
     }
 }
