@@ -66,6 +66,18 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
  */
 define('TRUSTTEXT', '#####TRUSTTEXT#####');
 
+/**
+ * A moodle_url comparison using this flag will return true if the base URLs match, params are ignored
+ */
+define('URL_MATCH_BASE', 0);
+/**
+ * A moodle_url comparison using this flag will return true if the base URLs match and the params of url1 are part of url2
+ */
+define('URL_MATCH_PARAMS', 1);
+/**
+ * A moodle_url comparison using this flag will return true if the two URLs are identical, except for the order of the params 
+ */
+define('URL_MATCH_EXACT', 2);
 
 /**
  * Allowed tags - string of html tags that can be tested against for safe html tags
@@ -480,6 +492,48 @@ class moodle_url {
     public function out_action($overrideparams = array()) {
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
         return $this->out(false, $overrideparams);
+    }
+
+    /**
+     * Compares this moodle_url with another
+     * See documentation of constants for an explanation of the comparison flags.
+     * @param moodle_url $url The moodle_url object to compare
+     * @param int $matchtype The type of comparison (URL_MATCH_BASE, URL_MATCH_PARAMS, URL_MATCH_EXACT)
+     * @return boolean
+     */
+    public function compare(moodle_url $url, $matchtype = URL_MATCH_EXACT) {
+        if ($this->out(true) != $url->out(true)) {
+            return false;
+        }
+
+        if ($matchtype == URL_MATCH_BASE) {
+            return true;
+        }
+
+        $urlparams = $url->params();
+        foreach ($this->params() as $param => $value) {
+            if ($param == 'sesskey') {
+                continue;
+            }
+            if (!array_key_exists($param, $urlparams) || $urlparams[$param] != $value) {
+                return false;
+            }
+        }
+
+        if ($matchtype == URL_MATCH_PARAMS) {
+            return true;
+        }
+
+        foreach ($urlparams as $param => $value) {
+            if ($param == 'sesskey') {
+                continue;
+            }
+            if (!array_key_exists($param, $this->params()) || $this->param($param) != $value) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
@@ -2588,7 +2642,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  */
 function switchroles_form($courseid) {
 
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
 
     if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
@@ -2611,8 +2665,11 @@ function switchroles_form($courseid) {
         }
         // unset default user role - it would not work
         unset($roles[$CFG->guestroleid]);
-        return popup_form($CFG->wwwroot.'/course/view.php?id='.$courseid.'&amp;sesskey='.sesskey().'&amp;switchrole=',
-                          $roles, 'switchrole', '', get_string('switchroleto'), 'switchrole', get_string('switchroleto'), true);
+        $popupurl = $CFG->wwwroot.'/course/view.php?id='.$courseid.'&sesskey='.sesskey();
+        $select = moodle_select::make_popup_form($popupurl, 'switchrole', $roles, 'switchrole', '');
+        $select->nothinglabel = get_string('switchroleto');
+        $select->set_help_icon('switchrole', get_string('switchroleto'));
+        return $OUTPUT->select($select);
     }
 
     return '';

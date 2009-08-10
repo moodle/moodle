@@ -116,5 +116,33 @@ class web_test extends UnitTestCase {
         $this->assertEqual("$CFG->wwwroot/admin/report/unittest/$relativeurl1", prepare_url(new moodle_url($relativeurl1)));
         $this->assertEqual("$CFG->wwwroot$relativeurl2", prepare_url(new moodle_url($relativeurl2)));
     }
+    
+    function test_compare_url() {
+        $url1 = new moodle_url('index.php', array('var1' => 1, 'var2' => 2));
+        $url2 = new moodle_url('index2.php', array('var1' => 1, 'var2' => 2, 'var3' => 3));
+
+        $this->assertFalse($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url2 = new moodle_url('index.php', array('var1' => 1, 'var3' => 3));
+
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url2 = new moodle_url('index.php', array('var1' => 1, 'var2' => 2, 'var3' => 3));
+
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url2 = new moodle_url('index.php', array('var2' => 2, 'var1' => 1));
+
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
+    }
 }
+
 ?>
