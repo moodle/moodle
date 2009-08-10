@@ -3509,11 +3509,22 @@ function update_tag_button($tagid) {
  * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
  */
 function update_module_button($cmid, $ignored, $string) {
-    global $OUTPUT;
+    global $CFG, $OUTPUT;
 
     // debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
 
-    return $OUTPUT->update_module_button($cmid, strtolower($string));
+    //NOTE: DO NOT call new output method because it needs the module name we do not have here!
+
+    if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
+        $string = get_string('updatethis', '', $string);
+
+        $form = new html_form();
+        $form->url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));
+        $form->button->text = $string;
+        return $OUTPUT->button($form);
+    } else {
+        return '';
+    }
 }
 
 /**
