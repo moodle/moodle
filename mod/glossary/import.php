@@ -17,7 +17,7 @@
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         print_error('invalidcoursemodule');
     }
-    
+
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
@@ -26,8 +26,8 @@
         print_error('invalidid', 'glossary');
     }
 
-    require_login($course->id, false, $cm);  
-    
+    require_login($course->id, false, $cm);
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/glossary:import', $context);
 
@@ -52,9 +52,9 @@
     echo $OUTPUT->heading($strimportentries);
 
     if ( !$step ) {
-        print_box_start('glossarydisplay generalbox');
+        echo $OUTPUT->box_start('glossarydisplay generalbox');
         include("import.html");
-        print_box_end();
+        echo $OUTPUT->box_end();
 
         echo $OUTPUT->footer();
         exit;
@@ -67,9 +67,9 @@
     $um = new upload_manager('file',false,false,$course,false,0);
 
     if (!$um->preprocess_files()) {
-        print_box_start('glossarydisplay generalbox');
+        echo $OUTPUT->box_start('glossarydisplay generalbox');
         print_continue('import.php?id='.$id);
-        print_box_end();
+        echo $OUTPUT->box_end();
 
         echo $OUTPUT->footer();
         die();
@@ -299,7 +299,7 @@
             }
         }
         // processed entries
-        print_box_start('glossarydisplay generalbox');
+        echo $OUTPUT->box_start('glossarydisplay generalbox');
         echo '<table class="glossaryimportexport">';
         echo '<tr>';
         echo '<td width="50%" align="right">';
@@ -345,7 +345,7 @@
         } else {
             print_continue('import.php?id='.$id);
         }
-        print_box_end();
+        echo $OUTPUT->box_end();
     } else {
         notice(get_string('errorparsingxml', 'glossary'));
     }

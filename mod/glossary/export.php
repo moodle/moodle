@@ -21,8 +21,8 @@
         print_error('invalidid', 'glossary');
     }
 
-    require_login($course->id, false, $cm);  
-    
+    require_login($course->id, false, $cm);
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/glossary:export', $context);
 
@@ -44,7 +44,7 @@
 
     echo $OUTPUT->heading($strexportentries);
 
-    print_box_start('glossarydisplay generalbox');
+    echo $OUTPUT->box_start('glossarydisplay generalbox');
     ?>
     <form action="exportfile.php" method="post">
     <table border="0" cellpadding="6" cellspacing="6" width="100%">
@@ -64,6 +64,6 @@
         $button->set_callback_options('glossary_csv_portfolio_caller', array('id' => $cm->id), '/mod/glossary/lib.php');
         $button->render();
     }
-    print_box_end();
+    echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
 ?>
