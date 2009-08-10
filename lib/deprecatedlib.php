@@ -2809,7 +2809,7 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
         throw new coding_exception('The $imagetext parameter has been deprecated. Please update your code and use $OUTPUT->help_icon() instead.');
     }
 
-    $helpicon = new help_icon();
+    $helpicon = new moodle_help_icon();
     $helpicon->page = $page;
     $helpicon->text = $title;
     $helpicon->module = $module;
@@ -3459,7 +3459,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
 
     global $OUTPUT;
 
-    $helpicon = new help_icon();
+    $helpicon = new moodle_help_icon();
     $helpicon->page = $helppage;
     $helpicon->text = $text;
     $helpicon->module = $module;

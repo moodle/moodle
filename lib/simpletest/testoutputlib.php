@@ -1208,7 +1208,7 @@ class moodle_core_renderer_test extends UnitTestCase {
     }
 
     public function test_heading_with_help() {
-        $originalicon = new help_icon();
+        $originalicon = new moodle_help_icon();
         $originalicon->page = 'myhelppage';
         $originalicon->text = 'Cool help text';
 

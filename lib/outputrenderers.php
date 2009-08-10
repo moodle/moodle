@@ -1263,7 +1263,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     /*
      * Centered heading with attached help button (same title text)
      * and optional icon attached
-     * @param help_icon $helpicon A help_icon object
+     * @param moodle_help_icon $helpicon A moodle_help_icon object
      * @param mixed $image An image URL or a html_image object
      * @return string HTML fragment
      */
@@ -1279,7 +1279,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     /**
      * Print a help icon.
      *
-     * @param help_icon $helpicon A help_icon object, subclass of html_link
+     * @param moodle_help_icon $helpicon A moodle_help_icon object, subclass of html_link
      *
      * @return string  HTML fragment
      */
@@ -1569,7 +1569,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * moodle_select::set_label($label) passing a html_label object
      *
      * To add a help icon, use moodle_select::set_help($page, $text, $linktext) or
-     * moodle_select::set_help($helpicon) passing a help_icon object
+     * moodle_select::set_help($helpicon) passing a moodle_help_icon object
      *
      * If you moodle_select::$rendertype to "radio", it will render radio buttons
      * instead of a <select> menu, unless $multiple is true, in which case it
@@ -1628,7 +1628,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $html .= $this->label($select->label);
         }
 
-        if (!empty($select->helpicon) && $select->helpicon instanceof help_icon) {
+        if (!empty($select->helpicon) && $select->helpicon instanceof moodle_help_icon) {
             $html .= $this->help_icon($select->helpicon);
         }
 

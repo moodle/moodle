@@ -307,7 +307,7 @@ class moodle_select extends moodle_html_component {
      */
     public $form;
     /**
-     * @var help_icon $form An optional help_icon component
+     * @var moodle_help_icon $form An optional moodle_help_icon component
      */
     public $helpicon;
     /**
@@ -546,7 +546,7 @@ class moodle_select extends moodle_html_component {
      * <pre>
      * $select->set_help_icon($page, $text, $linktext);
      * // OR
-     * $helpicon = new help_icon();
+     * $helpicon = new moodle_help_icon();
      * $helpicon->page = $page;
      * $helpicon->text = $text;
      * $helpicon->linktext = $linktext;
@@ -556,16 +556,16 @@ class moodle_select extends moodle_html_component {
      * Use the second form when you need to add additional HTML attributes
      * to the label and/or JS actions.
      *
-     * @param mixed $page Either the keyword that defines a help page or a help_icon object
+     * @param mixed $page Either the keyword that defines a help page or a moodle_help_icon object
      * @param text  $text The text of the help icon
      * @param boolean $linktext Whether or not to show text next to the icon
      * @return void
      */
     public function set_help_icon($page, $text, $linktext=false) {
-        if ($page instanceof help_icon) {
+        if ($page instanceof moodle_help_icon) {
             $this->helpicon = $page;
         } else if (!empty($page)) {
-            $this->helpicon = new help_icon();
+            $this->helpicon = new moodle_help_icon();
             $this->helpicon->page = $page;
             $this->helpicon->text = $text;
             $this->helpicon->linktext = $linktext;
@@ -1340,7 +1340,7 @@ class html_link extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class help_icon extends moodle_html_component {
+class moodle_help_icon extends moodle_html_component {
     /**
      * @var html_link $link A html_link object that will hold the URL info
      */
@@ -1385,11 +1385,11 @@ class help_icon extends moodle_html_component {
         global $COURSE, $OUTPUT;
 
         if (empty($this->page)) {
-            throw new coding_exception('A help_icon object requires a $page parameter');
+            throw new coding_exception('A moodle_help_icon object requires a $page parameter');
         }
 
         if (empty($this->text)) {
-            throw new coding_exception('A help_icon object requires a $text parameter');
+            throw new coding_exception('A moodle_help_icon object requires a $text parameter');
         }
 
         $this->link->text = $this->text;
@@ -1450,7 +1450,7 @@ class help_icon extends moodle_html_component {
     }
 
     public static function make_scale_menu($courseid, $scale) {
-        $helpbutton = new help_icon();
+        $helpbutton = new moodle_help_icon();
         $strscales = get_string('scales');
         $helpbutton->image->alt = $scale->name;
         $helpbutton->link->url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
