@@ -1466,7 +1466,7 @@ function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', 
  * @param object $category
  */
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
-     global $CFG, $DB;
+     global $CFG, $DB, $OUTPUT;
 
      $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1522,9 +1522,10 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
      echo '</b></td>';
      echo '<td align="center" style="width:20%">';
-
-     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=cat&amp;hook=", $menu, "catmenu", $selected, "",
-                      "", "", false);
+    
+     $select = moodle_select::make_popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat", 'hook', $menu, "catmenu", $selected);
+     $select->nothinglabel = false;
+     echo $OUTPUT->select($select);
 
      echo '</td>';
      echo '</tr>';
