@@ -5,33 +5,33 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 class feedback_item_info extends feedback_item_base {
     var $type = "info";
     function init() {
-    
+
     }
-    
+
     function &show_edit($item) {
         global $CFG;
-        
+
         require_once('info_form.php');
-        
+
         $item_form = new feedback_info_form();
-        
+
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : htmlspecialchars($item->name);
         $item->label = empty($item->label) ? '' : $item->label;
-        
+
         $item_form->requiredcheck->setValue(false);
 
         $item_form->itemname->setValue($item->name);
         $item_form->itemlabel->setValue($item->label);
 
         $item_form->infotype->setValue($item->presentation);
-        
+
         return $item_form;
     }
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
     function get_analysed($item, $groupid = false, $courseid = false) {
-        
+
         $presentation = $item->presentation;
         $aVal = null;
         $aVal->data = null;
@@ -42,7 +42,7 @@ class feedback_item_info extends feedback_item_base {
             $data = array();
             $datavalue = new object();
             foreach($values as $value) {
-                
+
                 switch($presentation) {
                     case 1:
                         $datavalue->value = $value->value;
@@ -66,7 +66,7 @@ class feedback_item_info extends feedback_item_base {
     }
 
     function get_printval($item, $value) {
-        
+
         if(!isset($value->value)) return '';
         return UserDate($value->value);
     }
@@ -105,9 +105,9 @@ class feedback_item_info extends feedback_item_base {
     }
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
-        global $USER, $DB;
+        global $USER, $DB, $OUTPUT;
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
-        
+
         $presentation = $item->presentation;
         if($highlightrequire AND $item->required AND strval($value) == '') {
             $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
@@ -128,10 +128,10 @@ class feedback_item_info extends feedback_item_base {
     <?php
         if($readonly){
             // print_simple_box_start($align);
-            print_box_start('generalbox boxalign'.$align);
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value ? UserDate($value):'&nbsp;';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }else {
             $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
             $course = $DB->get_record('course', array('id'=>$feedback->course));

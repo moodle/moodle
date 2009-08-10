@@ -5,30 +5,30 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 class feedback_item_numeric extends feedback_item_base {
     var $type = "numeric";
     var $sep_dec, $sep_thous;
-    
+
     function init() {
         $this->sep_dec = get_string('separator_decimal', 'feedback');
         if(substr($this->sep_dec, 0, 2) == '[['){
             $this->sep_dec = FEEDBACK_DECIMAL;
         }
-        
+
         $this->sep_thous = get_string('separator_thousand', 'feedback');
         if(substr($this->sep_thous, 0, 2) == '[['){
             $this->sep_thous = FEEDBACK_THOUSAND;
-        }    
+        }
     }
-    
+
     function show_edit($item) {
         global $CFG;
-        
+
         require_once('numeric_form.php');
-        
+
         $item_form = new feedback_numeric_form();
 
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
         $item->label = empty($item->label) ? '' : $item->label;
-        
+
         $item->required = isset($item->required) ? $item->required : 0;
         if($item->required) {
             $item_form->requiredcheck->setValue(true);
@@ -36,16 +36,16 @@ class feedback_item_numeric extends feedback_item_base {
 
         $item_form->itemname->setValue($item->name);
         $item_form->itemlabel->setValue($item->label);
-        
+
         $range_from_to = explode('|',$item->presentation);
-        
+
         $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? str_replace(FEEDBACK_DECIMAL, $this->sep_dec, floatval($range_from_to[0])) : '-';
         $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? str_replace(FEEDBACK_DECIMAL, $this->sep_dec, floatval($range_from_to[1])) : '-';
-                
+
         $item_form->selectfrom->setValue($range_from);
-        
+
         $item_form->selectto->setValue($range_to);
-        
+
         return $item_form;
     }
 
@@ -58,7 +58,7 @@ class feedback_item_numeric extends feedback_item_base {
         $analysed->name = $item->name;
         //$values = $DB->get_records('feedback_value', array('item'=>$item->id));
         $values = feedback_get_group_values($item, $groupid, $courseid);
-        
+
         $avg = 0.0;
         $counter = 0;
         if($values) {
@@ -79,12 +79,12 @@ class feedback_item_numeric extends feedback_item_base {
 
     function get_printval($item, $value) {
         if(!isset($value->value)) return '';
-        
+
         return $value->value;
     }
 
     function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
-        
+
         // $values = feedback_get_group_values($item, $groupid, $courseid);
         $values = $this->get_analysed($item, $groupid, $courseid);
 
@@ -122,11 +122,11 @@ class feedback_item_numeric extends feedback_item_base {
                 // $worksheet->write_number($rowOffset, 1, $data[$i]);
                 // $rowOffset++;
             // }
-        
+
             //mittelwert anzeigen
             $worksheet->setFormat("<l><f><ro2><vo><c:red>");
             $worksheet->write_string($rowOffset, 2, get_string('average', 'feedback'));
-            
+
             $worksheet->setFormat("<l><f><vo>");
             $worksheet->write_number($rowOffset + 1, 2, $analysed_item->avg);
             $rowOffset++;
@@ -136,8 +136,9 @@ class feedback_item_numeric extends feedback_item_base {
     }
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        global $OUTPUT;
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
-        
+
         //get the range
         $range_from_to = explode('|',$item->presentation);
         //get the min-value
@@ -152,7 +153,7 @@ class feedback_item_numeric extends feedback_item_base {
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-            <?php 
+            <?php
                 if($edit OR $readonly) {
                     echo '('.$item->label.') ';
                 }
@@ -176,10 +177,10 @@ class feedback_item_numeric extends feedback_item_base {
     <?php
         if($readonly){
             // print_simple_box_start($align);
-            print_box_start('generalbox boxalign'.$align);
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo (is_numeric($value)) ? number_format($value, 2, $this->sep_dec, $this->sep_thous) : '&nbsp;';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }else {
     ?>
             <input type="text" name="<?php echo $item->typ.'_'.$item->id; ?>"
@@ -198,11 +199,11 @@ class feedback_item_numeric extends feedback_item_base {
         //if the item is not required, so the check is true if no value is given
         if((!isset($value) OR $value == '') AND $item->required != 1) return true;
         if(!is_numeric($value))return false;
-        
+
         $range_from_to = explode('|',$item->presentation);
         $range_from = (isset($range_from_to[0]) AND is_numeric($range_from_to[0])) ? floatval($range_from_to[0]) : '-';
         $range_to = (isset($range_from_to[1]) AND is_numeric($range_from_to[1])) ? floatval($range_from_to[1]) : '-';
-        
+
         switch(true) {
             case ($range_from === '-' AND is_numeric($range_to)):
                 if(floatval($value) <= $range_to) return true;
@@ -217,13 +218,13 @@ class feedback_item_numeric extends feedback_item_base {
                 if(floatval($value) >= $range_from AND floatval($value) <= $range_to) return true;
                 break;
         }
-        
+
         return false;
     }
 
     function create_value($data) {
         $data = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data);
-        
+
         if(is_numeric($data)) {
             $data = floatval($data);
         }else {
@@ -239,22 +240,22 @@ class feedback_item_numeric extends feedback_item_base {
         }else {
             $num1 = '-';
         }
-        
+
         $num2 = str_replace($this->sep_dec, FEEDBACK_DECIMAL, $data->numericrangeto);
         if(is_numeric($num2)) {
             $num2 = floatval($num2);
         }else {
             $num2 = '-';
         }
-        
+
         if($num1 === '-' OR $num2 === '-') {
             return $num1 . '|'. $num2;
         }
-        
+
         if($num1 > $num2) {
             return $num2 . '|'. $num1;
         }else {
-            return $num1 . '|'. $num2;        
+            return $num1 . '|'. $num2;
         }
     }
 

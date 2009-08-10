@@ -17,7 +17,7 @@
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         print_error('invalidsesskey');
     }
-    
+
     $do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
     $moveupitem = optional_param('moveupitem', false, PARAM_INT);
     $movedownitem = optional_param('movedownitem', false, PARAM_INT);
@@ -26,19 +26,19 @@
     $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
 
     $ME = strip_querystring($FULLME);//sometimes it is not correct set
-    
+
     // $SESSION->feedback->current_tab = $do_show;
     $current_tab = $do_show;
- 
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             print_error('invalidcoursemodule');
         }
-     
+
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-     
+
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
@@ -46,7 +46,7 @@
     $capabilities = feedback_load_capabilities($cm->id);
 
     require_login($course->id, true, $cm);
-    
+
     if(!$capabilities->edititems){
         print_error('error');
     }
@@ -60,7 +60,7 @@
         $item = $DB->get_record('feedback_item', array('id'=>$movedownitem));
         feedback_movedown_item($item);
     }
-    
+
     //moving of items
     if($movehere && isset($SESSION->feedback->moving->movingitem)){
         $item = $DB->get_record('feedback_item', array('id'=>$SESSION->feedback->moving->movingitem));
@@ -74,14 +74,14 @@
     } else {
         unset($SESSION->feedback->moving);
     }
-    
+
     if($switchitemrequired) {
         $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
         @feedback_switch_item_required($item);
         redirect($ME.'?'.feedback_edit_get_default_query($id, $do_show));
         exit;
     }
-    
+
     //the create_template-form
     $create_template_form = new feedback_edit_create_template_form();
     $create_template_form->set_feedbackdata(array('capabilities' => $capabilities));
@@ -124,8 +124,8 @@
         }
     }
     $lastposition++;
-    
-    
+
+
     //the add_item-form
     $add_item_form = new feedback_edit_add_question_form('edit_item.php');
     $add_item_form->set_data(array('id'=>$id, 'position'=>$lastposition));
@@ -143,13 +143,13 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
@@ -160,9 +160,9 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-	
+
     $savereturn=isset($savereturn)?$savereturn:'';
-	  
+
     //print the messages
     if($savereturn == 'notsaved_name') {
         echo '<p align="center"><b><font color="red">'.get_string('name_required','feedback').'</font></b></p>';
@@ -171,21 +171,21 @@
     if($savereturn == 'saved') {
         echo '<p align="center"><b><font color="green">'.get_string('template_saved','feedback').'</font></b></p>';
     }
-    
+
     if($savereturn == 'failed') {
         echo '<p align="center"><b><font color="red">'.get_string('saving_failed','feedback').'</font></b></p>';
     }
 
     feedback_print_errors();
-    
+
     ///////////////////////////////////////////////////////////////////////////
     ///print the template-section
     ///////////////////////////////////////////////////////////////////////////
     if($do_show == 'templates') {
         // print_simple_box_start("center", '80%');
-        print_box_start('generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         $use_template_form->display();
-        
+
         if($capabilities->createprivatetemplate OR $capabilities->createpublictemplate) {
             $create_template_form->display();
             echo '<p><a href="'.htmlspecialchars('delete_template.php?id='.$id).'">'.get_string('delete_templates', 'feedback').'</a></p>';
@@ -200,34 +200,34 @@
             </p>';
         }
         // print_simple_box_end();
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
     ///////////////////////////////////////////////////////////////////////////
     ///print the Item-Edit-section
     ///////////////////////////////////////////////////////////////////////////
     if($do_show == 'edit') {
-        
+
         $add_item_form->display();
 
         if(is_array($feedbackitems)){
             $itemnr = 0;
-            
+
             $helpbutton = helpbutton('preview', get_string('preview','feedback'), 'feedback',true,false,'',true);
-            
+
             echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
                 echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
             }
             // print_simple_box_start('center', '80%');
-            print_box_start('generalbox boxaligncenter boxwidthwide');
-            
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+
             //check, if there exists required-elements
             $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=> 1));
             if($countreq > 0) {
                 // echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
                 echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
             }
-            
+
             echo '<table>';
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
                 $moveposition = 1;
@@ -332,7 +332,7 @@
                 }
                 echo '</td>';
                 echo '<td>';
-                
+
                 //print the toggle-button to switch required yes/no
                 if($feedbackitem->hasvalue == 1) {
                     // echo '<form action="'.$ME.'" method="post"><fieldset>';
@@ -389,14 +389,14 @@
                 }else {
                     echo '<tr><td>&nbsp;</td></tr>';
                 }
-                
+
             }
             echo '</table>';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }else{
             // print_simple_box(get_string('no_items_available_yet','feedback'),"center");
-            print_box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
+            echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
         }
     }
     /// Finish the page
@@ -408,17 +408,17 @@
 
     function feedback_edit_get_default_query($id, $tab) {
         global $USER;
-        
+
         $query = 'id='.$id;
         $query .= '&do_show='.$tab;
         //$query .= '&sesskey='.sesskey();
-        
+
         return $query;
     }
 
     function feedback_edit_print_default_form_values($id, $tab) {
         global $USER;
-        
+
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="id" value="'.$id.'" />';
         echo '<input type="hidden" name="do_show" value="'.$tab.'" />';

@@ -25,7 +25,7 @@
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         print_error('invalidsesskey');
     }
-    
+
     //if the use hit enter into a textfield so the form should not submit
     if(isset($formdata->sesskey) AND !isset($formdata->savevalues) AND !isset($formdata->gonextpage) AND !isset($formdata->gopreviouspage)) {
         $gopage = $formdata->lastpage;
@@ -35,7 +35,7 @@
     }else {
         $savevalues = false;
     }
-    
+
     if($gopage < 0 AND !$savevalues) {
         if(isset($formdata->gonextpage)){
             $gopage = $lastpage + 1;
@@ -51,63 +51,63 @@
     }else {
         $gonextpage = $gopreviouspage = false;
     }
-    
+
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             print_error('invalidcoursemodule');
         }
-     
+
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-     
+
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
     }
 
     $capabilities = feedback_load_capabilities($cm->id);
-    
+
     //check whether the feedback is anonymous
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
         $capabilities->complete = true;
     }else {
         print_error('feedback_is_not_for_anonymous', 'feedback');
     }
-    
+
     //check whether the user has a session
     // there used to be a sesskey test - this could not work - sorry
-    
+
     //check whether the feedback is located and! started from the mainsite
     if($course->id == SITEID AND !$courseid) {
         $courseid = SITEID;
     }
-    
+
     require_course_login($course);
-    
+
     if($courseid AND $courseid != SITEID) {
         $course2 = $DB->get_record('course', array('id'=>$courseid));
         require_course_login($course2); //this overwrites the object $course :-(
         $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
     }
-    
+
     if(!$capabilities->complete) {
         print_error('error');
     }
 
-    
+
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
@@ -117,20 +117,20 @@
     }
 
     feedback_print_errors();
-  
+
     //check, if the feedback is open (timeopen, timeclose)
     $checktime = time();
     if(($feedback->timeopen > $checktime) OR ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
         // print_simple_box_start('center');
-        print_box_start('generalbox boxaligncenter');
+        echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<h2><font color="red">'.get_string('feedback_is_not_open', 'feedback').'</font></h2>';
             print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
         // print_simple_box_end();
-        print_box_end();
+        echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
     }
-    
+
     //additional check for multiple-submit (prevent browsers back-button). the main-check is in view.php
     $feedback_can_submit = true;
     if($feedback->multiple_submit == 0 ) {
@@ -150,9 +150,9 @@
                 $userid = $USER->id; //arb
                 if($completedid = feedback_save_guest_values($_POST, sesskey())){
                     add_to_log($course->id, 'feedback', 'startcomplete', 'view.php?id='.$cm->id, $feedback->id); //arb: log even guest submissions or at least the startcomplete since the other add log event is elsewhere
-                    
+
                     if(!$gonextpage AND !$gopreviouspage) $preservevalues = false;//es kann gespeichert werden
-                    
+
                 }else {
                     $savereturn = 'failed';
                     if(isset($lastpage)) {
@@ -171,14 +171,14 @@
                 }
             }
         }
-        
+
         //saving the items
         if($savevalues AND !$preservevalues){
             //exists there any pagebreak, so there are values in the feedback_valuetmp
             $userid = $USER->id; //arb changed from 0 to $USER->id - no strict anonymous feedbacks - if it is a guest taking it then I want to know that it was a guest (at least in the data saved in the feedback tables)
 
             $feedbackcompletedtmp = $DB->get_record('feedback_completedtmp', array('id'=>$completedid));
-            
+
             //fake saving for switchrole
             $is_switchrole = feedback_check_is_switchrole();
             if($is_switchrole) {
@@ -188,7 +188,7 @@
                 $savereturn = 'saved';
                 feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 unset($SESSION->feedback->is_started);
-                
+
             }else {
                 $savereturn = 'failed';
             }
@@ -207,7 +207,7 @@
             $newpage = 0;
             $ispagebreak = false;
         }
-        
+
         //get the feedbackitems after the last shown pagebreak
         $feedbackitems = $DB->get_records_select('feedback_item', 'feedback = ? AND position > ?', array($feedback->id, $startposition), 'position');
         //get the first pagebreak
@@ -225,20 +225,20 @@
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
         echo $OUTPUT->heading(format_text($feedback->name));
-        
+
         if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
             echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';
             echo '</div>';
         }
-        
+
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
                 // print_simple_box_start('center', '75%');
-                print_box_start('generalbox boxaligncenter boxwidthwide');
+                echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
                 echo format_text($feedback->page_after_submit);
                 // print_simple_box_end();
-                print_box_end();
+                echo $OUTPUT->box_end();
             } else {
                 echo '<p align="center"><b><font color="green">'.get_string('entries_saved','feedback').'</font></b></p>';
                 if( intval($feedback->publish_stats) == 1) {
@@ -268,15 +268,15 @@
             if(isset($savereturn) && $savereturn == 'failed') {
                 echo '<p align="center"><b><font color="red">'.get_string('saving_failed','feedback').'</font></b></p>';
             }
-    
+
             if(isset($savereturn) && $savereturn == 'missing') {
                 echo '<p align="center"><b><font color="red">'.get_string('saving_failed_because_missing_or_false_values','feedback').'</font></b></p>';
             }
-    
+
             //print the items
             if(is_array($feedbackitems)){
                 // print_simple_box_start('center', '75%');
-                print_box_start('generalbox boxaligncenter boxwidthwide');
+                echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
                 echo '<div class="mdl-align"><form name="frm" action="'.$ME.'" method="post" onsubmit=" ">';
                 echo '<table>';
                 echo '<tr><td colspan="3" align="center">
@@ -290,7 +290,7 @@
                 if($countreq > 0) {
                     echo '<tr><td colspan="3"><font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font></td></tr>';
                 }
-                
+
                 unset($startitem);
                 $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
                 foreach($feedbackitems as $feedbackitem){
@@ -321,7 +321,7 @@
                     }
                     echo '</tr>';
                     echo '<tr><td>&nbsp;</td></tr>';
-                    
+
                     $lastbreakposition = $feedbackitem->position; //last item-pos (item or pagebreak)
                     if($feedbackitem->typ == 'pagebreak'){
                         break;
@@ -340,7 +340,7 @@
                     echo '<input type="hidden" name="startitempos" value="'. $startitem->position . '" />';
                     echo '<input type="hidden" name="lastitempos" value="'. $lastitem->position . '" />';
                 }
-                
+
                 if($ispagebreak AND $lastbreakposition > $firstpagebreak->position) {
                     echo '<input name="gopreviouspage" type="submit" value="'.get_string('previous_page','feedback').'" />';
                 }
@@ -350,9 +350,9 @@
                 if($lastbreakposition >= $maxitemcount) { //last page
                     echo '<input name="savevalues" type="submit" value="'.get_string('save_entries','feedback').'" />';
                 }
-                
+
                 echo '</form>';
-                
+
                 if($courseid) {
                     echo '<form name="frm" action="'.$CFG->wwwroot.'/course/view.php?id='.$courseid.'" method="post" onsubmit=" ">';
                 }else{
@@ -369,16 +369,16 @@
                 echo '</div>';
                 $SESSION->feedback->is_started = true;
                 // print_simple_box_end();
-                print_box_end();
+                echo $OUTPUT->box_end();
             }
         }
     }else {
         // print_simple_box_start('center');
-        print_box_start('generalbox boxaligncenter');
+        echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<h2><font color="red">'.get_string('this_feedback_is_already_submitted', 'feedback').'</font></h2>';
             print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
         // print_simple_box_end();
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
     /// Finish the page
     ///////////////////////////////////////////////////////////////////////////

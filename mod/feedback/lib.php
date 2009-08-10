@@ -252,7 +252,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
         $groupselect = "";
         $groupjoin   = "";
     }
-    
+
     if (!$feedbackitems = $DB->get_records_sql("SELECT fk . * , fc . * , u.firstname, u.lastname, u.email, u.picture
                                             FROM {feedback_completed} fc
                                                 JOIN {feedback} fk ON fk.id = fc.feedback
@@ -277,8 +277,8 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
     $aname = format_string($cm->name,true);
     foreach ($feedbackitems as $feedbackitem) {
         if ($feedbackitem->userid != $USER->id) {
-       
-            if ($groupmode == SEPARATEGROUPS and !$accessallgroups) { 
+
+            if ($groupmode == SEPARATEGROUPS and !$accessallgroups) {
                 $usersgroups = groups_get_all_groups($course->id, $feedbackitem->userid, $cm->groupingid);
                 if (!is_array($usersgroups)) {
                     continue;
@@ -298,14 +298,14 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
         $tmpactivity->name      = $aname;
         $tmpactivity->sectionnum= $cm->sectionnum;
         $tmpactivity->timestamp = $feedbackitem->timemodified;
-        
+
         $tmpactivity->content->feedbackid = $feedbackitem->id;
         $tmpactivity->content->feedbackuserid = $feedbackitem->userid;
-        
+
         $tmpactivity->user->userid   = $feedbackitem->userid;
         $tmpactivity->user->fullname = fullname($feedbackitem, $viewfullnames);
         $tmpactivity->user->picture  = $feedbackitem->picture;
-        
+
         $activities[$index++] = $tmpactivity;
     }
 
@@ -340,10 +340,10 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
         echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';
     }
-	
+
 	echo '<div class="title">';
     echo '</div>';
-	
+
     echo '<div class="user">';
     echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->userid}&amp;course=$courseid\">"
          ."{$activity->user->fullname}</a> - ".userdate($activity->timestamp);
@@ -358,7 +358,7 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
 /**
  * Print a detailed representation of what a  user has done with
  * a given particular instance of this module, for user activity reports.
- * 
+ *
  * @param object $course
  * @param object $user
  * @param object $mod
@@ -512,7 +512,7 @@ function feedback_reset_course_form($course) {
     foreach($feedbacks as $feedback) {
         echo '<p>';
         echo get_string('name','feedback').': '.$feedback->name.'<br />';
-        echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, true, get_string('resetting_data','feedback')), FEEDBACK_RESETFORM_RESET.$feedback->id);  
+        echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, true, get_string('resetting_data','feedback')), FEEDBACK_RESETFORM_RESET.$feedback->id);
         echo '<br />';
         echo $OUTPUT->checkbox(html_select_option::make_checkbox(1, false, get_string('drop_feedback','feedback')), FEEDBACK_RESETFORM_DROP.$feedback->id);
         echo '</p>';
@@ -704,7 +704,7 @@ function feedback_check_is_switchrole(){
     return false;
 }
 
-/** 
+/**
  * get users which have the complete-capability
  *
  * @global object
@@ -715,7 +715,7 @@ function feedback_check_is_switchrole(){
  */
 function feedback_get_complete_users($cm, $group = false) {
     global $DB;
-    
+
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
             print_error('badcontext');
     }
@@ -1388,7 +1388,7 @@ function feedback_get_all_break_positions($feedbackid) {
 
 /**
  * get the position of the last pagebreak
- * 
+ *
  * @param int $feedbackid
  * @return int the position of the last pagebreak
  */
@@ -1463,7 +1463,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
  * if the param $tmp is set true so the values are saved temporary in table feedback_valuetmp
  * if there is already a completed and the userid is set so the values are updated
  * on all other things new value records will be created
- * 
+ *
  * @global object
  * @param object $data the data from complete form
  * @param int $userid
@@ -1930,7 +1930,7 @@ function feedback_delete_all_completeds($feedbackid) {
 /**
  * deletes a completed given by completedid.
  * all related data such values or tracking data also will be deleted
- * 
+ *
  * @global object
  * @param int $completedid
  * @return boolean
@@ -2058,7 +2058,7 @@ function feedback_get_courses_from_sitecourse_map($feedbackid) {
  * removes non existing courses or feedbacks from sitecourse_map.
  * it shouldn't be called all too often
  * a good place for it could be the mapcourse.php or unmapcourse.php
- * 
+ *
  * @global object
  * @return void
  */
@@ -2289,7 +2289,7 @@ function feedback_print_errors() {
     }
 
     // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
-    print_box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
+    echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
     echo $OUTPUT->heading(get_string('handling_error', 'feedback'));
 
     echo '<p align="center"><b><font color="black"><pre>';
@@ -2297,7 +2297,7 @@ function feedback_print_errors() {
     echo '</pre></font></b></p>';
 
     // print_simple_box_end();
-    print_box_end();
+    echo $OUTPUT->box_end();
     echo '<br /><br />';
     $SESSION->feedback->errors = array(); //remove errors
 }

@@ -10,7 +10,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    
+
     ////////////////////////////////////////////////////////
     //get the params
     ////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
     ////////////////////////////////////////////////////////
     //get the objects
     ////////////////////////////////////////////////////////
-    
+
     if($userid) {
         $formdata->userid = intval($userid);
     }
@@ -32,24 +32,24 @@
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             print_error('invalidcoursemodule');
         }
-     
+
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-     
+
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
     }
-    
+
     $capabilities = feedback_load_capabilities($cm->id);
 
     require_login($course->id, true, $cm);
-    
+
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         print_error('invalidsesskey');
     }
-    
+
     if(!$capabilities->viewreports){
         print_error('error');
     }
@@ -62,21 +62,21 @@
         $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
         $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$formdata->userid, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)); //arb
     }
-    
+
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
-                 
+
     include('tabs.php');
 
     /// Print the main part of the page
@@ -92,10 +92,10 @@
         if($capabilities->viewreports) {
             //get the effective groupmode of this course and module
             $groupmode = groupmode($course, $cm);
-            
+
             $groupselect = groups_print_activity_menu($cm, 'show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
             $mygroupid = groups_get_activity_group($cm);
-            
+
             //get students in conjunction with groupmode
             if($groupmode > 0) {
 
@@ -120,12 +120,12 @@
                 echo '</div>';
             }
         }
-    
+
         //####### viewreports-start
         if($capabilities->viewreports) {
             //print the list of students
             // print_simple_box_start('center', '80%');
-            print_box_start('generalbox boxaligncenter boxwidthwide');
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             echo isset($groupselect) ? $groupselect : '';
             echo '<div class="clearer"></div>';
             echo '<div class="mdl-align"><table><tr><td width="400">';
@@ -140,7 +140,7 @@
                 foreach ($students as $student){
                     $completedCount = $DB->count_records('feedback_completed', array('userid'=>$student->id, 'feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                     if($completedCount > 0) {
-                     // Are we assuming that there is only one response per user? Should westep through a feedbackcompleteds? I added the addition anonymous check to the select so that only non-anonymous submissions are retrieved. 
+                     // Are we assuming that there is only one response per user? Should westep through a feedbackcompleteds? I added the addition anonymous check to the select so that only non-anonymous submissions are retrieved.
                         $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, ' userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                     ?>
                         <table width="100%">
@@ -195,20 +195,20 @@
                         ?>
                     </td>
                 </tr>
-            </table> 
+            </table>
     <?php
             echo '</td></tr></table></div>';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
-    
+
     }
     ////////////////////////////////////////////////////////
     /// Print the responses of the given user
     ////////////////////////////////////////////////////////
     if($do_show == 'showoneentry') {
         echo $OUTPUT->heading(format_text($feedback->name));
-        
+
         //print the items
         if(is_array($feedbackitems)){
             $usr = $DB->get_record('user', array('id'=>$formdata->userid));
@@ -218,7 +218,7 @@
                 echo '<p align="center">'.get_string('not_completed_yet','feedback').'</p>';
             }
             // print_simple_box_start("center", '50%');
-            print_box_start('generalbox boxaligncenter boxwidthnormal');
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
             echo '<form>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<table width="100%">';
@@ -233,7 +233,7 @@
                 } else {
                     echo '<td>&nbsp;</td>';
                 }
-                
+
                 if($feedbackitem->typ != 'pagebreak') {
                     if(isset($value->value)) {
                         feedback_print_item($feedbackitem, $value->value, true);
@@ -250,7 +250,7 @@
             echo '</table>';
             echo '</form>';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
         print_continue(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
     }

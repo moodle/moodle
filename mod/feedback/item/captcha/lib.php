@@ -5,20 +5,20 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 class feedback_item_captcha extends feedback_item_base {
     var $type = "captcha";
     function init() {
-    
+
     }
-    
+
     function show_edit($item) {
         global $CFG;
-        
+
         require_once('captcha_form.php');
-        
+
         $item_form = new feedback_captcha_form();
 
         $item->presentation = empty($item->presentation) ? 3 : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
         $item->label = empty($item->label) ? '' : $item->label;
-        
+
         $item->required = isset($item->required) ? $item->required : 1;
         if($item->required) {
             $item_form->requiredcheck->setValue(true);
@@ -26,7 +26,7 @@ class feedback_item_captcha extends feedback_item_base {
 
         $item_form->itemname->setValue($item->name);
         $item_form->itemlabel->setValue($item->label);
-        
+
         $item_form->select->setValue($item->presentation);
         return $item_form;
     }
@@ -49,13 +49,13 @@ class feedback_item_captcha extends feedback_item_base {
     }
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
-        global $SESSION, $CFG, $DB;
-        
+        global $SESSION, $CFG, $DB, $OUTPUT;
+
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
-        
+
         $presentation = $item->presentation;
         $SESSION->feedback->item->captcha->charcount = $presentation;
-        
+
         $cmid = 0;
         if(!$readonly) {
             $feedbackid = $item->feedback;
@@ -66,21 +66,21 @@ class feedback_item_captcha extends feedback_item_base {
                 }
             }
         }
-        
+
         if(isset($SESSION->feedback->item->captcha->checked)) {
             $checked = $SESSION->feedback->item->captcha->checked == true;
             unset($SESSION->feedback->item->captcha->checked);
         }else {
             $checked = false;
         }
-        
+
         //check if an false value even the value is not required
         if(!$readonly AND !$item->required AND $value != '' AND $SESSION->feedback->item->captcha->checkchar != $value) {
             $falsevalue = true;
         }else {
             $falsevalue = false;
         }
-        
+
         if(($highlightrequire AND $item->required AND !$checked) OR $falsevalue) {
             $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
         }else {
@@ -101,10 +101,10 @@ class feedback_item_captcha extends feedback_item_base {
     <?php
         if($readonly){
             // print_simple_box_start($align);
-            print_box_start('generalbox boxalign'.$align);
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value ? $value : '&nbsp;';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }else {
     ?>
             <input type="text" name="<?php echo $item->typ . '_' . $item->id;?>"

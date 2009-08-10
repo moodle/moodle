@@ -5,20 +5,20 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 class feedback_item_textarea extends feedback_item_base {
     var $type = "textarea";
     function init() {
-    
+
     }
-    
+
     function show_edit($item) {
         global $CFG;
 
         require_once('textarea_form.php');
-        
+
         $item_form = new feedback_textarea_form();
 
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $item->name = empty($item->name) ? '' : $item->name;
         $item->label = empty($item->label) ? '' : $item->label;
-              
+
         $item->required = isset($item->required) ? $item->required : 0;
         if($item->required) {
             $item_form->requiredcheck->setValue(true);
@@ -32,7 +32,7 @@ class feedback_item_textarea extends feedback_item_base {
         $itemheight = isset($widthAndHeight[1]) ? $widthAndHeight[1] : 5;
         $item_form->selectwith->setValue($itemwidth);
         $item_form->selectheight->setValue($itemheight);
-        
+
         return $item_form;
     }
 
@@ -56,7 +56,7 @@ class feedback_item_textarea extends feedback_item_base {
     }
 
     function get_printval($item, $value) {
-        
+
         if(!isset($value->value)) return '';
 
         return $value->value;
@@ -100,8 +100,9 @@ class feedback_item_textarea extends feedback_item_base {
     }
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+        global $OUTPUT;
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
-        
+
         $presentation = explode ("|", $item->presentation);
         if($highlightrequire AND $item->required AND strval($value) == '') {
             $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
@@ -122,10 +123,10 @@ class feedback_item_textarea extends feedback_item_base {
     <?php
         if($readonly){
             // print_simple_box_start($align);
-            print_box_start('generalbox boxalign'.$align);
+            echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value?str_replace("\n",'<br />',$value):'&nbsp;';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }else {
     ?>
             <textarea name="<?php echo $item->typ . '_' . $item->id;?>"

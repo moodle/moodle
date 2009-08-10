@@ -12,18 +12,18 @@
 
     $id = required_param('id', PARAM_INT);
     $courseid = optional_param('courseid', false, PARAM_INT);
-    
+
     // $SESSION->feedback->current_tab = 'view';
     $current_tab = 'view';
 
     if (! $cm = get_coursemodule_from_id('feedback', $id)) {
         print_error('invalidcoursemodule');
     }
- 
+
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
- 
+
     if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
@@ -33,12 +33,12 @@
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
         $capabilities->complete = true;
     }
-    
+
     //check whether the feedback is located and! started from the mainsite
     if($course->id == SITEID AND !$courseid) {
         $courseid = SITEID;
     }
-    
+
     //check whether the feedback is mapped to the given courseid
     if($course->id == SITEID AND !$capabilities->edititems) {
         if($DB->get_records('feedback_sitecourse_map', array('feedbackid'=>$feedback->id))) {
@@ -47,7 +47,7 @@
             }
         }
     }
-    
+
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
         if($course->id == SITEID) {
             require_login($course->id, true);
@@ -61,7 +61,7 @@
             require_course_login($course, true, $cm);
         }
     }
-    
+
     //check whether the given courseid exists
     if($courseid AND $courseid != SITEID) {
         if($course2 = $DB->get_record('course', array('id'=>$courseid))){
@@ -80,13 +80,13 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
@@ -113,21 +113,21 @@
     echo $OUTPUT->heading(format_text($feedback->name));
 
     // print_simple_box_start('center', '80%');
-    print_box_start('generalbox boxaligncenter boxwidthwide');
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $options = (object)array('noclean'=>true);
     echo format_module_intro('feedback', $feedback, $cm->id);
     // print_simple_box_end();
-    print_box_end();
-    
+    echo $OUTPUT->box_end();
+
     if($capabilities->edititems) {
         echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 4);
         // print_simple_box_start('center', '80%');
-        print_box_start('generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo format_text($feedback->page_after_submit);
         // print_simple_box_end();
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
-    
+
     if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
         if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
             echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
@@ -141,7 +141,7 @@
     if($capabilities->mapcourse) {
         if($feedback->course == SITEID) {
             // print_simple_box_start('center', '80%');
-            print_box_start('generalbox boxaligncenter boxwidthwide');
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             echo '<div class="mdl-align">';
             echo '<form action="mapcourse.php" method="get">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -152,7 +152,7 @@
             echo '<br />';
             echo '</div>';
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
     }
     //####### mapcourse-end
@@ -160,20 +160,20 @@
     //####### completed-start
     if($capabilities->complete) {
         // print_simple_box_start('center', '80%');
-        print_box_start('generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         //check, whether the feedback is open (timeopen, timeclose)
         $checktime = time();
         if(($feedback->timeopen > $checktime) OR ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
             // print_simple_box_start('center');
-            print_box_start('generalbox boxaligncenter');
+            echo $OUTPUT->box_start('generalbox boxaligncenter');
                 echo '<h2><font color="red">'.get_string('feedback_is_not_open', 'feedback').'</font></h2>';
                 print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
             // print_simple_box_end();
-            print_box_end();
+            echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
             exit;
         }
-        
+
         //check multiple Submit
         $feedback_can_submit = true;
         if($feedback->multiple_submit == 0 ) {
@@ -208,7 +208,7 @@
             }
         }
         // print_simple_box_end();
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
     //####### completed-end
     echo "</p>";

@@ -21,11 +21,11 @@
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             print_error('invalidcoursemodule');
         }
-     
+
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-     
+
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
@@ -57,13 +57,13 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
-    
+
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple(format_string($feedback->name), "",
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
@@ -73,7 +73,7 @@
 
     //print analysed items
     // print_simple_box_start("center", '80%');
-    print_box_start('generalbox boxaligncenter boxwidthwide');
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
     //get the groupid
     $groupselect = groups_print_activity_menu($cm, 'analysis.php?id=' . $cm->id.'&do_show=analysis', true);
@@ -146,7 +146,7 @@
     }
     echo '</td></tr></table></div>';
     // print_simple_box_end();
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 
