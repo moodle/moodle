@@ -19,7 +19,7 @@ require_once('lib.php');
  */
 function tag_print_cloud($nr_of_tags=150, $return=false) {
     global $CFG, $DB;
-    
+
     $can_manage_tags = has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
     if ( !$tagsincloud = $DB->get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag
@@ -69,7 +69,7 @@ function tag_print_cloud($nr_of_tags=150, $return=false) {
 }
 
 /**
- * This function is used by print_tag_cloud, to usort() the tags in the cloud.  
+ * This function is used by print_tag_cloud, to usort() the tags in the cloud.
  * See php.net/usort for the parameters documentation. This was originally in
  * blocks/blog_tags/block_blog_tags.php, named blog_tags_sort().
  */
@@ -99,7 +99,7 @@ function tag_cloud_sort($a, $b) {
  */
 function tag_print_description_box($tag_object, $return=false) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     $max_tags_displayed = 10; // todo: turn this into a system setting
 
@@ -110,7 +110,7 @@ function tag_print_description_box($tag_object, $return=false) {
     $output = '';
 
     if ($content) {
-        $output .= print_box_start('generalbox', 'tag-description', true);
+        $output .= $OUTPUT->box_start('generalbox', 'tag-description');
     }
 
     if (!empty($tag_object->description)) {
@@ -132,7 +132,7 @@ function tag_print_description_box($tag_object, $return=false) {
     }
 
     if ($content) {
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
     }
 
     if ($return) {
@@ -150,16 +150,16 @@ function tag_print_description_box($tag_object, $return=false) {
  */
 function tag_print_management_box($tag_object, $return=false) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     $tagname  = tag_display_name($tag_object);
     $output = '';
 
     if (!isguestuser()) {
-        $output .= print_box_start('box','tag-management-box', true);
+        $output .= $OUTPUT->box_start('box','tag-management-box');
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
         $links = array();
-        
+
         // Add a link for users to add/remove this from their interests
         if (tag_record_tagged_with('user', $USER->id, $tag_object->name)) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=removeinterest&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('removetagfrommyinterests', 'tag', $tagname) .'</a>';
@@ -171,13 +171,13 @@ function tag_print_management_box($tag_object, $return=false) {
         $links[] = '<a href="'. $CFG->wwwroot .'/tag/user.php?action=flaginappropriate&amp;sesskey='. sesskey() .'&amp;tag='. rawurlencode($tag_object->name) .'">'. get_string('flagasinappropriate', 'tag', rawurlencode($tagname)) .'</a>';
 
         // Edit tag: Only people with moodle/tag:edit capability who either have it as an interest or can manage tags
-        if (has_capability('moodle/tag:edit', $systemcontext) || 
+        if (has_capability('moodle/tag:edit', $systemcontext) ||
             has_capability('moodle/tag:manage', $systemcontext)) {
             $links[] = '<a href="'. $CFG->wwwroot .'/tag/edit.php?tag='. rawurlencode($tag_object->name) .'">'. get_string('edittag', 'tag') .'</a>';
         }
 
         $output .= implode(' | ', $links);
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
     }
 
     if ($return) {
@@ -193,16 +193,16 @@ function tag_print_management_box($tag_object, $return=false) {
  * @param bool $return if true return html string
  */
 function tag_print_search_box($return=false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
-    $output = print_box_start('','tag-search-box', true);
+    $output = $OUTPUT->box_start('','tag-search-box');
     $output .= '<form action="'.$CFG->wwwroot.'/tag/search.php" style="display:inline">';
     $output .= '<div>';
     $output .= '<input id="searchform_search" name="query" type="text" size="40" />';
     $output .= '<button id="searchform_button" type="submit">'. get_string('search', 'tag') .'</button><br />';
     $output .= '</div>';
     $output .= '</form>';
-    $output .= print_box_end(true);
+    $output .= $OUTPUT->box_end();
 
     if ($return) {
         return $output;
@@ -248,7 +248,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
-            $output .= print_box($addtaglink, 'box', 'tag-management-box', true);
+            $output .= $OUTPUT->box($addtaglink, 'box', 'tag-management-box');
         }
 
         $nr_of_lis_per_ul = 6;
@@ -273,7 +273,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
-            $output .= print_box($addtaglink, 'box', 'tag-management-box', true);
+            $output .= $OUTPUT->box($addtaglink, 'box', 'tag-management-box');
         }
     }
 
@@ -316,7 +316,7 @@ function tag_print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='',
  * @param $return if true return html string
  */
 function tag_print_user_box($user, $return=false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $textlib = textlib_get_instance();
     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
@@ -326,7 +326,7 @@ function tag_print_user_box($user, $return=false) {
         $profilelink = $CFG->wwwroot .'/user/view.php?id='. $user->id;
     }
 
-    $output = print_box_start('user-box', 'user'. $user->id, true);
+    $output = $OUTPUT->box_start('user-box', 'user'. $user->id);
     $fullname = fullname($user);
     $alt = '';
 
@@ -341,7 +341,7 @@ function tag_print_user_box($user, $return=false) {
     } else {
         $output .= '<img alt="'. $alt .'" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png" />';
     }
-    
+
     $output .= '<br />';
 
     if (!empty($profilelink)) {
@@ -354,7 +354,7 @@ function tag_print_user_box($user, $return=false) {
     }
 
     $output .= '<strong>'. $fullname .'</strong>';
-    $output .= print_box_end(true);
+    $output .= $OUTPUT->box_end();
 
     if ($return) {
         return $output;

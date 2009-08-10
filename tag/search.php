@@ -50,9 +50,9 @@ if(!empty($query)) {
 
 echo '<br/><br/>';
 
-print_box_start('generalbox', 'big-tag-cloud-box');
+echo $OUTPUT->box_start('generalbox', 'big-tag-cloud-box');
 tag_print_cloud(150);
-print_box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 

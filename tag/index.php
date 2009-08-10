@@ -79,7 +79,7 @@ require_once($CFG->dirroot.'/tag/coursetagslib.php');
 if ($courses = coursetag_get_tagged_courses($tag->id)) {
 
     $totalcount = count( $courses );
-    print_box_start('generalbox', 'tag-blogs'); //could use an id separate from tag-blogs, but would have to copy the css style to make it look the same
+    echo $OUTPUT->box_start('generalbox', 'tag-blogs'); //could use an id separate from tag-blogs, but would have to copy the css style to make it look the same
 
     $heading = get_string('courses') . ' ' . get_string('taggedwith', 'tag', $tagname) .': '. $totalcount;
     echo "<a name='course'></a>";
@@ -89,7 +89,7 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
         print_course($course);
 	}
 
-    print_box_end();
+    echo $OUTPUT->box_end();
 }
 
 // Print up to 10 previous blogs entries
@@ -102,7 +102,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
     $count = 10;
     if ($blogs = blog_fetch_entries('', $count, 0, 'site', '', $tag->id)) {
 
-        print_box_start('generalbox', 'tag-blogs');
+        echo $OUTPUT->box_start('generalbox', 'tag-blogs');
         $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
         echo "<a name='blog'></a>";
         echo $OUTPUT->heading($heading, 3);
@@ -129,7 +129,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
 
         echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&amp;filterselect=0&amp;tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
 
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 }
 
@@ -137,7 +137,7 @@ $usercount = tag_record_count('user', $tag->id);
 if ($usercount > 0) {
 
     //user table box
-    print_box_start('generalbox', 'tag-user-table');
+    echo $OUTPUT->box_start('generalbox', 'tag-user-table');
 
     $heading = get_string('users'). ' ' . get_string('taggedwith', 'tag', $tagname) . ': ' . $usercount;
     echo "<a name='user'></a>";
@@ -148,7 +148,7 @@ if ($usercount > 0) {
     $pagingbar->pagevar = 'userpage';
     echo $OUTPUT->paging_bar($pagingbar);
     tag_print_tagged_users_table($tag, $userpage * $perpage, $perpage);
-    print_box_end();
+    echo $OUTPUT->box_end();
 }
 
 echo $OUTPUT->footer();
