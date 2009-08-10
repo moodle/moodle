@@ -323,8 +323,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $PAGE->requires->js('mod/scorm/datamodels/scorm_datamodels.js');
     }
 
-    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid=';
-    $result->tocmenu = popup_form($url,$tocmenus, "tocmenu", $sco->id, '', '', '', true);
+    $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr;
+    $select = moodle_select::make_popup_form($url, 'scoid', $tocmenus, "tocmenu", $sco->id);
+    $select->nothinglabel = false;
+    $result->tocmenu = $OUTPUT->select($select);
 
     return $result;
 }
