@@ -3293,7 +3293,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     }
 
     if (!empty($optionsextra)) {
-        debugging('The $optionsextra (11th) param to popup_form is not supported, please improve your code.', DEBUG_DEVELOPER);
+        // debugging('The $optionsextra (11th) param to popup_form is not supported, please improve your code.', DEBUG_DEVELOPER);
     }
 
     if ($nothing == 'choose') {
