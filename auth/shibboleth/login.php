@@ -28,8 +28,10 @@ httpsrequired();
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langlabel = get_accesshide(get_string('language'));
-        $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true, 'self', $langlabel);
+        $select = moodle_select::make_popup_form("$CFG->httpswwwroot/login/index.php", 'lang', $langs, 'chooselang', $currlang);
+        $select->nothinglabel = false;
+        $select->set_label(get_accesshide(get_string('language')));
+        $langmenu = $OUTPUT->select($select);
     }
 
     $loginsite = get_string("loginsite");
