@@ -288,7 +288,7 @@
             }
             $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
                            "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1\">".
-                           "<img src=\"" . $OUTPUT->old_icon_url('$switchpix') . "\" alt=\"$switchclick\" /></a>";
+                           "<img src=\"" . $OUTPUT->old_icon_url("$switchpix") . "\" alt=\"$switchclick\" /></a>";
 
         } else if ($currentuser) {         /// Can only re-enable an email this way
             if ($user->emailstop) {   // Include link that tells how to re-enable their email
