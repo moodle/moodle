@@ -65,7 +65,7 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
     }
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
-    
+
     $strnotes = get_string('notes', 'notes');
     $nav = array();
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
@@ -87,7 +87,7 @@
     $strpersonalnotes = get_string('personalnotes', 'notes');
     $straddnewnote = get_string('addnewnote', 'notes');
 
-    print_box_start();
+    echo $OUTPUT->box_start();
 
     if ($courseid != SITEID) {
         //echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a> | <a href="#personalnotes">' . $strpersonalnotes . '</a>';
@@ -118,7 +118,7 @@
         }
     }
 
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 ?>

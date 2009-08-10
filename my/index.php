@@ -82,14 +82,14 @@
     }
 
     if (empty($courses)) {
-        print_box(get_string('nocourses','my'));
+        echo $OUTPUT->box(get_string('nocourses','my'));
     } else {
         print_overview($courses);
     }
 
     // if more than 20 courses
     if (count($courses) > 20) {
-        echo '<br />...';  
+        echo '<br />...';
     }
 
     echo $OUTPUT->footer();
