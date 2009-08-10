@@ -12,9 +12,9 @@
         if (trim($forum->intro) != '') {
             $options = new stdclass;
             $options->para = false;
-            print_box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
+            echo $OUTPUT->box(format_text($forum->intro, FORMAT_MOODLE, $options), 'generalbox', 'intro');
         }
-        
+
         $cm = get_coursemodule_from_instance('forum', $forum->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         echo '<div class="subscribelink">', forum_get_subscribe_link($forum, $context), '</div>';

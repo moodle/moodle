@@ -61,9 +61,9 @@
             print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_category_button());
             echo $OUTPUT->heading($strcategories);
             echo skip_main_destination();
-            print_box_start('categorybox');
+            echo $OUTPUT->box_start('categorybox');
             print_whole_category_list();
-            print_box_end();
+            echo $OUTPUT->box_end();
             print_course_search();
         } else {
             $strfulllistofcourses = get_string('fulllistofcourses');
@@ -71,9 +71,9 @@
                     build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
                          '', '', true, update_category_button());
             echo skip_main_destination();
-            print_box_start('courseboxes');
+            echo $OUTPUT->box_start('courseboxes');
             print_courses(0);
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
 
         echo '<div class="buttons">';
@@ -123,12 +123,12 @@
 
         if ($data->fulldelete) {
             $deletedcourses = category_delete_full($deletecat, true);
-            
+
             foreach($deletedcourses as $course) {
                 notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
             }
             notify(get_string('coursecategorydeleted', '', format_string($deletecat->name)), 'notifysuccess');
-            
+
         } else {
             category_delete_move($deletecat, $data->newparent, true);
         }
