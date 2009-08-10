@@ -185,7 +185,7 @@ class quiz_grading_report extends quiz_default_report {
         if (count($gradeableqs)!=1){
             $qurl = fullclone($this->viewurl);
             $qurl->remove_params('questionid', 'attemptid', 'gradeall', 'gradeungraded', 'gradenextungraded');
-            $menu = popup_form(($qurl->out()).'&amp;questionid=',$qmenu, 'questionid', $questionid, 'choose', '', '', true);
+            $menu = $OUTPUT->select(moodle_select::make_popup_form($qurl->out(), 'questionid', $qmenu, 'questionid', $questionid));
             echo '<div class="mdl-align">'.$menu.'</div>';
         }
         if (!$questionid){
