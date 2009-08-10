@@ -14,7 +14,7 @@ class assignment_online extends assignment_base {
 
     function view() {
 
-        global $USER;
+        global $USER, $OUTPUT;
 
         $edit  = optional_param('edit', 0, PARAM_BOOL);
         $saved = optional_param('saved', 0, PARAM_BOOL);
@@ -97,10 +97,10 @@ class assignment_online extends assignment_base {
 
         if (has_capability('mod/assignment:submit', $context)) {
             if ($editmode) {
-                print_box_start('generalbox', 'online');
+                echo $OUTPUT->box_start('generalbox', 'online');
                 $mform->display();
             } else {
-                print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
+                echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     echo format_text($submission->data1, $submission->data2);
                     $button = new portfolio_add_button();
@@ -112,7 +112,7 @@ class assignment_online extends assignment_base {
                     echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
             }
-            print_box_end();
+            echo $OUTPUT->box_end();
             if (!$editmode && $editable) {
                 echo "<div style='text-align:center'>";
                 print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
