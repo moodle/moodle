@@ -2355,7 +2355,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     } else {
         $nothing = 'choosedots';
     }
-    $select = moodle_select::make($categoriesarray, 'category', $selected);
+    $select = html_select::make($categoriesarray, 'category', $selected);
     $select->nothingvalue = $nothing;
     $select->nested = true;
     echo $OUTPUT->select($select);

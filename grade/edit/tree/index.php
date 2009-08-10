@@ -309,7 +309,7 @@ if (!$moving && count($categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
-    $select = new moodle_select();
+    $select = new html_select();
     $select->options = $categories;
     $select->name = 'moveafter';
     $select->disabled = true;

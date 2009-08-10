@@ -50,7 +50,7 @@
     } else {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        $select = moodle_select::make_popup_form($CFG->wwwroot .'/my/index.php', 'lang', $langs, 'chooselang', $currlang);
+        $select = html_select::make_popup_form($CFG->wwwroot .'/my/index.php', 'lang', $langs, 'chooselang', $currlang);
         $select->nothinglabel = false;
         $select->set_label(get_accesshide(get_string('language')));
         $langmenu = $OUTPUT->select($select);

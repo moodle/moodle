@@ -337,7 +337,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                 }
             }
             $popupurl = "index.php?move=$category->id&sesskey=".sesskey();
-            $select = moodle_select::make_popup_form($popupurl, 'moveto', $tempdisplaylist, "moveform$category->id", $category->parent);
+            $select = html_select::make_popup_form($popupurl, 'moveto', $tempdisplaylist, "moveform$category->id", $category->parent);
             $select->nothinglabel = false;
             echo $OUTPUT->select($select);
         }

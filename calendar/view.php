@@ -625,7 +625,7 @@ function calendar_course_filter_selector($getvars = '') {
     } else {
         $selected = '';
     }
-    $select = moodle_select::make_popup_form(CALENDAR_URL.'set.php?var=setcourse&'.$getvars, 'id', $courseoptions, 'cal_courses_flt', $selected);
+    $select = html_select::make_popup_form(CALENDAR_URL.'set.php?var=setcourse&'.$getvars, 'id', $courseoptions, 'cal_courses_flt', $selected);
     $select->nothinglabel = false;
     return $OUTPUT->select($select);
 }

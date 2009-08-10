@@ -8,7 +8,7 @@ $servercount = 0;
 if (is_array($mnethosts)) {
     $servercount = count(array_keys($mnethosts));
 }
-$select = moodle_select::make_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses);
+$select = html_select::make_yes_no('enrol_mnet_allow_allcourses', $frm->enrol_mnet_allow_allcourses);
 
 ?>
 <table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">

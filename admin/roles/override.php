@@ -231,7 +231,7 @@
 
     /// Print a form to swap roles, and a link back to the all roles list.
         echo '<div class="backlink">';
-        $select = moodle_select::make_popup_form($baseurl, 'roleid', $nameswithcounts, 'switchrole', $roleid);
+        $select = html_select::make_popup_form($baseurl, 'roleid', $nameswithcounts, 'switchrole', $roleid);
         $select->set_label(get_string('overrideanotherrole', 'role'));
         $select->nothinglabel = false;
         echo $OUTPUT->select($select);

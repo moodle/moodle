@@ -1,14 +1,14 @@
 <?php
     // The following is a hack to fix bug 1488
     $course = $DB->get_record('course', array('id'=>($form->courseid ? $form->courseid : $site->id)));
-    $startselectors = moodle_select::make_time_selectors(array(
+    $startselectors = html_select::make_time_selectors(array(
             'days' => 'startday',
             'months' => 'startmon', 
             'years' => 'startyr', 
             'hours' => 'starthr',
             'minutes' => 'startmin'), (int) $form->timestart);
 
-    $endselectors = moodle_select::make_time_selectors(array(
+    $endselectors = html_select::make_time_selectors(array(
             'days' => 'endday',
             'months' => 'endmon', 
             'years' => 'endyr', 

@@ -198,7 +198,7 @@
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
-                    $select = new moodle_select();
+                    $select = new html_select();
                     $select->options = array('delete' => get_string('delete'));
                     $select->name = 'action';
                     $select->button->label = get_string('withselected', 'quiz');

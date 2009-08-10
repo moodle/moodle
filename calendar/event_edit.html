@@ -1,12 +1,12 @@
 <?php
-$startselectors = moodle_select::make_time_selectors(array(
+$startselectors = html_select::make_time_selectors(array(
         'days' => 'startday',
         'months' => 'startmon', 
         'years' => 'startyr', 
         'hours' => 'starthr',
         'minutes' => 'startmin'), $form->timestart);
 
-$endselectors = moodle_select::make_time_selectors(array(
+$endselectors = html_select::make_time_selectors(array(
         'days' => 'endday',
         'months' => 'endmon', 
         'years' => 'endyr', 

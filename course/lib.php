@@ -1605,14 +1605,14 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $popupurl = "$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey();
 
     if (!empty($resources)) {
-        $select = moodle_select::make_popup_form($popupurl, 'add', $resources, "ressection$section", null);
+        $select = html_select::make_popup_form($popupurl, 'add', $resources, "ressection$section", null);
         $select->nothinglabel = $straddresource;
         $select->set_help_icon('resource/types', $straddresource); 
         $output .= $OUTPUT->select($select);
     }
 
     if (!empty($activities)) {
-        $select = moodle_select::make_popup_form($popupurl, 'add', $activities, "section$section", null);
+        $select = html_select::make_popup_form($popupurl, 'add', $activities, "section$section", null);
         $select->nothinglabel = $straddactivity;
         $select->set_help_icon('mods', $straddactivity); 
         $output .= $OUTPUT->select($select);

@@ -121,7 +121,7 @@
 
 /// Print form and popup menu
     echo '<div style="text-align:center">'.$strmoodleversion.' ';
-    $select = moodle_select::make_popup_form("$CFG->wwwroot/$CFG->admin/environment.php", 'version', $versions, 'selectversion', $version);
+    $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/environment.php", 'version', $versions, 'selectversion', $version);
     $select->nothinglabel = false;
     echo $OUTPUT->select($select);
     echo '</div>';

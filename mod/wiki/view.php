@@ -300,7 +300,7 @@
 
         echo '<td class="sideblockheading">'
             .get_string('otherwikis', 'wiki').':&nbsp;&nbsp;';
-        $select = new moodle_select();
+        $select = new html_select();
         $select->options = $wiki_list;
         $select->name = 'wikiselect';
         $select->selectedvalue = $selected;

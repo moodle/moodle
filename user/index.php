@@ -223,7 +223,7 @@
             unset($courselist[SITEID]);
             $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
         }
-        $select = moodle_select::make_popup_form($popupurl, 'id', $courselist, 'courseform', $course->id);
+        $select = html_select::make_popup_form($popupurl, 'id', $courselist, 'courseform', $course->id);
         $select->set_label(get_string('mycourses'));
         echo $OUTPUT->select($select);
         echo '</td>';
@@ -285,7 +285,7 @@
 
         if (count($timeoptions) > 1) {
             echo '<td class="left">';
-            $select = moodle_select::make_popup_form($baseurl, 'accesssince', $timeoptions, 'timeoptions', $accesssince);
+            $select = html_select::make_popup_form($baseurl, 'accesssince', $timeoptions, 'timeoptions', $accesssince);
             $select->set_label(get_string('usersnoaccesssince'));
             echo $OUTPUT->select($select);
             echo '</td>';
@@ -315,7 +315,7 @@
     if ($allowenroldetails) {
         $formatmenu['2']= get_string('enroldetails');
     }
-    $select = moodle_select::make_popup_form($baseurl, 'mode', $formatmenu, 'formatmenu', $mode);
+    $select = html_select::make_popup_form($baseurl, 'mode', $formatmenu, 'formatmenu', $mode);
     $select->nothinglabel = false;
     $select->set_label(get_string('userlist'));
     echo $OUTPUT->select($select);
@@ -589,7 +589,7 @@
                 $rolenames = array('0' => get_string('userswithrole', 'role')) + $rolenames;
             }
         }
-        $select = moodle_select::make_popup_form($rolenamesurl, 'roleid', $rolenames, 'rolesform', $roleid);
+        $select = html_select::make_popup_form($rolenamesurl, 'roleid', $rolenames, 'rolesform', $roleid);
         $select->nothinglabel = false;
         echo $OUTPUT->select($select);
         echo '</div>';
@@ -970,7 +970,7 @@
         }
 
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
-        $select = new moodle_select();
+        $select = new html_select();
         $select->options = $displaylist;
         $select->name = "formaction";
         $select->label = get_string("withselectedusers");

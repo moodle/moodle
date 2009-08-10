@@ -212,7 +212,7 @@
             }
             if (!empty($forummenu)) {
                 echo "<div style=\"float:right;\">";
-                $select = moodle_select::make_popup_form('', '', $forummenu, 'forummenu');
+                $select = html_select::make_popup_form('', '', $forummenu, 'forummenu');
                 $select->nothinglabel = get_string("movethisdiscussionto", "forum");
                 $select->form->button->text = get_string('move');
 

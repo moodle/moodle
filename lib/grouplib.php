@@ -480,7 +480,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $groupname = reset($groupsmenu);
         $output = $grouplabel.': '.$groupname;
     } else {
-        $select = moodle_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
+        $select = html_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
         $select->nothinglabel = false;
         $select->set_label($grouplabel);
         $output = $OUTPUT->select($select); 
@@ -588,7 +588,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $groupname = reset($groupsmenu);
         $output = $grouplabel.': '.$groupname;
     } else {
-        $select = moodle_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
+        $select = html_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
         $select->nothinglabel = false;
         $select->set_label($grouplabel);
         $output = $OUTPUT->select($select); 

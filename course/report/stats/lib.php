@@ -24,7 +24,7 @@
             $options[STATS_MODE_RANKED] = get_string('reports');
         }
         $popupurl = $url."?course=$course->id&time=$time";
-        $select = moodle_select::make_popup_form($popupurl, 'mode', $options, 'switchmode', $mode);
+        $select = html_select::make_popup_form($popupurl, 'mode', $options, 'switchmode', $mode);
         $select->nothinglabel = false;
         return $OUTPUT->select($select);
     }

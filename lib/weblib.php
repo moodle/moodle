@@ -2666,7 +2666,7 @@ function switchroles_form($courseid) {
         // unset default user role - it would not work
         unset($roles[$CFG->guestroleid]);
         $popupurl = $CFG->wwwroot.'/course/view.php?id='.$courseid.'&sesskey='.sesskey();
-        $select = moodle_select::make_popup_form($popupurl, 'switchrole', $roles, 'switchrole', '');
+        $select = html_select::make_popup_form($popupurl, 'switchrole', $roles, 'switchrole', '');
         $select->nothinglabel = get_string('switchroleto');
         $select->set_help_icon('switchrole', get_string('switchroleto'));
         return $OUTPUT->select($select);

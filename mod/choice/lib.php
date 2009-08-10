@@ -544,7 +544,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                $select = new moodle_select();
+                $select = new html_select();
                 $select->options = array('delete' => get_string('delete'));
                 $select->name = 'action';
                 $select->button->label = get_string('withselected', 'quiz');

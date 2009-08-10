@@ -44,9 +44,9 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $dayselector = moodle_select::make_time_selector('days', 'field_'.$this->field->id.'_day', $content);
-        $monthselector = moodle_select::make_time_selector('months', 'field_'.$this->field->id.'_month', $content);
-        $yearselector = moodle_select::make_time_selector('years', 'field_'.$this->field->id.'_year', $content);
+        $dayselector = html_select::make_time_selector('days', 'field_'.$this->field->id.'_day', $content);
+        $monthselector = html_select::make_time_selector('months', 'field_'.$this->field->id.'_month', $content);
+        $yearselector = html_select::make_time_selector('years', 'field_'.$this->field->id.'_year', $content);
         $str .= $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
         $str .= '</div>';
 

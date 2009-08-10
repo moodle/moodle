@@ -117,7 +117,7 @@
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
          '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
     echo '<label for="menuinstanceid">'.get_string('activitymodule').'</label>'."\n";
-    $select = moodle_select::make($instanceoptions, 'instanceid', $instanceid);
+    $select = html_select::make($instanceoptions, 'instanceid', $instanceid);
     $select->nested = true;
     echo $OUTPUT->select($select);
     echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
@@ -275,7 +275,7 @@
             echo '<input type="button" onclick="checknos()" value="'.get_string('selectnos').'" />'."\n";
         }
         $displaylist['messageselect.php'] = get_string('messageselectadd');
-        $select = new moodle_select();
+        $select = new html_select();
         $select->options = $displaylist;
         $select->name = "formaction";
         $select->label = get_string("withselectedusers");

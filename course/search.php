@@ -334,7 +334,7 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
-            $select = new moodle_select();
+            $select = new html_select();
             $select->options = $displaylist;
             $select->name = "moveto";
             $select->label = get_string("moveselectedcoursesto");

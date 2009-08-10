@@ -564,7 +564,7 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
             }
         }
 
-        $select = new moodle_select();
+        $select = new html_select();
         $select->options = $options;
         $select->name = 'aggregation_'.$category->id;
         $select->selectedvalue = $category->aggregation;

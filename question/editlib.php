@@ -1165,7 +1165,7 @@ class question_bank_view {
     /// Get all the existing categories now
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
-        $select = moodle_select::make_popup_form('edit.php?'.$pageurl->get_query_string(), 'category', $catmenu, 'catmenu', $current);
+        $select = html_select::make_popup_form('edit.php?'.$pageurl->get_query_string(), 'category', $catmenu, 'catmenu', $current);
         $select->nothinglabel = false;
         $select->set_label(get_string('selectacategory', 'question'));
         echo $OUTPUT->select($select);

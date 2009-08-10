@@ -275,7 +275,7 @@
                  '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
                  '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
              
-            $select = new moodle_select();
+            $select = new html_select();
             $select->options = array('delete' => get_string('deleteselected'));
             $select->name = 'attemptaction';
             $select->selectedvalue = 0;

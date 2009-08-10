@@ -140,7 +140,7 @@
         echo $OUTPUT->box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
-        $select = moodle_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php", 'lang', $langs, "chooselang", $currlang);
+        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php", 'lang', $langs, "chooselang", $currlang);
         $select->nothinglabel = false;
         $select->set_label($strcurrentlanguage.':');
         echo $OUTPUT->select($select);
@@ -494,7 +494,7 @@
         //$selectionlabel .= $strfilestoredin;
         $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
         $selectionlabel .= '/</code>';
-        $select = moodle_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare", 'currentfile', $menufiles, "choosefile", $currentfile);
+        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare", 'currentfile', $menufiles, "choosefile", $currentfile);
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
@@ -761,7 +761,7 @@
         //$selectionlabel .= $strfilestoredin;
         $selectionlabel .= $uselocal ? "{$currentlang}_local" : $currentlang;
         $selectionlabel .= '/help/</code>';
-        $select = moodle_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=helpfiles", 'currentfile', $menufiles, "choosefile", $currentfile);
+        $select = html_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=helpfiles", 'currentfile', $menufiles, "choosefile", $currentfile);
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);

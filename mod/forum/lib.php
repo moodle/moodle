@@ -4135,7 +4135,7 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
  */
 function forum_print_mode_form($id, $mode, $forumtype='') {
     global $OUTPUT;
-    $select = moodle_select::make_popup_form("view.php?f=$id", 'mode', forum_get_layout_modes(), "mode", $mode);
+    $select = html_select::make_popup_form("view.php?f=$id", 'mode', forum_get_layout_modes(), "mode", $mode);
     $select->nothinglabel = false;
 
     if ($forumtype == 'single') {

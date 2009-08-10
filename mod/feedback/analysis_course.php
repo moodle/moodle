@@ -146,7 +146,7 @@
         if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
              echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-             $select = new moodle_select();
+             $select = new html_select();
              $select->options = $courses;
              $select->name = 'coursefilter';
              $select->selectedvalue = $coursefilter;

@@ -320,7 +320,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
     if ($includeall) {
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
-    $select = moodle_select::make_popup_form($CFG->wwwroot.'/grade/' . $actionpage, 'userid', $menu, 'choosegradeuser', $userid);
+    $select = html_select::make_popup_form($CFG->wwwroot.'/grade/' . $actionpage, 'userid', $menu, 'choosegradeuser', $userid);
     $select->set_label($label);
     return $OUTPUT->select($select);
 }
@@ -359,7 +359,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
     // finally print/return the popup form
     if ($count > 1) {
-        $select = moodle_select::make_popup_form('', '', $menu, 'choosepluginreport', '');
+        $select = html_select::make_popup_form('', '', $menu, 'choosepluginreport', '');
         $select->override_option_values($menu);
         
         if ($return) {

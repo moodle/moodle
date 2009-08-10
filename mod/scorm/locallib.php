@@ -740,7 +740,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                 <?php print_string('organizations','scorm') ?>
                 <form id='changeorg' method='post' action='<?php echo $action ?>'>
                     <?php 
-                    $select = new moodle_select();
+                    $select = new html_select();
                     $select->options = $orgs;
                     $select->name = 'organization';
                     $select->selectedvalue = $organization;

@@ -27,7 +27,7 @@
  */
 
 /**
- * Base class for classes representing HTML elements, like moodle_select.
+ * Base class for classes representing HTML elements, like html_select.
  *
  * Handles the id and class attributes.
  *
@@ -260,6 +260,468 @@ class html_label extends moodle_html_component {
             throw new coding_exception('html_label must have a $text value.');
         }
         parent::prepare();
+    }
+}
+
+/**
+ * This class hold all the information required to describe a <select> menu that
+ * will be printed by {@link moodle_core_renderer::select()}. (Or by an overridden
+ * version of that method in a subclass.)
+ *
+ * This component can also hold enough metadata to be used as a popup form. It just
+ * needs a bit more setting up than for a simple menu. See the shortcut methods for
+ * developer-friendly usage.
+ *
+ * All the fields that are not set by the constructor have sensible defaults, so
+ * you only need to set the properties where you want non-default behaviour.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_select extends moodle_html_component {
+    /**
+     * The html_select object parses an array of options into component objects
+     * @see nested attribute
+     * @var mixed $options the choices to show in the menu. An array $value => $display, of html_select_option or of html_select_optgroup objects.
+     */
+    public $options;
+    /**
+     * @var string $name the name of this form control. That is, the name of the GET/POST
+     * variable that will be set if this select is submitted as part of a form.
+     */
+    public $name;
+    /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+    /**
+     * @var string $selectedvalue the option to select initially. Should match one
+     * of the $options array keys. Default none.
+     */
+    public $selectedvalue;
+    /**
+     * Defaults to get_string('choosedots').
+     * Set this to '' if you do not want a 'nothing is selected' option.
+     * This is ignored if the rendertype is 'radio' or 'checkbox'
+     * @var string The label for the 'nothing is selected' option.
+     */
+    public $nothinglabel = null;
+    /**
+     * @var string The value returned by the 'nothing is selected' option. Defaults to 0.
+     */
+    public $nothingvalue = 0;
+    /**
+     * @var boolean set this to true if you want the control to appear disabled.
+     */
+    public $disabled = false;
+    /**
+     * @var integer if non-zero, sets the tabindex attribute on the <select> element. Default 0.
+     */
+    public $tabindex = 0;
+    /**
+     * @var mixed Defaults to false, which means display the select as a dropdown menu.
+     * If true, display this select as a list box whose size is chosen automatically.
+     * If an integer, display as list box of that size.
+     */
+    public $listbox = false;
+    /**
+     * @var integer if you are using $listbox === true to get an automatically
+     * sized list box, the size of the list box will be the number of options,
+     * or this number, whichever is smaller.
+     */
+    public $maxautosize = 10;
+    /**
+     * @var boolean if true, allow multiple selection. Only used if $listbox is true, or if
+     *      the select is to be output as checkboxes.
+     */
+    public $multiple = false;
+    /**
+     * Another way to use nested menu is to prefix optgroup labels with -- and end the optgroup with --
+     * Leave this setting to false if you are using the latter method.
+     * @var boolean $nested if true, uses $options' keys as option headings (optgroup)
+     */
+    public $nested = false;
+    /**
+     * @var html_form $form An optional html_form component
+     */
+    public $form;
+    /**
+     * @var moodle_help_icon $form An optional moodle_help_icon component
+     */
+    public $helpicon;
+    /**
+     * @var boolean $rendertype How the select element should be rendered: menu or radio (checkbox is just radio + multiple)
+     */
+    public $rendertype = 'menu';
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        global $CFG;
+
+        // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
+        if (empty($this->id)) {
+            $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
+        }
+
+        if (empty($this->classes)) {
+            $this->set_classes(array('menu' . str_replace(array('[', ']'), '', $this->name)));
+        }
+
+        if (is_null($this->nothinglabel)) {
+            $this->nothinglabel = get_string('choosedots');
+        }
+
+        if (!empty($this->label) && !($this->label instanceof html_label)) {
+            $label = new html_label();
+            $label->text = $this->label;
+            $label->for = $this->name;
+            $this->label = $label;
+        }
+
+        $this->add_class('select');
+
+        $this->initialise_options();
+        parent::prepare();
+    }
+
+    /**
+     * This is a shortcut for making a simple select menu. It lets you specify
+     * the options, name and selected option in one line of code.
+     * @param array $options used to initialise {@link $options}.
+     * @param string $name used to initialise {@link $name}.
+     * @param string $selected  used to initialise {@link $selected}.
+     * @return html_select A html_select object with the three common fields initialised.
+     */
+    public static function make($options, $name, $selected = '') {
+        $menu = new html_select();
+        $menu->options = $options;
+        $menu->name = $name;
+        $menu->selectedvalue = $selected;
+        return $menu;
+    }
+
+    /**
+     * This is a shortcut for making a yes/no select menu.
+     * @param string $name used to initialise {@link $name}.
+     * @param string $selected  used to initialise {@link $selected}.
+     * @return html_select A menu initialised with yes/no options.
+     */
+    public static function make_yes_no($name, $selected) {
+        return self::make(array(0 => get_string('no'), 1 => get_string('yes')), $name, $selected);
+    }
+
+    /**
+     * This is a shortcut for making an hour selector menu.
+     * @param string $type The type of selector (years, months, days, hours, minutes)
+     * @param string $name fieldname
+     * @param int $currenttime A default timestamp in GMT
+     * @param int $step minute spacing
+     * @return html_select A menu initialised with hour options.
+     */
+    public static function make_time_selector($type, $name, $currenttime=0, $step=5) {
+
+        if (!$currenttime) {
+            $currenttime = time();
+        }
+        $currentdate = usergetdate($currenttime);
+        $userdatetype = $type;
+
+        switch ($type) {
+            case 'years':
+                for ($i=1970; $i<=2020; $i++) {
+                    $timeunits[$i] = $i;
+                }
+                $userdatetype = 'year';
+                break;
+            case 'months':
+                for ($i=1; $i<=12; $i++) {
+                    $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
+                }
+                $userdatetype = 'month';
+                break;
+            case 'days':
+                for ($i=1; $i<=31; $i++) {
+                    $timeunits[$i] = $i;
+                }
+                $userdatetype = 'mday';
+                break;
+            case 'hours':
+                for ($i=0; $i<=23; $i++) {
+                    $timeunits[$i] = sprintf("%02d",$i);
+                }
+                break;
+            case 'minutes':
+                if ($step != 1) {
+                    $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
+                }
+
+                for ($i=0; $i<=59; $i+=$step) {
+                    $timeunits[$i] = sprintf("%02d",$i);
+                }
+                break;
+            default:
+                throw new coding_exception("Time type $type is not supported by html_select::make_time_selector().");
+        }
+
+        $timerselector = self::make($timeunits, $name, $currentdate[$userdatetype]);
+        $timerselector->label = new html_label();
+        $timerselector->label->text = get_string(substr($type, -1), 'form');
+        $timerselector->label->for = "menu$timerselector->name";
+        $timerselector->label->add_class('accesshide');
+        $timerselector->nothinglabel = '';
+
+        return $timerselector;
+    }
+
+    /**
+     * Given an associative array of type => fieldname and an optional timestamp,
+     * returns an array of html_select components representing date/time selectors.
+     * @param array $selectors Arrays of type => fieldname. Selectors will be returned in the order of the types given
+     * @param int $currenttime A UNIX timestamp
+     * @param int $step minute spacing
+     * @return array Instantiated date/time selectors
+     */
+    public function make_time_selectors($selectors, $currenttime=0, $step=5) {
+        $selects = array();
+        foreach ($selectors as $type => $name) {
+            $selects[] = html_select::make_time_selector($type, $name, $currenttime, $step);
+        }
+        return $selects;
+    }
+
+    /**
+     * This is a shortcut for making a select popup form.
+     * @param mixed $baseurl The target URL, string or moodle_url
+     * @param string $name The variable which this select's options are changing in the URL
+     * @param array $options A list of value-label pairs for the popup list
+     * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
+     * @param string $selected The option that is initially selected
+     * @return html_select A menu initialised as a popup form.
+     */
+    public function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
+        global $CFG;
+
+        $selectedurl = null;
+
+        if (!($baseurl instanceof moodle_url)) {
+            $baseurl = new moodle_url($baseurl);
+        }
+
+        if (!empty($selected)) {
+            $selectedurl = $baseurl->out(false, array($name => $selected), false);
+        }
+
+        if (!($baseurl instanceof moodle_url)) {
+            $baseurl = new moodle_url($baseurl);
+        }
+
+        // Replace real value by formatted URLs
+        foreach ($options as $value => $label) {
+            $options[$baseurl->out(false, array($name => $value), false)] = $label;
+            unset($options[$value]);
+        }
+
+        $select = self::make($options, 'jump', $selectedurl);
+
+        $select->form = new html_form();
+        $select->form->id = $formid;
+        $select->form->method = 'get';
+        $select->form->add_class('popupform');
+        $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
+        $select->form->button->text = get_string('go');
+
+        $select->id = $formid . '_jump';
+
+        $select->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $select->id));
+
+        return $select;
+    }
+
+    /**
+     * Override the URLs of the default popup_form, which only supports one base URL
+     * @param array $options value=>label pairs representing select options
+     * @return void
+     */
+    public function override_option_values($options) {
+        global $PAGE;
+
+        $this->initialise_options();
+
+        reset($options);
+
+        foreach ($this->options as $optkey => $optgroup) {
+            if ($optgroup instanceof html_select_optgroup) {
+                foreach ($optgroup->options as $key => $option) {
+                    next($options);
+                    $this->options[$optkey]->options[$key]->value = key($options);
+
+                    $optionurl = new moodle_url(key($options));
+
+                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                        $this->options[$optkey]->options[$key]->selected = 'selected';
+                    }
+                }
+                next($options);
+            } else if ($optgroup instanceof html_select_option) {
+                next($options);
+                $this->options[$optkey]->value = key($options);
+                $optionurl = new moodle_url(key($options));
+
+                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                    $this->options[$optkey]->selected = 'selected';
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a help icon next to the select menu.
+     *
+     * This can be used in two ways:
+     *
+     * <pre>
+     * $select->set_help_icon($page, $text, $linktext);
+     * // OR
+     * $helpicon = new moodle_help_icon();
+     * $helpicon->page = $page;
+     * $helpicon->text = $text;
+     * $helpicon->linktext = $linktext;
+     * $select->set_help_icon($helpicon);
+     * </pre>
+     *
+     * Use the second form when you need to add additional HTML attributes
+     * to the label and/or JS actions.
+     *
+     * @param mixed $page Either the keyword that defines a help page or a moodle_help_icon object
+     * @param text  $text The text of the help icon
+     * @param boolean $linktext Whether or not to show text next to the icon
+     * @return void
+     */
+    public function set_help_icon($page, $text, $linktext=false) {
+        if ($page instanceof moodle_help_icon) {
+            $this->helpicon = $page;
+        } else if (!empty($page)) {
+            $this->helpicon = new moodle_help_icon();
+            $this->helpicon->page = $page;
+            $this->helpicon->text = $text;
+            $this->helpicon->linktext = $linktext;
+        }
+    }
+
+    /**
+     * Parses the $options array and instantiates html_select_option objects in
+     * the place of the original value => label pairs. This is useful for when you
+     * need to setup extra html attributes and actions on individual options before
+     * the component is sent to the renderer
+     * @return void;
+     */
+    public function initialise_options() {
+        // If options are already instantiated objects, stop here
+        $firstoption = reset($this->options);
+        if ($firstoption instanceof html_select_option || $firstoption instanceof html_select_optgroup) {
+            return;
+        }
+
+        if ($this->rendertype == 'radio' && $this->multiple) {
+            $this->rendertype = 'checkbox';
+        }
+
+        // If nested is on, or if radio/checkbox rendertype is set, remove the default Choose option
+        if ($this->nested || $this->rendertype == 'radio' || $this->rendertype == 'checkbox') {
+            $this->nothinglabel = '';
+        }
+
+        $options = $this->options;
+
+        $this->options = array();
+
+        if ($this->nested && $this->rendertype != 'menu') {
+            throw new coding_exception('html_select cannot render nested options as radio buttons or checkboxes.');
+        } else if ($this->nested) {
+            foreach ($options as $section => $values) {
+                $optgroup = new html_select_optgroup();
+                $optgroup->text = $section;
+
+                foreach ($values as $value => $display) {
+                    $option = new html_select_option();
+                    $option->value = s($value);
+                    $option->text = $display;
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $optgroup->options[] = $option;
+                }
+
+                $this->options[] = $optgroup;
+            }
+        } else {
+            $inoptgroup = false;
+            $optgroup = false;
+
+            foreach ($options as $value => $display) {
+                if ($display == '--') { /// we are ending previous optgroup
+                    // $this->options[] = $optgroup;
+                    $inoptgroup = false;
+                    continue;
+                } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
+                    if (!empty($optgroup->options)) {
+                        $this->options[] = $optgroup;
+                    }
+
+                    $optgroup = new html_select_optgroup();
+                    $optgroup->text = substr($display,2); // stripping the --
+
+                    $inoptgroup = true; /// everything following will be in an optgroup
+                    continue;
+
+                } else {
+                    // Add $nothing option if there are not optgroups
+                    if ($this->nothinglabel && empty($this->options[0]) && !$inoptgroup) {
+                        $nothingoption = new html_select_option();
+                        $nothingoption->value = 0;
+                        if (!empty($this->nothingvalue)) {
+                            $nothingoption->value = $this->nothingvalue;
+                        }
+                        $nothingoption->text = $this->nothinglabel;
+                        $this->options = array($nothingoption) + $this->options;
+                    }
+
+                    $option = new html_select_option();
+                    $option->text = $display;
+
+                    if ($display === '') {
+                        $option->text = $value;
+                    }
+
+                    if ((string) $value == (string) $this->selectedvalue ||
+                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
+                        $option->selected = 'selected';
+                    }
+
+                    $option->value = s($value);
+
+                    if ($inoptgroup) {
+                        $optgroup->options[] = $option;
+                    } else {
+                        $this->options[] = $option;
+                    }
+                }
+            }
+
+            if ($optgroup) {
+                $this->options[] = $optgroup;
+            }
+        }
     }
 }
 
@@ -1029,468 +1491,6 @@ class html_list_item extends moodle_html_component {
 }
 
 /// Complex components aggregating simpler components
-
-/**
- * This class hold all the information required to describe a <select> menu that
- * will be printed by {@link moodle_core_renderer::select()}. (Or by an overridden
- * version of that method in a subclass.)
- *
- * This component can also hold enough metadata to be used as a popup form. It just
- * needs a bit more setting up than for a simple menu. See the shortcut methods for
- * developer-friendly usage.
- *
- * All the fields that are not set by the constructor have sensible defaults, so
- * you only need to set the properties where you want non-default behaviour.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_select extends moodle_html_component {
-    /**
-     * The moodle_select object parses an array of options into component objects
-     * @see nested attribute
-     * @var mixed $options the choices to show in the menu. An array $value => $display, of html_select_option or of html_select_optgroup objects.
-     */
-    public $options;
-    /**
-     * @var string $name the name of this form control. That is, the name of the GET/POST
-     * variable that will be set if this select is submitted as part of a form.
-     */
-    public $name;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
-    /**
-     * @var string $selectedvalue the option to select initially. Should match one
-     * of the $options array keys. Default none.
-     */
-    public $selectedvalue;
-    /**
-     * Defaults to get_string('choosedots').
-     * Set this to '' if you do not want a 'nothing is selected' option.
-     * This is ignored if the rendertype is 'radio' or 'checkbox'
-     * @var string The label for the 'nothing is selected' option.
-     */
-    public $nothinglabel = null;
-    /**
-     * @var string The value returned by the 'nothing is selected' option. Defaults to 0.
-     */
-    public $nothingvalue = 0;
-    /**
-     * @var boolean set this to true if you want the control to appear disabled.
-     */
-    public $disabled = false;
-    /**
-     * @var integer if non-zero, sets the tabindex attribute on the <select> element. Default 0.
-     */
-    public $tabindex = 0;
-    /**
-     * @var mixed Defaults to false, which means display the select as a dropdown menu.
-     * If true, display this select as a list box whose size is chosen automatically.
-     * If an integer, display as list box of that size.
-     */
-    public $listbox = false;
-    /**
-     * @var integer if you are using $listbox === true to get an automatically
-     * sized list box, the size of the list box will be the number of options,
-     * or this number, whichever is smaller.
-     */
-    public $maxautosize = 10;
-    /**
-     * @var boolean if true, allow multiple selection. Only used if $listbox is true, or if
-     *      the select is to be output as checkboxes.
-     */
-    public $multiple = false;
-    /**
-     * Another way to use nested menu is to prefix optgroup labels with -- and end the optgroup with --
-     * Leave this setting to false if you are using the latter method.
-     * @var boolean $nested if true, uses $options' keys as option headings (optgroup)
-     */
-    public $nested = false;
-    /**
-     * @var html_form $form An optional html_form component
-     */
-    public $form;
-    /**
-     * @var moodle_help_icon $form An optional moodle_help_icon component
-     */
-    public $helpicon;
-    /**
-     * @var boolean $rendertype How the select element should be rendered: menu or radio (checkbox is just radio + multiple)
-     */
-    public $rendertype = 'menu';
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        global $CFG;
-
-        // name may contain [], which would make an invalid id. e.g. numeric question type editing form, assignment quickgrading
-        if (empty($this->id)) {
-            $this->id = 'menu' . str_replace(array('[', ']'), '', $this->name);
-        }
-
-        if (empty($this->classes)) {
-            $this->set_classes(array('menu' . str_replace(array('[', ']'), '', $this->name)));
-        }
-
-        if (is_null($this->nothinglabel)) {
-            $this->nothinglabel = get_string('choosedots');
-        }
-
-        if (!empty($this->label) && !($this->label instanceof html_label)) {
-            $label = new html_label();
-            $label->text = $this->label;
-            $label->for = $this->name;
-            $this->label = $label;
-        }
-
-        $this->add_class('select');
-
-        $this->initialise_options();
-        parent::prepare();
-    }
-
-    /**
-     * This is a shortcut for making a simple select menu. It lets you specify
-     * the options, name and selected option in one line of code.
-     * @param array $options used to initialise {@link $options}.
-     * @param string $name used to initialise {@link $name}.
-     * @param string $selected  used to initialise {@link $selected}.
-     * @return moodle_select A moodle_select object with the three common fields initialised.
-     */
-    public static function make($options, $name, $selected = '') {
-        $menu = new moodle_select();
-        $menu->options = $options;
-        $menu->name = $name;
-        $menu->selectedvalue = $selected;
-        return $menu;
-    }
-
-    /**
-     * This is a shortcut for making a yes/no select menu.
-     * @param string $name used to initialise {@link $name}.
-     * @param string $selected  used to initialise {@link $selected}.
-     * @return moodle_select A menu initialised with yes/no options.
-     */
-    public static function make_yes_no($name, $selected) {
-        return self::make(array(0 => get_string('no'), 1 => get_string('yes')), $name, $selected);
-    }
-
-    /**
-     * This is a shortcut for making an hour selector menu.
-     * @param string $type The type of selector (years, months, days, hours, minutes)
-     * @param string $name fieldname
-     * @param int $currenttime A default timestamp in GMT
-     * @param int $step minute spacing
-     * @return moodle_select A menu initialised with hour options.
-     */
-    public static function make_time_selector($type, $name, $currenttime=0, $step=5) {
-
-        if (!$currenttime) {
-            $currenttime = time();
-        }
-        $currentdate = usergetdate($currenttime);
-        $userdatetype = $type;
-
-        switch ($type) {
-            case 'years':
-                for ($i=1970; $i<=2020; $i++) {
-                    $timeunits[$i] = $i;
-                }
-                $userdatetype = 'year';
-                break;
-            case 'months':
-                for ($i=1; $i<=12; $i++) {
-                    $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
-                }
-                $userdatetype = 'month';
-                break;
-            case 'days':
-                for ($i=1; $i<=31; $i++) {
-                    $timeunits[$i] = $i;
-                }
-                $userdatetype = 'mday';
-                break;
-            case 'hours':
-                for ($i=0; $i<=23; $i++) {
-                    $timeunits[$i] = sprintf("%02d",$i);
-                }
-                break;
-            case 'minutes':
-                if ($step != 1) {
-                    $currentdate['minutes'] = ceil($currentdate['minutes']/$step)*$step;
-                }
-
-                for ($i=0; $i<=59; $i+=$step) {
-                    $timeunits[$i] = sprintf("%02d",$i);
-                }
-                break;
-            default:
-                throw new coding_exception("Time type $type is not supported by moodle_select::make_time_selector().");
-        }
-
-        $timerselector = self::make($timeunits, $name, $currentdate[$userdatetype]);
-        $timerselector->label = new html_label();
-        $timerselector->label->text = get_string(substr($type, -1), 'form');
-        $timerselector->label->for = "menu$timerselector->name";
-        $timerselector->label->add_class('accesshide');
-        $timerselector->nothinglabel = '';
-
-        return $timerselector;
-    }
-
-    /**
-     * Given an associative array of type => fieldname and an optional timestamp,
-     * returns an array of moodle_select components representing date/time selectors.
-     * @param array $selectors Arrays of type => fieldname. Selectors will be returned in the order of the types given
-     * @param int $currenttime A UNIX timestamp
-     * @param int $step minute spacing
-     * @return array Instantiated date/time selectors
-     */
-    public function make_time_selectors($selectors, $currenttime=0, $step=5) {
-        $selects = array();
-        foreach ($selectors as $type => $name) {
-            $selects[] = moodle_select::make_time_selector($type, $name, $currenttime, $step);
-        }
-        return $selects;
-    }
-
-    /**
-     * This is a shortcut for making a select popup form.
-     * @param mixed $baseurl The target URL, string or moodle_url
-     * @param string $name The variable which this select's options are changing in the URL
-     * @param array $options A list of value-label pairs for the popup list
-     * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
-     * @param string $selected The option that is initially selected
-     * @return moodle_select A menu initialised as a popup form.
-     */
-    public function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
-        global $CFG;
-
-        $selectedurl = null;
-
-        if (!($baseurl instanceof moodle_url)) {
-            $baseurl = new moodle_url($baseurl);
-        }
-
-        if (!empty($selected)) {
-            $selectedurl = $baseurl->out(false, array($name => $selected), false);
-        }
-
-        if (!($baseurl instanceof moodle_url)) {
-            $baseurl = new moodle_url($baseurl);
-        }
-
-        // Replace real value by formatted URLs
-        foreach ($options as $value => $label) {
-            $options[$baseurl->out(false, array($name => $value), false)] = $label;
-            unset($options[$value]);
-        }
-
-        $select = self::make($options, 'jump', $selectedurl);
-
-        $select->form = new html_form();
-        $select->form->id = $formid;
-        $select->form->method = 'get';
-        $select->form->add_class('popupform');
-        $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
-        $select->form->button->text = get_string('go');
-
-        $select->id = $formid . '_jump';
-
-        $select->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $select->id));
-
-        return $select;
-    }
-
-    /**
-     * Override the URLs of the default popup_form, which only supports one base URL
-     * @param array $options value=>label pairs representing select options
-     * @return void
-     */
-    public function override_option_values($options) {
-        global $PAGE;
-
-        $this->initialise_options();
-
-        reset($options);
-
-        foreach ($this->options as $optkey => $optgroup) {
-            if ($optgroup instanceof html_select_optgroup) {
-                foreach ($optgroup->options as $key => $option) {
-                    next($options);
-                    $this->options[$optkey]->options[$key]->value = key($options);
-
-                    $optionurl = new moodle_url(key($options));
-
-                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
-                        $this->options[$optkey]->options[$key]->selected = 'selected';
-                    }
-                }
-                next($options);
-            } else if ($optgroup instanceof html_select_option) {
-                next($options);
-                $this->options[$optkey]->value = key($options);
-                $optionurl = new moodle_url(key($options));
-
-                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
-                    $this->options[$optkey]->selected = 'selected';
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds a help icon next to the select menu.
-     *
-     * This can be used in two ways:
-     *
-     * <pre>
-     * $select->set_help_icon($page, $text, $linktext);
-     * // OR
-     * $helpicon = new moodle_help_icon();
-     * $helpicon->page = $page;
-     * $helpicon->text = $text;
-     * $helpicon->linktext = $linktext;
-     * $select->set_help_icon($helpicon);
-     * </pre>
-     *
-     * Use the second form when you need to add additional HTML attributes
-     * to the label and/or JS actions.
-     *
-     * @param mixed $page Either the keyword that defines a help page or a moodle_help_icon object
-     * @param text  $text The text of the help icon
-     * @param boolean $linktext Whether or not to show text next to the icon
-     * @return void
-     */
-    public function set_help_icon($page, $text, $linktext=false) {
-        if ($page instanceof moodle_help_icon) {
-            $this->helpicon = $page;
-        } else if (!empty($page)) {
-            $this->helpicon = new moodle_help_icon();
-            $this->helpicon->page = $page;
-            $this->helpicon->text = $text;
-            $this->helpicon->linktext = $linktext;
-        }
-    }
-
-    /**
-     * Parses the $options array and instantiates html_select_option objects in
-     * the place of the original value => label pairs. This is useful for when you
-     * need to setup extra html attributes and actions on individual options before
-     * the component is sent to the renderer
-     * @return void;
-     */
-    public function initialise_options() {
-        // If options are already instantiated objects, stop here
-        $firstoption = reset($this->options);
-        if ($firstoption instanceof html_select_option || $firstoption instanceof html_select_optgroup) {
-            return;
-        }
-
-        if ($this->rendertype == 'radio' && $this->multiple) {
-            $this->rendertype = 'checkbox';
-        }
-
-        // If nested is on, or if radio/checkbox rendertype is set, remove the default Choose option
-        if ($this->nested || $this->rendertype == 'radio' || $this->rendertype == 'checkbox') {
-            $this->nothinglabel = '';
-        }
-
-        $options = $this->options;
-
-        $this->options = array();
-
-        if ($this->nested && $this->rendertype != 'menu') {
-            throw new coding_exception('moodle_select cannot render nested options as radio buttons or checkboxes.');
-        } else if ($this->nested) {
-            foreach ($options as $section => $values) {
-                $optgroup = new html_select_optgroup();
-                $optgroup->text = $section;
-
-                foreach ($values as $value => $display) {
-                    $option = new html_select_option();
-                    $option->value = s($value);
-                    $option->text = $display;
-                    if ($display === '') {
-                        $option->text = $value;
-                    }
-
-                    if ((string) $value == (string) $this->selectedvalue ||
-                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
-                        $option->selected = 'selected';
-                    }
-
-                    $optgroup->options[] = $option;
-                }
-
-                $this->options[] = $optgroup;
-            }
-        } else {
-            $inoptgroup = false;
-            $optgroup = false;
-
-            foreach ($options as $value => $display) {
-                if ($display == '--') { /// we are ending previous optgroup
-                    // $this->options[] = $optgroup;
-                    $inoptgroup = false;
-                    continue;
-                } else if (substr($display,0,2) == '--') { /// we are starting a new optgroup
-                    if (!empty($optgroup->options)) {
-                        $this->options[] = $optgroup;
-                    }
-
-                    $optgroup = new html_select_optgroup();
-                    $optgroup->text = substr($display,2); // stripping the --
-
-                    $inoptgroup = true; /// everything following will be in an optgroup
-                    continue;
-
-                } else {
-                    // Add $nothing option if there are not optgroups
-                    if ($this->nothinglabel && empty($this->options[0]) && !$inoptgroup) {
-                        $nothingoption = new html_select_option();
-                        $nothingoption->value = 0;
-                        if (!empty($this->nothingvalue)) {
-                            $nothingoption->value = $this->nothingvalue;
-                        }
-                        $nothingoption->text = $this->nothinglabel;
-                        $this->options = array($nothingoption) + $this->options;
-                    }
-
-                    $option = new html_select_option();
-                    $option->text = $display;
-
-                    if ($display === '') {
-                        $option->text = $value;
-                    }
-
-                    if ((string) $value == (string) $this->selectedvalue ||
-                            (is_array($this->selectedvalue) && in_array($value, $this->selectedvalue))) {
-                        $option->selected = 'selected';
-                    }
-
-                    $option->value = s($value);
-
-                    if ($inoptgroup) {
-                        $optgroup->options[] = $option;
-                    } else {
-                        $this->options[] = $option;
-                    }
-                }
-            }
-
-            if ($optgroup) {
-                $this->options[] = $optgroup;
-            }
-        }
-    }
-}
 
 /**
  * Component representing a paging bar.

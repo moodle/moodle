@@ -50,7 +50,7 @@ function authorize_print_orders($courseid, $userid) {
     if (($popupcrs = $DB->get_records_sql_menu($sql, $params))) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
     }
-    $popupmenu = empty($popupcrs) ? '' : $OUTPUT->select(moodle_select::make_popup_form($baseurl.'&status='.$status, 'course', $popupcrs, 'coursesmenu', $courseid));
+    $popupmenu = empty($popupcrs) ? '' : $OUTPUT->select(html_select::make_popup_form($baseurl.'&status='.$status, 'course', $popupcrs, 'coursesmenu', $courseid));
     $popupmenu .= '<br />';
     $statusmenu = array(
         AN_STATUS_NONE => $strs->all,
@@ -66,7 +66,7 @@ function authorize_print_orders($courseid, $userid) {
         AN_STATUS_TEST => $authstrs->tested
     );
     
-    $popupmenu .= $OUTPUT->select(moodle_select::make_popup_form($baseurl.'&course='.$courseid, 'status', $statusmenu, 'statusmenu', $status));
+    $popupmenu .= $OUTPUT->select(html_select::make_popup_form($baseurl.'&course='.$courseid, 'status', $statusmenu, 'statusmenu', $status));
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
         $checkbox = html_select_option::make_checkbox(1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'));
@@ -92,7 +92,7 @@ function authorize_print_orders($courseid, $userid) {
 
     if ($perpage > 100) { $perpage = 100; }
     $perpagemenus = array(5 => 5, 10 => 10, 20 => 20, 50 => 50, 100 => 100);
-    $perpagemenu = $OUTPUT->select(moodle_select::make_popup_form($baseurl.'&status='.$status.'&course='.$courseid, 'perpage',$perpagemenus,'perpagemenu',$perpage));
+    $perpagemenu = $OUTPUT->select(html_select::make_popup_form($baseurl.'&status='.$status.'&course='.$courseid, 'perpage',$perpagemenus,'perpagemenu',$perpage));
     $table->define_columns(array('id', 'userid', 'timecreated', 'status', 'action'));
     $table->define_headers(array($authstrs->orderid, $authstrs->shopper, $strs->time, $strs->status, $perpagemenu));
     $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");

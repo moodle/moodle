@@ -1476,7 +1476,7 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
         $name = $matches[1];
     }
 
-    $select = moodle_select::make_popup_form(EWIKI_SCRIPT, $name, $links, 'wikilinks');
+    $select = html_select::make_popup_form(EWIKI_SCRIPT, $name, $links, 'wikilinks');
     $select->nothinglabel = get_string("choosewikilinks", "wiki");
     echo $OUTPUT->select($select);
 }
@@ -1516,7 +1516,7 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
         $name = $matches[1];
     }
 
-    $select = moodle_select::make_popup_form(EWIKI_SCRIPT, $name, $page, 'wikiactions');
+    $select = html_select::make_popup_form(EWIKI_SCRIPT, $name, $page, 'wikiactions');
     $select->nothinglabel = get_string("action", "wiki");
     echo $OUTPUT->select($select);
 }
@@ -1561,7 +1561,7 @@ function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $pag
   if($noeditor) {
     $action["checklinks"]=get_string("checklinks", "wiki");
   }
-    $select = moodle_select::make_popup_form($ewscript, 'action', $action, 'wikiadministration');
+    $select = html_select::make_popup_form($ewscript, 'action', $action, 'wikiadministration');
     $select->nothinglabel = get_string("chooseadministration", "wiki");
     echo $OUTPUT->select($select);
 }

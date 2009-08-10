@@ -171,7 +171,7 @@
     make_categories_list($displaylist, $notused);
 
     echo '<div class="categorypicker">';
-    $select = moodle_select::make_popup_form('category.php', 'id', $displaylist, 'switchcategory', $category->id);
+    $select = html_select::make_popup_form('category.php', 'id', $displaylist, 'switchcategory', $category->id);
     $select->set_label($strcategories.':');
     $select->nothinglabel = false;
     echo $OUTPUT->select($select);
@@ -410,7 +410,7 @@
             make_categories_list($movetocategories, $notused, 'moodle/category:manage');
             $movetocategories[$category->id] = get_string('moveselectedcoursesto');
             echo '<tr><td colspan="3" align="right">';
-            $select = new moodle_select();
+            $select = new html_select();
             $select->options = $movetocategories;
             $select->name = 'moveto';
             $select->selectedvalue = $category->id;

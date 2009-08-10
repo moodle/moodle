@@ -1523,7 +1523,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      echo '</b></td>';
      echo '<td align="center" style="width:20%">';
     
-     $select = moodle_select::make_popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat", 'hook', $menu, "catmenu", $selected);
+     $select = html_select::make_popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat", 'hook', $menu, "catmenu", $selected);
      $select->nothinglabel = false;
      echo $OUTPUT->select($select);
 

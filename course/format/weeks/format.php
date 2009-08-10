@@ -245,7 +245,7 @@
     if (!empty($sectionmenu)) {
         echo '<div class="jumpmenu">';
         $popupurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-        $select = moodle_select::make_popup_form($popupurl, 'week', $sectionmenu, 'sectionmenu');
+        $select = html_select::make_popup_form($popupurl, 'week', $sectionmenu, 'sectionmenu');
         $select->set_label(get_string('jumpto'));
         echo $OUTPUT->select($select);
         echo '</div>';

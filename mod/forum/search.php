@@ -292,7 +292,7 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
-    $selectors = moodle_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear', 'hours' => 'fromhour', 'minutes' => 'fromminute'), $datefrom);
+    $selectors = html_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear', 'hours' => 'fromhour', 'minutes' => 'fromminute'), $datefrom);
     foreach ($selectors as $select) {
         echo $OUTPUT->select($select);
     }
@@ -316,7 +316,7 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
-    $selectors = moodle_select::make_time_selectors(array('days' => 'today','months' => 'tomonth', 'years' => 'toyear', 'hours' => 'tohour', 'minutes' => 'tominute'), $dateto);
+    $selectors = html_select::make_time_selectors(array('days' => 'today','months' => 'tomonth', 'years' => 'toyear', 'hours' => 'tohour', 'minutes' => 'tominute'), $dateto);
     foreach ($selectors as $select) {
         echo $OUTPUT->select($select);
     }

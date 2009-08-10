@@ -3025,7 +3025,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $select = moodle_select::make($options, $name, $selected);
+    $select = html_select::make($options, $name, $selected);
     $select->nothinglabel = $nothing;
     $select->nothingvalue = $nothingvalue;
     $select->disabled = $disabled;
@@ -3073,7 +3073,7 @@ function choose_from_menu_yesno($name, $selected, $script = '', $return = false,
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
 
-    $select = moodle_select::make_yes_no($name, $selected);
+    $select = html_select::make_yes_no($name, $selected);
     $select->disabled = $disabled;
     $select->tabindex = $tabindex;
     $output = $OUTPUT->select($select);
@@ -3119,7 +3119,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
     }
-    $select = moodle_select::make($options, $name, $selected);
+    $select = html_select::make($options, $name, $selected);
     $select->tabindex = $tabindex;
     $select->disabled = $disabled;
     $select->nothingvalue = $nothingvalue;
@@ -3197,8 +3197,8 @@ function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
     // debugging('print_time_selector() has been deprecated. Please change your code to use $OUTPUT->select($timeselector).');
     global $OUTPUT;
-    $hourselector = moodle_select::make_time_selector('hours', $hour, $currenttime);
-    $minuteselector = moodle_select::make_time_selector('minutes', $minute, $currenttime, $step);
+    $hourselector = html_select::make_time_selector('hours', $hour, $currenttime);
+    $minuteselector = html_select::make_time_selector('minutes', $minute, $currenttime, $step);
 
     $output = $OUTPUT->select($hourselector) . $OUTPUT->select($minuteselector);
 
@@ -3226,9 +3226,9 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
     // debugging('print_date_selector() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
     global $OUTPUT;
 
-    $dayselector = moodle_select::make_time_selector('days', $day, $currenttime);
-    $monthselector = moodle_select::make_time_selector('months', $month, $currenttime);
-    $yearselector = moodle_select::make_time_selector('years', $year, $currenttime);
+    $dayselector = html_select::make_time_selector('days', $day, $currenttime);
+    $monthselector = html_select::make_time_selector('months', $month, $currenttime);
+    $yearselector = html_select::make_time_selector('years', $year, $currenttime);
 
     $output = $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
 
@@ -3284,7 +3284,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     }
 
     $baseurl = new moodle_url($baseurl);
-    $select = moodle_select::make_popup_form($baseurl, $name, $options, $formid, $selected);
+    $select = html_select::make_popup_form($baseurl, $name, $options, $formid, $selected);
     $select->disabled = $disabled;
 
     if (!empty($submitvalue)) {
@@ -3356,7 +3356,7 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
     // debugging('choose_from_radio() has been deprecated. Please change your code to use $OUTPUT->select($select).');
     global $OUTPUT;
 
-    $select = moodle_select::make($options, $name, $checked);
+    $select = html_select::make($options, $name, $checked);
     $select->rendertype = 'radio';
 
     $output = $OUTPUT->select($select);

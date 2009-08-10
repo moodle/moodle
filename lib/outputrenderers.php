@@ -1565,26 +1565,26 @@ class moodle_core_renderer extends moodle_renderer_base {
      * descriptive labels and help icons. By default it just outputs a select
      * menu.
      *
-     * To add a descriptive label, use moodle_select::set_label($text, $for) or
-     * moodle_select::set_label($label) passing a html_label object
+     * To add a descriptive label, use html_select::set_label($text, $for) or
+     * html_select::set_label($label) passing a html_label object
      *
-     * To add a help icon, use moodle_select::set_help($page, $text, $linktext) or
-     * moodle_select::set_help($helpicon) passing a moodle_help_icon object
+     * To add a help icon, use html_select::set_help($page, $text, $linktext) or
+     * html_select::set_help($helpicon) passing a moodle_help_icon object
      *
-     * If you moodle_select::$rendertype to "radio", it will render radio buttons
+     * If you html_select::$rendertype to "radio", it will render radio buttons
      * instead of a <select> menu, unless $multiple is true, in which case it
      * will render checkboxes.
      *
-     * To surround the menu with a form, simply set moodle_select->form as a
+     * To surround the menu with a form, simply set html_select->form as a
      * valid html_form object. Note that this function will NOT automatically
      * add a form for non-JS browsers. If you do not set one up, it assumes
      * that you are providing your own form in some other way.
      *
-     * You can either call this function with a single moodle_select argument
+     * You can either call this function with a single html_select argument
      * or, with a list of parameters, in which case those parameters are sent to
-     * the moodle_select constructor.
+     * the html_select constructor.
      *
-     * @param moodle_select $select a moodle_select that describes
+     * @param html_select $select a html_select that describes
      *      the select menu you want output.
      * @return string the HTML for the <select>
      */
@@ -1745,7 +1745,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * Output an <option> or <optgroup> element. If an optgroup element is detected,
      * this will recursively output its options as well.
      *
-     * @param mixed $option a html_select_option or moodle_select_optgroup
+     * @param mixed $option a html_select_option or html_select_optgroup
      * @return string the HTML for the <option> or <optgroup>
      */
     public function select_option($option) {

@@ -324,7 +324,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     }
 
     $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr;
-    $select = moodle_select::make_popup_form($url, 'scoid', $tocmenus, "tocmenu", $sco->id);
+    $select = html_select::make_popup_form($url, 'scoid', $tocmenus, "tocmenu", $sco->id);
     $select->nothinglabel = false;
     $result->tocmenu = $OUTPUT->select($select);
 
