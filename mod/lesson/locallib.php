@@ -480,9 +480,11 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
             $options['addendofbranch&amp;sesskey='.sesskey()]  = get_string('endofbranch', 'lesson');
             $options['addpage']                                = get_string('question', 'lesson');
             // Base url
-            $common = "$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;pageid=$page->id&amp;action=";
+            $common = "$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&pageid=$page->id";
+            $select = moodle_select::make_popup_form($common, 'action', $options, "addpage_$page->id");
+            $select->nothinglabel = get_string('addpage', 'lesson').'...';
 
-            $actions[] = popup_form($common, $options, "addpage_$page->id", '', get_string('addpage', 'lesson').'...', '', '', true);
+            $actions[] = $OUTPUT->select($select);
         }
     }
 
