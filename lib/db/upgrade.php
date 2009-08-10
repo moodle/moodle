@@ -2305,6 +2305,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if ($current_bloglevel == BLOG_GROUP_LEVEL || $current_bloglevel == BLOG_COURSE_LEVEL) {
             set_config('bloglevel', BLOG_SITE_LEVEL);
         }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009070100);
     }
 
     if ($result && $oldversion < 2009071000) {
