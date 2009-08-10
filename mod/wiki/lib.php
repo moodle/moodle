@@ -1454,7 +1454,7 @@ function wiki_print_search_form($cmid, $search="", $userid, $groupid, $return=fa
  * @param bool $return
  */
 function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
-   global $CFG, $ewiki_title;
+   global $CFG, $ewiki_title, $OUTPUT;
 
    $links=array();
 
@@ -1470,7 +1470,15 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
    if($binary) {
      $links["FileDownload"]=get_string("filedownload", "wiki");
    }
-   popup_form(EWIKI_SCRIPT, $links, "wikilinks", "", get_string("choosewikilinks", "wiki"), "", "", $return);
+    
+    $name = null;
+    if (preg_match('/([a-zA-Z0-9\-_]*)=$/', EWIKI_SCRIPT, $matches)) {
+        $name = $matches[1];
+    }
+
+    $select = moodle_select::make_popup_form(EWIKI_SCRIPT, $name, $links, 'wikilinks');
+    $select->nothinglabel = get_string("choosewikilinks", "wiki");
+    echo $OUTPUT->select($select);
 }
 
 /**
@@ -1502,8 +1510,15 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
   if($canedit && $binary && !in_array($page, $specialpages) && $action != "attachments") {
     $page["attachments/$page"]=get_string("attachments","wiki");
   }
+    
+    $name = null;
+    if (preg_match('/([a-zA-Z0-9\-_]*)=$/', EWIKI_SCRIPT, $matches)) {
+        $name = $matches[1];
+    }
 
-  popup_form(EWIKI_SCRIPT, $page, "wikiactions", "", get_string("action", "wiki"), "", "", false);
+    $select = moodle_select::make_popup_form(EWIKI_SCRIPT, $name, $page, 'wikiactions');
+    $select->nothinglabel = get_string("action", "wiki");
+    echo $OUTPUT->select($select);
 }
 
 /**
@@ -1518,13 +1533,12 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
  * @param object $course
  */
 function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $page, $noeditor, $course) {
-
+    global $OUTPUT;
   /// Create the URL
   $ewscript = 'admin.php?id='.$cmid;
-  if (isset($userid) && $userid!=0) $ewscript .= '&amp;userid='.$userid;
-  if (isset($groupid) && $groupid!=0) $ewscript .= '&amp;groupid='.$groupid;
-  if (isset($page)) $ewscript .= '&amp;page='.$page;
-  $ewscript.="&amp;action=";
+  if (isset($userid) && $userid!=0) $ewscript .= '&userid='.$userid;
+  if (isset($groupid) && $groupid!=0) $ewscript .= '&groupid='.$groupid;
+  if (isset($page)) $ewscript .= '&page='.$page;
 
 
     /// Build that action array according to wiki flags.
@@ -1547,7 +1561,9 @@ function wiki_print_administration_actions($wiki, $cmid, $userid, $groupid, $pag
   if($noeditor) {
     $action["checklinks"]=get_string("checklinks", "wiki");
   }
-  popup_form($ewscript, $action, "wikiadministration", "", get_string("chooseadministration", "wiki"), "", "", false);
+    $select = moodle_select::make_popup_form($ewscript, 'action', $action, 'wikiadministration');
+    $select->nothinglabel = get_string("chooseadministration", "wiki");
+    echo $OUTPUT->select($select);
 }
 
 /**
