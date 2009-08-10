@@ -542,7 +542,7 @@ if ($quiz->shufflequestions) {
     $notifystrings[] = get_string('shufflequestionsselected', 'quiz', $updatelink);
 }
 if (!empty($notifystrings)) {
-    print_box('<p>' . implode('</p><p>', $notifystrings) . '</p>', 'statusdisplay');
+    echo $OUTPUT->box('<p>' . implode('</p><p>', $notifystrings) . '</p>', 'statusdisplay');
 }
 
 if ($quiz_reordertool) {

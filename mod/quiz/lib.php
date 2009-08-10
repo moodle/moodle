@@ -238,7 +238,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     }
 
 /**
- * Is this a graded quiz? If this method returns true, you can assume that 
+ * Is this a graded quiz? If this method returns true, you can assume that
  * $quiz->grade and $quiz->sumgrades are non-zero (for example, if you want to
  * divide by them).
  *
@@ -434,7 +434,7 @@ function quiz_update_grades($quiz, $userid=0, $nullifnone=true) {
         quiz_grade_item_update($quiz);
     }
 }
-    
+
 /**
  * Update all grades in gradebook.
  *
@@ -480,7 +480,7 @@ function quiz_upgrade_grades() {
  * @return int 0 if ok, error code otherwise
  */
 function quiz_grade_item_update($quiz, $grades=NULL) {
-    global $CFG;
+    global $CFG, $OUTPUT;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
@@ -538,13 +538,13 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
                 $message = get_string('gradeitemislocked', 'grades');
                 $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id . '&amp;mode=overview';
                 $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
-                print_box_start('generalbox', 'notice');
+                echo $OUTPUT->box_start('generalbox', 'notice');
                 echo '<p>'. $message .'</p>';
                 echo '<div class="buttons">';
                 print_single_button($regrade_link, null, get_string('regradeanyway', 'grades'), 'post', $CFG->framename);
                 print_single_button($back_link,  null,  get_string('cancel'),  'post',  $CFG->framename);
                 echo '</div>';
-                print_box_end();
+                echo $OUTPUT->box_end();
 
                 return GRADE_UPDATE_ITEM_LOCKED;
             }
@@ -1146,7 +1146,7 @@ function quiz_question_list_instances($questionid) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
- * 
+ *
  * @param $mform form passed by reference
  */
 function quiz_reset_course_form_definition(&$mform) {

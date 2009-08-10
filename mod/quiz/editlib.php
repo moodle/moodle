@@ -1064,7 +1064,7 @@ class quiz_question_bank_view extends question_bank_view {
 
     public function display($tabname, $page, $perpage, $sortorder,
             $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext) {
-
+        global $OUTPUT;
         if ($this->process_actions_needing_ui()) {
             return;
         }
@@ -1075,7 +1075,7 @@ class quiz_question_bank_view extends question_bank_view {
         }
         $this->print_category_info($category);
 
-        print_box_start('generalbox questionbank');
+        echo $OUTPUT->box_start('generalbox questionbank');
 
         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat);
@@ -1086,16 +1086,17 @@ class quiz_question_bank_view extends question_bank_view {
                 $this->contexts->having_cap('moodle/question:add'));
 
         $this->display_options($recurse, $showhidden, $showquestiontext);
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 
     protected function print_choose_category_message($categoryandcontext) {
-        print_box_start('generalbox questionbank');
+        global $OUTPUT;
+        echo $OUTPUT->box_start('generalbox questionbank');
         $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'), $this->baseurl, $categoryandcontext);
         echo "<p style=\"text-align:center;\"><b>";
         print_string('selectcategoryabove', 'quiz');
         echo "</b></p>";
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 
     protected function print_category_info($category) {

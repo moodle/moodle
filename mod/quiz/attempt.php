@@ -13,7 +13,7 @@
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-/// Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php 
+/// Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php
     if ($id = optional_param('id', 0, PARAM_INTEGER)) {
         redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
     } else if ($qid = optional_param('q', 0, PARAM_INTEGER)) {
@@ -108,10 +108,10 @@
 
     /// Inform teachers of any restrictions that would apply to students at this point.
         if ($messages) {
-            print_box_start('quizaccessnotices');
+            echo $OUTPUT->box_start('quizaccessnotices');
             echo $OUTPUT->heading(get_string('accessnoticesheader', 'quiz'), 3);
             $accessmanager->print_messages($messages);
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
     }
 

@@ -224,7 +224,7 @@ class quiz_access_manager {
         $url = $this->_quizobj->view_url();
         if ($this->securewindow_required($canpreview)) {
             print_header();
-            print_box_start();
+            echo $OUTPUT->box_start();
             if ($message) {
                 echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
                 $delay = 5;
@@ -232,7 +232,7 @@ class quiz_access_manager {
                 echo '<p>' . get_string('pleaseclose', 'quiz') . '</p>';
                 $delay = 0;
             }
-            print_box_end();
+            echo $OUTPUT->box_end();
             $PAGE->requires->js_function_call('quiz_secure_window.close', array($url, $delay));
             echo $OUTPUT->footer();
             die();
@@ -624,9 +624,9 @@ class password_access_rule extends quiz_access_rule_base {
         }
         if (trim(strip_tags($this->_quiz->intro))) {
             $cm = get_coursemodule_from_id('quiz', $this->_quiz->id);
-            $output .= print_box(format_module_intro('quiz', $this->_quiz, $cm->id), 'generalbox', 'intro', true);
+            $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz, $cm->id), 'generalbox', 'intro');
         }
-        $output .= print_box_start('generalbox', 'passwordbox', true);
+        $output .= $OUTPUT->box_start('generalbox', 'passwordbox');
 
     /// If they have previously tried and failed to enter a password, tell them it was wrong.
         if (!empty($enteredpassword)) {
@@ -650,7 +650,7 @@ class password_access_rule extends quiz_access_rule_base {
         $output .= "</form>\n";
 
     /// Finish page.
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
 
     /// return or display form.
         if ($return) {

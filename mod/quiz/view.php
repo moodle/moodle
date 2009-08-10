@@ -93,7 +93,7 @@
 /// Print quiz name and description
     echo $OUTPUT->heading(format_string($quiz->name));
     if (trim(strip_tags($quiz->intro))) {
-        print_box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
     }
 
 /// Display information about this quiz.
@@ -101,9 +101,9 @@
     if ($quiz->attempts != 1) {
         $messages[] = get_string('gradingmethod', 'quiz', quiz_get_grading_option_name($quiz->grademethod));
     }
-    print_box_start('quizinfo');
+    echo $OUTPUT->box_start('quizinfo');
     $accessmanager->print_messages($messages);
-    print_box_end();
+    echo $OUTPUT->box_end();
 
 /// Show number of attempts summary to those who can view reports.
     if (has_capability('mod/quiz:viewreports', $context)) {
@@ -123,7 +123,7 @@
 
 /// If they are not enrolled in this course in a good enough role, tell them to enrol.
     if (!($canattempt || $canpreview || $canreviewmine)) {
-        print_box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
+        echo $OUTPUT->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
                 print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
                 "</p>\n", 'generalbox', 'notice');
         echo $OUTPUT->footer();
@@ -333,13 +333,13 @@
         }
 
         if ($resultinfo) {
-            print_box($resultinfo, 'generalbox', 'feedback');
+            echo $OUTPUT->box($resultinfo, 'generalbox', 'feedback');
         }
     }
 
 /// Determine if we should be showing a start/continue attempt button,
 /// or a button to go back to the course page.
-    print_box_start('quizattempt');
+    echo $OUTPUT->box_start('quizattempt');
     $buttontext = ''; // This will be set something if as start/continue attempt button should appear.
     if (!$quiz->questions) {
         echo $OUTPUT->heading(get_string("noquestions", "quiz"));
@@ -382,10 +382,10 @@
     } else {
         print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
     }
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     // Mark module as viewed (note, we do this here and not in finish_page,
-    // otherwise the 'not enrolled' error conditions would result in marking 
+    // otherwise the 'not enrolled' error conditions would result in marking
     // 'viewed', I think it's better if they don't.)
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);

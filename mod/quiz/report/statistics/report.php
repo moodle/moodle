@@ -13,7 +13,7 @@ require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_table.php');
 
 class quiz_statistics_report extends quiz_default_report {
-    
+
     /**
      * @var object instance of table class used for main questions stats table.
      */
@@ -36,14 +36,14 @@ class quiz_statistics_report extends quiz_default_report {
         $pageoptions['id'] = $cm->id;
         $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'statistics';
-        
+
         $questions = quiz_report_load_questions($quiz);
         // Load the question type specific information
         if (!get_question_options($questions)) {
             print_error('cannotloadquestion', 'question');
         }
 
-        
+
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
 
         $mform = new mod_quiz_report_statistics($reporturl);
@@ -60,7 +60,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
-        
+
 
         $nostudentsingroup = false;//true if a group is selected and their is noeone in it.
         if (!empty($currentgroup)) {
@@ -72,7 +72,7 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $groupstudents = array();
         }
-        
+
         if ($recalculate){
             if ($todelete = $DB->get_records_menu('quiz_statistics', array('quizid' => $quiz->id, 'groupid'=> (int)$currentgroup, 'allattempts'=>$useallattempts))){
                 list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
@@ -88,8 +88,8 @@ class quiz_statistics_report extends quiz_default_report {
             }
             redirect($reporturl);
         }
-        
-        
+
+
         $this->table = new quiz_report_statistics_table();
         $filename = "$course->shortname-".format_string($quiz->name,true);
         $this->table->is_downloading($download, $filename, get_string('quizstructureanalysis', 'quiz_statistics'));
@@ -114,7 +114,7 @@ class quiz_statistics_report extends quiz_default_report {
             $mform->display();
         }
 
-        list($quizstats, $questions, $subquestions, $s, $usingattemptsstring) 
+        list($quizstats, $questions, $subquestions, $s, $usingattemptsstring)
             = $this->quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup,
                                         $useallattempts, $groupstudents, $questions);
 
@@ -126,7 +126,7 @@ class quiz_statistics_report extends quiz_default_report {
         if ($s){
             $this->table->setup($quiz, $cm->id, $reporturl, $s);
         }
-        
+
         if (!$qid){//main page
             $this->output_quiz_info_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl, $everything);
             $this->output_quiz_structure_analysis_table($s, $questions, $subquestions);
@@ -170,7 +170,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
         return true;
     }
-    
+
     function sort_response_details($detail1, $detail2){
         if ($detail1->credit == $detail2->credit){
             return strcmp($detail1->answer, $detail2->answer);
@@ -184,31 +184,31 @@ class quiz_statistics_report extends quiz_default_report {
             return ($answer1->rcount > $answer2->rcount)? -1 : 1;
         }
     }
-    
+
     function output_individual_question_data($quiz, $question, $reporturl, $quizstats){
-        global $CFG, $DB, $QTYPES;
+        global $CFG, $DB, $QTYPES, $OUTPUT;
         require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_question_table.php');
         $this->qtable = new quiz_report_statistics_question_table($question->id);
         $downloadtype = $this->table->is_downloading();
         if (!$this->table->is_downloading()){
             $datumfromtable = $this->table->format_row($question);
-    
+
             $questioninfotable = new object();
             $questioninfotable->align = array('center', 'center');
             $questioninfotable->width = '60%';
             $questioninfotable->class = 'generaltable titlesleft';
-            
+
             $questioninfotable->data = array();
             $questioninfotable->data[] = array(get_string('modulename', 'quiz'), $quiz->name);
             $questioninfotable->data[] = array(get_string('questionname', 'quiz_statistics'), $question->name.'&nbsp;'.$datumfromtable['actions']);
             $questioninfotable->data[] = array(get_string('questiontype', 'quiz_statistics'), $datumfromtable['icon'].'&nbsp;'.get_string($question->qtype,'quiz').'&nbsp;'.$datumfromtable['icon']);
             $questioninfotable->data[] = array(get_string('positions', 'quiz_statistics'), $question->_stats->positions);
-    
+
             $questionstatstable = new object();
             $questionstatstable->align = array('center', 'center');
             $questionstatstable->width = '60%';
             $questionstatstable->class = 'generaltable titlesleft';
-    
+
             unset($datumfromtable['number']);
             unset($datumfromtable['icon']);
             $actions = $datumfromtable['actions'];
@@ -227,12 +227,12 @@ class quiz_statistics_report extends quiz_default_report {
             }
             echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
             print_table($questioninfotable);
-            
-            print_box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
-    
+
+            echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
+
             echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
             print_table($questionstatstable);
-            
+
         } else {
             $this->qtable->export_class_instance($this->table->export_class_instance());
             $questiontabletitle = !empty($question->number)?'('.$question->number.') ':'';
@@ -253,7 +253,7 @@ class quiz_statistics_report extends quiz_default_report {
             if ($this->table->is_downloading()){
                 $exportclass->output_headers($this->qtable->headers);
             }
-    
+
             $responses = $DB->get_records('quiz_question_response_stats', array('quizstatisticsid' => $quizstats->id, 'questionid' => $question->id), 'credit DESC, subqid ASC, aid ASC, rcount DESC');
             $responses = quiz_report_index_by_keys($responses, array('subqid', 'aid'), false);
             foreach ($responses as $subqid => $response){
@@ -278,12 +278,12 @@ class quiz_statistics_report extends quiz_default_report {
                 uasort($tresponsesforsubq, array('quiz_statistics_report', 'sort_response_details'));
                 foreach ($tresponsesforsubq as $aid => $teacherresponse){
                     $teacherresponserow = new object();
-                    $teacherresponserow->response = $teacherresponse->answer; 
+                    $teacherresponserow->response = $teacherresponse->answer;
                     $teacherresponserow->rcount = 0;
                     $teacherresponserow->subq = $subq;
                     $teacherresponserow->credit = $teacherresponse->credit;
                     if (isset($responses[$subqid][$aid])){
-                        $singleanswer = count($responses[$subqid][$aid])==1 && 
+                        $singleanswer = count($responses[$subqid][$aid])==1 &&
                                         ($responses[$subqid][$aid][0]->response == $teacherresponserow->response);
                         if (!$singleanswer && $qhaswildcards){
                             $this->qtable->add_separator();
@@ -319,10 +319,10 @@ class quiz_statistics_report extends quiz_default_report {
         if (!$this->table->is_downloading()){
             $url = $reporturl->out();
             $text = get_string('backtoquizreport', 'quiz_statistics');
-            print_box("<a href=\"$url\">$text</a>", 'boxaligncenter generalbox boxwidthnormal mdl-align');
+            echo $OUTPUT->box("<a href=\"$url\">$text</a>", 'boxaligncenter generalbox boxwidthnormal mdl-align');
         }
     }
-        
+
     function output_quiz_structure_analysis_table($s, $questions, $subquestions){
         global $OUTPUT;
         if ($s){
@@ -343,7 +343,7 @@ class quiz_statistics_report extends quiz_default_report {
             $this->table->finish_output(!$this->table->is_downloading());
         }
     }
-    
+
     function output_quiz_info_table($course, $cm, $quiz, $quizstats, $usingattemptsstring,
                     $currentgroup, $groupstudents, $useallattempts, $download, $reporturl, $everything){
         global $DB, $OUTPUT;
@@ -408,11 +408,11 @@ class quiz_statistics_report extends quiz_default_report {
                 if (!$a->count = $DB->count_records_sql($sql, array('time'=>$quizstats->timemodified)+$qaparams)){
                     $a->count = 0;
                 }
-                $quizinformationtablehtml .= print_box_start('boxaligncenter generalbox boxwidthnormal mdl-align', '', true);
+                $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
                 $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
                 $quizinformationtablehtml .= print_single_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
                                     get_string('recalculatenow', 'quiz_statistics'), 'post', '', true);
-                $quizinformationtablehtml .= print_box_end(true);
+                $quizinformationtablehtml .= $OUTPUT->box_end();
             }
             $downloadoptions = $this->table->get_download_menu();
             $quizinformationtablehtml .= '<form action="'. $this->table->baseurl .'" method="post">';
@@ -450,23 +450,23 @@ class quiz_statistics_report extends quiz_default_report {
         if (!$nostudentsingroup){
             //Calculating_MEAN_of_grades_for_all_attempts_by_students
             //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Calculating_MEAN_of_grades_for_all_attempts_by_students
-        
+
             list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents);
-    
+
             $sql = 'SELECT (CASE WHEN attempt=1 THEN 1 ELSE 0 END) AS isfirst, COUNT(1) AS countrecs, SUM(sumgrades) AS total ' .
                     'FROM '.$fromqa.
                     'WHERE ' .$whereqa.
                     'GROUP BY (attempt=1)';
-            
+
             if (!$attempttotals = $DB->get_records_sql($sql, $qaparams)){
                 $s = 0;
                 $usingattemptsstring = '';
             } else {
                 $firstattempt = $attempttotals[1];
                 $allattempts = new object();
-                $allattempts->countrecs = $firstattempt->countrecs + 
+                $allattempts->countrecs = $firstattempt->countrecs +
                                 (isset($attempttotals[0])?$attempttotals[0]->countrecs:0);
-                $allattempts->total = $firstattempt->total + 
+                $allattempts->total = $firstattempt->total +
                                 (isset($attempttotals[0])?$attempttotals[0]->total:0);
                 if ($useallattempts){
                     $usingattempts = $allattempts;
@@ -496,7 +496,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
         //recalculate sql again this time possibly including test for first attempt.
         list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $useallattempts);
-        
+
         //get the median
         if ($s) {
 
@@ -517,7 +517,7 @@ class quiz_statistics_report extends quiz_default_report {
             }
             $quizstats->median = array_sum($mediangrades) / count($mediangrades);
             if ($s>1){
-                //fetch sum of squared, cubed and power 4d 
+                //fetch sum of squared, cubed and power 4d
                 //differences between grades and mean grade
                 $mean = $usingattempts->total / $s;
                 $sql = "SELECT " .
@@ -530,29 +530,29 @@ class quiz_statistics_report extends quiz_default_report {
                 if (!$powers = $DB->get_record_sql($sql, $params)){
                     print_error('errorpowers', 'quiz_statistics');
                 }
-                
+
                 //Standard_Deviation
                 //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
-                
-                $quizstats->standarddeviation = sqrt($powers->power2 / ($s -1));
-                
 
-                
+                $quizstats->standarddeviation = sqrt($powers->power2 / ($s -1));
+
+
+
                 //Skewness_and_Kurtosis
                 if ($s>2){
                     //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
                     $m2= $powers->power2 / $s;
                     $m3= $powers->power3 / $s;
                     $m4= $powers->power4 / $s;
-                    
+
                     $k2= $s*$m2/($s-1);
                     $k3= $s*$s*$m3/(($s-1)*($s-2));
                     if ($k2){
                         $quizstats->skewness = $k3 / (pow($k2, 3/2));
                     }
                 }
-    
-    
+
+
                 if ($s>3){
                     $k4= $s*$s*((($s+1)*$m4)-(3*($s-1)*$m2*$m2))/(($s-1)*($s-2)*($s-3));
                     if ($k2){
@@ -582,7 +582,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
         return array($s, $usingattemptsstring, $quizstats, $qstats);
     }
-    
+
     function quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup, $useallattempts, $groupstudents, $questions){
         global $DB;
         $timemodified = time() - QUIZ_REPORT_TIME_TO_CACHE_STATS;
