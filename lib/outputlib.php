@@ -3962,16 +3962,38 @@ class moodle_select extends moodle_html_component {
 
     /**
      * This is a shortcut for making a select popup form.
-     * @param string $baseurl The target URL up to the point of the variable that changes
+     * @param mixed $baseurl The target URL, string or moodle_url
+     * @param string $name The variable which this select's options are changing in the URL
      * @param array $options A list of value-label pairs for the popup list
      * @param string $formid id for the control. Must be unique on the page. Used in the HTML.
      * @param string $selected The option that is initially selected
-     * @param string $submitvalue Optional label for the 'Go' button. Defaults to get_string('go').
      * @return moodle_select A menu initialised as a popup form.
      */
-    public function make_popup_form($options, $formid, $selected=null, $submitvalue='') {
+    public function make_popup_form($baseurl, $name, $options, $formid, $selected=null) {
         global $CFG;
-        $select = self::make($options, 'jump', $selected);
+
+        $selectedurl = null;
+
+        if (!($baseurl instanceof moodle_url)) {
+            $baseurl = new moodle_url($baseurl);
+        }
+
+        if (!empty($selected)) {
+            $selectedurl = $baseurl->out(false, array($name => $selected), false);
+        }
+
+        if (!($baseurl instanceof moodle_url)) {
+            $baseurl = new moodle_url($baseurl);
+        }
+
+        // Replace real value by formatted URLs
+        foreach ($options as $value => $label) {
+            $options[$baseurl->out(false, array($name => $value), false)] = $label;
+            unset($options[$value]);
+        }
+
+        $select = self::make($options, 'jump', $selectedurl);
+
         $select->form = new html_form();
         $select->form->id = $formid;
         $select->form->method = 'get';
@@ -3979,15 +4001,48 @@ class moodle_select extends moodle_html_component {
         $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
         $select->form->button->text = get_string('go');
 
-        if (!empty($submitvalue)) {
-            $select->form->button->text = $submitvalue;
-        }
-
         $select->id = $formid . '_jump';
 
         $select->add_action('change', 'submit_form_by_id', array('id' => $formid, 'selectid' => $select->id));
 
         return $select;
+    }
+
+    /**
+     * Override the URLs of the default popup_form, which only supports one base URL
+     * @param array $options value=>label pairs representing select options
+     * @return void
+     */
+    public function override_option_values($options) {
+        global $PAGE;
+
+        $this->initialise_options();
+
+        reset($options);
+
+        foreach ($this->options as $optkey => $optgroup) {
+            if ($optgroup instanceof html_select_optgroup) {
+                foreach ($optgroup->options as $key => $option) {
+                    next($options);
+                    $this->options[$optkey]->options[$key]->value = key($options);
+                    
+                    $optionurl = new moodle_url(key($options));
+
+                    if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                        $this->options[$optkey]->options[$key]->selected = 'selected';
+                    }
+                }
+                next($options);
+            } else if ($optgroup instanceof html_select_option) {
+                next($options);
+                $this->options[$optkey]->value = key($options);
+                $optionurl = new moodle_url(key($options));
+
+                if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
+                    $this->options[$optkey]->selected = 'selected';
+                }
+            }
+        }
     }
 
     /**

@@ -3272,20 +3272,25 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
     global $OUTPUT;
 
-    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($dateselector).');
+    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($select).');
 
     if (empty($options)) {
         return '';
     }
 
-    foreach ($options as $var => $val) {
-        $url = new moodle_url($baseurl . $var);
-        $options[$url->out(false, array(), false)] = $val;
-        unset($options[$var]);
+    // Extract the last param in the baseurl
+    $name = null;
+    if (preg_match('/([a-zA-Z0-9\-_]*)=$/', $baseurl, $matches)) {
+        $name = $matches[1];
     }
 
-    $select = moodle_select::make_popup_form($options, $formid, $selected, $submitvalue);
+    $baseurl = new moodle_url($baseurl);
+    $select = moodle_select::make_popup_form($baseurl, $name, $options, $formid, $selected);
     $select->disabled = $disabled;
+    
+    if (!empty($submitvalue)) {
+        $select->form->button->text = $submitvalue;
+    }
 
     if (!empty($optionsextra)) {
         debugging('The $optionsextra (11th) param to popup_form is not supported, please improve your code.', DEBUG_DEVELOPER);
