@@ -149,7 +149,7 @@ if ($mform->is_cancelled()) {
 /// DISPLAY FORM
 print_header($strforgotten, $strforgotten, $navigation, 'id_email');
 
-print_box(get_string('passwordforgotteninstructions'), 'generalbox boxwidthnormal boxaligncenter');
+echo $OUTPUT->box(get_string('passwordforgotteninstructions'), 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();
 
 echo $OUTPUT->footer();
