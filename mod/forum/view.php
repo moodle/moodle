@@ -243,7 +243,7 @@
 
         case 'eachuser':
             if (!empty($forum->intro)) {
-                print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
+                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
             }
             echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
@@ -269,7 +269,7 @@
 
         default:
             if (!empty($forum->intro)) {
-                print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
+                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
             }
             echo '<br />';
             if (!empty($showall)) {

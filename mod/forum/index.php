@@ -382,14 +382,14 @@
                     "", "", true, $searchform, navmenu($course));
 
     if (!isguest()) {
-        print_box_start('subscription');
+        echo $OUTPUT->box_start('subscription');
         echo '<span class="helplink">';
         echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
         echo '</span><br /><span class="helplink">';
         echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0">'.get_string('allunsubscribe', 'forum').'</a>';
         echo '</span>';
-        print_box_end();
-        print_box('&nbsp;', 'clearer');
+        echo $OUTPUT->box_end();
+        echo $OUTPUT->box('&nbsp;', 'clearer');
     }
 
     if ($generalforums) {

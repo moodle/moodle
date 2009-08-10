@@ -795,7 +795,7 @@
         }
     } else {
         if (!empty($forum->intro)) {
-            print_box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
+            echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
         }
     }
 
