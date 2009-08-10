@@ -1221,7 +1221,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function doc_link($path, $text=false, $iconpath=false) {
         global $CFG, $OUTPUT;
-        $icon = new action_icon();
+        $icon = new moodle_action_icon();
         $icon->linktext = $text;
         $icon->image->alt = $text;
         $icon->image->add_class('iconhelp');
@@ -1242,9 +1242,9 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
     /**
-     * Given a action_icon object, outputs an image linking to an action (URL or AJAX).
+     * Given a moodle_action_icon object, outputs an image linking to an action (URL or AJAX).
      *
-     * @param action_icon $icon An action_icon object
+     * @param moodle_action_icon $icon A moodle_action_icon object
      * @return string HTML fragment
      */
     public function action_icon($icon) {
@@ -1402,7 +1402,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * This method can be used in two ways:
      * <pre>
      * // Option 1:
-     * $userpic = new user_picture();
+     * $userpic = new moodle_user_picture();
      * // Set properties of $userpic
      * $OUTPUT->user_picture($userpic);
      *
@@ -1414,20 +1414,20 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param object $userpic Object with at least fields id, picture, imagealt, firstname, lastname
      *     If any of these are missing, or if a userid is passed, the database is queried. Avoid this
      *     if at all possible, particularly for reports. It is very bad for performance.
-     *     A user_picture object is a better parameter.
+     *     A moodle_user_picture object is a better parameter.
      * @param int $courseid courseid Used when constructing the link to the user's profile. Required if $userpic
-     *     is not a user_picture object
+     *     is not a moodle_user_picture object
      * @return string HTML fragment
      */
     public function user_picture($userpic, $courseid=null) {
-        // Instantiate a user_picture object if $user is not already one
-        if (!($userpic instanceof user_picture)) {
+        // Instantiate a moodle_user_picture object if $user is not already one
+        if (!($userpic instanceof moodle_user_picture)) {
             if (empty($courseid)) {
                 throw new coding_exception('Called $OUTPUT->user_picture with a $user object but no $courseid.');
             }
 
             $user = $userpic;
-            $userpic = new user_picture();
+            $userpic = new moodle_user_picture();
             $userpic->user = $user;
             $userpic->courseid = $courseid;
         } else {

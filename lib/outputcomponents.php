@@ -222,6 +222,803 @@ class moodle_html_component {
     }
 }
 
+/// Components representing HTML elements
+
+/**
+ * This class represents a label element
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_label extends moodle_html_component {
+    /**
+     * @var string $text The text to display in the label
+     */
+    public $text;
+    /**
+     * @var string $for The name of the form field this label is associated with
+     */
+    public $for;
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_label must have a $text value.');
+        }
+        parent::prepare();
+    }
+}
+
+/**
+ * This class represents a select option element
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_select_option extends moodle_html_component {
+    /**
+     * @var string $value The value of this option (will be sent with form)
+     */
+    public $value;
+    /**
+     * @var string $text The display value of the option
+     */
+    public $text;
+    /**
+     * @var boolean $selected Whether or not this option is selected
+     */
+    public $selected = false;
+    /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+
+    public function __construct() {
+        $this->label = new html_label();
+    }
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_select_option requires a $text value.');
+        }
+
+        if (empty($this->label->text)) {
+            $this->set_label($this->text);
+        } else if (!($this->label instanceof html_label)) {
+            $this->set_label($this->label);
+        }
+        if (empty($this->id)) {
+            $this->generate_id();
+        }
+
+        parent::prepare();
+    }
+
+    /**
+     * Shortcut for making a checkbox-ready option
+     * @param string $value The value of the checkbox
+     * @param boolean $checked
+     * @param string $label
+     * @param string $alt
+     * @return html_select_option A component ready for $OUTPUT->checkbox()
+     */
+    public function make_checkbox($value, $checked, $label='', $alt='') {
+        $checkbox = new html_select_option();
+        $checkbox->value = $value;
+        $checkbox->selected = $checked;
+        $checkbox->text = $label;
+        $checkbox->label->text = $label;
+        $checkbox->alt = $alt;
+        return $checkbox;
+    }
+}
+
+/**
+ * This class represents a select optgroup element
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_select_optgroup extends moodle_html_component {
+    /**
+     * @var string $text The display value of the optgroup
+     */
+    public $text;
+    /**
+     * @var array $options An array of html_select_option objects
+     */
+    public $options = array();
+
+    public function prepare() {
+        if (empty($this->text)) {
+            throw new coding_exception('html_select_optgroup requires a $text value.');
+        }
+        if (empty($this->options)) {
+            throw new coding_exception('html_select_optgroup requires at least one html_select_option object');
+        }
+        parent::prepare();
+    }
+}
+
+/**
+ * This class represents an input field
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_field extends moodle_html_component {
+    /**
+     * @var string $name The name attribute of the field
+     */
+    public $name;
+    /**
+     * @var string $value The value attribute of the field
+     */
+    public $value;
+    /**
+     * @var string $type The type attribute of the field (text, submit, checkbox etc)
+     */
+    public $type;
+    /**
+     * @var string $maxlength The maxlength attribute of the field (only applies to text type)
+     */
+    public $maxlength;
+    /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+
+    public function __construct() {
+        $this->label = new html_label();
+    }
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (empty($this->style)) {
+            $this->style = 'width: 4em;';
+        }
+        if (empty($this->id)) {
+            $this->generate_id();
+        }
+        parent::prepare();
+    }
+
+    /**
+     * Shortcut for creating a text input component.
+     * @param string $name    The name of the text field
+     * @param string $value   The value of the text field
+     * @param string $alt     The info to be inserted in the alt tag
+     * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
+     * @return html_field The field component
+     */
+    public static function make_text($name='unnamed', $value, $alt, $maxlength=0) {
+        $field = new html_field();
+        if (empty($alt)) {
+            $alt = get_string('textfield');
+        }
+        $field->type = 'text';
+        $field->name = $name;
+        $field->value = $value;
+        $field->alt = $alt;
+        $field->maxlength = $maxlength;
+        return $field;
+    }
+}
+
+/**
+ * Holds all the information required to render a <table> by
+ * {@see moodle_core_renderer::table()} or by an overridden version of that
+ * method in a subclass.
+ *
+ * Example of usage:
+ * $t = new html_table();
+ * ... // set various properties of the object $t as described below
+ * echo $OUTPUT->table($t);
+ *
+ * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table extends moodle_html_component {
+    /**
+     * @var array of headings. The n-th array item is used as a heading of the n-th column.
+     *
+     * Example of usage:
+     * $t->head = array('Student', 'Grade');
+     */
+    public $head;
+    /**
+     * @var array can be used to make a heading span multiple columns
+     *
+     * Example of usage:
+     * $t->headspan = array(2,1);
+     *
+     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
+     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
+     */
+    public $headspan;
+    /**
+     * @var array of column alignments. The value is used as CSS 'text-align' property. Therefore, possible
+     * values are 'left', 'right', 'center' and 'justify'. Specify 'right' or 'left' from the perspective
+     * of a left-to-right (LTR) language. For RTL, the values are flipped automatically.
+     *
+     * Examples of usage:
+     * $t->align = array(null, 'right');
+     * or
+     * $t->align[1] = 'right';
+     *
+     */
+    public $align;
+    /**
+     * @var array of column sizes. The value is used as CSS 'size' property.
+     *
+     * Examples of usage:
+     * $t->size = array('50%', '50%');
+     * or
+     * $t->size[1] = '120px';
+     */
+    public $size;
+    /**
+     * @var array of wrapping information. The only possible value is 'nowrap' that sets the
+     * CSS property 'white-space' to the value 'nowrap' in the given column.
+     *
+     * Example of usage:
+     * $t->wrap = array(null, 'nowrap');
+     */
+    public $wrap;
+    /**
+     * @var array of arrays or html_table_row objects containing the data. Alternatively, if you have
+     * $head specified, the string 'hr' (for horizontal ruler) can be used
+     * instead of an array of cells data resulting in a divider rendered.
+     *
+     * Example of usage with array of arrays:
+     * $row1 = array('Harry Potter', '76 %');
+     * $row2 = array('Hermione Granger', '100 %');
+     * $t->data = array($row1, $row2);
+     *
+     * Example with array of html_table_row objects: (used for more fine-grained control)
+     * $cell1 = new html_table_cell();
+     * $cell1->text = 'Harry Potter';
+     * $cell1->colspan = 2;
+     * $row1 = new html_table_row();
+     * $row1->cells[] = $cell1;
+     * $cell2 = new html_table_cell();
+     * $cell2->text = 'Hermione Granger';
+     * $cell3 = new html_table_cell();
+     * $cell3->text = '100 %';
+     * $row2 = new html_table_row();
+     * $row2->cells = array($cell2, $cell3);
+     * $t->data = array($row1, $row2);
+     */
+    public $data;
+    /**
+     * @var string width of the table, percentage of the page preferred. Defaults to 80% of the page width.
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     */
+    public $width = null;
+    /**
+     * @var string alignment the whole table. Can be 'right', 'left' or 'center' (default).
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     */
+    public $tablealign = null;
+    /**
+     * @var int padding on each cell, in pixels
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     */
+    public $cellpadding = null;
+    /**
+     * @var int spacing between cells, in pixels
+     * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     */
+    public $cellspacing = null;
+    /**
+     * @var array classes to add to particular rows, space-separated string.
+     * Classes 'r0' or 'r1' are added automatically for every odd or even row,
+     * respectively. Class 'lastrow' is added automatically for the last row
+     * in the table.
+     *
+     * Example of usage:
+     * $t->rowclasses[9] = 'tenth'
+     */
+    public $rowclasses;
+    /**
+     * @var array classes to add to every cell in a particular column,
+     * space-separated string. Class 'cell' is added automatically by the renderer.
+     * Classes 'c0' or 'c1' are added automatically for every odd or even column,
+     * respectively. Class 'lastcol' is added automatically for all last cells
+     * in a row.
+     *
+     * Example of usage:
+     * $t->colclasses = array(null, 'grade');
+     */
+    public $colclasses;
+    /**
+     * @var string description of the contents for screen readers.
+     */
+    public $summary;
+    /**
+     * @var bool true causes the contents of the heading cells to be rotated 90 degrees.
+     */
+    public $rotateheaders = false;
+
+    /**
+     * @see moodle_html_component::prepare()
+     * @return void
+     */
+    public function prepare() {
+        if (!empty($this->align)) {
+            foreach ($this->align as $key => $aa) {
+                if ($aa) {
+                    $this->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
+                } else {
+                    $this->align[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->size)) {
+            foreach ($this->size as $key => $ss) {
+                if ($ss) {
+                    $this->size[$key] = 'width:'. $ss .';';
+                } else {
+                    $this->size[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->wrap)) {
+            foreach ($this->wrap as $key => $ww) {
+                if ($ww) {
+                    $this->wrap[$key] = 'white-space:nowrap;';
+                } else {
+                    $this->wrap[$key] = '';
+                }
+            }
+        }
+        if (!empty($this->head)) {
+            foreach ($this->head as $key => $val) {
+                if (!isset($this->align[$key])) {
+                    $this->align[$key] = '';
+                }
+                if (!isset($this->size[$key])) {
+                    $this->size[$key] = '';
+                }
+                if (!isset($this->wrap[$key])) {
+                    $this->wrap[$key] = '';
+                }
+
+            }
+        }
+        if (empty($this->classes)) { // must be done before align
+            $this->set_classes(array('generaltable'));
+        }
+        if (!empty($this->tablealign)) {
+            $this->add_class('boxalign' . $this->tablealign);
+        }
+        if (!empty($this->rotateheaders)) {
+            $this->add_class('rotateheaders');
+        } else {
+            $this->rotateheaders = false; // Makes life easier later.
+        }
+        parent::prepare();
+    }
+    /**
+     * @param string $name The name of the variable to set
+     * @param mixed $value The value to assign to the variable
+     * @return void
+     */
+    public function __set($name, $value) {
+        if ($name == 'rowclass') {
+            debugging('rowclass[] has been deprecated for html_table ' .
+                      'and should be replaced with rowclasses[]. please fix the code.');
+            $this->rowclasses = $value;
+        } else {
+            parent::__set($name, $value);
+        }
+    }
+}
+
+/**
+ * Component representing a table row.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table_row extends moodle_html_component {
+    /**
+     * @var array $cells Array of html_table_cell objects
+     */
+    public $cells = array();
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a table cell.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_table_cell extends moodle_html_component {
+    /**
+     * @var string $text The contents of the cell
+     */
+    public $text;
+    /**
+     * @var string $abbr Abbreviated version of the contents of the cell
+     */
+    public $abbr = '';
+    /**
+     * @var int $colspan Number of columns this cell should span
+     */
+    public $colspan = '';
+    /**
+     * @var int $rowspan Number of rows this cell should span
+     */
+    public $rowspan = '';
+    /**
+     * @var string $scope Defines a way to associate header cells and data cells in a table
+     */
+    public $scope = '';
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a XHTML link.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_link extends moodle_html_component {
+    /**
+     * URL can be simple text or a moodle_url object
+     * @var mixed $url
+     */
+    public $url;
+
+    /**
+     * @var string $text The text that will appear between the link tags
+     */
+    public $text;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        // We can't accept an empty text value
+        if (empty($this->text)) {
+            throw new coding_exception('A html_link must have a descriptive text value!');
+        }
+
+        parent::prepare();
+    }
+
+    /**
+     * Shortcut for creating a link component.
+     * @param mixed  $url String or moodle_url
+     * @param string $text The text of the link
+     * @return html_link The link component
+     */
+    public function make($url, $text) {
+        $link = new html_link();
+        $link->url = $url;
+        $link->text = $text;
+        return $link;
+    }
+}
+
+/**
+ * Component representing a XHTML button (input of type 'button').
+ * The renderer will either output it as a button with an onclick event,
+ * or as a form with hidden inputs.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_button extends moodle_html_component {
+    /**
+     * @var string $text
+     */
+    public $text;
+
+    /**
+     * @var boolean $disabled Whether or not this button is disabled
+     */
+    public $disabled = false;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('singlebutton');
+
+        if (empty($this->text)) {
+            throw new coding_exception('A html_button must have a text value!');
+        }
+
+        if ($this->disabled) {
+            $this->disabled = 'disabled';
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing an image.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_image extends moodle_html_component {
+    /**
+     * @var string $alt A descriptive text
+     */
+    public $alt = HTML_ATTR_EMPTY;
+    /**
+     * @var string $src The path to the image being used
+     */
+    public $src;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('image');
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a textarea.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_textarea extends moodle_html_component {
+    /**
+     * @param string $name Name to use for the textarea element.
+     */
+    public $name;
+    /**
+     * @param string $value Initial content to display in the textarea.
+     */
+    public $value;
+    /**
+     * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
+     */
+    public $rows;
+    /**
+     * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
+     */
+    public $cols;
+    /**
+     * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
+     */
+    public $usehtmleditor;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        $this->add_class('form-textarea');
+
+        if (empty($this->id)) {
+            $this->id = "edit-$this->name";
+        }
+
+        if ($this->usehtmleditor) {
+            editors_head_setup();
+            $editor = get_preferred_texteditor(FORMAT_HTML);
+            $editor->use_editor($this->id, array('legacy'=>true));
+            $this->value = htmlspecialchars($value);
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a simple form wrapper. Its purpose is mainly to enclose
+ * a submit input with the appropriate action and hidden inputs.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_form extends moodle_html_component {
+    /**
+     * @var string $method post or get
+     */
+    public $method = 'post';
+    /**
+     * If a string is given, it will be converted to a moodle_url during prepare()
+     * @var mixed $url A moodle_url including params or a string
+     */
+    public $url;
+    /**
+     * @var array $params Optional array of parameters. Ignored if $url instanceof moodle_url
+     */
+    public $params = array();
+    /**
+     * @var boolean $showbutton If true, the submit button will always be shown even if JavaScript is available
+     */
+    public $showbutton = false;
+    /**
+     * @var string $targetwindow The name of the target page to open the linked page in.
+     */
+    public $targetwindow = 'self';
+    /**
+     * @var html_button $button A submit button
+     */
+    public $button;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        static $yes;
+        $this->button = new html_button();
+        if (!isset($yes)) {
+            $yes = get_string('yes');
+            $this->button->text = $yes;
+        }
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+
+        if (empty($this->url)) {
+            throw new coding_exception('A html_form must have a $url value (string or moodle_url).');
+        }
+
+        if (!($this->url instanceof moodle_url)) {
+            $this->url = new moodle_url($this->url, $this->params);
+        }
+
+        if ($this->method == 'post') {
+            $this->url->param('sesskey', sesskey());
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a list.
+ *
+ * The advantage of using this object instead of a flat array is that you can load it
+ * with metadata (CSS classes, event handlers etc.) which can be used by the renderers.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_list extends moodle_html_component {
+
+    /**
+     * @var array $items An array of html_list_item or html_list objects
+     */
+    public $items = array();
+
+    /**
+     * @var string $type The type of list (ordered|unordered), definition type not yet supported
+     */
+    public $type = 'unordered';
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+
+    /**
+     * This function takes a nested array of data and maps it into this list's $items array
+     * as proper html_list_item and html_list objects, with appropriate metadata.
+     *
+     * @param array $tree A nested array (array keys are ignored);
+     * @param int $row Used in identifying the iteration level and in ul classes
+     * @return void
+     */
+    public function load_data($tree, $level=0) {
+
+        $this->add_class("list-$level");
+
+        foreach ($tree as $key => $element) {
+            if (is_array($element)) {
+                $newhtmllist = new html_list();
+                $newhtmllist->load_data($element, $level + 1);
+                $this->items[] = $newhtmllist;
+            } else {
+                $listitem = new html_list_item();
+                $listitem->value = $element;
+                $listitem->add_class("list-item-$level-$key");
+                $this->items[] = $listitem;
+            }
+        }
+    }
+
+    /**
+     * Adds a html_list_item or html_list to this list.
+     * If the param is a string, a html_list_item will be added.
+     * @param mixed $item String, html_list or html_list_item object
+     * @return void
+     */
+    public function add_item($item) {
+        if ($item instanceof html_list_item || $item instanceof html_list) {
+            $this->items[] = $item;
+        } else {
+            $listitem = new html_list_item();
+            $listitem->value = $item;
+            $this->items[] = $item;
+        }
+    }
+}
+
+/**
+ * Component representing a list item.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_list_item extends moodle_html_component {
+    /**
+     * @var string $value The value of the list item
+     */
+    public $value;
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/// Complex components aggregating simpler components
 
 /**
  * This class hold all the information required to describe a <select> menu that
@@ -686,1170 +1483,6 @@ class moodle_select extends moodle_html_component {
 }
 
 /**
- * This class represents a label element
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_label extends moodle_html_component {
-    /**
-     * @var string $text The text to display in the label
-     */
-    public $text;
-    /**
-     * @var string $for The name of the form field this label is associated with
-     */
-    public $for;
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        if (empty($this->text)) {
-            throw new coding_exception('html_label must have a $text value.');
-        }
-        parent::prepare();
-    }
-}
-
-/**
- * This class represents a select option element
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_select_option extends moodle_html_component {
-    /**
-     * @var string $value The value of this option (will be sent with form)
-     */
-    public $value;
-    /**
-     * @var string $text The display value of the option
-     */
-    public $text;
-    /**
-     * @var boolean $selected Whether or not this option is selected
-     */
-    public $selected = false;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
-
-    public function __construct() {
-        $this->label = new html_label();
-    }
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        if (empty($this->text)) {
-            throw new coding_exception('html_select_option requires a $text value.');
-        }
-
-        if (empty($this->label->text)) {
-            $this->set_label($this->text);
-        } else if (!($this->label instanceof html_label)) {
-            $this->set_label($this->label);
-        }
-        if (empty($this->id)) {
-            $this->generate_id();
-        }
-
-        parent::prepare();
-    }
-
-    /**
-     * Shortcut for making a checkbox-ready option
-     * @param string $value The value of the checkbox
-     * @param boolean $checked
-     * @param string $label
-     * @param string $alt
-     * @return html_select_option A component ready for $OUTPUT->checkbox()
-     */
-    public function make_checkbox($value, $checked, $label='', $alt='') {
-        $checkbox = new html_select_option();
-        $checkbox->value = $value;
-        $checkbox->selected = $checked;
-        $checkbox->text = $label;
-        $checkbox->label->text = $label;
-        $checkbox->alt = $alt;
-        return $checkbox;
-    }
-}
-
-/**
- * This class represents a select optgroup element
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_select_optgroup extends moodle_html_component {
-    /**
-     * @var string $text The display value of the optgroup
-     */
-    public $text;
-    /**
-     * @var array $options An array of html_select_option objects
-     */
-    public $options = array();
-
-    public function prepare() {
-        if (empty($this->text)) {
-            throw new coding_exception('html_select_optgroup requires a $text value.');
-        }
-        if (empty($this->options)) {
-            throw new coding_exception('html_select_optgroup requires at least one html_select_option object');
-        }
-        parent::prepare();
-    }
-}
-
-/**
- * This class represents an input field
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_field extends moodle_html_component {
-    /**
-     * @var string $name The name attribute of the field
-     */
-    public $name;
-    /**
-     * @var string $value The value attribute of the field
-     */
-    public $value;
-    /**
-     * @var string $type The type attribute of the field (text, submit, checkbox etc)
-     */
-    public $type;
-    /**
-     * @var string $maxlength The maxlength attribute of the field (only applies to text type)
-     */
-    public $maxlength;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
-
-    public function __construct() {
-        $this->label = new html_label();
-    }
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        if (empty($this->style)) {
-            $this->style = 'width: 4em;';
-        }
-        if (empty($this->id)) {
-            $this->generate_id();
-        }
-        parent::prepare();
-    }
-
-    /**
-     * Shortcut for creating a text input component.
-     * @param string $name    The name of the text field
-     * @param string $value   The value of the text field
-     * @param string $alt     The info to be inserted in the alt tag
-     * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
-     * @return html_field The field component
-     */
-    public static function make_text($name='unnamed', $value, $alt, $maxlength=0) {
-        $field = new html_field();
-        if (empty($alt)) {
-            $alt = get_string('textfield');
-        }
-        $field->type = 'text';
-        $field->name = $name;
-        $field->value = $value;
-        $field->alt = $alt;
-        $field->maxlength = $maxlength;
-        return $field;
-    }
-}
-
-/**
- * This class represents how a block appears on a page.
- *
- * During output, each block instance is asked to return a block_contents object,
- * those are then passed to the $OUTPUT->block function for display.
- *
- * {@link $contents} should probably be generated using a moodle_block_..._renderer.
- *
- * Other block-like things that need to appear on the page, for example the
- * add new block UI, are also represented as block_contents objects.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class block_contents extends moodle_html_component {
-    /** @var int used to set $skipid. */
-    protected static $idcounter = 1;
-
-    const NOT_HIDEABLE = 0;
-    const VISIBLE = 1;
-    const HIDDEN = 2;
-
-    /**
-     * @param integer $skipid All the blocks (or things that look like blocks)
-     * printed on a page are given a unique number that can be used to construct
-     * id="" attributes. This is set automatically be the {@link prepare()} method.
-     * Do not try to set it manually.
-     */
-    public $skipid;
-
-    /**
-     * @var integer If this is the contents of a real block, this should be set to
-     * the block_instance.id. Otherwise this should be set to 0.
-     */
-    public $blockinstanceid = 0;
-
-    /**
-     * @var integer if this is a real block instance, and there is a corresponding
-     * block_position.id for the block on this page, this should be set to that id.
-     * Otherwise it should be 0.
-     */
-    public $blockpositionid = 0;
-
-    /**
-     * @param array $attributes an array of attribute => value pairs that are put on the
-     * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
-     */
-    public $attributes = array();
-
-    /**
-     * @param string $title The title of this block. If this came from user input,
-     * it should already have had format_string() processing done on it. This will
-     * be output inside <h2> tags. Please do not cause invalid XHTML.
-     */
-    public $title = '';
-
-    /**
-     * @param string $content HTML for the content
-     */
-    public $content = '';
-
-    /**
-     * @param array $list an alternative to $content, it you want a list of things with optional icons.
-     */
-    public $footer = '';
-
-    /**
-     * Any small print that should appear under the block to explain to the
-     * teacher about the block, for example 'This is a sticky block that was
-     * added in the system context.'
-     * @var string
-     */
-    public $annotation = '';
-
-    /**
-     * @var integer one of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
-     * the user can toggle whether this block is visible.
-     */
-    public $collapsible = self::NOT_HIDEABLE;
-
-    /**
-     * A (possibly empty) array of editing controls. Each element of this array
-     * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
-     * $icon is the icon name. Fed to $OUTPUT->old_icon_url.
-     * @var array
-     */
-    public $controls = array();
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        $this->skipid = self::$idcounter;
-        self::$idcounter += 1;
-        $this->add_class('sideblock');
-        if (empty($this->blockinstanceid) || !strip_tags($this->title)) {
-            $this->collapsible = self::NOT_HIDEABLE;
-        }
-        if ($this->collapsible == self::HIDDEN) {
-            $this->add_class('hidden');
-        }
-        if (!empty($this->controls)) {
-            $this->add_class('block_with_controls');
-        }
-        parent::prepare();
-    }
-}
-
-
-/**
- * This class represents a target for where a block can go when it is being moved.
- *
- * This needs to be rendered as a form with the given hidden from fields, and
- * clicking anywhere in the form should submit it. The form action should be
- * $PAGE->url.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class block_move_target extends moodle_html_component {
-    /**
-     * List of hidden form fields.
-     * @var array
-     */
-    public $url = array();
-    /**
-     * List of hidden form fields.
-     * @var array
-     */
-    public $text = '';
-}
-
-
-/**
- * Holds all the information required to render a <table> by
- * {@see moodle_core_renderer::table()} or by an overridden version of that
- * method in a subclass.
- *
- * Example of usage:
- * $t = new html_table();
- * ... // set various properties of the object $t as described below
- * echo $OUTPUT->table($t);
- *
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_table extends moodle_html_component {
-    /**
-     * @var array of headings. The n-th array item is used as a heading of the n-th column.
-     *
-     * Example of usage:
-     * $t->head = array('Student', 'Grade');
-     */
-    public $head;
-    /**
-     * @var array can be used to make a heading span multiple columns
-     *
-     * Example of usage:
-     * $t->headspan = array(2,1);
-     *
-     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
-     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
-     */
-    public $headspan;
-    /**
-     * @var array of column alignments. The value is used as CSS 'text-align' property. Therefore, possible
-     * values are 'left', 'right', 'center' and 'justify'. Specify 'right' or 'left' from the perspective
-     * of a left-to-right (LTR) language. For RTL, the values are flipped automatically.
-     *
-     * Examples of usage:
-     * $t->align = array(null, 'right');
-     * or
-     * $t->align[1] = 'right';
-     *
-     */
-    public $align;
-    /**
-     * @var array of column sizes. The value is used as CSS 'size' property.
-     *
-     * Examples of usage:
-     * $t->size = array('50%', '50%');
-     * or
-     * $t->size[1] = '120px';
-     */
-    public $size;
-    /**
-     * @var array of wrapping information. The only possible value is 'nowrap' that sets the
-     * CSS property 'white-space' to the value 'nowrap' in the given column.
-     *
-     * Example of usage:
-     * $t->wrap = array(null, 'nowrap');
-     */
-    public $wrap;
-    /**
-     * @var array of arrays or html_table_row objects containing the data. Alternatively, if you have
-     * $head specified, the string 'hr' (for horizontal ruler) can be used
-     * instead of an array of cells data resulting in a divider rendered.
-     *
-     * Example of usage with array of arrays:
-     * $row1 = array('Harry Potter', '76 %');
-     * $row2 = array('Hermione Granger', '100 %');
-     * $t->data = array($row1, $row2);
-     *
-     * Example with array of html_table_row objects: (used for more fine-grained control)
-     * $cell1 = new html_table_cell();
-     * $cell1->text = 'Harry Potter';
-     * $cell1->colspan = 2;
-     * $row1 = new html_table_row();
-     * $row1->cells[] = $cell1;
-     * $cell2 = new html_table_cell();
-     * $cell2->text = 'Hermione Granger';
-     * $cell3 = new html_table_cell();
-     * $cell3->text = '100 %';
-     * $row2 = new html_table_row();
-     * $row2->cells = array($cell2, $cell3);
-     * $t->data = array($row1, $row2);
-     */
-    public $data;
-    /**
-     * @var string width of the table, percentage of the page preferred. Defaults to 80% of the page width.
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
-     */
-    public $width = null;
-    /**
-     * @var string alignment the whole table. Can be 'right', 'left' or 'center' (default).
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
-     */
-    public $tablealign = null;
-    /**
-     * @var int padding on each cell, in pixels
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
-     */
-    public $cellpadding = null;
-    /**
-     * @var int spacing between cells, in pixels
-     * @deprecated since Moodle 2.0. Styling should be in the CSS.
-     */
-    public $cellspacing = null;
-    /**
-     * @var array classes to add to particular rows, space-separated string.
-     * Classes 'r0' or 'r1' are added automatically for every odd or even row,
-     * respectively. Class 'lastrow' is added automatically for the last row
-     * in the table.
-     *
-     * Example of usage:
-     * $t->rowclasses[9] = 'tenth'
-     */
-    public $rowclasses;
-    /**
-     * @var array classes to add to every cell in a particular column,
-     * space-separated string. Class 'cell' is added automatically by the renderer.
-     * Classes 'c0' or 'c1' are added automatically for every odd or even column,
-     * respectively. Class 'lastcol' is added automatically for all last cells
-     * in a row.
-     *
-     * Example of usage:
-     * $t->colclasses = array(null, 'grade');
-     */
-    public $colclasses;
-    /**
-     * @var string description of the contents for screen readers.
-     */
-    public $summary;
-    /**
-     * @var bool true causes the contents of the heading cells to be rotated 90 degrees.
-     */
-    public $rotateheaders = false;
-
-    /**
-     * @see moodle_html_component::prepare()
-     * @return void
-     */
-    public function prepare() {
-        if (!empty($this->align)) {
-            foreach ($this->align as $key => $aa) {
-                if ($aa) {
-                    $this->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
-                } else {
-                    $this->align[$key] = '';
-                }
-            }
-        }
-        if (!empty($this->size)) {
-            foreach ($this->size as $key => $ss) {
-                if ($ss) {
-                    $this->size[$key] = 'width:'. $ss .';';
-                } else {
-                    $this->size[$key] = '';
-                }
-            }
-        }
-        if (!empty($this->wrap)) {
-            foreach ($this->wrap as $key => $ww) {
-                if ($ww) {
-                    $this->wrap[$key] = 'white-space:nowrap;';
-                } else {
-                    $this->wrap[$key] = '';
-                }
-            }
-        }
-        if (!empty($this->head)) {
-            foreach ($this->head as $key => $val) {
-                if (!isset($this->align[$key])) {
-                    $this->align[$key] = '';
-                }
-                if (!isset($this->size[$key])) {
-                    $this->size[$key] = '';
-                }
-                if (!isset($this->wrap[$key])) {
-                    $this->wrap[$key] = '';
-                }
-
-            }
-        }
-        if (empty($this->classes)) { // must be done before align
-            $this->set_classes(array('generaltable'));
-        }
-        if (!empty($this->tablealign)) {
-            $this->add_class('boxalign' . $this->tablealign);
-        }
-        if (!empty($this->rotateheaders)) {
-            $this->add_class('rotateheaders');
-        } else {
-            $this->rotateheaders = false; // Makes life easier later.
-        }
-        parent::prepare();
-    }
-    /**
-     * @param string $name The name of the variable to set
-     * @param mixed $value The value to assign to the variable
-     * @return void
-     */
-    public function __set($name, $value) {
-        if ($name == 'rowclass') {
-            debugging('rowclass[] has been deprecated for html_table ' .
-                      'and should be replaced with rowclasses[]. please fix the code.');
-            $this->rowclasses = $value;
-        } else {
-            parent::__set($name, $value);
-        }
-    }
-}
-
-/**
- * Component representing a table row.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_table_row extends moodle_html_component {
-    /**
-     * @var array $cells Array of html_table_cell objects
-     */
-    public $cells = array();
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing a table cell.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_table_cell extends moodle_html_component {
-    /**
-     * @var string $text The contents of the cell
-     */
-    public $text;
-    /**
-     * @var string $abbr Abbreviated version of the contents of the cell
-     */
-    public $abbr = '';
-    /**
-     * @var int $colspan Number of columns this cell should span
-     */
-    public $colspan = '';
-    /**
-     * @var int $rowspan Number of rows this cell should span
-     */
-    public $rowspan = '';
-    /**
-     * @var string $scope Defines a way to associate header cells and data cells in a table
-     */
-    public $scope = '';
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing a XHTML link.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_link extends moodle_html_component {
-    /**
-     * URL can be simple text or a moodle_url object
-     * @var mixed $url
-     */
-    public $url;
-
-    /**
-     * @var string $text The text that will appear between the link tags
-     */
-    public $text;
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        // We can't accept an empty text value
-        if (empty($this->text)) {
-            throw new coding_exception('A html_link must have a descriptive text value!');
-        }
-
-        parent::prepare();
-    }
-
-    /**
-     * Shortcut for creating a link component.
-     * @param mixed  $url String or moodle_url
-     * @param string $text The text of the link
-     * @return html_link The link component
-     */
-    public function make($url, $text) {
-        $link = new html_link();
-        $link->url = $url;
-        $link->text = $text;
-        return $link;
-    }
-}
-
-/**
- * Component representing a help icon.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class moodle_help_icon extends moodle_html_component {
-    /**
-     * @var html_link $link A html_link object that will hold the URL info
-     */
-    public $link;
-    /**
-     * @var string $text A descriptive text
-     */
-    public $text;
-    /**
-     * @var string $page  The keyword that defines a help page
-     */
-    public $page;
-    /**
-     * @var string $module Which module is the page defined in
-     */
-    public $module = 'moodle';
-    /**
-     * @var boolean $linktext Whether or not to show text next to the icon
-     */
-    public $linktext = false;
-    /**
-     * @var mixed $image The help icon. Can be set to true (will use default help icon),
-     *                   false (will not use any icon), the URL to an image, or a full
-     *                   html_image object.
-     */
-    public $image;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
-     */
-    public function __construct() {
-        $this->link = new html_link();
-        $this->image = new html_image();
-    }
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        global $COURSE, $OUTPUT;
-
-        if (empty($this->page)) {
-            throw new coding_exception('A moodle_help_icon object requires a $page parameter');
-        }
-
-        if (empty($this->text)) {
-            throw new coding_exception('A moodle_help_icon object requires a $text parameter');
-        }
-
-        $this->link->text = $this->text;
-
-        // fix for MDL-7734
-        $this->link->url = new moodle_url('/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
-
-        // fix for MDL-7734
-        if (!empty($COURSE->lang)) {
-            $this->link->url->param('forcelang', $COURSE->lang);
-        }
-
-        // Catch references to the old text.html and emoticons.html help files that
-        // were renamed in MDL-13233.
-        if (in_array($this->page, array('text', 'emoticons', 'richtext'))) {
-            $oldname = $this->page;
-            $this->page .= '2';
-            debugging("You are referring to the old help file '$oldname'. " .
-                    "This was renamed to '$this->page' because of MDL-13233. " .
-                    "Please update your code.", DEBUG_DEVELOPER);
-        }
-
-        if ($this->module == '') {
-            $this->module = 'moodle';
-        }
-
-        // Warn users about new window for Accessibility
-        $this->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
-
-        // Prepare image and linktext
-        if ($this->image && !($this->image instanceof html_image)) {
-            $image = fullclone($this->image);
-            $this->image = new html_image();
-
-            if ($image instanceof moodle_url) {
-                $this->image->src = $image->out();
-            } else if ($image === true) {
-                $this->image->src = $OUTPUT->old_icon_url('help');
-            } else if (is_string($image)) {
-                $this->image->src = $image;
-            }
-            $this->image->alt = $this->text;
-
-            if ($this->linktext) {
-                $this->image->alt = get_string('helpwiththis');
-            } else {
-                $this->image->alt = $this->title;
-            }
-            $this->image->add_class('iconhelp');
-        } else if (empty($this->image->src)) {
-            if (!($this->image instanceof html_image)) {
-                $this->image = new html_image();
-            }
-            $this->image->src = $OUTPUT->old_icon_url('help');
-        }
-
-        parent::prepare();
-    }
-
-    public static function make_scale_menu($courseid, $scale) {
-        $helpbutton = new moodle_help_icon();
-        $strscales = get_string('scales');
-        $helpbutton->image->alt = $scale->name;
-        $helpbutton->link->url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
-        $popupaction = new popup_action('click', $helpbutton->url, 'ratingscale', $popupparams);
-        $popupaction->width = 500;
-        $popupaction->height = 400;
-        $helpbutton->link->add_action($popupaction);
-        $helpbutton->link->title = $scale->name;
-        return $helpbutton;
-    }
-}
-
-
-/**
- * Component representing a XHTML button (input of type 'button').
- * The renderer will either output it as a button with an onclick event,
- * or as a form with hidden inputs.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_button extends moodle_html_component {
-    /**
-     * @var string $text
-     */
-    public $text;
-
-    /**
-     * @var boolean $disabled Whether or not this button is disabled
-     */
-    public $disabled = false;
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        $this->add_class('singlebutton');
-
-        if (empty($this->text)) {
-            throw new coding_exception('A html_button must have a text value!');
-        }
-
-        if ($this->disabled) {
-            $this->disabled = 'disabled';
-        }
-
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing an icon linking to a Moodle page.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class action_icon extends moodle_html_component {
-    /**
-     * @var string $linktext Optional text to display next to the icon
-     */
-    public $linktext;
-    /**
-     * @var html_image $image The icon
-     */
-    public $image;
-    /**
-     * @var html_link $link The link
-     */
-    public $link;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
-     */
-    public function __construct() {
-        $this->image = new html_image();
-        $this->link = new html_link();
-    }
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        $this->image->add_class('action-icon');
-
-        parent::prepare();
-
-        if (empty($this->image->src)) {
-            throw new coding_exception('action_icon->image->src must not be empty');
-        }
-
-        if (empty($this->image->alt) && !empty($this->linktext)) {
-            $this->image->alt = $this->linktext;
-        } else if (empty($this->image->alt)) {
-            debugging('action_icon->image->alt should not be empty.', DEBUG_DEVELOPER);
-        }
-    }
-}
-
-/**
- * Component representing an image.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_image extends moodle_html_component {
-    /**
-     * @var string $alt A descriptive text
-     */
-    public $alt = HTML_ATTR_EMPTY;
-    /**
-     * @var string $src The path to the image being used
-     */
-    public $src;
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        $this->add_class('image');
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing a user picture.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class user_picture extends moodle_html_component {
-    /**
-     * @var mixed $user A userid or a user object with at least fields id, picture, imagealrt, firstname and lastname set.
-     */
-    public $user;
-    /**
-     * @var int $courseid The course id. Used when constructing the link to the user's profile.
-     */
-    public $courseid;
-    /**
-     * @var html_image $image A custom image used as the user picture.
-     */
-    public $image;
-    /**
-     * @var mixed $url False: picture not enclosed in a link. True: default link. moodle_url: custom link.
-     */
-    public $url;
-    /**
-     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
-     */
-    public $size;
-    /**
-     * @var boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
-     */
-    public $alttext = true;
-    /**
-     * @var boolean $popup Whether or not to open the link in a popup window
-     */
-    public $popup = false;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
-     */
-    public function __construct() {
-        $this->image = new html_image();
-    }
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        global $CFG, $DB, $OUTPUT;
-
-        if (empty($this->user)) {
-            throw new coding_exception('A user_picture object must have a $user object before being rendered.');
-        }
-
-        if (empty($this->courseid)) {
-            throw new coding_exception('A user_picture object must have a courseid value before being rendered.');
-        }
-
-        if (!($this->image instanceof html_image)) {
-            debugging('user_picture::image must be an instance of html_image', DEBUG_DEVELOPER);
-        }
-
-        $needrec = false;
-        // only touch the DB if we are missing data...
-        if (is_object($this->user)) {
-            // Note - both picture and imagealt _can_ be empty
-            // what we are trying to see here is if they have been fetched
-            // from the DB. We should use isset() _except_ that some installs
-            // have those fields as nullable, and isset() will return false
-            // on null. The only safe thing is to ask array_key_exists()
-            // which works on objects. property_exists() isn't quite
-            // what we want here...
-            if (! (array_key_exists('picture', $this->user)
-                   && ($this->alttext && array_key_exists('imagealt', $this->user)
-                       || (isset($this->user->firstname) && isset($this->user->lastname)))) ) {
-                $needrec = true;
-                $this->user = $this->user->id;
-            }
-        } else {
-            if ($this->alttext) {
-                // we need firstname, lastname, imagealt, can't escape...
-                $needrec = true;
-            } else {
-                $userobj = new StdClass; // fake it to save DB traffic
-                $userobj->id = $this->user;
-                $userobj->picture = $this->image->src;
-                $this->user = clone($userobj);
-                unset($userobj);
-            }
-        }
-        if ($needrec) {
-            $this->user = $DB->get_record('user', array('id' => $this->user), 'id,firstname,lastname,imagealt');
-        }
-
-        if ($this->url === true) {
-            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $this->courseid));
-        }
-
-        if (!empty($this->url) && $this->popup) {
-            $this->add_action(new popup_action('click', $this->url));
-        }
-
-        if (empty($this->size)) {
-            $file = 'f2';
-            $this->size = 35;
-        } else if ($this->size === true or $this->size == 1) {
-            $file = 'f1';
-            $this->size = 100;
-        } else if ($this->size >= 50) {
-            $file = 'f1';
-        } else {
-            $file = 'f2';
-        }
-
-        if (!empty($this->size)) {
-            $this->image->width = $this->size;
-            $this->image->height = $this->size;
-        }
-
-        $this->add_class('userpicture');
-
-        if (empty($this->image->src) && !empty($this->user->picture)) {
-            $this->image->src = $this->user->picture;
-        }
-
-        if (!empty($this->image->src)) {
-            require_once($CFG->libdir.'/filelib.php');
-            $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
-        } else { // Print default user pictures (use theme version if available)
-            $this->add_class('defaultuserpic');
-            $this->image->src = $OUTPUT->old_icon_url('u/' . $file);
-        }
-
-        if ($this->alttext) {
-            if (!empty($this->user->imagealt)) {
-                $this->image->alt = $this->user->imagealt;
-            } else {
-                $this->image->alt = get_string('pictureof','',fullname($this->user));
-            }
-        }
-
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing a textarea.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_textarea extends moodle_html_component {
-    /**
-     * @param string $name Name to use for the textarea element.
-     */
-    public $name;
-    /**
-     * @param string $value Initial content to display in the textarea.
-     */
-    public $value;
-    /**
-     * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
-     */
-    public $rows;
-    /**
-     * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
-     */
-    public $cols;
-    /**
-     * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
-     */
-    public $usehtmleditor;
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-        $this->add_class('form-textarea');
-
-        if (empty($this->id)) {
-            $this->id = "edit-$this->name";
-        }
-
-        if ($this->usehtmleditor) {
-            editors_head_setup();
-            $editor = get_preferred_texteditor(FORMAT_HTML);
-            $editor->use_editor($this->id, array('legacy'=>true));
-            $this->value = htmlspecialchars($value);
-        }
-
-        parent::prepare();
-    }
-}
-
-/**
- * Component representing a simple form wrapper. Its purpose is mainly to enclose
- * a submit input with the appropriate action and hidden inputs.
- *
- * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
- */
-class html_form extends moodle_html_component {
-    /**
-     * @var string $method post or get
-     */
-    public $method = 'post';
-    /**
-     * If a string is given, it will be converted to a moodle_url during prepare()
-     * @var mixed $url A moodle_url including params or a string
-     */
-    public $url;
-    /**
-     * @var array $params Optional array of parameters. Ignored if $url instanceof moodle_url
-     */
-    public $params = array();
-    /**
-     * @var boolean $showbutton If true, the submit button will always be shown even if JavaScript is available
-     */
-    public $showbutton = false;
-    /**
-     * @var string $targetwindow The name of the target page to open the linked page in.
-     */
-    public $targetwindow = 'self';
-    /**
-     * @var html_button $button A submit button
-     */
-    public $button;
-
-    /**
-     * Constructor: sets up the other components in case they are needed
-     * @return void
-     */
-    public function __construct() {
-        static $yes;
-        $this->button = new html_button();
-        if (!isset($yes)) {
-            $yes = get_string('yes');
-            $this->button->text = $yes;
-        }
-    }
-
-    /**
-     * @see lib/moodle_html_component#prepare()
-     * @return void
-     */
-    public function prepare() {
-
-        if (empty($this->url)) {
-            throw new coding_exception('A html_form must have a $url value (string or moodle_url).');
-        }
-
-        if (!($this->url instanceof moodle_url)) {
-            $this->url = new moodle_url($this->url, $this->params);
-        }
-
-        if ($this->method == 'post') {
-            $this->url->param('sesskey', sesskey());
-        }
-
-        parent::prepare();
-    }
-}
-
-/**
  * Component representing a paging bar.
  *
  * @copyright 2009 Nicolas Connault
@@ -2018,96 +1651,463 @@ class moodle_paging_bar extends moodle_html_component {
 }
 
 /**
- * Component representing a list.
- *
- * The advantage of using this object instead of a flat array is that you can load it
- * with metadata (CSS classes, event handlers etc.) which can be used by the renderers.
+ * Component representing a user picture.
  *
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_list extends moodle_html_component {
+class moodle_user_picture extends moodle_html_component {
+    /**
+     * @var mixed $user A userid or a user object with at least fields id, picture, imagealrt, firstname and lastname set.
+     */
+    public $user;
+    /**
+     * @var int $courseid The course id. Used when constructing the link to the user's profile.
+     */
+    public $courseid;
+    /**
+     * @var html_image $image A custom image used as the user picture.
+     */
+    public $image;
+    /**
+     * @var mixed $url False: picture not enclosed in a link. True: default link. moodle_url: custom link.
+     */
+    public $url;
+    /**
+     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
+     */
+    public $size;
+    /**
+     * @var boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
+     */
+    public $alttext = true;
+    /**
+     * @var boolean $popup Whether or not to open the link in a popup window
+     */
+    public $popup = false;
 
     /**
-     * @var array $items An array of html_list_item or html_list objects
+     * Constructor: sets up the other components in case they are needed
+     * @return void
      */
-    public $items = array();
-
-    /**
-     * @var string $type The type of list (ordered|unordered), definition type not yet supported
-     */
-    public $type = 'unordered';
+    public function __construct() {
+        $this->image = new html_image();
+    }
 
     /**
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
     public function prepare() {
+        global $CFG, $DB, $OUTPUT;
+
+        if (empty($this->user)) {
+            throw new coding_exception('A moodle_user_picture object must have a $user object before being rendered.');
+        }
+
+        if (empty($this->courseid)) {
+            throw new coding_exception('A moodle_user_picture object must have a courseid value before being rendered.');
+        }
+
+        if (!($this->image instanceof html_image)) {
+            debugging('moodle_user_picture::image must be an instance of html_image', DEBUG_DEVELOPER);
+        }
+
+        $needrec = false;
+        // only touch the DB if we are missing data...
+        if (is_object($this->user)) {
+            // Note - both picture and imagealt _can_ be empty
+            // what we are trying to see here is if they have been fetched
+            // from the DB. We should use isset() _except_ that some installs
+            // have those fields as nullable, and isset() will return false
+            // on null. The only safe thing is to ask array_key_exists()
+            // which works on objects. property_exists() isn't quite
+            // what we want here...
+            if (! (array_key_exists('picture', $this->user)
+                   && ($this->alttext && array_key_exists('imagealt', $this->user)
+                       || (isset($this->user->firstname) && isset($this->user->lastname)))) ) {
+                $needrec = true;
+                $this->user = $this->user->id;
+            }
+        } else {
+            if ($this->alttext) {
+                // we need firstname, lastname, imagealt, can't escape...
+                $needrec = true;
+            } else {
+                $userobj = new StdClass; // fake it to save DB traffic
+                $userobj->id = $this->user;
+                $userobj->picture = $this->image->src;
+                $this->user = clone($userobj);
+                unset($userobj);
+            }
+        }
+        if ($needrec) {
+            $this->user = $DB->get_record('user', array('id' => $this->user), 'id,firstname,lastname,imagealt');
+        }
+
+        if ($this->url === true) {
+            $this->url = new moodle_url('/user/view.php', array('id' => $this->user->id, 'course' => $this->courseid));
+        }
+
+        if (!empty($this->url) && $this->popup) {
+            $this->add_action(new popup_action('click', $this->url));
+        }
+
+        if (empty($this->size)) {
+            $file = 'f2';
+            $this->size = 35;
+        } else if ($this->size === true or $this->size == 1) {
+            $file = 'f1';
+            $this->size = 100;
+        } else if ($this->size >= 50) {
+            $file = 'f1';
+        } else {
+            $file = 'f2';
+        }
+
+        if (!empty($this->size)) {
+            $this->image->width = $this->size;
+            $this->image->height = $this->size;
+        }
+
+        $this->add_class('userpicture');
+
+        if (empty($this->image->src) && !empty($this->user->picture)) {
+            $this->image->src = $this->user->picture;
+        }
+
+        if (!empty($this->image->src)) {
+            require_once($CFG->libdir.'/filelib.php');
+            $this->image->src = new moodle_url(get_file_url($this->user->id.'/'.$file.'.jpg', null, 'user'));
+        } else { // Print default user pictures (use theme version if available)
+            $this->add_class('defaultuserpic');
+            $this->image->src = $OUTPUT->old_icon_url('u/' . $file);
+        }
+
+        if ($this->alttext) {
+            if (!empty($this->user->imagealt)) {
+                $this->image->alt = $this->user->imagealt;
+            } else {
+                $this->image->alt = get_string('pictureof','',fullname($this->user));
+            }
+        }
+
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a help icon.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_help_icon extends moodle_html_component {
+    /**
+     * @var html_link $link A html_link object that will hold the URL info
+     */
+    public $link;
+    /**
+     * @var string $text A descriptive text
+     */
+    public $text;
+    /**
+     * @var string $page  The keyword that defines a help page
+     */
+    public $page;
+    /**
+     * @var string $module Which module is the page defined in
+     */
+    public $module = 'moodle';
+    /**
+     * @var boolean $linktext Whether or not to show text next to the icon
+     */
+    public $linktext = false;
+    /**
+     * @var mixed $image The help icon. Can be set to true (will use default help icon),
+     *                   false (will not use any icon), the URL to an image, or a full
+     *                   html_image object.
+     */
+    public $image;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
+     * @return void
+     */
+    public function __construct() {
+        $this->link = new html_link();
+        $this->image = new html_image();
+    }
+
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        global $COURSE, $OUTPUT;
+
+        if (empty($this->page)) {
+            throw new coding_exception('A moodle_help_icon object requires a $page parameter');
+        }
+
+        if (empty($this->text)) {
+            throw new coding_exception('A moodle_help_icon object requires a $text parameter');
+        }
+
+        $this->link->text = $this->text;
+
+        // fix for MDL-7734
+        $this->link->url = new moodle_url('/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
+
+        // fix for MDL-7734
+        if (!empty($COURSE->lang)) {
+            $this->link->url->param('forcelang', $COURSE->lang);
+        }
+
+        // Catch references to the old text.html and emoticons.html help files that
+        // were renamed in MDL-13233.
+        if (in_array($this->page, array('text', 'emoticons', 'richtext'))) {
+            $oldname = $this->page;
+            $this->page .= '2';
+            debugging("You are referring to the old help file '$oldname'. " .
+                    "This was renamed to '$this->page' because of MDL-13233. " .
+                    "Please update your code.", DEBUG_DEVELOPER);
+        }
+
+        if ($this->module == '') {
+            $this->module = 'moodle';
+        }
+
+        // Warn users about new window for Accessibility
+        $this->title = get_string('helpprefix2', '', trim($this->text, ". \t")) .' ('.get_string('newwindow').')';
+
+        // Prepare image and linktext
+        if ($this->image && !($this->image instanceof html_image)) {
+            $image = fullclone($this->image);
+            $this->image = new html_image();
+
+            if ($image instanceof moodle_url) {
+                $this->image->src = $image->out();
+            } else if ($image === true) {
+                $this->image->src = $OUTPUT->old_icon_url('help');
+            } else if (is_string($image)) {
+                $this->image->src = $image;
+            }
+            $this->image->alt = $this->text;
+
+            if ($this->linktext) {
+                $this->image->alt = get_string('helpwiththis');
+            } else {
+                $this->image->alt = $this->title;
+            }
+            $this->image->add_class('iconhelp');
+        } else if (empty($this->image->src)) {
+            if (!($this->image instanceof html_image)) {
+                $this->image = new html_image();
+            }
+            $this->image->src = $OUTPUT->old_icon_url('help');
+        }
+
         parent::prepare();
     }
 
+    public static function make_scale_menu($courseid, $scale) {
+        $helpbutton = new moodle_help_icon();
+        $strscales = get_string('scales');
+        $helpbutton->image->alt = $scale->name;
+        $helpbutton->link->url = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
+        $popupaction = new popup_action('click', $helpbutton->url, 'ratingscale', $popupparams);
+        $popupaction->width = 500;
+        $popupaction->height = 400;
+        $helpbutton->link->add_action($popupaction);
+        $helpbutton->link->title = $scale->name;
+        return $helpbutton;
+    }
+}
+
+/**
+ * Component representing an icon linking to a Moodle page.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class moodle_action_icon extends moodle_html_component {
     /**
-     * This function takes a nested array of data and maps it into this list's $items array
-     * as proper html_list_item and html_list objects, with appropriate metadata.
-     *
-     * @param array $tree A nested array (array keys are ignored);
-     * @param int $row Used in identifying the iteration level and in ul classes
+     * @var string $linktext Optional text to display next to the icon
+     */
+    public $linktext;
+    /**
+     * @var html_image $image The icon
+     */
+    public $image;
+    /**
+     * @var html_link $link The link
+     */
+    public $link;
+
+    /**
+     * Constructor: sets up the other components in case they are needed
      * @return void
      */
-    public function load_data($tree, $level=0) {
-
-        $this->add_class("list-$level");
-
-        foreach ($tree as $key => $element) {
-            if (is_array($element)) {
-                $newhtmllist = new html_list();
-                $newhtmllist->load_data($element, $level + 1);
-                $this->items[] = $newhtmllist;
-            } else {
-                $listitem = new html_list_item();
-                $listitem->value = $element;
-                $listitem->add_class("list-item-$level-$key");
-                $this->items[] = $listitem;
-            }
-        }
+    public function __construct() {
+        $this->image = new html_image();
+        $this->link = new html_link();
     }
 
     /**
-     * Adds a html_list_item or html_list to this list.
-     * If the param is a string, a html_list_item will be added.
-     * @param mixed $item String, html_list or html_list_item object
+     * @see lib/moodle_html_component#prepare()
      * @return void
      */
-    public function add_item($item) {
-        if ($item instanceof html_list_item || $item instanceof html_list) {
-            $this->items[] = $item;
-        } else {
-            $listitem = new html_list_item();
-            $listitem->value = $item;
-            $this->items[] = $item;
+    public function prepare() {
+        $this->image->add_class('action-icon');
+
+        parent::prepare();
+
+        if (empty($this->image->src)) {
+            throw new coding_exception('moodle_action_icon->image->src must not be empty');
+        }
+
+        if (empty($this->image->alt) && !empty($this->linktext)) {
+            $this->image->alt = $this->linktext;
+        } else if (empty($this->image->alt)) {
+            debugging('moodle_action_icon->image->alt should not be empty.', DEBUG_DEVELOPER);
         }
     }
 }
 
 /**
- * Component representing a list item.
+ * This class represents how a block appears on a page.
  *
- * @copyright 2009 Nicolas Connault
+ * During output, each block instance is asked to return a block_contents object,
+ * those are then passed to the $OUTPUT->block function for display.
+ *
+ * {@link $contents} should probably be generated using a moodle_block_..._renderer.
+ *
+ * Other block-like things that need to appear on the page, for example the
+ * add new block UI, are also represented as block_contents objects.
+ *
+ * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_list_item extends moodle_html_component {
-    /**
-     * @var string $value The value of the list item
-     */
-    public $value;
+class block_contents extends moodle_html_component {
+    /** @var int used to set $skipid. */
+    protected static $idcounter = 1;
+
+    const NOT_HIDEABLE = 0;
+    const VISIBLE = 1;
+    const HIDDEN = 2;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @param integer $skipid All the blocks (or things that look like blocks)
+     * printed on a page are given a unique number that can be used to construct
+     * id="" attributes. This is set automatically be the {@link prepare()} method.
+     * Do not try to set it manually.
+     */
+    public $skipid;
+
+    /**
+     * @var integer If this is the contents of a real block, this should be set to
+     * the block_instance.id. Otherwise this should be set to 0.
+     */
+    public $blockinstanceid = 0;
+
+    /**
+     * @var integer if this is a real block instance, and there is a corresponding
+     * block_position.id for the block on this page, this should be set to that id.
+     * Otherwise it should be 0.
+     */
+    public $blockpositionid = 0;
+
+    /**
+     * @param array $attributes an array of attribute => value pairs that are put on the
+     * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
+     */
+    public $attributes = array();
+
+    /**
+     * @param string $title The title of this block. If this came from user input,
+     * it should already have had format_string() processing done on it. This will
+     * be output inside <h2> tags. Please do not cause invalid XHTML.
+     */
+    public $title = '';
+
+    /**
+     * @param string $content HTML for the content
+     */
+    public $content = '';
+
+    /**
+     * @param array $list an alternative to $content, it you want a list of things with optional icons.
+     */
+    public $footer = '';
+
+    /**
+     * Any small print that should appear under the block to explain to the
+     * teacher about the block, for example 'This is a sticky block that was
+     * added in the system context.'
+     * @var string
+     */
+    public $annotation = '';
+
+    /**
+     * @var integer one of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
+     * the user can toggle whether this block is visible.
+     */
+    public $collapsible = self::NOT_HIDEABLE;
+
+    /**
+     * A (possibly empty) array of editing controls. Each element of this array
+     * should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
+     * $icon is the icon name. Fed to $OUTPUT->old_icon_url.
+     * @var array
+     */
+    public $controls = array();
+
+    /**
+     * @see moodle_html_component::prepare()
      * @return void
      */
     public function prepare() {
+        $this->skipid = self::$idcounter;
+        self::$idcounter += 1;
+        $this->add_class('sideblock');
+        if (empty($this->blockinstanceid) || !strip_tags($this->title)) {
+            $this->collapsible = self::NOT_HIDEABLE;
+        }
+        if ($this->collapsible == self::HIDDEN) {
+            $this->add_class('hidden');
+        }
+        if (!empty($this->controls)) {
+            $this->add_class('block_with_controls');
+        }
         parent::prepare();
     }
+}
+
+/**
+ * This class represents a target for where a block can go when it is being moved.
+ *
+ * This needs to be rendered as a form with the given hidden from fields, and
+ * clicking anywhere in the form should submit it. The form action should be
+ * $PAGE->url.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class block_move_target extends moodle_html_component {
+    /**
+     * List of hidden form fields.
+     * @var array
+     */
+    public $url = array();
+    /**
+     * List of hidden form fields.
+     * @var array
+     */
+    public $text = '';
 }

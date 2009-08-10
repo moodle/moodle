@@ -233,7 +233,7 @@ case 'plugins':
     echo '<div><ul>';
     foreach($repos as $repo) {
         $info = $repo->get_meta();
-        $icon = new action_icon();
+        $icon = new moodle_action_icon();
         $icon->image->src = $info->icon;
         $icon->image->style = 'height: 16px; width: 16px;';
         $icon->link->url = clone($url);

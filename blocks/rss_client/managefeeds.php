@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -121,13 +121,13 @@ foreach($feeds as $feed) {
         '<div class="url">' . $OUTPUT->link($feed->url, $feed->url) .'</div>' .
         '<div class="description">' . $feed->description . '</div>';
 
-    $editaction = new action_icon();
+    $editaction = new moodle_action_icon();
     $editaction->link->url = $CFG->wwwroot .'/blocks/rss_client/editfeed.php?rssid=' . $feed->id . $extraparams;
     $editaction->link->title = get_string('edit');
     $editaction->image->src = $OUTPUT->old_icon_url('t/edit');
     $editaction->image->alt = get_string('edit');
 
-    $deleteaction = new action_icon();
+    $deleteaction = new moodle_action_icon();
     $deleteaction->link->url = $CFG->wwwroot .'/blocks/rss_client/managefeeds.php?deleterssid=' . $feed->id .
             '&sesskey=' . sesskey() . $extraparams;
     $deleteaction->link->title = get_string('delete');

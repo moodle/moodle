@@ -388,7 +388,7 @@ EOD;
                 $user->lastname  = $c->lastname;
                 $user->imagealt  = $c->imagealt;
                 $c->content = format_text($c->content, $c->format);
-                $userpic = new user_picture();
+                $userpic = new moodle_user_picture();
                 $userpic->user = $user;
                 $userpic->courseid = $this->course->id;
                 $userpic->link = true;

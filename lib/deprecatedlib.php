@@ -2675,7 +2675,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
 
     // debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $courseid).');
 
-    $userpic = new user_picture();
+    $userpic = new moodle_user_picture();
     $userpic->user = $user;
     $userpic->courseid = $courseid;
     $userpic->size = $size;
@@ -3287,7 +3287,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $baseurl = new moodle_url($baseurl);
     $select = moodle_select::make_popup_form($baseurl, $name, $options, $formid, $selected);
     $select->disabled = $disabled;
-    
+
     if (!empty($submitvalue)) {
         $select->form->button->text = $submitvalue;
     }
