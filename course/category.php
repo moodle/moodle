@@ -171,13 +171,9 @@
     make_categories_list($displaylist, $notused);
 
     echo '<div class="categorypicker">';
-    $popupurl = 'category.php?id=';
-    foreach ($displaylist as $key => $val) {
-        $displaylist[$popupurl.$key] = $val;
-        unset($displaylist[$key]);
-    }
-    $select = moodle_select::make_popup_form($displaylist, 'switchcategory', $popupurl.$category->id);
+    $select = moodle_select::make_popup_form('category.php', 'id', $displaylist, 'switchcategory', $category->id);
     $select->set_label($strcategories.':');
+    $select->nothinglabel = false;
     echo $OUTPUT->select($select);
     echo '</div>';
 

@@ -1556,8 +1556,6 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     static $resources = false;
     static $activities = false;
 
-    $popupurl = "$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey()."&add=";
-
     if ($resources === false) {
         $resources = array();
         $activities = array();
@@ -1583,14 +1581,14 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                         continue;
                     }
                     if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $resources[$popupurl.$type->type] = $type->typestr;
+                        $resources[$type->type] = $type->typestr;
                     } else {
-                        $activities[$popupurl.$type->type] = $type->typestr;
+                        $activities[$type->type] = $type->typestr;
                     }
                 }
             } else {
                 // all mods without type are considered activity
-                $activities[$popupurl.$modname] = $modnamestr;
+                $activities[$modname] = $modnamestr;
             }
         }
     }
@@ -1603,16 +1601,18 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     if (!$vertical) {
         $output .= '<div class="horizontal">';
     }
-    
+
+    $popupurl = "$CFG->wwwroot/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey();
+
     if (!empty($resources)) {
-        $select = moodle_select::make_popup_form($resources, "ressection$section", null);
+        $select = moodle_select::make_popup_form($popupurl, 'add', $resources, "ressection$section", null);
         $select->nothinglabel = $straddresource;
         $select->set_help_icon('resource/types', $straddresource); 
         $output .= $OUTPUT->select($select);
     }
 
     if (!empty($activities)) {
-        $select = moodle_select::make_popup_form($activities, "section$section", null);
+        $select = moodle_select::make_popup_form($popupurl, 'add', $activities, "section$section", null);
         $select->nothinglabel = $straddactivity;
         $select->set_help_icon('mods', $straddactivity); 
         $output .= $OUTPUT->select($select);
