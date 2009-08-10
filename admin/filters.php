@@ -248,8 +248,10 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     }
 
     // Disable/off/on
-    $row[] = popup_form(action_url($filter, 'setstate') . '&amp;newstate=', $activechoices,
-            'active' . basename($filter), $filterinfo->active, '', '', '', true, 'self', '', NULL, get_string('save', 'admin'));
+    $select = moodle_select::make_popup_form(action_url($filter, 'setstate'), 'newstate', $activechoices, 'active' . basename($filter), $filterinfo->active);
+    $select->nothinglabel = false;
+    $select->form->button->text = get_string('save', 'admin');
+    $row[] = $OUTPUT->select($select);
 
     // Re-order
     $updown = '';
@@ -269,9 +271,11 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     $row[] = $updown;
 
     // Apply to strings.
-    $row[] = popup_form(action_url($filter, 'setapplyto') . '&amp;stringstoo=', $applytochoices,
-            'applyto' . basename($filter), $applytostrings, '', '', '', true, 'self', '', NULL, get_string('save', 'admin'),
-            $filterinfo->active == TEXTFILTER_DISABLED);
+    $select = moodle_select::make_popup_form(action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, 'applyto' . basename($filter), $applytostrings);
+    $select->nothinglabel = false;
+    $select->disabled = $filterinfo->active == TEXTFILTER_DISABLED;
+    $select->form->button->text = get_string('save', 'admin');
+    $row[] = $OUTPUT->select($select);
 
     // Settings link, if required
     if (filter_has_global_settings($filter)) {
