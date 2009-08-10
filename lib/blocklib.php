@@ -1337,7 +1337,7 @@ function matching_page_type_patterns($pagetype) {
  * cannot add any blocks here.
  */
 function block_add_block_ui($page, $output) {
-    global $CFG;
+    global $CFG, $OUTPUT;
     if (!$page->user_is_editing() || !$page->user_can_edit_blocks()) {
         return null;
     }
@@ -1361,9 +1361,11 @@ function block_add_block_ui($page, $output) {
     }
     asort($menu, SORT_LOCALE_STRING);
 
-    // TODO convert to $OUTPUT.
-    $actionurl = $page->url->out_action() . '&amp;bui_addblock=';
-    $bc->content = popup_form($actionurl, $menu, 'add_block', '', get_string('adddots'), '', '', true);
+    $actionurl = $page->url->out_action();
+    $select = moodle_select::make_popup_form($actionurl, 'bui_addblock', $menu, 'add_block');
+    $select->nothinglabel = get_string('adddots');
+
+    $bc->content = $OUTPUT->select($select);
     return $bc;
 }
 

@@ -412,7 +412,7 @@ function groups_get_activity_groupmode($cm, $course=null) {
  * @return mixed void or string depending on $return param
  */
 function groups_print_course_menu($course, $urlroot, $return=false) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $OUTPUT;
 
     if (!$groupmode = $course->groupmode) {
         if ($return) {
@@ -480,7 +480,10 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $groupname = reset($groupsmenu);
         $output = $grouplabel.': '.$groupname;
     } else {
-        $output = popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $activegroup, '', '', '', true, 'self', $grouplabel);
+        $select = moodle_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
+        $select->nothinglabel = false;
+        $select->set_label($grouplabel);
+        $output = $OUTPUT->select($select); 
     }
 
     $output = '<div class="groupselector">'.$output.'</div>';
@@ -511,7 +514,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
  * @return mixed void or string depending on $return param
  */
 function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $SESSION, $OUTPUT;
 
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
@@ -585,7 +588,10 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $groupname = reset($groupsmenu);
         $output = $grouplabel.': '.$groupname;
     } else {
-        $output = popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $activegroup, '', '', '', true, 'self', $grouplabel);
+        $select = moodle_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
+        $select->nothinglabel = false;
+        $select->set_label($grouplabel);
+        $output = $OUTPUT->select($select); 
     }
 
     $output = '<div class="groupselector">'.$output.'</div>';
