@@ -247,7 +247,7 @@ class default_questiontype {
                 $html .= '<li>'.$permissionstr.'</li>';
             }
             $html .= '</ul>';
-            print_box($html, 'boxwidthnarrow boxaligncenter generalbox');
+            echo $OUTPUT->box($html, 'boxwidthnarrow boxaligncenter generalbox');
         }
         $mform->display();
     }
@@ -710,7 +710,7 @@ class default_questiontype {
         }
         return array($question->id => $responses[$question->id]->responses);
     }
-    
+
     /**
      * @param object $question
      * @return mixed either a integer score out of 1 that the average random
@@ -934,7 +934,7 @@ class default_questiontype {
                 if ($isgraded) {
                     $grade = question_format_grade($cmoptions, $state->last_graded->grade).'/';
                 } else {
-                    $grade = '--/'; 
+                    $grade = '--/';
                 }
             }
             $grade .= question_format_grade($cmoptions, $question->maxgrade);
@@ -983,7 +983,7 @@ class default_questiontype {
                 $checksum = question_get_toggleflag_checksum($aid, $qid, $qsid);
                 $postdata = "qsid=$qsid&aid=$aid&qid=$qid&checksum=$checksum&sesskey=" . sesskey();
                 $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
-                        '" value="1" ' . $checked . ' />' . 
+                        '" value="1" ' . $checked . ' />' .
                         '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_question_flag_tag(
                         $state->flagged, $id . 'img') . '</label>' . "\n";
                 $PAGE->requires->js_function_call('question_flag_changer.init_flag', array($id, $postdata));
@@ -1000,7 +1000,7 @@ class default_questiontype {
      * Work out the actual img tag needed for the flag
      *
      * @param boolean $flagged whether the question is currently flagged.
-     * @param string $id an id to be added as an attribute to the img (optional). 
+     * @param string $id an id to be added as an attribute to the img (optional).
      * @return string the img tag.
      */
     protected function get_question_flag_tag($flagged, $id = '') {
@@ -1178,7 +1178,7 @@ class default_questiontype {
                 $grade->raw = question_format_grade($cmoptions, $state->last_graded->raw_grade);
 
                 // let student know wether the answer was correct
-                $class = question_get_feedback_class($state->last_graded->raw_grade / 
+                $class = question_get_feedback_class($state->last_graded->raw_grade /
                         $question->maxgrade);
                 echo '<div class="correctness ' . $class . '">' . get_string($class, 'quiz') . '</div>';
 

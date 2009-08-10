@@ -1130,7 +1130,7 @@ class question_bank_view {
     }
 
     protected function get_current_category($categoryandcontext) {
-        global $DB;
+        global $DB, $OUTPUT;
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         if (!$categoryid) {
             $this->print_choose_category_message($categoryandcontext);
@@ -1139,9 +1139,9 @@ class question_bank_view {
 
         if (!$category = $DB->get_record('question_categories',
                 array('id' => $categoryid, 'contextid' => $contextid))) {
-            print_box_start('generalbox questionbank');
+            echo $OUTPUT->box_start('generalbox questionbank');
             notify('Category not found!');
-            print_box_end();
+            echo $OUTPUT->box_end();
             return false;
         }
 

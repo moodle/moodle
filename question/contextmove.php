@@ -235,9 +235,9 @@
         $cattomove->toareaname = $toareaname;
         $cattomove->fromareaname = $fromareaname;
 
-        print_box(get_string('movingcategoryandfiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
+        echo $OUTPUT->box(get_string('movingcategoryandfiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
     } else {
-        print_box(get_string('movingcategorynofiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
+        echo $OUTPUT->box(get_string('movingcategorynofiles', 'question', $cattomove), 'boxwidthnarrow boxaligncenter generalbox');
     }
     $contextmoveform->display();
     echo $OUTPUT->footer();

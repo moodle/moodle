@@ -96,9 +96,9 @@ if ($cm !== null) {
 }
 
 // Display a form to choose the question type.
-print_box_start('generalbox boxwidthnormal boxaligncenter', 'chooseqtypebox');
+echo $OUTPUT->box_start('generalbox boxwidthnormal boxaligncenter', 'chooseqtypebox');
 print_choose_qtype_to_add_form($hiddenparams);
-print_box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 ?>

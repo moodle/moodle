@@ -260,10 +260,10 @@ class question_category_object {
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
-                print_box_start('boxwidthwide boxaligncenter generalbox questioncategories contextlevel' . $list->context->contextlevel);
+                echo $OUTPUT->box_start('boxwidthwide boxaligncenter generalbox questioncategories contextlevel' . $list->context->contextlevel);
                 echo $OUTPUT->heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), 3);
                 echo $listhtml;
-                print_box_end();
+                echo $OUTPUT->box_end();
             }
         }
         echo $list->display_page_numbers();
@@ -369,10 +369,11 @@ class question_category_object {
     }
 
     public function display_move_form($questionsincategory, $category){
+        global $OUTPUT;
         $vars = new stdClass;
         $vars->name = $category->name;
         $vars->count = $questionsincategory;
-        print_box(get_string('categorymove', 'quiz', $vars), 'generalbox boxaligncenter');
+        echo $OUTPUT->box(get_string('categorymove', 'quiz', $vars), 'generalbox boxaligncenter');
         $this->moveform->display();
     }
 

@@ -235,9 +235,9 @@ if (count($urls)){
 
     $questionsstr->toareaname = $toareaname;
 
-    print_box(get_string('movingquestionsandfiles', 'question', $questionsstr), 'boxwidthnarrow boxaligncenter generalbox');
+    echo $OUTPUT->box(get_string('movingquestionsandfiles', 'question', $questionsstr), 'boxwidthnarrow boxaligncenter generalbox');
 } else {
-    print_box(get_string('movingquestionsnofiles', 'question', $questionsstr), 'boxwidthnarrow boxaligncenter generalbox');
+    echo $OUTPUT->box(get_string('movingquestionsnofiles', 'question', $questionsstr), 'boxwidthnarrow boxaligncenter generalbox');
 }
 $contextmoveform->display();
 echo $OUTPUT->footer();
