@@ -125,7 +125,7 @@ if (!core_tables_exist()) {
         echo $OUTPUT->heading(get_string('copyrightnotice'));
         $copyrightnotice = text_to_html(get_string('gpl'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
-        print_box($copyrightnotice, 'copyrightnotice');
+        echo $OUTPUT->box($copyrightnotice, 'copyrightnotice');
         echo '<br />';
         notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
                                                "http://docs.moodle.org/en/License");
@@ -139,7 +139,7 @@ if (!core_tables_exist()) {
         echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        print_box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
@@ -203,7 +203,7 @@ if ($version > $CFG->version) {  // upgrade
         echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        print_box($releasenoteslink);
+        echo $OUTPUT->box($releasenoteslink);
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
@@ -211,9 +211,9 @@ if ($version > $CFG->version) {  // upgrade
         } else {
             notify(get_string('environmentok', 'admin'), 'notifysuccess');
             if (empty($CFG->skiplangupgrade)) {
-                print_box_start('generalbox', 'notice');
+                echo $OUTPUT->box_start('generalbox', 'notice');
                 print_string('langpackwillbeupdated', 'admin');
-                print_box_end();
+                echo $OUTPUT->box_end();
             }
             print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
         }
@@ -226,9 +226,9 @@ if ($version > $CFG->version) {  // upgrade
         $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
         print_header($strplugincheck, $strplugincheck, $navigation, '', '', false, '&nbsp;', '&nbsp;');
         echo $OUTPUT->heading($strplugincheck);
-        print_box_start('generalbox', 'notice');
+        echo $OUTPUT->box_start('generalbox', 'notice');
         print_string('pluginchecknotice');
-        print_box_end();
+        echo $OUTPUT->box_end();
         print_plugin_tables();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
         print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
@@ -342,14 +342,14 @@ admin_externalpage_setup('adminnotifications');
 admin_externalpage_print_header();
 
 if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
-    print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
+    echo $OUTPUT->box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
 } else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
-    print_box(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'generalbox adminerror');
+    echo $OUTPUT->box(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'generalbox adminerror');
 
 }
 
 if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
-    print_box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
+    echo $OUTPUT->box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
 }
 
 // If no recently cron run
@@ -357,17 +357,17 @@ $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
 if (time() - $lastcron > 3600 * 24) {
     $strinstallation = get_string('installation', 'install');
     $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
-    print_box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
+    echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
 }
 
 // Print multilang upgrade notice if needed
 if (empty($CFG->filter_multilang_converted)) {
-    print_box(get_string('multilangupgradenotice', 'admin'), 'generalbox adminwarning');
+    echo $OUTPUT->box(get_string('multilangupgradenotice', 'admin'), 'generalbox adminwarning');
 }
 
 // Alert if we are currently in maintenance mode
 if (!empty($CFG->maintenance_enabled)) {
-    print_box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');
+    echo $OUTPUT->box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');
 }
 
 
@@ -378,7 +378,7 @@ $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
                  'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                  'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                  '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';
-print_box($copyrighttext, 'copyright');
+echo $OUTPUT->box($copyrighttext, 'copyright');
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 echo $OUTPUT->footer();

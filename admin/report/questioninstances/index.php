@@ -1,6 +1,6 @@
 <?php  // $Id$
 /**
- * For a given question type, list the number of 
+ * For a given question type, list the number of
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package roles
@@ -28,7 +28,7 @@ foreach ($QTYPES as $qtype) {
 }
 
 // Print the settings form.
-print_box_start('generalbox boxwidthwide boxaligncenter centerpara');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
 echo '<form method="get" action="." id="settingsform"><div>';
 echo $OUTPUT->heading(get_string('reportsettings', 'report_questioninstances'));
 echo '<p id="intro">', get_string('intro', 'report_questioninstances') , '</p>';
@@ -38,7 +38,7 @@ echo '</p>';
 echo '<p><input type="submit" id="settingssubmit" value="' .
         get_string('getreport', 'report_questioninstances') . '" /></p>';
 echo '</div></form>';
-print_box_end();
+echo $OUTPUT->box_end();
 
 // If we have a qtype to report on, generate the report.
 if ($requestedqtype) {
@@ -64,7 +64,7 @@ if ($requestedqtype) {
     // Get the question counts, and all the context information, for each
     // context. That is, rows of these results can be used as $context objects.
     $counts = $DB->get_records_sql("
-            SELECT qc.contextid, count(1) as numquestions, sum(hidden) as numhidden, con.id, con.contextlevel, con.instanceid, con.path, con.depth 
+            SELECT qc.contextid, count(1) as numquestions, sum(hidden) as numhidden, con.id, con.contextlevel, con.instanceid, con.path, con.depth
             FROM {question} q
             JOIN {question_categories} qc ON q.category = qc.id
             JOIN {context} con ON con.id = qc.contextid

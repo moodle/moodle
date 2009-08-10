@@ -138,7 +138,7 @@
         $a = new stdClass;
         $a->filter = $filtername;
         $a->directory = $filterpath;
-        print_box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
+        echo $OUTPUT->box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
         print_continue($returnurl);
         echo $OUTPUT->footer();
         exit;

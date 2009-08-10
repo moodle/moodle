@@ -36,7 +36,7 @@ if (array_key_exists($CFG->mnet_localhost_id, $mnethosts)) {
 
 // process actions
 if (!empty($action) and confirm_sesskey()) {
-    
+
     // boot if insufficient permission
     if (!has_capability('moodle/user:delete', $sitecontext)) {
         print_error('nomodifyacl','mnet');
@@ -56,7 +56,7 @@ if (!empty($action) and confirm_sesskey()) {
             break;
 
         case "acl":
-        
+
             // require the access parameter, and it must be 'allow' or 'deny'
             $accessctrl = trim(strtolower(required_param('accessctrl', PARAM_ALPHA)));
             if ($accessctrl != 'allow' and $accessctrl != 'deny') {
@@ -119,7 +119,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 }
 
 // Explain
-print_box(get_string('ssoacldescr','mnet'));
+echo $OUTPUT->box(get_string('ssoacldescr','mnet'));
 // Are the needed bits enabled?
 $warn = '';
 if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
@@ -135,7 +135,7 @@ if (get_config('auth/mnet', 'auto_add_remote_users') != true) {
 }
 if (!empty($warn)) {
     $warn = '<p>' .  get_string('ssoaclneeds','mnet').'</p>' . $warn;
-    print_box($warn);
+    echo $OUTPUT->box($warn);
 }
 // output the ACL table
 $columns = array("username", "mnet_host_id", "access", "delete");
@@ -196,7 +196,7 @@ if (!empty($table)) {
 print_simple_box_start('center','90%','','20');
 
 ?>
- <div class="mnetaddtoaclform"> 
+ <div class="mnetaddtoaclform">
   <form id="mnetaddtoacl" method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
 <?php

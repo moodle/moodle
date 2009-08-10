@@ -56,7 +56,7 @@
     notify('This block still uses an old-style config_global.html file. ' .
             'It must be updated by a developer to use a settings.php file.');
 
-    print_box(get_string('configwarning', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
+    echo $OUTPUT->box(get_string('configwarning', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
     echo '<br />';
 
     echo '<form method="post" action="block.php">';
@@ -66,9 +66,9 @@
     }
     echo '</p>';
 
-    print_box_start();
+    echo $OUTPUT->box_start();
     include($CFG->dirroot.'/blocks/'. $block->name() .'/config_global.html');
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     echo '</form>';
     echo $OUTPUT->footer();

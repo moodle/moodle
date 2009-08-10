@@ -45,7 +45,7 @@ admin_externalpage_setup('reportspamcleaner');
 $PAGE->requires->yui_lib('json');
 $PAGE->requires->yui_lib('connection');
 
-// Implement some AJAX calls 
+// Implement some AJAX calls
 
 // Delete one user
 if (!empty($del) && confirm_sesskey() && ($id != $USER->id)) {
@@ -91,9 +91,9 @@ admin_externalpage_print_header();
 
 print_spamcleaner_javascript();
 
-print_box(get_string('spamcleanerintro', 'report_spamcleaner'));
+echo $OUTPUT->box(get_string('spamcleanerintro', 'report_spamcleaner'));
 
-print_box_start();     // The forms section at the top
+echo $OUTPUT->box_start();     // The forms section at the top
 
 ?>
 
@@ -101,7 +101,7 @@ print_box_start();     // The forms section at the top
 
 <form method="post" action="index.php">
   <div>
-    <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" /> 
+    <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
     <input type="submit" value="<?php echo get_string('spamsearch', 'report_spamcleaner')?>" />
   </div>
@@ -120,7 +120,7 @@ print_box_start();     // The forms section at the top
 </div>
 
 <?php
-print_box_end(); 
+echo $OUTPUT->box_end();
 
 echo '<div id="result" class="mdl-align">';
 
@@ -142,12 +142,12 @@ echo '</div>';
 /////////////////////////////////////////////////////////////////////////////////
 
 
-///  Functions 
+///  Functions
 
 
 function search_spammers($keywords) {
 
-    global $CFG, $USER, $DB; 
+    global $CFG, $USER, $DB, $OUTPUT;
 
     if (!is_array($keywords)) {
         $keywords = array($keywords);    // Make it into an array
@@ -170,7 +170,7 @@ function search_spammers($keywords) {
     $spamusers_blog = $DB->get_recordset_sql($sql2);
 
     $keywordlist = implode(', ', $keywords);
-    print_box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
+    echo $OUTPUT->box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
 
     print_user_list(array($spamusers_desc, $spamusers_blog), $keywords);
 

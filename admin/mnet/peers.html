@@ -2,7 +2,7 @@
 admin_externalpage_print_header();
 
 if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
-    print_box(get_string('mnetdisabled','mnet'));
+    echo $OUTPUT->box(get_string('mnetdisabled','mnet'));
 }
 ?>
 <div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
@@ -67,7 +67,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     </table>
     <form method="post" action="peers.php">
         <table cellspacing="0" cellpadding="5" class="generaltable generalbox standard" >
-            
+
             <tr>
                 <th class="header c4" colspan="4">
                     <?php print_string('addnewhost', 'mnet'); ?>
@@ -92,7 +92,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
             <tr>
                 <td class="cell c4" align="right" colspan="4"><input type="submit" value="<?php print_string('addhost','mnet'); ?>" /></td>
             </tr>
-        
+
         </table>
     </form>
 </div>

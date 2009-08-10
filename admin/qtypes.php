@@ -148,7 +148,7 @@
 
         $a->qtype = $qtypename;
         $a->directory = $QTYPES[$delete]->plugin_dir();
-        print_box(get_string('qtypedeletefiles', 'admin', $a), 'generalbox', 'notice');
+        echo $OUTPUT->box(get_string('qtypedeletefiles', 'admin', $a), 'generalbox', 'notice');
         print_continue(admin_url('qtypes.php'));
         echo $OUTPUT->footer();
         exit;

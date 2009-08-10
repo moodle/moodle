@@ -17,12 +17,12 @@
 
     admin_externalpage_print_header();
 
-    print_box(get_string("remoteenrolhosts_desc", "mnet"));
+    echo $OUTPUT->box(get_string("remoteenrolhosts_desc", "mnet"));
 
     echo '<hr />';
 
     if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
-        print_box(get_string('mnetdisabled','mnet'));
+        echo $OUTPUT->box(get_string('mnetdisabled','mnet'));
     }
 
     echo '<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->'

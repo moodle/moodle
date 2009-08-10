@@ -50,7 +50,7 @@ if (!empty($adminroot->errors)) {
 admin_externalpage_print_header($focus);
 
 if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
-    print_box(get_string('upgradesettingsintro','admin'), 'generalbox');
+    echo $OUTPUT->box(get_string('upgradesettingsintro','admin'), 'generalbox');
 }
 
 echo '<form action="upgradesettings.php" method="post" id="adminsettings">';

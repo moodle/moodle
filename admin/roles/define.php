@@ -149,7 +149,7 @@
     }
 
     // Start the form.
-    print_box_start('generalbox');
+    echo $OUTPUT->box_start('generalbox');
     if ($action == 'view') {
         echo '<div class="mform">';
     } else {
@@ -178,7 +178,7 @@
 </div></form>
         <?php
     }
-    print_box_end();
+    echo $OUTPUT->box_end();
 
 /// Print a link back to the all roles list.
     echo '<div class="backlink">';

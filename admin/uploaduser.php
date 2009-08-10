@@ -705,7 +705,7 @@ if ($formdata = $mform->is_cancelled()) {
     $cir->close();
     $cir->cleanup(true);
 
-    print_box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
+    echo $OUTPUT->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
     echo '<p>';
     if ($optype != UU_UPDATE) {
         echo get_string('userscreated', 'admin').': '.$usersnew.'<br />';
@@ -726,7 +726,7 @@ if ($formdata = $mform->is_cancelled()) {
     }
     echo get_string('usersweakpassword', 'admin').': '.$forcechangepassword.'<br />';
     echo get_string('errors', 'admin').': '.$userserrors.'</p>';
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     if ($bulk) {
         print_continue($bulknurl);

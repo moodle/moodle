@@ -309,7 +309,7 @@
 
     /// Print a warning if we are assigning system roles.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
-            print_box(get_string('globalroleswarning', 'role'));
+            echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
         }
 
     /// Print the form.
@@ -389,7 +389,7 @@
 
         // Print a warning if we are assigning system roles.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
-            print_box(get_string('globalroleswarning', 'role'));
+            echo $OUTPUT->box(get_string('globalroleswarning', 'role'));
         }
 
         // Print instruction

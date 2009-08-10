@@ -137,14 +137,14 @@
 
     if (!$mode) {
         // TODO this is a very nice place to put some translation statistics
-        print_box_start();
+        echo $OUTPUT->box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
         $select = moodle_select::make_popup_form("$CFG->wwwroot/$CFG->admin/lang.php", 'lang', $langs, "chooselang", $currlang);
         $select->nothinglabel = false;
         $select->set_label($strcurrentlanguage.':');
         echo $OUTPUT->select($select);
-        print_box_end();
+        echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
     }
@@ -195,7 +195,7 @@
 
         // Total number of strings and missing strings
         $totalcounter->strings = 0;
-        $totalcounter->missing = 0;       
+        $totalcounter->missing = 0;
 
         // For each file, check that a counterpart exists, then check all the strings
         foreach ($stringfiles as $stringfile) {
@@ -204,7 +204,7 @@
             $prefix = $stringfile['prefix'];
             $filename = $stringfile['filename'];
             unset($string);
-            
+
             // Get some information about file locations:
             //  $enfilepath = the path to the English file distributed either in the core space or in plugin space
             //  $trfilepath = the path to the translated file distributed either in the lang pack or in plugin space
@@ -232,7 +232,7 @@
             $enstring = isset($string) ? $string : array();
             unset($string);
             ksort($enstring);
-            
+
             //$lcstring = local customizations
             $lcstring = array();
             if (file_exists($lcfilepath)) {
@@ -332,7 +332,7 @@
         }
 
         if ($m <> '') {
-            print_box($m, 'filenames');
+            echo $OUTPUT->box($m, 'filenames');
         }
 
         echo $o;
@@ -466,7 +466,7 @@
                 }
                 $saveinto = $locallangdir;
             }
-             
+
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
                 notify(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
             } else {
@@ -475,7 +475,7 @@
             unset($packstring);
         }
 
-        print_box_start('generalbox editstrings');
+        echo $OUTPUT->box_start('generalbox editstrings');
         $menufiles = array();
         $menufiles_coregrp = 1;
         foreach ($stringfiles as $stringfile) {
@@ -499,8 +499,8 @@
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
-        print_box_end();
-        
+        echo $OUTPUT->box_end();
+
         if ($currentfile <> '') {
             error_reporting(0);
             if (!isset($editable) || $editable) {
@@ -525,7 +525,7 @@
             error_reporting($CFG->debug);
 
             $o = '';    // stores the HTML output to be echo-ed
-            
+
             unset($string);
             include($enfilepath);
             $enstring = isset($string) ? $string : array();
@@ -729,7 +729,7 @@
             }
         }
 
-        print_box_start('generalbox editstrings');
+        echo $OUTPUT->box_start('generalbox editstrings');
         $menufiles = array();
         $menufiles_coregrp = 1;
         $origlocation = ''; // the location of the currentfile's English source will be stored here
@@ -766,7 +766,7 @@
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
-        print_box_end();
+        echo $OUTPUT->box_end();
 
         if (!empty($currentfile)) {
 

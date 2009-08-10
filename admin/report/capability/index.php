@@ -69,7 +69,7 @@ if (count($cleanedroleids) == count($allroles)) {
 }
 
 // Print the settings form.
-print_box_start('generalbox boxwidthwide boxaligncenter centerpara');
+echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
 echo '<form method="get" action="." id="settingsform">';
 echo $OUTPUT->heading(get_string('reportsettings', 'report_capability'));
 echo '<p id="intro">', get_string('intro', 'report_capability') , '</p>';
@@ -79,7 +79,7 @@ echo '<p><label for="menuroles"> ' . get_string('roleslabel', 'report_capability
 choose_from_menu($rolechoices, 'roles[]', $selectedroleids, '', '', '', false, false, 0, '', true, true);
 echo '<p><input type="submit" id="settingssubmit" value="' . get_string('getreport', 'report_capability') . '" /></p>';
 echo '</form>';
-print_box_end();
+echo $OUTPUT->box_end();
 
 // If we have a capability, generate the report.
 if ($capability) {
@@ -191,7 +191,7 @@ function print_report_tree($contextid, $contexts, $allroles) {
         foreach ($allroles as $role) {
             if (isset($contexts[$contextid]->rolecapabilites[$role->id])) {
                 $permission = $contexts[$contextid]->rolecapabilites[$role->id];
-                echo '<tr class="r' . ($rowcounter % 2) . '"><th class="cell">', $role->name, 
+                echo '<tr class="r' . ($rowcounter % 2) . '"><th class="cell">', $role->name,
                         '</th><td class="cell">' . $strpermissions[$permission] . '</td></tr>';
                 $rowcounter++;
             }

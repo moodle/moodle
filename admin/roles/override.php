@@ -186,11 +186,11 @@
     /// Show UI for overriding roles.
 
         if (!empty($capabilities)) {
-            print_box(get_string('nocapabilitiesincontext', 'role'), 'generalbox boxaligncenter');
+            echo $OUTPUT->box(get_string('nocapabilitiesincontext', 'role'), 'generalbox boxaligncenter');
 
         } else {
             // Print the capabilities overrideable in this context
-            print_box_start('generalbox boxwidthwide boxaligncenter');
+            echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 
             if ($showadvanced) {
                 $showadvancedlabel = get_string('hideadvanced', 'form');
@@ -225,7 +225,7 @@
 </div></form>
 
             <?php
-            print_box_end();
+            echo $OUTPUT->box_end();
 
         }
 

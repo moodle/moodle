@@ -94,7 +94,7 @@ if ($issue and ($result = $issue(true))) {
 
     print_table($table);
 
-    print_box($result->details, 'generalbox boxwidthnormal boxaligncenter'); // TODO: add proper css
+    echo $OUTPUT->box($result->details, 'generalbox boxwidthnormal boxaligncenter'); // TODO: add proper css
 
     print_continue($url);
 

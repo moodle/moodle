@@ -99,14 +99,14 @@
             }
         }
     }
-    
+
     $all_enrolled_usernames = '';
     $timemodified = array();
 /// List all the users (homed on this server) who are enrolled on the course
-/// This will include mnet-enrolled users, and those who have enrolled 
+/// This will include mnet-enrolled users, and those who have enrolled
 /// themselves, etc.
     if (is_array($all_enrolled_users) && count($all_enrolled_users)) {
-        list($select, $params) = $DB->get_in_or_equal(array_keys($all_enrolled_users), SQL_PARAMS_NAMED, 'un0'); 
+        list($select, $params) = $DB->get_in_or_equal(array_keys($all_enrolled_users), SQL_PARAMS_NAMED, 'un0');
         $select = " u.username $select AND ";
 
     } else {
@@ -134,7 +134,7 @@
             ON
                 a.userid = u.id AND a.courseid=:courseid
             WHERE
-                $select 
+                $select
                 u.deleted = 0 AND
                 u.confirmed = 1 AND
                 u.mnethostid = :mnetid
@@ -172,7 +172,7 @@
     // Read about our remote enrolments in 2 sets
     // first, get the remote enrolments done via enrol/mnet      $mnetenrolledusers
     // second, get the remote enrolments done with other plugins $remtenrolledusers
-    // NOTE: both arrays are keyed on the userid! 
+    // NOTE: both arrays are keyed on the userid!
     $sql = "
             SELECT
                 u.id,
@@ -185,7 +185,7 @@
                 {user} u,
                 {mnet_enrol_assignments} a
             WHERE
-                a.userid = u.id AND 
+                a.userid = u.id AND
                 a.courseid=:courseid AND
                 a.enroltype = 'mnet'   AND
                 u.deleted = 0 AND
@@ -213,7 +213,7 @@
                 {user} u,
                 {mnet_enrol_assignments} a
             WHERE
-                a.userid = u.id AND 
+                a.userid = u.id AND
                 a.courseid=:courseid AND
                 a.enroltype != 'mnet'  AND
                 u.deleted = 0 AND
@@ -249,9 +249,9 @@
         $params['search2'] = "%$searchtext%";
     }
 
-    $sql = ("SELECT id, firstname, lastname, email 
+    $sql = ("SELECT id, firstname, lastname, email
                FROM {user} u
-              WHERE deleted = 0 AND confirmed = 1 
+              WHERE deleted = 0 AND confirmed = 1
                     AND mnethostid = :mnetid
                     $select
            ORDER BY lastname ASC, firstname ASC");
@@ -259,9 +259,9 @@
 
     $availableusers = $DB->get_recordset_sql($sql, $params, 0, MAX_USERS_PER_PAGE);
 
-    $sql = ("SELECT COUNT('x') 
+    $sql = ("SELECT COUNT('x')
                FROM {user} u
-              WHERE deleted = 0 AND confirmed = 1 
+              WHERE deleted = 0 AND confirmed = 1
                     AND mnethostid = :mnetid
                     $select");
     $availablecount = $DB->count_records_sql($sql, $params);
@@ -286,8 +286,8 @@ $strsearchresults = get_string('searchresults');
 
 admin_externalpage_print_header();
 
-print_box('<strong>' . s($mnet_peer->name) . ' : ' 
-          . format_string($course->shortname) .' '. format_string($course->fullname) 
+echo $OUTPUT->box('<strong>' . s($mnet_peer->name) . ' : '
+          . format_string($course->shortname) .' '. format_string($course->fullname)
           . '</strong><br />'
           . get_string("enrolcourseenrol_desc", "mnet"));
 

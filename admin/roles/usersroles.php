@@ -145,7 +145,7 @@ $showroles = 1;
 $currenttab = 'usersroles';
 include_once($CFG->dirroot.'/user/tabs.php');
 echo $OUTPUT->heading($title, 3);
-print_box_start('generalbox boxaligncenter boxwidthnormal');
+echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 
 // Display them.
 if (!$roleassignments) {
@@ -155,7 +155,7 @@ if (!$roleassignments) {
 }
 
 /// End of page.
-print_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
 function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {

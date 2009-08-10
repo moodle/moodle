@@ -13,7 +13,7 @@
 
     if (!empty($CFG->skiplangupgrade)) {
         admin_externalpage_print_header();
-        print_box(get_string('langimportdisabled', 'admin'));
+        echo $OUTPUT->box(get_string('langimportdisabled', 'admin'));
         echo $OUTPUT->footer();
         die;
     }
@@ -275,9 +275,9 @@
     }
 
     if (!$remote) {
-        print_box_start();
+        echo $OUTPUT->box_start();
         print_string('remotelangnotavailable', 'admin', $CFG->dataroot.'/lang/');
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 
     if ($notice_ok) {
@@ -310,7 +310,7 @@
         }
     }
 
-    print_box_start();
+    echo $OUTPUT->box_start();
     echo '<table summary="">';
     echo '<tr><td align="center" valign="top">';
     echo '<form id="uninstallform" action="langimport.php?mode='.DELETION_OF_SELECTED_LANG.'" method="post">';
@@ -389,7 +389,7 @@
 
     //close available langs table
     echo '</td></tr></table>';
-    print_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 

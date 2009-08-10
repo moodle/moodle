@@ -48,7 +48,7 @@ if ($format) {
         case 'csv' : user_download_csv($fields);
         case 'ods' : user_download_ods($fields);
         case 'xls' : user_download_xls($fields);
-        
+
     }
     die;
 }
@@ -56,13 +56,13 @@ if ($format) {
 admin_externalpage_print_header();
 echo $OUTPUT->heading(get_string('download', 'admin'));
 
-print_box_start();
+echo $OUTPUT->box_start();
 echo '<ul>';
 echo '<li><a href="user_bulk_download.php?format=csv">'.get_string('downloadtext').'</a></li>';
 echo '<li><a href="user_bulk_download.php?format=ods">'.get_string('downloadods').'</a></li>';
 echo '<li><a href="user_bulk_download.php?format=xls">'.get_string('downloadexcel').'</a></li>';
 echo '</ul>';
-print_box_end();
+echo $OUTPUT->box_end();
 
 print_continue($return);
 
@@ -146,7 +146,7 @@ function user_download_xls($fields) {
 
 function user_download_csv($fields) {
     global $CFG, $SESSION, $DB;
-    
+
     require_once($CFG->dirroot.'/user/profile/lib.php');
 
     $filename = clean_filename(get_string('users').'.csv');
@@ -160,7 +160,7 @@ function user_download_csv($fields) {
     $delimiter = get_string('listsep');
     $encdelim  = '&#'.ord($delimiter);
 
-    $row = array(); 
+    $row = array();
     foreach ($fields as $fieldname) {
         $row[] = str_replace($delimiter, $encdelim, $fieldname);
     }

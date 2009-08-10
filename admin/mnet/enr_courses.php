@@ -24,7 +24,7 @@
 
     admin_externalpage_print_header();
 
-    print_box('<strong>' . s($host->name) . ' </strong><br />'
+    echo $OUTPUT->box('<strong>' . s($host->name) . ' </strong><br />'
               . get_string("enrolcourses_desc", "mnet"));
 
     echo '<hr />';

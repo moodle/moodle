@@ -103,7 +103,7 @@
         }
 
         if (!empty($section->sequence) or !empty($section->summary) or $editing) {
-            print_box_start('generalbox sitetopic');
+            echo $OUTPUT->box_start('generalbox sitetopic');
 
             /// If currently moving a file then show the current clipboard
             if (ismoving($SITE->id)) {
@@ -133,7 +133,7 @@
             if ($editing) {
                 print_section_add_menus($SITE, $section->section, $modnames);
             }
-            print_box_end();
+            echo $OUTPUT->box_end();
         }
     }
 
@@ -188,18 +188,18 @@
             case FRONTPAGECATEGORYNAMES:
 
                 echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
-                print_box_start('generalbox categorybox');
+                echo $OUTPUT->box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, false);
-                print_box_end();
+                echo $OUTPUT->box_end();
                 print_course_search('', false, 'short');
             break;
 
             case FRONTPAGECATEGORYCOMBO:
 
                 echo $OUTPUT->heading(get_string('categories'), 2, 'headingblock header');
-                print_box_start('generalbox categorybox');
+                echo $OUTPUT->box_start('generalbox categorybox');
                 print_whole_category_list(NULL, NULL, NULL, -1, true);
-                print_box_end();
+                echo $OUTPUT->box_end();
                 print_course_search('', false, 'short');
             break;
 

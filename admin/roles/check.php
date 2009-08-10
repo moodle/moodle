@@ -150,12 +150,12 @@
 /// If a user has been chosen, show all the permissions for this user.
     $reportuser = $userselector->get_selected_user();
     if (!is_null($reportuser)) {
-        print_box_start('generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
 
         $table = new explain_capability_table($context, $reportuser, $contextname);
         $table->display();
-        print_box_end();
+        echo $OUTPUT->box_end();
 
         $selectheading = get_string('selectanotheruser', 'role');
     } else {
@@ -163,7 +163,7 @@
     }
 
 /// Show UI for choosing a user to report on.
-    print_box_start('generalbox boxwidthnormal boxaligncenter', 'chooseuser');
+    echo $OUTPUT->box_start('generalbox boxwidthnormal boxaligncenter', 'chooseuser');
     echo '<form method="get" action="' . $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php" >';
 
 /// Hidden fields.
@@ -177,12 +177,12 @@
 
 /// User selector.
     echo $OUTPUT->heading('<label for="reportuser">' . $selectheading . '</label>', 3);
-    $userselector->display(); 
+    $userselector->display();
 
 /// Submit button and the end of the form.
     echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'role') . '" /></p>';
     echo '</form>';
-    print_box_end();
+    echo $OUTPUT->box_end();
 
 /// Appropriate back link.
     if (!$isfrontpage && ($url = get_context_url($context))) {
