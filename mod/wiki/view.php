@@ -6,7 +6,7 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks    
+    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
     require_once($CFG->libdir . '/ajax/ajaxlib.php');
     $PAGE->requires->yui_lib('connection');
 
@@ -19,10 +19,10 @@
     $groupid      = optional_param('groupid', 0, PARAM_INT);             // Group wiki.
     $canceledit   = optional_param('canceledit','', PARAM_ALPHA);        // Editing has been cancelled
     $cacheme      = optional_param('allowcache', 1, PARAM_INT);          // Set this to 0 to try and disable page caching.
-    
+
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '');
-    
+
     if($page) {
         // Split page command into action and page
         $actions = explode('/', $page,2);
@@ -35,7 +35,7 @@
         $actions=array('');
         $pagename='';
     }
-    
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('wiki', $id)) {
             print_error('invalidcoursemodule');
@@ -62,22 +62,22 @@
     }
 
     require_course_login($course, true, $cm);
-    
+
     /// Add the course module info to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
     $wiki->groupingid = $cm->groupingid;
     $wiki->groupmembersonly = $cm->groupmembersonly;
     $wiki->cmid = $cm->id;
-    
+
     /// Default format:
     $moodle_format=FORMAT_MOODLE;
 
 /// Globally disable CamelCase, if the option is selected for this wiki.
     $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
-    
+
     if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
         // OK, now we know the entry ID, we can do lock etc.
-        
+
         // If true, we are 'really' on an editing page, not just on edit/something
         $reallyedit=$actions[0]=='edit' && !$canceledit && !$editsave;
 
@@ -92,14 +92,14 @@
                 $_POST['content']="\n";
                 $_REQUEST['content']="\n";
             }
-    
-            // We must have the edit lock in order to be permitted to save    
+
+            // We must have the edit lock in order to be permitted to save
             list($ok,$lock)=wiki_obtain_lock($wiki_entry->id,$pagename);
             if(!$ok) {
                 print_error('savenolock', 'wiki', $CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
             }
         }
-        
+
 ///     ################# EWIKI Part ###########################
 ///     The wiki_entry->pagename is set to the specified value of the wiki,
 ///     or the default value in the 'lang' file if the specified value was empty.
@@ -239,7 +239,7 @@
     else {
         $content = '';
         $content2 = '<div class="boxaligncenter">'.get_string('nowikicreated', 'wiki').'</div>';
-        
+
     }
 
     # Group wiki, ...: No page and no ewiki_title
@@ -250,14 +250,14 @@
 
 /// Moodle Log
     if ($editsave != NULL) { /// We've submitted an edit and have been redirected back here
-        add_to_log($course->id, "wiki", 'edit', 
+        add_to_log($course->id, "wiki", 'edit',
                "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title",
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
     } else if ($ewiki_action != 'edit') {
-        add_to_log($course->id, "wiki", $ewiki_action, 
+        add_to_log($course->id, "wiki", $ewiki_action,
                "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title",
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
-    } 
+    }
 
 
 /// Print the page header
@@ -284,7 +284,7 @@
     if ($wiki_entry && $wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
         //echo "wiki list ";print_r($wiki_list);
         $selected="";
-        
+
         if (isset($wiki_list['selected'])) {
             $selected = $wiki_list['selected'];
             unset($wiki_list['selected']);
@@ -351,7 +351,7 @@
 
     if($wiki_entry && $ewiki_title==$wiki_entry->pagename && !empty($wiki->intro)) {
       if (trim(strip_tags($wiki->intro))) {
-          print_box(format_module_intro('wiki', $wiki, $cm->id), 'generalbox', 'intro');
+          echo $OUTPUT->box(format_module_intro('wiki', $wiki, $cm->id), 'generalbox', 'intro');
       }
     }
 
@@ -379,15 +379,15 @@
     }
 
     /// Insert a link to force page refresh if new content isn't showing.
-    
+
     // build new URL + query string
-    $queries = preg_split('/[?&]/', me());  
+    $queries = preg_split('/[?&]/', me());
     $nqueries = count($queries);
     $me = $queries[0] . '?';
     for($i=1; $i < $nqueries; $i++)
     {
         if( !strstr($queries[$i], 'allowcache') )
-            $me .= $queries[$i] . '&amp;'; 
+            $me .= $queries[$i] . '&amp;';
     }
     $me .= 'allowcache=0';
 
@@ -402,7 +402,7 @@
     /// actions will have the form [action]/[pagename]. If the action is 'view' or the  '/'
     /// isn't there (so the action defaults to 'view'), filter it.
     /// If the page does not yet exist, the display will default to 'edit'.
-    if((count($actions) < 2 || $actions[0] == "view") && $wiki_entry && 
+    if((count($actions) < 2 || $actions[0] == "view") && $wiki_entry &&
         $DB->record_exists('wiki_pages', array('pagename'=>$page, 'wiki'=>$wiki_entry->id))) {
         print(format_text($content, $moodle_format));
     } else if($actions[0]=='edit' && $reallyedit) {
@@ -412,16 +412,16 @@
         if(!$gotlock) {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
             $canoverridelock = has_capability('mod/wiki:overridelock', $modcontext);
-            
+
             $a=new stdClass;
             $a->since=userdate($lock->lockedsince);
             $a->seen=userdate($lock->lockedseen);
             $user=$DB->get_record('user', array('id'=>$lock->lockedby));
-            $a->name=fullname($user, 
+            $a->name=fullname($user,
               has_capability('moodle/site:viewfullnames', $modcontext));
-                
+
             print_string('pagelocked','wiki',$a);
-            
+
             if($canoverridelock) {
                 $pageesc=htmlspecialchars($page);
                 $stroverrideinfo=get_string('overrideinfo','wiki');
@@ -461,7 +461,7 @@ function handleFailure(o) {
 }
 intervalID=setInterval(function() {
     YAHOO.util.Connect.asyncRequest('POST','confirmlock.php',
-        {success:handleResponse,failure:handleFailure},'lockid={$lock->id}');    
+        {success:handleResponse,failure:handleFailure},'lockid={$lock->id}');
     },$intervalms);
 </script>
 <noscript><p>
