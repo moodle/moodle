@@ -310,7 +310,7 @@
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         $options = new object();
         $options->noclean = true;
-        print_box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
     }
 
 /// Delete any requested records
