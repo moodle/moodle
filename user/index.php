@@ -61,6 +61,8 @@
     $rolenames = array();
     $avoidroles = array();
 
+    $rolenamesurl = new moodle_url("$CFG->wwwroot/user/index.php?contextid=$context->id&sifirst=&silast=");
+
     if ($roles = get_roles_used_in_context($context, true)) {
         // We should ONLY allow roles with moodle/course:view because otherwise we get little niggly issues
         // like MDL-8093
@@ -160,7 +162,13 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;perpage='.$perpage.'&amp;accesssince='.$accesssince.'&amp;search='.s($search);
+    $baseurl = new moodle_url($CFG->wwwroot.'/user/index.php', array(
+            'contextid' => $context->id,
+            'roleid' => $roleid,
+            'id' => $course->id,
+            'perpage' => $perpage,
+            'accesssince' => $accesssince,
+            'search' => s($search)));
 
 /// Print headers
 
@@ -207,6 +215,7 @@
     if ($mycourses = get_my_courses($USER->id)) {
         echo '<td class="left">';
         $courselist = array();
+        $popupurl = new moodle_url($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = format_string($mycourse->shortname);
         }
@@ -214,13 +223,14 @@
             unset($courselist[SITEID]);
             $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
         }
-        popup_form($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&amp;sifirst=&amp;silast=&amp;id=',
-                   $courselist, 'courseform', $course->id, '', '', '', false, 'self', get_string('mycourses'));
+        $select = moodle_select::make_popup_form($popupurl, 'id', $courselist, 'courseform', $course->id);
+        $select->set_label(get_string('mycourses'));
+        echo $OUTPUT->select($select);
         echo '</td>';
     }
 
     echo '<td class="left">';
-    groups_print_course_menu($course, $baseurl);
+    groups_print_course_menu($course, $baseurl->out());
     echo '</td>';
 
     if (!isset($hiddenfields['lastaccess'])) {
@@ -241,6 +251,7 @@
 
         $now = usergetmidnight(time());
         $timeaccess = array();
+        $baseurl->remove_params('accesssince');
 
         // makes sense for this to go first.
         $timeoptions[0] = get_string('selectperiod');
@@ -274,8 +285,9 @@
 
         if (count($timeoptions) > 1) {
             echo '<td class="left">';
-            $baseurl = preg_replace('/&amp;accesssince='.$accesssince.'/','',$baseurl);
-            popup_form($baseurl.'&amp;accesssince=',$timeoptions,'timeoptions',$accesssince, '', '', '', false, 'self', get_string('usersnoaccesssince'));
+            $select = moodle_select::make_popup_form($baseurl, 'accesssince', $timeoptions, 'timeoptions', $accesssince);
+            $select->set_label(get_string('usersnoaccesssince'));
+            echo $OUTPUT->select($select);
             echo '</td>';
         }
     }
@@ -303,7 +315,10 @@
     if ($allowenroldetails) {
         $formatmenu['2']= get_string('enroldetails');
     }
-    popup_form($baseurl.'&amp;mode=', $formatmenu, 'formatmenu', $mode, '', '', '', false, 'self', get_string('userlist'));
+    $select = moodle_select::make_popup_form($baseurl, 'mode', $formatmenu, 'formatmenu', $mode);
+    $select->nothinglabel = false;
+    $select->set_label(get_string('userlist'));
+    echo $OUTPUT->select($select);
     echo '</td></tr></table>';
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
@@ -369,7 +384,7 @@
 
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
-    $table->define_baseurl($baseurl);
+    $table->define_baseurl($baseurl->out());
 
     if (!isset($hiddenfields['lastaccess'])) {
         $table->sortable(true, 'lastaccess', SORT_DESC);
@@ -567,15 +582,16 @@
         echo '<div class="rolesform">';
         echo '<label for="rolesform_jump">'.get_string('currentrole', 'role').'&nbsp;</label>';
         if ($context->id != $frontpagectx->id) {
-            $rolenames = array(0 => get_string('all')) + $rolenames;
+            $rolenames = array('0' => get_string('all')) + $rolenames;
         } else {
             if (!$CFG->defaultfrontpageroleid) {
                 // we do not want "All users with role" - we already have all users in defualt frontpage role option
-                $rolenames = array(0 => get_string('userswithrole', 'role')) + $rolenames;
+                $rolenames = array('0' => get_string('userswithrole', 'role')) + $rolenames;
             }
         }
-        popup_form("$CFG->wwwroot/user/index.php?contextid=$context->id&amp;sifirst=&amp;silast=&amp;roleid=", $rolenames,
-                   'rolesform', $roleid, '');
+        $select = moodle_select::make_popup_form($rolenamesurl, 'roleid', $rolenames, 'rolesform', $roleid);
+        $select->nothinglabel = false;
+        echo $OUTPUT->select($select);
         echo '</div>';
 
     } else if (count($rolenames) == 1) {
@@ -663,7 +679,7 @@
 
                 echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
                 if(!empty($firstinitial)) {
-                    echo '<a href="'.$baseurl.'&amp;sifirst=">'.$strall.'</a>';
+                    echo '<a href="'.$baseurl->out().'&amp;sifirst=">'.$strall.'</a>';
                 } else {
                     echo '<strong>'.$strall.'</strong>';
                 }
@@ -671,7 +687,7 @@
                     if ($letter == $firstinitial) {
                         echo ' <strong>'.$letter.'</strong>';
                     } else {
-                        echo ' <a href="'.$baseurl.'&amp;sifirst='.$letter.'">'.$letter.'</a>';
+                        echo ' <a href="'.$baseurl->out().'&amp;sifirst='.$letter.'">'.$letter.'</a>';
                     }
                 }
                 echo '</div>';
@@ -680,7 +696,7 @@
 
                 echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
                 if(!empty($lastinitial)) {
-                    echo '<a href="'.$baseurl.'&amp;silast=">'.$strall.'</a>';
+                    echo '<a href="'.$baseurl->out().'&amp;silast=">'.$strall.'</a>';
                 } else {
                     echo '<strong>'.$strall.'</strong>';
                 }
@@ -688,7 +704,7 @@
                     if ($letter == $lastinitial) {
                         echo ' <strong>'.$letter.'</strong>';
                     } else {
-                        echo ' <a href="'.$baseurl.'&amp;silast='.$letter.'">'.$letter.'</a>';
+                        echo ' <a href="'.$baseurl->out().'&amp;silast='.$letter.'">'.$letter.'</a>';
                     }
                 }
                 echo '</div>';
@@ -808,7 +824,7 @@
                         $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
                     }
                     $table->data = array($row);
-                    echo $OUTPUT->print_table($table);
+                    echo $OUTPUT->table($table);
                 }
 
             } else {
@@ -975,12 +991,15 @@
         echo '<input type="text" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
 
-    $perpageurl = preg_replace('/&amp;perpage=\d*/','', $baseurl);
+    $perpageurl = clone($baseurl);
+    $perpageurl->remove_params('perpage');
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
-        echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+        $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
+        echo '<div id="showall"><a href="'.$perpageurl->out().'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
-        echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
+        $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
+        echo '<div id="showall"><a href="'.$perpageurl.'">'.get_string('showall', '', $matchcount).'</a></div>';
     }
 
     echo $OUTPUT->footer();
