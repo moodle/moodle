@@ -113,13 +113,13 @@
 
     if (has_capability('mod/chat:chat',$context)) {
         /// Print the main part of the page
-        print_box_start('generalbox', 'enterlink');
+        echo $OUTPUT->box_start('generalbox', 'enterlink');
         // users with screenreader set, will only see 1 link, to the manual refresh page
         // for better accessibility
         if (!empty($USER->screenreader)) {
             $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
         } else {
-            $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
+            $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
         }
 
         echo '<p>';
@@ -143,12 +143,12 @@
             echo ')</p>';
         }
 
-        print_box_end();
+        echo $OUTPUT->box_end();
 
     } else {
-        print_box_start('generalbox', 'notallowenter');
+        echo $OUTPUT->box_start('generalbox', 'notallowenter');
         echo '<p>'.get_string('notallowenter', 'chat').'</p>';
-        print_box_end();
+        echo $OUTPUT->box_end();
     }
 
     if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
@@ -158,7 +158,7 @@
     }
 
     if ($chat->intro) {
-        print_box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
+        echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
     }
 
     chat_delete_old_users();
