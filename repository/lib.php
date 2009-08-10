@@ -604,7 +604,7 @@ abstract class repository {
             $params[] = $type;
         }
         $sql .= ' order by r.sortorder, i.name';
-       
+
         if (!$repos = $DB->get_records_sql($sql, $params)) {
             $repos = array();
         }
@@ -980,9 +980,9 @@ abstract class repository {
      * @param string $typename if set, we display only one type of instance
      */
     public static function display_instances_list($context, $typename = null) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
 
-        $output = print_box_start('generalbox','',true);
+        $output = $OUTPUT->box_start('generalbox');
         //if the context is SYSTEM, so we call it from administration page
         $admin = ($context->id == SYSCONTEXTID) ? true : false;
         if ($admin) {
@@ -1072,7 +1072,7 @@ abstract class repository {
             $output .= $instancehtml;
         }
 
-        $output .= print_box_end(true);
+        $output .= $OUTPUT->box_end();
 
         //print the list + creation links
         print($output);
@@ -1628,7 +1628,7 @@ final class repository_instance_form extends moodleform {
         global $DB;
 
         $errors = array();
-        $sql = "SELECT count('x') FROM {repository_instances} i, {repository} r WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name"; 
+        $sql = "SELECT count('x') FROM {repository_instances} i, {repository} r WHERE r.type=:plugin AND r.id=i.typeid AND i.name=:name";
         if ($DB->count_records_sql($sql, array('name' => $data['name'], 'plugin' => $data['plugin'])) > 1) {
             $errors = array('name' => get_string('err_uniquename', 'repository'));
         }
@@ -1704,6 +1704,7 @@ final class repository_type_form extends moodleform {
 }
 
 function repository_setup_default_plugins() {
+    global $OUTPUT;
     //if the plugin type has no multiple instance (e.g. has no instance option name)
     //repository_type::create will create an instance automatically
     $local_plugin = new repository_type('local', array(), true);
@@ -1711,7 +1712,7 @@ function repository_setup_default_plugins() {
     $upload_plugin = new repository_type('upload', array(), true);
     $upload_plugin_id = $upload_plugin->create(true);
     if (is_int($local_plugin_id) or is_int($upload_plugin_id)) {
-        print_box(get_string('setupdefaultplugins', 'repository'));
+        echo $OUTPUT->box(get_string('setupdefaultplugins', 'repository'));
     }
     return true;
 }
