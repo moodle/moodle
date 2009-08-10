@@ -206,15 +206,19 @@
                 }
                 $section = $forumcm->sectionnum;
                 if ($forumcm->instance != $forum->id) {
-                    $url = "discuss.php?d=$discussion->id&amp;move=$forumcm->instance&amp;sesskey=".sesskey();
+                    $url = "discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
                     $forummenu[$url] = format_string($forumcm->name);
                 }
             }
             if (!empty($forummenu)) {
                 echo "<div style=\"float:right;\">";
-                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "",
-                                 get_string("movethisdiscussionto", "forum"), "", "", true,'self','',NULL,
-                                 get_string('move'),false,true);
+                $select = moodle_select::make_popup_form('', '', $forummenu, 'forummenu');
+                $select->nothinglabel = get_string("movethisdiscussionto", "forum");
+                $select->form->button->text = get_string('move');
+
+                $select->override_option_values($forummenu);
+
+                echo $OUTPUT->select($select);
                 echo "</div>";
             }
         }
