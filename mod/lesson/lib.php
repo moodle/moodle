@@ -27,7 +27,7 @@
 require_once($CFG->libdir.'/eventslib.php');
 
 /** LESSON_MAX_EVENT_LENGTH = 432000 ; 5 days maximum */
-define("LESSON_MAX_EVENT_LENGTH", "432000"); 
+define("LESSON_MAX_EVENT_LENGTH", "432000");
 
 /**
  * Given an object containing all the necessary data,
@@ -180,7 +180,7 @@ function lesson_delete_course($course, $feedback=true) {
  */
 function lesson_user_outline($course, $user, $mod, $lesson) {
     global $DB;
-    
+
     $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
     if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid", $params,
                 "grade DESC")) {
@@ -214,7 +214,7 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
  */
 function lesson_user_complete($course, $user, $mod, $lesson) {
     global $DB;
-    
+
     $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
     if ($attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params,
                 "retry, timeseen")) {
@@ -293,7 +293,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * @return void
  */
 function lesson_print_overview($courses, &$htmlarray) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     if (!$lessons = get_all_instances_in_courses('lesson', $courses)) {
         return;
@@ -316,26 +316,26 @@ function lesson_print_overview($courses, &$htmlarray) {
             } else {
                 $class = '';
             }
-            $str = print_box("$strlesson: <a$class href=\"$CFG->wwwroot/mod/lesson/view.php?id=$lesson->coursemodule\">".
-                             format_string($lesson->name).'</a>', 'name', '', true);
+            $str = $OUTPUT->box("$strlesson: <a$class href=\"$CFG->wwwroot/mod/lesson/view.php?id=$lesson->coursemodule\">".
+                             format_string($lesson->name).'</a>', 'name');
 
             // Deadline
-            $str .= print_box(get_string('lessoncloseson', 'lesson', userdate($lesson->deadline)), 'info', '', true);
+            $str .= $OUTPUT->box(get_string('lessoncloseson', 'lesson', userdate($lesson->deadline)), 'info');
 
             // Attempt information
             if (has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $lesson->coursemodule))) {
                 // Number of user attempts
                 $attempts = $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id));
-                $str     .= print_box(get_string('xattempts', 'lesson', $attempts), 'info', '', true);
+                $str     .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
             } else {
                 // Determine if the user has attempted the lesson or not
                 if ($DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id))) {
-                    $str .= print_box($strattempted, 'info', '', true);
+                    $str .= $OUTPUT->box($strattempted, 'info');
                 } else {
-                    $str .= print_box($strnotattempted, 'info', '', true);
+                    $str .= $OUTPUT->box($strnotattempted, 'info');
                 }
             }
-            $str = print_box($str, 'lesson overview', '', true);
+            $str = $OUTPUT->box($str, 'lesson overview');
 
             if (empty($htmlarray[$lesson->course]['lesson'])) {
                 $htmlarray[$lesson->course]['lesson'] = $str;
@@ -372,7 +372,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG, $DB;
 
     $params = array("lessonid" => $lesson->id,"lessonid2" => $lesson->id);
-    
+
     if (isset($userid)) {
         $params["userid"] = $userid;
         $params["userid2"] = $userid;
@@ -383,7 +383,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
         $user="";
         $fuser="";
     }
-    
+
     if ($lesson->retake) {
         if ($lesson->usemaxgrade) {
             $sql = "SELECT u.id, u.id AS userid, MAX(g.grade) AS rawgrade
@@ -593,7 +593,7 @@ function lesson_get_post_actions() {
  **/
 function lesson_process_pre_save(&$lesson) {
     global $DB;
-    
+
     $lesson->timemodified = time();
 
     if (empty($lesson->timed)) {
@@ -667,9 +667,9 @@ function lesson_process_post_save(&$lesson) {
     $event->instance    = $lesson->id;
     $event->eventtype   = 'open';
     $event->timestart   = $lesson->available;
-    
+
     $event->visible     = instance_is_visible('lesson', $lesson);
-   
+
     $event->timeduration = ($lesson->deadline - $lesson->available);
 
     if ($lesson->deadline and $lesson->available and $event->timeduration <= LESSON_MAX_EVENT_LENGTH) {
@@ -697,7 +697,7 @@ function lesson_process_post_save(&$lesson) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the lesson.
- * 
+ *
  * @param $mform form passed by reference
  */
 function lesson_reset_course_form_definition(&$mform) {

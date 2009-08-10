@@ -24,7 +24,7 @@
         } else {
             $timer = array_pop($timer); // this will get the latest start time record
         }
-        
+
         if ($lesson->timed) {
             $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
 
@@ -38,7 +38,7 @@
                 lesson_set_message(get_string("studentoneminwarning", "lesson"));
             }
         }
-        
+
         $timer->lessontime = time();
         $DB->update_record("lesson_timer", $timer);
     }
@@ -63,7 +63,7 @@
                 break;
             }
             $useranswer = clean_param($useranswer, PARAM_RAW);
-        
+
             if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
@@ -79,7 +79,7 @@
             $userresponse->answer = $useranswer;
             $userresponse->response = "";
             $userresponse = serialize($userresponse);
-            
+
             $studentanswer = s($useranswer);
             break;
          case LESSON_SHORTANSWER :
@@ -88,7 +88,7 @@
             } else {
                 $noanswer = true;
                 break;
-            }            
+            }
             $useranswer = s(clean_param($useranswer, PARAM_RAW));
             if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
@@ -97,14 +97,14 @@
             foreach ($answers as $answer) {
                 $i += 1;
                 $expectedanswer  = $answer->answer; // for easier handling of $answer->answer
-                $ismatch         = false; 
-                $markit          = false; 
+                $ismatch         = false;
+                $markit          = false;
                 $useregexp       = false;
 
                 if ($page->qoption) {
                     $useregexp = true;
                 }
-                
+
                 if ($useregexp) { //we are using 'normal analysis', which ignores case
                     $ignorecase = '';
                     if ( substr($expectedanswer,strlen($expectedanswer) - 2, 2) == '/i') {
@@ -145,7 +145,7 @@
                                 if (!preg_match('/^'.$expectedanswer.'$/'.$ignorecase,$useranswer)) {
                                     $ismatch = true;
                                 }
-                                break;                                      
+                                break;
                             //2- check for code for marking wrong strings (coded by initial '++')
                             case "++":
                                 $expectedanswer=substr($expectedanswer,2);
@@ -154,7 +154,7 @@
                                 if (preg_match_all('/'.$expectedanswer.'/'.$ignorecase,$useranswer, $matches)) {
                                     $ismatch   = true;
                                     $nb        = count($matches[0]);
-                                    $original  = array(); 
+                                    $original  = array();
                                     $marked    = array();
                                     $fontStart = '<span class="incorrect matches">';
                                     $fontEnd   = '</span>';
@@ -165,7 +165,7 @@
                                     $useranswer = str_replace($original, $marked, $useranswer);
                                 }
                                 break;
-                            //3- check for wrong answers belonging neither to -- nor to ++ categories 
+                            //3- check for wrong answers belonging neither to -- nor to ++ categories
                             default:
                                 if (preg_match('/^'.$expectedanswer.'$/'.$ignorecase,$useranswer, $matches)) {
                                     $ismatch = true;
@@ -186,16 +186,16 @@
             }
             $studentanswer = $useranswer;
             break;
-        
+
         case LESSON_TRUEFALSE :
             if (empty($_POST['answerid'])) {
                 $noanswer = true;
                 break;
             }
-            $answerid = required_param('answerid', PARAM_INT); 
+            $answerid = required_param('answerid', PARAM_INT);
             if (!$answer = $DB->get_record("lesson_answers", array("id" => $answerid))) {
                 print_error("Continue: answer record not found");
-            } 
+            }
             if (lesson_iscorrect($pageid, $answer->jumpto)) {
                 $correctanswer = true;
             }
@@ -210,7 +210,7 @@
             $response  = trim($answer->response);
             $studentanswer = $answer->answer;
             break;
-        
+
         case LESSON_MULTICHOICE :
             if ($page->qoption) {
                 // MULTIANSWER allowed, user's answer is an array
@@ -243,21 +243,21 @@
                         }
                     }
                 }
-                // this is for custom scores.  If score on answer is positive, it is correct                    
+                // this is for custom scores.  If score on answer is positive, it is correct
                 if ($lesson->custom) {
                     $ncorrect = 0;
                     $nhits = 0;
                     foreach ($answers as $answer) {
                         if ($answer->score > 0) {
                             $ncorrect++;
-                    
+
                             foreach ($useranswers as $key => $answerid) {
                                 if ($answerid == $answer->id) {
                                    $nhits++;
                                 }
                             }
                             // save the first jumpto page id, may be needed!...
-                            if (!isset($correctpageid)) {  
+                            if (!isset($correctpageid)) {
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $correctpageid = $answer->jumpto;
                             }
@@ -271,7 +271,7 @@
                             }
                         } else {
                             // save the first jumpto page id, may be needed!...
-                            if (!isset($wrongpageid)) {   
+                            if (!isset($wrongpageid)) {
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $wrongpageid = $answer->jumpto;
                             }
@@ -284,7 +284,7 @@
                                 $wrongresponse = $answer->response;
                             }
                         }
-                    }                    
+                    }
                 } else {
                     foreach ($answers as $answer) {
                         if (lesson_iscorrect($pageid, $answer->jumpto)) {
@@ -295,7 +295,7 @@
                                 }
                             }
                             // save the first jumpto page id, may be needed!...
-                            if (!isset($correctpageid)) {  
+                            if (!isset($correctpageid)) {
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $correctpageid = $answer->jumpto;
                             }
@@ -309,7 +309,7 @@
                             }
                         } else {
                             // save the first jumpto page id, may be needed!...
-                            if (!isset($wrongpageid)) {   
+                            if (!isset($wrongpageid)) {
                                 // leave in its "raw" state - will converted into a proper page id later
                                 $wrongpageid = $answer->jumpto;
                             }
@@ -340,7 +340,7 @@
                     $noanswer = true;
                     break;
                 }
-                $answerid = required_param('answerid', PARAM_INT); 
+                $answerid = required_param('answerid', PARAM_INT);
                 if (!$answer = $DB->get_record("lesson_answers", array("id" => $answerid))) {
                     print_error("Continue: answer record not found");
                 }
@@ -392,7 +392,7 @@
                 }
                 if ($i == 3) {
                     $wrongpageid = $answer->jumpto;
-                    $wronganswerid = $answer->id;                        
+                    $wronganswerid = $answer->id;
                 }
                 $i++;
             }
@@ -487,7 +487,7 @@
         case LESSON_BRANCHTABLE:
             $noanswer = false;
             $newpageid = optional_param('jumpto', NULL, PARAM_INT);
-            // going to insert into lesson_branch                
+            // going to insert into lesson_branch
             if ($newpageid == LESSON_RANDOMBRANCH) {
                 $branchflag = 1;
             } else {
@@ -507,7 +507,7 @@
             $branch->retry = $retries;
             $branch->flag = $branchflag;
             $branch->timeseen = time();
-        
+
             $DB->insert_record("lesson_branch", $branch);
 
             //  this is called when jumping to random from a branch table
@@ -533,10 +533,10 @@
             } elseif ($newpageid == LESSON_RANDOMBRANCH) {
                 $newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
             }
-            // no need to record anything in lesson_attempts            
+            // no need to record anything in lesson_attempts
             redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$newpageid");
             break;
-        
+
     }
 
     $attemptsremaining  = 0;
@@ -547,7 +547,7 @@
         $newpageid = $pageid; // display same page again
         $feedback  = get_string('noanswer', 'lesson');
     } else {
-        $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id)); 
+        $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         if (!has_capability('mod/lesson:manage', $context)) {
             // record student's attempt
             $attempt = new stdClass;
@@ -560,7 +560,7 @@
             if(isset($userresponse)) {
                 $attempt->useranswer = $userresponse;
             }
-            
+
             $attempt->timeseen = time();
             // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
             if (isset($USER->modattempts[$lesson->id])) {
@@ -570,11 +570,11 @@
             // "number of attempts remaining" message if $lesson->maxattempts > 1
             // displaying of message(s) is at the end of page for more ergonomic display
             if (!$correctanswer and ($newpageid == 0)) {
-                // wrong answer and student is stuck on this page - check how many attempts 
+                // wrong answer and student is stuck on this page - check how many attempts
                 // the student has had at this page/question
                 $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$pageid, "userid"=>$USER->id),
                     "retry", $nretakes);
-                
+
                 // retreive the number of attempts left counter for displaying at bottom of feedback page
                 if ($nattempts >= $lesson->maxattempts) {
                     if ($lesson->maxattempts > 1) { // don't bother with message if only one attempt
@@ -610,7 +610,7 @@
                                 $found = true;
                                 break;
                             }
-                        } else {                             
+                        } else {
                             if (!$DB->count_records("lesson_attempts", array('pageid'=>$thispage->id, 'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes))) {
                                 $found = true;
                                 break;
@@ -644,7 +644,7 @@
                 //  2. Not displaying default feedback
                 //  3. The user did provide an answer
                 //  4. We are not reviewing with an incorrect answer (and not reviewing an essay question)
-                
+
                 $nodefaultresponse = true;  // This will cause a redirect below
             } else if ($isessayquestion) {
                 $response = get_string('defaultessayresponse', 'lesson');
@@ -657,14 +657,14 @@
 
         // display response (if there is one - there should be!)
         // display: lesson title, page title, question text, student's answer(s) before feedback message
-        
+
         if ($response) {
             //optionally display question page title
             //if ($title = $DB->get_field("lesson_pages", "title", array("id" => $pageid))) {
             //    print_heading($title);
             //}
             if ($lesson->review and !$correctanswer and !$isessayquestion) {
-                $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id)); 
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
                 $qattempts = $DB->count_records("lesson_attempts", array("userid"=>$USER->id, "retry"=>$nretakes, "pageid"=>$pageid));
                 if ($qattempts == 1) {
                     $feedback = get_string("firstwrong", "lesson");
@@ -677,12 +677,12 @@
                 } else if ($isessayquestion) {
                     $class = 'response';
                 } else {
-                    $class = 'response incorrect'; 
+                    $class = 'response incorrect';
                 }
                 $options = new stdClass;
                 $options->noclean = true;
                 $options->para = true;
-                $feedback = print_box(format_text($page->contents, FORMAT_MOODLE, $options), 'generalbox boxaligncenter', '', true);
+                $feedback = $OUTPUT->box(format_text($page->contents, FORMAT_MOODLE, $options), 'generalbox boxaligncenter');
                 $feedback .= '<em>'.get_string("youranswer", "lesson").'</em> : '.format_text($studentanswer, FORMAT_MOODLE, $options).
                                  "<div class=\"$class\">".format_text($response, FORMAT_MOODLE, $options).'</div>';
             }
@@ -738,7 +738,7 @@
             }
         } else {
             $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);
-        }            
+        }
     } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
         $newpageid = $page->prevpageid;
     } elseif ($newpageid == LESSON_RANDOMPAGE) {
@@ -749,17 +749,17 @@
                 $newpageid = LESSON_EOL;
             } else {
                 $newpageid = $page->nextpageid;
-            }            
+            }
         } else {
             $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
         }
     }
-    
+
     if ($nodefaultresponse) {
         // Don't display feedback
         redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$newpageid");
     }
-    
+
 /// Set Messages
 
     // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
@@ -777,7 +777,7 @@
         lesson_set_message(get_string('attemptsremaining', 'lesson', $attemptsremaining));
     }
     // Report if max attempts reached
-    if ($maxattemptsreached != 0) { 
+    if ($maxattemptsreached != 0) {
         lesson_set_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
     }
 
