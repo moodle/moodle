@@ -288,7 +288,7 @@ class graded_users_iterator {
  * @return null
  */
 function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0, $includeall=true, $return=false) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     if (is_null($userid)) {
         $userid = $USER->id;
@@ -309,7 +309,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
     }
 
     $nextuser = $gui->next_user();
-
+    
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;
         $menu[$user->id] = fullname($user);
@@ -320,10 +320,9 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
     if ($includeall) {
         $menu[0] .= " (" . (count($menu) - 1) . ")";
     }
-
-    return popup_form($CFG->wwwroot.'/grade/' . $actionpage . '&amp;userid=',
-                      $menu, 'choosegradeduser', $userid, null, '', '',
-                      $return, 'self', $label);
+    $select = moodle_select::make_popup_form($CFG->wwwroot.'/grade/' . $actionpage, 'userid', $menu, 'choosegradeuser', $userid);
+    $select->set_label($label);
+    return $OUTPUT->select($select);
 }
 
 /**
@@ -335,7 +334,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
  * @return nothing or string if $return true
  */
 function print_grade_plugin_selector($plugin_info, $return=false) {
-    global $CFG;
+    global $CFG, $OUTPUT, $PAGE;
 
     $menu = array();
     $count = 0;
@@ -348,7 +347,7 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
         $first_plugin = reset($plugins);
 
-        $menu[$first_plugin->link.'&amp;'] = '--'.$plugin_info['strings'][$plugin_type];
+        $menu[$first_plugin->link.'&'] = '--'.$plugin_info['strings'][$plugin_type];
 
         if (empty($plugins->id)) {
             foreach ($plugins as $plugin) {
@@ -360,12 +359,13 @@ function print_grade_plugin_selector($plugin_info, $return=false) {
 
     // finally print/return the popup form
     if ($count > 1) {
-        $select = popup_form('', $menu, 'choosepluginreport', '',
-                             get_string('chooseaction', 'grades'), '', '', true, 'self');
+        $select = moodle_select::make_popup_form('', '', $menu, 'choosepluginreport', '');
+        $select->override_option_values($menu);
+        
         if ($return) {
-            return $select;
+            return $OUTPUT->select($select);
         } else {
-            echo $select;
+            echo $OUTPUT->select($select);
         }
     } else {
         // only one option - no plugin selector needed
