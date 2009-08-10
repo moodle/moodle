@@ -287,7 +287,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 }
 
 // Print Table of categories and items
-print_box_start('gradetreebox generalbox');
+echo $OUTPUT->box_start('gradetreebox generalbox');
 
 echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
 echo '<div>';
@@ -326,7 +326,7 @@ echo '</div>';
 
 echo '</div></form>';
 
-print_box_end();
+echo $OUTPUT->box_end();
 
 // Print action buttons
 echo '<div class="buttons">';

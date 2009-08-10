@@ -133,10 +133,10 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
                 }
             }
             if ($error) {
-                print_box_start('generalbox importoutcomenofile');
+                echo $OUTPUT->box_start('generalbox importoutcomenofile');
                 echo get_string('importoutcomenofile', 'grades', $line);
                 echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
-                print_box_end();
+                echo $OUTPUT->box_end();
                 $fatal_error = true;
                 break;
             }
@@ -152,22 +152,22 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         // sanity check #2: every line must have the same number of columns as there are
         // headers.  If not, processing stops.
         if ( count($csv_data) != count($file_headers) ) {
-            print_box_start('generalbox importoutcomenofile');
+            echo $OUTPUT->box_start('generalbox importoutcomenofile');
             echo get_string('importoutcomenofile', 'grades', $line);
             echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
-            print_box_end();
+            echo $OUTPUT->box_end();
             $fatal_error = true;
-            //print_box(var_export($csv_data, true) ."<br />". var_export($header, true));
+            //echo $OUTPUT->box(var_export($csv_data, true) ."<br />". var_export($header, true));
             break;
         }
 
         // sanity check #3: all required fields must be present on the current line.
         foreach ($headers as $header => $position) {
             if ($csv_data[$imported_headers[$header]] == '') {
-                print_box_start('generalbox importoutcomenofile');
+                echo $OUTPUT->box_start('generalbox importoutcomenofile');
                 echo get_string('importoutcomenofile', 'grades', $line);
                 echo print_single_button($CFG->wwwroot.'/grade/edit/outcome/index.php', array('id'=> $courseid), get_string('back'), 'get', '_self', true);
-                print_box_end();
+                echo $OUTPUT->box_end();
                 $fatal_error = true;
                 break;
             }
@@ -193,7 +193,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
 
         if ($outcome) {
             // already exists, print a message and skip.
-            print_box(get_string('importskippedoutcome', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
+            echo $OUTPUT->box(get_string('importskippedoutcome', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
             continue;
         }
 
@@ -207,7 +207,7 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
             $scale_id = key($scale);
         } else {
             if (!has_capability('moodle/course:managescales', $context)) {
-                print_box(get_string('importskippednomanagescale', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
+                echo $OUTPUT->box(get_string('importskippednomanagescale', 'grades', $csv_data[$imported_headers['outcome_shortname']]));
                 continue;
             } else {
                 // scale doesn't exists : create it.
@@ -244,10 +244,10 @@ if ($handle = fopen($imported_file['userfile']['tmp_name'], 'r')) {
         $outcome_success_strings = new StdClass();
         $outcome_success_strings->name = $outcome_data['fullname'];
         $outcome_success_strings->id = $outcome_id;
-        print_box(get_string('importoutcomesuccess', 'grades', $outcome_success_strings));
+        echo $OUTPUT->box(get_string('importoutcomesuccess', 'grades', $outcome_success_strings));
     }
 } else {
-    print_box(get_string('importoutcomenofile', 'grades', 0));
+    echo $OUTPUT->box(get_string('importoutcomenofile', 'grades', 0));
 }
 
 // finish
