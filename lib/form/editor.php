@@ -1,6 +1,9 @@
-<?php  // $Id$
+<?php
+
+global $CFG;
 
 require_once('HTML/QuickForm/element.php');
+require_once($CFG->dirroot.'/lib/filelib.php');
 
 //TODO:
 //  * locking
@@ -15,7 +18,6 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     function MoodleQuickForm_editor($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
-        require_once("$CFG->dirroot/repository/lib.php");
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {

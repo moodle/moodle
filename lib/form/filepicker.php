@@ -1,8 +1,9 @@
 <?php
-// $Id$
+
+global $CFG;
 
 require_once("HTML/QuickForm/button.php");
-require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
+require_once($CFG->dirroot.'/repository/lib.php');
 
 /**
  * HTML class for a single filepicker element (based on button)
@@ -72,13 +73,13 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $straddfile = get_string('openpicker', 'repository');
         $currentfile = '';
         $draftvalue  = '';
-        if ($draftid = (int)$this->getValue()) {
+        if ($draftitemid = (int)$this->getValue()) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id DESC', false)) {
                 $file = reset($files);
                 $currentfile = $file->get_filename();
-                $draftvalue = 'value="'.$draftid.'"';
+                $draftvalue = 'value="'.$draftitemid.'"';
             }
         }
         if ($COURSE->id == SITEID) {
@@ -96,7 +97,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" '.$draftvalue.' />';
         $str .= $repojs;
 
-        $str .= $PAGE->requires->data_for_js('filepicker', Array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>$this->_options['maxfiles']))->asap();
+        $str .= $PAGE->requires->data_for_js('filepicker', Array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>1))->asap();
         $str .= $PAGE->requires->js('lib/form/filepicker.js')->asap();
         $str .= <<<EOD
 <a href="#nonjsfp" class="btnaddfile" onclick="return callpicker('$client_id', '$id', '$draftvalue')">$straddfile</a>
@@ -113,10 +114,10 @@ EOD;
         global $USER;
 
         // make sure max one file is present and it is not too big
-        if ($draftid = $submitValues[$this->_attributes['name']]) {
+        if ($draftitemid = $submitValues[$this->_attributes['name']]) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftid, 'id DESC', false)) {
+            if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id DESC', false)) {
                 $file = array_shift($files);
                 if ($this->_options['maxbytes'] and $file->get_filesize() > $this->_options['maxbytes']) {
                     // bad luck, somebody tries to sneak in oversized file
