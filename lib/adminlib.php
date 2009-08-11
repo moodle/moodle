@@ -5930,7 +5930,7 @@ class admin_setting_managewsprotocols extends admin_setting {
      * @return string XHTML
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $namestr = get_string('name');
         $settingsstr = get_string('settings');
