@@ -1649,9 +1649,14 @@ class moodle_core_renderer extends moodle_renderer_base {
             }
         } else if ($select->rendertype == 'checkbox') {
             $currentcheckbox = 0;
-            foreach ($select->options as $option) {
-                $html .= $this->checkbox($option, $select->name);
-                $currentcheckbox++;
+            // If only two choices are available, suggest using the checkbox method instead
+            if (count($select->options) < 3 && !$select->multiple) {
+                debugging('You are using $OUTPUT->select() to render two mutually exclusive choices using checkboxes. Please use $OUTPUT->checkbox(html_select_option) instead.', DEBUG_DEVELOPER);
+            } else {
+                foreach ($select->options as $option) {
+                    $html .= $this->checkbox($option, $select->name);
+                    $currentcheckbox++;
+                }
             }
         }
 
@@ -1670,6 +1675,12 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string the HTML for the <input type="radio">
      */
     public function radio($option, $name='unnamed') {
+        static $currentradio = array();
+        
+        if (empty($currentradio[$name])) {
+            $currentradio[$name] = 0;
+        }
+
         if ($option instanceof html_select_optgroup) {
             throw new coding_exception('$OUTPUT->radio($option) does not support a html_select_optgroup object as param.');
         } else if (!($option instanceof html_select_option)) {
@@ -1680,7 +1691,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $option->label->for = $option->id;
         $this->prepare_event_handlers($option);
 
-        $output = $this->output_start_tag('span', array('class' => "radiogroup $select->name rb$currentradio")) . "\n";
+        $output = $this->output_start_tag('span', array('class' => "radiogroup $name rb{$currentradio[$name]}")) . "\n";
         $output .= $this->label($option->label);
 
         if ($option->selected == 'selected') {
@@ -1697,7 +1708,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'checked' => $option->selected));
 
         $output .= $this->output_end_tag('span');
-
+        $currentradio[$name]++;
         return $output;
     }
 
@@ -2064,8 +2075,11 @@ class moodle_core_renderer extends moodle_renderer_base {
                                 'class' => $cell->get_classes_string(),
                                 'abbr' => $cell->abbr,
                                 'scope' => $cell->scope);
-
-                        $output .= $this->output_tag('td', $tdattributes, $cell->text) . "\n";
+                        $tagtype = 'td';
+                        if ($cell->header) {
+                            $tagtype = 'th';
+                        }
+                        $output .= $this->output_tag($tagtype, $tdattributes, $cell->text) . "\n";
                     }
                 }
                 $output .= $this->output_end_tag('tr') . "\n";

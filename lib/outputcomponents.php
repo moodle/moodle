@@ -49,6 +49,10 @@ class moodle_html_component {
      */
     public $style = '';
     /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+    /**
      * @var array class names to add to this HTML element.
      */
     public $classes = array();
@@ -214,7 +218,8 @@ class moodle_html_component {
         } else if (!empty($text)) {
             $this->label = new html_label();
             $this->label->for = $for;
-            if (empty($for) && !empty($this->id)) {
+            if (empty($for)) {
+                $this->generate_id();
                 $this->label->for = $this->id;
             }
             $this->label->text = $text;
@@ -291,10 +296,6 @@ class html_select extends moodle_html_component {
      * variable that will be set if this select is submitted as part of a form.
      */
     public $name;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
     /**
      * @var string $selectedvalue the option to select initially. Should match one
      * of the $options array keys. Default none.
@@ -442,6 +443,7 @@ class html_select extends moodle_html_component {
                     $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
                 }
                 $userdatetype = 'month';
+                $currentdate['month'] = $currentdate['mon'];
                 break;
             case 'days':
                 for ($i=1; $i<=31; $i++) {
@@ -469,7 +471,8 @@ class html_select extends moodle_html_component {
 
         $timerselector = self::make($timeunits, $name, $currentdate[$userdatetype]);
         $timerselector->label = new html_label();
-        $timerselector->label->text = get_string(substr($type, -1), 'form');
+
+        $timerselector->label->text = get_string(substr($type, 0, -1), 'form');
         $timerselector->label->for = "menu$timerselector->name";
         $timerselector->label->add_class('accesshide');
         $timerselector->nothinglabel = '';
@@ -745,10 +748,6 @@ class html_select_option extends moodle_html_component {
      * @var boolean $selected Whether or not this option is selected
      */
     public $selected = false;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
 
     public function __construct() {
         $this->label = new html_label();
@@ -846,10 +845,6 @@ class html_field extends moodle_html_component {
      * @var string $maxlength The maxlength attribute of the field (only applies to text type)
      */
     public $maxlength;
-    /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
 
     public function __construct() {
         $this->label = new html_label();
@@ -1152,6 +1147,10 @@ class html_table_cell extends moodle_html_component {
      * @var string $scope Defines a way to associate header cells and data cells in a table
      */
     public $scope = '';
+    /**
+     * @var boolean $header Whether or not this cell is a header cell
+     */
+    public $header = false;
 
     /**
      * @see lib/moodle_html_component#prepare()
