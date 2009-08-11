@@ -71,13 +71,26 @@ final class soap_server extends webservice_server {
 
             if(isset($_GET['wsdl'])) {
                 $autodiscover = new Zend_Soap_AutoDiscover();
+                /*
+                $autodiscover->setComplexTypeStrategy('Zend_Soap_Wsdl_Strategy_ArrayOfTypeComplex');
+                $autodiscover->setOperationBodyStyle(
+                    array('use' => 'literal',
+                          'namespace' => $CFG->wwwroot)
+                );
+               
+                $autodiscover->setBindingStyle(
+                    array('style' => 'rpc')
+                );
+*/
                 $autodiscover->setClass('ws_authentication');
                 $autodiscover->handle();
             } else {
 
                 $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?wsdl"); // this current file here
+                
+                $soap->registerFaultException('moodle_exception');
+                            
                 $soap->setClass('ws_authentication');
-                $soap->registerFaultException(moodle_exception);
                 $soap->handle();
             }
         } else { // if token exist, do the authentication here
@@ -107,7 +120,7 @@ final class soap_server extends webservice_server {
             } else {
                 $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=".$classpath."&wsdl"); // this current file here
                 $soap->setClass($classpath."_external");
-                $soap->registerFaultException(moodle_exception);
+                $soap->registerFaultException('moodle_exception');
                 $soap->handle();
             }
         }
