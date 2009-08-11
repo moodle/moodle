@@ -56,6 +56,7 @@ var repository_client = (function(){
                 close: true,
                 underlay: 'none',
                 zindex: 666666,
+                monitorresize: false,
                 xy: [50, YAHOO.util.Dom.getDocumentScrollTop()+20]
             });
             var layout = '';
@@ -78,29 +79,31 @@ var repository_client = (function(){
                     layout.render();
                 });
             });
-            var resize = new YAHOO.util.Resize('file-picker-'+client_id, {
-                handles: ['br'],
-                autoRatio: true,
-                status: true,
-                minWidth: 680,
-                minHeight: 400
-            });
-            ie6_fix_width(client_id, '680px');
-            resize.on('resize', function(args) {
-                var panelHeight = args.height;
-                var headerHeight = this.header.offsetHeight; // Content + Padding + Border
-                var bodyHeight = (panelHeight - headerHeight);
-                var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
-                YAHOO.util.Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
-                ie6_fix_width(this.client_id, '680px');
-                if (IE_SYNC) {
-                    this.sizeUnderlay();
-                    this.syncIframe();
-                }
-                layout.set('height', bodyContentHeight);
-                layout.set('width', (args.width - PANEL_BODY_PADDING));
-                layout.resize();
-            }, this.filepicker, true);
+            if (!YAHOO.env.ua.ie) {
+                var resize = new YAHOO.util.Resize('file-picker-'+client_id, {
+                    handles: ['br'],
+                    autoRatio: true,
+                    proxy: true,
+                    status: true,
+                    minWidth: 680,
+                    minHeight: 400
+                });
+                resize.on('resize', function(args) {
+                    var panelHeight = args.height;
+                    var headerHeight = this.header.offsetHeight; // Content + Padding + Border
+                    var bodyHeight = (panelHeight - headerHeight);
+                    var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
+                    YAHOO.util.Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
+                    ie6_fix_width(this.client_id, '680px');
+                    if (IE_SYNC) {
+                        this.sizeUnderlay();
+                        this.syncIframe();
+                    }
+                    layout.set('height', bodyContentHeight);
+                    layout.set('width', (args.width - PANEL_BODY_PADDING));
+                    layout.resize();
+                }, this.filepicker, true);
+            }
             repository_client.fp[client_id].viewbar = new YAHOO.widget.ButtonGroup({
                 id: 'btngroup-'+client_id,
                 name: 'buttons',
