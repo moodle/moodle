@@ -1924,6 +1924,61 @@ class assignment_base {
 
         return $status;
     }
+
+    /**
+     * base implementation for backing up subtype specific information
+     * for one single module
+     *
+     * @param filehandle $bf file handle for xml file to write to
+     * @param mixed $preferences the complete backup preference object
+     *
+     * @return boolean
+     */
+    function backup_one_mod($bf, $preferences) {
+        return true;
+    }
+
+    /**
+     * base implementation for backing up subtype specific information
+     * for one single submission
+     *
+     * @param filehandle $bf file handle for xml file to write to
+     * @param mixed $preferences the complete backup preference object
+     * @param object $submission the assignment submission db record
+     *
+     * @return boolean
+     */
+    function backup_one_submission($bf, $preferences, $submission) {
+        return true;
+    }
+
+    /**
+     * base implementation for restoring subtype specific information
+     * for one single module
+     *
+     * @param array  $info the array representing the xml
+     * @param object $restore the restore preferences
+     *
+     * @return boolean
+     */
+    function restore_one_mod($info, $restore) {
+        return true;
+    }
+
+    /**
+     * base implementation for restoring subtype specific information
+     * for one single submission
+     *
+     * @param object $submission the newly created submission
+     * @param array  $info the array representing the xml
+     * @param object $restore the restore preferences
+     *
+     * @return boolean
+     */
+    function restore_one_submission($submission, $info, $restore) {
+        return true;
+    }
+
 } ////// End of the assignment_base class
 
 
