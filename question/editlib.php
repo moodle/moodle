@@ -1225,7 +1225,7 @@ class question_bank_view {
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $category = $this->get_current_category($categoryandcontext);
 
@@ -1289,8 +1289,8 @@ class question_bank_view {
             } else {
                 $paging = "<div class='paging'>$showall</div>";
             }
+            echo $paging;
         }
-        echo $paging;
         echo '</div>';
 
         echo '<div class="modulespecificbuttonscontainer">';
@@ -1418,9 +1418,9 @@ class question_bank_view {
                 } else {
                     $movecontexturl  = new moodle_url($CFG->wwwroot.'/question/contextmoveq.php',
                                                     array('returnurl' => $returnurl,
-                                                            'ids'=>$questionidlist,
+                                                            'ids'=>$questionids,
                                                             'tocatid'=> $tocategoryid));
-                    if ($cm){
+                    if (!empty($cm->id)){
                         $movecontexturl->param('cmid', $cm->id);
                     } else {
                         $movecontexturl->param('courseid', $this->course->id);
