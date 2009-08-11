@@ -104,22 +104,11 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                // load up the subtype and see if it wants anything further restored.
-                $class = 'assignment_' . $assignment->assignmenttype;
-                require_once($CFG->dirroot . '/mod/assignment/lib.php');
-                require_once($CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php');
-                $cmid = backup_getid($restore->backup_unique_code, 'course_modules', $mod->id);
-                $cm = $DB->get_record('course_modules',  array('id' => $cmid->new_id));
-                $cm->instance = $newid;
-                $subtype = new $class($cmid->id, $assignment, $cm);
-                $assignment->id = $newid;
-
-                $subtype->restore_one_mod($info, $restore);
 
                 //Now check if want to restore user data and do it.
                 if (restore_userdata_selected($restore,'assignment',$mod->id)) { 
                     //Restore assignmet_submissions
-                    $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore, $subtype) && $status;
+                    $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore) && $status;
                 }
             } else {
                 $status = false;
@@ -132,7 +121,7 @@
     }
 
     //This function restores the assignment_submissions
-    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore, $subtype) {
+    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore) {
         global $CFG, $DB;
 
         $status = true;
@@ -209,8 +198,6 @@
                 $status = assignment_restore_files ($old_assignment_id, $new_assignment_id, 
                                                     $olduserid, $submission->userid, $restore);
 
-                $submission->id = $newid;
-                $status = $subtype->restore_one_submission($submission, $info, $restore);
             } else {
                 $status = false;
             }
