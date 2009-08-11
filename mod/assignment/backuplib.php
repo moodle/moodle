@@ -71,10 +71,13 @@
         fwrite ($bf,full_tag("TIMEAVAILABLE",4,false,$assignment->timeavailable));
         fwrite ($bf,full_tag("GRADE",4,false,$assignment->grade));
         fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$assignment->timemodified));
+
+        assignment_ensure_backup_subtype($assignment, $preferences->backup_course);
+        $assignment->atypeobj->backup_one_mod($bf, $preferences);
         //if we've selected to backup users info, then execute backup_assignment_submisions and
         //backup_assignment_files_instance
         if (backup_userdata_selected($preferences,'assignment',$assignment->id)) {
-            $status = backup_assignment_submissions($bf,$preferences,$assignment->id);
+            $status = backup_assignment_submissions($bf,$preferences,$assignment);
             if ($status) {
                 $status = backup_assignment_files_instance($bf,$preferences,$assignment->id);
             }
@@ -91,7 +94,7 @@
 
         $status = true;
 
-        $assignment_submissions = $DB->get_records("assignment_submissions", array("assignment"=>$assignment),"id");
+        $assignment_submissions = $DB->get_records("assignment_submissions", array("assignment"=>$assignment->id),"id");
         //If there is submissions
         if ($assignment_submissions) {
             //Write start tag
@@ -114,6 +117,9 @@
                 fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));       
                 fwrite ($bf,full_tag("TIMEMARKED",6,false,$ass_sub->timemarked));       
                 fwrite ($bf,full_tag("MAILED",6,false,$ass_sub->mailed));       
+
+                assignment_ensure_backup_subtype($assignment, $preferences->backup_course);
+                $assignment->atypeobj->backup_one_submission($bf, $preferences, $ass_sub);
                 //End submission
                 $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
             }
@@ -259,5 +265,29 @@
         return $DB->get_records_sql ("SELECT s.id , s.assignment
                                         FROM {assignment_submissions} s
                                        WHERE s.assignment = ?", array($instanceid));
+    }
+
+    /**
+     * small helper function to take the current assignment record
+     * and create the appropriate subtype object and store it
+     *
+     * @param $assignment the assignment db record (passed by reference and modified)
+     * @param $courseid the courseid
+     *
+     * @return void
+     */
+    function assignment_ensure_backup_subtype(&$assignment, $courseid) {
+        global $CFG, $DB;
+        static $course;
+        if (empty($course)) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+        }
+        if (empty($assignment->atypeobj)) {
+            $class = 'assignment_' . $assignment->assignmenttype;
+            require_once($CFG->dirroot . '/mod/assignment/lib.php');
+            require_once($CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php');
+            $cm = get_coursemodule_from_instance('assignment', $assignment->id, $courseid);
+            $assignment->atypeobj = new $class($cm->id, $assignment, $cm, $course);
+        }
     }
 ?>
