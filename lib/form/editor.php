@@ -4,6 +4,7 @@ global $CFG;
 
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
+require_once($CFG->dirroot.'/repository/lib.php');
 
 //TODO:
 //  * locking
