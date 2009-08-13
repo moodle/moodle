@@ -24,6 +24,5 @@ URL module is one of the successors to original 'file' type plugin of Resource m
 
 
 TODO:
- * reimplement portfolio support (?)
- * new backup/restore (Eloy)
- * old restore support (Eloy)
+ * implement portfolio support (MDL-20084)
+ * new backup/restore and old restore transformation (MDL-20085)
