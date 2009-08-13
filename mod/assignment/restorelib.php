@@ -105,11 +105,16 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
+                // load up the subtype and see if it wants anything further restored.
+                $class = 'assignment_' . $assignment->assignmenttype;
+                require_once($CFG->dirroot . '/mod/assignment/lib.php');
+                require_once($CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php');
+                call_user_func(array($class, 'restore_one_mod'), $info, $restore, $assignment);
 
                 //Now check if want to restore user data and do it.
                 if (restore_userdata_selected($restore,'assignment',$mod->id)) { 
                     //Restore assignmet_submissions
-                    $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore) && $status;
+                    $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore, $assignment) && $status;
                 }
             } else {
                 $status = false;
@@ -122,7 +127,7 @@
     }
 
     //This function restores the assignment_submissions
-    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore) {
+    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore, $assignment) {
 
         global $CFG;
 
@@ -200,6 +205,11 @@
                 $status = assignment_restore_files ($old_assignment_id, $new_assignment_id, 
                                                     $olduserid, $submission->userid, $restore);
 
+                $submission->id = $newid;
+                $class = 'assignment_' . $assignment->assignmenttype;
+                require_once($CFG->dirroot . '/mod/assignment/lib.php');
+                require_once($CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php');
+                call_user_func(array($class, 'restore_one_submission'), $info, $restore, $assignment, $submission);
             } else {
                 $status = false;
             }
