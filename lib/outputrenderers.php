@@ -1155,7 +1155,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         // Removing the button so it doesn't get output again
         unset($form->button);
 
-        return $this->form($form, $buttonoutput);
+        return $this->output_tag('div', array('class' => 'singlebutton'), $this->form($form, $buttonoutput));
     }
 
     /**
@@ -1206,8 +1206,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'class' => $form->get_classes_string());
 
         $divoutput = $this->output_tag('div', array(), $hiddenoutput . $contents . $buttonoutput);
-        $formoutput = $this->output_tag('form', $formattributes, $divoutput);
-        $output = $this->output_tag('div', array('class' => 'singlebutton'), $formoutput);
+        $output = $this->output_tag('form', $formattributes, $divoutput);
 
         return $output;
     }
@@ -1545,12 +1544,13 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param string $text The lang string for the button's label (already output from get_string())
      * @return string|void if $return is true, void otherwise
      */
-    public function close_window_button($text) {
+    public function close_window_button($text='') {
         if (empty($text)) {
             $text = get_string('closewindow');
         }
         $closeform = new html_form();
         $closeform->url = '#';
+        $closeform->method = 'get';
         $closeform->button->text = $text;
         $closeform->button->add_action('click', 'close_window');
         $closeform->button->prepare();

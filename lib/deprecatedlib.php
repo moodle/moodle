@@ -2901,7 +2901,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG, $OUTPUT;
 
-    // debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->action_icon().');
+    // debugging('doc_link() has been deprecated. Please change your code to use $OUTPUT->doc_link().');
 
     if (empty($CFG->docroot)) {
         return '';

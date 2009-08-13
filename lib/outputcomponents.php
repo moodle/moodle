@@ -49,10 +49,6 @@ class moodle_html_component {
      */
     public $style = '';
     /**
-     * @var mixed $label The label for that component. String or html_label object
-     */
-    public $label;
-    /**
      * @var array class names to add to this HTML element.
      */
     public $classes = array();
@@ -192,6 +188,23 @@ class moodle_html_component {
     }
 
     /**
+     * Shortcut for adding a JS confirm dialog when the component is clicked.
+     * The message must be a yes/no question.
+     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @return void
+     */
+    public function add_confirm_action($message) {
+        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message)));
+    }
+}
+
+class labelled_html_component extends moodle_html_component {
+    /**
+     * @var mixed $label The label for that component. String or html_label object
+     */
+    public $label;
+
+    /**
      * Adds a descriptive label to the component.
      *
      * This can be used in two ways:
@@ -224,16 +237,6 @@ class moodle_html_component {
             }
             $this->label->text = $text;
         }
-    }
-
-    /**
-     * Shortcut for adding a JS confirm dialog when the component is clicked.
-     * The message must be a yes/no question.
-     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
-     * @return void
-     */
-    public function add_confirm_action($message) {
-        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message)));
     }
 }
 
@@ -284,7 +287,7 @@ class html_label extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_select extends moodle_html_component {
+class html_select extends labelled_html_component {
     /**
      * The html_select object parses an array of options into component objects
      * @see nested attribute
@@ -735,7 +738,7 @@ class html_select extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_select_option extends moodle_html_component {
+class html_select_option extends labelled_html_component {
     /**
      * @var string $value The value of this option (will be sent with form)
      */
@@ -782,7 +785,7 @@ class html_select_option extends moodle_html_component {
      * @param string $alt
      * @return html_select_option A component ready for $OUTPUT->checkbox()
      */
-    public function make_checkbox($value, $checked, $label='', $alt='') {
+    public function make_checkbox($value, $checked, $label, $alt='') {
         $checkbox = new html_select_option();
         $checkbox->value = $value;
         $checkbox->selected = $checked;
@@ -828,7 +831,7 @@ class html_select_optgroup extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_field extends moodle_html_component {
+class html_field extends labelled_html_component {
     /**
      * @var string $name The name attribute of the field
      */
@@ -900,7 +903,7 @@ class html_field extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_table extends moodle_html_component {
+class html_table extends labelled_html_component {
     /**
      * @var array of headings. The n-th array item is used as a heading of the n-th column.
      *
@@ -1216,7 +1219,7 @@ class html_link extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_button extends moodle_html_component {
+class html_button extends labelled_html_component {
     /**
      * @var string $text
      */
@@ -1253,7 +1256,7 @@ class html_button extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class html_image extends moodle_html_component {
+class html_image extends labelled_html_component {
     /**
      * @var string $alt A descriptive text
      */
@@ -1813,7 +1816,7 @@ class moodle_user_picture extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_help_icon extends moodle_html_component {
+class moodle_help_icon extends labelled_html_component {
     /**
      * @var html_link $link A html_link object that will hold the URL info
      */
@@ -1943,7 +1946,7 @@ class moodle_help_icon extends moodle_html_component {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  */
-class moodle_action_icon extends moodle_html_component {
+class moodle_action_icon extends labelled_html_component {
     /**
      * @var string $linktext Optional text to display next to the icon
      */
@@ -1972,6 +1975,13 @@ class moodle_action_icon extends moodle_html_component {
      */
     public function prepare() {
         $this->image->add_class('action-icon');
+
+        if (!empty($this->actions)) {
+            foreach ($this->actions as $action) {
+                $this->link->add_action($action);
+            }
+            unset($this->actions);
+        }
 
         parent::prepare();
 

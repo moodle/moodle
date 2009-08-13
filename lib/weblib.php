@@ -559,6 +559,8 @@ function prepare_url($url, $stripformparams=false) {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
 
             return $matches[1] . "/$output";
+        } else if ($output == '') {
+            return $PAGE->url->out(false, array(), false) . '#';
         } else {
             throw new coding_exception('Your page uses bizarre relative URLs which Moodle cannot handle. Please use absolute URLs.');
         }
