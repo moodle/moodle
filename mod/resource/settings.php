@@ -1,48 +1,75 @@
-<?php  //$Id$
+<?php
 
-require_once($CFG->dirroot.'/mod/resource/lib.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-global $RESOURCE_WINDOW_OPTIONS; // make sure we have the pesky global
+/**
+ * Resource module admin settings and defaults
+ *
+ * @package   mod-resource
+ * @copyright 2009 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-$checkedyesno = array(''=>get_string('no'), 'checked'=>get_string('yes')); // not nice at all
+if ($ADMIN->fulltree) {
+    require_once("$CFG->libdir/resourcelib.php");
 
-$settings->add(new admin_setting_configtext('resource_framesize', get_string('framesize', 'resource'),
-                   get_string('configframesize', 'resource'), 130, PARAM_INT));
+    $displayoptions = resourcelib_get_displayoptions(array(RESOURCELIB_DISPLAY_AUTO,
+                                                           RESOURCELIB_DISPLAY_EMBED,
+                                                           RESOURCELIB_DISPLAY_FRAME,
+                                                           RESOURCELIB_DISPLAY_DOWNLOAD,
+                                                           RESOURCELIB_DISPLAY_OPEN,
+                                                           RESOURCELIB_DISPLAY_NEW,
+                                                           RESOURCELIB_DISPLAY_POPUP,
+                                                          ));
+    $defaultdisplayoptions = array(RESOURCELIB_DISPLAY_AUTO,
+                                   RESOURCELIB_DISPLAY_EMBED,
+                                   RESOURCELIB_DISPLAY_DOWNLOAD,
+                                   RESOURCELIB_DISPLAY_OPEN,
+                                   RESOURCELIB_DISPLAY_POPUP,
+                                  );
 
-$settings->add(new admin_setting_configtext('resource_websearch', get_string('websearchdefault', 'resource'),
-                   get_string('configwebsearch', 'resource'), 'http://google.com/'));
+    //--- general settings -----------------------------------------------------------------------------------
+    $settings->add(new admin_setting_configtext('resource/framesize',
+        get_string('framesize', 'resource'), get_string('configframesize', 'resource'), 130, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('resource/requiremodintro',
+        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+    $settings->add(new admin_setting_configmultiselect('resource/displayoptions',
+        get_string('displayoptions', 'resource'), get_string('configdisplayoptions', 'resource'),
+        $defaultdisplayoptions, $displayoptions));
 
-$settings->add(new admin_setting_configtext('resource_defaulturl', get_string('resourcedefaulturl', 'resource'),
-                   get_string('configdefaulturl', 'resource'), 'http://'));
+    //--- modedit defaults -----------------------------------------------------------------------------------
+    $settings->add(new admin_setting_heading('resourcemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-$settings->add(new admin_setting_configpasswordunmask('resource_secretphrase', get_string('password'),
-                   get_string('configsecretphrase', 'resource'), random_string(20)));
-
-$settings->add(new admin_setting_configcheckbox('resource_allowlocalfiles', get_string('allowlocalfiles', 'resource'),
-                   get_string('configallowlocalfiles', 'resource'), 0));
-
-$woptions = array('' => get_string('pagewindow', 'resource'), 'checked' => get_string('newwindow', 'resource'));
-$settings->add(new admin_setting_configselect('resource_popup', get_string('display', 'resource'),
-                   get_string('configpopup', 'resource'), '', $woptions));
-
-foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
-    $popupoption = "resource_popup$optionname";
-    if ($popupoption == 'resource_popupheight') {
-        $settings->add(new admin_setting_configtext('resource_popupheight', get_string('newheight', 'resource'),
-                           get_string('configpopupheight', 'resource'), 450, PARAM_INT));
-    } else if ($popupoption == 'resource_popupwidth') {
-        $settings->add(new admin_setting_configtext('resource_popupwidth', get_string('newwidth', 'resource'),
-                           get_string('configpopupwidth', 'resource'), 620, PARAM_INT));
-    } else {
-        $settings->add(new admin_setting_configselect($popupoption, get_string('new'.$optionname, 'resource'),
-                           get_string('configpopup'.$optionname, 'resource'), 'checked', $checkedyesno));
-    }
+    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/printheading',
+        get_string('printheading', 'resource'), get_string('printheadingexplain', 'resource'),
+        array('value'=>0, 'adv'=>false)));
+    $settings->add(new admin_setting_configcheckbox_with_advanced('resource/printintro',
+        get_string('printintro', 'resource'), get_string('printintroexplain', 'resource'),
+        array('value'=>1, 'adv'=>false)));
+    $settings->add(new admin_setting_configselect_with_advanced('resource/display',
+        get_string('displayselect', 'resource'), get_string('displayselectexplain', 'resource'),
+        array('value'=>RESOURCELIB_DISPLAY_AUTO, 'adv'=>false), $displayoptions));
+    $settings->add(new admin_setting_configtext_with_advanced('resource/popupwidth',
+        get_string('popupwidth', 'resource'), get_string('popupwidthexplain', 'resource'),
+        array('value'=>620, 'adv'=>true), PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext_with_advanced('resource/popupheight',
+        get_string('popupheight', 'resource'), get_string('popupheightexplain', 'resource'),
+        array('value'=>450, 'adv'=>true), PARAM_INT, 7));
+    $options = array('0' => get_string('none'), '1' => get_string('allfiles'), '2' => get_string('htmlfilesonly'));
+    $settings->add(new admin_setting_configselect_with_advanced('resource/filterfiles',
+        get_string('filterfiles', 'resource'), get_string('filterfilesexplain', 'resource'),
+        array('value'=>0, 'adv'=>true), $options));
 }
-
-$settings->add(new admin_setting_configcheckbox('resource_autofilerename', get_string('autofilerename', 'resource'),
-                   get_string('configautofilerenamesettings', 'resource'), 1));
-
-$settings->add(new admin_setting_configcheckbox('resource_blockdeletingfile', get_string('blockdeletingfile', 'resource'),
-                   get_string('configblockdeletingfilesettings', 'resource'), 1));
-
-?>

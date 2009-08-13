@@ -3788,6 +3788,27 @@ body#user-index .rolesform {
 }
 
 /***
+ *** Modules: general
+ ***/
+
+.mod_introbox {
+  border-width:1px;
+  border-style:solid;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding:10px;
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+table.mod_index {
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/***
  *** Modules: Assignment
  ***/
 
@@ -3937,6 +3958,17 @@ table.presets {
   margin-left: auto;
   margin-right: auto;
 }
+
+/***
+ ***
+ *** Modules: Folder
+ ***/
+
+#mod-folder-view .foldertree {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+} 
 
 /***
  *** Modules: Forum
@@ -5316,52 +5348,6 @@ body.jsenabled #quizcontentsblock  .repaginatecommand #repaginatecommand{
 .mod-resource .popupnotice {
   text-align:center;
   margin:40px;
-}
-
-.ims-nav-bar {
-  margin-top:0.2em;
-  position: relative;
-}
-
-.ims-nav-button a,
-.ims-nav-dimmed {
-  padding-left:1em;
-  padding-right:1em;
-  padding-top:0.2em;
-  padding-bottom:0.2em;
-}
-
-#ims-containerdiv {
-  margin-top:0.2em;
-}
-
-#ims-menudiv {
-  padding-top:1em;
-  padding-right:0.2em;
-  position:absolute;
-  width:250px;
-  overflow:auto;
-}
-
-#ims-menudiv ol {
-  margin:0em;
-  list-style-type:none;
-  padding-left:1em;
-}
-
-#ims-contentframe {
-  position:absolute;
-  left:260px;
-  border:1px solid;
-  width:640px;
-  height:480px;
-}
-
-#ims-contentframe-no-nav {
-  position:absolute;
-  border:1px solid;
-  width:640px;
-  height:480px;
 }
 
 #mod-resource-view div#footer {

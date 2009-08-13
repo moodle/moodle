@@ -1,8 +1,47 @@
-<?PHP // $Id$ 
-      // resource.php - created with Moodle 1.7 beta + (2006101003)
-
+<?php
 
 $string['addresource'] = 'Add a resource';
+$string['clicktodownload'] = 'Click $a link to download the file.';
+$string['clicktoopen2'] = 'Click $a link to view the file.';
+$string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
+$string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the height (in pixels) of the top frame (which contains the navigation).';
+$string['contentheader'] = 'Content';
+$string['displayauto'] = 'Automatic';
+$string['displaydownload'] = 'Force download';
+$string['displayembed'] = 'Embed';
+$string['displayframe'] = 'In frame';
+$string['displaynew'] = 'New window';
+$string['displayopen'] = 'Open';
+$string['displayoptions'] = 'Available display options';
+$string['displaypopup'] = 'In pop-up';
+$string['displayselect'] = 'Display';
+$string['displayselectexplain'] = 'Choose display type, unfortunately not all types are suitable for all files.';
+$string['filenotfound'] = 'File not found, sorry.';
+$string['filterfiles'] = 'Use filters on file content';
+$string['filterfilesexplain'] = 'Select type of file content filtering, please note this may cause problems for some Flash and Java applets. Please make sure that all text files are in UTF-8 encoding.';
+$string['foldercontent'] = 'Files and subfolders';
+$string['framesize'] = 'Frame height';
+$string['legacyfiles'] = 'Migration of old course file';
+$string['legacyfilesactive'] = 'Active';
+$string['legacyfilesdone'] = 'Finished';
+$string['modulename'] = 'File';
+$string['modulenameplural'] = 'Files';
+$string['neverseen'] = 'Never seen';
+$string['notmigrated'] = 'This legacy resource type ($a) was not yet migrated, sorry.';
+$string['optionsheader'] = 'Options';
+$string['popupheight'] = 'Popup height (in pixels)';
+$string['popupheightexplain'] = 'Specifies default height of popup windows.';
+$string['popupwidth'] = 'Popup width (in pixels)';
+$string['popupwidthexplain'] = 'Specifies default width of popup windows.';
+$string['printheading'] = 'Display resource name';
+$string['printheadingexplain'] = 'Display resource name above content? Some display types may not display resource name even if enabled.';
+$string['printintro'] = 'Display resource description';
+$string['printintroexplain'] = 'Display resource description bellow content? Some display types may not display description even if enabled.';
+$string['resourcecontent'] = 'Files and subfolders';
+
+
+// obsoleted <2.0 strings
+
 $string['affectedresources'] = 'Affected resources';
 $string['allowlocalfiles'] = 'Allow local files';
 $string['autofilerename'] = 'Update link if file renamed';
@@ -19,7 +58,6 @@ $string['configautofilerenamesettings'] = 'Automatically update references to fi
 $string['configblockdeletingfilesettings'] = 'Block deleting of files and directories referenced by resources. Please note that images and other files referenced from html are not protected.';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
-$string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the size (in pixels) of the top frame (which contains the navigation).';
 $string['configparametersettings'] = 'This sets the default value for the Parameter settings pane in the form when adding some new resources. After the first time, this becomes an individual user preference.';
 $string['configpopup'] = 'When adding a new resource which is able to be shown in a popup window, should this option be enabled by default?';
 $string['configpopupdirectories'] = 'Should popup windows show directory links by default?';
@@ -51,7 +89,6 @@ $string['filename'] = 'File name';
 $string['filtername'] = 'Resource Names Auto-linking';
 $string['forcedownload'] = 'Force download';
 $string['frameifpossible'] = 'Put resource in a frame to keep site navigation visible';
-$string['framesize'] = 'Frame size';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML fragment';
 $string['imspackageloaded'] = 'Package loaded';
@@ -68,12 +105,9 @@ $string['localfileinfo'] = '<p>Choose a local file from your computer. The file 
 $string['localfilepath'] = 'To set your own local path for this resource, choose any file from the drive (usually a CD_ROM) on your computer where the resource exists. The file will not be uploaded but the drive information will be stored and used for any local file resources';
 $string['localfileselect'] = 'Choose this file path.';
 $string['maindirectory'] = 'Main files directory';
-$string['modulename'] = 'Resource';
-$string['modulenameplural'] = 'Resources';
 $string['navigationbuttons'] = 'Navigation buttons';
 $string['navigationmenu'] = 'Navigation side menu';
 $string['navigationup'] = 'Up button';
-$string['neverseen'] = 'Never seen';
 $string['newdirectories'] = 'Show the directory links';
 $string['newfullscreen'] = 'Fill the whole screen';
 $string['newheight'] = 'Default window height (in pixels)';

@@ -1099,8 +1099,15 @@ body#mod-forum-index .generalbox .cell {
     text-decoration:underline;
 }
 
+/***
+ *** Modules: Resource
+ ***/
 
-    /***
+.mod-page .modified {
+  font-size:0.6em;
+}
+
+/***
  *** Modules: Resource
  ***/
 
@@ -1110,19 +1117,6 @@ body#mod-forum-index .generalbox .cell {
 
 .mod-resource .modified {
   font-size:0.6em;
-}
-
-.ims-nav-dimmed,
-.ims-nav-button {
-  font-size:0.8em;
-}
-
-#ims-toc-selected {
-  font-weight: bold;
-}
-
-#ims-menudiv {
-  font-size:0.8em;
 }
 
 /***

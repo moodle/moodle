@@ -16,14 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * List of all resources in course
+ * List of all resource type modules in course
  *
- * @package   mod-resource
- * @copyright 1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    moodlecore
+ * @copyright 2009 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
+require_once('../config.php');
+require_once("$CFG->libdir/resourcelib.php");
 
 $id = required_param('id', PARAM_INT); // course id
 
@@ -31,23 +32,58 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 require_course_login($course, true);
 
-add_to_log($course->id, 'resource', 'view all', "index.php?id=$course->id", '');
+// get list of all resource-like modules
+$allmodules = $DB->get_records('modules', array('visible'=>1));
+$modules = array();
+foreach ($allmodules as $key=>$module) {
+    $modname = $module->name;
+    $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+    if (!file_exists($libfile)) {
+        continue;
+    }
+    $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+    if ($archetype != MOD_ARCHETYPE_RESOURCE) {
+        continue;
+    }
 
-$strresource     = get_string('modulename', 'resource');
-$strresources    = get_string('modulenameplural', 'resource');
+    $modules[$modname] = get_string('modulename', $modname);
+    //some hacky nasic logging
+    add_to_log($course->id, $modname, 'view all', "index.php?id=$course->id", '');
+}
+
+$strresources    = get_string('resources');
 $strweek         = get_string('week');
 $strtopic        = get_string('topic');
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('mod/resource/index.php', array('id' => $course->id));
+$PAGE->set_url('course/resources.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strresources);
 $PAGE->set_heading($course->fullname);
 $navlinks = array(array('name' => $strresources, 'link' => '', 'type' => 'activityinstance'));
 echo $OUTPUT->header(build_navigation($navlinks), navmenu($course));
 
-if (!$resources = get_all_instances_in_course('resource', $course)) {
+$modinfo = get_fast_modinfo($course);
+$cms = array();
+$resources = array();
+foreach ($modinfo->cms as $cm) {
+    if (!$cm->uservisible) {
+        continue;
+    }
+    if (!array_key_exists($cm->modname, $modules)) {
+        continue;
+    }
+    $cms[$cm->id] = $cm;
+    $resources[$cm->modname][] = $cm->instance;
+}
+
+// preload instances
+foreach ($resources as $modname=>$instances) {
+    $resources[$modname] = $DB->get_records_list($modname, 'id', $instances, 'id', 'id,name,intro,introformat,timemodified');
+}
+
+if (!$cms) {
     notice(get_string('thereareno', 'moodle', $strresources), "$CFG->wwwroot/course/view.php?id=$course->id");
     exit;
 }
@@ -66,36 +102,38 @@ if ($course->format == 'weeks') {
     $table->align = array ('left', 'left', 'left');
 }
 
-$modinfo = get_fast_modinfo($course);
 $currentsection = '';
-foreach ($resources as $resource) {
-    $cm = $modinfo->cms[$resource->coursemodule];
+foreach ($cms as $cm) {
+    if (!isset($resources[$cm->modname][$cm->instance])) {
+        continue;
+    }
+    $resource = $resources[$cm->modname][$cm->instance];
     if ($course->format == 'weeks' or $course->format == 'topics') {
         $printsection = '';
-        if ($resource->section !== $currentsection) {
-            if ($resource->section) {
-                $printsection = $resource->section;
+        if ($cm->sectionnum !== $currentsection) {
+            if ($cm->sectionnum) {
+                $printsection = $cm->sectionnum;
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';
             }
-            $currentsection = $resource->section;
+            $currentsection = $cm->sectionnum;
         }
     } else {
         $printsection = '<span class="smallinfo">'.userdate($resource->timemodified)."</span>";
     }
 
     $extra = empty($cm->extra) ? '' : $cm->extra;
-    $icon = '';
     if (!empty($cm->icon)) {
-        // each resource file has an icon in 2.0
         $icon = '<img src="'.$OUTPUT->old_icon_url($cm->icon).'" class="activityicon" alt="" /> ';
+    } else {
+        $icon = '<img src="'.$OUTPUT->mod_icon_url('icon', $cm->modname).'" class="activityicon" alt="" /> ';
     }
 
-    $class = $resource->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
+    $class = $cm->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
     $table->data[] = array (
         $printsection,
-        "<a $class $extra href=\"view.php?id=$cm->id\">".$icon.format_string($resource->name)."</a>",
+        "<a $class $extra href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\">".$icon.format_string($resource->name)."</a>",
         format_module_intro('resource', $resource, $cm->id));
 }
 

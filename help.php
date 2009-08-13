@@ -48,9 +48,6 @@ if (!empty($file)) {
         }
 
         // The remaining horrible hardcoded special cases should be delegated to modules somehow.
-        if ($module == 'moodle'&& $file == 'resource/types.html') {  // RESOURCES
-            include_help_for_each_resource($forcelang, $skiplocal);
-        }
         if ($module == 'moodle' && $file == 'assignment/types.html') {  // ASSIGNMENTS
             include_help_for_each_assignment_type($forcelang, $skiplocal);
         }
@@ -180,30 +177,6 @@ function include_help_for_each_qtype() {
 function include_help_for_qtype($qtype, $localizedname) {
     echo '<h2>' . $localizedname . "</h2>\n\n";
     echo '<p>' . get_string($qtype . 'summary', 'qtype_' . $qtype) . "</p>\n\n";
-}
-
-function include_help_for_each_resource($forcelang, $skiplocal) {
-    global $CFG;
-
-    require_once($CFG->dirroot .'/mod/resource/lib.php');
-    $typelist = resource_get_types();
-
-    //add label type
-    $labelType = new object();
-    $labelType->modclass = MOD_CLASS_RESOURCE;
-    $resourcetype = 'label';
-    $labelType->name = $resourcetype;
-    $labelType->type = "resource&amp;type=$resourcetype";
-    $labelType->typestr = get_string("resourcetype$resourcetype", 'resource');
-    $typelist[] = $labelType;
-
-    foreach ($typelist as $type) {
-        list($filepath, $foundlang) = string_manager::instance()->find_help_file('type/' . $type->name . '.html', 'resource', $forcelang, $skiplocal);
-        if ($filepath) {
-            echo '<hr />';
-            include($filepath);
-        }
-    }
 }
 
 function include_help_for_each_assignment_type() {

@@ -300,6 +300,8 @@ define('FEATURE_GROUPINGS', 'groupings');
 /** True if module supports groupmembersonly */
 define('FEATURE_GROUPMEMBERSONLY', 'groupmembersonly');
 
+/** Type of module */
+define('FEATURE_MOD_ARCHETYPE', 'mod_archetype');
 /** True if module supports intro editor */
 define('FEATURE_MOD_INTRO', 'mod_intro');
 /** True if module supports subplugins */
@@ -308,6 +310,13 @@ define('FEATURE_MOD_SUBPLUGINS', 'mod_subplugins');
 define('FEATURE_MODEDIT_DEFAULT_COMPLETION', 'modedit_default_completion');
 
 define('FEATURE_COMMENT', 'comment');
+
+/** Unspecified module archetype */
+define('MOD_ARCHETYPE_OTHER', 0);
+/** Resource-like type module */
+define('MOD_ARCHETYPE_RESOURCE', 1);
+/** Assignemnt module archetype */
+define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////

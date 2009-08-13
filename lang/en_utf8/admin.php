@@ -208,6 +208,7 @@ $string['configminpasswordlength'] = 'Passwords must be at least these many char
 $string['configminpasswordlower'] = 'Passwords must have at least these many lower case letters.';
 $string['configminpasswordnonalphanum'] = 'Passwords must have at least these many non-alphanumeric characters.';
 $string['configminpasswordupper'] = 'Passwords must have at least these many upper case letters.';
+$string['condifmodeditdefaults'] = 'The values you set here define the default values that are used in the activity settings form when you create a new activity. You can also configure which activity settings are considered advanced.';
 $string['configmycoursesperpage'] = 'Maximum number of courses to display in any list of a user\'s own courses';
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['confignodefaultuserrolelists'] = 'This setting prevents all users from being returned from the database from deprecated calls of get_course_user, etc., for the site course if the default role provides that access. Check this, if you suffer a performance hit.';
@@ -600,6 +601,7 @@ $string['mnetrestore_extusers_admin'] = '<strong>Note:</strong> This backup file
 $string['mnetrestore_extusers_mismatch'] = '<strong>Note:</strong> This backup file apparently originates from a different Moodle installation and contains remote Moodle Network user accounts that may fail to restore. This operation is unsupported. If you are certain that it was created on this Moodle installation, or you can ensure that all the needed Moodle Network Hosts are configured, you may want to still try the restore.';
 $string['mnetrestore_extusers_noadmin'] = '<strong>Note:</strong> This backup file seems to come from a different Moodle installation and contains remote Moodle Network user accounts. You are not allowed to execute this type of restore. Contact the administrator of the site or, alternatively, restore this course without any user information (modules, files...)';
 $string['mnetrestore_extusers_switchuserauth'] = 'Remote Moodle Network user $a->username (coming from $a->mnethosturl) switched to local $a->auth authenticated user.';
+$string['modeditdefaults'] = 'Default values for activity settings';
 $string['modsettings'] = 'Manage activities';
 $string['modulesecurity'] = 'Module security';
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class=\"multilang\" and &lt;lang&gt;';
@@ -738,6 +740,8 @@ $string['releasenoteslink'] = 'For information about this version of Moodle, ple
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['renameerrors'] = 'Rename errors';
 $string['requiredtemplate'] = 'Required. You may use template syntax here (%%l = lastname, %%f = firstname, %%u = username). See help for details and examples.';
+$string['requiremodintro'] = 'Require activity description';
+$string['configrequiremodintro'] = 'Disable this option if you do not want to force users to enter description of each activity.';
 $string['requires'] = 'Requires';
 $string['requiredentrieschanged'] = '<strong>IMPORTANT - PLEASE READ<br/>(This warning message will only be displayed during this upgrade)</strong><br/>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explaination of the changes can be read on <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">the database module forum</a>. The expected behavior of these settings can also be read on <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
 <br/><br/>This change affects the following databases in your system: (Please save this list now, and after the upgrade, check that these activities still work the way that the teacher intends.)<br/><strong>$a->text</strong><br/>';

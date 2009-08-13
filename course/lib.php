@@ -1343,25 +1343,23 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         $icon = $OUTPUT->old_icon_url(str_replace(array('.gif', '.png'), '', $customicon));
                     }
                 } else {
-                    $icon = "" . $OUTPUT->mod_icon_url('icon', $mod->modname) . "";
+                    $icon = $OUTPUT->mod_icon_url('icon', $mod->modname);
                 }
 
-                //Accessibility: for files get description via icon.
+                //Accessibility: for files get description via icon, this is very ugly hack!
                 $altname = '';
-                if ('resource'==$mod->modname) {
-                    if (!empty($customicon)) {
-                        $possaltname = $customicon;
+                $altname = $mod->modfullname;
+                if (!empty($customicon)) {
+                    $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+                    if ($archetype == MOD_ARCHETYPE_RESOURCE) {
+                        $possaltname = str_replace(array('.gif', '.png'), '', $customicon).'.gif';
 
                         $mimetype = mimeinfo_from_icon('type', $possaltname);
                         $altname = get_mimetype_description($mimetype);
-                    } else {
-                        $altname = $mod->modfullname;
                     }
-                } else {
-                    $altname = $mod->modfullname;
                 }
                 // Avoid unnecessary duplication.
-                if (false!==stripos($instancename, $altname)) {
+                if (false !== stripos($instancename, $altname)) {
                     $altname = '';
                 }
                 // File type after name, for alphabetic lists (screen reader).
@@ -1587,8 +1585,13 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
                     }
                 }
             } else {
-                // all mods without type are considered activity
-                $activities[$modname] = $modnamestr;
+                $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+                if ($archetype == MOD_ARCHETYPE_RESOURCE) {
+                    $resources[$modname] = $modnamestr;
+                } else {
+                    // all other archetypes are considered activity
+                    $activities[$modname] = $modnamestr;
+                }
             }
         }
     }
@@ -3535,5 +3538,3 @@ function get_course_by_idnumber ($idnumber) {
     global $DB;
     return $DB->get_record('course', array('idnumber' => $idnumber));
 }
-
-?>

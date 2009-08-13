@@ -1,6 +1,27 @@
-<?php // $Id$
+<?php
 
-//  adds or updates modules in a course using new formslib
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Adds or updates modules in a course using new formslib
+ *
+ * @package    moodlecore
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once("../config.php");
     require_once("lib.php");
@@ -9,14 +30,12 @@
     require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/conditionlib.php');
 
-    $add    = optional_param('add', 0, PARAM_ALPHA);
+    $add    = optional_param('add', '', PARAM_ALPHA);     // module name
     $update = optional_param('update', 0, PARAM_INT);
-    $return = optional_param('return', 0, PARAM_BOOL); //return to course/view.php if false or mod/modname/view.php if true
-    $type   = optional_param('type', '', PARAM_ALPHANUM);
+    $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
+    $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 
     $PAGE->set_generaltype('form');
-
-    require_login();
 
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
@@ -42,48 +61,45 @@
 
         $cm = null;
 
-        $form = new object();
-        $form->section          = $section;  // The section number itself - relative!!! (section column in course_sections)
-        $form->visible          = $cw->visible;
-        $form->course           = $course->id;
-        $form->module           = $module->id;
-        $form->modulename       = $module->name;
-        $form->groupmode        = $course->groupmode;
-        $form->groupingid       = $course->defaultgroupingid;
-        $form->groupmembersonly = 0;
-        $form->instance         = '';
-        $form->coursemodule     = '';
-        $form->add              = $add;
-        $form->return           = 0; //must be false if this is an add, go back to course view on cancel
+        $data = new object();
+        $data->section          = $section;  // The section number itself - relative!!! (section column in course_sections)
+        $data->visible          = $cw->visible;
+        $data->course           = $course->id;
+        $data->module           = $module->id;
+        $data->modulename       = $module->name;
+        $data->groupmode        = $course->groupmode;
+        $data->groupingid       = $course->defaultgroupingid;
+        $data->groupmembersonly = 0;
+        $data->id               = '';
+        $data->instance         = '';
+        $data->coursemodule     = '';
+        $data->add              = $add;
+        $data->return           = 0; //must be false if this is an add, go back to course view on cancel
 
-        if (plugin_supports('mod', $form->modulename, FEATURE_MOD_INTRO, true)) {
+        if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
             $draftid_editor = file_get_submitted_draft_itemid('introeditor');
             file_prepare_draft_area($draftid_editor, null, null, null);
-            $form->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
+            $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
         }
 
-        // Turn off default grouping for modules that don't provide group mode
-        if ($add=='resource' || $add=='glossary' || $add=='label') {
-            $form->groupingid = 0;
-        }
-        
-        if (!empty($type)) {
-            $form->type = $type;
+        if (!empty($type)) { //TODO: hopefully will be removed in 2.0
+            $data->type = $type;
         }
 
         $sectionname = get_section_name($course->format);
         $fullmodulename = get_string('modulename', $module->name);
 
-        if ($form->section && $course->format != 'site') {
+        if ($data->section && $course->format != 'site') {
+            $heading = new object();
             $heading->what = $fullmodulename;
-            $heading->to   = "$sectionname $form->section";
+            $heading->to   = "$sectionname $data->section";
             $pageheading = get_string('addinganewto', 'moodle', $heading);
         } else {
             $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
         }
 
         $pagepath = 'mod-' . $module->name . '-';
-        if (!empty($type)) {
+        if (!empty($type)) { //TODO: hopefully will be removed in 2.0
             $pagepath .= $type;
         } else {
             $pagepath .= 'mod';
@@ -101,7 +117,7 @@
             print_error('invalidcourseid');
         }
 
-        require_login($course); // needed to setup proper $COURSE
+        require_login($course, false, $cm); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
@@ -109,7 +125,7 @@
             print_error('moduledoesnotexist');
         }
 
-        if (!$form = $DB->get_record($module->name, array('id'=>$cm->instance))) {
+        if (!$data = $DB->get_record($module->name, array('id'=>$cm->instance))) {
             print_error('moduleinstancedoesnotexist');
         }
 
@@ -117,41 +133,41 @@
             print_error('sectionnotexist');
         }
 
-        $form->coursemodule       = $cm->id;
-        $form->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
-        $form->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
-        $form->cmidnumber         = $cm->idnumber;          // The cm IDnumber
-        $form->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
-        $form->groupingid         = $cm->groupingid;
-        $form->groupmembersonly   = $cm->groupmembersonly;
-        $form->course             = $course->id;
-        $form->module             = $module->id;
-        $form->modulename         = $module->name;
-        $form->instance           = $cm->instance;
-        $form->return             = $return;
-        $form->update             = $update;
-        $form->completion         = $cm->completion;
-        $form->completionview     = $cm->completionview;
-        $form->completionexpected = $cm->completionexpected;
-        $form->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
-        if(!empty($CFG->enableavailability)) {
-            $form->availablefrom      = $cm->availablefrom;
-            $form->availableuntil     = $cm->availableuntil;
-            $form->showavailability   = $cm->showavailability;
+        $data->coursemodule       = $cm->id;
+        $data->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
+        $data->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
+        $data->cmidnumber         = $cm->idnumber;          // The cm IDnumber
+        $data->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
+        $data->groupingid         = $cm->groupingid;
+        $data->groupmembersonly   = $cm->groupmembersonly;
+        $data->course             = $course->id;
+        $data->module             = $module->id;
+        $data->modulename         = $module->name;
+        $data->instance           = $cm->instance;
+        $data->return             = $return;
+        $data->update             = $update;
+        $data->completion         = $cm->completion;
+        $data->completionview     = $cm->completionview;
+        $data->completionexpected = $cm->completionexpected;
+        $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+        if (!empty($CFG->enableavailability)) {
+            $data->availablefrom      = $cm->availablefrom;
+            $data->availableuntil     = $cm->availableuntil;
+            $data->showavailability   = $cm->showavailability;
         }
 
-        if (plugin_supports('mod', $form->modulename, FEATURE_MOD_INTRO, true)) {
+        if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
             $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-            $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $form->modulename.'_intro', 0, array('subdirs'=>true), $form->intro);
-            $form->introeditor = array('text'=>$currentintro, 'format'=>$form->introformat, 'itemid'=>$draftid_editor);
+            $currentintro = file_prepare_draft_area($draftid_editor, $context->id, $data->modulename.'_intro', 0, array('subdirs'=>true), $data->intro);
+            $data->introeditor = array('text'=>$currentintro, 'format'=>$data->introformat, 'itemid'=>$draftid_editor);
         }
 
-        if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
-                                                 'iteminstance'=>$form->instance, 'courseid'=>$course->id))) {
+        if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$data->modulename,
+                                                 'iteminstance'=>$data->instance, 'courseid'=>$course->id))) {
             // add existing outcomes
             foreach ($items as $item) {
                 if (!empty($item->outcomeid)) {
-                    $form->{'outcome_'.$item->outcomeid} = 1;
+                    $data->{'outcome_'.$item->outcomeid} = 1;
                 }
             }
 
@@ -170,14 +186,15 @@
             }
             if ($gradecat !== false) {
                 // do not set if mixed categories present
-                $form->gradecat = $gradecat;
+                $data->gradecat = $gradecat;
             }
         }
 
         $sectionname = get_section_name($course->format);
         $fullmodulename = get_string('modulename', $module->name);
 
-        if ($form->section && $course->format != 'site') {
+        if ($data->section && $course->format != 'site') {
+            $heading = new object();
             $heading->what = $fullmodulename;
             $heading->in   = "$sectionname $cw->section";
             $pageheading = get_string('updatingain', 'moodle', $heading);
@@ -185,7 +202,7 @@
             $pageheading = get_string('updatinga', 'moodle', $fullmodulename);
         }
 
-        $navlinksinstancename = array('name' => format_string($form->name, true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinksinstancename = array('name' => format_string($data->name, true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
 
         $pagetype = 'mod-' . $module->name . '-';
         if (!empty($type)) {
@@ -195,6 +212,7 @@
         }
         $PAGE->set_pagetype($pagetype);
     } else {
+        require_login();
         print_error('invalidaction');
     }
 
@@ -214,8 +232,8 @@
     }
 
     $mformclassname = 'mod_'.$module->name.'_mod_form';
-    $mform = new $mformclassname($form, $cw->section, $cm, $course);
-    $mform->set_data($form);
+    $mform = new $mformclassname($data, $cw->section, $cm, $course);
+    $mform->set_data($data);
 
     if ($mform->is_cancelled()) {
         if ($return && !empty($cm->id)) {
@@ -268,7 +286,7 @@
         if (!isset($fromform->name)) { //label
             $fromform->name = $fromform->modulename;
         }
-        
+
         if (!isset($fromform->completion)) {
             $fromform->completion = COMPLETION_DISABLED;
         }
@@ -292,6 +310,7 @@
             $cm->groupmode        = $fromform->groupmode;
             $cm->groupingid       = $fromform->groupingid;
             $cm->groupmembersonly = $fromform->groupmembersonly;
+
             $completion = new completion_info($course);
             if ($completion->is_enabled()) {
                 // Handle completion settings. If necessary, wipe existing completion
@@ -306,13 +325,13 @@
                 $cm->completionview            = $fromform->completionview;
                 $cm->completionexpected        = $fromform->completionexpected;
             }
-            if(!empty($CFG->enableavailability)) {
+            if (!empty($CFG->enableavailability)) {
                 $cm->availablefrom             = $fromform->availablefrom;
                 $cm->availableuntil            = $fromform->availableuntil;
-                // The form time is midnight, but because we want it to be 
+                // The form time is midnight, but because we want it to be
                 // inclusive, set it to 23:59:59 on that day.
                 if ($cm->availableuntil) {
-                    $cm->availableuntil = strtotime('23:59:59', 
+                    $cm->availableuntil = strtotime('23:59:59',
                         $cm->availableuntil);
                 }
                 $cm->showavailability          = $fromform->showavailability;
@@ -322,7 +341,7 @@
             $DB->update_record('course_modules', $cm);
 
             $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
-    
+
             // update embedded links and save files
             if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
                 $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
@@ -331,7 +350,7 @@
                 $fromform->introformat = $fromform->introeditor['format'];
                 unset($fromform->introeditor);
             }
-            
+
             if (!$updateinstancefunction($fromform, $mform)) {
                 print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
             }
@@ -380,10 +399,10 @@
             if(!empty($CFG->enableavailability)) {
                 $newcm->availablefrom             = $fromform->availablefrom;
                 $newcm->availableuntil            = $fromform->availableuntil;
-                // The form time is midnight, but because we want it to be 
+                // The form time is midnight, but because we want it to be
                 // inclusive, set it to 23:59:59 on that day.
                 if ($newcm->availableuntil) {
-                    $newcm->availableuntil = strtotime('23:59:59', 
+                    $newcm->availableuntil = strtotime('23:59:59',
                         $newcm->availableuntil);
                 }
                 $newcm->showavailability          = $fromform->showavailability;
@@ -393,24 +412,16 @@
                 print_error('cannotaddcoursemodule');
             }
 
-            $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
-    
-            // update embedded links and save files
-            if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
-                $fromform->intro = file_save_draft_area_files($fromform->introeditor['itemid'], $modcontext->id,
-                                                              $fromform->modulename.'_intro', 0,
-                                                              array('subdirs'=>true), $fromform->introeditor['text']);
-                $fromform->introformat = $fromform->introeditor['format'];
-                unset($fromform->introeditor);
-            }
+            $introeditor = $fromform->introeditor;
+            unset($fromform->introeditor);
+            $fromform->intro       = $introeditor['text'];
+            $fromform->introformat = $introeditor['format'];
 
             $returnfromfunc = $addinstancefunction($fromform, $mform);
 
             if (!$returnfromfunc or !is_number($returnfromfunc)) {
                 // undo everything we can
                 $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
-                $fs = get_file_storage();
-                $fs->delete_area_files($modcontext->id);
                 delete_context(CONTEXT_MODULE, $fromform->coursemodule);
                 $DB->delete_records('course_modules', array('id'=>$fromform->coursemodule));
 
@@ -424,6 +435,15 @@
             $fromform->instance = $returnfromfunc;
 
             $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id'=>$fromform->coursemodule));
+
+            // update embedded links and save files
+            $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
+            if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
+                $fromform->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
+                                                              $fromform->modulename.'_intro', 0,
+                                                              array('subdirs'=>true), $introeditor['text']);
+                $DB->set_field($fromform->modulename, 'intro', $fromform->intro, array('id'=>$fromform->instance));
+            }
 
             // course_modules and course_sections each contain a reference
             // to each other, so we have to update one of them twice.
@@ -545,7 +565,7 @@
         rebuild_course_cache($course->id);
         grade_regrade_final_grades($course->id);
 
-        if (isset($fromform->submitbutton)) { 
+        if (isset($fromform->submitbutton)) {
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
         } else {
             redirect("$CFG->wwwroot/course/view.php?id=$course->id");

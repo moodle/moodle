@@ -122,6 +122,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
             $filename = clean_param($item->getFilename(), PARAM_FILE);
 
             if ($filename === '') {
+                //unsupported chars, sorry
                 continue;
             }
 
@@ -140,7 +141,12 @@ function upgrade_migrate_files_course($context, $path, $delete) {
                 continue; // modules are responsible
             }
 
-            $filepath = clean_param($filepath.$item->getFilename().'/', PARAM_PATH);
+            $dirname = clean_param($item->getFilename(), PARAM_PATH);
+            if ($dirname === '') {
+                //unsupported chars, sorry
+                continue;
+            }
+            $filepath = ($filepath.$dirname.'/');
             if ($filepath !== '/backupdata/') {
                 $fs->create_directory($context->id, $filearea, 0, $filepath);
             }
