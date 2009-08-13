@@ -24,9 +24,7 @@ Resource module one of the successors to original 'file' type plugin of Resource
 
 
 TODO:
- * create better icon (?)
- * reimplement portfolio support (?)
- * new backup/restore (Eloy)
- * old restore support (Eloy)
- * file manager element with main file selection (Dongsheng)
- * reimplement resource name filter as part of more general activitynames filter (skodak)
+ * reimplement portfolio support (MDL-20079)
+ * new backup/restore and old restore migration (MDL-20081)
+ * file manager element with main file selection (MDL-20082)
+ * reimplement resource name filter as part of more general activitynames filter (MDL-20083)
