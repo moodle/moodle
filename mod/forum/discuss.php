@@ -92,7 +92,7 @@
             print_error('cannotpurgecachedrss', 'forum', $return);
         }
 
-        redirect($return.'&amp;moved=-1&amp;sesskey='.sesskey());
+        redirect($return.'&moved=-1&sesskey='.sesskey());
     }
 
     $logparameters = "d=$discussion->id";
@@ -206,7 +206,7 @@
                 }
                 $section = $forumcm->sectionnum;
                 if ($forumcm->instance != $forum->id) {
-                    $url = "discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
+                    $url = $CFG->wwwroot . "/mod/forum/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
                     $forummenu[$url] = format_string($forumcm->name);
                 }
             }

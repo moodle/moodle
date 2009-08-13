@@ -555,7 +555,10 @@ class html_select extends labelled_html_component {
     public function override_option_values($options) {
         global $PAGE;
 
+        $originalcount = count($options);
         $this->initialise_options();
+        $newcount = count($this->options);
+        $first = true;
 
         reset($options);
 
@@ -572,15 +575,16 @@ class html_select extends labelled_html_component {
                     }
                 }
                 next($options);
-            } else if ($optgroup instanceof html_select_option) {
-                next($options);
+            } else if ($optgroup instanceof html_select_option && !($first && $originalcount < $newcount)) {
                 $this->options[$optkey]->value = key($options);
                 $optionurl = new moodle_url(key($options));
 
                 if ($optionurl->compare($PAGE->url, URL_MATCH_PARAMS)) {
                     $this->options[$optkey]->selected = 'selected';
                 }
+                next($options);
             }
+            $first = false;
         }
     }
 
