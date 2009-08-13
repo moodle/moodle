@@ -2012,6 +2012,69 @@ class assignment_base {
     function portfolio_exportable() {
         return false;
     }
+
+    /**
+     * base implementation for backing up subtype specific information
+     * for one single module
+     *
+     * @param filehandle $bf file handle for xml file to write to
+     * @param mixed $preferences the complete backup preference object
+     *
+     * @return boolean
+     *
+     * @static
+     */
+    static function backup_one_mod($bf, $preferences, $assignment) {
+        return true;
+    }
+
+    /**
+     * base implementation for backing up subtype specific information
+     * for one single submission
+     *
+     * @param filehandle $bf file handle for xml file to write to
+     * @param mixed $preferences the complete backup preference object
+     * @param object $submission the assignment submission db record
+     *
+     * @return boolean
+     *
+     * @static
+     */
+    static function backup_one_submission($bf, $preferences, $assignment, $submission) {
+        return true;
+    }
+
+    /**
+     * base implementation for restoring subtype specific information
+     * for one single module
+     *
+     * @param array  $info the array representing the xml
+     * @param object $restore the restore preferences
+     *
+     * @return boolean
+     *
+     * @static
+     */
+    static function restore_one_mod($info, $restore, $assignment) {
+        return true;
+    }
+
+    /**
+     * base implementation for restoring subtype specific information
+     * for one single submission
+     *
+     * @param object $submission the newly created submission
+     * @param array  $info the array representing the xml
+     * @param object $restore the restore preferences
+     *
+     * @return boolean
+     *
+     * @static
+     */
+    static function restore_one_submission($info, $restore, $assignment, $submission) {
+        return true;
+    }
+
 } ////// End of the assignment_base class
 
 /**
