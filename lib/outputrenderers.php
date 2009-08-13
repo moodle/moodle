@@ -1676,7 +1676,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function radio($option, $name='unnamed') {
         static $currentradio = array();
-        
+
         if (empty($currentradio[$name])) {
             $currentradio[$name] = 0;
         }
@@ -1847,6 +1847,10 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output = '';
 
+        if (!debugging('', DEBUG_DEVELOPER)) {
+            return false;
+        }
+
         if ($this->has_started()) {
             $output .= $this->opencontainers->pop_all_but_last();
         } else {
@@ -1861,18 +1865,16 @@ class moodle_core_renderer extends moodle_renderer_base {
                 get_string('moreinformation') . '</a></p>';
         $output .= $this->box($message, 'errorbox');
 
-        if (debugging('', DEBUG_DEVELOPER)) {
-            if ($showerrordebugwarning) {
-                $output .= $this->notification('error() is a deprecated function. ' .
-                        'Please call print_error() instead of error()', 'notifytiny');
-            }
-            if (!empty($debuginfo)) {
-                $output .= $this->notification($debuginfo, 'notifytiny');
-            }
-            if (!empty($backtrace)) {
-                $output .= $this->notification('Stack trace: ' .
-                        format_backtrace($backtrace), 'notifytiny');
-            }
+        if ($showerrordebugwarning) {
+            $output .= $this->notification('error() is a deprecated function. ' .
+                    'Please call print_error() instead of error()', 'notifytiny');
+        }
+        if (!empty($debuginfo)) {
+            $output .= $this->notification($debuginfo, 'notifytiny');
+        }
+        if (!empty($backtrace)) {
+            $output .= $this->notification('Stack trace: ' .
+                    format_backtrace($backtrace), 'notifytiny');
         }
 
         if (!empty($link)) {
