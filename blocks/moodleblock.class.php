@@ -783,7 +783,7 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function user_can_addto(&$page) {
+    function user_can_addto($page) {
         return true;
     }
 
