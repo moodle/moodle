@@ -390,6 +390,7 @@ class grade_edit_tree {
 
             $object->set_parent($parent->id);
             $object->move_after_sortorder($sortorder);
+            $sortorder++;
         }
 
         redirect($returnurl, '', 0);
