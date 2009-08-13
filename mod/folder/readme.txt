@@ -25,9 +25,8 @@ Folder module is a successor to original 'directory' type plugin of Resource mod
 This module is intended for distribution of large number of documents.
 
 TODO:
- * reimplement portfolio support (?)
- * implement subdirectory support in File picker (Dongsheng)
- * new backup/restore (Eloy)
- * old restore support (Eloy)
- * improve folder view UI (skodak)
+ * reimplement portfolio support (MDL-20070)
+ * implement subdirectory support in File picker (MDL-20071)
+ * new backup/restore and old restore transformation (MDL-20072)
+ * improve folder view UI (MDL-20073)
 
