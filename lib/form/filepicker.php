@@ -65,6 +65,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     function toHtml() {
         global $CFG, $COURSE, $USER, $PAGE;
 
+
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         }
@@ -89,6 +90,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
         $client_id = uniqid();
         $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
+        $PAGE->requires->data_for_js('filepicker', array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>1));
+        $PAGE->requires->js('lib/form/filepicker.js');
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
@@ -97,10 +100,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" '.$draftvalue.' />';
         $str .= $repojs;
 
-        $str .= $PAGE->requires->data_for_js('filepicker', Array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>1))->asap();
-        $str .= $PAGE->requires->js('lib/form/filepicker.js')->asap();
         $str .= <<<EOD
-<button onclick="return callpicker('$id', '$client_id', '$draftvalue')">$straddfile</button>
+<a href="#nonjsfp" onclick="return launch_filepicker('$id', '$client_id', '$draftvalue')">$straddfile</a>
 <span id="file_info_{$client_id}" class="notifysuccess">$currentfile</span>
 
 <noscript>
