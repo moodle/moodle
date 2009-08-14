@@ -1178,7 +1178,6 @@ class moodle_core_renderer extends moodle_renderer_base {
             $contents = $this->output_empty_tag('input', array('type' => 'submit', 'value' => get_string('ok')));
         } else if (!empty($form->button)) {
             $form->button->prepare();
-            $buttonoutput = $this->output_start_tag('div', array('id' => "noscript$form->id"));
             $this->prepare_event_handlers($form->button);
 
             $buttonattributes = array('class' => $form->button->get_classes_string(),
@@ -1187,9 +1186,13 @@ class moodle_core_renderer extends moodle_renderer_base {
                                       'disabled' => $form->button->disabled,
                                       'id' => $form->button->id);
 
-            $buttonoutput .= $this->output_empty_tag('input', $buttonattributes);
-            $buttonoutput .= $this->output_end_tag('div');
-            $this->page->requires->js_function_call('hide_item', array("noscript$form->id"));
+            $buttonoutput = $this->output_empty_tag('input', $buttonattributes);
+
+            // Hide the submit button if the button has a JS submit action
+            if ($form->jssubmitaction) {
+                $buttonoutput = $this->output_start_tag('div', array('id' => "noscript$form->id")) . $buttonoutput . $this->output_end_tag('div');
+                $this->page->requires->js_function_call('hide_item', array("noscript$form->id"));
+            }
 
         }
 
@@ -1330,8 +1333,9 @@ class moodle_core_renderer extends moodle_renderer_base {
         // Use image if one is given
         if (!empty($image) && $image instanceof html_image) {
 
-            if (empty($image->alt)) {
+            if (empty($image->alt) || $image->alt == HTML_ATTR_EMPTY) {
                 $image->alt = $link->text;
+                $image->title = $link->text;
             }
 
             $link->text = $this->image($image);
@@ -1353,12 +1357,13 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function spacer($image) {
         $image = clone($image);
-        $image->prepare();
-        $image->add_class('spacer');
 
         if (empty($image->src)) {
             $image->src = $this->old_icon_url('spacer');
         }
+
+        $image->prepare();
+        $image->add_class('spacer');
 
         $output = $this->image($image);
 
@@ -1524,14 +1529,18 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         foreach ($list->items as $listitem) {
             if ($listitem instanceof html_list) {
-                $output .= $this->output_start_tag('li', array());
-                $output .= $this->htmllist($listitem);
-                $output .= $this->output_end_tag('li');
+                $output .= $this->output_start_tag('li', array()) . "\n";
+                $output .= $this->htmllist($listitem) . "\n";
+                $output .= $this->output_end_tag('li') . "\n";
             } else if ($listitem instanceof html_list_item) {
                 $listitem->prepare();
                 $this->prepare_event_handlers($listitem);
-                $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value);
+                $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
             }
+        }
+
+        if ($list->text) {
+            $output = $list->text . $output;
         }
 
         return $output . $this->output_end_tag($tag);

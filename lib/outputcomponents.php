@@ -536,6 +536,7 @@ class html_select extends labelled_html_component {
         $select->form = new html_form();
         $select->form->id = $formid;
         $select->form->method = 'get';
+        $select->form->jssubmitaction = true;
         $select->form->add_class('popupform');
         $select->form->url = new moodle_url($CFG->wwwroot . '/course/jumpto.php', array('sesskey' => sesskey()));
         $select->form->button->text = get_string('go');
@@ -1242,7 +1243,7 @@ class html_button extends labelled_html_component {
         $this->add_class('singlebutton');
 
         if (empty($this->text)) {
-            throw new coding_exception('A html_button must have a text value!');
+            $this->text = get_string('submit');
         }
 
         if ($this->disabled) {
@@ -1275,6 +1276,10 @@ class html_image extends labelled_html_component {
      * @return void
      */
     public function prepare() {
+        if (empty($this->src)) {
+            throw new coding_exception('html_image requires a $src value (moodle_url).');
+        }
+
         $this->add_class('image');
         parent::prepare();
     }
@@ -1365,7 +1370,10 @@ class html_form extends moodle_html_component {
      * @var html_button $button A submit button
      */
     public $button;
-
+    /**
+     * @var boolean $jssubmitaction If true, the submit button will be hidden when JS is enabled
+     */
+    public $jssubmitaction = false;
     /**
      * Constructor: sets up the other components in case they are needed
      * @return void
@@ -1424,6 +1432,11 @@ class html_list extends moodle_html_component {
     public $type = 'unordered';
 
     /**
+     * @var string $text An optional descriptive text for the list. Will be output as a list item before opening the new list
+     */
+    public $text = false;
+
+    /**
      * @see lib/moodle_html_component#prepare()
      * @return void
      */
@@ -1443,17 +1456,21 @@ class html_list extends moodle_html_component {
 
         $this->add_class("list-$level");
 
+        $i = 1;
         foreach ($tree as $key => $element) {
             if (is_array($element)) {
                 $newhtmllist = new html_list();
+                $newhtmllist->type = $this->type;
                 $newhtmllist->load_data($element, $level + 1);
+                $newhtmllist->text = $key;
                 $this->items[] = $newhtmllist;
             } else {
                 $listitem = new html_list_item();
                 $listitem->value = $element;
-                $listitem->add_class("list-item-$level-$key");
+                $listitem->add_class("list-item-$level-$i");
                 $this->items[] = $listitem;
             }
+            $i++;
         }
     }
 
@@ -1868,11 +1885,11 @@ class moodle_help_icon extends labelled_html_component {
             throw new coding_exception('A moodle_help_icon object requires a $page parameter');
         }
 
-        if (empty($this->text)) {
-            throw new coding_exception('A moodle_help_icon object requires a $text parameter');
+        if (empty($this->text) && empty($this->link->text)) {
+            throw new coding_exception('A moodle_help_icon object (or its $link attribute) requires a $text parameter');
+        } else if (!empty($this->text) && empty($this->link->text)) {
+            $this->link->text = $this->text;
         }
-
-        $this->link->text = $this->text;
 
         // fix for MDL-7734
         $this->link->url = new moodle_url('/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
