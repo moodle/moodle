@@ -90,9 +90,9 @@ if (!empty($edit) || !empty($new)) {
     } else {
         admin_externalpage_print_header();
         echo $OUTPUT->heading(get_string('configplugin', 'repository_'.$plugin));
-        print_simple_box_start();
+        echo $OUTPUT->box_start();
         $mform->display();
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
         $return = false;
     }
 } else if (!empty($hide)) {
