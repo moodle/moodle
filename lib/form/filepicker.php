@@ -100,8 +100,9 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= $PAGE->requires->data_for_js('filepicker', Array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>1))->asap();
         $str .= $PAGE->requires->js('lib/form/filepicker.js')->asap();
         $str .= <<<EOD
-<a href="#nonjsfp" class="btnaddfile" onclick="return callpicker('$client_id', '$id', '$draftvalue')">$straddfile</a>
-<span id="repo_info_{$client_id}" class="notifysuccess">$currentfile</span>
+<button onclick="return callpicker('$id', '$client_id', '$draftvalue')">$straddfile</button>
+<span id="file_info_{$client_id}" class="notifysuccess">$currentfile</span>
+
 <noscript>
 <a name="nonjsfp"></a>
 <object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
