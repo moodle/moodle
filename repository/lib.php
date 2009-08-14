@@ -646,7 +646,7 @@ abstract class repository {
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
                     // super_called will make sure the parent construct function is called
                     // by repository construct function
-                    $capability = has_capability('repository/'.$repo->repositorytype.':view', $context, $USER->id, false);
+                    $capability = has_capability('repository/'.$repo->repositorytype.':view', $context, $USER->id);
                     if ($is_supported && $capability) {
                         $ret[] = $repository;
                     }
