@@ -623,7 +623,7 @@ abstract class repository {
             $is_supported = true;
 
             $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-            $context = get_context_instance_by_id(CONTEXT_SYSTEM, $repo->contextid);
+            $context = get_context_instance_by_id($repo->contextid);
             if (empty($repository->super_called)) {
                 debugging('parent::__construct must be called by '.$repo->repositorytype.' plugin.');
             } else {
