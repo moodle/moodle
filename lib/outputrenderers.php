@@ -1799,6 +1799,9 @@ class moodle_core_renderer extends moodle_renderer_base {
         $field->prepare();
         $this->prepare_event_handlers($field);
         $output = $this->output_start_tag('span', array('class' => "textfield $field->name"));
+        if (!empty($field->label)) {
+            $output .= $this->label($field->label);
+        }
         $output .= $this->output_empty_tag('input', array(
                 'type' => 'text',
                 'name' => $field->name,

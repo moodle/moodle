@@ -232,7 +232,9 @@ class labelled_html_component extends moodle_html_component {
             $this->label = new html_label();
             $this->label->for = $for;
             if (empty($for)) {
-                $this->generate_id();
+                if (empty($this->id)) {
+                    $this->generate_id();
+                }
                 $this->label->for = $this->id;
             }
             $this->label->text = $text;
