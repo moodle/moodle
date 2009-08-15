@@ -209,7 +209,7 @@
                 $class = 'assignment_' . $assignment->assignmenttype;
                 require_once($CFG->dirroot . '/mod/assignment/lib.php');
                 require_once($CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php');
-                call_user_func(array($class, 'restore_one_submission'), $info, $restore, $assignment, $submission);
+                call_user_func(array($class, 'restore_one_submission'), $sub_info, $restore, $assignment, $submission);
             } else {
                 $status = false;
             }
