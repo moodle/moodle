@@ -57,8 +57,6 @@ $str_userlist  = get_string('userlist',  'chat');
 $PAGE->set_generaltype('popup');
 $PAGE->set_title('Chat');
 
-$PAGE->requires->yui_lib('dom');
-$PAGE->requires->yui_lib('element');
 $PAGE->requires->yui_lib('dragdrop');
 $PAGE->requires->yui_lib('resize');
 $PAGE->requires->yui_lib('layout');
@@ -72,13 +70,17 @@ $PAGE->requires->data_for_js('chat_lang', array('send'=>$str_send, 'sending'=>$s
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
 $PAGE->add_body_class('yui-skin-sam');
 
-$PAGE->requires->css('lib/yui/reset-fonts-grids/reset-fonts-grids.css');
-$PAGE->requires->css('lib/yui/resize/assets/skins/sam/resize.css');
-$PAGE->requires->css('lib/yui/layout/assets/skins/sam/layout.css');
-$PAGE->requires->css('lib/yui/button/assets/skins/sam/button.css');
-
 echo $OUTPUT->header();
-echo "<style type='text/css'> #listing a{text-decoration:none;color:gray} #listing a:hover {text-decoration:underline;color:white;background:blue} #listing{padding: .5em}</style>";
+echo <<<STY
+<style type='text/css'>
+#messageslist{list-style-type:none;padding:0;margin:0}
+#listing a{text-decoration:none;color:gray}
+#listing a:hover {text-decoration:underline;color:white;background:blue}
+#listing{padding: .5em}
+h2{margin:0}
+</style>
+STY;
+
 echo $OUTPUT->heading($str_title,1);
 echo <<<DIVS
 <div id="chat_header">
@@ -88,14 +90,14 @@ echo <<<DIVS
     <input type="button" id="btn_send" value="$str_send" />
 </div>
 <div id="chat_user_list">
-<ul id="listing">
-</ul>
+    <ul id="listing">
+    </ul>
 </div>
 <div id="chat_options">
 </div>
 <div id="chat_panel">
-<ul id="msg_list">
-<ul>
+    <ul id="messageslist">
+    <ul>
 </div>
 <div id="notify">
 </div>

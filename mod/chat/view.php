@@ -165,14 +165,14 @@
 
     if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
         $timenow = time();
-        print_simple_box_start('center');
+        $OUTPUT->box_start('generalbox');
         echo $OUTPUT->heading($strcurrentusers);
         echo '<table id="chatcurrentusers">';
         foreach ($chatusers as $chatuser) {
             $lastping = $timenow - $chatuser->lastmessageping;
             echo '<tr><td class="chatuserimage">';
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
-            print_user_picture($chatuser, 0, $chatuser->picture, false, false, false);
+            print_user_picture($chatuser, $COURSE->id, $chatuser->picture, false, false, false);
             echo '</a></td><td class="chatuserdetails">';
             echo '<p>';
             echo fullname($chatuser).'<br />';
@@ -181,7 +181,7 @@
             echo '</td></tr>';
         }
         echo '</table>';
-        print_simple_box_end();
+        $OUTPUT->box_end();
     }
 
     echo $OUTPUT->footer();

@@ -7,9 +7,9 @@
 
 define('NO_MOODLE_COOKIES', true); // session not used here
 
-require_once('../../../config.php');
-require_once('../lib.php');
-require_once('common.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require_once(dirname(dirname(__FILE__)) . '/lib.php');
+require_once(dirname(__FILE__) . '/common.php');
 
 ob_start();
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');

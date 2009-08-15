@@ -777,7 +777,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
-    $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
+    $message->picture = print_user_picture($sender->id, $courseid, $sender->picture, false, true, false);
     if ($courseid) {
         $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }

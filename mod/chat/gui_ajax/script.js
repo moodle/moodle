@@ -25,7 +25,7 @@ Event.onDOMReady(function() {
     layout.render();
     Event.on('btn_send', 'click', function(ev) {
         Event.stopEvent(ev);
-        send_msg();
+        send_message();
     });
     Event.on('chat_panel', 'mouseover', function(ev) {
         Event.stopEvent(ev);
@@ -35,15 +35,27 @@ Event.onDOMReady(function() {
         Event.stopEvent(ev);
         scrollable = true;
     });
-    var key_send = new YAHOO.util.KeyListener(document, { keys:13 }, {fn:send_msg, correctScope:true });
+    var key_send = new YAHOO.util.KeyListener(document, { keys:13 }, {fn:send_message, correctScope:true });
     key_send.enable();
     document.getElementById('input_msgbox').focus();
     document.title = chat_cfg.chatroom_name;
 
-    // done build layout
-    var transaction = YAHOO.util.Connect.asyncRequest('POST', "update.php?chat_sid="+chat_cfg.sid+"&chat_init=1", init_cb, null);
+
+    this.cb = {
+        success: function(o){
+            if(o.responseText){
+                var data = YAHOO.lang.JSON.parse(o.responseText);
+            } else {
+                return;
+            }
+            if (data.users) {
+                update_users(data.users);
+            }
+        }
+    }
+    var transaction = YAHOO.util.Connect.asyncRequest('POST', "update.php?chat_sid="+chat_cfg.sid+"&chat_init=1", this.cb, null);
     interval = setInterval(function(){
-        update_info();
+        update_messages();
     }, chat_cfg.timer);
 });
 })();
@@ -64,21 +76,38 @@ function talkto(name) {
     msg.value = "To "+name+": ";
     msg.focus();
 }
-function send_msg() {
+
+function send_message() {
     var msg = document.getElementById('input_msgbox').value;
     var el_send = document.getElementById('btn_send');
     if (!msg) {
-        alert('null?');
+        alert('Empty message not allowed');
         return;
     }
     var url = 'post.php?chat_sid='+chat_cfg.sid;
     el_send.value = chat_lang.sending;
-    var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
+    var trans = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
 }
 function send_beep(id){
     var url = 'post.php?chat_sid='+chat_cfg.sid;
-    var a = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "beep="+id);
+    var trans = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "beep="+id);
 }
+
+var send_cb = {
+    success: function(o) {
+        if(o.responseText == 200){
+            document.getElementById('btn_send').value = chat_lang.send;
+            document.getElementById('input_msgbox').value = '';
+        }
+        clearInterval(interval)
+        update_messages();
+        interval = setInterval(function(){
+            update_messages();
+        }, chat_cfg.timer);
+        document.getElementById('input_msgbox').focus();
+    }
+}
+
 function update_users(users) {
     if(!users){
         return;
@@ -97,7 +126,7 @@ function update_users(users) {
         list.appendChild(el);
     }
 }
-function update_info() {
+function update_messages() {
     if(!chat_cfg.req_count){
         chat_cfg.req_count = 1;
     } else {
@@ -108,32 +137,17 @@ function update_info() {
     if(chat_cfg.chat_lastrow != null){
         url += "&chat_lastrow="+chat_cfg.chat_lastrow;
     }
-    var a = YAHOO.util.Connect.asyncRequest('POST', url, update_cb, null);
+    var trans = YAHOO.util.Connect.asyncRequest('POST', url, update_cb, null);
 }
 function append_msg(msg) {
-    var list = document.getElementById('msg_list');
-    var el = document.createElement('li');
+    var list = document.getElementById('messageslist');
+    var item = document.createElement('li');
     console.info('New message:'+msg.msg);
-    el.innerHTML = msg.msg;
+    item.innerHTML = msg.msg;
     if(msg.type && msg.type == 'beep'){
         document.getElementById('notify').innerHTML = '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
     }
-    list.appendChild(el);
-}
-
-var send_cb = {
-    success: function(o) {
-        if(o.responseText == 200){
-         document.getElementById('btn_send').value = chat_lang.send;
-         document.getElementById('input_msgbox').value = '';
-        }
-        clearInterval(interval)
-        update_info();
-        interval = setInterval(function(){
-            update_info();
-        }, chat_cfg.timer);
-        document.getElementById('input_msgbox').focus();
-    }
+    list.appendChild(item);
 }
 var update_cb = {
 success: function(o){
@@ -172,18 +186,6 @@ success: function(o){
         document.getElementById('chat_panel').parentNode.scrollTop+=500;
     }
 }
-}
-var init_cb = {
-    success: function(o){
-        if(o.responseText){
-            var data = YAHOO.lang.JSON.parse(o.responseText);
-        } else {
-            return;
-        }
-        if (data.users) {
-            update_users(data.users);
-        }
-    }
 }
 
 // debug code

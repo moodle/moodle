@@ -1,17 +1,16 @@
 <?php
-
 function microtime_float(){
     list($usec, $sec) = explode(" ", microtime());
     return ((float)$usec+(float)$sec);
 }
 
 function format_user_list($data, $course) {
-    global $CFG, $DB;
+    global $CFG, $DB, $COURSE;
     $users = array();
     foreach($data as $v){
         $user['name'] = fullname($v);
         $user['url'] = $CFG->wwwroot.'/user/view.php?id='.$v->id.'&amp;course='.$course->id;
-        $user['picture'] = print_user_picture($v->id, 0, $v->picture, false, true, false);
+        $user['picture'] = print_user_picture($v->id, $COURSE->id, $v->picture, false, true, false);
         $user['id'] = $v->id;
         $users[] = $user;
     }
