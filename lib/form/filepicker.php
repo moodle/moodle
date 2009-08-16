@@ -101,7 +101,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= $repojs;
 
         $str .= <<<EOD
-<a href="#nonjsfp" onclick="return launch_filepicker('$id', '$client_id', '$draftvalue')">$straddfile</a>
+<a href="#nonjsfp" onclick="return launch_filepicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
 <span id="file_info_{$client_id}" class="notifysuccess">$currentfile</span>
 
 <noscript>
