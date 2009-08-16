@@ -971,11 +971,6 @@ repository_client.postdata = function(obj) {
     return str;
 }
 
-repository_client.stripHTML = function(str){
-    var re= /<\S[^><]*>/g
-    var ret = str.replace(re, "")
-    return ret;
-}
 repository_client.popup = function(client_id, url) {
     window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
     cached_client_id = client_id;
@@ -1121,7 +1116,7 @@ repository_client.parse_json = function(txt, source) {
     try {
         var ret = YAHOO.lang.JSON.parse(txt);
     } catch(e) {
-        alert(fp_lang.invalidjson+' - |'+source+'| -'+this.stripHTML(txt));
+        alert(fp_lang.invalidjson+' - |'+source+'| -'+stripHTML(txt));
     }
     return ret;
 }
