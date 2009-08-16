@@ -479,7 +479,7 @@ repository_client.loading = function(id, type, name) {
     try {
         panel.get('element').innerHTML = str;
     } catch(e) {
-        alert('sadjfjsalfkj '+ e.toString());
+        alert(e.toString());
     }
 }
 repository_client.view_as_list = function(client_id, data) {
