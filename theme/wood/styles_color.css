@@ -26,10 +26,10 @@ ul.tabrow1 li a:visited,
 .generaltable .cell,
 div.sideblock table.minicalendar,
 .sideblock .hide-show-image,
-#course-view .weeks .content,
-#course-view .topics .content,
-#course-view .weeks .section,
-#course-view .topics .section {
+.course-view .weeks .content,
+.course-view .topics .content,
+.course-view .weeks .section,
+.course-view .topics .section {
     border:none;
     background:none;
 }
@@ -263,7 +263,6 @@ legend,
 .coursebox,
 .categorybox,
 .cal_popup_fg,
-#course-view .section td.content,
 table.files,
 #admin-index .generalbox,
 .generalbox,
@@ -291,8 +290,7 @@ form.mform fieldset,
 
 /** Places using the vertical ultra-white wood texture without borders **/
 
-#course-view .weeks .section.main .content,
-#course-view .topics .section.main .content,
+.course-view .section.main .content,
 #mod-chat-gui_header_js-users,
 #grade-index .generaltableheader,
 #grade-index .generalboxcontent,
@@ -332,9 +330,7 @@ form.mform fieldset,
 
 /** Places using the vertical medium wood texture with borders **/
 
-#course-view .weeks .section.main,
-#course-view .topics .section.main,
-#course-view .section td.side {
+.course-view .section.main {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
