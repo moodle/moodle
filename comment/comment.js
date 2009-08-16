@@ -41,11 +41,7 @@ function get_comments(client_id, area, itemid, page) {
     }
     this.cb = {
         success: function(o) {
-            try {
-                var ret = YAHOO.lang.JSON.parse(o.responseText);
-            } catch(e) {
-                alert("JSON ERROR: "+o.responseText);
-            }
+            var ret = json_decode(o.responseText);
             if (!comment_check_response(ret)) {
                 return;
             }
@@ -68,11 +64,7 @@ function get_comments(client_id, area, itemid, page) {
 function post_comment(cid) {
     this.cb = {
         success: function(o) {
-            try {
-                var resp = YAHOO.lang.JSON.parse(o.responseText);
-            } catch(e) {
-                alert("JSON ERROR: "+o.responseText);
-            }
+            var resp = json_decode(o.responseText);
             if (!comment_check_response(resp)) {
                 return;
             }
@@ -120,11 +112,7 @@ function delete_comment(client_id, comment_id) {
     }
     this.cb = {
         success: function(o) {
-            try {
-                var resp = YAHOO.lang.JSON.parse(o.responseText);
-            } catch(e) {
-                alert("JSON ERROR: "+o.responseText);
-            }
+            var resp = json_decode(o.responseText);
             if (!comment_check_response(resp)) {
                 return;
             }
