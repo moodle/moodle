@@ -63,7 +63,7 @@ class data_field_checkbox extends data_field_base {
     }
 
     function display_search_field($value='') {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         $temp = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
         $options = array();
         if(!empty($temp)) {
@@ -72,7 +72,7 @@ class data_field_checkbox extends data_field_base {
                 $options[$key] = $key;  //Build following indicies from the sql.
             }
         }
-        return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true); 
+        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value)); 
     }
     
     function parse_search_field() {

@@ -11,8 +11,7 @@
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
 // the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
+// (at your option) any later version.                                   // //                                                                       //
 // This program is distributed in the hope that it will be useful,       //
 // but WITHOUT ANY WARRANTY; without even the implied warranty of        //
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
@@ -27,7 +26,7 @@ class data_field_textarea extends data_field_base {
     var $type = 'textarea';
 
     function display_add_field($recordid=0) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $text   = '';
         $format = 0;
@@ -54,9 +53,9 @@ class data_field_textarea extends data_field_base {
             // Get the available text formats for this field.
             $formatsForField = format_text_menu();
             $str .= '<br />';
-
-            $str .= choose_from_menu($formatsForField, 'field_' . $this->field->id .
-                                     '_content1', $format, 'choose', '', '', true);
+            $select = html_select( $formatsForField, 'field_' . $this->field->id . '_content1', $format);
+            $select->nothingvalue = '';
+            $str .= $OUTPUT->select($select);
 
             $str .= helpbutton('textformat', get_string('helpformatting'), 'moodle', true, false, '', true);
         }

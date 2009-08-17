@@ -325,7 +325,7 @@
 
         $options = array(0 => get_string('ascending', 'data'),
                          1 => get_string('descending', 'data'));
-        choose_from_menu($options, 'defaultsortdir', $data->defaultsortdir, '');
+        echo $OUTPUT->select(html_select::make($options, 'defaultsortdir', $data->defaultsortdir, false));
         echo '<input type="submit" value="'.get_string('save', 'data').'" />';
         echo '</div>';
         echo '</form>';

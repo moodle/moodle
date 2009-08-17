@@ -1305,7 +1305,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
  * @return void
  */
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
-    global $CFG, $DB, $PAGE;
+    global $CFG, $DB, $PAGE, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1320,7 +1320,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    choose_from_menu($pagesizes, 'perpage', $perpage, '', '', '0', false, false, 0, 'pref_perpage');
+    $select = html_select::make($pagesizes, 'perpage', $perpage, false);
+    $select->id = 'pref_perpage';
+    echo $OUTPUT->select($select);
      echo '<div id="reg_search" style="display: ';
     if ($advanced) {
         echo 'none';
@@ -1602,7 +1604,7 @@ function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
  * @param array $scale
  */
 function data_print_rating_menu($recordid, $userid, $scale) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     static $strrate;
 
@@ -1613,8 +1615,9 @@ function data_print_rating_menu($recordid, $userid, $scale) {
     if (empty($strrate)) {
         $strrate = get_string("rate", "data");
     }
-
-    choose_from_menu($scale, $recordid, $rating->rating, "$strrate...", '', -999);
+    $select = html_select::make($scale, $recordid, $rating->rating, "$strrate...");
+    $select->nothingvalue = -999;
+    echo $OUTPUT->select($select);
 }
 
 /**

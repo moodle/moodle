@@ -66,7 +66,7 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         $lats = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
         $longs = $DB->get_records_sql_menu('SELECT id, content1 FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
         $options = array();
@@ -77,7 +77,7 @@ class data_field_latlong extends data_field_base {
                 $options[$temp.','.$longs[$key]] = $temp.','.$longs[$key];
             }
         }
-       return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);
+       return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value));
     }
 
     function parse_search_field() {

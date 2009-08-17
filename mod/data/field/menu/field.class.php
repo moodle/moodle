@@ -27,7 +27,7 @@ class data_field_menu extends data_field_base {
     var $type = 'menu';
 
     function display_add_field($recordid=0) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         if ($recordid){
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
@@ -45,9 +45,13 @@ class data_field_menu extends data_field_base {
                 $options[$option] = $option;
             }
         }
+        
 
-        $str .= choose_from_menu($options, 'field_'.$this->field->id, $content,
-                                 get_string('menuchoose', 'data'), '', '', true, false, 0, 'field_'.$this->field->id);
+        $select = html_select::make($options, 'field_'.$this->field->id, $content, get_string('menuchoose', 'data'));
+        $select->nothingvalue = '';
+        $select->id = 'field_'.$this->field->id;
+
+        $str .= $OUTPUT->select($select);
 
         $str .= '</div>';
 
@@ -55,7 +59,7 @@ class data_field_menu extends data_field_base {
     }
     
     function display_search_field($content = '') {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $usedoptions = array();
         $sql = "SELECT DISTINCT content
@@ -84,7 +88,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return choose_from_menu($options, 'f_'.$this->field->id, $content, '&nbsp;', '', 0, true);    
+        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $content, '&nbsp;'));    
     }
 
      function parse_search_field() {
