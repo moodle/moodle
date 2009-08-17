@@ -13,7 +13,11 @@
 <tr valign="top">
     <td align="right">enrol_currency:</td>
     <td>
-    <?php choose_from_menu ($paypalcurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    <?php 
+        $select = html_select::make($paypalcurrencies, "enrol_currency", $frm->enrol_currency, false);
+        $select->nothingvalue = '';
+        echo $OUTPUT->select($select);
+    ?>
     </td>
     <td>
     <?php  print_string("currency") ?>

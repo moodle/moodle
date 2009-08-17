@@ -64,7 +64,12 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">enrol_currency:</td>
-    <td><?php choose_from_menu(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, "","", "") ?><br />
+    <td><?php 
+        $select = html_select::make(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
+        $select->nothingvalue = '';
+        echo $OUTPUT->select($select);
+        ?>
+        <br />
         <?php print_string("currency") ?>
     </td>
 </tr>
@@ -209,7 +214,11 @@ if (!isset($frm->acceptechecktypes)) {
     <td><?php
     $sorts = array('ttl' => get_string('adminemailexpiredsortsum', 'enrol_authorize'),
                    'cnt' => get_string('adminemailexpiredsortcount', 'enrol_authorize'));
-    choose_from_menu($sorts, "an_sorttype", $frm->an_sorttype, "","", "") ?><br />
+    $select = html_select::make($sorts, "an_sorttype", $frm->an_sorttype, false);
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
+    ?>
+    <br />
     <?php print_string("adminemailexpiredsort", "enrol_authorize") ?></td>
 </tr>
 

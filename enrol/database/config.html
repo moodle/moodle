@@ -19,7 +19,9 @@
        if (!isset($frm->enrol_dbtype)) {
            $frm->enrol_dbtype = 'mysql';
        }
-       choose_from_menu($dboptions, "enrol_dbtype", $frm->enrol_dbtype, '', '', '');
+       $select = html_select::make($dboptions, "enrol_dbtype", $frm->enrol_dbtype, false);
+       $select->nothingvalue = '';
+       echo $OUTPUT->select($select);
     ?>
       
     </td>
@@ -160,7 +162,7 @@
         $assignableroles = get_assignable_roles($sitecontext);
         $assignableroles = array('' => get_string('default')) + $assignableroles;
     
-        choose_from_menu($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, '');
+        echo $OUTPUT->select(html_select::make($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, false));
         if (isset($err['enrol_db_defaultcourseroleid'])) formerr($err['enrol_db_defaultcourseroleid']); 
     ?>
     </td>
@@ -178,7 +180,7 @@
     <td align="right">enrol_db_autocreate:</td>
     <td>
     <?php
-       choose_from_menu($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, "");
+       echo $OUTPUT->select(html_select::make($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, false));
            if (isset($err["enrol_db_autocreate"])) formerr($err["enrol_db_autocreate"]); 
     ?>
     </td>
@@ -194,7 +196,7 @@
            $displaylist = array();
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
-           choose_from_menu($displaylist, "enrol_db_category", $frm->enrol_db_category, "");
+           echo $OUTPUT->select(html_select::make($displaylist, "enrol_db_category", $frm->enrol_db_category, false));
            
     ?>
     <?php  if (isset($err["enrol_db_category"])) formerr($err["enrol_db_category"]); ?>
@@ -223,7 +225,7 @@
     <td align="right">enrol_db_ignorehiddencourse:</td>
     <td>
     <?php
-        choose_from_menu($yesno, "enrol_db_ignorehiddencourse", $frm->enrol_db_ignorehiddencourse, "");
+        echo $OUTPUT->select(html_select::make($yesno, "enrol_db_ignorehiddencourse", $frm->enrol_db_ignorehiddencourse, false));
         if (isset($err['enrol_db_ignorehiddencourse'])) {
             formerr($err['enrol_db_ignorehiddencourse']);
         }
@@ -238,7 +240,7 @@
     <td align="right">enrol_db_disableunenrol:</td>
     <td>
     <?php
-        choose_from_menu($yesno, "enrol_db_disableunenrol", $frm->enrol_db_disableunenrol, "");
+        echo $OUTPUT->select(html_select::make($yesno, "enrol_db_disableunenrol", $frm->enrol_db_disableunenrol, false));
         if (isset($err['enrol_db_disableunenrol'])) {
             formerr($err['enrol_db_disableunenrol']);
         }
