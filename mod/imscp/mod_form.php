@@ -47,10 +47,7 @@ class mod_imscp_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'imscp'));
-        $mform->addElement('static', 'note', '', '<i>(TODO: Filepicker is borked, sorry.)</i>');
-//        $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'));
-        $mform->setMaxFileSize(10000000);
-        $mform->addElement('file', 'package', get_string('packagefile', 'imscp'));
+        $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'));
 
         $options = array('-1'=>get_string('all'), '0'=>get_string('no'), '1'=>'1', '2'=>'2', '5'=>'5', '10'=>'10', '20'=>'20');
         $mform->addElement('select', 'keepold', get_string('keepold', 'imscp'), $options);
@@ -73,7 +70,7 @@ class mod_imscp_mod_form extends moodleform_mod {
 
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
         $fs = get_file_storage();
-        /*
+
         if (!$files = $fs->get_area_files($usercontext->id, 'user_draft', $data['package'], 'id', false)) {
             if (!$this->current->instance) {
                 $errors['package'] = get_string('required');
@@ -81,20 +78,12 @@ class mod_imscp_mod_form extends moodleform_mod {
             }
         }
 
-        $files = reset($file);
+        $file = reset($files);
 
         if ($file->get_mimetype() != 'application/zip') {
             $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
             // better delete current file, it is not usable anyway
             $fs->delete_area_files($usercontext->id, 'user_draft', $data['package']);
-        }*/
-
-        // TODO: filepicker borked
-        if (empty($files)) {
-            if (!$this->current->instance) {
-                $errors['package'] = get_string('required');
-                return $errors;
-            }
         }
 
         return $errors;
