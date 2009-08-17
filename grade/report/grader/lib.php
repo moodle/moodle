@@ -687,7 +687,7 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     public function get_studentshtml() {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         $studentshtml = '';
         $strfeedback  = $this->get_lang_string("feedback");
@@ -866,9 +866,10 @@ class grade_report_grader extends grade_report {
                             }
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'
                                           .$item->id.'" value="'.$oldval.'"/>';
-                            $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                              $gradeval, $nogradestr, '', '-1',
-                                                              true, false, $tabindices[$item->id]['grade']);
+                            $select = html_select::make($scaleopt, 'grade_'.$userid.'_'.$item->id,$gradeval, $nogradestr);
+                            $select->nothingvalue = '-1';
+                            $select->tabindex = $tabindices[$item->id]['grade'];
+                            $studentshtml .= $OUTPUT->select($select);
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
 

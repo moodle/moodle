@@ -83,10 +83,8 @@ class grade_import_mapping_form extends moodleform {
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
-        //choose_from_menu($mapfromoptions, 'mapfrom');
 
         $maptooptions = array('userid'=>'userid', 'username'=>'username', 'useridnumber'=>'useridnumber', 'useremail'=>'useremail', '0'=>'ignore');
-        //choose_from_menu($maptooptions, 'mapto');
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
 
         $mform->addElement('header', 'general', get_string('mappings', 'grades'));
