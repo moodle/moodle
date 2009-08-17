@@ -17,7 +17,7 @@
 </tr>
 <tr>
     <td align="right"><label for="menurecaptcha"><?php print_string('auth_emailrecaptcha_key', 'auth_email') ?></label></td>
-    <td><?php choose_from_menu($yesno, 'recaptcha', $config->recaptcha, ''); ?></td> 
+    <td><?php echo $OUTPUT->select(html_select::make($yesno, 'recaptcha', $config->recaptcha, false)); ?></td> 
     <td><?php print_string('auth_emailrecaptcha', 'auth_email') ?></td>
 </tr>    
 <?php
