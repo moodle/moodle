@@ -350,7 +350,7 @@
                                                 p.id as prefid 
                                         FROM {$CFG->prefix}user u 
                                              JOIN {$CFG->prefix}user_preferences p ON u.id=p.userid
-                                        WHERE p.name='create_password' AND p.value=1 AND u.email !='' ");
+                                        WHERE p.name='create_password' AND p.value='1' AND u.email !='' ");
 
             foreach ($newusers as $newuserid => $newuser) {
                 $newuser->emailstop = 0; // send email regardless
