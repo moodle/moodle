@@ -37,7 +37,7 @@
                 print_simple_box_start("center");
                 echo $OUTPUT->heading($scale->name);
                 echo "<center>";
-                choose_from_menu($scalemenu, "", "", "");
+                echo $OUTPUT->select(html_select::make($scalemenu));
                 echo "</center>";
                 echo text_to_html($scale->description);
                 print_simple_box_end();
@@ -63,7 +63,7 @@
             print_simple_box_start("center");
             echo $OUTPUT->heading($scale->name);
             echo "<center>";
-            choose_from_menu($scalemenu, "", "", "");
+            echo $OUTPUT->select(html_select::make($scalemenu));
             echo "</center>";
             echo text_to_html($scale->description);
             print_simple_box_end();
@@ -86,7 +86,7 @@
             print_simple_box_start("center");
             echo $OUTPUT->heading($scale->name);
             echo "<center>";
-            choose_from_menu($scalemenu, "", "", "");
+            echo $OUTPUT->select(html_select::make($scalemenu));
             echo "</center>";
             echo text_to_html($scale->description);
             print_simple_box_end();

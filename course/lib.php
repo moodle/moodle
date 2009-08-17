@@ -1868,7 +1868,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 }
 
 /**
- * This function will return $options array for choose_from_menu, with whitespace to denote nesting.
+ * This function will return $options array for $OUTPUT->select(), with whitespace to denote nesting.
  */
 function make_categories_options() {
     make_categories_list($cats,$parents);
@@ -2952,7 +2952,7 @@ function print_standard_coursemodule_settings($form, $features=null) {
  * Print groupmode form element on module setup forms in mod/.../mod_form.php
  */
 function print_groupmode_setting($form, $course=NULL) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     if (empty($course)) {
         if (!$course = $DB->get_record('course', array('id'=>$form->course))) {
@@ -2976,7 +2976,9 @@ function print_groupmode_setting($form, $course=NULL) {
         $choices[NOGROUPS] = get_string('groupsnone');
         $choices[SEPARATEGROUPS] = get_string('groupsseparate');
         $choices[VISIBLEGROUPS] = get_string('groupsvisible');
-        choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
+        $select = html_select::make($choices, 'groupmode', $groupmode, false);
+        $select->disabled = $course->groupmodeforce;
+        echo $OUTPUT->select($select);
         helpbutton('groupmode', get_string('groupmode'));
         echo '</td></tr>';
     }
@@ -2986,7 +2988,7 @@ function print_groupmode_setting($form, $course=NULL) {
  * Print groupmode form element on module setup forms in mod/.../mod_form.php
  */
 function print_grouping_settings($form, $course=NULL) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     if (empty($course)) {
         if (! $course = $DB->get_record('course', array('id'=>$form->course))) {
@@ -3009,7 +3011,7 @@ function print_grouping_settings($form, $course=NULL) {
 
         $groupingid = isset($cm->groupingid) ? $cm->groupingid : 0;
 
-        choose_from_menu($groupings, 'groupingid', $groupingid, get_string('none'), '', 0, false);
+        echo $OUTPUT->select(html_select::make($groupings, 'groupingid', $groupingid, get_string('none')));
         echo '</td></tr>';
 
         $checked = empty($cm->groupmembersonly) ? '':'checked="checked"';
@@ -3026,7 +3028,7 @@ function print_grouping_settings($form, $course=NULL) {
  * Print visibility setting form element on module setup forms in mod/.../mod_form.php
  */
 function print_visible_setting($form, $course=NULL) {
-    global $DB;
+    global $DB, $OUTPUT;
     if (empty($course)) {
         if (!$course = $DB->get_record('course', array('id'=>$form->course))) {
             print_error("invalidcourseid");
@@ -3051,7 +3053,9 @@ function print_visible_setting($form, $course=NULL) {
     echo '<td align="right"><b>'.get_string('visible', '').':</b></td>';
     echo '<td align="left">';
     $choices = array(1 => get_string('show'), 0 => get_string('hide'));
-    choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
+    $select = html_select::make($choices, 'visible', $visible, false);
+    $select->disabled = $hiddensection;
+    echo $OUTPUT->select($select);
     echo '</td></tr>';
 }
 

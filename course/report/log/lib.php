@@ -3,7 +3,7 @@
 function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG, $SITE, $DB;
+    global $USER, $CFG, $SITE, $DB, $OUTPUT;
     require_once $CFG->dirroot.'/mnet/peer.php';
     
     $mnet_peer = new mnet_peer();
@@ -227,7 +227,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
-        choose_from_menu($courses,"id",$course->id,false);
+        echo $OUTPUT->select(html_select::make($courses,"id",$course->id, false));
         if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
@@ -245,11 +245,11 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         else {
             $groups = array();
         }
-        choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
+        echo $OUTPUT->select(html_select::make($groups, "group", $selectedgroup, get_string("allgroups")));
     }
 
     if ($showusers) {
-        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+        echo $OUTPUT->select(html_select::make($users, "user", $selecteduser, get_string("allparticipants")));
     }
     else {
         $users = array();
@@ -260,20 +260,26 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         else {
             $users[0] = get_string('allparticipants');
         }
-        choose_from_menu($users, 'user', $selecteduser, false);
+        echo $OUTPUT->select(html_select::make($users, "user", $selecteduser, false));
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
-    choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
-    choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
+    
+    echo $OUTPUT->select(html_select::make($dates, "date", $selecteddate, get_string("alldays")));
+    
+    $select = html_select::make($activities, "modid", $selectedactivity);
+    $select->nothinglabel = get_string("allactivities");
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
+    
+    echo $OUTPUT->select(html_select::make($actions, 'modaction', $modaction, get_string("allactions")));
     
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    choose_from_menu ($logformats, 'logformat', $logformat, false);
+    echo $OUTPUT->select(html_select::make($logformats, 'logformat', $logformat, false));
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';
@@ -282,7 +288,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     // first check to see if we can override showcourses and showusers
     $numcourses =  $DB->count_records("course");
@@ -434,12 +440,12 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
-        choose_from_menu ($courses, "id", $course->id, "");
+        echo $OUTPUT->select(html_select::make($courses, "id", $course->id, false));
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
         $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
-        choose_from_menu($courses,"id",$course->id,false);
+        echo $OUTPUT->select(html_select::make($courses,"id",$course->id, false));
         if (has_capability('coursereport/log:view', $sitecontext)) {
             $a = new object();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
@@ -457,11 +463,11 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         else {
             $groups = array();
         }
-        choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
+        echo $OUTPUT->select(html_select::make($groups, "group", $selectedgroup, get_string("allgroups")));
     }
 
     if ($showusers) {
-        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
+        echo $OUTPUT->select(html_select::make($users, "user", $selecteduser, get_string("allparticipants")));
     }
     else {
         $users = array();
@@ -472,21 +478,27 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         else {
             $users[0] = get_string('allparticipants');
         }
-        choose_from_menu($users, 'user', $selecteduser, false);
+        echo $OUTPUT->select(html_select::make($users, "user", $selecteduser, false));
         $a = new object();
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
-    choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
-    choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
-    choose_from_menu ($actions, 'modaction', $modaction, get_string("allactions"));
+    echo $OUTPUT->select(html_select::make($dates, "date", $selecteddate, get_string("alldays")));
+    
+    $select = html_select::make($activities, "modid", $selectedactivity);
+    $select->nothinglabel = get_string("allactivities");
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
+    
+    echo $OUTPUT->select(html_select::make($actions, 'modaction', $modaction, get_string("allactions")));
     
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    choose_from_menu ($logformats, 'logformat', $logformat, false);
+    
+    echo $OUTPUT->select(html_select::make($logformats, 'logformat', $logformat, false));
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';

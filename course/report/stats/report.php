@@ -44,21 +44,21 @@
         }
 
         $table->align = array('left','left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),choose_from_menu($courseoptions,'course',$course->id,'','','',true),
-                               get_string('users'),choose_from_menu($users,'userid',$userid,'','','',true),
-                               get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
-                               get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
+        $table->data[] = array(get_string('course'),$OUTPUT->select(html_select::make($courseoptions,'course',$course->id,false)),
+                               get_string('users'),$OUTPUT->select(html_select::make($users,'userid',$userid,false)),
+                               get_string('statsreporttype'),$OUTPUT->select(html_select::make($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false)),
+                               get_string('statstimeperiod'),$OUTPUT->select(html_select::make($timeoptions,'time',$time,false)),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_RANKED) {
         $table->align = array('left','left','left','left','left','left');
-        $table->data[] = array(get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
-                               get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
+        $table->data[] = array(get_string('statsreporttype'),$OUTPUT->select(html_select::make($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false)),
+                               get_string('statstimeperiod'),$OUTPUT->select(html_select::make($timeoptions,'time',$time,false)),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_GENERAL) {
         $table->align = array('left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),choose_from_menu($courseoptions,'course',$course->id,'','','',true),
-                               get_string('statsreporttype'),choose_from_menu($reportoptions,'report',($report == 5) ? $report.$roleid : $report,'','','',true),
-                               get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
+        $table->data[] = array(get_string('course'),$OUTPUT->select(html_select::make($courseoptions,'course',$course->id,false)),
+                               get_string('statsreporttype'),$OUTPUT->select(html_select::make($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false)),
+                               get_string('statstimeperiod'),$OUTPUT->select(html_select::make($timeoptions,'time',$time,false)),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     }
 
