@@ -179,8 +179,9 @@ if (empty($availablefilters)) {
         } else {
             $activechoices[TEXTFILTER_INHERIT] = $strdefaultoff;
         }
-        $row[] = choose_from_menu($activechoices, str_replace('/', '_', $filter),
-                $filterinfo->localstate, '', '', '', true);
+        $select = html_select::make($activechoices, str_replace('/', '_', $filter), $filterinfo->localstate, false);
+        $select->nothingvalue = '';
+        $row[] = $OUTPUT->select($select);
 
         // Settings link, if required
         if ($settingscol) {
