@@ -956,7 +956,10 @@ class assignment_base {
             echo '</div>';
         }
         echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label> ';
-        choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1, false, $disabled);
+        $select = html_select::make(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'));
+        $select->nothingvalue = '-1';
+        $select->disabled = $disabled;
+        echo $OUTPUT->select($select);
         echo '</div>';
 
         echo '<div class="clearer"></div>';
@@ -971,7 +974,9 @@ class assignment_base {
                     $options[0] = get_string('nooutcome', 'grades');
                     echo $options[$outcome->grades[$submission->userid]->grade];
                 } else {
-                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
+                    $select = html_select::make($options, 'outcome_'.$n.'['.$userid.']', $outcome->grades[$submission->userid]->grade, get_string('nooutcome', 'grades'));
+                    $select->id = 'menuoutcome_'.$n;
+                    echo $OUTPUT->select($select);
                 }
                 echo '</div>';
                 echo '<div class="clearer"></div>';
@@ -990,7 +995,7 @@ class assignment_base {
                 echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
             } else {
                 echo '<div class="format">';
-                choose_from_menu(format_text_menu(), "format", $submission->format, "");
+                echo $OUTPUT->select(html_select::make(format_text_menu(), "format", $submission->format, false));
                 helpbutton("textformat", get_string("helpformatting"));
                 echo '</div>';
             }
@@ -1264,9 +1269,10 @@ class assignment_base {
                         if ($final_grade->locked or $final_grade->overridden) {
                             $grade = '<div id="g'.$auser->id.'" class="'. $locked_overridden .'">'.$final_grade->formatted_grade.'</div>';
                         } else if ($quickgrade) {
-                            $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
-                                                     'menu['.$auser->id.']', $auser->grade,
-                                                     get_string('nograde'),'',-1,true,false,$tabindex++);
+                            $select = html_select::make(make_grades_menu($this->assignment->grade), 'menu['.$auser->id.']', $auser->grade, get_string('nograde'));
+                            $select->nothingvalue = '-1';
+                            $select->tabindex = $tabindex++;
+                            $menu = $OUTPUT->select($select);
                             $grade = '<div id="g'.$auser->id.'">'. $menu .'</div>';
                         } else {
                             $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
@@ -1277,9 +1283,10 @@ class assignment_base {
                         if ($final_grade->locked or $final_grade->overridden) {
                             $grade = '<div id="g'.$auser->id.'" class="'. $locked_overridden .'">'.$final_grade->formatted_grade.'</div>';
                         } else if ($quickgrade) {
-                            $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
-                                                     'menu['.$auser->id.']', $auser->grade,
-                                                     get_string('nograde'),'',-1,true,false,$tabindex++);
+                            $select = html_select::make(make_grades_menu($this->assignment->grade), 'menu['.$auser->id.']', $auser->grade, get_string('nograde'));
+                            $select->nothingvalue = '-1';
+                            $select->tabindex = $tabindex++;
+                            $menu = $OUTPUT->select($select);
                             $grade = '<div id="g'.$auser->id.'">'.$menu.'</div>';
                         } else {
                             $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
@@ -1304,9 +1311,10 @@ class assignment_base {
                     if ($final_grade->locked or $final_grade->overridden) {
                         $grade = '<div id="g'.$auser->id.'">'.$final_grade->formatted_grade . '</div>';
                     } else if ($quickgrade) {   // allow editing
-                        $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
-                                                 'menu['.$auser->id.']', $auser->grade,
-                                                 get_string('nograde'),'',-1,true,false,$tabindex++);
+                        $select = html_select::make(make_grades_menu($this->assignment->grade), 'menu['.$auser->id.']', $auser->grade, get_string('nograde'));
+                        $select->nothingvalue = '-1';
+                        $select->tabindex = $tabindex++;
+                        $menu = $OUTPUT->select($select);
                         $grade = '<div id="g'.$auser->id.'">'.$menu.'</div>';
                     } else {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
@@ -1354,8 +1362,11 @@ class assignment_base {
                             $outcomes .= ': <span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$outcome->grades[$auser->id]->grade].'</span>';
                         } else {
                             $outcomes .= ' ';
-                            $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']',
-                                        $outcome->grades[$auser->id]->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
+                            $select = html_select::make($options, 'outcome_'.$n.'['.$auser->id.']', $outcome->grades[$auser->id]->grade, get_string('nooutcome', 'grades'));
+                            $select->nothingvalue = '0';
+                            $select->tabindex = $tabindex++;
+                            $select->id = 'outcome_'.$n.'_'.$auser->id;
+                            $outcomes .= $OUTPUT->select($select);
                         }
                         $outcomes .= '</div>';
                     }
