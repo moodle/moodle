@@ -3461,7 +3461,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon=false, $return=false) {
 
-    debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+    debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->heading().');
 
     global $OUTPUT;
 
