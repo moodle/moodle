@@ -196,6 +196,20 @@ class moodle_html_component {
     public function add_confirm_action($message) {
         $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message)));
     }
+
+    /**
+     * Returns true if this component has an action of the requested type (component_action by default).
+     * @param string $class The class of the action we are looking for
+     * @return boolean True if action is found
+     */
+    public function has_action($class='component_action') {
+        foreach ($this->actions as $action) {
+            if (get_class($action) == $class) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 class labelled_html_component extends moodle_html_component {

@@ -1061,6 +1061,11 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         if (is_a($link, 'html_link')) {
             $link = clone($link);
+
+            if ($link->has_action('popup_action')) {
+                return $this->link_to_popup($link);
+            }
+
             $link->prepare();
             $this->prepare_event_handlers($link);
             $attributes['href'] = prepare_url($link->url);
