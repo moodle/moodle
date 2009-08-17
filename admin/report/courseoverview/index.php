@@ -50,8 +50,17 @@
 
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
-    $table->data[] = array(get_string('statsreporttype'),choose_from_menu($reportoptions,'report',$report,'','','',true),
-                           get_string('statstimeperiod'),choose_from_menu($timeoptions,'time',$time,'','','',true),
+    
+    $select = html_select::make($reportoptions,'report',$report, false);
+    $select->nothingvalue = '';
+    $reporttypemenu = $OUTPUT->select($select);
+    
+    $select = html_select::make($timeoptions,'time',$time, false);
+    $select->nothingvalue = '';
+    $timeoptionsmenu = $OUTPUT->select($select);
+    
+    $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
+                           get_string('statstimeperiod'),$timeoptionsmenu,
                            '<input type="text" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',
                            '<input type="submit" value="'.get_string('view').'" />') ;
 

@@ -61,7 +61,7 @@ class edit_index extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $OUTPUT;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -119,7 +119,9 @@ class edit_index extends XMLDBAction {
         $typeoptions = array (0 => 'not unique',
                               1 => 'unique');
         $o.= '      <tr valign="top"><td><label for="menuunique" accesskey="t">Type:</label></td>';
-        $o.= '        <td colspan="2">' . choose_from_menu($typeoptions, 'unique', $index->getUnique(), '', '', '', true) . '</td></tr>';
+        $select = html_select::make($typeoptions, 'unique', $index->getUnique(), false);
+        $select->nothingvalue = '';
+        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
     /// xmldb_index Fields
         $o.= '      <tr valign="top"><td><label for="fields" accesskey="f">Fields:</label></td>';
         $o.= '        <td colspan="2"><input name="fields" type="text" size="40" maxlength="80" id="fields" value="' . s(implode(', ', $index->getFields())) . '" /></td></tr>';

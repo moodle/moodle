@@ -60,7 +60,7 @@ class new_statement extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $DB;
+        global $CFG, $XMLDB, $DB, $OUTPUT;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -103,7 +103,7 @@ class new_statement extends XMLDBAction {
             $o.= '    <input type="hidden" name ="action" value="new_statement" />';
             $o.= '    <input type="hidden" name ="postaction" value="edit_statement" />';
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-            $o.= '      <tr><td><label for="type" accesskey="t">' . $this->str['statementtype'] .' </label>' . choose_from_menu($typeoptions, 'type', '', 'choose', '', 0, true) . '<label for="table" accesskey="a">' . $this->str['statementtable'] . ' </label>' .choose_from_menu($selecttables, 'table', '', 'choose', '', 0, true) . '</td></tr>';
+            $o.= '      <tr><td><label for="type" accesskey="t">' . $this->str['statementtype'] .' </label>' . $OUTPUT->select(html_select::make($typeoptions, 'type')) . '<label for="table" accesskey="a">' . $this->str['statementtable'] . ' </label>' .$OUTPUT->select(html_select::make($selecttables, 'table')) . '</td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['create'] . '" /></td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a></td></tr>';
             $o.= '    </table>';

@@ -630,12 +630,13 @@ class define_role_table_advanced extends capability_table_with_risks {
     }
 
     protected function get_legacy_type_field($id) {
+        global $OUTPUT;
         $options = array();
         $options[''] = get_string('none');
         foreach($this->legacyroles as $type => $cap) {
             $options[$type] = get_string('legacy:'.$type, 'role');
         }
-        return choose_from_menu($options, 'legacytype', $this->role->legacytype, '', '', 0, true);
+        return $OUTPUT->select(html_select::make($options, 'legacytype', $this->role->legacytype, false));
     }
 
     protected function get_assignable_levels_control() {

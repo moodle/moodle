@@ -68,7 +68,7 @@ class view_table_php extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $OUTPUT;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -166,7 +166,7 @@ class view_table_php extends XMLDBAction {
         $o.= '    <input type="hidden" name ="table" value="' . s($tableparam) . '" />';
         $o.= '    <input type="hidden" name ="action" value="view_table_php" />';
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . choose_from_menu($popcommands, 'command', $commandparam, '', '', 0, true) . '&nbsp;<label for="fieldkeyindex" accesskey="f">' . $this->str['selectfieldkeyindex'] . ' </label>' .choose_from_menu($popfields, 'fieldkeyindex', $origfieldkeyindexparam, '', '', 0, true) . '</td></tr>';
+        $o.= '      <tr><td><label for="action" accesskey="c">' . $this->str['selectaction'] .' </label>' . $OUTPUT->select(html_select::make($popcommands, 'command', $commandparam, false)) . '&nbsp;<label for="fieldkeyindex" accesskey="f">' . $this->str['selectfieldkeyindex'] . ' </label>' .$OUTPUT->select(html_select::make($popfields, 'fieldkeyindex', $origfieldkeyindexparam, false)) . '</td></tr>';
         $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['view'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';

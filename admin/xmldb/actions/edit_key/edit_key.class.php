@@ -61,7 +61,7 @@ class edit_key extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $OUTPUT;
 
     /// Do the job, setting result as needed
     /// Get the dir containing the file
@@ -124,8 +124,11 @@ class edit_key extends XMLDBAction {
     /// if ($key->getType() != XMLDB_KEY_FOREIGN_UNIQUE) {
     ///     unset ($typeoptions[XMLDB_KEY_FOREIGN_UNIQUE);
     /// }
+        $select = html_select::make($typeoptions, 'type', $key->getType(), false);
+        $select->nothingvalue = '';
+
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
-        $o.= '        <td colspan="2">' . choose_from_menu($typeoptions, 'type', $key->getType(), '', '', '', true) . '</td></tr>';
+        $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
     /// xmldb_key Fields
         $o.= '      <tr valign="top"><td><label for="fields" accesskey="f">Fields:</label></td>';
         $o.= '        <td colspan="2"><input name="fields" type="text" size="40" maxlength="80" id="fields" value="' . s(implode(', ', $key->getFields())) . '" /></td></tr>';

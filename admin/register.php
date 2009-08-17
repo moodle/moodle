@@ -78,7 +78,9 @@
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="menucountry">'.get_string("country").'</label></div>';
     echo '<div class="felement ftext">';
-    choose_from_menu (get_list_of_countries(), "country", $admin->country, get_string("selectacountry")."...", "", "");
+    $select = html_select::make(get_list_of_countries(), "country", $admin->country, get_string("selectacountry")."...");
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
     echo '</div>';
     echo '</div>';
 
@@ -88,7 +90,9 @@
     $options[0] = get_string("publicdirectory0");
     $options[1] = get_string("publicdirectory1");
     $options[2] = get_string("publicdirectory2");
-    choose_from_menu ($options, "public", "2", "", "", "");
+    $select = html_select::make($options, "public", "2", false);
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
     unset($options);
     echo '</div>';
     echo '</div>';
@@ -98,7 +102,9 @@
     echo '<div class="felement ftext">';
     $options[0] = get_string("registrationcontactno");
     $options[1] = get_string("registrationcontactyes");
-    choose_from_menu ($options, "contact", "1", "", "", "");
+    $select = html_select::make($options, "contact", "1", false);
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
     unset($options);
     echo '</div>';
     echo '</div>';
@@ -173,7 +179,9 @@
     echo '<div class="felement ftext">';
     $options[0] = get_string("registrationno");
     $options[1] = get_string("registrationyes");
-    choose_from_menu ($options, "mailme", "1", "", "", "");
+    $select = html_select::make($options, "mailme", "1", false);
+    $select->nothingvalue = '';
+    echo $OUTPUT->select($select);
     unset($options);
     echo '</div>';
     echo '</div>';
