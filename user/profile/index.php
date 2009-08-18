@@ -126,7 +126,7 @@ foreach ($categories as $category) {
     if (count($table->data)) {
         print_table($table);
     } else {
-        notify($strnofields);
+        echo $OUTPUT->notification($strnofields);
     }
 
 } /// End of $categories foreach

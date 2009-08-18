@@ -2,7 +2,7 @@
 <input type="hidden" name="id" value="<?php p($id) ?>" />
 <input type="hidden" name="returnto" value="<?php p($returnto) ?>" />
 <input type="hidden" name="deluser" value="" />
-<?php print_simple_box_start("center", ""); ?>
+<?php echo $OUTPUT->box_start(); ?>
 <table border="0" cellpadding="5">
 <tr valign="top">
     <td align="right"><b>
@@ -15,14 +15,14 @@
 <tr valign="top">
     <td align="right" valign="middle" nowrap="nowrap">
      <?php
-        helpbutton("reading", get_string("helpreading"), "moodle", true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make("reading", get_string("helpreading"), "moodle", true));
         echo "<br />";
-        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make("writing", get_string("helpwriting"), "moodle", true));
         echo "<br />";
-        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make("questions", get_string("helpquestions"), "moodle", true));
         echo "<br />";
         if ($usehtmleditor) {
-           helpbutton("richtext2", get_string("helprichtext"), "moodle", true, true);
+           echo $OUTPUT->help_icon(moodle_help_icon::make("richtext2", get_string("helprichtext"), "moodle", true));
         } else {
            emoticonhelpbutton("theform", "message");
         }
@@ -41,14 +41,14 @@
         } else {
             choose_from_menu(format_text_menu(), "format", $format, "");
         }
-        helpbutton("textformat", get_string("helpformatting"));
+        echo $OUTPUT->help_icon(moodle_help_icon::make("textformat", get_string("helpformatting")));
      ?>
     </td>
 </tr>
 
 <tr><td align="center" colspan="2"><input type="submit" name="preview" value="<?php print_string('preview'); ?>" /></td></tr>
 </table>
-<?php print_simple_box_end(); ?>
+<?php echo $OUTPUT->box_end(); ?>
 <table align="center"><tr><th colspan="4" scope="row"><?php print_string('currentlyselectedusers'); ?></th></tr>
 <?php
     if (count($SESSION->emailto[$id])) {

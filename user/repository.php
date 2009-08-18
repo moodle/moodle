@@ -33,7 +33,7 @@ $currenttab = 'repositories';
 include('tabs.php');
 
 echo $OUTPUT->heading($configstr);
-print_simple_box_start();
+echo $OUTPUT->box_start();
 
 if (!$instances = repository::get_instances($COURSE->context, $USER->id)) {
     print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');

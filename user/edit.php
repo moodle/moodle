@@ -126,7 +126,7 @@
                 $a->oldemail = $usernew->email = $user->email;
 
                 $email_changed_html = $OUTPUT->box(get_string('auth_changingemailaddress', 'auth_email', $a), 'generalbox', 'notice');
-                $email_changed_html .= print_continue("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", true);
+                $email_changed_html .= $OUTPUT->continue_button("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id");
                 $email_changed = true;
             }
         }

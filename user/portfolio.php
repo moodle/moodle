@@ -62,9 +62,9 @@ if (!empty($config)) {
         exit;
     } else {
         echo $OUTPUT->heading(get_string('configplugin', 'portfolio'));
-        print_simple_box_start();
+        echo $OUTPUT->box_start();
         $mform->display();
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
         $display = false;
     }
 
@@ -75,7 +75,7 @@ if (!empty($config)) {
 
 if ($display) {
     echo $OUTPUT->heading($configstr);
-    print_simple_box_start();
+    echo $OUTPUT->box_start();
 
     if (!$instances = portfolio_instances(true, false)) {
         print_error('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');

@@ -109,7 +109,7 @@ if($course->enrollable == 2) {
 }
 
 $title = get_string('groupextendenrol');
-echo $OUTPUT->heading($title . helpbutton('groupextendenrol', $title, 'moodle', true, false, '', true));
+echo $OUTPUT->heading($title . $OUTPUT->help_icon(moodle_help_icon::make('groupextendenrol', $title)));
 echo '<form method="post" action="groupextendenrol.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';

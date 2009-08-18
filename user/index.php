@@ -22,7 +22,7 @@
 
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
-    
+
     $PAGE->set_url('user/index.php', compact('page', 'perpage', 'mode', 'accesssince', 'search', 'roleid', 'contextid', 'courseid'));
 
     if ($contextid) {
@@ -786,11 +786,11 @@
                     }
 
                     $row->cells[1]->text .= $OUTPUT->container_end();
-                    
+
                     $row->cells[2] = new html_table_cell();
                     $row->cells[2]->add_class('links');
                     $row->cells[2]->text = '';
-                    
+
                     $links = array();
 
                     if ($CFG->bloglevel > 0) {
@@ -815,7 +815,7 @@
                     }
 
                     $links[] = html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php?id='. $user->id .'&course='. $course->id), get_string('fullprofile') . '...');
-                    
+
                     foreach ($links as $link) {
                         $row->cells[2]->text .= $OUTPUT->link($link);
                     }
@@ -969,7 +969,7 @@
             $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
         }
 
-        helpbutton("participantswithselectedusers", get_string("withselectedusers"));
+        echo $OUTPUT->help_icon(moodle_help_icon::make("participantswithselectedusers", get_string("withselectedusers")));
         $select = new html_select();
         $select->options = $displaylist;
         $select->name = "formaction";

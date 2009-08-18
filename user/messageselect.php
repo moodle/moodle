@@ -73,7 +73,7 @@
 
     // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
     if (empty($CFG->messaging)) {
-        notify(get_string('messagingdisabled','message'));  
+        echo $OUTPUT->notification(get_string('messagingdisabled','message'));
     }
 
     if ($count) {
@@ -114,14 +114,14 @@
             echo $OUTPUT->footer();
             exit;
         } else {
-            notify(get_string('nousersyet'));
+            echo $OUTPUT->notification(get_string('nousersyet'));
         }
     }
 
     echo '<p align="center"><a href="'.$returnto.'">'.get_string("keepsearching").'</a>'.((count($SESSION->emailto[$id])) ? ', '.get_string('usemessageform') : '').'</p>';
 
     if ((!empty($send) || !empty($preview) || !empty($edit)) && (empty($messagebody))) {
-        notify(get_string('allfieldsrequired'));
+        echo $OUTPUT->notification(get_string('allfieldsrequired'));
     }
 
     if (count($SESSION->emailto[$id])) {

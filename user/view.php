@@ -114,7 +114,7 @@
                     print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                     echo $OUTPUT->heading(get_string('notenrolledprofile'));
                 }
-                print_continue($_SERVER['HTTP_REFERER']);
+                echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
                 echo $OUTPUT->footer();
                 exit;
             }

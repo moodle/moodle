@@ -33,7 +33,7 @@ if (empty($preferences['newemailattemptsleft'])) {
     if ($DB->get_record('user', array('email' => $user->email))) {
         $stremailnowexists = get_string('auth_emailnowexists', 'auth_email');
         echo $OUTPUT->box($stremailnowexists, 'center');
-        print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
+        echo $OUTPUT->continue_button("$CFG->wwwroot/user/view.php?id=$user->id");
     } else {
         // update user email
         $DB->set_field('user', 'email', $user->email, array('id' => $user->id));
@@ -41,7 +41,7 @@ if (empty($preferences['newemailattemptsleft'])) {
         $a->email = $user->email;
         $stremailupdatesuccess = get_string('auth_emailupdatesuccess', 'auth_email', $a);
         echo $OUTPUT->box($stremailupdatesuccess, 'center');
-        print_continue("$CFG->wwwroot/user/view.php?id=$user->id");
+        echo $OUTPUT->continue_button("$CFG->wwwroot/user/view.php?id=$user->id");
     }
 
 } else {

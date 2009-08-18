@@ -84,11 +84,11 @@ echo get_string('users'). ': ' . implode(', ', $userlist) . '.';
 echo '</p>';
 
 echo '<p>' . get_string('content', 'notes');
-helpbutton('writing', get_string('helpwriting'));
+echo $OUTPUT->help_icon(moodle_help_icon::make('writing', get_string('helpwriting')));
 echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content) . '</textarea></p>';
 
 echo '<p>' . $strpublishstate;
-helpbutton('status', $strpublishstate, 'notes');
+echo $OUTPUT->help_icon(moodle_help_icon::make('status', $strpublishstate, 'notes'));
 echo $OUTPUT->select(html_select::make($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false));
 echo '</p>';
 
