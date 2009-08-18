@@ -59,7 +59,7 @@
     }
 
     if (isguest()) {
-        notify(get_string("guestsnotallowed", "survey"));
+        echo $OUTPUT->notification(get_string("guestsnotallowed", "survey"));
     }
 
 
@@ -112,7 +112,7 @@
     echo '<div>';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
-    print_simple_box(format_module_intro('survey', $survey, $cm->id), 'center', '70%', '', 5, 'generalbox', 'intro');
+    echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
 
 // Get all the major questions and their proper order
     if (! $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions))) {

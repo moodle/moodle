@@ -92,7 +92,7 @@
 
     $groupingid = $cm->groupingid;
     
-    print_simple_box_start("center");
+    echo $OUTPUT->box_start("generalbox boxaligncenter");
     if ($showscales) {
         echo "<a href=\"report.php?action=summary&amp;id=$id\">$strsummary</a>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.php?action=scales&amp;id=$id\">$strscales</a>";
@@ -114,7 +114,7 @@
             $action = "questions";
         }
     }
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     $spacer = new html_image();
     $spacer->height = 30;
@@ -136,7 +136,7 @@
             survey_print_graph("id=$id&amp;group=$currentgroup&amp;type=overall.png");
             echo "</a></div>";
         } else {
-            notify(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
         }
         break;
 
@@ -144,7 +144,7 @@
         echo $OUTPUT->heading($strscales);
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-            notify(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
 
         } else {
 
@@ -195,7 +195,7 @@
         }
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-            notify(get_string("nobodyyet","survey"));
+            echo $OUTPUT->notification(get_string("nobodyyet","survey"));
 
         } else {
 
@@ -315,7 +315,7 @@
          echo $OUTPUT->heading(get_string("analysisof", "survey", get_string('participants')));
 
          if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
-             notify(get_string("nobodyyet","survey"));
+             echo $OUTPUT->notification(get_string("nobodyyet","survey"));
          } else {
              survey_print_all_responses($cm->id, $results, $course->id);
          }
@@ -332,15 +332,15 @@
          if ($notes != '' and confirm_sesskey()) {
              if (survey_get_analysis($survey->id, $user->id)) {
                  if (! survey_update_analysis($survey->id, $user->id, $notes)) {
-                     notify("An error occurred while saving your notes.  Sorry.");
+                     echo $OUTPUT->notification("An error occurred while saving your notes.  Sorry.");
                  } else {
-                     notify(get_string("savednotes", "survey"));
+                     echo $OUTPUT->notification(get_string("savednotes", "survey"));
                  }
              } else {
                  if (! survey_add_analysis($survey->id, $user->id, $notes)) {
-                     notify("An error occurred while saving your notes.  Sorry.");
+                     echo $OUTPUT->notification("An error occurred while saving your notes.  Sorry.");
                  } else {
-                     notify(get_string("savednotes", "survey"));
+                     echo $OUTPUT->notification(get_string("savednotes", "survey"));
                  }
              }
          }

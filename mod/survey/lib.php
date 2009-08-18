@@ -619,7 +619,7 @@ function survey_print_multi($question) {
  * @param object $question
  */
 function survey_print_single($question) {
-    global $DB, $qnum;
+    global $DB, $qnum, $OUTPUT;
 
     $rowclass = survey_question_rowclass(0);
 
@@ -649,7 +649,7 @@ function survey_print_single($question) {
 
     } else if ($question->type < 0) {     // Choose several of a number
         $options = explode( ",", $question->options);
-        notify("This question type not supported yet");
+        echo $OUTPUT->notification("This question type not supported yet");
     }
 
     echo "</td></tr></table>";
