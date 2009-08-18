@@ -109,7 +109,7 @@
 
     print_header($strchangepassword, $strchangepassword, $navigation);
     if (get_user_preferences('auth_forcepasswordchange')) {
-        notify(get_string('forcepasswordchangenotice'));
+        echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
     }
     $mform->display();
     echo $OUTPUT->footer();

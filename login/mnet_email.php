@@ -23,7 +23,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 }
 
 echo '<p>&nbsp;</p>';
-print_simple_box_start('center','50%','','20');
+echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 
 ?>
   <form method="post">
@@ -34,7 +34,7 @@ print_simple_box_start('center','50%','','20');
   </form>
 <?php
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
 ?>
