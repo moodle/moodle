@@ -4107,7 +4107,7 @@ function forum_get_ratings_summary($postid, $scale, $ratings=NULL) {
 function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
 
     static $strrate;
-    global $DB;
+    global $DB, $OUTPUT;
 
     if (is_null($myrating)) {
         if (!$rating = $DB->get_record("forum_ratings", array("userid" => $userid, "post" => $postid))) {
@@ -4121,7 +4121,7 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
         $strrate = get_string("rate", "forum");
     }
     $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
-    choose_from_menu($scale, $postid, $myrating, '', '', '0', false, false, 0, '', false, false, 'forumpostratingmenu');
+    echo $OUTPUT->select(html_select::make($scale, $postid, $myrating, false)->add_class('forumpostratingmenu'));
 }
 
 /**

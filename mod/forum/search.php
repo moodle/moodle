@@ -333,7 +333,7 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0"><label for="menuforumid">'.get_string('searchwhichforums', 'forum').'</label></td>';
     echo '<td class="c1">';
-    choose_from_menu(forum_menu_list($course), 'forumid', '', get_string('allforums', 'forum'), '');
+    echo $OUTPUT->select(html_select::make(forum_menu_list($course), 'forumid', '', get_string('allforums', 'forum')));
     echo '</td>';
     echo '</tr>';
 
