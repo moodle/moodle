@@ -97,14 +97,14 @@
             if ($coursemods = $DB->get_records("course_modules", array("module"=>$module->id))) {
                 foreach ($coursemods as $coursemod) {
                     if (! delete_mod_from_section($coursemod->id, $coursemod->section)) {
-                        notify("Could not delete the $strmodulename with id = $coursemod->id from section $coursemod->section");
+                        echo $OUTPUT->notification("Could not delete the $strmodulename with id = $coursemod->id from section $coursemod->section");
                     }
                 }
             }
 
             // delete calendar events
             if (!$DB->delete_records("event", array("modulename"=>$delete))) {
-                notify("Error occurred while deleting all $strmodulename records in calendar event table");
+                echo $OUTPUT->notification("Error occurred while deleting all $strmodulename records in calendar event table");
             }
 
             // clear course.modinfo for courses
@@ -118,34 +118,34 @@
 
             // Now delete all the course module records
             if (!$DB->delete_records("course_modules", array("module"=>$module->id))) {
-                notify("Error occurred while deleting all $strmodulename records in course_modules table");
+                echo $OUTPUT->notification("Error occurred while deleting all $strmodulename records in course_modules table");
             }
             if ($coursemods) {
                 foreach ($coursemods as $coursemod) {
                     if (!delete_context(CONTEXT_MODULE, $coursemod->id)) {
-                        notify("Could not delete the context for $strmodulename with id = $coursemod->id");
+                        echo $OUTPUT->notification("Could not delete the context for $strmodulename with id = $coursemod->id");
                     }
                 }
             }
 
             // Then delete all the logs
             if (!$DB->delete_records("log", array("module"=>$module->name))) {
-                notify("Error occurred while deleting all $strmodulename records in log table");
+                echo $OUTPUT->notification("Error occurred while deleting all $strmodulename records in log table");
             }
 
             // And log_display information
             if (!$DB->delete_records("log_display", array("module"=>$module->name))) {
-                notify("Error occurred while deleting all $strmodulename records in log_display table");
+                echo $OUTPUT->notification("Error occurred while deleting all $strmodulename records in log_display table");
             }
 
             // And the module entry itself
             if (!$DB->delete_records("modules", array("name"=>$module->name))) {
-                notify("Error occurred while deleting the $strmodulename record from modules table");
+                echo $OUTPUT->notification("Error occurred while deleting the $strmodulename record from modules table");
             }
 
             // And the module configuration records
             if (!unset_all_config_for_plugin($module->name)) {
-                notify(get_string('errordeletingconfig', 'admin', $strmodulename));
+                echo $OUTPUT->notification(get_string('errordeletingconfig', 'admin', $strmodulename));
             }
 
             // cleanup the gradebook
@@ -167,7 +167,7 @@
                 $uninstallfunction = $module->name . '_uninstall';
                 if (function_exists($uninstallfunction)) {
                     if (! $uninstallfunction() ) {
-                        notify('Encountered a problem running uninstall function for '. $module->name.'!');
+                        echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $module->name.'!');
                     }
                 }
             }

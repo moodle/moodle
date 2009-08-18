@@ -33,8 +33,8 @@ if ($data = $form->get_data()) {
     $feedback->finished();
 
     // Finish up.
-    notify(get_string('success'), 'notifysuccess');
-    print_continue("$CFG->wwwroot/$CFG->admin/");
+    echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
+    echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/");
     echo $OUTPUT->footer();
     die;
 }

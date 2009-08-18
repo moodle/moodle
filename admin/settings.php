@@ -58,13 +58,13 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
 /// print header stuff ------------------------------------------------------------
 if (empty($SITE->fullname)) {
     print_header($settingspage->visiblename, $settingspage->visiblename, '', $focus);
-    print_simple_box(get_string('configintrosite', 'admin'), 'center', '50%');
+    echo $OUTPUT->box(get_string('configintrosite', 'admin'));
 
     if ($errormsg !== '') {
-        notify ($errormsg);
+        echo $OUTPUT->notification($errormsg);
 
     } else if ($statusmsg !== '') {
-        notify ($statusmsg, 'notifysuccess');
+        echo $OUTPUT->notification($statusmsg, 'notifysuccess');
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -105,10 +105,10 @@ if (empty($SITE->fullname)) {
     print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
 
     if ($errormsg !== '') {
-        notify ($errormsg);
+        echo $OUTPUT->notification($errormsg);
 
     } else if ($statusmsg !== '') {
-        notify ($statusmsg, 'notifysuccess');
+        echo $OUTPUT->notification($statusmsg, 'notifysuccess');
     }
 
     // ---------------------------------------------------------------------------------------------------------------

@@ -64,7 +64,7 @@ echo '<li><a href="user_bulk_download.php?format=xls">'.get_string('downloadexce
 echo '</ul>';
 echo $OUTPUT->box_end();
 
-print_continue($return);
+echo $OUTPUT->continue_button($return);
 
 echo $OUTPUT->footer();
 

@@ -19,7 +19,7 @@ if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
 }
 print_tabs(array($tabs), 'mnetdetails');
 
-print_simple_box_start("center", "");
+echo $OUTPUT->box_start();
 ?>
 <form method="post" action="peers.php">
 <div>
@@ -46,7 +46,7 @@ if (empty($mnet_peer->public_key)) $mnet_peer->public_key = '';
     <td align="right" valign="top"><?php
         print_string('publickey', 'mnet');
         echo ': <br />';
-        helpbutton("publickey", get_string('publickey', 'mnet'), "mnet", true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make("publickey", get_string('publickey', 'mnet'), "mnet", true));
     ?></td>
 <?php
 
@@ -119,7 +119,7 @@ if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address){
     <tr>
         <td align="right" valign="top"><?php print_string('ipaddress', 'mnet');
         echo ': <br />';
-        helpbutton("ipaddress", get_string('ipaddress', 'mnet'), "mnet", true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make("ipaddress", get_string('ipaddress', 'mnet'), "mnet", true));
         ?>:</td>
         <td valign="top"><?php echo $mnet_peer->ip_address; ?></td>
     </tr>
@@ -152,6 +152,6 @@ if (!empty($credentials)) {
 </div>
 </form>
 <?php
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 ?>

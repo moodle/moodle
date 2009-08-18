@@ -45,7 +45,7 @@
     delete_subdirectories($deletedir);
 
     echo '<h1 align="center">Done!</h1>';
-    print_continue($CFG->wwwroot);
+    echo $OUTPUT->continue_button($CFG->wwwroot);
     echo $OUTPUT->footer();
     exit;
 

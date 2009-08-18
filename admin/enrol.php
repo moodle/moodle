@@ -58,7 +58,7 @@
     }
     asort($options);
 
-    print_simple_box(get_string('configenrolmentplugins', 'admin'), 'center', '700');
+    echo $OUTPUT->box(get_string('configenrolmentplugins', 'admin'));
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol.php\">";
     echo "<div>";

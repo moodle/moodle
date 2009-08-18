@@ -28,7 +28,7 @@ if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
     print_error('notables', 'debug');
 }
 
-print_simple_box_start('center');
+echo $OUTPUT->box_start();
 
 /// Turn off time limits, sometimes upgrades can be slow.
 
@@ -93,14 +93,14 @@ foreach ($tables as $table) {
 // set conversion flag - switches to new plugin automatically
 set_config('filter_multilang_converted', 1);
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 /// Rebuild course cache which might be incorrect now
-notify('Rebuilding course cache...', 'notifysuccess');
+echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
-notify('...finished', 'notifysuccess');
+echo $OUTPUT->notification('...finished', 'notifysuccess');
 
-print_continue('index.php');
+echo $OUTPUT->continue_button('index.php');
 
 echo $OUTPUT->footer();
 die;

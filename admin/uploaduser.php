@@ -729,9 +729,9 @@ if ($formdata = $mform->is_cancelled()) {
     echo $OUTPUT->box_end();
 
     if ($bulk) {
-        print_continue($bulknurl);
+        echo $OUTPUT->continue_button($bulknurl);
     } else {
-        print_continue($returnurl);
+        echo $OUTPUT->continue_button($returnurl);
     }
     echo $OUTPUT->footer();
     die;

@@ -72,23 +72,23 @@
                         $a = new stdClass();
                         $a->url = 'http://download.moodle.org/environment/environment.zip';
                         $a->dest= $CFG->dataroot.'/';
-                        print_simple_box(get_string($cd->get_error(), 'error', $a), 'center', '', '', 5, 'errorbox');
+                        echo $OUTPUT->box(get_string($cd->get_error(), 'error', $a), 'errorbox');
                     } else {
-                        print_simple_box(get_string($cd->get_error(), 'error'), 'center', '', '', 5, 'errorbox');
+                        echo $OUTPUT->box(get_string($cd->get_error(), 'error'), 'errorbox');
                     }
                     break;
                 case COMPONENT_UPTODATE:
-                    print_simple_box(get_string($cd->get_error(), 'error'), 'center');
+                    echo $OUTPUT->box(get_string($cd->get_error(), 'error'));
                     break;
                 case COMPONENT_INSTALLED:
-                    print_simple_box(get_string('componentinstalled', 'admin'), 'center');
+                    echo $OUTPUT->box(get_string('componentinstalled', 'admin'));
                     break;
             }
         }
     }
 
 /// Start of main box
-    print_simple_box_start('center');
+    echo $OUTPUT->box_start();
 
     echo "<div style=\"text-align:center\">".$stradminhelpenvironment."</div><br />";
 
@@ -127,7 +127,7 @@
     echo '</div>';
 
 /// End of main box
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
 /// Gather and show results
     $status = check_moodle_environment($version, $environment_results);

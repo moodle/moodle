@@ -53,7 +53,7 @@
 
     echo $OUTPUT->heading($strblockname);
 
-    notify('This block still uses an old-style config_global.html file. ' .
+    echo $OUTPUT->notification('This block still uses an old-style config_global.html file. ' .
             'It must be updated by a developer to use a settings.php file.');
 
     echo $OUTPUT->box(get_string('configwarning', 'admin'), 'generalbox boxwidthnormal boxaligncenter');

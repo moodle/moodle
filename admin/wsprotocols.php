@@ -39,9 +39,9 @@ if (!empty($hide)) {
         redirect($baseurl,get_string("changessaved"));
     }
 
-    print_simple_box_start();
+    echo $OUTPUT->box_start();
     $mform->display();
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
 } else if (!empty($settings)) {
 /// Server settings page
@@ -72,9 +72,9 @@ if (!empty($hide)) {
         redirect($baseurl,get_string("changessaved")); // return to the security web service page
     }
 /// display the server settings form
-    print_simple_box_start();
+    echo $OUTPUT->box_start();
     $mform->display();
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 } else {
     $return = true;
 }

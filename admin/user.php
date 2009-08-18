@@ -83,7 +83,7 @@
             } else {
                 session_gc(); // remove stale sessions
                 admin_externalpage_print_header();
-                notify($returnurl, get_string('deletednot', '', fullname($user, true)));
+                echo $OUTPUT->notification($returnurl, get_string('deletednot', '', fullname($user, true)));
             }
         }
     } else if ($acl and confirm_sesskey()) {

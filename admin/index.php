@@ -145,8 +145,8 @@ if (!core_tables_exist()) {
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
             print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
         } else {
-            notify(get_string('environmentok', 'admin'), 'notifysuccess');
-            print_continue("index.php?agreelicense=1&amp;confirmrelease=1&amp;lang=$CFG->lang");
+            echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+            echo $OUTPUT->continue_button("index.php?agreelicense=1&confirmrelease=1&lang=$CFG->lang");
         }
 
         echo $OUTPUT->footer();
@@ -209,13 +209,13 @@ if ($version > $CFG->version) {  // upgrade
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
             print_upgrade_reload('index.php?confirmupgrade=1');
         } else {
-            notify(get_string('environmentok', 'admin'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
             if (empty($CFG->skiplangupgrade)) {
                 echo $OUTPUT->box_start('generalbox', 'notice');
                 print_string('langpackwillbeupdated', 'admin');
                 echo $OUTPUT->box_end();
             }
-            print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1');
+            echo $OUTPUT->continue_button('index.php?confirmupgrade=1&confirmrelease=1');
         }
 
         echo $OUTPUT->footer();
@@ -231,7 +231,7 @@ if ($version > $CFG->version) {  // upgrade
         echo $OUTPUT->box_end();
         print_plugin_tables();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
-        print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
+        echo $OUTPUT->continue_button('index.php?confirmupgrade=1&confirmrelease=1&confirmplugincheck=1');
         echo $OUTPUT->footer();
         die();
 
@@ -240,7 +240,7 @@ if ($version > $CFG->version) {  // upgrade
         upgrade_core($version, true);
     }
 } else if ($version < $CFG->version) {
-    notify('WARNING!!!  The code you are using is OLDER than the version that made these databases!');
+    echo $OUTPUT->notification('WARNING!!!  The code you are using is OLDER than the version that made these databases!');
 }
 
 // Updated human-readable release version if necessary
@@ -356,7 +356,7 @@ if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
 $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
 if (time() - $lastcron > 3600 * 24) {
     $strinstallation = get_string('installation', 'install');
-    $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);
+    $helpbutton = $OUTPUT->help_icon(moodle_help_icon::make('install', $strinstallation));
     echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
 }
 

@@ -32,7 +32,7 @@ if ($confirm and confirm_sesskey()) {
             $auth = get_auth_plugin($user->auth);
             $result = $auth->user_confirm($user->username, $user->secret);
             if ($result != AUTH_CONFIRM_OK && $result != AUTH_CONFIRM_ALREADY) {
-                notify(get_string('usernotconfirmed', '', fullname($user, true)));
+                echo $OUTPUT->notification(get_string('usernotconfirmed', '', fullname($user, true)));
             }
         }
         $rs->close();

@@ -75,7 +75,7 @@ foreach($users as $user) {
 echo $OUTPUT->heading("$usercount / $usertotal ".get_string('users'));
 print_table($table);
 
-print_continue($return);
+echo $OUTPUT->continue_button($return);
 
 echo $OUTPUT->footer();
 ?>

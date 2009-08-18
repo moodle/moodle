@@ -139,7 +139,7 @@
         $a->filter = $filtername;
         $a->directory = $filterpath;
         echo $OUTPUT->box(get_string('deletefilterfiles', 'admin', $a), 'generalbox', 'notice');
-        print_continue($returnurl);
+        echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();
         exit;
     }

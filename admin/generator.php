@@ -1208,7 +1208,7 @@ class generator_web extends generator {
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         if (!has_capability('moodle/site:doanything', $systemcontext)) {
             // If not logged in, give link to login page for current site
-            notify("You must be logged in as administrator before using this script.");
+            echo $OUTPUT->notification("You must be logged in as administrator before using this script.");
             echo $OUTPUT->footer();
             require_login();
         } else {

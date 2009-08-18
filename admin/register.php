@@ -38,7 +38,7 @@
 
     echo $OUTPUT->heading($strregistration);
 
-    print_simple_box($strregistrationinfo, "center", "70%");
+    echo $OUTPUT->box($strregistrationinfo);
 
 
 /// Print the form

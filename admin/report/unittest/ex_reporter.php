@@ -116,14 +116,15 @@ class ExHtmlReporter extends HtmlReporter {
      * @param string $message Text to display.
      */
     function paintMessage($message) {
+        global $OUTPUT;
         if ($this->showpasses) {
-            print_simple_box_start('', '100%');
+            echo $OUTPUT->box_start();
             echo '<span class="notice">', $this->get_string('notice'), '</span>: ';
             $breadcrumb = $this->getTestList();
             array_shift($breadcrumb);
             echo implode($this->strseparator, $breadcrumb);
             echo $this->strseparator, '<br />', $message, "\n";
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             flush();
         }
     }

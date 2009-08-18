@@ -301,7 +301,7 @@ if (!empty($errors)) {
         $msg .= $e.'<br />';
     }
     $msg .= '</p>';
-    notify($msg);
+    echo $OUTPUT->notification($msg);
 }
 
 

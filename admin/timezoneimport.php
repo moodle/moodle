@@ -94,7 +94,7 @@
         $a->source  = $importdone;
         echo $OUTPUT->heading(get_string('importtimezonescount', 'admin', $a), 3);
 
-        print_continue('index.php');
+        echo $OUTPUT->continue_button('index.php');
 
         $timezonelist = array();
         foreach ($timezones as $timezone) {
@@ -110,15 +110,15 @@
         ksort($timezonelist);
 
         echo "<br />";
-        print_simple_box_start('center');
+        echo $OUTPUT->box_start();
         foreach ($timezonelist as $name => $count) {
             echo "$name ($count)<br />";
         }
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
 
     } else {
         echo $OUTPUT->heading(get_string('importtimezonesfailed', 'admin'), 3);
-        print_continue('index.php');
+        echo $OUTPUT->continue_button('index.php');
     }
 
     echo $OUTPUT->footer();

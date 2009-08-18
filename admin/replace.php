@@ -18,7 +18,7 @@ echo $OUTPUT->heading('Search and replace text throughout the whole database');
 
 if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Print a form
 
-    print_simple_box_start('center');
+    echo $OUTPUT->box_start();
     echo '<div class="mdl-align">';
     echo '<form action="replace.php" method="post">';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -27,21 +27,21 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
     echo '<input type="submit" value="Yes, do it now" /><br />';
     echo '</form>';
     echo '</div>';
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
     die;
 }
 
-print_simple_box_start('center');
+echo $OUTPUT->box_start();
 
 if (!db_replace($search, $replace)) {
     print_error('erroroccur', debug);
 }
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 /// Try to replace some well-known serialised contents (html blocks)
-notify('Replacing in html blocks...');
+echo $OUTPUT->notification('Replacing in html blocks...');
 $instances = $DB->get_recordset('block_instances', array('blockname' => 'html'));
 foreach ($instances as $instance) {
     $blockobject = block_instance('html', $instance);
@@ -51,11 +51,11 @@ foreach ($instances as $instance) {
 $instances->close();
 
 /// Rebuild course cache which might be incorrect now
-notify('Rebuilding course cache...', 'notifysuccess');
+echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
-notify('...finished', 'notifysuccess');
+echo $OUTPUT->notification('...finished', 'notifysuccess');
 
-print_continue('index.php');
+echo $OUTPUT->continue_button('index.php');
 
 echo $OUTPUT->footer();
 

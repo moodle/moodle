@@ -20,7 +20,7 @@
 
     if (data_submitted() and $confirm and confirm_sesskey()) {
 
-        notify('Please be patient and wait for this to complete...', 'notifysuccess');
+        echo $OUTPUT->notification('Please be patient and wait for this to complete...', 'notifysuccess');
 
         if ($tables = $DB->get_tables()) {
             $DB->set_debug(true);
@@ -30,8 +30,8 @@
             }
             $DB->set_debug(false);
         }
-        notify('... done.', 'notifysuccess');
-        print_continue('index.php');
+        echo $OUTPUT->notification('... done.', 'notifysuccess');
+        echo $OUTPUT->continue_button('index.php');
         echo $OUTPUT->footer();
 
     } else {

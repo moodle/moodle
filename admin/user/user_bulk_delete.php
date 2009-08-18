@@ -31,7 +31,7 @@ if ($confirm and confirm_sesskey()) {
             if ($primaryadmin->id != $user->id and $USER->id != $user->id and delete_user($user)) {
                 unset($SESSION->bulk_users[$user->id]);
             } else {
-                notify(get_string('deletednot', '', fullname($user, true)));
+                echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
             }
         }
         $rs->close;

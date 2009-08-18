@@ -14,7 +14,7 @@ if ($mnet_peer->id != $CFG->mnet_all_hosts_id && $mnet_peer->application->name =
     $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
 }
 print_tabs(array($tabs), 'mnetservices');
-print_simple_box_start("center", "");
+echo $OUTPUT->box_start();
 
 ?>
 
@@ -101,6 +101,6 @@ print_simple_box_start("center", "");
 </div>
 </form>
 <?php
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 ?>

@@ -254,7 +254,7 @@
                 $fileismissing = 0;
             } else {
                 $fileismissing = 1;
-                $o .= notify(get_string("filemissing", "", $trfilepath), "notifyproblem", "center", true);
+                $o .= $OUTPUT->notification(get_string("filemissing", "", $trfilepath), "notifyproblem");
             }
 
             $missingcounter = 0;
@@ -343,7 +343,7 @@
 
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                notify(get_string("filemissing", "", "$langdir/help/$file"), 'notifyproblem');
+                echo $OUTPUT->notification(get_string("filemissing", "", "$langdir/help/$file"), 'notifyproblem');
                 $somethingfound = true;
                 continue;
             }
@@ -354,14 +354,14 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                notify(get_string("filemissing", "", "$langdir/docs/$file"), 'notifyproblem');
+                echo $OUTPUT->notification(get_string("filemissing", "", "$langdir/docs/$file"), 'notifyproblem');
                 $somethingfound = true;
                 continue;
             }
         }
 
         if (!empty($somethingfound)) {
-            print_continue("lang.php");
+            echo $OUTPUT->continue_button("lang.php");
         } else {
             notice(get_string("languagegood"), "lang.php" );
         }
@@ -410,7 +410,7 @@
                     print_error('filemismatch', 'error', '', (object)array('current'=>$currectfile, 'file'=>$prefix.$plugin.'.php'));
                 }
                 if (!$uselocal) {
-                    notify($streditingnoncorelangfile);
+                    echo $OUTPUT->notification($streditingnoncorelangfile);
                     $editable = false;
                 }
             } else {
@@ -468,7 +468,7 @@
             }
 
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
-                notify(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
+                echo $OUTPUT->notification(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
             } else {
                 print_error('cannotsavefile', 'error', 'lang.php?mode=compare&amp;currentfile=$currentfile', $saveinto.'/'.$currentfile);
             }
@@ -498,7 +498,7 @@
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
-        helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('langswitchstorage', $strfilestoredinhelp));
         echo $OUTPUT->box_end();
 
         if ($currentfile <> '') {
@@ -519,7 +519,7 @@
                     fclose($f);
                 } else {
                     $editable = false;
-                    notify(get_string("makeeditable", "", "$saveto/$currentfile"), 'notifyproblem');
+                    echo $OUTPUT->notification(get_string("makeeditable", "", "$saveto/$currentfile"), 'notifyproblem');
                 }
             }
             error_reporting($CFG->debug);
@@ -723,7 +723,7 @@
                 print_error('confirmsesskeybad', 'error');
             }
             if (lang_help_save_file($saveto, $currentfile, $_POST['filedata'])) {
-                notify(get_string("changessaved")." ($saveto/$currentfile)", "notifysuccess");
+                echo $OUTPUT->notification(get_string("changessaved")." ($saveto/$currentfile)", "notifysuccess");
             } else {
                 print_error('cannotsavefile', 'error', 'lang.php?mode=compare&amp;currentfile=$currentfile', array($saveinto, $currentfile));
             }
@@ -765,7 +765,7 @@
         $select->nothinglabel = $strchoosefiletoedit;
         $select->set_label($selectionlabel);
         echo $OUTPUT->select($select);
-        helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('langswitchstorage', $strfilestoredinhelp));
         echo $OUTPUT->box_end();
 
         if (!empty($currentfile)) {
@@ -785,8 +785,8 @@
                     //
                     // webserver is unable to create new file
                     //
-                    notify(get_string('filemissing', '', "$saveto/$currentfile" ));
-                    notify(get_string('makeeditable', '', "$saveto/$currentfile"));
+                    echo $OUTPUT->notification(get_string('filemissing', '', "$saveto/$currentfile" ));
+                    echo $OUTPUT->notification(get_string('makeeditable', '', "$saveto/$currentfile"));
                     $editable = false;
                 } else {
                     //
@@ -803,7 +803,7 @@
                 // file exists but it is not writeable by web server process :-(
                 //
                 $editable = false;
-                notify(get_string('makeeditable', '', "$saveto/$currentfile"));
+                echo $OUTPUT->notification(get_string('makeeditable', '', "$saveto/$currentfile"));
             }
 
             // master en_utf8 in dataroot is not editable
@@ -814,11 +814,11 @@
             echo '<div>';
 
             if ($uselocal) {
-                $strsavetotitle = $strlanglocalpackage . helpbutton('langpackages', $strlanglocalpackage, 'moodle', true, false, '', true);
-                $straltdirtitle = $strlangmasterpackage . helpbutton('langpackages', $strlangmasterpackage, 'moodle', true, false, '', true);
+                $strsavetotitle = $strlanglocalpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlanglocalpackage));
+                $straltdirtitle = $strlangmasterpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterpackage));
             } else {
-                $straltdirtitle = $strlanglocalpackage . helpbutton('langpackages', $strlanglocalpackage, 'moodle', true, false, '', true);
-                $strsavetotitle = $strlangmasterpackage . helpbutton('langpackages', $strlangmasterpackage, 'moodle', true, false, '', true);
+                $straltdirtitle = $strlanglocalpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlanglocalpackage));
+                $strsavetotitle = $strlangmasterpackage . $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterpackage));
 
             }
 
@@ -874,7 +874,7 @@
             }
             if (is_readable($ensrc)) {
                 echo '<fieldset><legend>'.$strlangmasterenglish;
-                helpbutton('langpackages', $strlangmasterenglish);
+                echo $OUTPUT->help_icon(moodle_help_icon::make('langpackages', $strlangmasterenglish));
                 echo '</legend>';
                 echo "<div class='mdl-align'>\n<textarea rows=\"$fileeditorrows\" cols=\"$fileeditorcols\" name=\"\">";
                 echo htmlspecialchars(file_get_contents($ensrc));
@@ -1349,13 +1349,13 @@ function lang_help_preview_url($currentfile, $skiplocal=false, $forcelang = '') 
  * @return bool False if save failed, true otherwise
  */
 function lang_help_save_file($helproot, $file, $content) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     $content = str_replace("\r", "",$content);              // Remove linefeed characters
     $content = preg_replace("/\n{3,}/", "\n\n", $content);  // Collapse runs of blank lines
     $content = trim($content);                              // Delete leading/trailing whitespace
     if (is_readable("$helproot/$file") && filesize("$helproot/$file") > 0 && $content == '') {
-        notify(get_string('langrmyourself', 'admin'));
+        echo $OUTPUT->notification(get_string('langrmyourself', 'admin'));
         return true;
     }
 

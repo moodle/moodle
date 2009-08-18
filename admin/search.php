@@ -37,10 +37,10 @@ if ($data = data_submitted() and confirm_sesskey()) {
 admin_externalpage_print_header($focus);
 
 if ($errormsg !== '') {
-    notify ($errormsg);
+    echo $OUTPUT->notification($errormsg);
 
 } else if ($statusmsg !== '') {
-    notify ($statusmsg, 'notifysuccess');
+    echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
 $resultshtml = admin_search_settings_html($query); // case insensitive search only

@@ -48,19 +48,19 @@
     echo "<input type=\"hidden\" name=\"enrol\" value=\"".$enrol."\" />";
 
 /// Print current enrolment type description
-    print_simple_box_start("center", "80%");
+    echo $OUTPUT->box_start();
     echo $OUTPUT->heading($options[$enrol]);
 
-    print_simple_box_start("center", "60%", '', 5, 'informationbox');
+    echo $OUTPUT->box_start('informationbox');
     print_string("description", "enrol_$enrol");
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     echo "<hr />";
 
     $enrolment->config_form($frm);
 
     echo "<p class=\"centerpara\"><input type=\"submit\" value=\"".get_string("savechanges")."\" /></p>\n";
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     echo "</div>";
     echo "</form>";
 

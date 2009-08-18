@@ -64,14 +64,14 @@ echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
 // auth plugin description
-print_simple_box_start('center', '80%');
+echo $OUTPUT->box_start();
 echo $OUTPUT->heading($authtitle);
-print_simple_box_start('center', '80%', '', 5, 'informationbox');
+echo $OUTPUT->box_start('informationbox');
 echo $authdescription;
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo "<hr />\n";
 $authplugin->config_form($frm, $err, $user_fields);
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo '<p style="text-align: center"><input type="submit" value="' . get_string("savechanges") . "\" /></p>\n";
 echo "</div>\n";
 echo "</form>\n";

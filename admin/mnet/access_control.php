@@ -193,7 +193,7 @@ if (!empty($table)) {
 
 
 // output the add form
-print_simple_box_start('center','90%','','20');
+echo $OUTPUT->box_start();
 
 ?>
  <div class="mnetaddtoaclform">
@@ -233,7 +233,7 @@ foreach ($formerror as $error) {
     echo "<br><span class=\"error\">$error<span>";
 }
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
 ?>

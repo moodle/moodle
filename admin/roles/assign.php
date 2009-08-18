@@ -334,7 +334,7 @@
               if ($hidden) { echo 'checked="checked" '; } ?>/>
               <label for="hidden" title="<?php print_string('createhiddenassign', 'role'); ?>">
                   <?php print_string('hidden', 'role'); ?>
-                  <?php helpbutton('hiddenassign', get_string('createhiddenassign', 'role')); ?>
+                  <?php echo $OUTPUT->help_icon(moodle_help_icon::make('hiddenassign', get_string('createhiddenassign', 'role'))); ?>
               </label></p>
 
               <p><label for="extendperiod"><?php print_string('enrolperiod') ?></label><br />
@@ -366,9 +366,9 @@
                 $msg .= $e.'<br />';
             }
             $msg .= '</p>';
-            print_simple_box_start('center');
-            notify($msg);
-            print_simple_box_end();
+            echo $OUTPUT->box_start();
+            echo $OUTPUT->notification($msg);
+            echo $OUTPUT->box_end();
         }
 
     /// Print a form to swap roles, and a link back to the all roles list.

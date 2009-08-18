@@ -18,7 +18,7 @@
 /// Scheduled backups aren't active by the site admin
     $backup_config = backup_get_config();
     if (empty($backup_config->backup_sche_active)) {
-        notify(get_string('scheduledbackupsinactive'));
+        echo $OUTPUT->notification(get_string('scheduledbackupsinactive'));
     }
 
 /// Get needed strings
@@ -44,12 +44,12 @@
 /// Lastlog view
     if (!$courseid) {
         echo $OUTPUT->heading($backuploglaststatus);
-        print_simple_box_start('center');
+        echo $OUTPUT->box_start();
     /// Now, get every record from backup_courses
         $courses = $DB->get_records("backup_courses");
 
         if (!$courses) {
-            notify(get_string('nologsfound'));
+            echo $OUTPUT->notification(get_string('nologsfound'));
         } else {
             echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
             //Print table header
@@ -82,7 +82,7 @@
             }
             echo "</table>";
         }
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
 /// Detailed View !!
     } else {
         echo $OUTPUT->heading($backuplogdetailed);
@@ -90,7 +90,7 @@
         $coursename = $DB->get_field("course", "fullname", array("id"=>"$courseid"));
         echo $OUTPUT->heading("$strcourse: $coursename");
 
-        print_simple_box_start('center');
+        echo $OUTPUT->box_start();
 
     /// First, me get all the distinct backups for that course in backup_log
         $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime,laststarttime
@@ -100,13 +100,13 @@
 
     /// Iterate over backup executions
         if (!$executions) {
-            notify(get_string('nologsfound'));
+            echo $OUTPUT->notification(get_string('nologsfound'));
         } else {
             echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
             foreach($executions as $execution) {
                 echo "<tr>";
                 echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\">";
-                print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
+                echo $OUTPUT->box(userdate($execution->laststarttime));
                 echo "</td>";
                 echo "</tr>";
                 $logs = $DB->get_records_sql("SELECT *
@@ -126,7 +126,7 @@
             }
             echo "</table>";
         }
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     echo $OUTPUT->footer();

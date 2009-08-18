@@ -64,7 +64,7 @@ print_heading_with_help($struploadpictures, 'uploadpictures');
 $mform = new admin_uploadpicture_form(null, $userfields);
 if ($formdata = $mform->get_data()) {
     if (!array_key_exists($userfield, $userfields)) {
-        notify(get_string('uploadpicture_baduserfield','admin'));
+        echo $OUTPUT->notification(get_string('uploadpicture_baduserfield','admin'));
     } else {
         // Large files are likely to take their time and memory. Let PHP know
         // that we'll take longer, and that the process should be recycled soon
@@ -81,11 +81,11 @@ if ($formdata = $mform->get_data()) {
         $dstfile = $zipodir.'/images.zip';
         
         if (!$mform->save_file('userfile', $dstfile, true)) {
-            notify(get_string('uploadpicture_cannotmovezip','admin'));
+            echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
         } else {
             if (!unzip_file($dstfile, $zipdir, false)) {
-                notify(get_string('uploadpicture_cannotunzip','admin'));
+                echo $OUTPUT->notification(get_string('uploadpicture_cannotunzip','admin'));
                 @remove_dir($zipdir);
             } else {
                 // We don't need the zip file any longer, so delete it to make
@@ -99,8 +99,8 @@ if ($formdata = $mform->get_data()) {
             
                 // Finally remove the temporary directory with all the user images and print some stats.
                 remove_dir($zipdir);
-                notify(get_string('usersupdated', 'admin') . ": " . $results['updated']);
-                notify(get_string('errors', 'admin') . ": " . $results['errors']);
+                echo $OUTPUT->notification(get_string('usersupdated', 'admin') . ": " . $results['updated']);
+                echo $OUTPUT->notification(get_string('errors', 'admin') . ": " . $results['errors']);
                 echo '<hr />';
             }
         }
@@ -149,8 +149,9 @@ function my_mktempdir($dir, $prefix='', $mode=0700) {
  * @return nothing
  */
 function process_directory ($dir, $userfield, $overwrite, &$results) {
+    global $OUTPUT;
     if(!($handle = opendir($dir))) {
-        notify(get_string('uploadpicture_cannotprocessdir','admin'));
+        echo $OUTPUT->notification(get_string('uploadpicture_cannotprocessdir','admin'));
         return;
     }
 
@@ -191,7 +192,7 @@ function process_directory ($dir, $userfield, $overwrite, &$results) {
  *                  PIX_FILE_SKIPPED
  */
 function process_file ($file, $userfield, $overwrite) {
-    global $DB;
+    global $DB, $OUTPUT;
     
     // Add additional checks on the filenames, as they are user
     // controlled and we don't want to open any security holes.
@@ -200,7 +201,7 @@ function process_file ($file, $userfield, $overwrite) {
     $extension = $path_parts['extension'];
     if ($basename != clean_param($basename, PARAM_FILE)) {
         // The original picture file name has invalid characters
-        notify(get_string('uploadpicture_invalidfilename', 'admin',
+        echo $OUTPUT->notification(get_string('uploadpicture_invalidfilename', 'admin',
                           clean_param($basename, PARAM_CLEANHTML)));
         return PIX_FILE_ERROR;
     }
@@ -216,22 +217,22 @@ function process_file ($file, $userfield, $overwrite) {
         $a = new Object();
         $a->userfield = clean_param($userfield, PARAM_CLEANHTML);
         $a->uservalue = clean_param($uservalue, PARAM_CLEANHTML);
-        notify(get_string('uploadpicture_usernotfound', 'admin', $a));
+        echo $OUTPUT->notification(get_string('uploadpicture_usernotfound', 'admin', $a));
         return PIX_FILE_ERROR;
     }
 
     $haspicture = $DB->get_field('user', 'picture', array('id'=>$user->id));
     if ($haspicture && !$overwrite) {
-        notify(get_string('uploadpicture_userskipped', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_userskipped', 'admin', $user->username));
         return PIX_FILE_SKIPPED;
     }
 
     if (my_save_profile_image($user->id, $file)) {
         $DB->set_field('user', 'picture', 1, array('id'=>$user->id));
-        notify(get_string('uploadpicture_userupdated', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_userupdated', 'admin', $user->username));
         return PIX_FILE_UPDATED;
     } else {
-        notify(get_string('uploadpicture_cannotsave', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_cannotsave', 'admin', $user->username));
         return PIX_FILE_ERROR;
     }
 }

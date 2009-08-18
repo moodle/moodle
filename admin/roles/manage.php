@@ -201,7 +201,7 @@
     $table->wrap = array('nowrap', '', 'nowrap','nowrap');
     $table->width = '90%';
     $table->head = array(
-        get_string('role') . ' ' . helpbutton('roles', get_string('roles'), 'moodle', true, false, '', true),
+        get_string('role') . ' ' . $OUTPUT->help_icon(moodle_help_icon::make('roles', get_string('roles'))),
         get_string('description'),
         get_string('shortname'),
         get_string('edit')

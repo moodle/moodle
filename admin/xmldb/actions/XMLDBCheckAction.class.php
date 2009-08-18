@@ -76,7 +76,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $DB;
+        global $CFG, $XMLDB, $DB, $OUTPUT;
 
     /// And we nedd some ddl suff
         $dbman = $DB->get_manager();
@@ -133,7 +133,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
                 /// Load the XML contents to structure
                     $loaded = $xmldb_file->loadXMLStructure();
                     if (!$loaded || !$xmldb_file->isLoaded()) {
-                        notify('Errors found in XMLDB file: '. $dbdir->path . '/install.xml');
+                        echo $OUTPUT->notification('Errors found in XMLDB file: '. $dbdir->path . '/install.xml');
                         continue;
                     }
                 /// Arriving here, everything is ok, get the XMLDB structure

@@ -96,7 +96,7 @@ if ($issue and ($result = $issue(true))) {
 
     echo $OUTPUT->box($result->details, 'generalbox boxwidthnormal boxaligncenter'); // TODO: add proper css
 
-    print_continue($url);
+    echo $OUTPUT->continue_button($url);
 
 } else {
     report_security_hide_timearning();

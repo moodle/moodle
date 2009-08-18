@@ -77,7 +77,7 @@ if (!is_null($path)) {
     } else if (is_dir($path)){
         $test->findTestFiles($path);
     } else {
-        print_simple_box(get_string('pathdoesnotexist', $langfile, $path), '', '', '', '', 'errorbox');
+        echo $OUTPUT->box(get_string('pathdoesnotexist', $langfile, $path), 'errorbox');
         $ok = false;
     }
 

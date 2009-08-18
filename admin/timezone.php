@@ -29,7 +29,7 @@
 
         $USER->timezone = $zone;
         $current = $zone;
-        notify('Timezone of all users changed', 'notifysuccess');
+        echo $OUTPUT->notification('Timezone of all users changed', 'notifysuccess');
     } else {
         $current = 99;
     }

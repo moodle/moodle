@@ -72,7 +72,7 @@
 
     $table = $controller->get_table();
 
-    print_simple_box($controller->get_intro_text(), 'center');
+    echo $OUTPUT->box($controller->get_intro_text());
 
     echo '<form action="' . $baseurl . '" method="post">';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';

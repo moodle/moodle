@@ -373,8 +373,9 @@ abstract class capability_table_with_risks extends capability_table_base {
     }
 
     protected function add_header_cells() {
+        global $OUTPUT;
         echo '<th colspan="' . count($this->displaypermissions) . '" scope="col">' .
-                get_string('permission', 'role') . ' ' . helpbutton('permissions', get_string('permissions', 'role'), '', true, false, '', true) . '</th>';
+                get_string('permission', 'role') . ' ' . $OUTPUT->help_icon(moodle_help_icon::make('permissions', get_string('permissions', 'role'))) . '</th>';
         echo '<th class="risk" colspan="' . count($this->allrisks) . '" scope="col">' . get_string('risks','role') . '</th>';
     }
 

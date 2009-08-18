@@ -6,7 +6,7 @@ $tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid=
 $tabs[] = new tabobject('mnetthemes', 'mnet_themes.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetthemes, $strmnetthemes, false);
 print_tabs(array($tabs), 'mnetdetails');
 
-print_simple_box_start("center", "");
+echo $OUTPUT->box_start();
 ?>
 <table cellpadding="9" cellspacing="0" >
 <tr>
@@ -18,6 +18,6 @@ print_simple_box_start("center", "");
 </tr>
 </table>
 <?php
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 ?>
