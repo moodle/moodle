@@ -453,7 +453,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     echo $OUTPUT->heading($hotpot->name);
 }
 function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $reports = hotpot_get_report_names('overview,simplestat,fullstat');
 
@@ -551,7 +551,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     print '</td><th align="right" scope="col">'.get_string('reportcontent', 'hotpot').':</th><td colspan="7">';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
-        print choose_from_menu($options, $name, $value, "", "", 0, true);
+        print $OUTPUT->select(html_select::make($options, $name, $value, false));
     };
     print '<input type="submit" value="'.get_string('reportbutton', 'hotpot').'" /></td></tr>';
 
@@ -590,7 +590,7 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     print '</td>';
     foreach ($menus as $name => $options) {
         $value = $formdata[$name];
-        print '<th align="right" scope="col">'.get_string($name, 'hotpot').':</th><td>'.choose_from_menu($options, $name, $value, "", "", 0, true).'</td>';
+        print '<th align="right" scope="col">'.get_string($name, 'hotpot').':</th><td>'.$OUTPUT->select(html_select::make($options, $name, $value, false)).'</td>';
     }
     print '</tr>';
 
