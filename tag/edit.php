@@ -119,7 +119,7 @@ print_header_simple(get_string('tag', 'tag') . ' - '. $tagname, '', $navigation)
 echo $OUTPUT->heading($tagname, 2);
 
 if (!empty($errorstring)) {
-    notify($errorstring);
+    echo $OUTPUT->notification($errorstring);
 }
 
 $tagform->display();

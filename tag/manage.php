@@ -137,10 +137,10 @@ switch($action) {
 echo '<br/>';
 
 if ($err_notice) {
-    notify($err_notice, 'red');
+    echo $OUTPUT->notification($err_notice, 'red');
 }
 if ($notice) {
-    notify($notice, 'green');
+    echo $OUTPUT->notification($notice, 'green');
 }
 
 // small form to add an official tag

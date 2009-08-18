@@ -115,7 +115,7 @@ print_header_simple($title, '', $nav, '', '', false);
 
         // Print the add and delete form
         $script = coursetag_get_jscript();
-        $addtagshelp = helpbutton('addtags', 'adding tags', $tagslang, TRUE, FALSE, '', TRUE);
+        $addtagshelp = $OUTPUT->help_icon(moodle_help_icon::make('addtags', 'adding tags', $tagslang));
         $edittagthisunit = get_string('edittagthisunit', $tagslang);
         $arrowtitle = get_string('arrowtitle', $tagslang);
         $sesskey = sesskey();
@@ -148,7 +148,7 @@ print_header_simple($title, '', $nav, '', '', false);
                     </div>
 EOT;
         if ($coursetabs) {
-            $deletetagshelp = helpbutton('deletetags', 'deleting tags', $tagslang, TRUE, FALSE, '', TRUE);
+            $deletetagshelp = $OUTPUT->help_icon(moodle_help_icon::make('deletetags', 'deleting tags', $tagslang));
             $editdeletemytag = get_string('editdeletemytag', $tagslang);
             $outstr .= <<<EOT1
                     <div class="coursetag_edit_row">

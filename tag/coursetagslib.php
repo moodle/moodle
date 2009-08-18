@@ -464,7 +464,7 @@ function coursetag_get_tagged_courses($tagid) {
  */
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
 
-    global $DB;
+    global $DB, $OUTPUT;
 
     if ($tags = $DB->get_records_select('tag_instance', "itemtype='course' AND itemid=:courseid", array('courseid'=>$courseid))) {
         foreach ($tags as $tag) {
@@ -478,7 +478,7 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
     }
 
     if ($showfeedback) {
-        notify(get_string('deletedcoursetags', 'tag'));
+        echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'));
     }
 }
 
