@@ -70,7 +70,7 @@
         } else {
             echo '<p class="boxaligncenter">'.userdate($start).' --> '. userdate($end).'</p>';
 
-            print_simple_box_start('center');
+            echo $OUTPUT->box_start('center');
             foreach ($messages as $message) {  // We are walking FORWARDS through messages
                 $formatmessage = chat_format_message($message, $course->id, $USER);
                 if (isset($formatmessage->html)) {
@@ -90,11 +90,11 @@
                     $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/lib.php');
                     $button->render();
                 }
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         }
 
         if (!$deletesession or !has_capability('mod/chat:deletelog', $context)) {
-            print_continue("report.php?id=$cm->id");
+            echo $OUTPUT->continue_button("report.php?id=$cm->id");
         }
 
         echo $OUTPUT->footer();
@@ -134,7 +134,7 @@
         $DB->delete_records_select('chat_messages', "chatid = :chatid AND timestamp >= :start AND
                                                      timestamp <= :end $groupselect", $params);
         $strdeleted  = get_string('deleted');
-        notify("$strdeleted: ".userdate($start).' --> '. userdate($end));
+        echo $OUTPUT->notification("$strdeleted: ".userdate($start).' --> '. userdate($end));
         unset($deletesession);
     }
 
@@ -184,7 +184,7 @@
 
                 echo '<p align="center">'.userdate($sessionstart).' --> '. userdate($sessionend).'</p>';
 
-                print_simple_box_start('center');
+                echo $OUTPUT->box_start();
 
                 arsort($sessionusers);
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
@@ -214,7 +214,7 @@
                     echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1\">$strdeletesession</a>";
                 }
                 echo '</p>';
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
             }
 
             $sessionend = $message->timestamp;

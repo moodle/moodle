@@ -26,7 +26,7 @@
     <form action="../empty.php" method="get" target="empty" id="inputform"
           onsubmit="return empty_field_and_submit();">
         <input type="text" name="chat_message" size="60" value="" />
-        <?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
+        <?php echo $OUTPUT->help_icon(moodle_help_icon::make("chatting", get_string("helpchatting", "chat"), "chat", true)); ?>
     </form>
     
     <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
