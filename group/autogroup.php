@@ -236,7 +236,7 @@ print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', 
 echo $OUTPUT->heading($strautocreategroups);
 
 if ($error != '') {
-    notify($error);
+    echo $OUTPUT->notification($error);
 }
 
 /// Display the form

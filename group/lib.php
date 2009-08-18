@@ -272,7 +272,7 @@ function groups_delete_grouping($groupingorid) {
  * @return bool success
  */
 function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     if (is_bool($userid)) {
         debugging('Incorrect userid function parameter');
@@ -298,7 +298,7 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
     events_trigger('groups_members_removed', $eventdata);
 
     if ($showfeedback) {
-        notify(get_string('deleted').' groups_members');
+        echo $OUTPUT->notification(get_string('deleted').' groups_members');
     }
 
     return true;
@@ -311,7 +311,7 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
  * @return bool success
  */
 function groups_delete_groupings_groups($courseid, $showfeedback=false) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
@@ -320,7 +320,7 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     events_trigger('groups_groupings_groups_removed', $courseid);
 
     if ($showfeedback) {
-        notify(get_string('deleted').' groupings_groups');
+        echo $OUTPUT->notification(get_string('deleted').' groupings_groups');
     }
 
     return true;
@@ -333,7 +333,7 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
  * @return bool success
  */
 function groups_delete_groups($courseid, $showfeedback=false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     require_once($CFG->libdir.'/gdlib.php');
 
     // delete any uses of groups
@@ -357,7 +357,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     events_trigger('groups_groups_deleted', $courseid);
 
     if ($showfeedback) {
-        notify(get_string('deleted').' groups');
+        echo $OUTPUT->notification(get_string('deleted').' groups');
     }
 
     return true;
@@ -370,7 +370,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
  * @return bool success
  */
 function groups_delete_groupings($courseid, $showfeedback=false) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     // delete any uses of groupings
     $sql = "DELETE FROM {groupings_groups}
@@ -388,7 +388,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     events_trigger('groups_groupings_deleted', $courseid);
 
     if ($showfeedback) {
-        notify(get_string('deleted').' groupings');
+        echo $OUTPUT->notification(get_string('deleted').' groupings');
     }
 
     return true;
