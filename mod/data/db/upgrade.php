@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_data_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
     $result = true;
@@ -160,7 +160,7 @@ function xmldb_data_upgrade($oldversion) {
                     $a->text .= $database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")<br/>";
                 }
                 //TODO: MDL-17427 send this info to "upgrade log" which will be implemented in 2.0
-                notify(get_string('requiredentrieschanged', 'admin', $a));
+                echo $OUTPUT->notification(get_string('requiredentrieschanged', 'admin', $a));
             }
         }
         unset_config('requiredentriesfixflag', 'data'); // remove old flag

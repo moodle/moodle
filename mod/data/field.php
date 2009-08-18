@@ -241,8 +241,8 @@
         data_print_header($course, $cm, $data,'fields');
 
         if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {
-            notify(get_string('nofieldindatabase','data'));  // nothing in database
-            notify(get_string('pleaseaddsome','data', 'preset.php?id='.$cm->id));      // link to presets
+            echo $OUTPUT->notification(get_string('nofieldindatabase','data'));  // nothing in database
+            echo $OUTPUT->notification(get_string('pleaseaddsome','data', 'preset.php?id='.$cm->id));      // link to presets
 
         } else {    //else print quiz style list of fields
 
@@ -281,7 +281,7 @@
         echo '<label for="fieldform_jump">'.get_string('newfield','data').'</label>';
         $popupurl = $CFG->wwwroot.'/mod/data/field.php?d='.$data->id.'&mode=new&sesskey='.  sesskey();
         echo $OUTPUT->select(html_select::make_popup_form($popupurl, 'newtype', $menufield, "fieldform"));
-        helpbutton('fields', get_string('addafield','data'), 'data');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('fields', get_string('addafield','data'), 'data'));
         echo '</div>';
 
         echo '<div class="sortdefault">';

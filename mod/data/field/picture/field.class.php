@@ -136,7 +136,7 @@ class data_field_picture extends data_field_base {
     }
 
     function update_field() {
-        global $DB;
+        global $DB, $OUTPUT;
 
         // Get the old field data so that we can check whether the thumbnail dimensions have changed
         $oldfield = $DB->get_record('data_fields', array('id'=>$this->field->id));
@@ -148,7 +148,7 @@ class data_field_picture extends data_field_base {
             if ($contents = $DB->get_records('data_content', array('fieldid'=>$this->field->id))) {
                 $fs = get_file_storage();
                 if (count($contents) > 20) {
-                    notify(get_string('resizingimages', 'data'), 'notifysuccess');
+                    echo $OUTPUT->notification(get_string('resizingimages', 'data'), 'notifysuccess');
                     echo "\n\n";
                     // To make sure that ob_flush() has the desired effect
                     ob_flush();

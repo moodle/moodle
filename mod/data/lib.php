@@ -122,8 +122,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @return bool
      */
     function define_default_field() {
+        global $OUTPUT;
         if (empty($this->data->id)) {
-            notify('Programmer error: dataid not defined in field class');
+            echo $OUTPUT->notification('Programmer error: dataid not defined in field class');
         }
         $this->field = new object;
         $this->field->id = 0;
@@ -177,10 +178,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @return bool
      */
     function insert_field() {
-        global $DB;
+        global $DB, $OUTPUT;
 
         if (empty($this->field)) {
-            notify('Programmer error: Field has not been defined yet!  See define_field()');
+            echo $OUTPUT->notification('Programmer error: Field has not been defined yet!  See define_field()');
             return false;
         }
 
@@ -260,7 +261,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         if (empty($this->field)) {   // No field has been defined yet, try and make one
             $this->define_default_field();
         }
-        print_simple_box_start('center','80%');
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
         echo '<form id="editfield" action="'.$CFG->wwwroot.'/mod/data/field.php" method="post">'."\n";
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
@@ -286,7 +287,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         echo '</form>';
 
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     /**
@@ -807,7 +808,7 @@ function data_add_record($data, $groupid=0){
  * @return bool
  */
 function data_tags_check($dataid, $template) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     // first get all the possible tags
     $fields = $DB->get_records('data_fields', array('dataid'=>$dataid));
@@ -817,7 +818,7 @@ function data_tags_check($dataid, $template) {
         $pattern="/\[\[".$field->name."\]\]/i";
         if (preg_match_all($pattern, $template, $dummy)>1){
             $tagsok = false;
-            notify ('[['.$field->name.']] - '.get_string('multipletags','data'));
+            echo $OUTPUT->notification('[['.$field->name.']] - '.get_string('multipletags','data'));
         }
     }
     // else return true
@@ -855,7 +856,7 @@ function data_add_instance($data) {
  * @return bool
  */
 function data_update_instance($data) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $data->timemodified = time();
     $data->id           = $data->instance;
@@ -1825,7 +1826,7 @@ function data_convert_arrays_to_strings(&$fieldinput) {
  * @return boolean data module was converted or not
  */
 function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array(), $cmid=NULL) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (!isset($data->participants) && !isset($data->assesspublic)
             && !isset($data->groupmode)) {
@@ -1838,7 +1839,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     if (empty($cmid)) {
         // We were not given the course_module id. Try to find it.
         if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-            notify('Could not get the course module for the data');
+            echo $OUTPUT->notification('Could not get the course module for the data');
             return false;
         } else {
             $cmid = $cm->id;
@@ -2069,9 +2070,9 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     // Print any notices
 
     if (!empty($displaynoticegood)) {
-        notify($displaynoticegood, 'notifysuccess');    // good (usually green)
+        echo $OUTPUT->notification($displaynoticegood, 'notifysuccess');    // good (usually green)
     } else if (!empty($displaynoticebad)) {
-        notify($displaynoticebad);                     // bad (usuually red)
+        echo $OUTPUT->notification($displaynoticebad);                     // bad (usuually red)
     }
 }
 
@@ -2259,6 +2260,7 @@ class PresetImporter {
      *
      */
     function import_options() {
+        global $OUTPUT;
         if (!confirm_sesskey()) {
             print_error('invalidsesskey');
         }
@@ -2282,7 +2284,7 @@ class PresetImporter {
 
         if (!empty($currentfields) && !empty($newfields)) {
             echo "<h3>$strfieldmappings ";
-            helpbutton('fieldmappings', $strfieldmappings, 'data');
+            echo $OUTPUT->help_icon(moodle_help_icon::make('fieldmappings', $strfieldmappings, 'data'));
             echo '</h3><table>';
 
             foreach ($newfields as $nid => $newfield) {

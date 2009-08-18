@@ -124,7 +124,7 @@
             // Check for multiple tags, only need to check for add template.
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
                 if ($DB->update_record('data', $newtemplate)) {
-                    notify(get_string('templatesaved', 'data'), 'notifysuccess');
+                    echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
                 }
             }
             add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
@@ -153,7 +153,7 @@
         // Only reload if we are not resetting the template to default.
         $data = $DB->get_record('data', array('id'=>$d));
     }
-    print_simple_box_start('center','80%');
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
 
 /// Add the HTML editor(s).
@@ -175,7 +175,7 @@
     if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         // Add all the available fields for this data.
         echo '<label for="availabletags">'.get_string('availabletags','data').'</label>';
-        helpbutton('tags', get_string('tags'), 'data');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('tags', get_string('tags'), 'data'));
         echo '<br />';
 
 
@@ -283,7 +283,7 @@
     echo '</td></tr></table>';
 
 
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     echo '</div>';
     echo '</form>';
 

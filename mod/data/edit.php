@@ -186,7 +186,7 @@
         /// Of course, you can't be stopped if you are an editting teacher! =)
 
             if (data_atmaxentries($data) and !has_capability('mod/data:manageentries',$context)){
-                notify (get_string('atmaxentry','data'));
+                echo $OUTPUT->notification(get_string('atmaxentry','data'));
                 echo $OUTPUT->footer();
                 exit;
             }
@@ -209,7 +209,7 @@
             }
 
             if ($emptyform){    //nothing gets written to database
-                notify(get_string('emptyaddform','data'));
+                echo $OUTPUT->notification(get_string('emptyaddform','data'));
             }
 
             if (!$emptyform && $recordid = data_add_record($data, $currentgroup)) {    //add instance to data_record
@@ -237,7 +237,7 @@
 
                 add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
 
-                notify(get_string('entrysaved','data'));
+                echo $OUTPUT->notification(get_string('entrysaved','data'));
 
                 if (!empty($datarecord->saveandview)) {
                     redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$recordid);
@@ -257,7 +257,7 @@
     echo '<input name="d" value="'.$data->id.'" type="hidden" />';
     echo '<input name="rid" value="'.$rid.'" type="hidden" />';
     echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
-    print_simple_box_start('center','80%');
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
     if (!$rid){
         echo $OUTPUT->heading(get_string('newentry','data'), 2);
@@ -292,7 +292,7 @@
         echo '<input type="submit" value="'.get_string('saveandadd','data').'" />';
     }
     echo '</div>';
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     echo '</div></form>';
 
 
@@ -300,7 +300,7 @@
 
     if (has_capability('mod/data:manageentries',$context)) {
         if ($import) {
-            print_simple_box_start('center','80%');
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             echo $OUTPUT->heading(get_string('uploadrecords', 'data'), 3);
 
             $maxuploadsize = get_max_upload_file_size();
@@ -313,7 +313,7 @@
             echo '<tr>';
             echo '<td align="right">'.get_string('csvfile', 'data').':</td>';
             echo '<td><input type="file" name="recordsfile" size="30" />';
-            helpbutton('importcsv', get_string('csvimport', 'data'), 'data', true, false);
+            echo $OUTPUT->help_icon(moodle_help_icon::make('importcsv', get_string('csvimport', 'data'), 'data'));
             echo '</td><tr>';
             echo '<td align="right">'.get_string('fielddelimiter', 'data').':</td>';
             echo '<td><input type="text" name="fielddelimiter" size="6" />';
@@ -327,7 +327,7 @@
             echo '<input type="submit" value="'.get_string('uploadfile', 'data').'" />';
             echo '</form>';
             echo '</div>';
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             echo '<div style="text-align:center">';
             echo '<a href="edit.php?d='.$data->id.'&amp;import=1">'.get_string('uploadrecords', 'data').'</a>';

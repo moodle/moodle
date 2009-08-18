@@ -170,9 +170,9 @@
     }
 
     if ($recordsadded > 0) {
-        notify($recordsadded. ' '. get_string('recordssaved', 'data'));
+        echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'));
     } else {
-        notify(get_string('recordsnotsaved', 'data'));
+        echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'));
     }
     echo '<p />';
 

@@ -123,7 +123,7 @@ switch ($action) {
         @rmdir($presetpath);
 
         $strdeleted = get_string('deleted', 'data');
-        notify("$shortname $strdeleted", 'notifysuccess');
+        echo $OUTPUT->notification("$shortname $strdeleted", 'notifysuccess');
         break;
 
         /***************** Importing *****************/
@@ -175,9 +175,9 @@ switch ($action) {
         $straddentries = get_string('addentries', 'data');
         $strtodatabase = get_string('todatabase', 'data');
         if (!$DB->get_records('data_records', array('dataid'=>$data->id))) {
-            notify("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase", 'notifysuccess');
+            echo $OUTPUT->notification("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase", 'notifysuccess');
         } else {
-            notify("$strimportsuccess", 'notifysuccess');
+            echo $OUTPUT->notification("$strimportsuccess", 'notifysuccess');
         }
         break;
 
@@ -235,7 +235,7 @@ switch ($action) {
         $name = optional_param('name', $data->name, PARAM_FILE);
 
         if (is_directory_a_preset("$CFG->dataroot/data/preset/$USER->id/$name")) {
-            notify("Preset already exists: Pick another name or overwrite");
+            echo $OUTPUT->notification("Preset already exists: Pick another name or overwrite");
 
             echo '<div style="text-align:center">';
             echo '<form action="preset.php" method="post">';
@@ -274,7 +274,7 @@ switch ($action) {
         if (!unzip_file($file, $CFG->dataroot.$presetdirectory, false)) {
             print_error('cannotunziptopreset', 'data');
         }
-        notify(get_string('savesuccess', 'data'), 'notifysuccess');
+        echo $OUTPUT->notification(get_string('savesuccess', 'data'), 'notifysuccess');
         break;
 }
 
@@ -296,7 +296,7 @@ echo '<table class="presets" cellpadding="5">';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strexport.'</h3></td></tr>';
 
 echo '<tr><td><label>'.$strexportaszip.'</label>';
-helpbutton('exportzip', '', 'data', true, true);
+echo $OUTPUT->help_icon(moodle_help_icon::make('exportzip', '', 'data', true));
 echo '</td><td>';
 $options = new object();
 $options->action = 'export';
@@ -306,7 +306,7 @@ print_single_button('preset.php', $options, $strexport, 'post');
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
-helpbutton('savepreset', '', 'data', true, true);
+echo $OUTPUT->help_icon(moodle_help_icon::make('savepreset', '', 'data', true));
 echo '</td><td>';
 $options = new object();
 $options->action = 'save1';
@@ -316,7 +316,7 @@ print_single_button('preset.php', $options, $strsave, 'post');
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';
-helpbutton('importfromfile', '', 'data', true, true);
+echo $OUTPUT->help_icon(moodle_help_icon::make('importfromfile', '', 'data', true));
 echo '</td><td>';
 echo '<form id="uploadpreset" method="post" action="preset.php">';
 echo '<fieldset class="invisiblefieldset">';
@@ -329,7 +329,7 @@ echo '</fieldset></form>';
 echo '</td></tr>';
 
 echo '<tr valign="top"><td><label>'.$strusestandard.'</label>';
-helpbutton('usepreset', '', 'data', true, true);
+echo $OUTPUT->help_icon(moodle_help_icon::make('usepreset', '', 'data', true));
 echo '</td><td>';
 
 echo '<form id="presets" method="post" action="preset.php" >';

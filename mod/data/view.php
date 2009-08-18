@@ -331,7 +331,7 @@
 
                     add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
 
-                    notify(get_string('recorddeleted','data'), 'notifysuccess');
+                    echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
                 }
             }
 
@@ -381,7 +381,7 @@
                     $newrecord->id = $approverecord->id;
                     $newrecord->approved = 1;
                     if ($DB->update_record('data_records', $newrecord)) {
-                        notify(get_string('recordapproved','data'), 'notifysuccess');
+                        echo $OUTPUT->notification(get_string('recordapproved','data'), 'notifysuccess');
                     }
                 }
             }
@@ -392,7 +392,7 @@
         if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
             $data->entriesleft = $data->requiredentries - $numentries;
             $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
-            notify($strentrieslefttoadd);
+            echo $OUTPUT->notification($strentrieslefttoadd);
         }
 
     /// Check the number of entries required before to view other participant's entries against the number of entries already made (doesn't apply to teachers)
@@ -400,7 +400,7 @@
         if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !has_capability('mod/data:manageentries', $context)) {
             $data->entrieslefttoview = $data->requiredentriestoview - $numentries;
             $strentrieslefttoaddtoview = get_string('entrieslefttoaddtoview', 'data', $data);
-            notify($strentrieslefttoaddtoview);
+            echo $OUTPUT->notification($strentrieslefttoaddtoview);
             $requiredentries_allowed = false;
         }
 
@@ -597,9 +597,9 @@
                 $a = new object();
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                notify(get_string('foundnorecords','data', $a));
+                echo $OUTPUT->notification(get_string('foundnorecords','data', $a));
             } else {
-                notify(get_string('norecords','data'));
+                echo $OUTPUT->notification(get_string('norecords','data'));
             }
 
         } else { //  We have some records to print
@@ -609,7 +609,7 @@
                 $a->num = $totalcount;
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                notify(get_string('foundrecords', 'data', $a), 'notifysuccess');
+                echo $OUTPUT->notification(get_string('foundrecords', 'data', $a), 'notifysuccess');
             }
 
             if ($mode == 'single') {                  // Single template
@@ -620,7 +620,7 @@
                 echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
 
                 if (empty($data->singletemplate)){
-                    notify(get_string('nosingletemplate','data'));
+                    echo $OUTPUT->notification(get_string('nosingletemplate','data'));
                     data_generate_default_template($data, 'singletemplate', 0, false, false);
                 }
 
@@ -641,7 +641,7 @@
                 echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $nowperpage, $baseurl));
 
                 if (empty($data->listtemplate)){
-                    notify(get_string('nolisttemplate','data'));
+                    echo $OUTPUT->notification(get_string('nolisttemplate','data'));
                     data_generate_default_template($data, 'listtemplate', 0, false, false);
                 }
                 echo $data->listtemplateheader;
