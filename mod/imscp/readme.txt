@@ -20,8 +20,9 @@ license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 IMS CP module
 =============
 
-IMS CP module is a successor to original 'ims' type plugin of Resource module.
+IMS CP module is a successor to the original 'ims' type plugin of Resource module.
 
 TODO:
- * implement portfolio support (MDL-20074)
+ * implement a portfolio support (MDL-20074)
  * new backup/restore and old restore migration (MDL-20075)
+ * move module CSS into themes (MDL-20067)

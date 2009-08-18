@@ -1,7 +1,5 @@
 /*** Modules: IMS CP ***/
 
-/* TODO: yui styling has to go here because the order of CSS loading is not solved yet */
-
 #mod-imscp-view #imscp_nav {
  text-align: center;
  margin-bottom: 5px;
@@ -16,10 +14,9 @@
  display:none;
 }
 
-/* this is a temporary hack until we solve theYUI CSS trouble */
+
 #mod-imscp-view .yui-layout-hd {
  background-image: none;
- height:3em;
  background-color: #DDDDDD;
 }
 
