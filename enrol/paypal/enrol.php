@@ -41,7 +41,7 @@ function print_entry($course) {
             echo $OUTPUT->heading(get_string('costorkey', 'enrol_paypal'));
         }
 
-        print_simple_box_start("center");
+        echo $OUTPUT->box_end();
 
         if ($USER->username == 'guest') { // force login only for guest user, not real users with guest role
             if (empty($CFG->loginhttps)) {
@@ -68,7 +68,7 @@ function print_entry($course) {
             include($CFG->dirroot.'/enrol/paypal/enrol.html');
         }
 
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
 
         if ($course->password) {  // Second option
             $password = '';

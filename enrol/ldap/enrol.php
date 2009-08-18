@@ -12,7 +12,7 @@ class enrolment_plugin_ldap {
  * This function syncs a user's enrolments with those on the LDAP server.
  */
 function setup_enrolments(&$user) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     //error_log('[ENROL_LDAP] setup_enrolments called');
 
@@ -20,7 +20,7 @@ function setup_enrolments(&$user) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        notify("[ENROL_LDAP] LDAP-module cannot connect to server: {$CFG->enrol_ldap_host_url}");
+        echo $OUTPUT->notification("[ENROL_LDAP] LDAP-module cannot connect to server: {$CFG->enrol_ldap_host_url}");
         return false;
     }
     
@@ -119,12 +119,12 @@ function setup_enrolments(&$user) {
 
 /// sync enrolments with ldap, create courses if required.
 function sync_enrolments($type, $enrol = false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     // Get the role. If it doesn't exist, that is bad.
     $role = $DB->get_record('role', array('shortname'=>$type));
     if (!$role) {
-        notify("No such role: $type");
+        echo $OUTPUT->notification("No such role: $type");
         return false;
     }
 
@@ -132,7 +132,7 @@ function sync_enrolments($type, $enrol = false) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        echo $OUTPUT->notification("LDAP-module cannot connect to server: $CFG->ldap_host_url");
         return false;
     }
     
@@ -416,7 +416,7 @@ function process_config($config) {
 
 function enrol_ldap_connect(){
 /// connects to ldap-server
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $result = ldap_connect($CFG->enrol_ldap_host_url);
 
@@ -430,14 +430,14 @@ function enrol_ldap_connect(){
                                  $CFG->enrol_ldap_bind_dn, 
                                  $CFG->enrol_ldap_bind_pw );
             if (!$bind) {
-                notify("Error in binding to LDAP server");
+                echo $OUTPUT->notification("Error in binding to LDAP server");
                 trigger_error("Error in binding to LDAP server $!");
             }
 
         }
         return $result;
     } else {
-        notify("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
+        echo $OUTPUT->notification("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
         return false;
     }
 }
@@ -446,19 +446,19 @@ function enrol_ldap_bind($ldap_connection){
 /// makes bind to ldap for searching users
 /// uses ldap_bind_dn or anonymous bind
 
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if ( ! empty($CFG->enrol_ldap_bind_dn) ){
         //bind with search-user
         if (!ldap_bind($ldap_connection, $CFG->enrol_ldap_bind_dn,$CFG->enrol_ldap_bind_pw)){
-            notify("Error: could not bind ldap with ldap_bind_dn/pw");
+            echo $OUTPUT->notification("Error: could not bind ldap with ldap_bind_dn/pw");
             return false;
         }
 
     } else {
         //bind anonymously 
         if ( !ldap_bind($ldap_connection)){
-            notify("Error: could not bind ldap anonymously");
+            echo $OUTPUT->notification("Error: could not bind ldap anonymously");
             return false;
         }  
     }
@@ -547,7 +547,7 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $role){
 // you will want to call fix_course_sortorder() after your are done
 // with course creation
 function create_course ($course_ext,$skip_fix_course_sortorder=0){
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     // override defaults with template course
     if (!empty($CFG->enrol_ldap_template)){
@@ -602,7 +602,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/ldap auto-creation");
     } else {
         error_log("Could not create new course from LDAP from DN:" . $course_ext['dn']);
-        notify("Serious Error! Could not create the new course!");
+        echo $OUTPUT->notification("Serious Error! Could not create the new course!");
         return false;
     }
     

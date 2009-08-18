@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_enrol_authorize_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
     $result = true;
@@ -31,7 +31,7 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
     if ($result && $oldversion < 2008020500 && is_enabled_enrol('authorize')) {
         require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
         if (!check_curl_available()) {
-            notify("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
+            echo $OUTPUT->notification("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
                     PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)");
         }
 

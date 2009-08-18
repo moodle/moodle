@@ -453,19 +453,18 @@ class enrolment_plugin_authorize
      * @param object $frm
      * @access public
      */
-    public function config_form($frm)
-    {
-        global $CFG, $DB;
+    public function config_form($frm) {
+        global $CFG, $DB, $OUTPUT;
         $mconfig = get_config('enrol/authorize');
 
         if (!check_curl_available()) {
-            notify('PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)');
+            echo $OUTPUT->notification('PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)');
         }
 
         if (empty($CFG->loginhttps) and substr($CFG->wwwroot, 0, 5) !== 'https') {
             $a = new stdClass;
             $a->url = "$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity";
-            notify(get_string('adminconfighttps', 'enrol_authorize', $a));
+            echo $OUTPUT->notification(get_string('adminconfighttps', 'enrol_authorize', $a));
             return; // notice breaks the form and xhtml later
         }
         elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 443) { // MDL-9836
@@ -473,12 +472,12 @@ class enrolment_plugin_authorize
             $wwwsroot = str_replace('http:', 'https:', $wwwsroot);
             $a = new stdClass;
             $a->url = $wwwsroot;
-            notify(get_string('adminconfighttpsgo', 'enrol_authorize', $a));
+            echo $OUTPUT->notification(get_string('adminconfighttpsgo', 'enrol_authorize', $a));
             return; // notice breaks the form and xhtml later
         }
 
         if (optional_param('verifyaccount', 0, PARAM_INT)) {
-            notify(authorize_verify_account());
+            echo $OUTPUT->notification(authorize_verify_account());
         }
 
         if (!empty($frm->an_review)) {
@@ -487,7 +486,7 @@ class enrolment_plugin_authorize
             if ($captureday > 0 || $emailexpired > 0) {
                 $lastcron = $DB->get_field_sql('SELECT max(lastcron) FROM {modules}');
                 if ((time() - intval($lastcron) > 3600 * 24)) {
-                    notify(get_string('admincronsetup', 'enrol_authorize'));
+                    echo $OUTPUT->notification(get_string('admincronsetup', 'enrol_authorize'));
                 }
             }
         }
@@ -496,15 +495,15 @@ class enrolment_plugin_authorize
             $a = new stdClass;
             $a->count = $count;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
-            notify(get_string('adminpendingorders', 'enrol_authorize', $a));
+            echo $OUTPUT->notification(get_string('adminpendingorders', 'enrol_authorize', $a));
         }
 
         if (data_submitted()) {
             if (empty($mconfig->an_login)) {
-                notify("an_login required");
+                echo $OUTPUT->notification("an_login required");
             }
             if (empty($mconfig->an_tran_key) && empty($mconfig->an_password)) {
-                notify("an_tran_key or an_password required");
+                echo $OUTPUT->notification("an_tran_key or an_password required");
             }
         }
 

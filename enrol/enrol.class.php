@@ -6,7 +6,7 @@
 
 class enrolment_factory {
     function factory($enrol = '') {
-        global $CFG;
+        global $CFG, $OUTPUT;
         if (!$enrol) {
             $enrol = $CFG->enrol;
         }
@@ -16,7 +16,7 @@ class enrolment_factory {
             return new $class;
         } else {
             trigger_error("$CFG->dirroot/enrol/$enrol/enrol.php does not exist");
-            notify("Enrolment file $enrol/enrol.php does not exist");
+            echo $OUTPUT->notification("Enrolment file $enrol/enrol.php does not exist");
         }
     }
 }

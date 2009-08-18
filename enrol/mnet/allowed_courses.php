@@ -122,7 +122,7 @@ if ($courses = $DB->get_records('course', null, 'shortname', 'id, shortname')) {
 
 
 // output the form
-print_simple_box_start('center','90%','','20');
+echo $OUTPUT->box_start();
 
 ?>
  <div class="allowedcoursesdiv"> 
@@ -249,7 +249,7 @@ if (count($courses) < 1) {
   </div>
 <?php
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
 ?>

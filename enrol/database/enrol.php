@@ -174,13 +174,13 @@ function setup_enrolments(&$user) {
  * used.
  */
 function sync_enrolments($role = null) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     error_reporting(E_ALL);
 
     // Connect to the external database
     $enroldb = $this->enrol_connect();
     if (!$enroldb) {
-        notify("enrol/database cannot connect to server");
+        echo $OUTPUT->notification("enrol/database cannot connect to server");
         return false;
     }
 
@@ -554,7 +554,7 @@ function process_config($config) {
 // you will want to call fix_course_sortorder() after your are done
 // with course creation
 function create_course ($course,$skip_fix_course_sortorder=0){
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     // define a template
     if (!empty($CFG->enrol_db_template)){
@@ -616,7 +616,7 @@ function create_course ($course,$skip_fix_course_sortorder=0){
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/database auto-creation");
     } else {
         trigger_error("Could not create new course $extcourse from  from database");
-        notify("Serious Error! Could not create the new course!");
+        echo $OUTPUT->notification("Serious Error! Could not create the new course!");
         return false;
     }
 
