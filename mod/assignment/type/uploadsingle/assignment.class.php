@@ -37,7 +37,7 @@ class assignment_uploadsingle extends assignment_base {
 
     function view() {
 
-        global $USER;
+        global $USER, $OUTPUT;
 
         $context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
         require_capability('mod/assignment:view', $context);
@@ -57,7 +57,7 @@ class assignment_uploadsingle extends assignment_base {
                 $this->view_feedback();
             }
             if ($filecount) {
-                print_simple_box($this->print_user_files($USER->id, true), 'center');
+                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
             }
         }
 
@@ -88,7 +88,7 @@ class assignment_uploadsingle extends assignment_base {
             if ($submission = $this->get_submission($USER->id)) {
                 //TODO: change later to ">= 0", to prevent resubmission when graded 0
                 if (($submission->grade > 0) and !$this->assignment->resubmit) {
-                    notify(get_string('alreadygraded', 'assignment'));
+                    echo $OUTPUT->notification(get_string('alreadygraded', 'assignment'));
                 }
             }
 
@@ -110,17 +110,17 @@ class assignment_uploadsingle extends assignment_base {
                             echo $OUTPUT->heading(get_string('uploadedfile'));
                             redirect('view.php?id='.$this->cm->id);
                         } else {
-                            notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
+                            echo $OUTPUT->notification(get_string("uploadnotregistered", "assignment", $newfile_name) );
                             $file->delete();
                         }
                     }
                 }
             } else {
-                notify(get_string("uploaderror", "assignment")); //submitting not allowed!
+                echo $OUTPUT->notification(get_string("uploaderror", "assignment")); //submitting not allowed!
             }
         }
 
-        print_continue('view.php?id='.$this->cm->id);
+        echo $OUTPUT->continue_button('view.php?id='.$this->cm->id);
 
         $this->view_footer();
     }

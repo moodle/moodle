@@ -28,9 +28,9 @@ class assignment_upload extends assignment_base {
         if ($this->assignment->timeavailable > time()
           and !has_capability('mod/assignment:grade', $this->context)      // grading user can see it anytime
           and $this->assignment->var3) {                                   // force hiding before available date
-            print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
+            echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
             print_string('notavailableyet', 'assignment');
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             $this->view_intro();
         }
@@ -50,12 +50,12 @@ class assignment_upload extends assignment_base {
             }
 
             if ($filecount and $submission) {
-                print_simple_box($this->print_user_files($USER->id, true), 'center');
+                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
             } else {
                 if (!$this->isopen() or $this->is_finalized($submission)) {
-                    print_simple_box(get_string('nofiles', 'assignment'), 'center');
+                    echo $OUTPUT->box(get_string('nofiles', 'assignment'), 'generalbox boxaligncenter');
                 } else {
-                    print_simple_box(get_string('nofilesyet', 'assignment'), 'center');
+                    echo $OUTPUT->box(get_string('nofilesyet', 'assignment'), 'generalbox boxaligncenter');
                 }
             }
 
@@ -84,7 +84,7 @@ class assignment_upload extends assignment_base {
             if ($this->count_responsefiles($USER->id)) {
                 echo $OUTPUT->heading(get_string('responsefiles', 'assignment'), 3);
                 $responsefiles = $this->print_responsefiles($USER->id, true);
-                print_simple_box($responsefiles, 'center');
+                echo $OUTPUT->box($responsefiles, 'generalbox boxaligncenter');
             }
             return;
         }
@@ -169,13 +169,13 @@ class assignment_upload extends assignment_base {
     }
 
     function view_notes() {
-        global $USER;
+        global $USER, $OUTPUT;
 
         if ($submission = $this->get_submission($USER->id)
           and !empty($submission->data1)) {
-            print_simple_box(format_text($submission->data1, FORMAT_HTML), 'center', '630px');
+            echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML), 'generalbox boxaligncenter boxwidthwide');
         } else {
-            print_simple_box(get_string('notesempty', 'assignment'), 'center');
+            echo $OUTPUT->box(get_string('notesempty', 'assignment'), 'generalbox boxaligncenter');
         }
         if ($this->can_update_notes($submission)) {
             $options = array ('id'=>$this->cm->id, 'action'=>'editnotes');
@@ -482,8 +482,8 @@ class assignment_upload extends assignment_base {
 
         if (!$this->can_update_notes($submission)) {
             $this->view_header(get_string('upload'));
-            notify(get_string('uploaderror', 'assignment'));
-            print_continue($returnurl);
+            echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
+            echo $OUTPUT->continue_button($returnurl);
             $this->view_footer();
             die;
         }
@@ -503,8 +503,8 @@ class assignment_upload extends assignment_base {
 
             } else {
                 $this->view_header(get_string('notes', 'assignment'));
-                notify(get_string('notesupdateerror', 'assignment'));
-                print_continue($returnurl);
+                echo $OUTPUT->notification(get_string('notesupdateerror', 'assignment'));
+                echo $OUTPUT->continue_button($returnurl);
                 $this->view_footer();
                 die;
             }
@@ -543,14 +543,14 @@ class assignment_upload extends assignment_base {
             }
         }
         print_header(get_string('upload'));
-        notify(get_string('uploaderror', 'assignment'));
-        print_continue($returnurl);
+        echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
+        echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();
         die;
     }
 
     function upload_file() {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         $returnurl = 'view.php?id='.$this->cm->id;
 
@@ -559,8 +559,8 @@ class assignment_upload extends assignment_base {
 
         if (!$this->can_upload_file($submission)) {
             $this->view_header(get_string('upload'));
-            notify(get_string('uploaderror', 'assignment'));
-            print_continue($returnurl);
+            echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
+            echo $OUTPUT->continue_button($returnurl);
             $this->view_footer();
             die;
         }
@@ -591,8 +591,8 @@ class assignment_upload extends assignment_base {
         }
 
         $this->view_header(get_string('upload'));
-        notify(get_string('uploaderror', 'assignment'));
-        print_continue($returnurl);
+        echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
+        echo $OUTPUT->continue_button($returnurl);
         $this->view_footer();
         die;
     }
@@ -664,8 +664,8 @@ class assignment_upload extends assignment_base {
             $this->email_teachers($submission);
         } else {
             $this->view_header(get_string('submitformarking', 'assignment'));
-            notify(get_string('finalizeerror', 'assignment'));
-            print_continue($returnurl);
+            echo $OUTPUT->notification(get_string('finalizeerror', 'assignment'));
+            echo $OUTPUT->continue_button($returnurl);
             $this->view_footer();
             die;
         }
@@ -723,8 +723,8 @@ class assignment_upload extends assignment_base {
                 $this->update_grade($submission);
             } else {
                 $this->view_header(get_string('submitformarking', 'assignment'));
-                notify(get_string('unfinalizeerror', 'assignment'));
-                print_continue($returnurl);
+                echo $OUTPUT->notification(get_string('unfinalizeerror', 'assignment'));
+                echo $OUTPUT->continue_button($returnurl);
                 $this->view_footer();
                 die;
             }
@@ -783,8 +783,8 @@ class assignment_upload extends assignment_base {
 
         // print delete error
         print_header(get_string('delete'));
-        notify(get_string('deletefilefailed', 'assignment'));
-        print_continue($returnurl);
+        echo $OUTPUT->notification(get_string('deletefilefailed', 'assignment'));
+        echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();
         die;
 
@@ -815,8 +815,8 @@ class assignment_upload extends assignment_base {
         if (!$submission = $this->get_submission($userid) // incorrect submission
           or !$this->can_delete_files($submission)) {     // can not delete
             $this->view_header(get_string('delete'));
-            notify(get_string('cannotdeletefiles', 'assignment'));
-            print_continue($returnurl);
+            echo $OUTPUT->notification(get_string('cannotdeletefiles', 'assignment'));
+            echo $OUTPUT->continue_button($returnurl);
             $this->view_footer();
             die;
         }
@@ -857,8 +857,8 @@ class assignment_upload extends assignment_base {
         } else {
             print_header(get_string('delete'));
         }
-        notify(get_string('deletefilefailed', 'assignment'));
-        print_continue($returnurl);
+        echo $OUTPUT->notification(get_string('deletefilefailed', 'assignment'));
+        echo $OUTPUT->continue_button($returnurl);
         if (empty($mode)) {
             $this->view_footer();
         } else {

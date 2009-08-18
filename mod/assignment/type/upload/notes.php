@@ -43,21 +43,21 @@
       and !empty($submission->data1)) {
         print_header(fullname($user,true).': '.$assignment->name);
         echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
-        print_simple_box(format_text($submission->data1, FORMAT_HTML), 'center', '100%');
+        echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML), 'generalbox boxaligncenter boxwidthwide');
         if ($mode != 'single') {
             echo $OUTPUT->close_window_button();
         } else {
-            print_continue($returnurl);
+            echo $OUTPUT->continue_button($returnurl);
         }
         echo $OUTPUT->footer();
     } else {
         print_header(fullname($user,true).': '.$assignment->name);
         echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
-        print_simple_box(get_string('notesempty', 'assignment'), 'center', '100%');
+        echo $OUTPUT->box(get_string('notesempty', 'assignment'), 'generalbox boxaligncenter boxwidthwide');
         if ($mode != 'single') {
             echo $OUTPUT->close_window_button();
         } else {
-            print_continue($returnurl);
+            echo $OUTPUT->continue_button($returnurl);
         }
         echo $OUTPUT->footer();
     }

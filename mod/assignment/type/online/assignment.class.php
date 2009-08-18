@@ -76,7 +76,7 @@ class assignment_online extends assignment_base {
                 redirect('view.php?id='.$this->cm->id.'&saved=1');
             } else {
                 // TODO: add better error message
-                notify(get_string("error")); //submitting not allowed!
+                echo $OUTPUT->notification(get_string("error")); //submitting not allowed!
             }
         }
 
@@ -92,7 +92,7 @@ class assignment_online extends assignment_base {
         $this->view_dates();
 
         if ($saved) {
-            notify(get_string('submissionsaved', 'assignment'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('submissionsaved', 'assignment'), 'notifysuccess');
         }
 
         if (has_capability('mod/assignment:submit', $context)) {
@@ -131,13 +131,13 @@ class assignment_online extends assignment_base {
      * Display the assignment dates
      */
     function view_dates() {
-        global $USER, $CFG;
+        global $USER, $CFG, $OUTPUT;
 
         if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
             return;
         }
 
-        print_simple_box_start('center', '', '', 0, 'generalbox', 'dates');
+        echo $OUTPUT->box_start('generalbox boxaligncenter', 'dates');
         echo '<table>';
         if ($this->assignment->timeavailable) {
             echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
@@ -159,7 +159,7 @@ class assignment_online extends assignment_base {
             }
         }
         echo '</table>';
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     function update_submission($data) {
@@ -211,15 +211,15 @@ class assignment_online extends assignment_base {
 
         ///Stolen code from file.php
 
-        print_simple_box_start('center', '', '', 0, 'generalbox', 'wordcount');
+        echo $OUTPUT->box_start('generalbox boxaligncenter', 'wordcount');
     /// Decide what to count
         if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
             echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
         } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
             echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
         }
-        print_simple_box_end();
-        print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
+        echo $OUTPUT->box_end();
+        echo $OUTPUT->box(format_text($submission->data1, $submission->data2), 'generalbox boxaligncenter boxwidthwide');
 
         ///End of stolen code from file.php
 

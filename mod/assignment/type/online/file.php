@@ -38,7 +38,7 @@
     if ($submission = $assignmentinstance->get_submission($user->id)) {
         print_header(fullname($user,true).': '.$assignment->name);
 
-        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        echo $OUTPUT->box_start('generalbox boxaligcenter', 'dates');
         echo '<table>';
         if ($assignment->timedue) {
             echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
@@ -53,9 +53,9 @@
                 echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')</td></tr>';
             }
         echo '</table>';
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
 
-        print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
+        echo $OUTPUT->box(format_text($submission->data1, $submission->data2), 'generalbox boxaligncenter boxwidthwide');
         echo $OUTPUT->close_window_button();
         echo $OUTPUT->footer();
     } else {

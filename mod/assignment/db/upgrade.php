@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_assignment_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
     $result = true;
@@ -76,7 +76,7 @@ function xmldb_assignment_upgrade($oldversion) {
                         continue;
                     }
                     if (!$item->isReadable()) {
-                        notify(" File not readable, skipping: ".$path.$item->getFilename());
+                        echo $OUTPUT->notification(" File not readable, skipping: ".$path.$item->getFilename());
                         continue;
                     }
                     $filename = clean_param($item->getFilename(), PARAM_FILE);

@@ -206,9 +206,10 @@ class assignment_base {
      * The default implementation prints the assignment description in a box
      */
     function view_intro() {
-        print_simple_box_start('center', '', '', 0, 'generalbox', 'intro');
+        global $OUTPUT;
+        echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
         echo format_module_intro('assignment', $this->assignment, $this->cm->id);
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     /**
@@ -218,11 +219,12 @@ class assignment_base {
      * This will be suitable for most assignment types
      */
     function view_dates() {
+        global $OUTPUT;
         if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
             return;
         }
 
-        print_simple_box_start('center', '', '', 0, 'generalbox', 'dates');
+        echo $OUTPUT->box_start('generalbox boxaligncenter', 'dates');
         echo '<table>';
         if ($this->assignment->timeavailable) {
             echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
@@ -233,7 +235,7 @@ class assignment_base {
             echo '    <td class="c1">'.userdate($this->assignment->timedue).'</td></tr>';
         }
         echo '</table>';
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
 
@@ -674,7 +676,7 @@ class assignment_base {
 
                 }
 
-                $message = notify(get_string('changessaved'), 'notifysuccess', 'center', true);
+                $message = $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
 
                 $this->display_submissions($message);
                 break;
@@ -996,7 +998,7 @@ class assignment_base {
             } else {
                 echo '<div class="format">';
                 echo $OUTPUT->select(html_select::make(format_text_menu(), "format", $submission->format, false));
-                helpbutton("textformat", get_string("helpformatting"));
+                echo $OUTPUT->help_icon(moodle_help_icon::make("textformat", get_string("helpformatting")));
                 echo '</div>';
             }
         }
@@ -1401,7 +1403,7 @@ class assignment_base {
             echo '<label for="mailinfo">'.get_string('enableemailnotification','assignment').'</label>';
             echo '<input type="hidden" name="mailinfo" value="0" />';
             echo '<input type="checkbox" id="mailinfo" name="mailinfo" value="1" '.$lastmailinfo.' />';
-            helpbutton('emailnotification', get_string('enableemailnotification', 'assignment'), 'assignment').'</p></div>';
+            echo $OUTPUT->help_icon(moodle_help_icon::make('emailnotification', get_string('enableemailnotification', 'assignment'), 'assignment')).'</p></div>';
             echo '</div>';
             echo '<div class="fastgbutton"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
             echo '</div>';
@@ -1419,7 +1421,7 @@ class assignment_base {
         echo '</td>';
         echo '<td>';
         echo '<input type="text" id="perpage" name="perpage" size="1" value="'.$perpage.'" />';
-        helpbutton('pagesize', get_string('pagesize','assignment'), 'assignment');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('pagesize', get_string('pagesize','assignment'), 'assignment'));
         echo '</td></tr>';
         echo '<tr><td>';
         echo '<label for="quickgrade">'.get_string('quickgrade','assignment').'</label>';
@@ -1427,7 +1429,7 @@ class assignment_base {
         echo '<td>';
         $checked = $quickgrade ? 'checked="checked"' : '';
         echo '<input type="checkbox" id="quickgrade" name="quickgrade" value="1" '.$checked.' />';
-        helpbutton('quickgrade', get_string('quickgrade', 'assignment'), 'assignment').'</p></div>';
+        echo $OUTPUT->help_icon(moodle_help_icon::make('quickgrade', get_string('quickgrade', 'assignment'), 'assignment')).'</p></div>';
         echo '</td></tr>';
         echo '<tr><td colspan="2">';
         echo '<input type="submit" value="'.get_string('savepreferences').'" />';
@@ -1883,6 +1885,7 @@ class assignment_base {
      * @param $user object
      */
     function user_complete($user) {
+        global $OUTPUT;
         if ($submission = $this->get_submission($user->id)) {
 
             $fs = get_file_storage();
@@ -1895,7 +1898,7 @@ class assignment_base {
                 }
             }
 
-            print_simple_box_start();
+            echo $OUTPUT->box_start();
             echo get_string("lastmodified").": ";
             echo userdate($submission->timemodified);
             echo $this->display_lateness($submission->timemodified);
@@ -1910,7 +1913,7 @@ class assignment_base {
                 $this->view_feedback($submission);
             }
 
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
 
         } else {
             print_string("notsubmittedyet", "assignment");
