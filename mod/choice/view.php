@@ -56,7 +56,7 @@
         } else {
             choice_user_submit_response($answer, $choice, $USER->id, $course->id, $cm);
         }
-        notify(get_string('choicesaved', 'choice'),'notifysuccess');
+        echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
     }
 
 
@@ -87,7 +87,7 @@
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
     if (!empty($USER->id) && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
         empty($choice->allowupdate) ) {
-        print_simple_box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), "center");
+        echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)));
     }
 
 /// Print the form
@@ -95,11 +95,11 @@
     $timenow = time();
     if ($choice->timeclose !=0) {
         if ($choice->timeopen > $timenow ) {
-            print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
+            echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)));
             echo $OUTPUT->footer();
             exit;
         } else if ($timenow > $choice->timeclose) {
-            print_simple_box(get_string("expired", "choice", userdate($choice->timeclose)), "center");
+            echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)));
             $choiceopen = false;
         }
     }
@@ -133,13 +133,13 @@
             $SESSION->wantsurl = $FULLME;
             $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
 
-            print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
+            echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
             echo '<div class="continuebutton">';
             print_single_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL,
                                 get_string('enrolme', '', format_string($course->shortname)), 'post', $CFG->framename);
             echo '</div>'."\n";
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
 
         }
     }
@@ -153,7 +153,7 @@
         choice_show_results($choice, $course, $cm, $allresponses); //show table with students responses.
 
     } else if (!$choiceformshown) {
-        print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
+        echo $OUTPUT->box(get_string('noresultsviewable', 'choice'));
     }
 
     echo $OUTPUT->footer();
