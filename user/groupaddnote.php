@@ -89,7 +89,7 @@ echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content
 
 echo '<p>' . $strpublishstate;
 helpbutton('status', $strpublishstate, 'notes');
-choose_from_menu($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, '');
+echo $OUTPUT->select(html_select::make($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false));
 echo '</p>';
 
 echo '<input type="submit" value="' . get_string('savechanges'). '" /></div></form>';

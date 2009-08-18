@@ -148,9 +148,9 @@ foreach ($_POST as $k => $v) {
 print_table($table);
 echo '<div style="width:100%;text-align:center;"><strong>';
 echo get_string('extendperiod') . ' ';
-choose_from_menu($periodmenu, "extendperiod");
+echo $OUTPUT->select(html_select::make($periodmenu, 'extendperiod'));
 echo ' ' . get_string('startingfrom') . ' ';
-choose_from_menu($basemenu, "extendbase", "2", "");
+echo $OUTPUT->select(html_select::make($basemenu, 'extendbase', '2', false));
 echo '</strong><br />';
 echo '<input type="submit" value="'.get_string('savechanges').'" />';
 echo '</div></form>';

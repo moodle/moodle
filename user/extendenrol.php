@@ -143,15 +143,15 @@ foreach ($_POST as $k => $v) {
             $timeend = $unlimited;
             unset($userbasemenu[2]);
         }
-        $checkbox = choose_from_menu($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange, '', '0', true);
-        $checkbox2 = choose_from_menu($userbasemenu, "extendbase[{$m[1]}]", "2", "", '', '0', true);
+        
+        $checkbox = $OUTPUT->select(html_select::make($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange));
+        $checkbox2 = $OUTPUT->select(html_select::make($userbasemenu, "extendbase[{$m[1]}]", "2", false));
         $table->data[] = array(
-        fullname($user, true),
-        $timestart,
-        $timeend,
-        '<input type="hidden" name="userid['.$m[1].']" value="'.$m[1].'" />'.$checkbox,
-        $checkbox2
-        );
+                fullname($user, true),
+                $timestart,
+                $timeend,
+                '<input type="hidden" name="userid['.$m[1].']" value="'.$m[1].'" />'.$checkbox,
+                $checkbox2);
     }
 }
 print_table($table);
