@@ -200,9 +200,9 @@ if (!$exporter->get('instance')) {
     }
     else {
         $exporter->print_header('selectplugin');
-        print_simple_box_start();
+        echo $OUTPUT->box_start();
         $mform->display();
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
     }

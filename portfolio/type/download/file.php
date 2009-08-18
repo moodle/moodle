@@ -21,7 +21,7 @@ $exporter->verify_rewaken();
 
 $exporter->print_header(get_string('downloading', 'portfolio_download'), false);
 $returnurl = $exporter->get('caller')->get_return_url();
-notify('<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />');
+echo $OUTPUT->notification('<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />');
 
 // if they don't have javascript, they can submit the form here to get the file.
 // if they do, it does it nicely for them.
