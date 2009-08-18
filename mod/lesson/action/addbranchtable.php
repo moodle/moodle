@@ -70,7 +70,7 @@
             // answer 1 jumpto next page
             echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", LESSON_NEXTPAGE, false));
         }
-        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
         echo "</td></tr>\n";
     }
     // close table and form

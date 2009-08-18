@@ -66,7 +66,7 @@
         switch ($page->qtype) {
             case LESSON_MULTICHOICE :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
+                echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
@@ -76,12 +76,12 @@
                 } else {
                     echo "<input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" />";
                 }
-                helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+                echo $OUTPUT->help_icon(moodle_help_icon::make("questionoption", get_string("questionoption", "lesson"), "lesson"));
                 echo "</p>\n";
                 break;
             case LESSON_SHORTANSWER :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
+                echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
@@ -91,7 +91,7 @@
                 } else {
                     echo "<input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" />";
                 }
-                helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+                echo $OUTPUT->help_icon(moodle_help_icon::make("questionoption", get_string("questionoption", "lesson"), "lesson"));
                 echo "</p>\n";
                 break;
             case LESSON_TRUEFALSE :
@@ -99,7 +99,7 @@
             case LESSON_MATCHING :
             case LESSON_NUMERICAL :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
+                echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
@@ -170,13 +170,13 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         }
@@ -185,13 +185,13 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         }
@@ -201,13 +201,13 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />"; 
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         }
@@ -216,13 +216,13 @@
                         if ($flags & LESSON_RESPONSE_EDITOR) {
                             echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" checked=\"checked\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                         } else {
                             echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
                         }
@@ -237,14 +237,14 @@
                     if ($flags & LESSON_ANSWER_EDITOR and $page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                     } else {
                         if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
-                            helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                            echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
                         } else {
@@ -257,13 +257,13 @@
                     if ($flags & LESSON_RESPONSE_EDITOR) {
                         echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" checked=\"checked\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                     } else {
                         echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
                     }
@@ -274,13 +274,13 @@
                     if ($flags & LESSON_ANSWER_EDITOR) {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                     } else {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "answer[$n]", $answer->answer);
                     }
@@ -292,15 +292,15 @@
                     if ($n == 2) {
                         echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
                         echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
-                        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                         if($lesson->custom)
                             echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                         echo "</td></tr>\n";
                     }
                     if ($n == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
-                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false);
-                        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                         if($lesson->custom)
                             echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                         echo "</td></tr>\n";
@@ -310,7 +310,7 @@
                 case LESSON_ESSAY :
                     echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     if($lesson->custom) {
                         echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                     }
@@ -322,7 +322,7 @@
                 case LESSON_NUMERICAL:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $nplus1:</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     if($lesson->custom) {
                         echo get_string("score", "lesson")." $nplus1: <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
                     }
@@ -334,7 +334,7 @@
                 case LESSON_ENDOFBRANCH:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $nplus1:</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     echo "</td></tr>\n";
                     break;
             }
@@ -362,14 +362,14 @@
                     echo "<tr><td><b>".get_string("answer", "lesson")." $icorrected:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
                         "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
-                    helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                     echo "</td></tr>\n";
                     echo "<tr><td><b>".get_string("matchesanswer", "lesson")." $icorrected:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
                         "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\" />";
-                    helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "response[$i]");
                     echo "</td></tr>\n";
@@ -382,7 +382,7 @@
                     if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
-                        helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                         echo "]<br />\n";
                         print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                     } else {
@@ -393,7 +393,7 @@
                     echo "<tr><td><b>".get_string("response", "lesson")." $iplus1:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
                         "<input type=\"checkbox\" name=\"responseeditor[$i]\" value=\"1\" />";
-                    helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "response[$i]");
                     echo "</td></tr>\n";
@@ -402,7 +402,7 @@
                     echo "<tr><td><b>".get_string("description", "lesson")." $iplus1:</b>\n";
                     echo " [".get_string("useeditor", "lesson").": ".
                         "<input type=\"checkbox\" name=\"answereditor[$i]\" value=\"1\" />";
-                    helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                     echo "]<br />\n";
                     print_textarea(false, 10, 70, 630, 300, "answer[$i]");
                     echo "</td></tr>\n";
@@ -413,7 +413,7 @@
                     if ($i < 1) {
                         echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
                         echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
-                        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                         if($lesson->custom) {
                             echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                         }
@@ -424,7 +424,7 @@
                     if ($i == 2) {
                         echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
                         echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", $answer->jumpto, false));
-                        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                         if ($lesson->custom) {
                             echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
                         }
@@ -433,7 +433,7 @@
                     if ($i == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
                         echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", $answer->jumpto, false));
-                        helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                        echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                         if ($lesson->custom) {
                             echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
                         }
@@ -447,7 +447,7 @@
                 case LESSON_NUMERICAL:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     if($lesson->custom) {
                         echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     }
@@ -456,7 +456,7 @@
                 case LESSON_BRANCHTABLE :
                     echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     echo "</td></tr>\n";
                     break;
             }

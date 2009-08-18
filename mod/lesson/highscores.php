@@ -136,7 +136,7 @@
 
     switch ($mode) {
         case 'add':
-            print_simple_box_start('center');
+            echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<div class="mdl-align">
                  <form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
                  <input type="hidden" name="id" value="'.$cm->id.'" />
@@ -146,7 +146,7 @@
             echo get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\" />\n<p>\n";
             lesson_print_submit_link(get_string("submitname", "lesson"), 'nickname');
             echo "</p>\n</form>\n</div>\n";
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             break;
         default:
             $params = array ("lessonid" => $lesson->id);

@@ -118,7 +118,7 @@
     }
 
     if ($nothingtodisplay) {
-        notify(get_string('nolessonattempts', 'lesson'));
+        echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
         echo $OUTPUT->footer();
         exit();
     }

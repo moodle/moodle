@@ -52,7 +52,7 @@
     <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-        echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br />";
+        echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
         lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype, 
                           "lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=".$pageid.$linkadd);
 
@@ -64,7 +64,7 @@
                 $qoptionstr = get_string('multianswer', 'lesson');
             }
             echo "<label for=\"qoption\"><strong>$qoptionstr</strong></label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
-            helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+            echo $OUTPUT->help_icon(moodle_help_icon::make("questionoption", get_string("questionoption", "lesson"), "lesson"));
             echo '</p>';
         }
     ?>
@@ -95,7 +95,7 @@
                     // answer 1 jumpto next page
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", LESSON_NEXTPAGE, false));
                 }
-                helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                 if($lesson->custom) {
                     if ($i) {
                         echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
@@ -109,7 +109,7 @@
         case LESSON_ESSAY :
                 echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
                 echo $OUTPUT->select(html_select::make($jump, "jumpto[0]", LESSON_NEXTPAGE, false));
-                helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                 if ($lesson->custom) {
                     echo get_string("score", "lesson").": <input type=\"text\" name=\"score[0]\" value=\"1\" size=\"5\" />";
                 }
@@ -137,7 +137,7 @@
                 if ($i == 2) {
                     echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", LESSON_NEXTPAGE, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     if($lesson->custom) {
                         echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
                     }
@@ -145,7 +145,7 @@
                 } elseif ($i == 3) {
                     echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
-                    helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                    echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                     if($lesson->custom) {
                         echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
                     }
@@ -173,7 +173,7 @@
                     // answer 1 jumpto next page
                     echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", LESSON_NEXTPAGE, false));
                 }
-                helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
+                echo $OUTPUT->help_icon(moodle_help_icon::make("jumpto", get_string("jump", "lesson"), "lesson"));
                 if($lesson->custom) {
                     if ($i) {
                         echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";

@@ -347,7 +347,7 @@ function lesson_set_message($message, $class="notifyproblem", $align='center') {
  * @return boolean
  **/
 function lesson_print_messages() {
-    global $SESSION;
+    global $SESSION, $OUTPUT;
     
     if (empty($SESSION->lesson_messages)) {
         // No messages to print
@@ -355,7 +355,7 @@ function lesson_print_messages() {
     }
     
     foreach($SESSION->lesson_messages as $message) {
-        notify($message[0], $message[1], $message[2]);
+        echo $OUTPUT->notification($message[0], $message[1], $message[2]);
     }
     
     // Reset
@@ -1530,7 +1530,7 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
  * @return void
  **/
 function lesson_print_ongoing_score($lesson) {
-    global $USER, $DB;
+    global $USER, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1548,11 +1548,11 @@ function lesson_print_ongoing_score($lesson) {
         if ($lesson->custom) {
             $a->score = $gradeinfo->earned;
             $a->currenthigh = $gradeinfo->total;
-            print_simple_box(get_string("ongoingcustom", "lesson", $a), "center");
+            echo $OUTPUT->box(get_string("ongoingcustom", "lesson", $a), "generalbox boxaligncenter");
         } else {
             $a->correct = $gradeinfo->earned;
             $a->viewed = $gradeinfo->attempts;
-            print_simple_box(get_string("ongoingnormal", "lesson", $a), "center");
+            echo $OUTPUT->box(get_string("ongoingnormal", "lesson", $a), "generalbox boxaligncenter");
         }
     }
 }
@@ -1591,7 +1591,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
  * @return boolean The return is not significant as of yet.  Will return true/false.
  **/
 function lesson_print_progress_bar($lesson, $course) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1603,7 +1603,7 @@ function lesson_print_progress_bar($lesson, $course) {
     
     // catch teachers
     if (has_capability('mod/lesson:manage', $context)) {
-        notify(get_string('progressbarteacherwarning2', 'lesson'));
+        echo $OUTPUT->notification(get_string('progressbarteacherwarning2', 'lesson'));
         return false;
     }
     if (!isset($USER->modattempts[$lesson->id])) {
@@ -1756,6 +1756,7 @@ function lesson_add_pretend_blocks($page, $cm, $lesson, $timer = null) {
  * @return block_contents
  **/
 function lesson_mediafile_block_contents($cmid, $lesson) {
+    global $OUTPUT;
     if (empty($lesson->mediafile)) {
         return null;
     }
@@ -1765,7 +1766,7 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
     $name     = 'lessonmediafile';
 
     $content  = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
-    $content .= helpbutton("mediafilestudent", get_string("mediafile", "lesson"), "lesson", true, false, '', true);
+    $content .= $OUTPUT->help_icon(moodle_help_icon::make("mediafilestudent", get_string("mediafile", "lesson"), "lesson"));
 
     $bc = new block_contents();
     $bc->title = get_string('linkedmedia', 'lesson');

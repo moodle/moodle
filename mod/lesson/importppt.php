@@ -50,11 +50,11 @@
     if ($form = data_submitted()) {   /// Filename
 
         if (empty($_FILES['newfile'])) {      // file was just uploaded
-            notify(get_string("uploadproblem") );
+            echo $OUTPUT->notification(get_string("uploadproblem") );
         }
 
         if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
-            notify(get_string("uploadnofilefound") );
+            echo $OUTPUT->notification(get_string("uploadnofilefound") );
 
         } else {  // Valid file is found
             
@@ -75,7 +75,7 @@
             }
 
             echo "<hr>";
-            print_continue("$CFG->wwwroot/mod/$modname/view.php?id=$cm->id");
+            echo $OUTPUT->continue_button("$CFG->wwwroot/mod/$modname/view.php?id=$cm->id");
             echo $OUTPUT->footer();
             exit;
         }
@@ -85,7 +85,7 @@
 
     print_heading_with_help($strimportppt, "importppt", "lesson");
 
-    print_simple_box_start("center");
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo "<form id=\"theform\" enctype=\"multipart/form-data\" method=\"post\">";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n";
@@ -101,7 +101,7 @@
 
     echo "</table>";
     echo "</form>";
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
     

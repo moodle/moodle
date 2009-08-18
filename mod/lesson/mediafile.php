@@ -183,7 +183,7 @@
         $filename = basename($file['basename'], '.'.$file['extension']);
 
         echo "<div class=\"lessonmediafilecontrol\"><p>";
-        notify(get_string('clicktodownload', 'lesson'));
+        echo $OUTPUT->notification(get_string('clicktodownload', 'lesson'));
         echo "<a href=\"$fullurl\">".format_string($filename).'</a>';
         echo "</p></div>";
         

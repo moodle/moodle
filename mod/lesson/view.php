@@ -70,7 +70,7 @@
                 echo '<fieldset class="invisiblefieldset">';
                 echo '<input type="hidden" name="id" value="'. $cm->id .'" />' . "\n";
                 if (optional_param('userpassword', 0, PARAM_CLEAN)) {
-                    notify(get_string('loginfail', 'lesson'));
+                    echo $OUTPUT->notification(get_string('loginfail', 'lesson'));
                 }
 
                 echo get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name))."<br /><br />\n".

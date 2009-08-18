@@ -43,7 +43,7 @@
     if (empty($firstpage)) {
         // There are no pages; give teacher some options
         if (has_capability('mod/lesson:edit', $context)) {
-            print_simple_box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th scope=\"col\">".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
+            echo $OUTPUT->box( "<table cellpadding=\"5\" border=\"0\">\n<tr><th scope=\"col\">".get_string("whatdofirst", "lesson")."</th></tr><tr><td>".
                 "<a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                 get_string("importquestions", "lesson")."</a></td></tr><tr><td>".
                 "<a href=\"importppt.php?id=$cm->id&amp;pageid=0\">".

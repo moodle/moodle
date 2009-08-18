@@ -31,22 +31,22 @@ class qformat_default {
     }
 
     function importprocess($filename, $lesson, $pageid) {
-        global $DB;
+        global $DB, $OUTPUT;
         
     /// Processes a given file.  There's probably little need to change this
         $timenow = time();
 
         if (! $lines = $this->readdata($filename)) {
-            notify("File could not be read, or was empty");
+            echo $OUTPUT->notification("File could not be read, or was empty");
             return false;
         }
 
         if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
-            notify("There are no questions in this file!");
+            echo $OUTPUT->notification("There are no questions in this file!");
             return false;
         }
         
-        notify(get_string('importcount', 'lesson', sizeof($questions)));
+        echo $OUTPUT->notification(get_string('importcount', 'lesson', sizeof($questions)));
 
         $count = 0;
 
@@ -128,18 +128,18 @@ class qformat_default {
                     $result = lesson_save_question_options($question);
 
                     if (!empty($result->error)) {
-                        notify($result->error);
+                        echo $OUTPUT->notification($result->error);
                         return false;
                     }
 
                     if (!empty($result->notice)) {
-                        notify($result->notice);
+                        echo $OUTPUT->notification($result->notice);
                         return true;
                     }
                     break;
             // the Bad ones
                 default :
-                    notify(get_string('unsupportedqtype', 'lesson', $question->qtype));
+                    echo $OUTPUT->notification(get_string('unsupportedqtype', 'lesson', $question->qtype));
             }
  
         }
