@@ -998,14 +998,14 @@ function hotpot_delete_instance($id) {
  * @param string $strtable
  */
 function hotpot_delete_and_notify($table, $select, $params, $strtable) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $count = max(0, $DB->count_records_select($table, $select, $params));
     if ($count) {
         $DB->delete_records_select($table, $select, $params);
         $count -= max(0, $DB->count_records_select($table, $select, $params));
         if ($count) {
-            notify(get_string('deleted')." $count x $strtable");
+            echo $OUTPUT->notification(get_string('deleted')." $count x $strtable");
         }
     }
 }

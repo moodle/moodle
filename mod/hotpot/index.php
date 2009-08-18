@@ -96,7 +96,7 @@
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
             if (!$confirm) {
 
-                print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
+                echo $OUTPUT->box_start("generalbox boxaligncenter boxwidthnormal errorboxcontent");
 
                 if (count($regrade_hotpots)==1) {
                     echo $OUTPUT->heading(get_string('regradecheck', 'hotpot', $regrade_hotpots[$regrade]->name));
@@ -126,7 +126,7 @@
                 .   '</td></tr></table></div>'
                 ;
 
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
                 echo $OUTPUT->footer();
                 exit;
 
@@ -138,7 +138,7 @@
 
                 // regrade attempts for these hotpots
                 foreach ($regrade_hotpots as $hotpot) {
-                    notify("<b>$hotpot->name</b>");
+                    echo $OUTPUT->notification("<b>$hotpot->name</b>");
 
                     // delete questions and responses for this hotpot
                     if ($records = $DB->get_records('hotpot_questions', array('hotpot'=>$hotpot->id), '', 'id,hotpot')) {
@@ -167,7 +167,7 @@
                         if (!empty($CFG->hotpot_showtimes)) {
                             $msg .= ' ('.format_time(sprintf("%0.2f", microtime_diff($attemptstart, microtime()))).')';
                         }
-                        notify($msg);
+                        echo $OUTPUT->notification($msg);
                     }
                     $hotpotcount++;
                 } // end foreach $hotpots
@@ -176,9 +176,9 @@
                     if (!empty($CFG->hotpot_showtimes)) {
                         $msg .= ' ('.format_time(sprintf("%0.2f", microtime_diff($hotpotstart, microtime()))).')';
                     }
-                    notify($msg);
+                    echo $OUTPUT->notification($msg);
                 }
-                notify(get_string('regradecomplete', 'quiz'));
+                echo $OUTPUT->notification(get_string('regradecomplete', 'quiz'));
             } // end if $confirm
         } // end regrade
 

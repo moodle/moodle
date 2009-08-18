@@ -42,7 +42,7 @@
 //]]>
 </script>
 <?php
-    print_simple_box_start("center", "96%");
+    echo $OUTPUT->box_start("generalbox boxaligncenter boxwidthwide");
     if($hp = new hotpot_xml_quiz($params)) {
         print '<pre id="contents">';
         switch ($params->action) {
@@ -63,9 +63,9 @@
         }
         print '</pre>';
     } else {
-        print_simple_box("Could not open Hot Potatoes XML file", "center", "", "#FFBBBB");
+        echo $OUTPUT->box("Could not open Hot Potatoes XML file", "errorboxcontent generalbox");
     }
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     print '<br />';
     echo $OUTPUT->close_window_button();
 ?>

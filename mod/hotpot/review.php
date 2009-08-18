@@ -89,7 +89,8 @@
 ///////////////////////////
 function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
     // start table
-    print_simple_box_start("center", "80%", "#ffffff", 0);
+    global $OUTPUT;
+    echo $OUTPUT->box_start("generalbox boxaligncenter boxwidthwide");
     print '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
     // add attempt properties
     $fields = array('attempt', 'score', 'penalties', 'status', 'timetaken', 'timerecorded');
@@ -127,7 +128,7 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
     }
     // finish table
     print '</table>';
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 }
 function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     global $DB;
@@ -154,7 +155,7 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     print "</table>\n";
 }
 function hotpot_print_attempt_details(&$hotpot, &$attempt) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     // define fields to print
     $textfields = array('correct', 'ignored', 'wrong');
@@ -197,7 +198,7 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
     }
     $colspan = max(2, $colspan);
     // start table of questions and responses
-    print_simple_box_start("center", "80%", "#ffffff", 0);
+    echo $OUTPUT->box_start("generalbox boxaligncenter boxwidthwide");
     print '<table width="100%" border="1" valign="top" align="center" cellpadding="2" cellspacing="2" class="generaltable">'."\n";
     if (empty($q)) {
         print '<tr><td align="center" class="generaltablecell"><b>'.get_string("noresponses", "hotpot")."</b></td></tr>\n";
@@ -245,6 +246,6 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
     }
     // finish table
     print "</table>\n";
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 }
 ?>

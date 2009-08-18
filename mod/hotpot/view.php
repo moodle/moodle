@@ -70,20 +70,20 @@
             $boxalign = 'center';
             $boxwidth = 500;
             if (trim(strip_tags($hotpot->summary))) {
-                print_simple_box_start($boxalign, $boxwidth);
+                echo $OUTPUT->box_start("generalbox boxalign$boxalign");
                 print '<div class="mdl-align">'.format_text($hotpot->summary)."</div>\n";
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
                 print "<br />\n";
             }
             print '<form id="passwordform" method="post" action="view.php?id='.$cm->id.'">'."\n";
-            print_simple_box_start($boxalign, $boxwidth);
+            echo $OUTPUT->box_start("generalbox boxalign$boxalign");
             print '<div class="mdl-align">';
             print get_string('requirepasswordmessage', 'quiz').'<br /><br />';
             print '<b>'.get_string('password').':</b> ';
             print '<input name="hppassword" type="password" value="" /> ';
             print '<input type="submit" value="'.get_string("ok").'" /> ';
             print "</div>\n";
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             print "</form>\n";
             echo $OUTPUT->footer();
             exit;
@@ -370,7 +370,7 @@
             print_header($title, $heading, $navigation, "", $head.$styles.$scripts, true, $button, $loggedinas, false, $body_tags
             );
             if (!empty($available_msg)) {
-                notify($available_msg);
+                echo $OUTPUT->notification($available_msg);
             }
             print $body.$footer;
         break;
@@ -426,7 +426,7 @@
                         $loggedinas, false, $body_tags
                     );
                     if (!empty($available_msg)) {
-                        notify($available_msg);
+                        echo $OUTPUT->notification($available_msg);
                     }
                     print "<iframe id=\"$iframe_id\" src=\"view.php?id=$cm->id&amp;framename=main\" height=\"100%\" width=\"100%\">";
                     print "<ilayer name=\"$iframe_id\" src=\"view.php?id=$cm->id&amp;framename=main\" height=\"100%\" width=\"100%\">";

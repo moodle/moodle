@@ -12,7 +12,7 @@ class hotpot_report extends hotpot_default_report {
 		return true;
 	}
 	function create_responses_table(&$hotpot, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
-		global $CFG;
+		global $CFG, $OUTPUT;
 		$is_html = ($options['reportformat']=='htm');
 		// shortcuts for font tags
 		$br = $is_html ? "<br />\n" : "\n";
@@ -136,7 +136,7 @@ class hotpot_report extends hotpot_default_report {
 							if (empty($table->caption)) {
 								$table->caption = get_string('indivresp', 'quiz');
 								if ($is_html) {
-									$table->caption .= helpbutton('responsestable', $table->caption, 'hotpot', true, false, '', true);
+									$table->caption .= $OUTPUT->help_icon(moodle_help_icon::make('responsestable', $table->caption, 'hotpot'));
 								}
 							}
 							$hints = empty($response->hints) ? 0 : $response->hints;
@@ -162,6 +162,7 @@ class hotpot_report extends hotpot_default_report {
 		$tables[] = &$table;
 	}
 	function create_analysis_table(&$users, &$attempts, &$questions, &$options, &$tables) {
+        global $OUTPUT;
 		$is_html = ($options['reportformat']=='htm');
 		// the fields we are interested in, in the order we want them
 		$fields = array('correct', 'wrong', 'ignored', 'hints', 'clues', 'checks', 'weighting');
@@ -259,14 +260,14 @@ class hotpot_report extends hotpot_default_report {
 			$br = $is_html ? '<br />' : "\n";
 			$space = $is_html ? '&nbsp;' : "";
 			$no_value = $is_html ? '--' : "";
-			$help_button = $is_html ? helpbutton("discrimination", get_string('discrimination', 'quiz'), "quiz", true, false, "", true) : "";
+			$help_button = $is_html ? $OUTPUT->help_icon(moodle_help_icon::make("discrimination", get_string('discrimination', 'quiz'), "quiz")) : "";
 			// table properties
 			unset($table);
 			$table->border = 1;
 			$table->width = '100%';
 			$table->caption = get_string('itemanal', 'quiz');
 			if ($is_html) {
-				$table->caption .= helpbutton('analysistable', $table->caption, 'hotpot', true, false, '', true);
+				$table->caption .= $OUTPUT->help_icon(moodle_help_icon::make('analysistable', $table->caption, 'hotpot'));
 			}
 			// initialize legend, if necessary
 			if (!empty($options['reportshowlegend'])) {

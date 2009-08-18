@@ -360,7 +360,7 @@ class hotpot_default_report {
         }
     }
     function print_html_start(&$table) {
-
+        global $OUTPUT;
         // default class for the table
         if (empty($table->tableclass)) {
             $table->tableclass = 'generaltable';
@@ -426,7 +426,7 @@ class hotpot_default_report {
             print $table->start."\n";
         }
 
-        print_simple_box_start("$table->tablealign", "$table->width", "#ffffff", 0);
+        echo $OUTPUT->box_start("generalbox boxalign$table->tablealign");
         print '<table width="100%" border="'.$table->border.'" valign="top" align="center"  cellpadding="'.$table->cellpadding.'" cellspacing="'.$table->cellspacing.'" class="'.$table->tableclass.'">'."\n";
 
         if (isset($table->caption)) {
@@ -528,8 +528,9 @@ class hotpot_default_report {
         }
     }
     function print_html_finish(&$table) {
+        global $OUTPUT;
         print "</table>\n";
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
 
         if (isset($table->finish)) {
             print $table->finish."\n";
