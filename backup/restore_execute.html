@@ -58,9 +58,9 @@
 
     if (empty($restore->importing)) {
         //Print final message
-        print_simple_box(get_string("restorefinished"),"center");
+        echo $OUTPUT->box(get_string("restorefinished"));
     } else {
-        print_simple_box(get_string("importdatafinished"),"center");
+        echo $OUTPUT->box(get_string("importdatafinished"));
         $file = $CFG->dataroot . '/' 
             . $SESSION->import_preferences->backup_course 
             . '/backupdata/' . $SESSION->import_preferences->backup_name;
@@ -72,6 +72,6 @@
         }
         unset($SESSION->restore);
     }
-    print_continue("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
+    echo $OUTPUT->continue_button("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
 
 ?>

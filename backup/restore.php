@@ -105,7 +105,7 @@
     if (!$file) {
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
         echo $OUTPUT->heading(get_string("nofilesselected"));
-        print_continue("$CFG->wwwroot/$CFG->admin/index.php");
+        echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/index.php");
         echo $OUTPUT->footer();
         exit;
     }
@@ -114,7 +114,7 @@
     if ($cancel) {
         print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
         echo $OUTPUT->heading(get_string("restorecancelled"));
-        print_continue("$CFG->wwwroot/course/view.php?id=".$id);
+        echo $OUTPUT->continue_button("$CFG->wwwroot/course/view.php?id=".$id);
         echo $OUTPUT->footer();
         exit;
     }
@@ -136,7 +136,7 @@
     }
     //Print form
     echo $OUTPUT->heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
-    print_simple_box_start('center');
+    echo $OUTPUT->box_start();
 
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");
@@ -171,7 +171,7 @@
         unset($SESSION->cancontinue);
         include_once("restore_execute.html");
     }
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     //Print footer
     echo $OUTPUT->footer();

@@ -238,7 +238,7 @@
 
         if ($courses = $mycourses) {
             echo $OUTPUT->heading(get_string("choosecourse"));
-            print_simple_box_start("center");
+            echo $OUTPUT->box_start();
             foreach ($courses as $course) {
                 if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     continue;
@@ -250,10 +250,10 @@
                 }
                 echo "<a $optdimmed href=\"restore.php?course_id=$course->id&amp;launch=check&amp;id=$id&amp;file=$file\">".format_string($course->fullname).' ('.format_string($course->shortname).')</a><br />'."\n";
             }
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             echo $OUTPUT->heading(get_string("nocoursesyet"));
-            print_continue("$CFG->wwwroot/$CFG->admin/index.php");
+            echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/index.php");
         }
     //Checks everything and execute restore
     } else if (($restore->restoreto != RESTORETO_NEW_COURSE and !empty($restore->course_id)) or ($restore->restoreto == RESTORETO_NEW_COURSE)) {

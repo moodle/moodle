@@ -73,14 +73,14 @@
 
         if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
             echo $OUTPUT->heading(get_string("choosecourse"));
-            print_simple_box_start("center");
+            echo $OUTPUT->box_start();
             foreach ($courses as $course) {
                 echo '<a href="backup.php?id='.$course->id.'">'.format_string($course->fullname).' ('.format_string($course->shortname).')</a><br />'."\n";
             }
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             echo $OUTPUT->heading(get_string("nocoursesyet"));
-            print_continue("$CFG->wwwroot/$CFG->admin/index.php");
+            echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/index.php");
         }
         echo $OUTPUT->footer();
         exit;
@@ -108,7 +108,7 @@
 
     //Print form
     echo $OUTPUT->heading(format_string("$strcoursebackup: $course->fullname ($course->shortname)"));
-    print_simple_box_start("center");
+    echo $OUTPUT->box_start();
 
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");
@@ -126,7 +126,7 @@
     } else if ($launch == "execute") {
         include_once("backup_execute.html");
     }
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     //Print footer
     echo $OUTPUT->footer();

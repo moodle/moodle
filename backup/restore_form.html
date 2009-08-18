@@ -264,7 +264,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="shortnamefield">'.get_string ('shortname').'</label>';
         echo "</td>";
         echo "<td><input type=\"text\" id=\"shortnamefield\" name=\"shortname\" maxlength=\"100\"  size=\"20\" value=\"".s($form1->shortname)."\" alt=\"".get_string("shortname")."\"  />" ;
-        helpbutton("courseshortname", get_string("shortname")) ;
+        echo $OUTPUT->help_icon(moodle_help_icon::make("courseshortname", get_string("shortname"))) ;
         if (isset($err["shortname"])) formerr($err["shortname"]);
         echo "</td>";
         echo "</tr>";
@@ -273,7 +273,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo '<label for="fullnamefield">'.get_string ('fullname').'</label>';
         echo "</td>";
         echo "<td><input type=\"text\" id=\"fullnamefield\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"".s($form1->fullname)."\" alt=\" ".get_string("fullname")."\"  />" ;
-        helpbutton("coursefullname", get_string("fullname")) ;
+        echo $OUTPUT->help_icon(moodle_help_icon::make("coursefullname", get_string("fullname"))) ;
         if (isset($err["fullname"])) formerr($err["fullname"]);
         echo"</td></tr>";
         echo "<tr valign=\"top\"> ";
@@ -289,7 +289,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             $yearselector = html_select::make_time_selector('years', "startyear", $form1->startdate);
 
             echo $OUTPUT->select($dayselector) . $OUTPUT->select($monthselector) . $OUTPUT->select($yearselector);
-            helpbutton("coursestartdate", get_string("startdate"));
+            echo $OUTPUT->help_icon(moodle_help_icon::make("coursestartdate", get_string("startdate")));
         } else {
             print_string('notavailable');
             echo '<input type="hidden" name="startyear" value="0" />';
@@ -445,7 +445,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Groups tr (assume there is no $info->backup_groups)
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        $helplink = helpbutton('grouprestore', get_string('groups'), '', true, false, '', true);
+        $helplink = $OUTPUT->help_icon(moodle_help_icon::make('grouprestore', get_string('groups')));
         if (empty($CFG->enablegroupings)) {
             echo '<label for="menurestore_groups">'.get_string ("groups").'</label>'.$helplink;
             echo "</b></td><td colspan=\"2\">";

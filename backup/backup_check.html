@@ -119,7 +119,7 @@
         $backupprefs->backup_blogs = 0;
         $backupprefs->backuproleassignments = array();
 
-        print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
+        echo $OUTPUT->box(get_string("backupnoneusersinfo"), "noticebox");
         echo "<hr />";
     }
 

@@ -536,7 +536,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             print_table($table);
 
             if ($info->backup_backup_version <= 2005070500) {
-                 notify(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
+                 echo $OUTPUT->notification(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
             }
 
             //Now backup contents in another table
@@ -7784,7 +7784,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
      */
     function restore_precheck($id,$file,&$errorstr,$noredirect=false) {
 
-        global $CFG, $SESSION;
+        global $CFG, $SESSION, $OUTPUT;
 
         //Prepend dataroot to variable to have the absolute path
         $file = $CFG->dataroot."/".$file;
@@ -7840,7 +7840,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $errorstr = "An error occurred deleting old data";
                 add_to_backup_log(time(),$preferences->backup_course,$errorstr,'restoreprecheck');
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify($errorstr);
+                    echo $OUTPUT->notification($errorstr);
                 }
             }
         }
@@ -7852,7 +7852,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (! $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error copying backup file. Invalid name or bad perms.");
+                    echo $OUTPUT->notification("Error copying backup file. Invalid name or bad perms.");
                 } else {
                     $errorstr = "Error copying backup file. Invalid name or bad perms";
                     return false;
@@ -7867,7 +7867,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (! $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error unzipping backup file. Invalid zip file.");
+                    echo $OUTPUT->notification("Error unzipping backup file. Invalid zip file.");
                 } else {
                     $errorstr = "Error unzipping backup file. Invalid zip file.";
                     return false;
@@ -7897,7 +7897,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $errorstr = 'Error checking backup file. moodle.xml is incorrect or corrupted.';
                 }
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify($errorstr);
+                    echo $OUTPUT->notification($errorstr);
                 } else {
                     return false;
                 }
@@ -7939,7 +7939,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $message->serverrelease = $CFG->release;
             $message->backupversion = $info->backup_moodle_version;
             $message->backuprelease = $info->backup_moodle_release;
-            print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", '', "20", "noticebox");
+            echo $OUTPUT->box(get_string('noticenewerbackup','',$message), "noticebox");
 
         }
 
@@ -8057,7 +8057,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
 
     function restore_execute(&$restore,$info,$course_header,&$errorstr) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         $status = true;
 
@@ -8095,7 +8095,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //First of all, split moodle.xml into handy files
             if (!restore_split_xml ($xml_file, $restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error proccessing moodle.xml file. Process ended.");
+                    echo $OUTPUT->notification("Error proccessing moodle.xml file. Process ended.");
                 } else {
                     $errorstr = "Error proccessing moodle.xml file. Process ended.";
                 }
@@ -8113,7 +8113,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $oldidnumber = $course_header->course_idnumber;
             if (!$status = restore_create_new_course($restore,$course_header)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error while creating the new empty course.");
+                    echo $OUTPUT->notification("Error while creating the new empty course.");
                 } else {
                     $errorstr = "Error while creating the new empty course.";
                     return false;
@@ -8169,7 +8169,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $restore->restoreto = RESTORETO_NEW_COURSE;
                     } else {
                         if (!defined('RESTORE_SILENTLY')) {
-                            notify("An error occurred while deleting some of the course contents.");
+                            echo $OUTPUT->notification("An error occurred while deleting some of the course contents.");
                         } else {
                             $errrostr = "An error occurred while deleting some of the course contents.";
                             return false;
@@ -8178,7 +8178,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             } else {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error opening existing course.");
+                    echo $OUTPUT->notification("Error opening existing course.");
                     $status = false;
                 } else {
                     $errorstr = "Error opening existing course.";
@@ -8194,7 +8194,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_users($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore users.");
+                    echo $OUTPUT->notification("Could not restore users.");
                 } else {
                     $errorstr = "Could not restore users.";
                     return false;
@@ -8250,7 +8250,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                 } else {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("No users were found!");
+                        echo $OUTPUT->notification("No users were found!");
                     } // no need to return false here, it's recoverable.
                 }
             }
@@ -8268,7 +8268,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_groups($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groups!");
+                    echo $OUTPUT->notification("Could not restore groups!");
                 } else {
                     $errorstr = "Could not restore groups!";
                     return false;
@@ -8286,7 +8286,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_groupings($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groupings!");
+                    echo $OUTPUT->notification("Could not restore groupings!");
                 } else {
                     $errorstr = "Could not restore groupings!";
                     return false;
@@ -8304,7 +8304,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_groupings_groups($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groups in groupings!");
+                    echo $OUTPUT->notification("Could not restore groups in groupings!");
                 } else {
                     $errorstr = "Could not restore groups in groupings!";
                     return false;
@@ -8326,7 +8326,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
                 if (!$status = restore_create_sections($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
+                        echo $OUTPUT->notification("Error creating sections in the existing course.");
                     } else {
                         $errorstr = "Error creating sections in the existing course.";
                         return false;
@@ -8342,7 +8342,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
                 if (!$status = restore_create_sections($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
+                        echo $OUTPUT->notification("Error creating sections in the existing course.");
                     } else {
                         $errorstr = "Error creating sections in the existing course.";
                         return false;
@@ -8354,7 +8354,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //Error
             } else {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Neither a new course or an existing one was specified.");
+                    echo $OUTPUT->notification("Neither a new course or an existing one was specified.");
                     $status = false;
                 } else {
                     $errorstr = "Neither a new course or an existing one was specified.";
@@ -8372,7 +8372,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
                 if (!$status = restore_create_metacourse($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating metacourse in the course.");
+                        echo $OUTPUT->notification("Error creating metacourse in the course.");
                     } else {
                         $errorstr = "Error creating metacourse in the course.";
                         return false;
@@ -8394,7 +8394,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_questions($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore categories and questions!");
+                    echo $OUTPUT->notification("Could not restore categories and questions!");
                 } else {
                     $errorstr = "Could not restore categories and questions!";
                     return false;
@@ -8412,7 +8412,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_user_files($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore user files!");
+                    echo $OUTPUT->notification("Could not restore user files!");
                 } else {
                     $errorstr = "Could not restore user files!";
                     return false;
@@ -8439,7 +8439,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_course_files($restore)) {
                 if (empty($status)) {
-                    notify("Could not restore course files!");
+                    echo $OUTPUT->notification("Could not restore course files!");
                 } else {
                     $errorstr = "Could not restore course files!";
                     return false;
@@ -8467,7 +8467,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_site_files($restore)) {
                 if (empty($status)) {
-                    notify("Could not restore site files!");
+                    echo $OUTPUT->notification("Could not restore site files!");
                 } else {
                     $errorstr = "Could not restore site files!";
                     return false;
@@ -8494,7 +8494,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_messages($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore messages!");
+                    echo $OUTPUT->notification("Could not restore messages!");
                 } else {
                     $errorstr = "Could not restore messages!";
                     return false;
@@ -8512,7 +8512,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_blogs($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore blogs!");
+                    echo $OUTPUT->notification("Could not restore blogs!");
                 } else {
                     $errorstr = "Could not restore blogs!";
                     return false;
@@ -8530,7 +8530,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_scales($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore custom scales!");
+                    echo $OUTPUT->notification("Could not restore custom scales!");
                 } else {
                     $errorstr = "Could not restore custom scales!";
                     return false;
@@ -8548,7 +8548,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_events($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore course events!");
+                    echo $OUTPUT->notification("Could not restore course events!");
                 } else {
                     $errorstr = "Could not restore course events!";
                     return false;
@@ -8566,7 +8566,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_modules($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore modules!");
+                    echo $OUTPUT->notification("Could not restore modules!");
                 } else {
                     $errorstr = "Could not restore modules!";
                     return false;
@@ -8589,7 +8589,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $course_header->blockinfo = !empty($course_header->blockinfo) ? $course_header->blockinfo : NULL;
                 if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify('Error while creating the course blocks');
+                        echo $OUTPUT->notification('Error while creating the course blocks');
                     } else {
                         $errorstr = "Error while creating the course blocks";
                         return false;
@@ -8612,7 +8612,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 if (!$status = restore_set_format_data($restore, $xml_file)) {
                         $error = "Error while setting the course format data";
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify($error);
+                        echo $OUTPUT->notification($error);
                     } else {
                         $errorstr=$error;
                         return false;
@@ -8631,7 +8631,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_create_logs($restore,$xml_file)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore logs!");
+                    echo $OUTPUT->notification("Could not restore logs!");
                 } else {
                     $errorstr = "Could not restore logs!";
                     return false;
@@ -8651,7 +8651,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_check_instances($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not adjust instances in course_modules!");
+                    echo $OUTPUT->notification("Could not adjust instances in course_modules!");
                 } else {
                     $errorstr = "Could not adjust instances in course_modules!";
                     return false;
@@ -8669,7 +8669,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_refresh_events($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not refresh events for activities!");
+                    echo $OUTPUT->notification("Could not refresh events for activities!");
                 } else {
                     $errorstr = "Could not refresh events for activities!";
                     return false;
@@ -8687,7 +8687,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_decode_content_links($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not decode content links!");
+                    echo $OUTPUT->notification("Could not decode content links!");
                 } else {
                     $errorstr = "Could not decode content links!";
                     return false;
@@ -8706,7 +8706,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             if (!$status = restore_convert_wiki2markdown($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not convert wiki texts to markdown!");
+                    echo $OUTPUT->notification("Could not convert wiki texts to markdown!");
                 } else {
                     $errorstr = "Could not convert wiki texts to markdown!";
                     return false;
@@ -8725,7 +8725,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
                 if (!$status = restore_create_gradebook($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("Could not restore gradebook!");
+                        echo $OUTPUT->notification("Could not restore gradebook!");
                     } else {
                         $errorstr = "Could not restore gradebook!";
                         return false;
@@ -8746,7 +8746,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             /// force full refresh of grading data before migration == crete all items first
                 if (!$status = restore_migrate_old_gradebook($restore,$xml_file)) {
                     if (!defined('RESTORE_SILENTLY')) {
-                        notify("Could not migrate gradebook!");
+                        echo $OUTPUT->notification("Could not migrate gradebook!");
                     } else {
                         $errorstr = "Could not migrade gradebook!";
                         return false;
@@ -8795,7 +8795,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             role_assign($legacyteacher->id, $USER->id, 0, $newcontext->id);
                         }
                     } else {
-                        notify('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
+                        echo $OUTPUT->notification('Could not find a legacy teacher role. You might need your moodle admin to assign a role with editing privilages to this course.');
                     }
                 }
             }
@@ -8839,7 +8839,7 @@ WHERE
             }
             if (!$status = clean_temp_data ($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not clean up temporary data from files and database");
+                    echo $OUTPUT->notification("Could not clean up temporary data from files and database");
                 } else {
                     $errorstr = "Could not clean up temporary data from files and database";
                     return false;
@@ -8858,7 +8858,7 @@ WHERE
         }
         else {
             if (!defined('RESTORE_SILENTLY')) {
-                notify("Could not close the restorelog.html file");
+                echo $OUTPUT->notification("Could not close the restorelog.html file");
             }
         }
 
