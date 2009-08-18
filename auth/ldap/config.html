@@ -65,7 +65,7 @@
     $yesno = array( get_string('no'), get_string('yes') );
 
 if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
-    notify(get_string('auth_ldap_noextension','auth_ldap'));
+    echo $OUTPUT->notification(get_string('auth_ldap_noextension','auth_ldap'));
 }
 
 ?>
