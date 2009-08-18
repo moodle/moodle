@@ -41,7 +41,7 @@ $ewiki_t["c"]["EWIKIDUMPCSS"] = '
   
 
 function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
-  global $userid, $groupid, $cm, $wikipage, $wiki, $course, $CFG;
+  global $userid, $groupid, $cm, $wikipage, $wiki, $course, $CFG, $OUTPUT;
   #-- return legacy page
   $cont = true;
   $wikiexport = optional_param('wikiexport', '');
@@ -109,7 +109,9 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
         '    <TD align="right">'.get_string("exportformats","wiki").":</TD>\n".
         "    <TD>\n";
   if($wiki->htmlmode!=2) {
-    $ret.= choose_from_menu($exportformats, "exportformats", $exportformatval, "", "", "", true)."\n";
+      $select = html_select::make($exportformats, "exportformats", $exportformatval, false);
+      $select->nothingvalue = '';
+    $ret.= $OUTPUT->select($select)."\n";
   } else {
     $ret.= '<INPUT type="hidden" name="exportformats" value="1" />'.
            get_string("html","wiki");
@@ -133,7 +135,9 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   if(count($exportdestinations)==1) {
     $ret.='<INPUT type="hidden" name="exportdestinations" value="0" />'.$exportdestinations[0]."\n";
   } else {
-    $ret.=choose_from_menu($exportdestinations, "exportdestinations", $exportdestinationsval, "", "", "", true)."\n";
+      $select = html_select::make($exportdestinations, "exportdestinations", $exportdestinationsval, false);
+      $select->nothingvalue = '';
+    $ret.= $OUTPUT->select($select)."\n";
   }
   $ret.="    </TD>\n".
       "  </TR>\n".      

@@ -47,7 +47,7 @@ if($err->remark) {
         $operations=array( "lastonly" => get_string("revertlastonly","wiki"),
                            "allsince" => get_string("revertallsince","wiki"),
                            "the" => get_string("revertthe","wiki"));
-        choose_from_menu($operations, "howtooperate", $form->howtooperate, "");
+        echo $OUTPUT->select(html_select::make($operations, "howtooperate", $form->howtooperate, false));
         ?>
     </td>
 </tr>
