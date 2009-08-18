@@ -775,7 +775,7 @@
                 && !has_capability('mod/forum:viewqandawithoutposting', $modcontext)
                 && !empty($discussion->id)
                 && !forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
-        notify(get_string('qandanotify','forum'));
+        echo $OUTPUT->notification(get_string('qandanotify','forum'));
     }
 
     forum_check_throttling($forum, $cm);

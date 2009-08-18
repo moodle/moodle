@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_forum_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
     $result = true;
@@ -38,7 +38,7 @@ function xmldb_forum_upgrade($oldversion) {
     if ($result && $oldversion < 2007101512) {
 
     /// Cleanup the forum subscriptions
-        notify('Removing stale forum subscriptions', 'notifysuccess');
+        echo $OUTPUT->notification('Removing stale forum subscriptions', 'notifysuccess');
 
         $roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW);
         $roles = array_keys($roles);
@@ -125,7 +125,7 @@ function xmldb_forum_upgrade($oldversion) {
                 $filepath = "$CFG->dataroot/$post->course/$CFG->moddata/forum/$post->forum/$post->id/$post->attachment";
                 if (!is_readable($filepath)) {
                     //file missing??
-                    notify("File not readable, skipping: ".$filepath);
+                    echo $OUTPUT->notification("File not readable, skipping: ".$filepath);
                     $post->attachment = '';
                     $DB->update_record('forum_posts', $post);
                     continue;
@@ -135,7 +135,7 @@ function xmldb_forum_upgrade($oldversion) {
                 $filearea = 'forum_attachment';
                 $filename = clean_param($post->attachment, PARAM_FILE);
                 if ($filename === '') {
-                    notify("Unsupported post filename, skipping: ".$filepath);
+                    echo $OUTPUT->notification("Unsupported post filename, skipping: ".$filepath);
                     $post->attachment = '';
                     $DB->update_record('forum_posts', $post);
                     continue;

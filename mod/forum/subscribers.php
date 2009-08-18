@@ -145,11 +145,11 @@
         }
     }
 
-    print_simple_box_start('center');
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
 
     include('subscriber.html');
 
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 

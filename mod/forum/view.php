@@ -135,7 +135,7 @@
             $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
             $strallowchoice = get_string('allowchoice', 'forum');
             echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
-            helpbutton("subscription", $strallowchoice, "forum");
+            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strallowchoice, "forum"));
             echo '&nbsp;<span class="helplink">';
             if (has_capability('mod/forum:managesubscriptions', $context)) {
                 echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$strallowchoice</a>";
@@ -147,13 +147,13 @@
         } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $strsubscriptionsoff = get_string('disallowsubscribe','forum');
             echo $strsubscriptionsoff;
-            helpbutton("subscription", $strsubscriptionsoff, "forum");
+            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strsubscriptionsoff, "forum"));
         } else {
             $streveryonecannowchoose = get_string("everyonecannowchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
             $strshowsubscribers = get_string("showsubscribers", "forum");
             echo '<span class="helplink">' . get_string("allowsallsubscribe", 'forum') . '</span><br />';
-            helpbutton("subscription", $strforcesubscribe, "forum");
+            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strforcesubscribe, "forum"));
             echo '&nbsp;';
 
             if (has_capability('mod/forum:managesubscriptions', $context)) {
@@ -209,18 +209,18 @@
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
         $a->blockafter = $forum->blockafter;
         $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-        notify(get_string('thisforumisthrottled','forum',$a));
+        echo $OUTPUT->notification(get_string('thisforumisthrottled','forum',$a));
     }
 
     if ($forum->type == 'qanda' && !has_capability('moodle/course:manageactivities', $context)) {
-        notify(get_string('qandanotify','forum'));
+        echo $OUTPUT->notification(get_string('qandanotify','forum'));
     }
 
     switch ($forum->type) {
         case 'single':
             if (! $discussion = $DB->get_record("forum_discussions", array("forum" => $forum->id))) {
                 if ($discussions = $DB->get_records("forum_discussions", array("forum" => $forum->id), "timemodified ASC")) {
-                    notify("Warning! There is more than one discussion in this forum - using the most recent");
+                    echo $OUTPUT->notification("Warning! There is more than one discussion in this forum - using the most recent");
                     $discussion = array_pop($discussions);
                 } else {
                     print_error('nodiscussions', 'forum');

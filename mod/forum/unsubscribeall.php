@@ -25,7 +25,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
     $DB->delete_records('forum_subscriptions', array('userid'=>$USER->id));
     $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
     echo $OUTPUT->box(get_string('unsubscribealldone', 'forum'));
-    print_continue($return);
+    echo $OUTPUT->continue_button($return);
     echo $OUTPUT->footer();
     die;
 
@@ -40,7 +40,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
 
     } else {
         echo $OUTPUT->box(get_string('unsubscribeallempty', 'forum'));
-        print_continue($return);
+        echo $OUTPUT->continue_button($return);
         echo $OUTPUT->footer();
         die;
     }

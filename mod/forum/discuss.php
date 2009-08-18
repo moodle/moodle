@@ -21,7 +21,7 @@
     }
 
     if (!$forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
-        notify("Bad forum ID stored in this discussion");
+        echo $OUTPUT->notification("Bad forum ID stored in this discussion");
     }
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
@@ -76,7 +76,7 @@
             get_context_instance(CONTEXT_MODULE,$cmto->id));
 
         if (!forum_move_attachments($discussion, $forum->id, $forumto->id)) {
-            notify("Errors occurred while moving attachment directories - check your file permissions");
+            echo $OUTPUT->notification("Errors occurred while moving attachment directories - check your file permissions");
         }
         $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
         $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
@@ -229,16 +229,16 @@
         $a = new object();
         $a->blockafter  = $forum->blockafter;
         $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-        notify(get_string('thisforumisthrottled','forum',$a));
+        echo $OUTPUT->notification(get_string('thisforumisthrottled','forum',$a));
     }
 
     if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
                 !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
-        notify(get_string('qandanotify','forum'));
+        echo $OUTPUT->notification(get_string('qandanotify','forum'));
     }
 
     if ($move == -1 and confirm_sesskey()) {
-        notify(get_string('discussionmoved', 'forum', format_string($forum->name,true)));
+        echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)));
     }
 
     $canrate = has_capability('mod/forum:rate', $modcontext);
