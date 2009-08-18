@@ -73,7 +73,7 @@
 
     echo $OUTPUT->heading($strpreferences);
 
-    print_simple_box_start("center");
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
 
     $prefs->timeformat = get_user_preferences('calendar_timeformat', '');
     $prefs->startwday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
@@ -82,7 +82,7 @@
     $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);
 
     include('./preferences.html');
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 
