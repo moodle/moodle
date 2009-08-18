@@ -319,7 +319,7 @@ function resource_print_tobemigrated($resource, $cm, $course) {
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
     resource_print_intro($resource, $cm, $course);
-    notify(get_string('notmigrated', 'resource', $resoruce_old->type));
+    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resoruce_old->type));
     echo $OUTPUT->footer();
     die;
 }
@@ -338,7 +338,7 @@ function resource_print_filenotfound($resource, $cm, $course) {
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
     resource_print_intro($resource, $cm, $course);
-    notify(get_string('notmigrated', 'resource', $resoruce_old->type));
+    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resoruce_old->type));
     echo $OUTPUT->footer();
     die;
 }

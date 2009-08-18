@@ -28,7 +28,7 @@
  * @return void
  */
 function imscp_20_migrate() {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     require_once("$CFG->libdir/filelib.php");
     require_once("$CFG->dirroot/course/lib.php");
     require_once("$CFG->dirroot/mod/imscp/locallib.php");
@@ -100,7 +100,7 @@ function imscp_20_migrate() {
             } catch (Exception $e) {
                 //continue on error, we can not recover anyway
                 $error = true;
-                notify("IMSCP: failed migrating file: $relname");
+                echo $OUTPUT->notification("IMSCP: failed migrating file: $relname");
             }
         }
         unset($files);
