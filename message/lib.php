@@ -204,7 +204,7 @@ function message_print_search() {
 }
 
 function message_print_settings() {
-    global $USER;
+    global $USER, $OUTPUT;
 
     if ($frm = data_submitted() and confirm_sesskey()) {
 
@@ -232,11 +232,10 @@ function message_print_settings() {
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
     $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
     $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
-    $format_select = choose_from_menu( array(FORMAT_PLAIN => get_string('formatplain'),
+    $format_select = $OUTPUT->select(html_select::make( array(FORMAT_PLAIN => get_string('formatplain'),
                                              FORMAT_HTML  => get_string('formathtml')),
                                        'emailformat',
-                                       get_user_preferences('message_emailformat', FORMAT_PLAIN),
-                                       false, '', '0', true );
+                                       get_user_preferences('message_emailformat', FORMAT_PLAIN)));
 
     include('settings.html');
 }

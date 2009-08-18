@@ -2969,7 +2969,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
     }
-    $output .= choose_from_menu($grades, $name, $current, '', '', 0, true);
+    $output .= $OUTPUT->select(html_select::make($grades, $name, $current, false));
 
     $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
     $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',

@@ -3027,7 +3027,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
                            $id='', $listbox=false, $multiple=false, $class='') {
 
     global $OUTPUT;
-    // debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    debugging('choose_from_menu() has been deprecated. Please change your code to use $OUTPUT->select($select).');
 
     if ($script) {
         debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);

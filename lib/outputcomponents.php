@@ -414,9 +414,10 @@ class html_select extends labelled_html_component {
      * @param array $options used to initialise {@link $options}.
      * @param string $name used to initialise {@link $name}.
      * @param string $selected  used to initialise {@link $selected}.
+     * @param string $nothinglabel The label for the 'nothing is selected' option. Defaults to "Choose..."
      * @return html_select A html_select object with the three common fields initialised.
      */
-    public static function make($options, $name, $selected = '') {
+    public static function make($options, $name, $selected = '', $nothinglabel='choosedots') {
         $menu = new html_select();
         $menu->options = $options;
         $menu->name = $name;
