@@ -2299,7 +2299,7 @@ function glossary_get_ratings_summary($entryid, $scale, $ratings=NULL) {
  * @param array $scale
  */
 function glossary_print_rating_menu($entryid, $userid, $scale) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     static $strrate;
 
@@ -2310,8 +2310,10 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     if (empty($strrate)) {
         $strrate = get_string("rate", "glossary");
     }
+    $select = html_select::make($scale, $entryid, $rating->rating, "$strrate...");
+    $select->nothingvalue = '-999';
 
-    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...",'',-999);
+    echo $OUTPUT->select($select);
 }
 
 /**

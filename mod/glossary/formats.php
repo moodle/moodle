@@ -77,7 +77,7 @@
         //Sort it
         asort($formats);
 
-        choose_from_menu($formats,'popupformatname',$displayformat->popupformatname);
+        echo $OUTPUT->select(html_select::make($formats,'popupformatname',$displayformat->popupformatname));
      ?>
         </td>
         <td width="60%">
