@@ -591,7 +591,7 @@ class block_base {
      * @return boolean whether anything was done. Blocks should use edit_form.php.
      */
     function instance_config_print() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         // Default behavior: print the config_instance.html file
         // You don't need to override this if you're satisfied with the above
         if (!$this->instance_allow_multiple() && !$this->instance_allow_config()) {
@@ -599,9 +599,9 @@ class block_base {
         }
 
         if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
-            print_simple_box_start('center', '', '', 5, 'blockconfiginstance');
+            echo $OUTPUT->box_start('generalbox boxaligncenter blockconfiginstance');
             include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             notice(get_string('blockconfigbad'), str_replace('blockaction=', 'dummy=', qualified_me()));
         }

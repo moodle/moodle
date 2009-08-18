@@ -229,7 +229,7 @@ class block_tags extends block_base {
                     $tagthisunit = get_string('tagthisunit', $tagslang);
                     $buttonadd = get_string('add', $tagslang);
                     $arrowtitle = get_string('arrowtitle', $tagslang);
-                    $coursetaghelpbutton = helpbutton('addtags', 'adding tags', $tagslang, TRUE, FALSE, '', TRUE);
+                    $coursetaghelpbutton = $OUTPUT->help_icon(moodle_help_icon::make('addtags', 'adding tags', $tagslang));
                     $sesskey = sesskey();
                     $arrowright = $OUTPUT->old_icon_url('t/arrow_left');
                     $this->content->footer .= <<<EOT

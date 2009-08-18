@@ -7,7 +7,7 @@ class block_search_forums extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -36,7 +36,7 @@ class block_search_forums extends block_base {
                                 '<input id="searchform_search" name="search" type="text" size="16" />';
         $this->content->text .= '<button id="searchform_button" type="submit" title="'.$search.'">'.$button.'</button><br />'; 
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->page->course->id.'">'.$advancedsearch.'</a>';
-        $this->content->text .= helpbutton('search', $advancedsearch, 'moodle', true, false, '', true);
+        $this->content->text .= $OUTPUT->help_icon(moodle_help_icon::make('search', $advancedsearch));
         $this->content->text .= '</fieldset></form></div>';
 
         return $this->content;
