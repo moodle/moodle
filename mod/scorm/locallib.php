@@ -702,14 +702,14 @@ function scorm_course_format_display($user,$course) {
         }
         $options = (object)array('noclean'=>true);
         $headertext .= '</td></tr><tr><td'.$colspan.'>'.get_string('summary').':<br />'.format_module_intro('scorm', $scorm, $scorm->coursemodule).'</td></tr></table>';
-        print_simple_box($headertext,'','100%');
+        echo $OUTPUT->box($headertext,'generalbox boxwidthwide');
         scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
     } else {
         if (has_capability('moodle/course:update', $context)) {
             // Create a new activity
             redirect($CFG->wwwroot.'/course/mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
         } else {
-            notify('Could not find a scorm course here');
+            echo $OUTPUT->notification('Could not find a scorm course here');
         }
     }
     echo '</div>';
@@ -725,7 +725,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if($scorm->displaycoursestructure == 1) {
-        print_simple_box_start('center',$boxwidth);
+        echo $OUTPUT->box_start('generalbox boxaligncenter');
 ?>
         <div class="structurehead"><?php print_string('contents','scorm') ?></div>
 <?php
@@ -783,7 +783,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     // do we want the TOC to be displayed?
     if($scorm->displaycoursestructure == 1) {
         echo $result->toc;
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     // is this the first attempt ?

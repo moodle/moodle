@@ -77,7 +77,7 @@
             $navigation = build_navigation($navlinks);
             print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
-            print_simple_box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "center");
+            echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
             echo $OUTPUT->footer();
             die;
         } elseif ($timenow > $scorm->timeclose) {
@@ -85,7 +85,7 @@
             $navigation = build_navigation($navlinks);
             print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
-            print_simple_box(get_string("expired", "scorm", userdate($scorm->timeclose)), "center");
+            echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
             echo $OUTPUT->footer();
             die;
         }

@@ -116,7 +116,7 @@ function xmldb_scorm_upgrade($oldversion) {
         /////////////////////////////////////
 
         function scorm_migrate_content_files($context, $base, $path) {
-            global $CFG;
+            global $CFG, $OUTPUT;
 
             $fullpathname = $base.$path;
             $fs           = get_file_storage();
@@ -137,7 +137,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
                 if ($item->isFile()) {
                     if (!$item->isReadable()) {
-                        notify(" File not readable, skipping: ".$fullpathname.$item->getFilename());
+                        echo $OUTPUT->notification(" File not readable, skipping: ".$fullpathname.$item->getFilename());
                         unset($item); // release file handle
                         continue;
                     }

@@ -5,17 +5,17 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 class mod_scorm_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $OUTPUT;
         $cfg_scorm = get_config('scorm');
 
         $mform = $this->_form;
 
         if (!$CFG->slasharguments) {
-            $mform->addElement('static', '', '',notify(get_string('slashargs', 'scorm'), 'notifyproblem', 'center', true));
+            $mform->addElement('static', '', '',$OUTPUT->notification(get_string('slashargs', 'scorm'), 'notifyproblem'));
         }
         $zlib = ini_get('zlib.output_compression'); //check for zlib compression - if used, throw error because of IE bug. - SEE MDL-16185
         if (isset($zlib) && $zlib) {
-            $mform->addElement('static', '', '',notify(get_string('zlibwarning', 'scorm'), 'notifyproblem', 'center', true));
+            $mform->addElement('static', '', '',$OUTPUT->notification(get_string('zlibwarning', 'scorm'), 'notifyproblem'));
         }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));

@@ -75,16 +75,16 @@
     if ($scorm->displayattemptstatus == 1) {
         $attemptstatus = scorm_get_attempt_status($USER,$scorm);
     }
-    print_simple_box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
+    echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'generalbox boxaligncenter boxwidthwide', 'intro');
     
     $scormopen = true;
     $timenow = time();
     if ($scorm->timeclose !=0) {
         if ($scorm->timeopen > $timenow) {
-            print_simple_box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "center");
+            echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
             $scormopen = false;
         } else if ($timenow > $scorm->timeclose) {
-            print_simple_box(get_string("expired", "scorm", userdate($scorm->timeclose)), "center");
+            echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
             $scormopen = false;
         }
     }

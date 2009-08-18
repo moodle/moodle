@@ -97,7 +97,7 @@
 
     if ($action == 'delete' && has_capability('mod/scorm:deleteresponses',$contextmodule)) {
         if (scorm_delete_responses($attemptids, $scorm->id)) { //delete responses.
-            notify(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
         }
     }
 
@@ -215,21 +215,21 @@
                 }
                 echo '</div>';
             } else {
-                notify(get_string('noactivity', 'scorm'));
+                echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
             }
         } else {
             if (!empty($user)) {
                 // User SCORM report
                 if ($scoes = $DB->get_records_select('scorm_scoes',"scorm=? ORDER BY id", array($scorm->id))) {
                     if (!empty($userdata)) {
-                        print_simple_box_start('center');
+                        echo $OUTPUT->box_start('generalbox boxaligncenter');
                         echo '<div class="mdl-align">'."\n";
                         print_user_picture($user, $course->id, $userdata->picture, false, false);
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
                         echo '</div>'."\n";
-                        print_simple_box_end();
+                        echo $OUTPUT->box_end();
 
                         // Print general score data
                         $table = new stdClass();
@@ -282,7 +282,7 @@
     } else {
         // User SCO report
         if (!empty($userdata)) {
-            print_simple_box_start('center');
+            echo $OUTPUT->box_start('generalbox boxaligncenter');
             //print_heading(format_string($sco->title));
             echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
@@ -454,7 +454,7 @@
                 echo '<h3>'.get_string('othertracks','scorm').'</h3>';
                 print_table($table);
             }
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         } else {
             print_error('missingparameter');
         }
