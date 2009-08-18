@@ -124,7 +124,7 @@
 /// If they are not enrolled in this course in a good enough role, tell them to enrol.
     if (!($canattempt || $canpreview || $canreviewmine)) {
         echo $OUTPUT->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
-                print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id, true) .
+                $OUTPUT->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id) .
                 "</p>\n", 'generalbox', 'notice');
         echo $OUTPUT->footer();
         exit;
@@ -380,7 +380,7 @@
     if ($buttontext) {
         $accessmanager->print_start_attempt_button($canpreview, $buttontext, $unfinished);
     } else {
-        print_continue($CFG->wwwroot . '/course/view.php?id=' . $course->id);
+        echo $OUTPUT->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id);
     }
     echo $OUTPUT->box_end();
 

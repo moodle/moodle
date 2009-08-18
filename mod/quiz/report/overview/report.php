@@ -189,10 +189,10 @@ class quiz_overview_report extends quiz_default_report {
         }
         $nostudents = false;
         if (!$students){
-            notify(get_string('nostudentsyet'));
+            echo $OUTPUT->notification(get_string('nostudentsyet'));
             $nostudents = true;
         }else if ($currentgroup && !$groupstudents){
-            notify(get_string('nostudentsingroup'));
+            echo $OUTPUT->notification(get_string('nostudentsingroup'));
             $nostudents = true;
         }
         if (!$table->is_downloading()) {
@@ -426,7 +426,7 @@ class quiz_overview_report extends quiz_default_report {
     function regrade_all($dry, $quiz, $groupstudents){
         global $DB, $OUTPUT;
         if (!has_capability('mod/quiz:regrade', $this->context)) {
-            notify(get_string('regradenotallowed', 'quiz'));
+            echo $OUTPUT->notification(get_string('regradenotallowed', 'quiz'));
             return true;
         }
         // Fetch all attempts
@@ -509,7 +509,7 @@ class quiz_overview_report extends quiz_default_report {
     function regrade_all_needed($quiz, $groupstudents){
         global $DB, $OUTPUT;
         if (!has_capability('mod/quiz:regrade', $this->context)) {
-            notify(get_string('regradenotallowed', 'quiz'));
+            echo $OUTPUT->notification(get_string('regradenotallowed', 'quiz'));
             return;
         }
         // Fetch all attempts that need regrading

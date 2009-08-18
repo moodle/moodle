@@ -61,7 +61,7 @@ class quiz_grading_report extends quiz_default_report {
         // Check permissions
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
         if (!has_capability('mod/quiz:grade', $this->context)) {
-            notify(get_string('gradingnotallowed', 'quiz_grading'));
+            echo $OUTPUT->notification(get_string('gradingnotallowed', 'quiz_grading'));
             return true;
         }
 
@@ -135,7 +135,7 @@ class quiz_grading_report extends quiz_default_report {
                     // the following will update the state and attempt
                     $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
                     if (is_string($error)) {
-                        notify($error);
+                        echo $OUTPUT->notification($error);
                         $allok = false;
                     } else if ($state->changed) {
                         // If the state has changed save it and update the quiz grade
@@ -145,9 +145,9 @@ class quiz_grading_report extends quiz_default_report {
                 }
 
                 if ($allok) {
-                    notify(get_string('changessaved', 'quiz'), 'notifysuccess');
+                    echo $OUTPUT->notification(get_string('changessaved', 'quiz'), 'notifysuccess');
                 } else {
-                    notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
+                    echo $OUTPUT->notification(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
                 }
             }
         }
@@ -160,15 +160,15 @@ class quiz_grading_report extends quiz_default_report {
 
         if(empty($this->users)) {
             if ($currentgroup){
-                notify(get_string('nostudentsingroup'));
+                echo $OUTPUT->notification(get_string('nostudentsingroup'));
             } else {
-                notify(get_string('nostudentsyet'));
+                echo $OUTPUT->notification(get_string('nostudentsyet'));
             }
             return true;
         }
         $qattempts = quiz_get_total_qas_graded_and_ungraded($quiz, array_keys($gradeableqs), array_keys($this->users));
         if(empty($qattempts)) {
-            notify(get_string('noattemptstoshow', 'quiz'));
+            echo $OUTPUT->notification(get_string('noattemptstoshow', 'quiz'));
             return true;
         }
         $qmenu = array();
@@ -226,7 +226,7 @@ class quiz_grading_report extends quiz_default_report {
      *       Finnish documenting
      **/
     function view_question($quiz, $question, $totalattempts, $ungraded) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $usercount = count($this->users);
 
@@ -319,7 +319,7 @@ class quiz_grading_report extends quiz_default_report {
             $table->print_html();
             echo '</div>';
         } else {
-            notify(get_string('noattemptstoshow', 'quiz'));
+            echo $OUTPUT->notification(get_string('noattemptstoshow', 'quiz'));
         }
     }
 
@@ -416,7 +416,7 @@ class quiz_grading_report extends quiz_default_report {
             echo '<div class="boxaligncenter"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
                 '</form>';
         } else {
-            notify(get_string('noattemptstoshow', 'quiz'));
+            echo $OUTPUT->notification(get_string('noattemptstoshow', 'quiz'));
         }
     }
 

@@ -103,7 +103,7 @@ class quiz_statistics_report extends quiz_default_report {
                 groups_print_activity_menu($cm, $reporturl->out());
                 echo '<br />';
                 if ($currentgroup && !$groupstudents){
-                    notify(get_string('nostudentsingroup', 'quiz_statistics'));
+                    echo $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
                 }
             }
         }
@@ -422,7 +422,7 @@ class quiz_statistics_report extends quiz_default_report {
             $select = html_select::make($downloadoptions, 'download', $this->table->defaultdownloadformat, false);
             $select->nothingvalue = '';
             $quizinformationtablehtml .= $OUTPUT->select($select);;
-            $quizinformationtablehtml .= helpbutton('tableexportformats', get_string('tableexportformats', 'table'), 'moodle', true, false, '', true);
+            $quizinformationtablehtml .= $OUTPUT->help_icon(moodle_help_icon::make('tableexportformats', get_string('tableexportformats', 'table')));
             $quizinformationtablehtml .= '</div></form>';
         }
         $quizinformationtablehtml .= print_table($quizinformationtable, true);

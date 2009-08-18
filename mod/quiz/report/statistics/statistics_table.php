@@ -141,11 +141,12 @@ class quiz_report_statistics_table extends flexible_table {
         return quiz_report_scale_sumgrades_as_percentage($question->_stats->maxgrade, $this->quiz);
     }
     function col_effective_weight($question){
+        global $OUTPUT;
         if (!$question->_stats->subquestion){
             if ($question->_stats->negcovar){
                 $negcovar = get_string('negcovar', 'quiz_statistics');
                 if (!$this->is_downloading()){
-                    $negcovar .= helpbutton('negcovar', $negcovar, 'quiz_statistics', true, false, '', true);
+                    $negcovar .= $OUTPUT->help_icon(moodle_help_icon::make('negcovar', $negcovar, 'quiz_statistics'));
                     return '<div class="negcovar">'.$negcovar.'</div>';
                 } else {
                     return $negcovar;

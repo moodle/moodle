@@ -172,7 +172,7 @@ class qstats{
     }
     
     function process_states(){
-        global $DB;
+        global $DB, $OUTPUT;
         set_time_limit(0);
         $subquestionstats = array();
         foreach ($this->states as $state){
@@ -210,7 +210,7 @@ class qstats{
             $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
             $this->_initial_question_walker($this->subquestions[$qid]->_stats);
             if ($subquestionstats[$qid]->differentweights){
-                notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
+                echo $OUTPUT->notification(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
             }
             if ($this->subquestions[$qid]->_stats->usedin){
                 sort($this->subquestions[$qid]->_stats->usedin, SORT_NUMERIC);

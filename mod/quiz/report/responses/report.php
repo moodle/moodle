@@ -17,7 +17,7 @@ class quiz_responses_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $COURSE, $DB, $PAGE;
+        global $CFG, $COURSE, $DB, $PAGE, $OUTPUT;
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -150,10 +150,10 @@ class quiz_responses_report extends quiz_default_report {
         }
         $nostudents = false;
         if (!$students){
-            notify(get_string('nostudentsyet'));
+            echo $OUTPUT->notification(get_string('nostudentsyet'));
             $nostudents = true;
         }else if ($currentgroup && !$groupstudents){
-            notify(get_string('nostudentsingroup'));
+            echo $OUTPUT->notification(get_string('nostudentsingroup'));
             $nostudents = true;
         }
         if (!$table->is_downloading()) {

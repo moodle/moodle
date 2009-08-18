@@ -45,12 +45,12 @@
 
     /// If success, notify and print a close button.
         if (!is_string($error)) {
-            notify(get_string('changessaved'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
             close_window(2, true);
         }
 
     /// Otherwise, display the error and fall throug to re-display the form.
-        notify($error);
+        echo $OUTPUT->notification($error);
     }
 
 /// Print the comment form.

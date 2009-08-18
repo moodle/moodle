@@ -559,7 +559,7 @@ function quiz_set_grade($newgrade, &$quiz) {
  */
 function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     global $DB;
-    global $USER;
+    global $USER, $OUTPUT;
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -568,7 +568,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     if (!$attempts){
         // Get all the attempts made by the user
         if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
-            notify('Could not find any user attempts');
+            echo $OUTPUT->notification('Could not find any user attempts');
             return false;
         }
     }
