@@ -68,7 +68,7 @@
 
     if (!$um->preprocess_files()) {
         echo $OUTPUT->box_start('glossarydisplay generalbox');
-        print_continue('import.php?id='.$id);
+        echo $OUTPUT->continue_button('import.php?id='.$id);
         echo $OUTPUT->box_end();
 
         echo $OUTPUT->footer();
@@ -131,7 +131,7 @@
 
                 // Include new glossary and return the new ID
                 if ( !$glossary->id = glossary_add_instance($glossary) ) {
-                    notify("Error while trying to create the new glossary.");
+                    echo $OUTPUT->notification("Error while trying to create the new glossary.");
                     echo '</center>';
                     glossary_print_tabbed_table_end();
                     echo $OUTPUT->footer();
@@ -175,11 +175,11 @@
 
                     rebuild_course_cache($course->id);
 
-                    print_simple_box(get_string("newglossarycreated","glossary"),"center","70%");
+                    echo $OUTPUT->box(get_string("newglossarycreated","glossary"),'generalbox boxaligncenter boxwidthnormal');
                     echo '<p>';
                 }
             } else {
-                notify("Error while trying to create the new glossary.");
+                echo $OUTPUT->notification("Error while trying to create the new glossary.");
                 echo $OUTPUT->footer();
                 exit;
             }
@@ -341,9 +341,9 @@
         }
     /// Print continue button, based on results
         if ($importedentries) {
-            print_continue('view.php?id='.$id);
+            echo $OUTPUT->continue_button('view.php?id='.$id);
         } else {
-            print_continue('import.php?id='.$id);
+            echo $OUTPUT->continue_button('import.php?id='.$id);
         }
         echo $OUTPUT->box_end();
     } else {

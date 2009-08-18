@@ -47,7 +47,7 @@
 
     echo $OUTPUT->heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
-    print_simple_box("<center>".get_string("configwarning", 'admin')."</center>", "center", "60%");
+    echo $OUTPUT->box(get_string("configwarning", 'admin'), "generalbox boxaligncenter boxwidthnormal");
     echo "<br />";
 
     $yes = get_string("yes");

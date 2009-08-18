@@ -86,10 +86,10 @@
                 $DB->delete_records("glossary_entries_categories", array("categoryid"=>$hook));
                 $DB->delete_records("glossary_categories", array("id"=>$hook));
 
-                print_simple_box_start("center","40%", "#FFBBBB");
+                echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
                 echo "<div style=\"text-align:center\">" . get_string("categorydeleted","glossary") ."</div>";
                 echo "</center>";
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
                 echo $OUTPUT->footer();
 
                 add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
@@ -98,7 +98,7 @@
             } else {
                 echo "<p style=\"text-align:center\">" . get_string("delete"). " " . get_string("category","glossary"). "</p>";
 
-                print_simple_box_start("center","40%", "#FFBBBB");
+                echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
                 echo "<div class=\"boxaligncenter\"><b>".format_text($category->name, FORMAT_PLAIN)."</b><br/>";
 
                 $num_entries = $DB->count_records("glossary_entries_categories", array("categoryid"=>$category->id));
@@ -132,7 +132,7 @@
                 print_single_button("editcategories.php", $options, get_string("no") );
                 echo "</td></tr></table>";
                 echo "</div>";
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
             }
         }
 
@@ -143,9 +143,9 @@
             if ( $dupcategory ) {
                 echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary");
 
-                print_simple_box_start("center","40%", "#FFBBBB");
+                echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
                 echo "<div style=\"text-align:center\">" . get_string("duplicatedcategory","glossary") ."</div>";
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
 
                 redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
 

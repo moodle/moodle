@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_glossary_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
     $result = true;
@@ -64,7 +64,7 @@ function xmldb_glossary_upgrade($oldversion) {
                 }
                 if (!is_readable($filepath)) {
                     //file missing??
-                    notify("File not readable, skipping: $filepath");
+                    echo $OUTPUT->notification("File not readable, skipping: $filepath");
                     $entry->attachment = '';
                     $DB->update_record('glossary_entries', $entry);
                     continue;
@@ -74,7 +74,7 @@ function xmldb_glossary_upgrade($oldversion) {
                 $filearea = 'glossary_attachment';
                 $filename = clean_param($entry->attachment, PARAM_FILE);
                 if ($filename === '') {
-                    notify("Unsupported entry filename, skipping: ".$filepath);
+                    echo $OUTPUT->notification("Unsupported entry filename, skipping: ".$filepath);
                     $entry->attachment = '';
                     $DB->update_record('glossary_entries', $entry);
                     continue;

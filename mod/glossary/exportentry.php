@@ -63,9 +63,9 @@
     if (!$mainglossary->allowduplicatedentries) {
         if ($DB->get_record('glossary_entries', array('glossaryid'=>$mainglossary->id, 'lower(concept)'=>moodle_strtolower($entry->concept)))) {
             print_header_simple(format_string($glossary->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
-            nootify(get_string('errconceptalreadyexists', 'glossary'));
-            print_continue($returnurl);
-            print_simple_box_end();
+            echo $OUTPUT->notification(get_string('errconceptalreadyexists', 'glossary'));
+            echo $OUTPUT->continue_button($returnurl);
+            echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
             die;
         }

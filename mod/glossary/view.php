@@ -486,7 +486,7 @@
         }
     }
     if ( !$entriesshown ) {
-        print_simple_box('<div style="text-align:center">' . get_string("noentries","glossary") . '</div>',"center","95%");
+        echo $OUTPUT->box(get_string("noentries","glossary"), "generalbox boxaligncenter boxwidthwide");
     }
 
 
