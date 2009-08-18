@@ -227,7 +227,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
@@ -294,9 +294,10 @@ class question_match_qtype extends default_questiontype {
                         $a->feedbackimg = question_get_feedback_image($correctresponse);
                     }
                 }
-
-                $a->control = choose_from_menu($answers, $menuname, $response, 'choose',
-                                               '', 0, true, $options->readonly);
+                
+                $select = html_select::make($answers, $menuname, $response);
+                $select->disabled = $options->readonly;
+                $a->control = $OUTPUT->select($select);
 
                 // Neither the editing interface or the database allow to provide
                 // fedback for this question type.
