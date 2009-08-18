@@ -257,12 +257,12 @@ print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit,
 
 echo $OUTPUT->heading($strgradeedit);
 
-print_simple_box_start("center");
+echo $OUTPUT->box_start();
 
 // Form if in edit or add modes
 $mform->display();
 
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 die;

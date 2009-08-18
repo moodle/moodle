@@ -81,7 +81,7 @@ echo '<div class="clearer"></div>';
 
 //show warnings if any
 foreach($warnings as $warning) {
-    notify($warning);
+    echo $OUTPUT->notification($warning);
 }
 
 $studentsperpage = $report->get_pref('studentsperpage');

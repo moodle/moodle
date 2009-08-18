@@ -261,7 +261,7 @@ if ($formdata = $mform->get_data()) {
                         if (!$user = $DB->get_record('user', array('id' => $value))) {
                             // user not found, abort whold import
                             import_cleanup($importcode);
-                            notify("user mapping error, could not find user with id \"$value\"");
+                            echo $OUTPUT->notification("user mapping error, could not find user with id \"$value\"");
                             $status = false;
                             break 3;
                         }
@@ -271,7 +271,7 @@ if ($formdata = $mform->get_data()) {
                         if (!$user = $DB->get_record('user', array('idnumber' => $value))) {
                              // user not found, abort whold import
                             import_cleanup($importcode);
-                            notify("user mapping error, could not find user with idnumber \"$value\"");
+                            echo $OUTPUT->notification("user mapping error, could not find user with idnumber \"$value\"");
                             $status = false;
                             break 3;
                         }
@@ -280,7 +280,7 @@ if ($formdata = $mform->get_data()) {
                     case 'useremail':
                         if (!$user = $DB->get_record('user', array('email' => $value))) {
                             import_cleanup($importcode);
-                            notify("user mapping error, could not find user with email address \"$value\"");
+                            echo $OUTPUT->notification("user mapping error, could not find user with email address \"$value\"");
                             $status = false;
                             break 3;
                         }
@@ -289,7 +289,7 @@ if ($formdata = $mform->get_data()) {
                     case 'username':
                         if (!$user = $DB->get_record('user', array('username' => $value))) {
                             import_cleanup($importcode);
-                            notify("user mapping error, could not find user with username \"$value\"");
+                            echo $OUTPUT->notification("user mapping error, could not find user with username \"$value\"");
                             $status = false;
                             break 3;
                         }
@@ -327,7 +327,7 @@ if ($formdata = $mform->get_data()) {
                                 // had to pick mapping
                                 $status = false;
                                 import_cleanup($importcode);
-                                notify(get_string('importfailed', 'grades'));
+                                echo $OUTPUT->notification(get_string('importfailed', 'grades'));
                                 break 3;
                             }
 
@@ -348,7 +348,7 @@ if ($formdata = $mform->get_data()) {
                                 // had to pick mapping
                                 $status = false;
                                 import_cleanup($importcode);
-                                notify(get_string('importfailed', 'grades'));
+                                echo $OUTPUT->notification(get_string('importfailed', 'grades'));
                                 break 3;
                             }
 
@@ -356,7 +356,7 @@ if ($formdata = $mform->get_data()) {
                             if ($gradeitem->is_locked()) {
                                 $status = false;
                                 import_cleanup($importcode);
-                                notify(get_string('gradeitemlocked', 'grades'));
+                                echo $OUTPUT->notification(get_string('gradeitemlocked', 'grades'));
                                 break 3;
                             }
 
@@ -376,7 +376,7 @@ if ($formdata = $mform->get_data()) {
                                         echo "<br/>grade is $value";
                                         $status = false;
                                         import_cleanup($importcode);
-                                        notify(get_string('badgrade', 'grades'));
+                                        echo $OUTPUT->notification(get_string('badgrade', 'grades'));
                                         break 3;
                                     }
                                     $value = $key;
@@ -392,7 +392,7 @@ if ($formdata = $mform->get_data()) {
                                     echo "<br/>grade is $value";
                                     $status = false;
                                     import_cleanup($importcode);
-                                    notify(get_string('badgrade', 'grades'));
+                                    echo $OUTPUT->notification(get_string('badgrade', 'grades'));
                                     break 3;
                                 }
                                 $newgrade->finalgrade = $value;
@@ -409,7 +409,7 @@ if ($formdata = $mform->get_data()) {
                 // user not found, abort whold import
                 $status = false;
                 import_cleanup($importcode);
-                notify('user mapping error, could not find user!');
+                echo $OUTPUT->notification('user mapping error, could not find user!');
                 break;
             }
 
@@ -417,7 +417,7 @@ if ($formdata = $mform->get_data()) {
                 // not allowed to import into this group, abort
                 $status = false;
                 import_cleanup($importcode);
-                notify('user not member of current group, can not update!');
+                echo $OUTPUT->notification('user not member of current group, can not update!');
                 break;
             }
 
@@ -432,7 +432,7 @@ if ($formdata = $mform->get_data()) {
                             // individual grade locked
                             $status = false;
                             import_cleanup($importcode);
-                            notify(get_string('gradelocked', 'grades'));
+                            echo $OUTPUT->notification(get_string('gradelocked', 'grades'));
                             break 2;
                         }
                     }

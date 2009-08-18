@@ -60,8 +60,8 @@ if ($data = $mform->get_data()) {
             echo $OUTPUT->footer();
             die;
         } else {
-            notify($error);
-            print_continue($CFG->wwwroot.'/grade/index.php?id='.$course->id);
+            echo $OUTPUT->notification($error);
+            echo $OUTPUT->continue_button($CFG->wwwroot.'/grade/index.php?id='.$course->id);
             echo $OUTPUT->footer();
             die;
         }

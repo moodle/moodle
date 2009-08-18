@@ -77,8 +77,8 @@ if (!$courseid) {
     admin_externalpage_print_header();
 }
 
-$table = null;
-$table2 = null;
+$table = new stdClass();
+$table2 = new stdClass();
 $heading = '';
 
 if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {

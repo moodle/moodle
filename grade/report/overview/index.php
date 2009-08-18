@@ -115,7 +115,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         echo $user_selector;
 
         if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
-            notify(get_string('groupusernotmember', 'error'));
+            echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));
         } else {
             if ($report->fill_table()) {
                 echo '<br />'.$report->print_table(true);

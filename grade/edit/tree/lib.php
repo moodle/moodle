@@ -539,7 +539,8 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
     }
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('aggregation', 'grades').helpbutton('aggregation', 'aggregation', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('aggregation', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregation', 'aggregation', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -588,7 +589,8 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
 class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('extracredit', 'grades').helpbutton('aggregationcoefcombo', 'aggregationcoefcombo', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('extracredit', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregationcoefcombo', 'aggregationcoefcombo', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -625,7 +627,8 @@ class grade_edit_tree_column_extracredit extends grade_edit_tree_column {
 class grade_edit_tree_column_weight extends grade_edit_tree_column {
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('weightuc', 'grades').helpbutton('aggregationcoefweight', 'aggregationcoefweight', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('weightuc', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('aggregationcoefweight', 'aggregationcoefweight', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -706,8 +709,9 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
     }
 
     public function get_header_cell() {
+        global $OUTPUT;
         return '<th class="header" style="width: 40px" scope="col">'.get_string('aggregateonlygraded', 'grades')
-              .helpbutton('aggregateonlygraded', 'aggregateonlygraded', 'grade', true, false, '', true).'</th>';
+              .$OUTPUT->help_icon(moodle_help_icon::make('aggregateonlygraded', 'aggregateonlygraded', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -734,8 +738,9 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
     }
 
     public function get_header_cell() {
+        global $OUTPUT;
         return '<th class="header" style="width: 40px" scope="col">'.get_string('aggregatesubcats', 'grades')
-              .helpbutton('aggregatesubcats', 'aggregatesubcats', 'grade', true, false, '', true).'</th>';
+              .$OUTPUT->help_icon(moodle_help_icon::make('aggregatesubcats', 'aggregatesubcats', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -763,8 +768,9 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
     }
 
     public function get_header_cell() {
+        global $OUTPUT;
         return '<th class="header" style="width: 40px" scope="col">'.get_string('aggregateoutcomes', 'grades')
-              .helpbutton('aggregateoutcomes', 'aggregateoutcomes', 'grade', true, false, '', true).'</th>';
+              .$OUTPUT->help_icon(moodle_help_icon::make('aggregateoutcomes', 'aggregateoutcomes', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -801,7 +807,8 @@ class grade_edit_tree_column_droplow extends grade_edit_tree_column_category {
     }
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('droplow', 'grades').helpbutton('droplow', 'droplow', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('droplow', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('droplow', 'droplow', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -826,7 +833,8 @@ class grade_edit_tree_column_keephigh extends grade_edit_tree_column_category {
     }
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('keephigh', 'grades').helpbutton('keephigh', 'keephigh', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('keephigh', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('keephigh', 'keephigh', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -851,7 +859,8 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
     }
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('multfactor', 'grades').helpbutton('multfactor', 'multfactor', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('multfactor', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('multfactor', 'multfactor', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {
@@ -880,7 +889,8 @@ class grade_edit_tree_column_multfactor extends grade_edit_tree_column {
 class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
 
     public function get_header_cell() {
-        return '<th class="header" scope="col">'.get_string('plusfactor', 'grades').helpbutton('plusfactor', 'plusfactor', 'grade', true, false, '', true).'</th>';
+        global $OUTPUT;
+        return '<th class="header" scope="col">'.get_string('plusfactor', 'grades').$OUTPUT->help_icon(moodle_help_icon::make('plusfactor', 'plusfactor', 'grade')).'</th>';
     }
 
     public function get_category_cell($category, $levelclass, $params) {

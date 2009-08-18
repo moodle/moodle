@@ -68,10 +68,10 @@ if (has_capability('moodle/site:config', $systemcontext)) {
     echo "</a></div>\n";
 }
 
-print_simple_box_start("center");
+echo $OUTPUT->box_start();
 
 $mform->display();
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
 ?>

@@ -43,7 +43,7 @@ function get_new_importcode() {
  * @return bool success
  */
 function grade_import_commit($courseid, $importcode, $importfeedback=true, $verbose=true) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     $commitstart = time(); // start time in case we need to roll back
     $newitemids = array(); // array to hold new grade_item ids from grade_import_newitem table, mapping array
@@ -129,7 +129,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
     }
 
     if ($verbose) {
-        notify(get_string('importsuccess', 'grades'), 'notifysuccess');
+        echo $OUTPUT->notification(get_string('importsuccess', 'grades'), 'notifysuccess');
         $unenrolledusers = get_unenrolled_users_in_import($importcode, $courseid);
         if ($unenrolledusers) {
             $list = "<ul>\n";
@@ -138,9 +138,9 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                 $list .= '<li>' . get_string('usergrade', 'grades', $u) . '</li>';
             }
             $list .= "</ul>\n";
-            notify(get_string('unenrolledusersinimport', 'grades', $list), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('unenrolledusersinimport', 'grades', $list), 'notifysuccess');
         }
-        print_continue($CFG->wwwroot.'/grade/index.php?id='.$courseid);
+        echo $OUTPUT->continue_button($CFG->wwwroot.'/grade/index.php?id='.$courseid);
     }
     // clean up
     import_cleanup($importcode);

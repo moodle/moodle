@@ -103,7 +103,7 @@ class grade_report_overview extends grade_report {
     }
 
     public function fill_table() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         // MDL-11679, only show 'mycourses' instead of all courses
         if ($courses = get_my_courses($this->user->id, 'c.sortorder ASC', 'id, shortname, showgrades')) {
@@ -192,7 +192,7 @@ class grade_report_overview extends grade_report {
             return true;
 
         } else {
-            notify(get_string('nocourses', 'grades'));
+            echo $OUTPUT->notification(get_string('nocourses', 'grades'));
             return false;
         }
     }
