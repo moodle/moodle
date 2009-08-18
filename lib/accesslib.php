@@ -3269,7 +3269,7 @@ function reset_role_capabilities($roleid) {
  * @return boolean true if success, exception in case of any problems
  */
 function update_capabilities($component='moodle') {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $storedcaps = array();
 
@@ -3332,7 +3332,7 @@ function update_capabilities($component='moodle') {
                     //assign_capability will update rather than insert if capability exists
                     if (!assign_capability($capname, $rolecapability->permission,
                                             $rolecapability->roleid, $rolecapability->contextid, true)){
-                         notify('Could not clone capabilities for '.$capname);
+                         echo $OUTPUT->notification('Could not clone capabilities for '.$capname);
                     }
                 }
             }
@@ -3341,7 +3341,7 @@ function update_capabilities($component='moodle') {
         // we ignore legacy key if we have cloned permissions
         } else if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
                     !assign_legacy_capabilities($capname, $capdef['legacy'])) {
-            notify('Could not assign legacy capabilities for '.$capname);
+            echo $OUTPUT->notification('Could not assign legacy capabilities for '.$capname);
         }
     }
     // Are there any capabilities that have been removed from the file

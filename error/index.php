@@ -47,7 +47,7 @@
 
     print_header($site->fullname .':Error', $site->fullname .': Error 404', 'Error 404 - File not Found', '');
 
-    print_simple_box('<p align="center">'. get_string('pagenotexist', 'error'). '<br />'.s($requesturi).'</p>', 'center');
+    echo $OUTPUT->box(get_string('pagenotexist', 'error'). '<br />'.s($requesturi), 'generalbox boxaligncenter');
 
     if (isloggedin()) {
 ?>
@@ -61,7 +61,7 @@
            </form>
 <?php
     } else {
-        print_continue($CFG->wwwroot);
+        echo $OUTPUT->continue_button($CFG->wwwroot);
     }
     echo $OUTPUT->footer();
 ?>

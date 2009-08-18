@@ -119,7 +119,7 @@ class upload_manager {
      * @return boolean
      */
     function preprocess_files() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         foreach ($_FILES as $name => $file) {
             $this->status = true; // only set it to true here so that we can check if this function has been called.
@@ -141,7 +141,7 @@ class upload_manager {
                         $a->name    = $this->files[$name]['originalname'];
                         $a->problem = $this->files[$name]['uploadlog'];
                         if (!$this->config->silent) {
-                            notify(get_string('uploadfailednotrecovering','moodle',$a));
+                            echo $OUTPUT->notification(get_string('uploadfailednotrecovering','moodle',$a));
                         }
                         else {
                             $this->notify .= '<br />'. get_string('uploadfailednotrecovering','moodle',$a);
@@ -152,7 +152,7 @@ class upload_manager {
                     } else if (count($this->files) == 1) {
 
                         if (!$this->config->silent and !$this->config->allownull) {
-                            notify($this->files[$name]['uploadlog']);
+                            echo $OUTPUT->notification($this->files[$name]['uploadlog']);
                         } else {
                             $this->notify .= '<br />'. $this->files[$name]['uploadlog'];
                         }
@@ -211,7 +211,7 @@ class upload_manager {
      * @return boolean status;
      */
     function save_files($destination) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
         
         if (!$this->status) { // preprocess_files hasn't been run
             $this->preprocess_files();
@@ -271,7 +271,7 @@ class upload_manager {
         if (empty($savedsomething)) {
             $this->status = false;
             if ((empty($this->config->allownull) && !empty($this->inputname)) || (empty($this->inputname) && empty($this->config->allownullmultiple))) {
-                notify(get_string('uploadnofilefound'));
+                echo $OUTPUT->notification(get_string('uploadnofilefound'));
             }
             return false;
         }
@@ -298,6 +298,7 @@ class upload_manager {
      * @param array $exceptions Full paths of files to KEEP.
      */
     function delete_other_files($destination, $exceptions=null) {
+        global $OUTPUT;
         $deletedsomething = false;
         if ($filestodel = get_directory_list($destination)) {
             foreach ($filestodel as $file) {
@@ -309,7 +310,7 @@ class upload_manager {
         }
         if ($deletedsomething) {
             if (!$this->config->silent) {
-                notify(get_string('uploadoldfilesdeleted'));
+                echo $OUTPUT->notification(get_string('uploadoldfilesdeleted'));
             }
             else {
                 $this->notify .= '<br />'. get_string('uploadoldfilesdeleted');

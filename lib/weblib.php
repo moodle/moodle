@@ -3084,8 +3084,11 @@ function emoticonhelpbutton($form, $field, $return = false) {
 
     $SESSION->inserttextform = $form;
     $SESSION->inserttextfield = $field;
-    $imagetext = '<img src="' . $OUTPUT->old_icon_url('s/smiley') . '" alt="" class="emoticon" style="margin-left:3px; padding-right:1px;width:15px;height:15px;" />';
-    $help = helpbutton('emoticons2', get_string('helpemoticons'), 'moodle', true, true, '', true, $imagetext);
+    $helpicon = moodle_help_icon::make('emoticons2', get_string('helpemoticons'), 'moodle', true);
+    $helpicon->image->src = $OUTPUT->old_icon_url('s/smiley');
+    $helpicon->image->add_class('emoticon');
+    $helpicon->style = "margin-left:3px; padding-right:1px;width:15px;height:15px;";
+    $help = $OUTPUT->help_icon($helpicon);
     if (!$return){
         echo $help;
     } else {
@@ -3139,7 +3142,7 @@ function notice ($message, $link='', $course=NULL) {
     }
 
     echo $OUTPUT->box($message, 'generalbox', 'notice');
-    print_continue($link);
+    echo $OUTPUT->continue_button($link);
 
     echo $OUTPUT->footer();
     exit(1); // general error code

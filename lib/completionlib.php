@@ -166,10 +166,10 @@ class completion_info {
      * @return void
      */
     public function print_help_icon() {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
         if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
             echo '<span id = "completionprogressid" class="completionprogress">'.get_string('yourprogress','completion').' ';
-            helpbutton('completionicons',get_string('completionicons','completion'),'completion');
+            echo $OUTPUT->help_icon(moodle_help_icon::make('completionicons',get_string('completionicons','completion'),'completion'));
             echo '</span>';
         }
     }

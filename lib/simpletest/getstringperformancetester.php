@@ -48,7 +48,7 @@ $requiredlangs = $TEST_LANGUAGES;
 array_pop($requiredlangs);
 foreach ($requiredlangs as $lang) {
     if (!isset($installedlangs[$lang])) {
-        notify('You must install the following language packs to run these test: ' . implode(', ', $requiredlangs));
+        echo $OUTPUT->notification('You must install the following language packs to run these test: ' . implode(', ', $requiredlangs));
         echo $OUTPUT->footer();
         die;
     }

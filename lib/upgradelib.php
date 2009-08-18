@@ -822,7 +822,7 @@ function upgrade_finished($continueurl=null) {
         upgrade_setup_debug(false);
         ignore_user_abort(false);
         if ($continueurl) {
-            print_continue($continueurl);
+            echo $OUTPUT->continue_button($continueurl);
             echo $OUTPUT->footer();
             die;
         }
@@ -907,6 +907,7 @@ function print_upgrade_part_start($plugin, $installation, $verbose) {
  * @param bool $installation true if installation, false menas upgrade
  */
 function print_upgrade_part_end($plugin, $installation, $verbose) {
+    global $OUTPUT;
     upgrade_started();
     if ($installation) {
         if (empty($plugin) or $plugin == 'moodle') {
@@ -922,7 +923,7 @@ function print_upgrade_part_end($plugin, $installation, $verbose) {
         }
     }
     if ($verbose) {
-        notify(get_string('success'), 'notifysuccess');
+        echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
         print_upgrade_separator();
     }
 }
@@ -971,7 +972,7 @@ function upgrade_language_pack($lang='') {
                     $cd->install();
                 }
             }
-            notify(get_string('success'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
         }
     }
 

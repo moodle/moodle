@@ -70,11 +70,11 @@ switch (optional_param('action', '', PARAM_ACTION)) {
             }
             flush();
             populate_test_database($syscontext, 10, 100, 1000, 5000, 5000);
-            notify('Test tables created.', 'notifysuccess');
+            echo $OUTPUT->notification('Test tables created.', 'notifysuccess');
         } else if ($issetup == count($requiredtables)) {
-            notify('Test tables are already set up.', 'notifysuccess');
+            echo $OUTPUT->notification('Test tables are already set up.', 'notifysuccess');
         } else {
-            notify('Something is wrong, please delete the test tables and try again.');
+            echo $OUTPUT->notification('Something is wrong, please delete the test tables and try again.');
         }
         break;
 
@@ -86,12 +86,12 @@ switch (optional_param('action', '', PARAM_ACTION)) {
             }
         }
         $issetup = 0;
-        notify('Test tables dropped.', 'notifysuccess');
+        echo $OUTPUT->notification('Test tables dropped.', 'notifysuccess');
         break;
 
     case 'test':
         if ($issetup != count($requiredtables)) {
-            notify('Something is wrong, please delete the test tables and try again.');
+            echo $OUTPUT->notification('Something is wrong, please delete the test tables and try again.');
         } else {
             $contexts = $DB->get_records('context');
             $numcalls = 1000;
@@ -146,7 +146,7 @@ function print_result_line($duration, $basetime, $numcalls, $action1, $action2 =
 }
 
 function populate_test_database($syscontext, $numcategories, $numcourses, $nummodules, $numoverrides, $numconfigs) {
-    global $DB;
+    global $DB, $OUTPUT;
     set_time_limit(600);
     $syscontext->id = $DB->insert_record('context', $syscontext);
 
@@ -158,7 +158,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         $categoryparents[] = $context;
         $categories[$context->id] = $context;
     }
-    notify('Created ' . $numcategories . ' course category contexts.', 'notifysuccess'); flush();
+    echo $OUTPUT->notification('Created ' . $numcategories . ' course category contexts.', 'notifysuccess'); flush();
 
     // Course contexts.
     $courses = array();
@@ -166,7 +166,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         $context = insert_context(CONTEXT_COURSE, $i, $categories[array_rand($categories)]);
         $courses[$context->id] = $context;
     }
-    notify('Created ' . $numcourses . ' course contexts.', 'notifysuccess'); flush();
+    echo $OUTPUT->notification('Created ' . $numcourses . ' course contexts.', 'notifysuccess'); flush();
 
     // Activities contexts.
     $mods = array();
@@ -180,7 +180,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         }
     }
     $DB->commit_sql();
-    notify('Created ' . $nummodules . ' module contexts.', 'notifysuccess'); flush();
+    echo $OUTPUT->notification('Created ' . $nummodules . ' module contexts.', 'notifysuccess'); flush();
 
     $contexts = $categories + $courses + $mods;
 
@@ -192,7 +192,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         filter_set_global_state($filter, $state);
         $counts[$state]++;
     }
-    notify('Set global setting: ' . $counts[TEXTFILTER_DISABLED] . ' disabled, ' .
+    echo $OUTPUT->notification('Set global setting: ' . $counts[TEXTFILTER_DISABLED] . ' disabled, ' .
             $counts[TEXTFILTER_OFF] . ' off and ' . $counts[TEXTFILTER_ON] . ' on.', 'notifysuccess'); flush();
 
     // Local overrides.
@@ -206,7 +206,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         }
     }
     $DB->commit_sql();
-    notify('Set ' . $numoverrides . ' local overrides.', 'notifysuccess'); flush();
+    echo $OUTPUT->notification('Set ' . $numoverrides . ' local overrides.', 'notifysuccess'); flush();
 
     // Local config.
     $variablenames = array('frog' => 0, 'toad' => 0, 'elver' => 0, 'eft' => 0, 'tadpole' => 0);
@@ -220,7 +220,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
         }
     }
     $DB->commit_sql();
-    notify('Set ' . $numconfigs . ' local configs.', 'notifysuccess'); flush();
+    echo $OUTPUT->notification('Set ' . $numconfigs . ' local configs.', 'notifysuccess'); flush();
 }
 
 function insert_context($contextlevel, $instanceid, $parent) {

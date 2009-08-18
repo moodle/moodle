@@ -175,7 +175,7 @@ function save_profile_image($id, $userform, $dir='user') {
  * @return boolean
  */
 function process_profile_image($originalfile, $destination) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if(!(is_file($originalfile) && is_dir($destination))) {
         return false;
@@ -263,7 +263,7 @@ function process_profile_image($originalfile, $destination) {
             return 1;
         }
     } else {
-        notify('PHP has not been configured to support JPEG images.  Please correct this.');
+        echo $OUTPUT->notification('PHP has not been configured to support JPEG images.  Please correct this.');
     }
     return 0;
 }
@@ -278,7 +278,7 @@ function process_profile_image($originalfile, $destination) {
  * @return boolean
  */
 function upgrade_profile_image($id, $dir='users') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $im = ImageCreateFromJPEG($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg');
 
@@ -333,7 +333,7 @@ function upgrade_profile_image($id, $dir='users') {
             return 1;
         }
     } else {
-        notify('PHP has not been configured to support JPEG images.  Please correct this.');
+        echo $OUTPUT->notification('PHP has not been configured to support JPEG images.  Please correct this.');
     }
     return 0;
 }

@@ -1963,6 +1963,21 @@ class moodle_help_icon extends labelled_html_component {
         parent::prepare();
     }
 
+    /**
+     * This is a shortcut for creating a help_icon with only the 2 required params
+     * @param string $page  The keyword that defines a help page
+     * @param string $text A descriptive text
+     * @return moodle_help_icon A moodle_help_icon object with the two common fields initialised.
+     */
+    public static function make($page, $text, $module='moodle', $linktext=false) {
+        $helpicon = new moodle_help_icon();
+        $helpicon->page = $page;
+        $helpicon->text = $text;
+        $helpicon->module = $module;
+        $helpicon->linktext = $linktext;
+        return $helpicon;
+    }
+
     public static function make_scale_menu($courseid, $scale) {
         $helpbutton = new moodle_help_icon();
         $strscales = get_string('scales');

@@ -333,9 +333,9 @@ class portfolio_exporter {
                 return true;
             } else {
                 $this->print_header('configexport');
-                print_simple_box_start();
+                echo $OUTPUT->box_start();
                 $mform->display();
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
                 echo $OUTPUT->footer();
                 return false;;
             }
@@ -382,7 +382,7 @@ class portfolio_exporter {
         $yesurl = $CFG->wwwroot . '/portfolio/add.php?stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
         $nourl  = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
         $this->print_header('confirmexport');
-        print_simple_box_start();
+        echo $OUTPUT->box_start();
         echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 4);
         $mainsummary = array();
         if (!$this->instance->get_export_config('hideformat')) {
@@ -417,7 +417,7 @@ class portfolio_exporter {
         }
         print_table($table);
         notice_yesno($strconfirm, $yesurl, $nourl);
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         return false;
     }
@@ -587,9 +587,9 @@ class portfolio_exporter {
             return;
         }
 
-        print_simple_box_start();
+        echo $OUTPUT->box_start();
         echo $this->caller->heading_summary();
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
     }
 
     /**
@@ -791,8 +791,8 @@ class portfolio_exporter {
         global $CFG, $OUTPUT;
         $title = get_string('exportexpired', 'portfolio');
         print_header($title, $title, build_navigation(get_string('exportexpired', 'portfolio')));
-        notify(get_string('exportexpireddesc', 'portfolio'));
-        print_continue($CFG->wwwroot);
+        echo $OUTPUT->notification(get_string('exportexpireddesc', 'portfolio'));
+        echo $OUTPUT->continue_button($CFG->wwwroot);
         echo $OUTPUT->footer();
         exit;
     }

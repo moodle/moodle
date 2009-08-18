@@ -737,6 +737,7 @@ function portfolio_instance_sanity_check($instances=null) {
 *
 */
 function portfolio_report_insane($insane, $instances=false, $return=false) {
+    global $OUTPUT;
     if (empty($insane)) {
         return;
     }
@@ -751,7 +752,7 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
         $headerstr = get_string('somepluginsdisabled', 'portfolio');
     }
 
-    $output = notify($headerstr, 'notifyproblem', 'center', true);
+    $output = $OUTPUT->notification($headerstr, 'notifyproblem');
     $table = new StdClass;
     $table->head = array($pluginstr, '');
     $table->data = array();

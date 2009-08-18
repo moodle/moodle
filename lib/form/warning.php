@@ -49,7 +49,8 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
     }
 
     function toHtml() {
-        return notify($this->_text, $this->_class, 'center', true);
+        global $OUTPUT;
+        return $OUTPUT->notification($this->_text, $this->_class);
     }
 
     /**

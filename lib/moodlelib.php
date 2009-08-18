@@ -2202,7 +2202,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                     if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     } else {
-                        notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
+                        echo $OUTPUT->notification(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
                         echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';
                         echo $OUTPUT->footer();
                         exit;
@@ -3403,7 +3403,7 @@ function guest_user() {
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $authsenabled = get_enabled_auth_plugins();
 
@@ -3469,7 +3469,7 @@ function authenticate_user_login($username, $password) {
             include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
             if (function_exists('sso_user_login')) {
                 if (!sso_user_login($username, $password)) {   // Perform the signon process
-                    notify('Second sign-on failed');
+                    echo $OUTPUT->notification('Second sign-on failed');
                 }
             }
         }
@@ -3813,7 +3813,7 @@ function set_login_session_preferences() {
  *             failed, but you have no way of knowing which.
  */
 function delete_course($courseorid, $showfeedback = true) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     $result = true;
 
     if (is_object($courseorid)) {
@@ -3833,7 +3833,7 @@ function delete_course($courseorid, $showfeedback = true) {
 
     if (!remove_course_contents($courseid, $showfeedback)) {
         if ($showfeedback) {
-            notify("An error occurred while deleting some of the course contents.");
+            echo $OUTPUT->notification("An error occurred while deleting some of the course contents.");
         }
         $result = false;
     }
@@ -3843,14 +3843,14 @@ function delete_course($courseorid, $showfeedback = true) {
 /// Delete all roles and overiddes in the course context
     if (!delete_context(CONTEXT_COURSE, $courseid)) {
         if ($showfeedback) {
-            notify("An error occurred while deleting the main course context.");
+            echo $OUTPUT->notification("An error occurred while deleting the main course context.");
         }
         $result = false;
     }
 
     if (!fulldelete($CFG->dataroot.'/'.$courseid)) {
         if ($showfeedback) {
-            notify("An error occurred while deleting the course files.");
+            echo $OUTPUT->notification("An error occurred while deleting the course files.");
         }
         $result = false;
     }
@@ -3876,7 +3876,7 @@ function delete_course($courseorid, $showfeedback = true) {
  *             failed, but you have no way of knowing which.
  */
 function remove_course_contents($courseid, $showfeedback=true) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
@@ -3898,7 +3898,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
             include_once($formatlib);
             if (function_exists($formatdelete)) {
                 if ($showfeedback) {
-                    notify($strdeleted.' '.$format);
+                    echo $OUTPUT->notification($strdeleted.' '.$format);
                 }
                 $formatdelete($course->id);
             }
@@ -3927,7 +3927,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                                 $count++;
 
                             } else {
-                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
+                                echo $OUTPUT->notification('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
                                 $result = false;
                             }
                             if ($cm) {
@@ -3938,7 +3938,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                         }
                     }
                 } else {
-                    notify('Function '.$moddelete.'() doesn\'t exist!');
+                    echo $OUTPUT->notification('Function '.$moddelete.'() doesn\'t exist!');
                     $result = false;
                 }
 
@@ -3947,7 +3947,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 }
             }
             if ($showfeedback) {
-                notify($strdeleted .' '. $count .' x '. $modname);
+                echo $OUTPUT->notification($strdeleted .' '. $count .' x '. $modname);
             }
         }
     } else {
@@ -3978,7 +3978,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     foreach ($tablestoclear as $table => $col) {
         if ($DB->delete_records($table, array($col=>$course->id))) {
             if ($showfeedback) {
-                notify($strdeleted . ' ' . $table);
+                echo $OUTPUT->notification($strdeleted . ' ' . $table);
             }
         } else {
             $result = false;
@@ -3992,7 +3992,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $DB->delete_records("course_meta", array("parent_course"=>$course->id));
         sync_metacourse($course->id); // have to do it here so the enrolments get nuked. sync_metacourses won't find it without the id.
         if ($showfeedback) {
-            notify("$strdeleted course_meta");
+            echo $OUTPUT->notification("$strdeleted course_meta");
         }
     } else {
         if ($parents = $DB->get_records("course_meta", array("child_course"=>$course->id))) {
@@ -4000,7 +4000,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                 remove_from_metacourse($parent->parent_course,$parent->child_course); // this will do the unenrolments as well.
             }
             if ($showfeedback) {
-                notify("$strdeleted course_meta");
+                echo $OUTPUT->notification("$strdeleted course_meta");
             }
         }
     }
@@ -5038,11 +5038,11 @@ function get_file_packer($mimetype='application/zip') {
  * @return string|false Returns full path to directory if successful, false if not
  */
 function make_user_directory($userid, $test=false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (is_bool($userid) || $userid < 0 || !preg_match('/^[0-9]{1,10}$/', $userid) || $userid > 2147483647) {
         if (!$test) {
-            notify("Given userid was not a valid integer! (" . gettype($userid) . " $userid)");
+            echo $OUTPUT->notification("Given userid was not a valid integer! (" . gettype($userid) . " $userid)");
         }
         return false;
     }
@@ -5067,7 +5067,7 @@ function make_user_directory($userid, $test=false) {
  * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder)
  */
 function get_user_directories($only_non_empty=true, $legacy=false) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $rootdir = $CFG->dataroot."/user";
 
@@ -5084,7 +5084,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
                     $dirlist[$userid] = array('basedir' => $rootdir, 'userfolder' => $userid);
                 }
             } else {
-                notify("no directories found under $rootdir");
+                echo $OUTPUT->notification("no directories found under $rootdir");
             }
         } else {
             if ($grouplist =get_directory_list($rootdir, '', true, true, false)) { // directories will be in the form 0, 1000, 2000 etc...
@@ -5098,7 +5098,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
             }
         }
     } else {
-        notify("$rootdir does not exist!");
+        echo $OUTPUT->notification("$rootdir does not exist!");
         return false;
     }
     return $dirlist;
@@ -5231,7 +5231,7 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
  * @return bool|string
  */
 function print_file_upload_error($filearray = '', $returnerror = false) {
-
+    global $OUTPUT;
     if ($filearray == '' or !isset($filearray['error'])) {
 
         if (empty($_FILES)) return false;
@@ -5273,7 +5273,7 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
     if ($returnerror) {
         return $errmessage;
     } else {
-        notify($errmessage);
+        echo $OUTPUT->notification($errmessage);
         return true;
     }
 
@@ -7266,7 +7266,7 @@ function check_gd_version() {
  * @return bool
  */
 function moodle_needs_upgrading() {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $version = null;
     include_once($CFG->dirroot .'/version.php');  # defines $version and upgrades
@@ -7278,7 +7278,7 @@ function moodle_needs_upgrading() {
         foreach ($mods as $mod => $fullmod) {
             $module = new object();
             if (!is_readable($fullmod .'/version.php')) {
-                notify('Module "'. $mod .'" is not readable - check permissions');
+                echo $OUTPUT->notification('Module "'. $mod .'" is not readable - check permissions');
                 continue;
             }
             include_once($fullmod .'/version.php');  # defines $module with version etc
@@ -7348,7 +7348,7 @@ function upgrade_set_timeout($max_execution_time=300) {
  * @uses HOURSECS
  */
 function notify_login_failures() {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
 

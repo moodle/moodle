@@ -55,7 +55,7 @@ for ($i=1; ; $i++){
 
 }
 print_header();
-print_simple_box_start('center', '96%');
+echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('editorhelptopics'));
 
 
@@ -64,7 +64,7 @@ foreach ($topics as $i => $topic){
     echo('<li>'.$topics[$i].'</li>');
 }
 echo '</ul>';
-print_simple_box_end();
+echo $OUTPUT->box_end();
 // End of page.
 echo $OUTPUT->close_window_button();
 global $CFG;

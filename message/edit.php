@@ -215,9 +215,9 @@
 
     /// TODO XXX: This is only a quick hack ... helpfile locations should be provided as part of the provider definition
         if ($provider->component == 'moodle') {
-            $helpbtn = helpbutton('moodle_'.$provider->name, $providername, 'message', true, false, '', true);
+            $helpbtn = $OUTPUT->help_icon(moodle_help_icon::make('moodle_'.$provider->name, $providername, 'message'));
         } else {
-            $helpbtn = helpbutton('message_'.$provider->name, $providername, basename($provider->component), true, false, '', true);
+            $helpbtn = $OUTPUT->help_icon(moodle_help_icon::make('message_'.$provider->name, $providername, basename($provider->component)));
         }
 
         echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";

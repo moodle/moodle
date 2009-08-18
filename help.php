@@ -94,13 +94,13 @@ if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
 
 // Do the main output.
 print_header($title);
-print_simple_box_start();
+echo $OUTPUT->box_start();
 print $output;
-print_simple_box_end();
+echo $OUTPUT->box_end();
 
 // Display an error if necessary.
 if (!$helpfound) {
-    notify('Help file "'. $file .'" could not be found!');
+    echo $OUTPUT->notification('Help file "'. $file .'" could not be found!');
 }
 
 // End of page.

@@ -109,7 +109,7 @@ if ($file_info and $file_info->is_directory() and $file_info->is_writable() and 
 if ($file_info and $delete) {
     if (!data_submitted() or !confirm_sesskey()) {
         print_header();
-        notify(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
+        echo $OUTPUT->notification(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
         $parent_info = $file_info->get_parent();
 
         $optionsno  = $parent_info->get_params();
@@ -136,7 +136,7 @@ if ($file_info and $delete) {
 html_header($context, $file_info);
 
 if ($error !== '') {
-    notify($error);
+    echo $OUTPUT->notification($error);
 }
 
 displaydir($file_info);

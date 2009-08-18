@@ -83,7 +83,7 @@ function upgrade_migrate_files_courses() {
  * Internal function - do not use directly
  */
 function upgrade_migrate_files_course($context, $path, $delete) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $fullpathname = $CFG->dataroot.'/'.$context->instanceid.$path;
     if (!file_exists($fullpathname)) {
@@ -114,7 +114,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
 
         if ($item->isFile()) {
             if (!$item->isReadable()) {
-                notify(" File not readable, skipping: ".$fullpathname.$item->getFilename());
+                echo $OUTPUT->notification(" File not readable, skipping: ".$fullpathname.$item->getFilename());
                 continue;
             }
 
@@ -168,7 +168,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
  * Unfortunately this function uses core file related functions - it might be necessary to tweak it if something changes there :-(
  */
 function upgrade_migrate_files_blog() {
-    global $DB, $CFG;
+    global $DB, $CFG, $OUTPUT;
 
     $fs = get_file_storage();
 
@@ -199,7 +199,7 @@ function upgrade_migrate_files_blog() {
             }
 
             if (!is_readable($pathname)) {
-                notify(" File not readable, skipping: ".$pathname);
+                echo $OUTPUT->notification(" File not readable, skipping: ".$pathname);
                 continue;
             }
 

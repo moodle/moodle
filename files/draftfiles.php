@@ -99,7 +99,7 @@ if (isset($_FILES['newfile']) and data_submitted() and confirm_sesskey()) {
 if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $delete)) {
     if (!data_submitted() or !confirm_sesskey()) {
         print_header();
-        notify(get_string('deletecheckwarning').': '.s($file->get_filepath().$file->get_filename()));
+        echo $OUTPUT->notification(get_string('deletecheckwarning').': '.s($file->get_filepath().$file->get_filename()));
         $optionsno  = array('itemid'=>$itemid, 'filepath'=>$filepath, 'subdirs'=>$subdirs);
         $optionsyes = array('itemid'=>$itemid, 'filepath'=>$filepath, 'delete'=>$delete, 'sesskey'=>sesskey(), 'subdirs'=>$subdirs);
         notice_yesno (get_string('deletecheckfiles'), 'draftfiles.php', 'draftfiles.php', $optionsyes, $optionsno, 'post', 'get');
@@ -120,7 +120,7 @@ if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $fi
 print_header();
 
 if ($notice !== '') {
-    notify($notice);
+    echo $OUTPUT->notification($notice);
 }
 
 echo '<div class="areafiles">';

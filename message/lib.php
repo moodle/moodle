@@ -293,7 +293,7 @@ function message_get_contact($contactid) {
 
 
 function message_print_search_results($frm) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     echo '<div class="mdl-align">';
 
@@ -349,7 +349,7 @@ function message_print_search_results($frm) {
             echo '</table>';
 
         } else {
-            notify(get_string('nosearchresults', 'message'));
+            echo $OUTPUT->notification(get_string('nosearchresults', 'message'));
         }
 
 
@@ -476,13 +476,13 @@ function message_print_search_results($frm) {
             echo '</table>';
 
         } else {
-            notify(get_string('nosearchresults', 'message'));
+            echo $OUTPUT->notification(get_string('nosearchresults', 'message'));
         }
 
 
     /// what the ????, probably an empty search string, duh!
     } else {
-        notify(get_string('emptysearchstring', 'message'));
+        echo $OUTPUT->notification(get_string('emptysearchstring', 'message'));
     }
 
     echo '<br />';

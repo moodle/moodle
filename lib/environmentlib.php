@@ -317,7 +317,7 @@ function print_moodle_environment($result, $environment_results) {
 
 /// Finally, if any error has happened, print the summary box
     if (!$result) {
-        print_simple_box($strenvironmenterrortodo, 'center', '', '', '', 'environmentbox errorbox');
+        echo $OUTPUT->box($strenvironmenterrortodo, 'environmentbox errorbox');
     }
 }
 

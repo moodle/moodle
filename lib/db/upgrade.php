@@ -20,7 +20,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_main_upgrade($oldversion) {
-    global $CFG, $THEME, $USER, $DB;
+    global $CFG, $THEME, $USER, $DB, $OUTPUT;
 
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 
@@ -113,7 +113,7 @@ function xmldb_main_upgrade($oldversion) {
                 if ($guestroles = get_roles_with_capability('moodle/legacy:guest', CAP_ALLOW)) {
                     if (isset($guestroles[$role->id])) {
                         set_config('defaultuserroleid', null);
-                        notify('Guest role removed from "Default role for all users" setting, please select another role.', 'notifysuccess');
+                        echo $OUTPUT->notification('Guest role removed from "Default role for all users" setting, please select another role.', 'notifysuccess');
                     }
                 }
             } else {
@@ -125,7 +125,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2008051201) {
-        notify('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
+        echo $OUTPUT->notification('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
         upgrade_set_timeout(60*20); // this may take a while
 
     /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
@@ -2141,7 +2141,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($result && $oldversion < 2009051200) {
     /// Let's check the status of mandatory mnet_host records, fixing them
     /// and moving "orphan" users to default localhost record. MDL-16879
-        notify('Fixing mnet records, this may take a while...', 'notifysuccess');
+        echo $OUTPUT->notification('Fixing mnet records, this may take a while...', 'notifysuccess');
         upgrade_fix_incorrect_mnethostids();
 
     /// Main savepoint reached
