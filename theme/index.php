@@ -55,7 +55,7 @@ if ($choose and confirm_sesskey()) {
         echo $OUTPUT->box_end();
     }
 
-    print_continue($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
+    echo $OUTPUT->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
 
     echo $OUTPUT->footer();
     exit;
