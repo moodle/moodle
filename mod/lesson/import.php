@@ -95,7 +95,7 @@
     echo "<tr><td align=\"right\">";
     print_string("fileformat", "lesson");
     echo ":</td><td>";
-    choose_from_menu($fileformatnames, "format", "gift", "");
+    echo $OUTPUT->select(html_select::make($fileformatnames, "format", "gift", false));
     echo "</td></tr>";
 
     echo "<tr><td align=\"right\">";

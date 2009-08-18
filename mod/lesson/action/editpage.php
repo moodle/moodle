@@ -291,7 +291,7 @@
                 case LESSON_MATCHING :
                     if ($n == 2) {
                         echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
-                        choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
                             echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
@@ -299,7 +299,7 @@
                     }
                     if ($n == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
-                        choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false);
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom)
                             echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
@@ -309,7 +309,7 @@
                     break;
                 case LESSON_ESSAY :
                     echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
-                    choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
+                    echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
                         echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
@@ -321,7 +321,7 @@
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $nplus1:</b> \n";
-                    choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
+                    echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
                         echo get_string("score", "lesson")." $nplus1: <input type=\"text\" name=\"score[$n]\" value=\"$answer->score\" size=\"5\" />";
@@ -333,7 +333,7 @@
                 case LESSON_ENDOFCLUSTER:
                 case LESSON_ENDOFBRANCH:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $nplus1:</b> \n";
-                    choose_from_menu($jump, "jumpto[$n]", $answer->jumpto, "");
+                    echo $OUTPUT->select(html_select::make($jump, "jumpto[$n]", $answer->jumpto, false));
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     echo "</td></tr>\n";
                     break;
@@ -412,7 +412,7 @@
                 case LESSON_ESSAY :
                     if ($i < 1) {
                         echo "<tr><td><b>".get_string("jump", "lesson").":</b> \n";
-                        choose_from_menu($jump, "jumpto[$i]", 0, "");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if($lesson->custom) {
                             echo get_string("score", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\" />";
@@ -423,7 +423,7 @@
                 case LESSON_MATCHING :
                     if ($i == 2) {
                         echo "<tr><td><b>".get_string("correctanswerjump", "lesson").":</b> \n";
-                        choose_from_menu($jump, "jumpto[$i]", $answer->jumpto, "");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", $answer->jumpto, false));
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if ($lesson->custom) {
                             echo get_string("correctanswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
@@ -432,7 +432,7 @@
                     }
                     if ($i == 3) {
                         echo "<tr><td><b>".get_string("wronganswerjump", "lesson").":</b> \n";
-                        choose_from_menu($jump, "jumpto[$i]", $answer->jumpto, "");
+                        echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", $answer->jumpto, false));
                         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                         if ($lesson->custom) {
                             echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"$answer->score\" size=\"5\" />";
@@ -446,7 +446,7 @@
                 case LESSON_SHORTANSWER:
                 case LESSON_NUMERICAL:
                     echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
-                    choose_from_menu($jump, "jumpto[$i]", 0, "");
+                    echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     if($lesson->custom) {
                         echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\" />";
@@ -455,7 +455,7 @@
                     break;
                 case LESSON_BRANCHTABLE :
                     echo "<tr><td><b>".get_string("jump", "lesson")." $iplus1:</b> \n";
-                    choose_from_menu($jump, "jumpto[$i]", 0, "");
+                    echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
                     helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
                     echo "</td></tr>\n";
                     break;

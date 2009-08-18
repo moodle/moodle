@@ -369,7 +369,9 @@
                 $options[0] = get_string('nocredit', 'lesson');
                 $options[1] = get_string('credit', 'lesson');
             }
-            $table->data[] = array(get_string('essayscore', 'lesson').': '.choose_from_menu($options, 'score', $essayinfo->score, '', '', '', true));
+            $select = html_select::make($options, 'score', $essayinfo->score, false);
+            $select->nothingvalue = '';
+            $table->data[] = array(get_string('essayscore', 'lesson').': '.$OUTPUT->select($select));
 
             print_table($table);
             echo '<div class="buttons">

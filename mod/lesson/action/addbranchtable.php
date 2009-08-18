@@ -65,10 +65,10 @@
         echo "<tr><td><strong>".get_string("jump", "lesson")." $iplus1:</strong> \n";
         if ($i) {
             // answers 2, 3, 4... jumpto this page
-            choose_from_menu($jump, "jumpto[$i]", 0, "");
+            echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", 0, false));
         } else {
             // answer 1 jumpto next page
-            choose_from_menu($jump, "jumpto[$i]", LESSON_NEXTPAGE, "");
+            echo $OUTPUT->select(html_select::make($jump, "jumpto[$i]", LESSON_NEXTPAGE, false));
         }
         helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
         echo "</td></tr>\n";

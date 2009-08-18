@@ -684,10 +684,10 @@
 
                             if (isset($USER->modattempts[$lesson->id])) {
                                 $selected = htmlspecialchars(trim($answers[$useranswers[$t]]->response));  // gets the user's previous answer
-                                choose_from_menu ($responseoptions, "response[$answer->id]", $selected);
+                                echo $OUTPUT->select(html_select::make ($responseoptions, "response[$answer->id]", $selected));
                                 $t++;
                             } else {
-                                choose_from_menu ($responseoptions, "response[$answer->id]");
+                                echo $OUTPUT->select(html_select::make ($responseoptions, "response[$answer->id]"));
                             }
                             echo '</td></tr>';
                             if ($answer != end($answers)) {
