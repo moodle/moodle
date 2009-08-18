@@ -39,7 +39,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
         //       specific tables.
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, n.tolerance " .
                                 "FROM {question_answers} a, " .
@@ -47,7 +47,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                                 "WHERE a.question = ? " .
                                 "    AND   a.id = n.answer " .
                                 "ORDER BY a.id ASC", array($question->id))) {
-            notify('Error: Missing question answer for numerical question ' . $question->id . '!');
+            echo $OUTPUT->notification('Error: Missing question answer for numerical question ' . $question->id . '!');
             return false;
         }
         $this->get_numerical_units($question);

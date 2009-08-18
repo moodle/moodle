@@ -151,7 +151,7 @@
             }
 
             echo "<hr />";
-            print_continue("edit.php?".($thispageurl->get_query_string(array('category'=>"{$qformat->category->id},{$qformat->category->contextid}"))));
+            echo $OUTPUT->continue_button("edit.php?".($thispageurl->get_query_string(array('category'=>"{$qformat->category->id},{$qformat->category->contextid}"))));
             echo $OUTPUT->footer();
             exit;
         }

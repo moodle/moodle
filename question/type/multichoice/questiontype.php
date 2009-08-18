@@ -19,17 +19,17 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
-        global $DB;
+        global $DB, $OUTPUT;
         // Get additional information from database
         // and attach it to the question object
         if (!$question->options = $DB->get_record('question_multichoice', array('question' => $question->id))) {
-            notify('Error: Missing question options for multichoice question'.$question->id.'!');
+            echo $OUTPUT->notification('Error: Missing question options for multichoice question'.$question->id.'!');
             return false;
         }
 
         list ($usql, $params) = $DB->get_in_or_equal(explode(',', $question->options->answers));
         if (!$question->options->answers = $DB->get_records_select('question_answers', "id $usql", $params, 'id')) {
-           notify('Error: Missing question answers for multichoice question'.$question->id.'!');
+           echo $OUTPUT->notification('Error: Missing question answers for multichoice question'.$question->id.'!');
            return false;
         }
 

@@ -227,6 +227,7 @@ class qformat_xml extends qformat_default {
      */
     function import_truefalse( $question ) {
         // get common parts
+        global $OUTPUT;
         $qo = $this->import_headers( $question );
 
         // 'header' parts particular to true/false
@@ -263,7 +264,7 @@ class qformat_xml extends qformat_default {
             $a = new stdClass;
             $a->questiontext = $qo->questiontext;
             $a->answer = get_string($qo->answer ? 'true' : 'false', 'quiz');
-            notify(get_string('truefalseimporterror', 'quiz', $a));
+            echo $OUTPUT->notification(get_string('truefalseimporterror', 'quiz', $a));
         }
         return $qo;
     }
@@ -772,7 +773,7 @@ class qformat_xml extends qformat_default {
      * @return string xml segment
      */
     function writequestion( $question ) {
-    global $CFG,$QTYPES;
+    global $CFG,$QTYPES, $OUTPUT;
         // initial string;
         $expout = "";
 
@@ -1013,7 +1014,7 @@ class qformat_xml extends qformat_default {
         default:
             // try support by optional plugin
             if (!$data = $this->try_exporting_using_qtypes( $question->qtype, $question )) { 
-                notify( get_string( 'unsupportedexport','qformat_xml',$QTYPES[$question->qtype]->local_name() ) );
+                echo $OUTPUT->notification( get_string( 'unsupportedexport','qformat_xml',$QTYPES[$question->qtype]->local_name() ) );
             }
             $expout .= $data;
         }

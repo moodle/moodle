@@ -235,7 +235,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
  */
     function exportprocess() {
 
-        global $CFG;
+        global $CFG, $OUTPUT;
         $courseid = $this->course->id;
 
         // create a directory for the exports (if not already existing)
@@ -247,7 +247,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         // get the questions (from database) in this category
         $questions = get_questions_category( $this->category );
 
-        notify("Exporting ".count($questions)." questions.");
+        echo $OUTPUT->notification("Exporting ".count($questions)." questions.");
         $count = 0;
 
         // create the imsmanifest file
@@ -256,7 +256,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         // copy files used by the main questions to the export directory
         $result = $this->handle_questions_media($questions, $path, $courseid);
         if ($result !== true) {
-            notify(implode("<br />", $result));
+            echo $OUTPUT->notification(implode("<br />", $result));
         }
 
         $manifestquestions = $this->objects_to_array($questions);

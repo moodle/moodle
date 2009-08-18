@@ -230,7 +230,7 @@ class random_qtype extends default_questiontype {
         /// From version 1.5 and later the question type random works like all
         /// the other question types in that it now only needs one response
         /// record per question.
-        global $QTYPES, $DB;
+        global $QTYPES, $DB, $OUTPUT;
         if (!preg_match('~^random([0-9]+)-(.*)$~', $state->responses[''], $answerregs)) {
             if (empty($state->responses[''])) {
                 // This is the case if there weren't enough questions available in the category.
@@ -241,12 +241,12 @@ class random_qtype extends default_questiontype {
             }
             // this must be an old-style state which stores only the id for the wrapped question
             if (!$wrappedquestion = $DB->get_record('question', array('id' => $state->responses['']))) {
-                notify("Can not find wrapped question {$state->responses['']}");
+                echo $OUTPUT->notification("Can not find wrapped question {$state->responses['']}");
             }
             // In the old model the actual response was stored in a separate entry in
             // the state table and fortunately there was only a single state per question
             if (!$state->responses[''] = $DB->get_field('question_states', 'answer', array('attempt' => $state->attempt, 'question' => $wrappedquestion->id))) {
-                notify("Wrapped state missing");
+                echo $OUTPUT->notification("Wrapped state missing");
             }
         } else {
             if (!$wrappedquestion = $DB->get_record('question', array('id' => $answerregs[1]))) {

@@ -213,7 +213,7 @@ if ($mform->is_cancelled()){
 
     if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext){
         if ($inpopup) {
-            notify(get_string('changessaved'), '');
+            echo $OUTPUT->notification(get_string('changessaved'), '');
             close_window(3);
         } else {
             $nexturl = new moodle_url($returnurl);

@@ -106,9 +106,9 @@ class question_match_qtype extends default_questiontype {
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        global $DB;
+        global $DB, $OUTPUT;
         if (!$state->options->subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
-            notify('Error: Missing subquestions!');
+            echo $OUTPUT->notification('Error: Missing subquestions!');
             return false;
         }
 
@@ -135,11 +135,11 @@ class question_match_qtype extends default_questiontype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
-        global $DB;
+        global $DB, $OUTPUT;
         static $subquestions = array();
         if (!isset($subquestions[$question->id])){
             if (!$subquestions[$question->id] = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
-               notify('Error: Missing subquestions!');
+               echo $OUTPUT->notification('Error: Missing subquestions!');
                return false;
             }
         }

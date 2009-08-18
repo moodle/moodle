@@ -19,6 +19,7 @@ function repchar( $text ) {
     }
 
 function writequestion( $question ) {
+    global $OUTPUT;
     // turns question into string
     // question reflects database fields for general question and specific to type
 
@@ -108,7 +109,7 @@ function writequestion( $question ) {
         $expout .= "<!-- CLOZE type is not supported  -->\n";
         break;
     default:
-        notify("No handler for qtype $question->qtype for GIFT export" );
+        echo $OUTPUT->notification("No handler for qtype $question->qtype for GIFT export" );
     }
     // close off div 
     $expout .= "</div>\n\n\n";

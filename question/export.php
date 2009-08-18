@@ -122,7 +122,7 @@
             $PAGE->requires->js_function_call('document.location.replace', array($efile))->after_delay(1);
         }
 
-        print_continue('edit.php?' . $thispageurl->get_query_string());
+        echo $OUTPUT->continue_button('edit.php?' . $thispageurl->get_query_string());
         echo $OUTPUT->footer();
         exit;
     }

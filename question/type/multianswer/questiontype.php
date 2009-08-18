@@ -24,13 +24,13 @@ class embedded_cloze_qtype extends default_questiontype {
     }
     
     function has_wildcards_in_responses($question, $subqid) {
-        global $QTYPES;
+        global $QTYPES, $OUTPUT;
         foreach ($question->options->questions as $subq){
             if ($subq->id == $subqid){
                 return $QTYPES[$subq->qtype]->has_wildcards_in_responses($subq, $subqid);
             }
         }
-        notify('Could not find sub question!');
+        echo $OUTPUT->notification('Could not find sub question!');
         return true;
     }
 
@@ -39,11 +39,11 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
-        global $QTYPES, $DB;
+        global $QTYPES, $DB, $OUTPUT;
 
         // Get relevant data indexed by positionkey from the multianswers table
         if (!$sequence = $DB->get_field('question_multianswer', 'sequence', array('question' => $question->id))) {
-            notify(get_string('noquestions','qtype_multianswer',$question->name));
+            echo $OUTPUT->notification(get_string('noquestions','qtype_multianswer',$question->name));
             $question->options->questions['1']= '';
             return true ;
         }
@@ -65,7 +65,7 @@ class embedded_cloze_qtype extends default_questiontype {
         if (isset($wrappedquestions) && is_array($wrappedquestions)){
             foreach ($wrappedquestions as $wrapped) {
                 if (!$QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
-                    notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
+                    echo $OUTPUT->notification("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
                 }else {
                 // for wrapped questions the maxgrade is always equal to the defaultgrade,
                 // there is no entry in the question_instances table for them
@@ -76,7 +76,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         }
         if ($nbvaliquestion == 0 ) {
-            notify(get_string('noquestions','qtype_multianswer',$question->name));
+            echo $OUTPUT->notification(get_string('noquestions','qtype_multianswer',$question->name));
         }
 
         return true;
@@ -823,7 +823,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function restore_recode_answer($state, $restore) {
-        global $DB;
+        global $DB, $OUTPUT;
         //The answer is a comma separated list of hypen separated sequence number and answers. We may have to recode the answers
         $answer_field = "";
         $in_first = true;
@@ -842,7 +842,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $wrappedquestionid = $sequence[$seqnum-1];
             // now we can find the question
             if (!$wrappedquestion = $DB->get_record('question', array('id' => $wrappedquestionid))) {
-                notify("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $state->question");
+                echo $OUTPUT->notification("Can't find the subquestion $wrappedquestionid that is used as part $seqnum in cloze question $state->question");
             }
             // For multichoice question we need to recode the answer
             if ($answer and $wrappedquestion->qtype == 'multichoice') {

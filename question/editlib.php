@@ -1140,7 +1140,7 @@ class question_bank_view {
         if (!$category = $DB->get_record('question_categories',
                 array('id' => $categoryid, 'contextid' => $contextid))) {
             echo $OUTPUT->box_start('generalbox questionbank');
-            notify('Category not found!');
+            echo $OUTPUT->notification('Category not found!');
             echo $OUTPUT->box_end();
             return false;
         }
@@ -1910,12 +1910,12 @@ function print_qtype_to_add_option($qtype, $localizedname) {
  * @param boolean $disabled if true, the button will be disabled.
  */
 function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
     print_single_button($CFG->wwwroot . '/question/addquestion.php', $params,
             $caption,'get', '', false, $tooltip, $disabled);
-    helpbutton('types', get_string('createnewquestion', 'question'), 'question');
+    echo $OUTPUT->help_icon(moodle_help_icon::make('types', get_string('createnewquestion', 'question'), 'question'));
     $PAGE->requires->yui_lib('dragdrop');
     $PAGE->requires->yui_lib('container');
     if (!$choiceformprinted) {

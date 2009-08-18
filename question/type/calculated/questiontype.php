@@ -28,7 +28,7 @@ class question_calculated_qtype extends default_questiontype {
 
     function get_question_options(&$question) {
         // First get the datasets and default options
-         global $CFG, $DB;
+         global $CFG, $DB, $OUTPUT;
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
                                 "FROM {question_answers} a, " .
@@ -36,7 +36,7 @@ class question_calculated_qtype extends default_questiontype {
                                 "WHERE a.question = ? " .
                                 "AND   a.id = c.answer ".
                                 "ORDER BY a.id ASC", array($question->id))) {
-            notify('Error: Missing question answer for calculated question ' . $question->id . '!');
+            echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
             return false;
         }
 
@@ -267,9 +267,10 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
+        global $OUTPUT;
         if (!preg_match('~^dataset([0-9]+)[^-]*-(.*)$~',
                 $state->responses[''], $regs)) {
-            notify ("Wrongly formatted raw response answer " .
+            echo $OUTPUT->notification("Wrongly formatted raw response answer " .
                    "{$state->responses['']}! Could not restore session for " .
                    " question #{$question->id}.");
             $state->options->datasetitem = 1;
@@ -834,7 +835,7 @@ class question_calculated_qtype extends default_questiontype {
                                     . $form->calclength[$key+1];
                             break;
                         default:
-                            notify("Unexpected distribution ".$form->calcdistribution[$key+1]);
+                            echo $OUTPUT->notification("Unexpected distribution ".$form->calcdistribution[$key+1]);
                     }
                 }
             }

@@ -28,9 +28,9 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
 
     function get_question_options(&$question) {
-        global $DB;
+        global $DB, $OUTPUT;
         if (!$question->options = $DB->get_record('question_randomsamatch', array('question' => $question->id))) {
-            notify('Error: Missing question options for random short answer question '.$question->id.'!');
+            echo $OUTPUT->notification('Error: Missing question options for random short answer question '.$question->id.'!');
             return false;
         }
 
@@ -80,7 +80,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
         // 1. All questions that are explicitly assigned to the quiz
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
-        global $QTYPES;
+        global $QTYPES, $OUTPUT;
         if (!isset($cmoptions->questionsinuse)) {
             $cmoptions->questionsinuse = $cmoptions->questions;
         }
@@ -111,7 +111,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
                  questions were deleted after this Random Short-Answer question was
                  created.";
             }
-            notify($errorstr);
+            echo $OUTPUT->notification($errorstr);
             $errorstr = '<span class="notifyproblem">' . $errorstr . '</span>';
         }
 
@@ -171,7 +171,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
 
     function restore_session_and_responses(&$question, &$state) {
         global $DB;
-        global $QTYPES;
+        global $QTYPES, $OUTPUT;
         static $wrappedquestions = array();
         if (empty($state->responses[''])) {
             $question->questiontext = "Insufficient selection options are
@@ -191,12 +191,12 @@ class question_randomsamatch_qtype extends question_match_qtype {
                 $state->responses[$wqid] = $response[1];
                 if (!isset($wrappedquestions[$wqid])){
                     if (!$wrappedquestions[$wqid] = $DB->get_record('question', array('id' => $wqid))) {
-                        notify("Couldn't get question (id=$wqid)!");
+                        echo $OUTPUT->notification("Couldn't get question (id=$wqid)!");
                         return false;
                     }
                     if (!$QTYPES[$wrappedquestions[$wqid]->qtype]
                      ->get_question_options($wrappedquestions[$wqid])) {
-                        notify("Couldn't get question options (id=$response[0])!");
+                        echo $OUTPUT->notification("Couldn't get question options (id=$response[0])!");
                         return false;
                     }
     
@@ -217,7 +217,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
 
                 if (!$QTYPES[$wrappedquestion->qtype]
                  ->restore_session_and_responses($wrappedquestion, $state)) {
-                    notify("Couldn't restore session of question (id=$response[0])!");
+                    echo $OUTPUT->notification("Couldn't restore session of question (id=$response[0])!");
                     return false;
                 }
                 $wrappedquestion->name_prefix = $question->name_prefix;

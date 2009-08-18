@@ -216,30 +216,30 @@ class qformat_default {
      * @return boolean success
      */
     function importprocess() {
-        global $USER, $DB;
+        global $USER, $DB, $OUTPUT;
 
        // reset the timer in case file upload was slow
        @set_time_limit();
 
        // STAGE 1: Parse the file
-       notify( get_string('parsingquestions','quiz') );
+       echo $OUTPUT->notification( get_string('parsingquestions','quiz') );
 
         if (! $lines = $this->readdata($this->filename)) {
-            notify( get_string('cannotread','quiz') );
+            echo $OUTPUT->notification( get_string('cannotread','quiz') );
             return false;
         }
 
         if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
-            notify( get_string('noquestionsinfile','quiz') );
+            echo $OUTPUT->notification( get_string('noquestionsinfile','quiz') );
             return false;
         }
 
         // STAGE 2: Write data to database
-        notify( get_string('importingquestions','quiz',$this->count_questions($questions)) );
+        echo $OUTPUT->notification( get_string('importingquestions','quiz',$this->count_questions($questions)) );
 
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
-            notify( get_string('importparseerror','quiz') );
+            echo $OUTPUT->notification( get_string('importparseerror','quiz') );
             return true;
         }
 
@@ -265,7 +265,7 @@ class qformat_default {
                     }
                 }
                 if (!$answersvalid) {
-                    notify(get_string('matcherror', 'quiz'));
+                    echo $OUTPUT->notification(get_string('matcherror', 'quiz'));
                     ++$gradeerrors;
                     continue;
                 }
@@ -324,12 +324,12 @@ class qformat_default {
                     ->save_question_options($question);
 
             if (!empty($result->error)) {
-                notify($result->error);
+                echo $OUTPUT->notification($result->error);
                 return false;
             }
 
             if (!empty($result->notice)) {
-                notify($result->notice);
+                echo $OUTPUT->notification($result->notice);
                 return true;
             }
 
@@ -641,7 +641,7 @@ class qformat_default {
      * @return boolean success
      */
     function exportprocess() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         // create a directory for the exports (if not already existing)
         if (! $export_dir = make_upload_directory($this->question_get_export_dir())) {
@@ -657,7 +657,7 @@ class qformat_default {
             $questions = $this->questions;
         }
 
-        notify( get_string('exportingquestions','quiz') );
+        echo $OUTPUT->notification( get_string('exportingquestions','quiz') );
         $count = 0;
 
         // results are first written into string (and then to a file)

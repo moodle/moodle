@@ -438,7 +438,7 @@ class default_questiontype {
     *                         specific information (it is passed by reference).
     */
     function get_question_options(&$question) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         if (!isset($question->options)) {
             $question->options = new object;
@@ -453,7 +453,7 @@ class default_questiontype {
                     $question->options->$field = $extra_data->$field;
                 }
             } else {
-                notify("Failed to load question options from the table $question_extension_table for questionid " .
+                echo $OUTPUT->notification("Failed to load question options from the table $question_extension_table for questionid " .
                         $question->id);
                 return false;
             }
@@ -467,7 +467,7 @@ class default_questiontype {
                     FROM {question_answers} qa, {$answer_extension_table} qax
                     WHERE qa.questionid = ? AND qax.answerid = qa.id", array($question->id));
             if (!$question->options->answers) {
-                notify("Failed to load question answers from the table $answer_extension_table for questionid " .
+                echo $OUTPUT->notification("Failed to load question answers from the table $answer_extension_table for questionid " .
                         $question->id);
                 return false;
             }
@@ -1244,8 +1244,8 @@ class default_questiontype {
         /* This default implementation prints an error and must be overridden
         by all question type implementations, unless the default implementation
         of print_question has been overridden. */
-
-        notify('Error: Question formulation and input controls has not'
+        global $OUTPUT;
+        echo $OUTPUT->notification('Error: Question formulation and input controls has not'
                .'  been implemented for question type '.$this->name());
     }
 

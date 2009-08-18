@@ -480,7 +480,7 @@
     }
 
     function question_insert_site_file_names($course, $backup_unique_code){
-        global $QTYPES, $CFG, $DB;
+        global $QTYPES, $CFG, $DB, $OUTPUT;
         $status = true;
         $questionids = question_ids_by_backup ($backup_unique_code);
         $urls = array();
@@ -501,7 +501,7 @@
                 $inserturl->path = $url;
                 $status = $status && $DB->insert_record('backup_files', $inserturl);
             } else {
-                notify(get_string('linkedfiledoesntexist', 'question', $url));
+                echo $OUTPUT->notification(get_string('linkedfiledoesntexist', 'question', $url));
             }
         }
         return $status;
