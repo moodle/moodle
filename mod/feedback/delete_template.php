@@ -91,17 +91,14 @@
     echo $OUTPUT->heading(get_string('delete_template','feedback'));
     if($shoulddelete == 1) {
 
-        // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
         echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
         echo $OUTPUT->heading(get_string('confirmdeletetemplate', 'feedback'));
         $mform->display();
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }else {
         $templates = feedback_get_template_list($course, true);
         echo '<div class="mdl-align">';
         if(!is_array($templates)) {
-            // print_simple_box(get_string('no_templates_available_yet', 'feedback'), "center");
             echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
         }else {
             echo '<table width="30%">';

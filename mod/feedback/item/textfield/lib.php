@@ -119,10 +119,8 @@ class feedback_item_textfield extends feedback_item_base {
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
-            // print_simple_box_start($align);
             echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value?$value:'&nbsp;';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }else {
     ?>

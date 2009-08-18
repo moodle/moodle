@@ -90,9 +90,7 @@
 
     include('tabs.php');
 
-    // print_simple_box(get_string('mapcourseinfo', 'feedback'), 'center', '80%');
     echo $OUTPUT->box(get_string('mapcourseinfo', 'feedback'), 'generalbox boxaligncenter boxwidthwide');
-    // print_simple_box_start('center', '70%');
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     echo '<form method="post">';
     echo '<input type="hidden" name="id" value="'.$id.'" />';
@@ -108,14 +106,14 @@
         echo ' ' . get_string('courses') . ': ';
         echo $OUTPUT->select(html_select::make ($courses, 'coursefilter', $coursefilter));
         echo '<input type="submit" value="'.get_string('mapcourse', 'feedback').'"/>';
-        helpbutton('mapcourses', '', 'feedback', true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make('mapcourses', '', 'feedback', true));
         echo '<input type="button" value="'.get_string('searchagain').'" onclick="document.location=\'mapcourse.php?id='.$id.'\'"/>';
         echo '<input type="hidden" name="searchcourse" value="'.$searchcourse.'"/>';
         echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'"/>';
-        helpbutton('searchcourses', '', 'feedback', true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make('searchcourses', '', 'feedback', true));
     } else {
         echo '<input type="text" name="searchcourse" value="'.$searchcourse.'"/> <input type="submit" value="'.get_string('searchcourses').'"/>';
-        helpbutton('searchcourses', '', 'feedback', true, true);
+        echo $OUTPUT->help_icon(moodle_help_icon::make('searchcourses', '', 'feedback', true));
     }
 
     echo '</form>';
@@ -137,7 +135,6 @@
     }
 
 
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();

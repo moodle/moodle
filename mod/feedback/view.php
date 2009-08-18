@@ -112,19 +112,15 @@
 
     echo $OUTPUT->heading(format_text($feedback->name));
 
-    // print_simple_box_start('center', '80%');
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $options = (object)array('noclean'=>true);
     echo format_module_intro('feedback', $feedback, $cm->id);
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
 
     if($capabilities->edititems) {
         echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 4);
-        // print_simple_box_start('center', '80%');
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo format_text($feedback->page_after_submit);
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }
 
@@ -140,18 +136,16 @@
     //####### mapcourse-start
     if($capabilities->mapcourse) {
         if($feedback->course == SITEID) {
-            // print_simple_box_start('center', '80%');
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             echo '<div class="mdl-align">';
             echo '<form action="mapcourse.php" method="get">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="id" value="'.$id.'" />';
             echo '<button type="submit">'.get_string('mapcourses', 'feedback').'</button>';
-            helpbutton('mapcourse', '', 'feedback', true, true);
+            echo $OUTPUT->help_icon(moodle_help_icon::make('mapcourse', '', 'feedback', true));
             echo '</form>';
             echo '<br />';
             echo '</div>';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }
     }
@@ -159,16 +153,13 @@
 
     //####### completed-start
     if($capabilities->complete) {
-        // print_simple_box_start('center', '80%');
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         //check, whether the feedback is open (timeopen, timeclose)
         $checktime = time();
         if(($feedback->timeopen > $checktime) OR ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
-            // print_simple_box_start('center');
             echo $OUTPUT->box_start('generalbox boxaligncenter');
                 echo '<h2><font color="red">'.get_string('feedback_is_not_open', 'feedback').'</font></h2>';
-                print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
-            // print_simple_box_end();
+                echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
             echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
             exit;
@@ -202,12 +193,11 @@
         }else {
             echo '<h2><font color="red">'.get_string('this_feedback_is_already_submitted', 'feedback').'</font></h2>';
             if($courseid) {
-                print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
+                echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$courseid);
             }else {
-                print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
+                echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
             }
         }
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }
     //####### completed-end

@@ -182,7 +182,6 @@
     $item_form->display();
 
 /*
-    // print_simple_box_start('center');
     echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
         echo '<form action="'.$ME.'" method="post">';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -224,7 +223,6 @@
     //////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////
 */
-    // print_simple_box_end();
     // echo $OUTPUT->box_end();
 
     if ($typ!='label') {

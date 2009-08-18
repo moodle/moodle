@@ -112,7 +112,7 @@
             if($feedback->course == SITEID){
                 echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis_course.php?id=' . $id . '&courseid='.$courseid).'">';
                 echo get_string('course') .' '. get_string('analysis', 'feedback') . ' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
-                helpbutton('viewcompleted', '', 'feedback', true, true);
+                echo $OUTPUT->help_icon(moodle_help_icon::make('viewcompleted', '', 'feedback', true));
                 echo '</div>';
             }else {
                 echo '<div class="mdl-align"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
@@ -124,14 +124,13 @@
         //####### viewreports-start
         if($capabilities->viewreports) {
             //print the list of students
-            // print_simple_box_start('center', '80%');
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             echo isset($groupselect) ? $groupselect : '';
             echo '<div class="clearer"></div>';
             echo '<div class="mdl-align"><table><tr><td width="400">';
             if (!$students) {
                 if($courseid != SITEID){
-                    notify(get_string('noexistingstudents'));
+                    echo $OUTPUT->notification(get_string('noexistingstudents'));
                 }
             } else{
                 echo print_string('non_anonymous_entries', 'feedback');
@@ -198,7 +197,6 @@
             </table>
     <?php
             echo '</td></tr></table></div>';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }
 
@@ -217,7 +215,6 @@
             } else {
                 echo '<p align="center">'.get_string('not_completed_yet','feedback').'</p>';
             }
-            // print_simple_box_start("center", '50%');
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
             echo '<form>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -249,10 +246,9 @@
             echo '</td></tr>';
             echo '</table>';
             echo '</form>';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }
-        print_continue(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
+        echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
     }
     /// Finish the page
     ///////////////////////////////////////////////////////////////////////////

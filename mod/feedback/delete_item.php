@@ -72,12 +72,10 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     echo $OUTPUT->heading(format_text($feedback->name));
-    // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
     echo $OUTPUT->heading(get_string('confirmdeleteitem', 'feedback'));
     print_string('relateditemsdeleted','feedback');
     $mform->display();
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();

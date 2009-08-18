@@ -72,7 +72,6 @@
 
 
     //print analysed items
-    // print_simple_box_start("center", '80%');
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
     //get the groupid
@@ -145,7 +144,6 @@
         print_heading_with_help(get_string('insufficient_responses_for_this_group', 'feedback'), 'insufficient_responses', 'feedback');
     }
     echo '</td></tr></table></div>';
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();

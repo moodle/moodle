@@ -127,10 +127,8 @@ class feedback_item_info extends feedback_item_base {
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
-            // print_simple_box_start($align);
             echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value ? UserDate($value):'&nbsp;';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }else {
             $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));

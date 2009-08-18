@@ -149,11 +149,9 @@
     //check, if the feedback is open (timeopen, timeclose)
     $checktime = time();
     if(($feedback->timeopen > $checktime) OR ($feedback->timeclose < $checktime AND $feedback->timeclose > 0)) {
-        // print_simple_box_start('center');
         echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<h2><font color="red">'.get_string('feedback_is_not_open', 'feedback').'</font></h2>';
-            print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
-        // print_simple_box_end();
+            echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
@@ -292,10 +290,8 @@
 
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
-                // print_simple_box_start('center', '75%');
                 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
                 echo format_text($feedback->page_after_submit);
-                // print_simple_box_end();
                 echo $OUTPUT->box_end();
             } else {
                 echo '<p align="center"><b><font color="green">'.get_string('entries_saved','feedback').'</font></b></p>';
@@ -311,15 +307,15 @@
             $completion->set_module_viewed($cm);
 
             if($feedback->site_after_submit) {
-                print_continue(feedback_encode_target_url($feedback->site_after_submit));
+                echo $OUTPUT->continue_button(feedback_encode_target_url($feedback->site_after_submit));
             }else {
                 if($courseid) {
-                    print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
+                    echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$courseid);
                 }else {
                     if($course->id == SITEID) {
-                        print_continue($CFG->wwwroot);
+                        echo $OUTPUT->continue_button($CFG->wwwroot);
                     } else {
-                        print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
+                        echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
                     }
                 }
             }
@@ -334,7 +330,6 @@
 
             //print the items
             if(is_array($feedbackitems)){
-                // print_simple_box_start('center', '75%');
                 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
                 echo '<div class="mdl-align"><form name="frm" action="'.$ME.'" method="post" onsubmit=" ">';
                 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -430,16 +425,13 @@
                 echo '</form>';
                 echo '</div>';
                 $SESSION->feedback->is_started = true;
-                // print_simple_box_end();
                 echo $OUTPUT->box_end();
             }
         }
     }else {
-        // print_simple_box_start('center');
         echo $OUTPUT->box_start('generalbox boxaligncenter');
             echo '<h2><font color="red">'.get_string('this_feedback_is_already_submitted', 'feedback').'</font></h2>';
-            print_continue($CFG->wwwroot.'/course/view.php?id='.$course->id);
-        // print_simple_box_end();
+            echo $OUTPUT->continue_button($CFG->wwwroot.'/course/view.php?id='.$course->id);
         echo $OUTPUT->box_end();
     }
     /// Finish the page

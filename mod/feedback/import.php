@@ -93,12 +93,10 @@
     echo $OUTPUT->heading(get_string('import_questions','feedback'));
 
     if(isset($importerror->msg) AND is_array($importerror->msg)) {
-        // print_simple_box_start('center', '', '#FFAAAA', 5, 'notifyproblem');
         echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter');
         foreach($importerror->msg as $msg) {
             echo $msg.'<br />';
         }
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }
 

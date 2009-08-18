@@ -63,7 +63,6 @@
     if(is_array($feedbackitems)){
         $itemnr = 0;
 
-        // print_simple_box_start('center', '80%');
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo '<div class="mdl-align printview"><table>';
         //print the inserted items
@@ -88,13 +87,11 @@
         echo '</table>';
         echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
         echo '</div>';
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }else{
-        // print_simple_box(get_string('no_items_available_yet','feedback'),"center");
         echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter boxwidthwide');
     }
-    print_continue('view.php?id='.$id);
+    echo $OUTPUT->continue_button('view.php?id='.$id);
     /// Finish the page
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////

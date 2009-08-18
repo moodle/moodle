@@ -215,10 +215,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
             foreach($lines as $line){
                 if($value == $index){
                     $item_value = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
-                    // print_simple_box_start('left');
                     echo $OUTPUT->box_start('generalbox boxalign'.$align);
                     echo text_to_html($item_value[1], true, false, false);
-                    // print_simple_box_end();
                     echo $OUTPUT->box_end();
                     break;
                 }

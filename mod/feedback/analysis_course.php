@@ -65,7 +65,6 @@
     include('tabs.php');
 
     //print the analysed items
-    // print_simple_box_start("center", '80%');
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
     if( $capabilities->viewreports ) {

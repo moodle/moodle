@@ -79,13 +79,11 @@
     ///////////////////////////////////////////////////////////////////////////
     echo $OUTPUT->heading(format_text($feedback->name));
 
-    // print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
     echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'));
 
     $mform->display();
 
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
 
     $templateitems = $DB->get_records('feedback_item', array('template'=>$templateid), 'position');
@@ -96,7 +94,6 @@
     if(is_array($templateitems)){
         $itemnr = 0;
         echo '<p align="center">'.get_string('preview', 'feedback').'</p>';
-        // print_simple_box_start('center', '75%');
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo '<div class="mdl-align"><table>';
         foreach($templateitems as $templateitem){
@@ -116,10 +113,8 @@
             echo '<tr><td>&nbsp;</td></tr>';
         }
         echo '</table></div>';
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }else{
-        // print_simple_box(get_string('no_items_available_at_this_template','feedback'),"center");
         echo $OUTPUT->box(get_string('no_items_available_at_this_template','feedback'),'generalbox boxaligncenter boxwidthwide');
     }
 

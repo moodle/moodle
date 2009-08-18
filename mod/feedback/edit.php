@@ -182,7 +182,6 @@
     ///print the template-section
     ///////////////////////////////////////////////////////////////////////////
     if($do_show == 'templates') {
-        // print_simple_box_start("center", '80%');
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         $use_template_form->display();
 
@@ -199,7 +198,6 @@
                 <a href="'.htmlspecialchars('import.php?id='.$id).'">'.get_string('import_questions', 'feedback').'</a>
             </p>';
         }
-        // print_simple_box_end();
         echo $OUTPUT->box_end();
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -212,13 +210,12 @@
         if(is_array($feedbackitems)){
             $itemnr = 0;
 
-            $helpbutton = helpbutton('preview', get_string('preview','feedback'), 'feedback',true,false,'',true);
+            $helpbutton = $OUTPUT->help_icon(moodle_help_icon::make('preview', get_string('preview','feedback'), 'feedback',true));
 
             echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
                 echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
             }
-            // print_simple_box_start('center', '80%');
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
             //check, if there exists required-elements
@@ -392,10 +389,8 @@
 
             }
             echo '</table>';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }else{
-            // print_simple_box(get_string('no_items_available_yet','feedback'),"center");
             echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
         }
     }

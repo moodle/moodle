@@ -80,9 +80,8 @@
 
     echo $OUTPUT->heading(format_text($feedback->name));
 
-    print_continue(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
+    echo $OUTPUT->continue_button(htmlspecialchars('show_entries.php?id='.$id.'&do_show=showentries'));
     //print the list with anonymous completeds
-    // print_simple_box_start("center");
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $PAGE->requires->js('mod/feedback/feedback.js');
 ?>
@@ -116,7 +115,6 @@
     </form>
     </div>
 <?php
-    // print_simple_box_end();
     echo $OUTPUT->box_end();
     if(!isset($formdata->completedid)) {
         $formdata = null;
@@ -132,7 +130,6 @@
             } else {
                 echo '<p align="center">'.get_string('not_completed_yet','feedback').'</p>';
             }
-            // print_simple_box_start("center", '50%');
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
             echo '<form>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -160,7 +157,6 @@
             echo '</td></tr>';
             echo '</table>';
             echo '</form>';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }
     }

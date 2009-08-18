@@ -176,10 +176,8 @@ class feedback_item_numeric extends feedback_item_base {
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
-            // print_simple_box_start($align);
             echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo (is_numeric($value)) ? number_format($value, 2, $this->sep_dec, $this->sep_thous) : '&nbsp;';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }else {
     ?>

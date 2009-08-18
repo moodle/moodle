@@ -122,10 +122,8 @@ class feedback_item_textarea extends feedback_item_base {
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
-            // print_simple_box_start($align);
             echo $OUTPUT->box_start('generalbox boxalign'.$align);
             echo $value?str_replace("\n",'<br />',$value):'&nbsp;';
-            // print_simple_box_end();
             echo $OUTPUT->box_end();
         }else {
     ?>

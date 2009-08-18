@@ -258,15 +258,12 @@ class feedback_item_multichoice extends feedback_item_base {
                     }
                     $index++;
                 }
-                // print_simple_box_end();
                 echo $OUTPUT->box_end();
             }else {
                 foreach($presentation as $pres){
                     if($value == $index){
-                        // print_simple_box_start($align);
                         echo $OUTPUT->box_start('generalbox boxalign'.$align);
                         echo text_to_html($pres, true, false, false);
-                        // print_simple_box_end();
                         echo $OUTPUT->box_end();
                         break;
                     }
