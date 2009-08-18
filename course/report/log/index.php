@@ -102,21 +102,21 @@
             case 'downloadascsv':
                 if (!print_log_csv($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
-                    notify("No logs found!");
+                    echo $OUTPUT->notification("No logs found!");
                     echo $OUTPUT->footer();
                 }
                 exit;
             case 'downloadasods':
                 if (!print_log_ods($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
-                    notify("No logs found!");
+                    echo $OUTPUT->notification("No logs found!");
                     echo $OUTPUT->footer();
                 }
                 exit;
             case 'downloadasexcel':
                 if (!print_log_xls($course, $user, $date, 'l.time DESC', $modname,
                         $modid, $modaction, $group)) {
-                    notify("No logs found!");
+                    echo $OUTPUT->notification("No logs found!");
                     echo $OUTPUT->footer();
                 }
                 exit;

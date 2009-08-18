@@ -164,7 +164,7 @@
 
             $statsstatus = stats_check_uptodate($course->id);
             if ($statsstatus !== NULL) {
-                notify ($statsstatus);
+                echo $OUTPUT->notification($statsstatus);
             }
 
             $earliestday   = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');

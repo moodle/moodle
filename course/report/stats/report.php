@@ -100,7 +100,7 @@
         $stats = $DB->get_records_sql($sql, $params);
 
         if (empty($stats)) {
-            notify(get_string('statsnodata'));
+            echo $OUTPUT->notification(get_string('statsnodata'));
 
         } else {
 

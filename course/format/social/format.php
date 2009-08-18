@@ -21,5 +21,5 @@
         forum_print_latest_discussions($course, $forum, 10, 'plain', '', false);
 
     } else {
-        notify('Could not find or create a social forum here');
+        echo $OUTPUT->notification('Could not find or create a social forum here');
     }

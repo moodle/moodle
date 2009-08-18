@@ -69,7 +69,7 @@
             }
             if ($course) {
                 if (! $DB->set_field("course", "visible", $visible, array("id"=>$course->id))) {
-                    notify("Could not update that course!");
+                    echo $OUTPUT->notification("Could not update that course!");
                 }
             }
         }
@@ -101,7 +101,7 @@
         $navigation = build_navigation($navlinks);
 
         print_header("$site->fullname : $strsearch", $site->fullname, $navigation, "", "");
-        print_simple_box_start("center");
+        echo $OUTPUT->box_start();
         echo "<center>";
         echo "<br />";
         print_course_search("", false, "plain");
@@ -109,7 +109,7 @@
         print_string("searchhelp");
         echo "</p>";
         echo "</center>";
-        print_simple_box_end();
+        echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;
     }

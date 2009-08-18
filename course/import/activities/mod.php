@@ -47,7 +47,7 @@
     }
 
     if (empty($options) && empty($creator)) {
-        notify(get_string('courseimportnotaught'));
+        echo $OUTPUT->notification(get_string('courseimportnotaught'));
         return; // yay , this will pass control back to the file that included or required us.
     }
 

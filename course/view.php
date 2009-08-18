@@ -123,7 +123,7 @@
         if (!empty($section)) {
             if (!empty($move) and confirm_sesskey()) {
                 if (!move_section($course, $section, $move)) {
-                    notify('An error occurred while moving a section');
+                    echo $OUTPUT->notification('An error occurred while moving a section');
                 }
             }
         }

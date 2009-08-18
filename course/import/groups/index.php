@@ -137,7 +137,7 @@
                 //unset invalid courseid
                 if (isset($newgroup->idnumber)){
                     if (!$mycourse = $DB->get_record('course', array('idnumber'=>$newgroup->idnumber))) {
-                        notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
+                        echo $OUTPUT->notification(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }
                     $newgroup->courseid = $mycourse->id;
@@ -147,7 +147,7 @@
 
                 else if (isset($newgroup->coursename)){
                     if (!$mycourse = $DB->get_record('course', array('shortname', $newgroup->coursename))) {
-                        notify(get_string('unknowncourse', 'error', $newgroup->coursename));
+                        echo $OUTPUT->notification(get_string('unknowncourse', 'error', $newgroup->coursename));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }
                     $newgroup->courseid = $mycourse->id;
@@ -168,7 +168,7 @@
 
                     ///Users cannot upload groups in courses they cannot update.
                     if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
-                        notify(get_string('nopermissionforcreation','group',$groupname));
+                        echo $OUTPUT->notification(get_string('nopermissionforcreation','group',$groupname));
 
                     } else {
                         if ( $groupid = groups_get_group_by_name($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup)) ) {
@@ -176,13 +176,13 @@
                             //Record not added - probably because group is already registered
                             //In this case, output groupname from previous registration
                             if ($groupid) {
-                                notify("$groupname :".get_string('groupexistforcourse', 'error', $groupname));
+                                echo $OUTPUT->notification("$groupname :".get_string('groupexistforcourse', 'error', $groupname));
                             } else {
-                                notify(get_string('groupnotaddederror', 'error', $groupname));
+                                echo $OUTPUT->notification(get_string('groupnotaddederror', 'error', $groupname));
                             }
                         }
                         else {
-                            notify(get_string('groupaddedsuccesfully', 'group', $groupname));
+                            echo $OUTPUT->notification(get_string('groupaddedsuccesfully', 'group', $groupname));
                         }
                     }
                 } //close courseid validity check

@@ -67,9 +67,10 @@
 
             print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck, 'link'=>'', 'type'=>'misc'))));
 
-            print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
+            // print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
+            echo $OUTPUT->box_start('noticebox');
             notice_yesno($strdeletecheckfull, 'mod.php', $return, $optionsyes, $optionsno, 'post', 'get');
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             echo $OUTPUT->footer();
 
             exit;
@@ -86,7 +87,7 @@
         $deleteinstancefunction = $cm->modname."_delete_instance";
 
         if (!$deleteinstancefunction($cm->instance)) {
-            notify("Could not delete the $cm->modname (instance)");
+            echo $OUTPUT->notification("Could not delete the $cm->modname (instance)");
         }
 
         // remove all module files in case modules forget to do that
@@ -94,10 +95,10 @@
         $fs->delete_area_files($modcontext->id);
 
         if (!delete_course_module($cm->id)) {
-            notify("Could not delete the $cm->modname (coursemodule)");
+            echo $OUTPUT->notification("Could not delete the $cm->modname (coursemodule)");
         }
         if (!delete_mod_from_section($cm->id, $cm->section)) {
-            notify("Could not delete the $cm->modname from that section");
+            echo $OUTPUT->notification("Could not delete the $cm->modname from that section");
         }
 
         add_to_log($course->id, 'course', "delete mod",

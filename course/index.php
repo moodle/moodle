@@ -125,9 +125,9 @@
             $deletedcourses = category_delete_full($deletecat, true);
 
             foreach($deletedcourses as $course) {
-                notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
+                echo $OUTPUT->notification(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
             }
-            notify(get_string('coursecategorydeleted', '', format_string($deletecat->name)), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('coursecategorydeleted', '', format_string($deletecat->name)), 'notifysuccess');
 
         } else {
             category_delete_move($deletecat, $data->newparent, true);
@@ -138,7 +138,7 @@
             set_config('defaultrequestcategory', $DB->get_field('course_categories', 'MIN(id)', array('parent'=>0)));
         }
 
-        print_continue('index.php');
+        echo $OUTPUT->continue_button('index.php');
 
         echo $OUTPUT->footer();
         die;

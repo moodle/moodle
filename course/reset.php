@@ -67,7 +67,7 @@ if ($mform->is_cancelled()) {
         $table->data  = $data;
         print_table($table);
 
-        print_continue('view.php?id='.$course->id);  // Back to course page
+        echo $OUTPUT->continue_button('view.php?id='.$course->id);  // Back to course page
         echo $OUTPUT->footer();
         exit;
     }
@@ -76,7 +76,7 @@ if ($mform->is_cancelled()) {
 print_header($course->fullname.': '.$strresetcourse, $course->fullname.': '.$strresetcourse, $navigation);
 echo $OUTPUT->heading($strresetcourse);
 
-print_simple_box(get_string('resetinfo'), 'center', '60%');
+echo $OUTPUT->box(get_string('resetinfo'));
 
 $mform->display();
 echo $OUTPUT->footer();

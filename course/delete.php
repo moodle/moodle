@@ -79,7 +79,7 @@
 
     echo $OUTPUT->heading( get_string("deletedcourse", "", format_string($course->shortname)) );
 
-    print_continue("category.php?id=$course->category");
+    echo $OUTPUT->continue_button("category.php?id=$course->category");
 
     echo $OUTPUT->footer();
 

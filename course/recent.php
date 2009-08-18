@@ -203,12 +203,12 @@
 
             if (($activity->type == 'section') && ($param->sortby == 'default')) {
                 if ($inbox) {
-                    print_simple_box_end();
+                    echo $OUTPUT->box_end();
                     $spacer = new html_image();
                     $spacer->height = 30;
                     echo $OUTPUT->spacer($spacer) . '<br />';
                 }
-                print_simple_box_start('center', '90%');
+                echo $OUTPUT->box_start();
                 echo "<h2>$activity->name</h2>";
                 $inbox = true;
 
@@ -238,7 +238,7 @@
                 }
 
                 if (!$inbox) {
-                    print_simple_box_start('center', '90%');
+                    echo $OUTPUT->box_start();
                     $inbox = true;
                 }
 
@@ -251,7 +251,7 @@
         }
 
         if ($inbox) {
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
         }
 
 

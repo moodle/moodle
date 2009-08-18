@@ -54,7 +54,7 @@
 
     if (!$frm = data_submitted()) {
         $note = get_string("importmetacoursenote");
-        print_simple_box($note, "center", "50%");
+        echo $OUTPUT->box($note);
 
 /// A form was submitted so process the input
 
@@ -120,11 +120,11 @@
         }
     }
 
-    print_simple_box_start("center");
+    echo $OUTPUT->box_start();
 
     include('importstudents.html');
 
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
 

@@ -13,5 +13,5 @@
     if (function_exists($moduleformat)) {
         $moduleformat($USER,$course);
     } else { 
-        notify('The module '. $module. ' does not support single activity course format');
+        echo $OUTPUT->notification('The module '. $module. ' does not support single activity course format');
     }

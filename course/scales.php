@@ -34,13 +34,13 @@
 
                 $scalemenu = make_menu_from_list($scale->scale);
 
-                print_simple_box_start("center");
+                echo $OUTPUT->box_start();
                 echo $OUTPUT->heading($scale->name);
                 echo "<center>";
                 echo $OUTPUT->select(html_select::make($scalemenu));
                 echo "</center>";
                 echo text_to_html($scale->description);
-                print_simple_box_end();
+                echo $OUTPUT->box_end();
                 echo $OUTPUT->close_window_button();
                 echo $OUTPUT->footer();
                 exit;
@@ -60,13 +60,13 @@
         foreach ($scales as $scale) {
             $scalemenu = make_menu_from_list($scale->scale);
 
-            print_simple_box_start("center");
+            echo $OUTPUT->box_start();
             echo $OUTPUT->heading($scale->name);
             echo "<center>";
             echo $OUTPUT->select(html_select::make($scalemenu));
             echo "</center>";
             echo text_to_html($scale->description);
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             echo "<hr />";
         }
 
@@ -83,13 +83,13 @@
         foreach ($scales as $scale) {
             $scalemenu = make_menu_from_list($scale->scale);
 
-            print_simple_box_start("center");
+            echo $OUTPUT->box_start();
             echo $OUTPUT->heading($scale->name);
             echo "<center>";
-            echo $OUTPUT->select(html_select::make($scalemenu));
+            echo $OUTPUT->select(html_select::make($scalemenu, ''));
             echo "</center>";
             echo text_to_html($scale->description);
-            print_simple_box_end();
+            echo $OUTPUT->box_end();
             echo "<hr />";
         }
     }
