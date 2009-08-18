@@ -339,7 +339,7 @@
 
         /// Formatting Rules
         echo '<td class="howtowiki">';
-        helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
+        echo $OUTPUT->help_icon(moodle_help_icon::make('howtowiki', get_string('howtowiki', 'wiki'), 'wiki'));
         echo '</td>';
 
         echo '</tr></table>';
@@ -396,7 +396,7 @@
     $linktext = get_string('reloadlinktext', 'wiki');
     echo "<div class='wikilinkright'><a href='$me' title='$linkdesc'><input type='button' value='$linktext' /></a></div>";
 
-    print_simple_box_start('center', '100%', '', '20');
+    echo $OUTPUT->box_start();
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
     /// actions will have the form [action]/[pagename]. If the action is 'view' or the  '/'
@@ -476,7 +476,7 @@ $strnojslockwarning
         print $content;
     }
     print $content2;
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
     echo "<br />";
 
 /// Finish the page

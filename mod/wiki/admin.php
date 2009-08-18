@@ -338,12 +338,12 @@
     }
 
     // The wiki Contents
-    print_simple_box_start( 'center', '100%', '', '20');
+    echo $OUTPUT->box_start();
     // Do the Action
     # "setpageflags", "removepages", "strippages", "checklinks", "revertpages"
     print_heading_with_help(get_string($action,"wiki"), $action, "wiki");
     include $action.".html";
-    print_simple_box_end();
+    echo $OUTPUT->box_end();
 
 /// Finish the page
     echo $OUTPUT->footer();

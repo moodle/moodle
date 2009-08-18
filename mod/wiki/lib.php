@@ -170,7 +170,7 @@ function wiki_rmdir($basedir) {
  * @return bool
  */
 function wiki_delete_instance($id) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (! $wiki = $DB->get_record("wiki", array("id"=>$id))) {
         return false;
@@ -186,7 +186,7 @@ function wiki_delete_instance($id) {
               foreach ($files as $file) {
                   #if ($file != $exception) {
                       unlink("$basedir/$file");
-                      notify("Existing file '$file' has been deleted!");
+                      echo $OUTPUT->notification("Existing file '$file' has been deleted!");
                   #}
               }
           }

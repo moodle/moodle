@@ -149,7 +149,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
 }
 
 function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvirtualpages=0, $exportdestinations=0) {
-  global $ewiki_config, $wiki, $ewiki_plugins, $wiki_entry, $course, $CFG, $ewiki_t, $userid, $groupid;
+  global $ewiki_config, $wiki, $ewiki_plugins, $wiki_entry, $course, $CFG, $ewiki_t, $userid, $groupid, $OUTPUT;
   
   $filestozip=array();
   #-- disable protected email
@@ -317,7 +317,7 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
               $destfn=clean_filename(substr($id,strlen(EWIKI_IDF_INTERNAL)));
               $dest="$exportdir/".$destfn;
               if(!copy($fn,$dest)) {
-                notify("Cannot copy $fn to $dest.");
+                echo $OUTPUT->notification("Cannot copy $fn to $dest.");
               }
                           
               #$fn = urlencode(preg_replace(EWIKI_DUMP_FILENAME_REGEX, "", $id));
