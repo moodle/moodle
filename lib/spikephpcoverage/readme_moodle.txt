@@ -14,6 +14,7 @@ Added:
 
 Our changes: /// Look for "moodle" in code
  * src/parser/PHPParser.php - comment some debug lines causing some notices in moodle
+ * src/parser/PHPParser.php - added support for the T_ABSTRACT token
  * src/reporter/HtmlCoverageReporter.php, src/reporter/html/indexheader.html,
    src/reporter/html/header.html, src/reporter/html/footer.html - various xhtml fixes
 

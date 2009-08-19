@@ -309,6 +309,7 @@
                     case T_PROTECTED:               // protected
                     case T_VAR:                     // var
                     case T_GLOBAL:                  // global
+                    case T_ABSTRACT:                // abstract (Moodle added)
                     case T_CLASS:                   // class
                     case T_INTERFACE:               // interface
                     case T_REQUIRE:                 // require
