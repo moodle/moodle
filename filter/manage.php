@@ -156,7 +156,7 @@ if (empty($availablefilters)) {
     echo "\n<div>\n";
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 
-    $table = new stdClass;
+    $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'));
     $table->align = array('left', 'left');
     if ($settingscol) {
@@ -195,7 +195,7 @@ if (empty($availablefilters)) {
         $table->data[] = $row;
     }
 
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo '<div class="buttons">' . "\n";
     echo '<input type="submit" name="savechanges" value="' . get_string('savechanges') . '" />';
     echo "\n</div>\n";
