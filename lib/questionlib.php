@@ -635,7 +635,7 @@ function delete_question($questionid) {
  * @return boolean
  */
 function question_delete_course($course, $feedback=true) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     //To store feedback to be showed at the end of the process
     $feedbackdata   = array();
@@ -669,10 +669,10 @@ function question_delete_course($course, $feedback=true) {
         }
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
-            $table = new stdClass;
+            $table = new html_table();
             $table->head = array(get_string('category','quiz'), get_string('action'));
             $table->data = $feedbackdata;
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
     }
     return true;
@@ -735,10 +735,10 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
         // Output feedback if requested.
         if ($feedback and $feedbackdata) {
-            $table = new stdClass;
+            $table = new html_table();
             $table->head = array(get_string('questioncategory','question'), get_string('action'));
             $table->data = $feedbackdata;
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
 
     } else {
@@ -801,7 +801,7 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
  * @return boolean
  */
 function question_delete_activity($cm, $feedback=true) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     //To store feedback to be showed at the end of the process
     $feedbackdata   = array();
@@ -832,10 +832,10 @@ function question_delete_activity($cm, $feedback=true) {
         }
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
-            $table = new stdClass;
+            $table = new html_table();
             $table->head = array(get_string('category','quiz'), get_string('action'));
             $table->data = $feedbackdata;
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
     }
     return true;

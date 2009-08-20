@@ -74,7 +74,9 @@ class moodle_html_component {
      * @return array the class names as an array.
      */
     public static function clean_classes($classes) {
-        if (is_array($classes)) {
+        if (empty($classes)) {
+            return '';
+        } else if (is_array($classes)) {
             return $classes;
         } else {
             return explode(' ', trim($classes));
@@ -1424,6 +1426,14 @@ class html_form extends moodle_html_component {
 
         parent::prepare();
     }
+
+    public static function make_button($url, $options, $label='OK', $method='post') {
+        $form = new html_form();
+        $form->url = new moodle_url($url, $options);
+        $form->button->text = $label;
+        $form->method = $method;
+        return $form;
+    }
 }
 
 /**
@@ -1844,6 +1854,13 @@ class moodle_user_picture extends moodle_html_component {
         }
 
         parent::prepare();
+    }
+
+    public static function make($user, $courseid) {
+        $userpic = new moodle_user_picture();
+        $userpic->user = $user;
+        $userpic->courseid = $courseid;
+        return $userpic;
     }
 }
 

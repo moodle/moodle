@@ -410,13 +410,13 @@ class portfolio_exporter {
             $isummary = array();
         }
         $mainsummary = array_merge($mainsummary, $csummary, $isummary);
-        $table = new StdClass;
+        $table = new html_table();
         $table->data = array();
         foreach ($mainsummary as $string => $value) {
             $table->data[] = array($string, $value);
         }
-        print_table($table);
-        notice_yesno($strconfirm, $yesurl, $nourl);
+        echo $OUTPUT->table($table);
+        echo $OUTPUT->confirm($strconfirm, $yesurl, $nourl);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         return false;

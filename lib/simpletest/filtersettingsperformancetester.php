@@ -110,11 +110,21 @@ if ($issetup == count($requiredtables)) {
 
 $DB = $realdb;
 
-echo '<div>';
-print_single_button($baseurl, array('action' => 'setup'), 'Set up test tables', 'get', '', false, '', $issetup > 0);
-print_single_button($baseurl, array('action' => 'teardown'), 'Drop test tables', 'get', '', false, '', $issetup == 0);
-print_single_button($baseurl, array('action' => 'test'), 'Run tests', 'get', '', false, '', $issetup != count($requiredtables));
-echo '</div>';
+echo $OUTPUT->container_start();
+
+$form = html_form::make_button($baseurl, array('action' => 'setup'), 'Set up test tables', 'get');
+$form->button->disabled = $issetup > 0;
+echo $OUTPUT->button($form);
+
+$form = html_form::make_button($baseurl, array('action' => 'teardown'), 'Drop test tables', 'get');
+$form->button->disabled = $issetup == 0;
+echo $OUTPUT->button($form);
+
+$form = html_form::make_button($baseurl, array('action' => 'test'), 'Run tests', 'get');
+$form->button->disabled = $issetup != count($requiredtables);
+echo $OUTPUT->button($form);
+
+echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 

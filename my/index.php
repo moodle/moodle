@@ -11,8 +11,7 @@
 
     if (isguest()) {
         print_header($strmymoodle);
-        notice_yesno(get_string('noguest', 'my') . '<br /><br />' .
-                get_string('liketologin'), get_login_url(), $CFG->wwwroot);
+        echo $OUTPUT->confirm(get_string('noguest', 'my') . '<br /><br />' . get_string('liketologin'), get_login_url(), $CFG->wwwroot);
         echo $OUTPUT->footer();
         die;
     }

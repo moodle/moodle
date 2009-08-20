@@ -1330,17 +1330,24 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string $function
      */
     function setHelpButton($elementname, $button, $suppresscheck=false, $function='helpbutton'){
+        global $OUTPUT;
         if (array_key_exists($elementname, $this->_elementIndex)){
             //_elements has a numeric index, this code accesses the elements by name
             $element=&$this->_elements[$this->_elementIndex[$elementname]];
-            if (method_exists($element, 'setHelpButton')){
-                $element->setHelpButton($button, $function);
-            }else{
-                $a=new object();
-                $a->name=$element->getName();
-                $a->classname=get_class($element);
-                print_error('nomethodforaddinghelpbutton', 'form', '', $a);
+            $buttonparams = array('page', 'text', 'module', 'image', 'linktext', 'text', 'return', 'imagetext');
+            $helpiconoptions = array('page' => null, 'text' => null, 'module' => 'moodle', 'image' => null, 'linktext' => false);
+
+            foreach ($button as $key => $val) {
+                if (isset($button[$key])) {
+                    $helpiconoptions[$buttonparams[$key]] = $val;
+                }
             }
+            $helpicon = moodle_help_icon::make($helpiconoptions['page'], $helpiconoptions['text'], $helpiconoptions['module'], $helpiconoptions['linktext']);
+            if (!$helpiconoptions['image']) {
+                $helpicon->image = false;
+            }
+
+            $element->_helpbutton = $OUTPUT->help_icon($helpicon);
         }elseif (!$suppresscheck){
             print_error('nonexistentformelements', 'form', '', $elementname);
         }

@@ -4550,7 +4550,7 @@ class admin_setting_manageauths extends admin_setting {
         $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
         $return .= $OUTPUT->box_start('generalbox authsui');
 
-        $table = new object();
+        $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center');
         $table->width = '90%';
@@ -4620,7 +4620,7 @@ class admin_setting_manageauths extends admin_setting {
             // add a row to the table
             $table->data[] =array($displayname, $hideshow, $updown, $settings);
         }
-        $return .= print_table($table, true);
+        $return .= $OUTPUT->table($table);
         $return .= get_string('configauthenticationplugins', 'admin').'<br />'.get_string('tablenosave', 'filters');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
@@ -4727,7 +4727,7 @@ class admin_setting_manageeditors extends admin_setting {
         $return = $OUTPUT->heading(get_string('acteditorshhdr', 'editor'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox editorsui');
 
-        $table = new object();
+        $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center');
         $table->width = '90%';
@@ -4784,7 +4784,7 @@ class admin_setting_manageeditors extends admin_setting {
             // add a row to the table
             $table->data[] =array($displayname, $hideshow, $updown, $settings);
         }
-        $return .= print_table($table, true);
+        $return .= $OUTPUT->table($table);
         $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'filters');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
@@ -4939,7 +4939,7 @@ class admin_setting_manageportfolio extends admin_setting {
         $output .= portfolio_report_insane($insane, null, true);
         $output .= portfolio_report_insane($insaneinstances, $instances, true);
 
-        $table = new StdClass;
+        $table = new html_table();
         $table->head = array($namestr, $pluginstr, '');
         $table->data = array();
 
@@ -4959,7 +4959,7 @@ class admin_setting_manageportfolio extends admin_setting {
             }
         }
 
-        $output .= print_table($table, true);
+        $output .= $OUTPUT->table($table);
 
         $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br /><br />';
         $addable = 0;
@@ -5047,7 +5047,7 @@ function admin_externalpage_setup($section, $extrabutton = '',
  * @param string $focus focus element
  */
 function admin_externalpage_print_header($focus='') {
-    global $CFG, $PAGE, $SITE, $THEME;
+    global $CFG, $PAGE, $SITE, $THEME, $OUTPUT;
 
     if (!is_string($focus)) {
         $focus = ''; // BC compatibility, there used to be adminroot parameter
@@ -5079,7 +5079,7 @@ function admin_externalpage_print_header($focus='') {
             $caption = get_string('blocksediton');
             $options['adminedit'] = 'on';
         }
-        $buttons = print_single_button($PAGE->url->out(false), $options, $caption, 'get', '', true);
+        $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(false), $options, $caption, 'get'));
     }
 
     $navlinks = array();
@@ -5793,7 +5793,7 @@ class admin_setting_managerepository extends admin_setting {
         $instances = repository::get_types();
         $instancesnumber = count($instances);
         $alreadyplugins = array();
-        $table = new StdClass;
+        $table = new html_table();
         $table->head = array($namestr, $updownstr, $hiddenstr, $deletestr, $settingsstr);
         $table->align = array('left', 'center', 'center','center','center');
         $table->data = array();
@@ -5865,7 +5865,7 @@ class admin_setting_managerepository extends admin_setting {
                 $alreadyplugins[] = $i->get_typename();
             }
         }
-        $output .= print_table($table, true);
+        $output .= $OUTPUT->table($table);
         $instancehtml = '<div><h3>';
         $instancehtml .= get_string('addplugin', 'repository');
         $instancehtml .= '</h3><ul>';
@@ -5941,7 +5941,7 @@ class admin_setting_managewsprotocols extends admin_setting {
         $hiddenstr = get_string('hiddenshow', 'repository');
         require_once("../webservice/lib.php");
         $protocols = webservice_lib::get_list_protocols();
-        $table = new StdClass;
+        $table = new html_table();
         $table->head = array($namestr, $hiddenstr, $settingsstr);
         $table->align = array('left', 'center', 'center');
         $table->data = array();
@@ -5971,7 +5971,7 @@ class admin_setting_managewsprotocols extends admin_setting {
                 $table->rowclasses[] = '';
             }
         }
-        $output = print_table($table, true);
+        $output = $OUTPUT->table($table);
 
         return highlight($query, $output);
     }
@@ -6027,7 +6027,7 @@ class admin_setting_managewsusersettings extends admin_setting {
         //search all web service users
         $users = get_users(true, '', false, null, 'firstname ASC','', '', '', 1000);
 
-        $table = new StdClass;
+        $table = new html_table();
         $table->head = array('username', 'whitelist');
         $table->align = array('left', 'center');
         $table->data = array();
@@ -6044,7 +6044,7 @@ class admin_setting_managewsusersettings extends admin_setting {
             }
         }
 
-        $output .= print_table($table, true);
+        $output .= $OUTPUT->table($table);
         return highlight($query, $output);
     }
 }

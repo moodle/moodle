@@ -168,23 +168,23 @@ function print_moodle_environment($result, $environment_results) {
     $strrestricted = get_string('restricted');
     $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
 /// Table headers
-    $servertable = new stdClass;//table for server checks
+    $servertable = new html_table();//table for server checks
     $servertable->head  = array ($strname, $strinfo, $strreport, $strstatus);
     $servertable->align = array ('center', 'center', 'left', 'center');
     $servertable->wrap  = array ('nowrap', '', '', 'nowrap');
     $servertable->size  = array ('10', 10, '100%', '10');
     $servertable->width = '90%';
-    $servertable->class = 'environmenttable generaltable';
+    $servertable->add_class('environmenttable generaltable');
 
     $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
-    $othertable = new stdClass;//table for custom checks
+    $othertable = new html_table();//table for custom checks
     $othertable->head  = array ($strinfo, $strreport, $strstatus);
     $othertable->align = array ('center', 'left', 'center');
     $othertable->wrap  = array ('', '', 'nowrap');
     $othertable->size  = array (10, '100%', '10');
     $othertable->width = '90%';
-    $othertable->class = 'environmenttable generaltable';
+    $othertable->add_class('environmenttable generaltable');
 
     $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
@@ -309,10 +309,10 @@ function print_moodle_environment($result, $environment_results) {
 
 /// Print table
     echo $OUTPUT->heading(get_string('serverchecks', 'admin'));
-    print_table($servertable);
+    echo $OUTPUT->table($servertable);
     if (count($othertable->data)){
         echo $OUTPUT->heading(get_string('customcheck', 'admin'));
-        print_table($othertable);
+        echo $OUTPUT->table($othertable);
     }
 
 /// Finally, if any error has happened, print the summary box

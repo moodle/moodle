@@ -82,7 +82,7 @@ class comment_manager {
         $this->perpage = 10;
         $count = $DB->count_records_sql('SELECT COUNT(*) FROM {comments} c');
         $comments = $this->get_comments($page);
-        $table = new stdclass;
+        $table = new html_table();
         $table->head = array ('<input type="checkbox" id="comment_select_all"/>', 'author', 'content', 'action');
         $table->align = array ('left', 'left', 'left', 'left');
         $table->width = "95%";
@@ -101,7 +101,7 @@ class comment_manager {
             }
             $table->data[] = array($checkbox, $c->username, $c->content, $action);
         } 
-        print_table($table);
+        echo $OUTPUT->table($table);
         echo $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php'));
     }
 

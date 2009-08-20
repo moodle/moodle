@@ -117,7 +117,7 @@ if ($file_info and $delete) {
         $optionsyes['delete'] = 1;
         $optionsyes['sesskey'] = sesskey();
 
-        notice_yesno (get_string('deletecheckfiles'), 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+        echo $OUTPUT->confirm(get_string('deletecheckfiles'), new moodle_url( 'index.php', $optionsyes),  new moodle_url('index.php', $optionsno));
         echo $OUTPUT->footer();
         die;
     }

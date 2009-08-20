@@ -2657,8 +2657,7 @@ function switchroles_form($courseid) {
         $options['sesskey'] = sesskey();
         $options['switchrole'] = 0;
 
-        return print_single_button($CFG->wwwroot.'/course/view.php', $options,
-                                   get_string('switchrolereturn'), 'post', '_self', true);
+        return $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/view.php', $options, get_string('switchrolereturn')));
     }
 
     if (has_capability('moodle/role:switchroles', $context)) {

@@ -753,7 +753,7 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
     }
 
     $output = $OUTPUT->notification($headerstr, 'notifyproblem');
-    $table = new StdClass;
+    $table = new html_table();
     $table->head = array($pluginstr, '');
     $table->data = array();
     foreach ($insane as $plugin => $reason) {
@@ -766,7 +766,7 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
         }
         $table->data[] = array($name, get_string($reason, 'portfolio_' . $plugin));
     }
-    $output .= print_table($table, true);
+    $output .= $OUTPUT->table($table);
     $output .= '<br /><br /><br />';
 
     if ($return) {

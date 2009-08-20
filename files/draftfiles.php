@@ -102,7 +102,7 @@ if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $fi
         echo $OUTPUT->notification(get_string('deletecheckwarning').': '.s($file->get_filepath().$file->get_filename()));
         $optionsno  = array('itemid'=>$itemid, 'filepath'=>$filepath, 'subdirs'=>$subdirs);
         $optionsyes = array('itemid'=>$itemid, 'filepath'=>$filepath, 'delete'=>$delete, 'sesskey'=>sesskey(), 'subdirs'=>$subdirs);
-        notice_yesno (get_string('deletecheckfiles'), 'draftfiles.php', 'draftfiles.php', $optionsyes, $optionsno, 'post', 'get');
+        echo $OUTPUT->confirm(get_string('deletecheckfiles'), new moodle_url('draftfiles.php', $optionsyes), new moodle_url('draftfiles.php', $optionsno));
         echo $OUTPUT->footer();
         die;
 

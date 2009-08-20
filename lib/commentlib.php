@@ -388,9 +388,7 @@ EOD;
                 $user->lastname  = $c->lastname;
                 $user->imagealt  = $c->imagealt;
                 $c->content = format_text($c->content, $c->format);
-                $userpic = new moodle_user_picture();
-                $userpic->user = $user;
-                $userpic->courseid = $this->course->id;
+                $userpic = moodle_user_picture::make($user, $this->course->id);
                 $userpic->link = true;
                 $userpic->size = 18;
                 $userpic->alttext = true;
@@ -443,7 +441,7 @@ EOD;
      * @return mixed
      */
     public function add($content) {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $OUTPUT;
         if (empty($this->postcap)) {
             return COMMENT_ERROR_INSUFFICIENT_CAPS;
         }
@@ -471,7 +469,9 @@ EOD;
             $newcmt->time = userdate($now, get_string('strftimerecent', 'langconfig'));
             $newcmt->username = fullname($USER);
             $newcmt->content = format_text($newcmt->content);
-            $newcmt->avatar = print_user_picture($USER, $this->course->id, NULL, 16, true);
+            $userpic = moodle_user_picture::make($USER, $this->course->id);
+            $userpic->size = 16;
+            $newcmt->avatar = $OUTPUT->user_picture($userpic);
             return $newcmt;
         } else {
             return COMMENT_ERROR_DB;

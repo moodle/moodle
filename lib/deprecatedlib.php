@@ -2401,7 +2401,7 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
 function print_table($table, $return=false) {
     global $OUTPUT;
     // TODO MDL-19755 turn debugging on once we migrate the current core code to use the new API
-    // debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
+    debugging('print_table() has been deprecated. Please change your code to use $OUTPUT->table().');
     $newtable = new html_table();
     foreach ($table as $property => $value) {
         if (property_exists($newtable, $property)) {
@@ -2589,7 +2589,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
         $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
     global $OUTPUT;
 
-    // debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
+    debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->button().');
 
     // Cast $options to array
     $options = (array) $options;
@@ -2679,7 +2679,7 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
     global $CFG, $DB, $OUTPUT;
 
-    // debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $courseid).');
+    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, $courseid).');
 
     $userpic = new moodle_user_picture();
     $userpic->user = $user;
@@ -2802,7 +2802,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * @return string|void Depending on value of $return
  */
 function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    // debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
+    debugging('helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_icon().');
 
     global $OUTPUT;
 
@@ -2967,21 +2967,14 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
  */
 function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
 
-    // debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
+    debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
 
     global $OUTPUT;
 
-    $formcontinue = new html_form();
-    $formcontinue->url = new moodle_url($linkyes, $optionsyes);
-    $formcontinue->button->text = get_string('yes');
-    $formcontinue->method = $methodyes;
+    $buttoncontinue = html_form::make_button($linkyes, $optionsyes, get_string('yes'), $methodyes);
+    $buttoncancel   = html_form::make_button($linkno, $optionsno, get_string('no'), $methodno);
 
-    $formcancel = new html_form();
-    $formcancel->url = new moodle_url($linkno, $optionsno);
-    $formcancel->button->text = get_string('no');
-    $formcancel->method = $methodno;
-
-    echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
+    echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
 }
 
 /**
@@ -3428,7 +3421,7 @@ function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '',
  */
 function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $return=false) {
 
-    // debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
+    debugging('print_textfield() has been deprecated. Please change your code to use $OUTPUT->textfield($field).');
 
     global $OUTPUT;
 
