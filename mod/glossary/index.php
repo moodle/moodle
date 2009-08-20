@@ -49,6 +49,8 @@
     $strtopic  = get_string("topic");
     $strentries  = get_string("entries", "glossary");
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strentries);
         $table->align = array ("CENTER", "LEFT", "CENTER");
@@ -125,7 +127,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
 /// Finish the page
 

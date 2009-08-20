@@ -134,7 +134,7 @@ function glossary_comment_delete() {
 
         glossary_comment_print_header($course, $cm, $glossary, $entry, 'delete');
         glossary_print_comment($course, $cm, $glossary, $entry, $comment);
-        notice_yesno($strdeletewarning, $linkyes, $linkno, $optionsyes, $optionsno, 'post', 'get');
+        echo $OUTPUT->confirm($strdeletewarning, new moodle_url($linkyes, $optionsyes), new moodle_url($linkno, $optionsno));
         echo $OUTPUT->footer();
         die;
     }

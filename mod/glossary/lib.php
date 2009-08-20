@@ -1478,7 +1478,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
-             echo print_single_button("editcategories.php", $options, get_string("editcategories","glossary"), "get");
+             echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("editcategories","glossary"), "get"));
      }
      echo '</td>';
 
@@ -1743,7 +1743,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<table class="glossarycomment" cellspacing="0">';
     echo '<tr valign="top">';
     echo '<td class="left picture">';
-    print_user_picture($user, $course->id, $user->picture);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
     echo '</td>';
     echo '<td class="entryheader">';
 

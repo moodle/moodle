@@ -1,7 +1,7 @@
 <?php  // $Id$
 
 function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
 
     $user = $DB->get_record('user', array('id'=>$entry->userid));
@@ -13,7 +13,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo '<tr valign="top">';
         
         echo '<td class="picture">';
-        print_user_picture($user, $course->id, $user->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
         echo '</td>';
         
         echo '<th class="entryheader">';

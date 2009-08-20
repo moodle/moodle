@@ -80,7 +80,7 @@
         $optionsyes = array('id'=>$entry->id, 'confirm'=>1, 'sesskey'=>sesskey(), 'prevmode'=>$prevmode, 'hook'=>$hook);
         $optionsno  = array('id'=>$cm->id, 'mode'=>$prevmode, 'hook'=>$hook);
 
-        notice_yesno($areyousure, $linkyes, $linkno, $optionsyes, $optionsno, 'post', 'get');
+        echo $OUTPUT->confirm($areyousure, new moodle_url($linkyes, $optionsyes), new moodle_url($linkno, $optionsno));
         echo '</div>';
         echo $OUTPUT->footer();
         die;

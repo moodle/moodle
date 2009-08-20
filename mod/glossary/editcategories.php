@@ -129,7 +129,7 @@
 <?php
                 unset($options);
                 $options = array ("id" => $id);
-                print_single_button("editcategories.php", $options, get_string("no") );
+                echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("no")));
                 echo "</td></tr></table>";
                 echo "</div>";
                 echo $OUTPUT->box_end();
@@ -224,12 +224,12 @@
              $options['action'] = "add";
 
              echo "<table border=\"0\"><tr><td align=\"right\">";
-             echo print_single_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary"), "get");
+             echo $OUTPUT->button(html_form::make_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary")));
              echo "</td><td align=\"left\">";
              unset($options['action']);
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
-             echo print_single_button("view.php", $options, get_string("back","glossary") );
+             echo $OUTPUT->button(html_form::make_button("view.php", $options, get_string("back","glossary")));
              echo "</td></tr>";
              echo "</table>";
 
