@@ -19,7 +19,7 @@ if (!isset($form->changesfield)) {
 <div class="boxaligncenter">
 <?php
 if($err->remark) {
-  formerr($err->remark);
+  echo $OUTPUT->error_text($err->remark);
 }
 ?>
 <table cellpadding="5">
@@ -29,7 +29,7 @@ if($err->remark) {
         <input type="text" name="authorfieldpattern" size="30" value="<?php p($form->authorfieldpattern) ?>" />
 <?php
         echo $OUTPUT->help_icon(moodle_help_icon::make('revertauthorfieldpattern', get_string('authorfieldpattern', 'wiki'), 'wiki'));
-        if (!empty($err->authorfieldpattern)) { formerr($err->authorfieldpattern); }
+        if (!empty($err->authorfieldpattern)) { echo $OUTPUT->error_text($err->authorfieldpattern); }
 ?>
     </td>
 </tr>
@@ -37,7 +37,7 @@ if($err->remark) {
     <td align="right"><p><b><?php print_string('changesfield','wiki') ?>:</b></p></td>
     <td>
         <input type="text" name="changesfield" size="30" value="<?php p($form->changesfield) ?>" />
-        <?php if (!empty($err->changesfield)) { formerr($err->changesfield); } ?>
+        <?php if (!empty($err->changesfield)) { echo $OUTPUT->error_text($err->changesfield); } ?>
     </td>
 </tr>
 <tr valign="top">
@@ -55,7 +55,7 @@ if($err->remark) {
     <td align="right"><p><b><?php print_string('deleteversions','wiki') ?>:</b></p></td>
     <td>
         <input type="text" name="deleteversions" size="2" value="<?php p($form->deleteversions) ?>" />
-        <?php if (!empty($err->deleteversions)) { formerr($err->deleteversions); } ?>
+        <?php if (!empty($err->deleteversions)) { echo $OUTPUT->error_text($err->deleteversions); } ?>
     </td>
 </tr>
 </table>
