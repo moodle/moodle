@@ -164,9 +164,9 @@
     }
 
     //Link to calendar export page
-    echo '<div class="bottom">';
+    echo $OUTPUT->container_start('bottom');
     if (!empty($CFG->enablecalendarexport)) {
-        print_single_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar'));
+        echo $OUTPUT->button(html_form::make_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar')));
 
         if (!empty($USER->id)) {
             $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
@@ -180,7 +180,7 @@
         }
     }
 
-    echo '</div>';
+    echo $OUTPUT->container_end();
     echo '</div>';
     echo '</td>';
 
