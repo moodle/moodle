@@ -274,7 +274,7 @@ function authorize_print_order($orderid)
     $navigation = build_navigation($navlinks);
     print_header("$course->shortname: $authstrs->paymentmanagement", $authstrs->orderdetails, $navigation, '', '', false, $buttons);
 
-    $table = new stdClass;
+    $table = new html_table();
     $table->width = '100%';
     $table->size = array('30%', '70%');
     $table->align = array('right', 'left');
@@ -322,7 +322,7 @@ function authorize_print_order($orderid)
         }
         $table->data[] = array("<b>$strs->confirm:</b>", get_string('captureyes', 'enrol_authorize') . '<br />' .
                                authorize_print_action_button($orderid, ORDER_CAPTURE, 0, true, false, $strs->no));
-        print_table($table);
+        echo $OUTPUT->table($table);
     }
     elseif (ORDER_REFUND == $do && in_array(ORDER_REFUND, $statusandactions->actions)) {
         $refunded = 0.0;
@@ -377,7 +377,7 @@ function authorize_print_order($orderid)
                      get_string('canbecredit', 'enrol_authorize', $a) . '<br />';
         $table->data[] = array("<b>$strs->confirm:</b>",
                                authorize_print_action_button($orderid, ORDER_REFUND, 0, true, $authstrs->unenrolstudent, $strs->no, $extrahtml));
-        print_table($table);
+        echo $OUTPUT->table($table);
     }
     elseif (ORDER_DELETE == $do && in_array(ORDER_DELETE, $statusandactions->actions)) {
         if ($confirm && confirm_sesskey()) {
@@ -389,7 +389,7 @@ function authorize_print_order($orderid)
         }
         $table->data[] = array("<b>$strs->confirm:</b>",
                                authorize_print_action_button($orderid, ORDER_DELETE, 0, true, $authstrs->unenrolstudent,$strs->no));
-        print_table($table);
+        echo $OUTPUT->table($table);
     }
     elseif (ORDER_VOID == $do) { // special case: cancel original or refunded transaction?
         $suborderid = optional_param('suborder', 0, PARAM_INT);
@@ -411,7 +411,7 @@ function authorize_print_order($orderid)
             }
             $table->data[] = array("<b>$strs->confirm:</b>", get_string('voidyes', 'enrol_authorize') . '<br />' .
                                    authorize_print_action_button($orderid, ORDER_VOID, 0, true, false, $strs->no));
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
         elseif (!empty($suborderid)) { // cancel refunded
             $sql = "SELECT r.*, e.courseid, e.paymentmethod
@@ -452,15 +452,15 @@ function authorize_print_order($orderid)
                 $a->amount = $suborder->amount;
                 $table->data[] = array("<b>$strs->confirm:</b>", get_string('subvoidyes', 'enrol_authorize', $a) . '<br />' .
                                        authorize_print_action_button($orderid, ORDER_VOID, $suborderid, true, $authstrs->unenrolstudent, $strs->no));
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
         }
     }
     else {
-        print_table($table);
+        echo $OUTPUT->table($table);
 
         if ($settled) { // show refunds.
-            $t2 = new stdClass;
+            $t2 = new html_table();
             $t2->size = array('45%', '15%', '20%', '10%', '10%');
             $t2->align = array('right', 'right', 'right', 'right', 'right');
             $t2->head = array($authstrs->settlementdate, $authstrs->transid, $strs->status, $strs->action, $authstrs->amount);
@@ -504,7 +504,7 @@ function authorize_print_order($orderid)
                 $t2->data[] = array('','',get_string('noreturns', 'enrol_authorize'),'','');
             }
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
-            print_table($t2);
+            echo $OUTPUT->table($t2);
         }
     }
 

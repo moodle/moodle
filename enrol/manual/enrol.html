@@ -40,7 +40,7 @@
     if (isguestuser()) {
         echo $OUTPUT->box_start('centerpara');
         $loginurl = get_login_url();
-        print_single_button($loginurl, null, get_string('login'));
+        echo $OUTPUT->button(html_form::make_button($loginurl, null, get_string('login')));
         echo $OUTPUT->box_end();
     }
 ?>

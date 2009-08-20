@@ -315,13 +315,13 @@ class enrolment_plugin_authorize
 
                     load_all_capabilities();
 
-                    $OUTPUT->box_start('generalbox notice');
+                    echo $OUTPUT->box_start('generalbox notice');
                     echo '<p>'. get_string('paymentthanks', 'moodle', $course->fullname) .'</p>';
-                    echo '<div class="buttons">';
-                    print_single_button("$CFG->wwwroot/enrol/authorize/index.php", array('order'=>$order->id), get_string('payments'));
-                    print_single_button("$CFG->wwwroot/course/view.php", array('id'=>$course->id), $course->fullname);
-                    echo '</div>';
-                    $OUTPUT->box_end();
+                    echo $OUTPUT->container_start('buttons');
+                    echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/enrol/authorize/index.php", array('order'=>$order->id), get_string('payments')));
+                    echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/course/view.php", array('id'=>$course->id), $course->fullname));
+                    echo $OUTPUT->container_end();
+                    echo $OUTPUT->box_end();
                     echo $OUTPUT->footer();
                     exit; // break;
                 }

@@ -48,7 +48,7 @@ var $errormsg;
 * @param    course  current course object
 */
 function print_entry($course) {
-    global $CFG, $USER, $SESSION, $THEME;
+    global $CFG, $USER, $SESSION, $THEME, $OUTPUT;
 
     $strloginto = get_string('loginto', '', $course->shortname);
     $strcourses = get_string('courses');
@@ -71,8 +71,7 @@ function print_entry($course) {
 
             print_header($strloginto, $course->fullname, $navigation);
             echo '<br />';
-            notice_yesno(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&amp;confirm=1",
-                                                              "enrol.php?id=$course->id&amp;cancel=1");
+            echo $OUTPUT->confirm(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&confirm=1", "enrol.php?id=$course->id&cancel=1");
             echo $OUTPUT->footer();
             exit;
 
