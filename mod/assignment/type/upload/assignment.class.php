@@ -116,7 +116,7 @@ class assignment_upload extends assignment_base {
 
         echo '<tr>';
         echo '<td class="left picture">';
-        print_user_picture($teacher, $this->course->id, $teacher->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';
@@ -180,7 +180,7 @@ class assignment_upload extends assignment_base {
         if ($this->can_update_notes($submission)) {
             $options = array ('id'=>$this->cm->id, 'action'=>'editnotes');
             echo '<div style="text-align:center">';
-            print_single_button('upload.php', $options, get_string('edit'), 'post', '_self', false);
+            echo $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('edit')));
             echo '</div>';
         }
     }
@@ -372,10 +372,10 @@ class assignment_upload extends assignment_base {
         if ($this->drafts_tracked() and $this->isopen() and has_capability('mod/assignment:grade', $this->context) and $mode != '') { // we do not want it on view.php page
             if ($this->can_unfinalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'unfinalize', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= print_single_button('upload.php', $options, get_string('unfinalize', 'assignment'), 'post', '_self', true);
+                $output .= $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('unfinalize', 'assignment')));
             } else if ($this->can_finalize($submission)) {
                 $options = array ('id'=>$this->cm->id, 'userid'=>$userid, 'action'=>'finalizeclose', 'mode'=>$mode, 'offset'=>$offset);
-                $output .= print_single_button('upload.php', $options, get_string('finalize', 'assignment'), 'post', '_self', true);
+                $output .= $OUTPUT->button(html_form::make_button('upload.php', $options, get_string('finalize', 'assignment')));
             }
         }
 
@@ -646,7 +646,7 @@ class assignment_upload extends assignment_base {
             $optionsyes = array ('id'=>$this->cm->id, 'confirm'=>1, 'action'=>'finalize');
             $this->view_header(get_string('submitformarking', 'assignment'));
             echo $OUTPUT->heading(get_string('submitformarking', 'assignment'));
-            notice_yesno(get_string('onceassignmentsent', 'assignment'), 'upload.php', 'view.php', $optionsyes, $optionsno, 'post', 'get');
+            echo $OUTPUT->confirm(get_string('onceassignmentsent', 'assignment'), new moodle_url('upload.php', $optionsyes),new moodle_url( 'view.php', $optionsno));
             $this->view_footer();
             die;
 
@@ -756,7 +756,7 @@ class assignment_upload extends assignment_base {
         $offset   = required_param('offset', PARAM_INT);
         $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
-        $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset";
+        $returnurl = "submissions.php?id={$this->cm->id}&userid=$userid&mode=$mode&offset=$offset";
 
         if (!$this->can_manage_responsefiles()) {
            redirect($returnurl);
@@ -769,7 +769,7 @@ class assignment_upload extends assignment_base {
             $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset);
             print_header(get_string('delete'));
             echo $OUTPUT->heading(get_string('delete'));
-            notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
+            echo $OUTPUT->confirm(get_string('confirmdeletefile', 'assignment', $file), new moodle_url('delete.php', $optionsyes), new moodle_url($urlreturn, $optionsreturn));
             echo $OUTPUT->footer();
             die;
         }
@@ -809,7 +809,7 @@ class assignment_upload extends assignment_base {
         } else {
             $urlreturn = 'submissions.php';
             $optionsreturn = array('id'=>$this->cm->id, 'offset'=>$offset, 'mode'=>$mode, 'userid'=>$userid);
-            $returnurl = "submissions.php?id={$this->cm->id}&amp;offset=$offset&amp;mode=$mode&amp;userid=$userid";
+            $returnurl = "submissions.php?id={$this->cm->id}&offset=$offset&mode=$mode&userid=$userid";
         }
 
         if (!$submission = $this->get_submission($userid) // incorrect submission
@@ -829,7 +829,7 @@ class assignment_upload extends assignment_base {
                 print_header(get_string('delete'));
             }
             echo $OUTPUT->heading(get_string('delete'));
-            notice_yesno(get_string('confirmdeletefile', 'assignment', $file), 'delete.php', $urlreturn, $optionsyes, $optionsreturn, 'post', 'get');
+            echo $OUTPUT->confirm(get_string('confirmdeletefile', 'assignment', $file), new moodle_url('delete.php', $optionsyes), new moodle_url($urlreturn, $optionsreturn));
             if (empty($mode)) {
                 $this->view_footer();
             } else {

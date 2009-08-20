@@ -302,7 +302,7 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left picture">';
         if ($teacher) {
-            print_user_picture($teacher, $this->course->id, $teacher->picture);
+            echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
         }
         echo '</td>';
         echo '<td class="topic">';
@@ -937,7 +937,7 @@ class assignment_base {
             global $USER;
             $teacher = $USER;
         }
-        print_user_picture($teacher, $this->course->id, $teacher->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($teacher, $this->course->id));
         echo '</td>';
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
@@ -1029,7 +1029,7 @@ class assignment_base {
         ///End of teacher info row, Start of student info row
         echo '<tr>';
         echo '<td class="picture user">';
-        print_user_picture($user, $this->course->id, $user->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $this->course->id));
         echo '</td>';
         echo '<td class="topic">';
         echo '<div class="from">';
@@ -1248,7 +1248,7 @@ class assignment_base {
 
             /// Calculate user status
                 $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
-                $picture = print_user_picture($auser, $course->id, $auser->picture, false, true);
+                $picture = $OUTPUT->user_picture(moodle_user_picture::make($auser, $course->id));
 
                 if (empty($auser->submissionid)) {
                     $auser->grade = -1; //no submission yet
@@ -2860,7 +2860,7 @@ function assignment_print_recent_mod_activity($activity, $courseid, $detail, $mo
     echo '<table border="0" cellpadding="3" cellspacing="0" class="assignment-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $courseid));
     echo "</td><td>";
 
     if ($detail) {

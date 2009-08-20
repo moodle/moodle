@@ -36,6 +36,8 @@
 
     $timenow = time();
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
         $table->align = array ("center", "left", "left", "left", "right");
@@ -114,7 +116,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     echo $OUTPUT->footer();
 ?>

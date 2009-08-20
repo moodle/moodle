@@ -115,8 +115,8 @@ class assignment_online extends assignment_base {
             echo $OUTPUT->box_end();
             if (!$editmode && $editable) {
                 echo "<div style='text-align:center'>";
-                print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
-                        get_string('editmysubmission', 'assignment'));
+                echo $OUTPUT->button(html_form::make_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
+                        get_string('editmysubmission', 'assignment')));
                 echo "</div>";
             }
 

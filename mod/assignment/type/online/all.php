@@ -136,7 +136,7 @@
     print_header_simple($str->assignments, "", $navigation, "", "", true, "", navmenu($course));
 
     foreach ($views as $view) {
-        print_container_start(true,'generalbox assignment');
+        echo $OUTPUT->container_start('clearfix generalbox assignment');
 
         // info bit
         echo $OUTPUT->heading("$view->section - $view->name", 3, 'mdl-left');
@@ -148,17 +148,17 @@
         echo '<div class="description">'.$view->description.'</div>';
        
         //submission part
-        print_container_start(false,'generalbox submission');
+        echo $OUTPUT->container_start('generalbox submission');
         echo '<div class="submissiondate">'.$view->submissiondate.'</div>';
         echo "<p>$view->submissiontext</p>\n";
         echo "<p>$view->editlink</p>\n";
-        print_container_end();
+        echo $OUTPUT->container_end();
 
         // feedback part
         $onlineinstance = new assignment_online( $view->cm );
         $onlineinstance->view_feedback();
 
-        print_container_end();
+        echo $OUTPUT->container_end();
     }
 
     echo $OUTPUT->footer();
