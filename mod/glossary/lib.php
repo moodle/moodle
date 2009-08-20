@@ -2179,7 +2179,7 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
  * @param array $scale
  */
 function glossary_print_ratings_mean($entryid, $scale) { 
-
+    global $OUTPUT;
     static $strrate;
 
     $mean = glossary_get_ratings_mean($entryid, $scale);
@@ -2191,7 +2191,9 @@ function glossary_print_ratings_mean($entryid, $scale) {
         }
 
         echo "$strratings: ";
-        link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
+        $link = html_link::make("/mod/glossary/report.php?id=$entryid", $mean);
+        $link->add_action(new popup_action('click', $link->url, "ratings"));
+        echo $OUTPUT->link($link);                    
     }
 }
 
