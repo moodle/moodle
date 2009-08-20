@@ -144,7 +144,9 @@ switch ($action) {
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);
-                notice_yesno($strdeletecheckfull, 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+                $formcontinue = html_form::make_button('index.php', $optionsyes, get_string('yes'));
+                $formcancel = html_form::make_button('index.php', $optionsno, get_string('no'), 'get');
+                echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
             }
@@ -329,22 +331,22 @@ echo '</div></form>';
 echo $OUTPUT->box_end();
 
 // Print action buttons
-echo '<div class="buttons">';
+echo $OUTPUT->container_start('buttons');
 
 if ($moving) {
-    print_single_button('index.php', array('id'=>$course->id), get_string('cancel'), 'get');
+    echo $OUTPUT->button(html_form::make_button('index.php', array('id'=>$course->id), get_string('cancel'), 'get'));
 } else {
-    print_single_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
-    print_single_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
+    echo $OUTPUT->button(html_form::make_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get'));
+    echo $OUTPUT->button(html_form::make_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get'));
 
     if (!empty($CFG->enableoutcomes)) {
-        print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
+        echo $OUTPUT->button(html_form::make_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get'));
     }
 
     //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
 }
 
-echo '</div>';
+echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 

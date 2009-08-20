@@ -740,7 +740,7 @@ class grade_report_grader extends grade_report {
                 // Student name and link
                 $user_pic = null;
                 if ($showuserimage) {
-                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, null, 0, true) . '</div>';
+                    $user_pic = '<div class="userpic">' . $OUTPUT->user_picture(moodle_user_picture::make($user, $this->courseid)) . '</div>';
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
@@ -1015,7 +1015,7 @@ class grade_report_grader extends grade_report {
 
                 $user_pic = null;
                 if ($showuserimage) {
-                    $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
+                    $user_pic = '<div class="userpic">' . $OUTPUT->user_picture(moodle_user_picture::make($user, $this->courseid)) . "</div>\n";
                 }
 
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
@@ -1448,7 +1448,7 @@ class grade_report_grader extends grade_report {
 
         return true;
     }
-    
+
     /**
      * Returns whether or not to display fixed students column.
      * Includes a browser check, because IE6 doesn't support the scrollbar.
@@ -1457,13 +1457,13 @@ class grade_report_grader extends grade_report {
      */
     public function is_fixed_students() {
         global $USER, $CFG;
-        return empty($USER->screenreader) && $CFG->grade_report_fixedstudents && 
-            (check_browser_version('MSIE', '7.0') || 
+        return empty($USER->screenreader) && $CFG->grade_report_fixedstudents &&
+            (check_browser_version('MSIE', '7.0') ||
              check_browser_version('Firefox', '2.0') ||
              check_browser_version('Gecko', '2006010100') ||
              check_browser_version('Camino', '1.0') ||
              check_browser_version('Opera', '6.0') ||
-             check_browser_version('Safari', '2.0')); 
+             check_browser_version('Safari', '2.0'));
     }
 }
 ?>

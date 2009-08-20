@@ -97,13 +97,13 @@ switch ($action) {
 
         if(!$deleteconfirmed){
             print_header(get_string('outcomedelete', 'grades'));
-            notice_yesno(get_string('outcomeconfirmdelete', 'grades', $outcome->fullname),
-                    "index.php?id={$courseid}", "index.php?id={$courseid}",
-                    array('outcomeid' => $outcome->id,
-                        'action'=> 'delete',
-                        'sesskey' =>  sesskey(),
-                        'deleteconfirmed'=> 1)
-                    );
+            $confirmurl = new moodle_url('index.php', array(
+                    'id' => $courseid, 'outcomeid' => $outcome->id,
+                    'action'=> 'delete',
+                    'sesskey' =>  sesskey(),
+                    'deleteconfirmed'=> 1));
+
+            echo $OUTPUT->confirm(get_string('outcomeconfirmdelete', 'grades', $outcome->fullname), $confirmurl, "index.php?id={$courseid}");
             echo $OUTPUT->footer();
             die;
         }else{
@@ -170,13 +170,13 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
 
         $data[] = $line;
     }
-    $table = new object();
+    $table = new html_table();
     $table->head  = array($strfullname, $strshortname, $strscale, $stritems, $stredit);
     $table->size  = array('30%', '20%', '20%', '20%', '10%' );
     $table->align = array('left', 'left', 'left', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    $return .= print_table($table, true);
+    $return .= $OUTPUT->table($table);
     $outcomes_tables[] = $return;
 }
 
@@ -226,13 +226,13 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
 
         $data[] = $line;
     }
-    $table = new object();
+    $table = new html_table();
     $table->head  = array($strfullname, $strshortname, $strscale, $strcourses, $stritems, $stredit);
     $table->size  = array('30%', '20%', '20%', '10%', '10%', '10%');
     $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
-    $return .= print_table($table, true);
+    $return .= $OUTPUT->table($table);
     $outcomes_tables[] = $return;
 }
 
@@ -245,12 +245,12 @@ foreach($outcomes_tables as $table) {
     print($table);
 }
 
-echo '<div class="buttons">';
-print_single_button('edit.php', array('courseid'=>$courseid), $strcreatenewoutcome);
+echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->button(html_form::make_button('edit.php', array('courseid'=>$courseid), $strcreatenewoutcome));
 if ( !empty($outcomes_tables) ) {
-    print_single_button('export.php', array('id'=>$courseid, 'sesskey'=>sesskey()),  get_string('exportalloutcomes', 'grades'));
+    echo $OUTPUT->button(html_form::make_button('export.php', array('id'=>$courseid, 'sesskey'=>sesskey()),  get_string('exportalloutcomes', 'grades')));
 }
-echo '</div>';
+echo $OUTPUT->container_end();
 
 $upload_form->display();
 

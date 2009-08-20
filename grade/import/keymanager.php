@@ -52,16 +52,17 @@ if ($keys = $DB->get_records_select('user_private_key', "script='grade/import' A
         $data[] = $line;
     }
 }
+$table = new html_table();
 $table->head  = array(get_string('keyvalue', 'userkey'), get_string('keyiprestriction', 'userkey'), get_string('keyvaliduntil', 'userkey'), $stredit);
 $table->size  = array('50%', '30%', '10%', '10%');
 $table->align = array('left', 'left', 'left', 'center');
 $table->width = '90%';
 $table->data  = $data;
-print_table($table);
+echo $OUTPUT->table($table);
 
-echo '<div class="buttons">';
-print_single_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey'));
-echo '</div>';
+echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->button(html_form::make_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey')));
+echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 ?>

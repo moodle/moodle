@@ -77,8 +77,8 @@ if (!$courseid) {
     admin_externalpage_print_header();
 }
 
-$table = new stdClass();
-$table2 = new stdClass();
+$table = new html_table();
+$table2 = new html_table();
 $heading = '';
 
 if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
@@ -145,11 +145,10 @@ if ($courseid) {
 }
 
 echo $OUTPUT->heading($strcustomscales, 3, 'main');
-print_table($table);
+echo $OUTPUT->table($table);
 echo $OUTPUT->heading($strstandardscale, 3, 'main');
-print_table($table2);
-echo '<div class="buttons">';
-print_single_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale);
-echo '</div>';
-
+echo $OUTPUT->table($table2);
+echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->button(html_form::make_button('edit.php', array('courseid'=>$courseid), $srtcreatenewscale));
+echo $OUTPUT->container_end(); 
 echo $OUTPUT->footer(); 

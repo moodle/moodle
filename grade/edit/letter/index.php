@@ -53,13 +53,13 @@ foreach($letters as $boundary=>$letter) {
     $max = $boundary - 0.01;
 }
 
-$table = new object();
+$table = new html_table();
 $table->head  = array(get_string('max', 'grades'), get_string('min', 'grades'), get_string('letter', 'grades'));
 $table->size  = array('30%', '30%', '40%');
 $table->align = array('left', 'left', 'left');
 $table->width = '30%';
 $table->data  = $data;
-print_table($table);
+echo $OUTPUT->table($table);
 
 echo $OUTPUT->footer();
 

@@ -158,7 +158,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @return string
      */
     function get_studentrowhtml($user) {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
         $showuserimage = $this->get_pref('showuserimage');
         $showuseridnumber = $this->get_pref('showuseridnumber');
         $fixedstudents = empty($USER->screenreader) && $this->get_pref('fixedstudents');
@@ -183,7 +183,7 @@ class grade_report_grader_ajax extends grade_report_grader {
             // Student name and link
             $user_pic = null;
             if ($showuserimage) {
-                $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, true, 0, true) . '</div>';
+                $user_pic = '<div class="userpic">' . $OUTPUT->user_picture(moodle_user_picture::make($user, $this->courseid)) . '</div>';
             }
 
             $studentrowhtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'

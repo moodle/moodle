@@ -124,7 +124,7 @@ if ($courseid) {
 }
 
 if (!grade_scale::fetch_all_local($courseid) && !grade_scale::fetch_all_global()) {
-    notice_yesno(get_string('noscales', 'grades'), $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid, $returnurl);
+    echo $OUTPUT->confirm(get_string('noscales', 'grades'), $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid, $returnurl);
     echo $OUTPUT->footer();
     die();
 }

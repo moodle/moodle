@@ -64,7 +64,9 @@ if ($id and $delete) {
         print_header(get_string('deleteselectedkey'), get_string('deleteselectedkey'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        notice_yesno(get_string('deletekeyconfirm', 'userkey', $key->value), 'key.php', 'keymanager.php', $optionsyes, $optionsno, 'get', 'get');
+        $formcontinue = html_form::make_button('key.php', $optionsyes, get_string('yes'), 'get');
+        $formcancel = html_form::make_button('keymanager.php', $optionsno, get_string('no'), 'get');
+        echo $OUTPUT->confirm(get_string('deletekeyconfirm', 'userkey', $key->value), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
 

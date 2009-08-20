@@ -288,29 +288,29 @@ abstract class grade_export {
     public function print_continue() {
         global $CFG, $OUTPUT;
 
-        $params = $this->get_export_params();
-
+        $params = $this->get_export_params(); 
 
         echo $OUTPUT->heading(get_string('export', 'grades'));
 
-        echo '<div class="gradeexportlink">';
+        echo $OUTPUT->container_start('gradeexportlink');
+
         if (!$this->userkey) {      // this button should trigger a download prompt
-            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php',
-                                $params, get_string('download', 'admin'));
+            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php',
+                                $params, get_string('download', 'admin')));
 
         } else {
             $paramstr = '';
             $sep = '?';
             foreach($params as $name=>$value) {
                 $paramstr .= $sep.$name.'='.$value;
-                $sep = '&amp;';
+                $sep = '&';
             }
 
-            $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paramstr.'&amp;key='.$this->userkey;
+            $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paramstr.'&key='.$this->userkey;
 
-            echo get_string('download', 'admin').': <a href="'.$link.'">'.$link.'</a>';
+            echo get_string('download', 'admin').': ' . $OUTPUT->link(html_link::make($link, $link));
         }
-        echo '</div>';
+        echo $OUTPUT->container_end();
     }
 }
 
