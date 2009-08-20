@@ -21,7 +21,7 @@ $endselectors = html_select::make_time_selectors(array(
     </td>
     <td>
       <input type="text" name="name" size="67" value="<?php p($form->name); ?>" />
-      <?php if (isset($err['name'])) formerr($err['name']); ?>
+      <?php if (isset($err['name'])) echo $OUTPUT->error_text($err['name']); ?>
     </td>
   </tr>
   <tr>
@@ -31,7 +31,7 @@ $endselectors = html_select::make_time_selectors(array(
     <td>
       <?php
           print_textarea($usehtmleditor, 20, 65, 630, 300, "description", $form->description);
-          if (isset($err['description'])) formerr($err['description']);
+          if (isset($err['description'])) echo $OUTPUT->error_text($err['description']);
       ?>
     </td>
   </tr>
@@ -41,7 +41,7 @@ $endselectors = html_select::make_time_selectors(array(
       <?php echo $OUTPUT->select($startselectors[0]) . $OUTPUT->select($startselectors[1]) . $OUTPUT->select($startselectors[2]);?>
       <?php print_string('eventtime', 'calendar');?>
       <?php echo $OUTPUT->select($startselectors[3]) . $OUTPUT->select($startselectors[4]);?>
-      <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
+      <?php if (isset($err['timestart'])) echo $OUTPUT->error_text($err['timestart']); ?>
     </td>
   </tr>
   <tr>
@@ -63,13 +63,13 @@ $endselectors = html_select::make_time_selectors(array(
         <?php echo $OUTPUT->select($endselectors[0]) . $OUTPUT->select($endselectors[1]) . $OUTPUT->select($endselectors[2]);?>
         <?php print_string('eventtime', 'calendar');?>
         <?php echo $OUTPUT->select($endselectors[3]) . $OUTPUT->select($endselectors[4]);?>
-        <?php if (isset($err['timeduration'])) formerr($err['timeduration']); ?>
+        <?php if (isset($err['timeduration'])) echo $OUTPUT->error_text($err['timeduration']); ?>
       </div>
       <div>
         <input type="radio" name="duration" value="2" id="duration_minutes" <?php if($form->duration == 2) echo 'checked="checked"'; ?>/>
         <label for="duration_minutes"><?php print_string('durationminutes', 'calendar'); ?>:</label>
         <input type="text" name="minutes" size="3" value="<?php p($form->minutes); ?>" />
-        <?php if (isset($err['minutes'])) formerr($err['minutes']); ?>
+        <?php if (isset($err['minutes'])) echo $OUTPUT->error_text($err['minutes']); ?>
       </div>
     </td>
   </tr>
