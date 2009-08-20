@@ -49,6 +49,7 @@
 
     // Start of the table for General Forums
 
+    $generaltable = new html_table();
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ('left', 'left', 'center');
 
@@ -183,9 +184,13 @@
                     } else {
                         $options = array('id'=>$forum->id);
                         if (!isset($untracked[$forum->id])) {
-                            $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes, 'post', '_self', true, $strnotrackforum);
+                            $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes);
+                            $form->button->title = $strnotrackforum;
+                            $trackedlink = $OUTPUT->button($form);
                         } else {
-                            $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno, 'post', '_self', true, $strtrackforum);
+                            $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno);
+                            $form->button->title = $strtrackforum;
+                            $trackedlink = $OUTPUT->button($form);
                         }
                     }
                 }
@@ -240,6 +245,7 @@
 
 
     // Start of the table for Learning Forums
+    $learningtable = new html_table();
     $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
     $learningtable->align = array ('left', 'left', 'center');
 
@@ -305,9 +311,13 @@
                         } else {
                             $options = array('id'=>$forum->id);
                             if (!isset($untracked[$forum->id])) {
-                                $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes, 'post', '_self', true, $strnotrackforum);
+                                $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $stryes);
+                                $form->button->title = $strnotrackforum;
+                                $trackedlink = $OUTPUT->button($form);
                             } else {
-                                $trackedlink = print_single_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno, 'post', '_self', true, $strtrackforum);
+                                $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php', $options, $strno);
+                                $form->button->title = $strtrackforum;
+                                $trackedlink = $OUTPUT->button($form);
                             }
                         }
                     }
@@ -394,12 +404,12 @@
 
     if ($generalforums) {
         echo $OUTPUT->heading(get_string('generalforums', 'forum'));
-        print_table($generaltable);
+        echo $OUTPUT->table($generaltable);
     }
 
     if ($learningforums) {
         echo $OUTPUT->heading(get_string('learningforums', 'forum'));
-        print_table($learningtable);
+        echo $OUTPUT->table($learningtable);
     }
 
     echo $OUTPUT->footer();

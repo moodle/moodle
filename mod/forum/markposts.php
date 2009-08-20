@@ -35,8 +35,7 @@
     if (isguest()) {   // Guests can't change forum
         $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
-        notice_yesno(get_string('noguesttracking', 'forum').'<br /><br />'.get_string('liketologin'),
-                     get_login_url(), $returnto);
+        echo $OUTPUT->confirm(get_string('noguesttracking', 'forum').'<br /><br />'.get_string('liketologin'), get_login_url(), $returnto);
         echo $OUTPUT->footer();
         exit;
     }

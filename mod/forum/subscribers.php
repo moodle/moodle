@@ -67,7 +67,7 @@
             echo '<table align="center" cellpadding="5" cellspacing="5">';
             foreach ($users as $user) {
                 echo '<tr><td>';
-                print_user_picture($user, $course->id);
+                echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
                 echo '</td><td>';
                 echo fullname($user);
                 echo '</td><td>';

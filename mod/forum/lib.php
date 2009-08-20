@@ -3074,7 +3074,7 @@ function forum_get_course_forum($courseid, $type) {
 function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
                               $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
 
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     if (!isset($userto->viewfullnames[$forum->id])) {
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
@@ -3094,7 +3094,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
     $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
-    $output .= print_user_picture($userfrom, $course->id, $userfrom->picture, false, true);
+    $output .= $OUTPUT->user_picture(moodle_user_picture::make($userfrom, $course->id));
     $output .= '</td>';
 
     if ($post->parent) {
@@ -3312,7 +3312,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $postuser->picture   = $post->picture;
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($postuser, $course->id);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($postuser, $course->id));
     echo '</td>';
 
     if ($post->parent) {
@@ -3620,7 +3620,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $postuser->picture = $post->picture;
 
     echo '<td class="picture">';
-    print_user_picture($postuser, $forum->course);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($postuser, $forum->course));
     echo "</td>\n";
 
     // User name
@@ -4915,7 +4915,7 @@ function forum_post_subscription($post, $forum) {
  * @return string
  */
 function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false, $fakelink=true, $backtoindex=false, $subscribed_forums=null) {
-    global $CFG, $USER, $PAGE;
+    global $CFG, $USER, $PAGE, $OUTPUT;
     $defaultmessages = array(
         'subscribed' => get_string('unsubscribe', 'forum'),
         'unsubscribed' => get_string('subscribe', 'forum'),
@@ -4960,8 +4960,9 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $link = "<noscript>";
         }
         $options ['id'] = $forum->id;
-        $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php',
-                $options, $linktext, 'post', '_self', true, $linktitle);
+        $form = html_form::make_button($CFG->wwwroot.'/mod/forum/subscribe.php', $options, $linktext);
+        $form->button->title = $linktitle;
+        $link .= $OUTPUT->button($form);
         if ($fakelink) {
             $link .= '</noscript>';
         }
@@ -4983,7 +4984,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
  * @return string
  */
 function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
-    global $CFG, $USER, $PAGE;
+    global $CFG, $USER, $PAGE, $OUTPUT;
 
     static $strnotrackforum, $strtrackforum;
 
@@ -5015,8 +5016,10 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
         // use <noscript> to print button in case javascript is not enabled
         $link .= '<noscript>';
     }
-    $link .= print_single_button($CFG->wwwroot . '/mod/forum/settracking.php?id=' . $forum->id,
-            '', $linktext, 'post', '_self', true, $linktitle);
+    $form = html_form::make_button($CFG->wwwroot.'/mod/forum/settracking.php?id=' . $forum->id, $options, $linktext);
+    $form->button->title = $linktitle;
+    $link .= $OUTPUT->button($form);
+
     if ($fakelink) {
         $link .= '</noscript>';
     }
@@ -6123,7 +6126,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    print_user_picture($activity->user, $courseid);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $courseid));
     echo "</td><td class=\"$class\">";
 
     echo '<div class="title">';

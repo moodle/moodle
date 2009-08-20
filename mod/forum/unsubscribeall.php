@@ -34,7 +34,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
 
     if ($a) {
         $msg = get_string('unsubscribeallconfirm', 'forum', $a);
-        notice_yesno($msg, 'unsubscribeall.php', $return, array('confirm'=>1, 'sesskey'=>sesskey()), NULL, 'post', 'get');
+        echo $OUTPUT->confirm($msg, new moodle_url('unsubscribeall.php', array('confirm'=>1)), $return);
         echo $OUTPUT->footer();
         die;
 
