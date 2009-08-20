@@ -1466,7 +1466,7 @@ class question_bank_view {
     }
 
     public function process_actions_needing_ui() {
-        global $DB;
+        global $DB, $OUTPUT;
         if (optional_param('deleteselected', false, PARAM_BOOL)) {
             // make a list of all the questions that are selected
             $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
@@ -1495,11 +1495,9 @@ class question_bank_view {
             if ($inuse) {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
-            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $this->baseurl->out_action(),
-                        $this->baseurl->out(true),
-                        array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist)),
-                        $this->baseurl->params(), 'post', 'get');
+            echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames),
+                        $this->baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
+                        $this->baseurl);
 
             return true;
         }
@@ -1913,8 +1911,11 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
-    print_single_button($CFG->wwwroot . '/question/addquestion.php', $params,
-            $caption,'get', '', false, $tooltip, $disabled);
+    $form = html_form::make_button($CFG->wwwroot . '/question/addquestion.php', $params, $caption,'get');
+    $form->button->title = $tooltip;
+    $form->button->disabled = $disabled;
+    echo $OUTPUT->button($form);
+
     echo $OUTPUT->help_icon(moodle_help_icon::make('types', get_string('createnewquestion', 'question'), 'question'));
     $PAGE->requires->yui_lib('dragdrop');
     $PAGE->requires->yui_lib('container');

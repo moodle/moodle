@@ -366,8 +366,8 @@ class default_questiontype {
         }
 
         if (!empty($result->noticeyesno)) {
-            notice_yesno($result->noticeyesno, "question.php?id=$question->id&amp;courseid={$course->id}",
-                "edit.php?courseid={$course->id}");
+            echo $OUTPUT->confirm($result->noticeyesno, "question.php?id=$question->id&courseid={$course->id}",
+                    "edit.php?courseid={$course->id}");
             echo $OUTPUT->footer();
             exit;
         }
@@ -1066,7 +1066,7 @@ class default_questiontype {
      * Used by print_question()
      */
     function history($question, $state, $number, $cmoptions, $options) {
-        global $DB;
+        global $DB, $OUTPUT;
         $history = '';
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
@@ -1078,7 +1078,7 @@ class default_questiontype {
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
-                $table = new stdClass;
+                $table = new html_table();
                 $table->width = '100%';
                 if ($options->scores) {
                     $table->head  = array (
@@ -1134,7 +1134,7 @@ class default_questiontype {
                                                 );
                     }
                 }
-                $history = print_table($table, true);
+                $history = $OUTPUT->table($table);
             }
         }
         return $history;
