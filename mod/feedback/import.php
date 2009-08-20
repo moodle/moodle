@@ -136,9 +136,9 @@
 
      <?php
 
-    echo '<div class="mdl-align">';
-    print_single_button('edit.php', array('id'=>$id, 'do_show'=>'templates'), get_string('cancel'));
-    echo '</div>';
+    echo $OUTPUT->container_start('mdl-align');
+    echo $OUTPUT->button(html_form::make_button('edit.php', array('id'=>$id, 'do_show'=>'templates'), get_string('cancel')));
+    echo $OUTPUT->container_end();
     echo $OUTPUT->footer();
 
     function feedback_load_xml_data($filename) {

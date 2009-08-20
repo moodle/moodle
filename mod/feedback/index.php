@@ -50,6 +50,8 @@
     $strtopic  = get_string("topic");
     $strresponses = get_string('responses', 'feedback');
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         if($capabilities->viewreports) {
             $table->head  = array ($strweek, $strname, $strresponses);
@@ -107,7 +109,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     /// Finish the page
 

@@ -145,7 +145,7 @@
                         <table width="100%">
                             <tr>
                                 <td align="left">
-                                    <?php echo print_user_picture($student->id, $course->id, $student->picture, false, true);?>
+                                    <?php echo $OUTPUT->user_picture(moodle_user_picture::make($student, $course->id));?>
                                 </td>
                                 <td align="left">
                                     <?php echo fullname($student);?>
@@ -155,7 +155,7 @@
                                     $show_button_link = $ME;
                                     $show_button_options = array('sesskey'=>sesskey(), 'userid'=>$student->id, 'do_show'=>'showoneentry', 'id'=>$id);
                                     $show_button_label = get_string('show_entries', 'feedback');
-                                    print_single_button($show_button_link, $show_button_options, $show_button_label, 'post');
+                                    echo $OUTPUT->button(html_form::make_button($show_button_link, $show_button_options, $show_button_label));
                                 ?>
                                 </td>
                     <?php
@@ -166,7 +166,7 @@
                                     $delete_button_link = 'delete_completed.php';
                                     $delete_button_options = array('sesskey'=>sesskey(), 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry', 'id'=>$id);
                                     $delete_button_label = get_string('delete_entry', 'feedback');
-                                    print_single_button($delete_button_link, $delete_button_options, $delete_button_label, 'post');
+                                    echo $OUTPUT->button(html_form::make_button($delete_button_link, $delete_button_options, $delete_button_label));
                                 ?>
                                 </td>
                     <?php
@@ -190,7 +190,7 @@
                             $show_anon_button_link = 'show_entries_anonym.php';
                             $show_anon_button_options = array('sesskey'=>sesskey(), 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id);
                             $show_anon_button_label = get_string('show_entries', 'feedback');
-                            print_single_button($show_anon_button_link, $show_anon_button_options, $show_anon_button_label, 'post');
+                            echo $OUTPUT->button(html_form::make_button($show_anon_button_link, $show_anon_button_options, $show_anon_button_label));
                         ?>
                     </td>
                 </tr>

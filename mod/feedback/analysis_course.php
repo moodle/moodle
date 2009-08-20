@@ -69,12 +69,12 @@
 
     if( $capabilities->viewreports ) {
         //button "export to excel"
-        echo '<div class="mdl-align">';
+        echo $OUTPUT->container_start('mdl-align');
         $export_button_link = 'analysis_to_excel.php';
         $export_button_options = array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter);
         $export_button_label = get_string('export_to_excel', 'feedback');
-        print_single_button($export_button_link, $export_button_options, $export_button_label, 'post');
-        echo '</div>';
+        echo $OUTPUT->button(html_form::make_button($export_button_link, $export_button_options, $export_button_label));
+        echo $OUTPUT->container_end();
     }
 
     //get the groupid
