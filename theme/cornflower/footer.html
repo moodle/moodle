@@ -1,8 +1,8 @@
 <?php
 
-    print_container_end(); // content container
+    echo $OUTPUT->container_end(); // content container
 
-    print_container_start(false, '', 'footer');
+    echo $OUTPUT->container_start('footer');
 
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
@@ -23,7 +23,7 @@
         echo $performanceinfo;
     }
 
-    print_container_end();
+    echo $OUTPUT->container_end();
 ?>
 
 </div>

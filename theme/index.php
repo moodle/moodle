@@ -65,7 +65,7 @@ if ($choose and confirm_sesskey()) {
 admin_externalpage_print_header('themeselector');
 echo $OUTPUT->heading(get_string('themes'));
 
-$table = new stdClass;
+$table = new html_table();
 $table->id = 'adminthemeselector';
 $table->head = array(get_string('theme'), get_string('info'));
 
@@ -126,8 +126,8 @@ foreach ($themes as $themename => $themedir) {
         $infocell .= "<ul>\n<li>" . implode("</li>\n<li>", $infoitems) . "</li>\n</ul>\n";
     }
     if ($themename != $CFG->theme) {
-        $infocell .= print_single_button('index.php', array('choose' => $themename, 'sesskey' => $sesskey),
-                get_string('choose'), 'get', null, true);
+        $infocell .= $OUTPUT->button(html_form::make_button('index.php', array('choose' => $themename, 'sesskey' => $sesskey),
+                get_string('choose'), 'get'));
 
     }
     $row[] = $infocell;
@@ -138,7 +138,7 @@ foreach ($themes as $themename => $themedir) {
     }
 }
 
-print_table($table);
+echo $OUTPUT->table($table);
 
 echo $OUTPUT->footer();
 ?>

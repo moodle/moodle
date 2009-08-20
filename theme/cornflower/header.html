@@ -20,16 +20,16 @@
 <?php //Accessibility: warning: ALT text will need editing when logo changes. 'headermain' is now H1.
 
       if ($home) {  // home page ?>
-    <?php print_container_start(true, '', 'header-home'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
         <h1 class="headermain"><img alt="[ REPLACE ME ]" src="<?php echo $CFG->themewww.'/'.current_theme() ?>/images/logo.jpg" width="457" height="64" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <?php print_container_start(true, '', 'header'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header'); ?>
         <h1 class="headermain"><img alt="[ REPLACE ME ]" src="<?php echo $CFG->themewww.'/'.current_theme() ?>/images/logo.jpg" width="457" height="64" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
     <div class="clearer"></div>
 <?php } ?>
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
@@ -43,4 +43,4 @@
 <?php }  ?>
     <!-- END OF HEADER -->
     <div class="clearer"></div>
-    <?php print_container_start(false, '', 'content'); ?>
+    <?php echo $OUTPUT->container_start('content'); ?>

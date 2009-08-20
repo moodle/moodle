@@ -14,19 +14,19 @@
     
 <?php if ($home) {  // This is what gets printed on the home page only  
 ?>
-    <?php print_container_start(true, '', 'header-home'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 	<div class="navbar clearfix">
 		&nbsp;      
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
-    <?php print_container_start(true, '', 'header'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
     <div class="navbar clearfix">
     <?php if ($navigation) { // This is the navigation table with breadcrumbs
     ?>
@@ -36,4 +36,4 @@
     </div>
 <?php } ?>
     <!-- END OF HEADER -->
-    <?php print_container_start(false, '', 'content'); ?>
+    <?php echo $OUTPUT->container_start('content'); ?>

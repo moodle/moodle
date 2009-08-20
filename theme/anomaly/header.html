@@ -33,7 +33,7 @@
 <?php //Accessibility: 'headermain' is now H1, see theme/standard/styles_layout.css: .headermain
       if ($home) {  // This is what gets printed on the home page only
 ?>
-    <?php print_container_start(true, '', 'header-home'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
     
     <div id="header-t">
     	<div id="header-r">
@@ -48,10 +48,10 @@
     	</div>
     </div>
 
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <?php print_container_start(true, '', 'header'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header'); ?>
     <div id="header-t">
     	<div id="header-r">
     		<div id="header-l">
@@ -62,7 +62,7 @@
 				</div>
 			</div>
 		</div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 <?php } ?>
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
       if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
@@ -74,4 +74,4 @@
 ?>
 <?php } ?>
     <!-- END OF HEADER -->
-    <?php print_container_start(false, '', 'content'); ?>
+    <?php echo $OUTPUT->container_start('content'); ?>

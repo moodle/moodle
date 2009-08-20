@@ -1,8 +1,8 @@
 <?php
 
-    print_container_end(); // content container
+    echo $OUTPUT->container_end(); // content container
 
-    print_container_start(false, '', 'footer');
+    echo $OUTPUT->container_start('footer');
     echo '<hr />';
 
     echo '<p class="helplink">';
@@ -12,7 +12,7 @@
     echo $loggedinas;
     echo $homelink;
 
-    print_container_end();
+    echo $OUTPUT->container_end();
 ?>
 </div>
 </body>

@@ -1,4 +1,4 @@
-<?php print_container_end(); ?><!-- end container Content -->
+<?php echo $OUTPUT->container_end(); ?><!-- end container Content -->
 <!-- START OF FOOTER -->
 <?php 
 
@@ -10,7 +10,7 @@ if (function_exists('is_in_popup')) {
 }
 
 if (!$inpopup) { 
-    print_container_start(false, '', 'footer');
+    echo $OUTPUT->container_start('footer');
     
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
@@ -26,7 +26,7 @@ if (!$inpopup) {
         echo $performanceinfo;
     }
 
-    print_container_end();
+    echo $OUTPUT->container_end();
 
 } // end if inpopup
 

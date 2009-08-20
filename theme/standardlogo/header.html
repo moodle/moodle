@@ -34,16 +34,16 @@
 
       //Accessibility: warning: ALT text will need editing if logo changes. 'headermain' is now H1.
 ?>
-    <?php print_container_start(true, '', 'header-home'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
         <h1 class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <?php print_container_start(true, '', 'header'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
-    <?php print_container_end(); ?>
+    <?php echo $OUTPUT->container_end(); ?>
 <?php } ?>
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
       if ($navigation) { // This is the navigation table with breadcrumbs  ?>
@@ -56,4 +56,4 @@
         <hr />
 <?php } ?>
     <!-- END OF HEADER -->
-    <?php print_container_start(false, '', 'content'); ?>
+    <?php echo $OUTPUT->container_start('content'); ?>

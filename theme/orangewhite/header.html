@@ -19,7 +19,7 @@
 
 <?php if ($home) {  // This is what gets printed on the home page only
 ?>
-    <?php print_container_start(true, '', 'header-home'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     <?php print_container_end(); ?>
@@ -27,7 +27,7 @@
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
-    <?php print_container_start(true, '', 'header'); ?>
+    <?php echo $OUTPUT->container_start('clearfix header'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
         <!-- <div class="headermenu"><div id="new-menu"><?php echo $navmenulist ?></div></div> -->
@@ -41,4 +41,4 @@
     </div>
 <?php } ?>
     <!-- END OF HEADER -->
-    <?php print_container_start(false, '', 'content'); ?>
+    <?php echo $OUTPUT->container_start('content'); ?>
