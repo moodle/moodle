@@ -123,14 +123,20 @@
         }
 
         echo '<p>';
-        link_to_popup_window ($chattarget,
-                "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
+        $link = html_link::make($chattarget, $strenterchat);
+        $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+        $link->title = get_string('modulename', 'chat');
+        echo $OUTPUT->link($link);                    
+        
         echo '</p>';
 
         if ($CFG->enableajax) {
             echo '<p>';
-            link_to_popup_window ("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam",
-                "chat$course->id$chat->id$groupparam", get_string('ajax_gui', 'message'), 500, 700, get_string('modulename', 'chat'));
+            
+            $link = html_link::make("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam", get_string('ajax_gui', 'message'));
+            $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+            $link->title = get_string('modulename', 'chat');
+            echo $OUTPUT->link($link);
             echo '</p>';
         }
 
@@ -138,8 +144,10 @@
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
             echo '<p>(';
-            link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
+            $link = html_link::make("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam", get_string('noframesjs', 'message'));
+            $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+            $link->title = get_string('modulename', 'chat');
+            echo $OUTPUT->link($link);
             echo ')</p>';
         }
 
