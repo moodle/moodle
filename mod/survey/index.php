@@ -32,6 +32,8 @@
         notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");
     }
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strstatus);
         $table->align = array ("CENTER", "LEFT", "LEFT");
@@ -78,7 +80,7 @@
     }
 
     echo "<br />";
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo $OUTPUT->footer();
 
 ?>

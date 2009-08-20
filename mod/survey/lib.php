@@ -170,11 +170,11 @@ function survey_user_outline($course, $user, $mod, $survey) {
  * @param object $survey
  */
 function survey_user_complete($course, $user, $mod, $survey) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
 
     if (survey_already_done($survey->id, $user->id)) {
         if ($survey->template == SURVEY_CIQ) { // print out answers for critical incidents
-            $table = NULL;
+            $table = new html_table();
             $table->align = array("left", "left");
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
@@ -191,7 +191,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 }
                 $table->data[] = array("<b>$questiontext</b>", $answertext);
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
             
         } else {
         
@@ -463,19 +463,19 @@ function survey_count_responses($surveyid, $groupid, $groupingid) {
  * @param int $courseid
  */
 function survey_print_all_responses($cmid, $results, $courseid) {
-
-    $table = new object();
+    global $OUTPUT;
+    $table = new html_table();
     $table->head  = array ("", get_string("name"),  get_string("time"));
     $table->align = array ("", "left", "left");
     $table->size = array (35, "", "" );
 
     foreach ($results as $a) {
-        $table->data[] = array(print_user_picture($a->id, $courseid, $a->picture, false, true, false),
-               "<a href=\"report.php?action=student&amp;student=$a->id&amp;id=$cmid\">".fullname($a)."</a>", 
+        $table->data[] = array($OUTPUT->user_picture(moodle_user_picture::make($a, $courseid)),
+               $OUTPUT->link("report.php?action=student&student=$a->id&id=$cmid", fullname($a)), 
                userdate($a->time));
     }
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 }
 
 /**

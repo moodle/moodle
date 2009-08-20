@@ -90,11 +90,11 @@
                 $question = $questions[$val];
                 if ($question->type == 0 or $question->type == 1) {
                     if ($answer = survey_get_user_answer($survey->id, $question->id, $USER->id)) {
-                        $table = NULL;
+                        $table = new html_table();
                         $table->head = array(get_string($question->text, "survey"));
                         $table->align = array ("left");
                         $table->data[] = array(s($answer->answer1));//no html here, just plain text
-                        print_table($table);
+                        echo $OUTPUT->table($table);
                         echo $OUTPUT->spacer(clone($spacer)) . '<br />';
                     }
                 }
