@@ -206,6 +206,7 @@ class quiz_report_overview_table extends table_sql {
      * @return string the contents of the cell.
      */
     function other_cols($colname, $attempt){
+        global $OUTPUT;
 
         if (preg_match('/^qsgrade([0-9]+)$/', $colname, $matches)){
             $questionid = $matches[1];
@@ -226,11 +227,12 @@ class quiz_report_overview_table extends table_sql {
                         $grade = '<del>'.$oldgrade.'</del><br />'.
                                 $newgrade;
                     }
-                    $linktopopup = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
-                            $attempt->attempt . '&amp;question=' . $question->id,
-                            'reviewquestion', $grade, 450, 650,
-                            get_string('reviewresponsetoq', 'quiz', $question->formattedname),
-                            'none', true);
+
+                    $link = html_link::make("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id", $grade);
+                    $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
+                    $link->title = get_string('reviewresponsetoq', 'quiz', $question->formattedname);
+                    $linktopopup = $OUTPUT->link($link); 
+
                     if (($this->questions[$questionid]->maxgrade != 0)){
                         $fractionofgrade = $stateforqinattempt->grade
                                         / $this->questions[$questionid]->maxgrade;
@@ -241,7 +243,7 @@ class quiz_report_overview_table extends table_sql {
                     } else {
                         return $linktopopup;
                     }
-                    
+
                 } else {
                     return $grade;
                 }

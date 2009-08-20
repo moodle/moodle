@@ -821,9 +821,16 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
     }
 
     // Build the icon.
-    return link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quiz->id, 'questionpreview',
-            "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strpreviewquestion\" /> $strpreviewlabel",
-            0, 0, $strpreviewquestion, QUESTION_PREVIEW_POPUP_OPTIONS, true);
+    $image = new html_image();
+    $image->src = $OUTPUT->old_icon_url('t/preview');
+    $image->add_class('iconsmall');
+    $image->alt = $strpreviewquestion;
+
+    $link = html_link::make("/question/preview.php?id=$question->id&quizid=$quiz->id", $strpreviewlabel);
+    parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
+    $link->add_action(new popup_action('click', $link->url, 'questionpreview', $options));
+    $link->title = $strpreviewquestion;
+    return $OUTPUT->link_to_popup($link, $image);
 }
 
 /**

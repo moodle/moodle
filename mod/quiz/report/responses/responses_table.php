@@ -137,7 +137,7 @@ class quiz_report_responses_table extends table_sql {
         }
     }
     function other_cols($colname, $attempt){
-        global $QTYPES;
+        global $QTYPES, $OUTPUT;
         static $states =array();
         if (preg_match('/^qsanswer([0-9]+)$/', $colname, $matches)){
             if ($attempt->uniqueid == 0) {
@@ -158,16 +158,16 @@ class quiz_report_responses_table extends table_sql {
             } else {
                 $formathtml = false;
             }
-            
+
             $summary =  $QTYPES[$question->qtype]->response_summary($question, $stateforqinattempt,
                                                 QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY, $formathtml);
             if (!$this->is_downloading()) {
                 if ($summary){
-                    $summary = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
-                        $attempt->attempt . '&amp;question=' . $question->id,
-                        'reviewquestion', $summary, 450, 650,
-                        get_string('reviewresponsetoq', 'quiz', $question->formattedname),
-                        'none', true);
+                    $link = html_link::make("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id", $summary);
+                    $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
+                    $link->title = $question->formattedname;
+                    $summary = $OUTPUT->link($link);
+
                     if (question_state_is_graded($stateforqinattempt)
                                 && ($question->maxgrade > 0)){
                         $grade = $stateforqinattempt->grade
