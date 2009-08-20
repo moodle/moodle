@@ -716,7 +716,7 @@ class assignment_base {
      * @param $submission object The submission whose data is to be updated on the main page
      */
     function update_main_listing($submission) {
-        global $SESSION, $CFG;
+        global $SESSION, $CFG, $OUTPUT;
 
         $output = '';
 
@@ -762,8 +762,17 @@ class assignment_base {
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
             $buttontext = get_string('update');
-            $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$submission->userid.'&amp;mode=single'.'&amp;offset='.(optional_param('offset', '', PARAM_INT)-1),
-                      'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
+            $url = new moodle_url('/mod/assignment/submissions.php', array(
+                    'id' => $this->cm->id,
+                    'userid' => $submission->userid,
+                    'mode' => 'single', 
+                    'offset' => (optional_param('offset', '', PARAM_INT)-1)));
+                        
+            $link = html_link::make($url, $buttontext);
+            $link->add_action(new popup_action('click', $link->url, 'grade'.$submission->userid, array('height' => 450, 'width' => 700)));
+            $link->title = $buttontext;
+            $button = $OUTPUT->link($link);                    
+            
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
 
@@ -1343,9 +1352,12 @@ class assignment_base {
 
                 ///No more buttons, we use popups ;-).
                 $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
-                           . '&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++;
-                $button = link_to_popup_window ($popup_url, 'grade'.$auser->id, $buttontext, 600, 780,
-                                                $buttontext, 'none', true, 'button'.$auser->id);
+                           . '&userid='.$auser->id.'&mode=single'.'&offset='.$offset++;
+
+                $link = html_link::make($popup_url, $buttontext);
+                $link->add_action(new popup_action('click', $link->url, 'grade'.$auser->id, array('height' => 600, 'width' => 700)));
+                $link->title = $buttontext;
+                $button = $OUTPUT->link($link);                    
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 

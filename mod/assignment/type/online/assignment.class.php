@@ -186,11 +186,15 @@ class assignment_online extends assignment_base {
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
+        
+        $link = html_link::make("/mod/assignment/type/online/file.php?id=$this->cm->id&userid=$submission->userid", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
+        $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
+        $link->title = get_string('submission', 'assignment');
+        $popup = $OUTPUT->link($link);                    
+        
         $output = '<div class="files">'.
                   '<img src="'.$OUTPUT->old_icon_url('f/html') . '" class="icon" alt="html" />'.
-                  link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
-                  get_string('submission', 'assignment'), 'none', true).
+                  $popup .
                   '</div>';
                   return $output;
     }
@@ -201,12 +205,15 @@ class assignment_online extends assignment_base {
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
+        
+        $link = html_link::make("/mod/assignment/type/online/file.php?id=$this->cm->id&userid=$submission->userid", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
+        $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
+        $link->title = get_string('submission', 'assignment');
+        $popup = $OUTPUT->link($link);                    
 
         $output = '<div class="files">'.
                   '<img align="middle" src="'.$OUTPUT->old_icon_url('f/html') . '" height="16" width="16" alt="html" />'.
-                  link_to_popup_window ('/mod/assignment/type/online/file.php?id='.$this->cm->id.'&amp;userid='.
-                  $submission->userid, 'file'.$userid, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), 450, 580,
-                  get_string('submission', 'assignment'), 'none', true).
+                  $popup .
                   '</div>';
 
         ///Stolen code from file.php

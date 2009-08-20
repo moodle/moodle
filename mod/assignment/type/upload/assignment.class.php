@@ -272,8 +272,11 @@ class assignment_upload extends assignment_base {
         }
 
         if ($this->notes_allowed() and !empty($submission->data1)) {
-            $output .= link_to_popup_window ('/mod/assignment/type/upload/notes.php?id='.$this->cm->id.'&amp;userid='.$userid,
-                                            'notes'.$userid, get_string('notes', 'assignment'), 500, 780, get_string('notes', 'assignment'), 'none', true, 'notesbutton'.$userid);
+            $link = html_link::make("/mod/assignment/type/upload/notes.php?id=$this->cm->id&userid=$userid", get_string('notes', 'assignment'));
+            $link->add_action(new popup_action('click', $link->url, 'notes', array('height' => 500, 'width' => 780)));
+            $link->title = get_string('notes', 'assignment');
+            $output .= $OUTPUT->link($link);                    
+            
             $output .= '&nbsp;';
         }
 
