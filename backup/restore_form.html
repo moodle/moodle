@@ -265,7 +265,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</td>";
         echo "<td><input type=\"text\" id=\"shortnamefield\" name=\"shortname\" maxlength=\"100\"  size=\"20\" value=\"".s($form1->shortname)."\" alt=\"".get_string("shortname")."\"  />" ;
         echo $OUTPUT->help_icon(moodle_help_icon::make("courseshortname", get_string("shortname"))) ;
-        if (isset($err["shortname"])) formerr($err["shortname"]);
+        if (isset($err["shortname"])) echo $OUTPUT->error_text($err["shortname"]);
         echo "</td>";
         echo "</tr>";
         echo "<tr valign=\"top\" >";
@@ -274,7 +274,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</td>";
         echo "<td><input type=\"text\" id=\"fullnamefield\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"".s($form1->fullname)."\" alt=\" ".get_string("fullname")."\"  />" ;
         echo $OUTPUT->help_icon(moodle_help_icon::make("coursefullname", get_string("fullname"))) ;
-        if (isset($err["fullname"])) formerr($err["fullname"]);
+        if (isset($err["fullname"])) echo $OUTPUT->error_text($err["fullname"]);
         echo"</td></tr>";
         echo "<tr valign=\"top\"> ";
         echo "<td align=\"right\"> ";
