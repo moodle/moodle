@@ -46,7 +46,7 @@ if (!$dataid = optional_param('id', '', PARAM_INT) ) {
 
 // all we're going to do is print a table with some information
 // about the current export, with a yes/ no option to resume or cancel.
-$table = new StdClass;
+$table = new html_table();
 $table->head = array(
     get_string('displayarea', 'portfolio'),   // the part of moodle exporting content
     get_string('destination', 'portfolio'),   // the portfolio plugin instance
@@ -69,10 +69,10 @@ if ($dataid) {
 $strheading = get_string('activeexport', 'portfolio');
 print_header($strheading, $strheading);
 
-notice_yesno(get_string('alreadyexporting', 'portfolio'), $CFG->wwwroot . '/portfolio/add.php', $CFG->wwwroot . '/portfolio/add.php?cancel=1');
+echo $OUTPUT->confirm(get_string('alreadyexporting', 'portfolio'), $CFG->wwwroot . '/portfolio/add.php', $CFG->wwwroot . '/portfolio/add.php?cancel=1');
 
 if (count($table->data) > 0) {
-    print_table($table);
+    echo $OUTPUT->table($table);
 }
 
 echo $OUTPUT->footer();
