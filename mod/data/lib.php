@@ -51,7 +51,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     /** @var object The database object that this field belongs to */
     var $data = NULL;
     /** @var object The field object itself, if we know it */
-    var $field = NULL;   
+    var $field = NULL;
     /** @var int Width of the icon for this fieldtype */
     var $iconwidth = 16;
     /** @var int Width of the icon for this fieldtype */
@@ -555,8 +555,8 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
 
 /**
- * Search for a field name and replaces it with another one in all the 
- * form templates. Set $newfieldname as '' if you want to delete the   
+ * Search for a field name and replaces it with another one in all the
+ * form templates. Set $newfieldname as '' if you want to delete the
  * field from the form.
  *
  * @global object
@@ -756,10 +756,10 @@ function data_atmaxentries($data){
 
 /**
  * returns the number of entries already made by this user
- * 
+ *
  * @global object
  * @global object
- * @param object $data                                                
+ * @param object $data
  * @return int
  */
 function data_numentries($data){
@@ -769,7 +769,7 @@ function data_numentries($data){
 }
 
 /**
- * function that takes in a dataid and adds a record            
+ * function that takes in a dataid and adds a record
  * this is used everytime an add template is submitted
  *
  * @global object
@@ -804,7 +804,7 @@ function data_add_record($data, $groupid=0){
  *
  * @global object
  * @param int $dataid,
- * @param string $template                                   
+ * @param string $template
  * @return bool
  */
 function data_tags_check($dataid, $template) {
@@ -1142,15 +1142,15 @@ function data_get_participants($dataid) {
 
 // junk functions
 /**
- * takes a list of records, the current data, a search string,          
+ * takes a list of records, the current data, a search string,
  * and mode to display prints the translated template
  *
  * @global object
  * @global object
  * @param string $template
- * @param array $records                                          
+ * @param array $records
  * @param object $data
- * @param string $search                                          
+ * @param string $search
  * @param int $page
  * @param bool $return
  * @return mixed
@@ -1286,17 +1286,17 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
 
 /**
- * function that takes in the current data, number of items per page,   
- * a search string and prints a preference box in view.php              
- *                                                                      
- * This preference box prints a searchable advanced search template if  
- *     a) A template is defined                                         
- *  b) The advanced search checkbox is checked.                         
+ * function that takes in the current data, number of items per page,
+ * a search string and prints a preference box in view.php
+ *
+ * This preference box prints a searchable advanced search template if
+ *     a) A template is defined
+ *  b) The advanced search checkbox is checked.
  *
  * @global object
  * @global object
- * @param object $data                                            
- * @param int $perpage                                            
+ * @param object $data
+ * @param int $perpage
  * @param string $search
  * @param string $sort
  * @param string $order
@@ -1529,6 +1529,7 @@ function data_print_ratings($data, $record) {
  * @param bool $link
  */
 function data_print_ratings_mean($recordid, $scale, $link=true) {
+    global $OUTPUT;
     static $strrate;
 
     $mean = data_get_ratings_mean($recordid, $scale);
@@ -1541,7 +1542,9 @@ function data_print_ratings_mean($recordid, $scale, $link=true) {
 
         echo "$strratings: ";
         if ($link) {
-            link_to_popup_window ("/mod/data/report.php?id=$recordid", "ratings", $mean, 400, 600);
+            $link = html_link::make("/mod/data/report.php?id=$recordid", $mean);
+            $link->add_action(new popup_action('click', $link->url, 'ratings', array('height' => 400, 'width' => 600)));
+            echo $OUTPUT->link($link);
         } else {
             echo "$mean ";
         }
@@ -2847,9 +2850,9 @@ function data_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedow
         if (!$cm = get_coursemodule_from_instance('data', $cminfo->instance, $course->id)) {
             return false;
         }
-        
+
         require_course_login($course, true, $cm);
-        
+
         if (!$content = $DB->get_record('data_content', array('id'=>$contentid))) {
             return false;
         }
