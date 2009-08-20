@@ -94,12 +94,10 @@
             print_error('nousers');
         }
         $strunenrolsure  = get_string('unenrolsure', '', fullname($user, true));
-        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=".sesskey(),
-                                      $_SERVER['HTTP_REFERER']);
+        echo $OUTPUT->confirm($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", $PAGE->url);
     } else {
         $strunenrolsure  = get_string('unenrolsure', '', get_string("yourself"));
-        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;confirm=yes&amp;sesskey=".sesskey(),
-                                      $_SERVER['HTTP_REFERER']);
+        echo $OUTPUT->confirm($strunenrolsure, "unenrol.php?id=$id&confirm=yes", $PAGE->url);
     }
 
     echo $OUTPUT->footer();

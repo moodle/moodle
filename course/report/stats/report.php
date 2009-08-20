@@ -21,6 +21,7 @@
         print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
+    $table = new html_table();
     $table->width = 'auto';
 
     if ($mode == STATS_MODE_DETAILED) {
@@ -66,7 +67,7 @@
         .'<div>'."\n"
         .'<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     echo '</div>';
     echo '</form>';
@@ -121,7 +122,7 @@
                 }
             }
 
-            $table = new StdClass;
+            $table = new html_table();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
             switch ($param->table) {
@@ -220,7 +221,7 @@
                 $lastrecord[] = $lastlink;
                 $table->data[] = $lastrecord;
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
     }
 

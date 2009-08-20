@@ -211,7 +211,7 @@
             // What the heck is this about?   -- MD
             $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
 
-            $table = new object();
+            $table = new html_table();
             $table->align = array('left','center','center','center');
             $param->table = str_replace('user_','',$param->table);
             switch ($param->table) {
@@ -230,7 +230,7 @@
                 $a[] = $stat->line3;
                 $table->data[] = $a;
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
             break;
 
         case "outline" :

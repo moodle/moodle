@@ -185,17 +185,17 @@
     }
 
     if ($editingon && has_capability('moodle/category:manage', $context)) {
-        echo '<div class="buttons">';
+        echo $OUTPUT->container_start('buttons');
 
         // Print button to update this category
         $options = array('id' => $category->id);
-        print_single_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('editcategorythis'), 'get');
+        echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('editcategorythis'), 'get'));
 
         // Print button for creating new categories
         $options = array('parent' => $category->id);
-        print_single_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('addsubcategory'), 'get');
+        echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/editcategory.php', $options, get_string('addsubcategory'), 'get'));
 
-        echo '</div>';
+        echo $OUTPUT->container_end();
     }
 
 /// Print out all the sub-categories
@@ -432,14 +432,14 @@
         $options['id'] = $category->id;
         $options['resort'] = 'name';
         $options['sesskey'] = sesskey();
-        print_single_button('category.php', $options, get_string('resortcoursesbyname'), 'get');
+        echo $OUTPUT->button(html_form::make_button('category.php', $options, get_string('resortcoursesbyname'), 'get'));
     }
 
     if (has_capability('moodle/course:create', $context)) {
     /// Print button to create a new course
         unset($options);
         $options['category'] = $category->id;
-        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        echo $OUTPUT->button(html_form::make_button('edit.php', $options, get_string('addnewcourse'), 'get'));
     }
 
     if (!empty($CFG->enablecourserequests) && $category->id == $CFG->enablecourserequests) {

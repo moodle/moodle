@@ -161,7 +161,8 @@
         echo $OUTPUT->heading(get_string('coursespending'));
 
     /// Build a table of all the requests.
-        $table->class = 'pendingcourserequests generaltable';
+        $table = new html_table();
+        $table->add_class('pendingcourserequests generaltable');
         $table->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
         $table->head = array('&nbsp;', get_string('shortname'), get_string('fullname'),
                 get_string('requestedby'), get_string('summary'), get_string('requestreason'), get_string('action'));
@@ -191,15 +192,15 @@
             $row[] = fullname($requester);
             $row[] = format_string($course->summary);
             $row[] = format_string($course->reason);
-            $row[] = print_single_button($baseurl, array('approve' => $course->id, 'sesskey' => sesskey()), get_string('approve'), 'get', '', true) .
-                    print_single_button($baseurl, array('reject' => $course->id), get_string('rejectdots'), 'get', '', true);
+            $row[] = $OUTPUT->button(html_form::make_button($baseurl, array('approve' => $course->id, 'sesskey' => sesskey()), get_string('approve'), 'get')) .
+                    $OUTPUT->button(html_form::make_button($baseurl, array('reject' => $course->id), get_string('rejectdots'), 'get'));
 
         /// Add the row to the table.
             $table->data[] = $row;
         }
 
     /// Display the table.
-        print_table($table);
+        echo $OUTPUT->table($table);
 
     /// Message about name collisions, if necessary.
         if (!empty($collision)) {
@@ -208,6 +209,6 @@
     }
 
 /// Finish off the page.
-    print_single_button($CFG->wwwroot . '/course/index.php', array(), get_string('backtocourselisting'));
+    echo $OUTPUT->button(html_form::make_button($CFG->wwwroot . '/course/index.php', array(), get_string('backtocourselisting')));
     echo $OUTPUT->footer();
 ?>

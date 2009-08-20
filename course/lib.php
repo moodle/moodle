@@ -2003,17 +2003,19 @@ function print_category_info($category, $depth, $showcourses = false) {
  * @param object $systemcontext the system context.
  */
 function print_course_request_buttons($systemcontext) {
-    global $CFG, $DB;
+    global $CFG, $DB, $OUTPUT;
     if (empty($CFG->enablecourserequests)) {
         return;
     }
     if (isloggedin() && !isguestuser() && !has_capability('moodle/course:create', $systemcontext) && has_capability('moodle/course:request', $systemcontext)) {
     /// Print a button to request a new course
-        print_single_button('request.php', NULL, get_string('requestcourse'), 'get');
+        echo $OUTPUT->button(html_form::make_button('request.php', NULL, get_string('requestcourse'), 'get'));
     }
     /// Print a button to manage pending requests
     if (has_capability('moodle/site:approvecourse', $systemcontext)) {
-        print_single_button('pending.php', NULL, get_string('coursespending'), 'get', '_self', false, '', !$DB->record_exists('course_request', array()));
+        $form = html_form::make_button('pending.php', NULL, get_string('coursespending'), 'get');
+        $form->button->disabled = !$DB->record_exists('course_request', array());
+        echo $OUTPUT->button($form);
     }
 }
 
@@ -2036,7 +2038,7 @@ function can_edit_in_category($categoryid = 0) {
  *      to see it.
  */
 function update_category_button($categoryid = 0) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $OUTPUT;
 
     // Check permissions.
     if (!can_edit_in_category($categoryid)) {
@@ -2060,7 +2062,7 @@ function update_category_button($categoryid = 0) {
     } else {
         $page = 'index.php';
     }
-    return print_single_button($CFG->wwwroot . '/course/' . $page, $options, $label, 'get', '', true);
+    return $OUTPUT->button(html_form::make_button($CFG->wwwroot . '/course/' . $page, $options, $label, 'get'));
 }
 
 /**
@@ -2106,7 +2108,7 @@ function print_courses($category) {
             $options = array();
             $options['category'] = $category->id;
             echo '<div class="addcoursebutton">';
-            print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string("addnewcourse"));
+            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/edit.php', $options, get_string("addnewcourse")));
             echo '</div>';
         }
     }
@@ -2278,7 +2280,7 @@ function print_my_moodle() {
             echo "<table width=\"100%\"><tr><td align=\"center\">";
             print_course_search("", false, "short");
             echo "</td><td align=\"center\">";
-            print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
+            echo $OUTPUT->button(html_form::make_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get"));
             echo "</td></tr></table>\n";
         }
 

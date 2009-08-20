@@ -76,15 +76,17 @@
             echo $OUTPUT->box_end();
         }
 
-        echo '<div class="buttons">';
+        echo $OUTPUT->container_start('buttons');
         if (has_capability('moodle/course:create', $systemcontext)) {
         /// Print link to create a new course
         /// Get the 1st available category
             $options = array('category' => $CFG->defaultrequestcategory);
-            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+            $form = html_form::make_button('edit.php', $options, get_string('addnewcourse'));
+            $form->method = 'get';
+            echo $OUTPUT->button($form);
         }
         print_course_request_buttons($systemcontext);
-        echo '</div>';
+        echo $OUTPUT->container_end();
         echo $OUTPUT->footer();
         exit;
     }
@@ -243,14 +245,18 @@
         // print create course link to first category
         $options = array();
         $options = array('category' => $CFG->defaultrequestcategory);
-        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        $form = html_form::make_button('edit.php', $options, get_string('addnewcourse'));
+        $form->method = 'get';
+        echo $OUTPUT->button($form);
     }
 
     // Print button for creating new categories
     if (has_capability('moodle/category:manage', $systemcontext)) {
         $options = array();
         $options['parent'] = 0;
-        print_single_button('editcategory.php', $options, get_string('addnewcategory'), 'get');
+        $form = html_form::make_button('editcategory.php', $options, get_string('addnewcategory'));
+        $form->method = 'get';
+        echo $OUTPUT->button($form);
     }
 
     print_course_request_buttons($systemcontext);

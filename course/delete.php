@@ -41,10 +41,8 @@
 
         print_header("$site->shortname: $strdeletecheck", $site->fullname, $navigation);
 
-        notice_yesno("$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .
-                     " (" . format_string($course->shortname) . ")",
-                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=".sesskey(),
-                     "category.php?id=$course->category");
+        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .  " (" . format_string($course->shortname) . ")";
+        echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "category.php?id=$course->category");
 
         echo $OUTPUT->footer();
         exit;
