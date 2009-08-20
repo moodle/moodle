@@ -75,7 +75,7 @@ class moodle_html_component {
      */
     public static function clean_classes($classes) {
         if (empty($classes)) {
-            return '';
+            return array();
         } else if (is_array($classes)) {
             return $classes;
         } else {

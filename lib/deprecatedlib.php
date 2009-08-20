@@ -1836,6 +1836,7 @@ function page_id_and_class(&$getid, &$getclass) {
  * @param string $error The text to be displayed in red
  */
 function formerr($error) {
+    debugging('formerr() has been deprecated. Please change your code to use $OUTPUT->error_text($string).');
     global $OUTPUT;
     echo $OUTPUT->error_text($error);
 }
@@ -2447,7 +2448,7 @@ function link_to_popup_window ($url, $name=null, $linkname=null,
                                $options=null, $return=false) {
     global $OUTPUT;
 
-    // debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link().');
+    debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link().');
 
     if ($options == 'none') {
         $options = null;
@@ -2515,7 +2516,7 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
                                  $id=null, $class=null) {
     global $OUTPUT;
 
-    debugging('link_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->link_to_popup().');
+    debugging('button_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->button().');
 
     if ($options == 'none') {
         $options = null;

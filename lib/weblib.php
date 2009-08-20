@@ -2971,8 +2971,10 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     $output .= $OUTPUT->select(html_select::make($grades, $name, $current, false));
 
     $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->old_icon_url('help') . '" /></span>';
-    $output .= link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
-                                     $linkobject, 400, 500, $strscales, 'none', true);
+    $link = html_link::make('/course/scales.php?id='. $courseid .'&list=true', $linkobject);
+    $link->add_action(new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500)));
+    $link->title = $strscales;
+    $output .= $OUTPUT->link($link);
 
     if ($return) {
         return $output;
@@ -3060,7 +3062,10 @@ function editorhelpbutton(){
 
     $paramstring = join('&', $urlparams);
     $linkobject = '<img alt="'.$alttag.'" class="iconhelp" src="'.$OUTPUT->old_icon_url('help') . '" />';
-    return link_to_popup_window(s('/lib/form/editorhelp.php?'.$paramstring), 'popup', $linkobject, 400, 500, $alttag, 'none', true);
+    $link = html_link::make(s('/lib/form/editorhelp.php?'.$paramstring), $linkobject);
+    $link->add_action(new popup_action('click', $link->url, 'popup', array('height' => 400, 'width' => 500)));
+    $link->title = $alttag;
+    return $OUTPUT->link($link);
 }
 
 /**

@@ -300,9 +300,9 @@ function displaydir($file_info) {
                 }
 
                 if ($viewurl = $child_info->get_url()) {
-                    $viewurl = "&nbsp;".link_to_popup_window ($viewurl, "display",
-                                                     "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strfile\" />&nbsp;",
-                                                     480, 640, get_string('viewfileinpopup'), null, true);
+                    $link = html_link::make($viewurl, "display", "<img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"$strfile\" />&nbsp;");
+                    $link->add_action(new popup_action('click', $link->url, 'display', array('height' => 480, 'width' => 640)));
+                    $viewurl = "&nbsp;".$OUTPUT->link($link);
                 } else {
                     $viewurl = '';
                 }
