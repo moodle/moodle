@@ -1006,7 +1006,7 @@ abstract class repository {
         $instancesnumber = count($instances);
         $alreadyplugins = array();
 
-        $table = new StdClass;
+        $table = new html_table();
         $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
         $table->align = array('left', 'left', 'center','center');
         $table->data = array();
@@ -1035,7 +1035,7 @@ abstract class repository {
                 $alreadyplugins[] = $i->name;
             }
         }
-        $output .= print_table($table, true);
+        $output .= $OUTPUT->table($table);
         $instancehtml = '<div>';
         $addable = 0;
 

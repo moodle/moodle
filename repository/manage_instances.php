@@ -179,7 +179,9 @@
             }
             exit;
         }
-        notice_yesno(get_string('confirmdelete', 'repository', $instance->name), $baseurl . '&amp;delete=' . $delete . '&amp;sure=yes', $baseurl);
+        $formcontinue = html_form::make_button($baseurl, array('delete' => $delete, 'sure' => 'yes'), get_string('yes'));
+        $formcancel = html_form::make_button($baseurl, array(), get_string('no'));
+        echo $OUTPUT->confirm(get_string('confirmdelete', 'repository', $instance->name), $formcontinue, $formcancel);
         $return = false;
     } else {
         repository::display_instances_list($context);
