@@ -163,6 +163,7 @@ if (!$acl) {
     echo $OUTPUT->heading(get_string('noaclentries','mnet'));
     $table = NULL;
 } else {
+    $table = new html_table();
     $table->head = $headings;
     $table->align = array('left', 'left', 'center');
     $table->width = "95%";
@@ -183,7 +184,7 @@ if (!$acl) {
 }
 
 if (!empty($table)) {
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo '<p>&nbsp;</p>';
     $baseurl = new moodle_url(null, array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
     $pagingbar = moodle_paging_bar::make($aclcount, $page, $perpage, $baseurl);

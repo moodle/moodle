@@ -122,9 +122,9 @@
             $qtypename = $QTYPES[$delete]->local_name();
             admin_externalpage_print_header();
             echo $OUTPUT->heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
-            notice_yesno(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
-                    admin_url('qtypes.php?delete=' . $delete . '&amp;confirm=1&amp;sesskey=' . sesskey()),
-                    admin_url('qtypes.php'), NULL, NULL, 'post', 'get');
+            echo $OUTPUT->confirm(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
+                    admin_url('qtypes.php?delete=' . $delete . '&confirm=1'),
+                    admin_url('qtypes.php'));
             echo $OUTPUT->footer();
             exit;
         }

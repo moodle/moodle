@@ -131,21 +131,21 @@
 
 /// On the view page, show some extra controls at the top.
     if ($action == 'view') {
-        echo '<div class="buttons">';
+        echo $OUTPUT->container_start('buttons');
         $options = array();
         $options['roleid'] = $roleid;
         $options['action'] = 'edit';
-        print_single_button($defineurl, $options, get_string('edit'));
+        echo $OUTPUT->button(html_form::make_button($defineurl, $options, get_string('edit')));
         $options['action'] = 'reset';
         if ($definitiontable->get_legacy_type()) {
-            print_single_button($manageurl, $options, get_string('resetrole', 'role'));
+            echo $OUTPUT->button(html_form::make_button($manageurl, $options, get_string('resetrole', 'role')));
         } else {
-            print_single_button($manageurl, $options, get_string('resetrolenolegacy', 'role'));
+            echo $OUTPUT->button(html_form::make_button($manageurl, $options, get_string('resetrolenolegacy', 'role')));
         }
         $options['action'] = 'duplicate';
-        print_single_button($defineurl, $options, get_string('duplicaterole', 'role'));
-        print_single_button($manageurl, null, get_string('listallroles', 'role'));
-        echo "</div>\n";
+        echo $OUTPUT->button(html_form::make_button($defineurl, $options, get_string('duplicaterole', 'role')));
+        echo $OUTPUT->button(html_form::make_button($manageurl, null, get_string('listallroles', 'role')));
+        echo $OUTPUT->container_end();
     }
 
     // Start the form.

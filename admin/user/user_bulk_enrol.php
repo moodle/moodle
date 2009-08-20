@@ -45,6 +45,7 @@ usort($users, 'sort_compare');
 
 //Take courses data (id, shortname, and fullname)
 $courses = get_courses_page(1, 'c.sortorder ASC', 'c.id,c.shortname,c.fullname,c.visible', $totalcount);
+$table = new html_table();
 $table->width = "95%";
 $columns = array('fullname');
 foreach ($courses as $v)
@@ -124,7 +125,7 @@ foreach($users as $user)
     $table->data[] = $temparray;
 }
 echo $OUTPUT->heading("$usercount / $usertotal ".get_string('users'));
-print_table($table);
+echo $OUTPUT->table($table);
 echo '<div class="continuebutton">';
 echo '<input type="submit" name="multienrolsubmit" value="save changes" />';
 echo '</div>';

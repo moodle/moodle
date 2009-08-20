@@ -156,7 +156,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     }
-    notice_yesno(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&amp;delete=' . $delete . '&amp;sure=yes', $baseurl);
+    echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
     $return = false;
 }
 else if (!empty($move) && !empty($type)) {

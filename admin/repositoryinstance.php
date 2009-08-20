@@ -122,7 +122,8 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     }
-    notice_yesno(get_string('confirmdelete', 'repository', $instance->name), $sesskeyurl . '&amp;type=' . $type . '&amp;delete=' . $delete . '&amp;sure=yes', "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?session=". sesskey());
+
+    echo $OUTPUT->confirm(get_string('confirmdelete', 'repository', $instance->name), "$sesskeyurl&type=$type'&delete=$delete'&sure=yes", "$CFG->wwwroot/$CFG->admin/repositoryinstance.php?session=". sesskey());
     $return = false;
 }
 

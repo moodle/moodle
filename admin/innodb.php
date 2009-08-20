@@ -36,8 +36,9 @@
 
     } else {
         $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
-        notice_yesno('Are you sure you want convert all your tables to the InnoDB format?',
-                     'innodb.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        $formcontinue = html_form::make_button('innodb.php', $optionsyes, get_string('yes'));
+        $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
+        echo $OUTPUT->confirm('Are you sure you want convert all your tables to the InnoDB format?', $formcontinue, $formcancel);
         echo $OUTPUT->footer();
     }
 

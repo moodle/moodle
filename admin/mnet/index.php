@@ -49,13 +49,10 @@
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {
             $MNET->get_private_key();
             $SESSION->mnet_confirm_delete_key = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
-            notice_yesno(get_string("deletekeycheck", "mnet"),
-                                    "index.php?sesskey=".sesskey()."&amp;confirm=".md5($MNET->public_key),
-                                    "index.php",
-                                     array('sesskey' => sesskey()),
-                                     NULL,
-                                    'post',
-                                    'get');
+
+            $formcontinue = html_form::make_button('index.php', array('confirm' => md5($MNET->public_key)), get_string('yes'));
+            $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
+            echo $OUTPUT->confirm(get_string("deletekeycheck", "mnet"), $formcontinue, $formcancel);
             exit;
         } else {
             // We're deleting

@@ -89,7 +89,10 @@
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
                 $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
-                notice_yesno(get_string('deleterolesure', 'role', $a), $baseurl, $baseurl, $optionsyes, NULL, 'post', 'get');
+                
+                $formcontinue = html_form::make_button($baseurl, array('confirm' => 1, 'msg' => $msg), get_string('yes'));
+                $formcancel = html_form::make_button($baseurl, $optionsno, get_string('no'), 'get');
+                echo $OUTPUT->confirm(get_string('deleterolesure', 'role', $a), $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
             }
@@ -169,7 +172,9 @@
                 } else {
                     $warning = get_string('resetrolesure', 'role', $a);
                 }
-                notice_yesno($warning, 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
+                $formcontinue = html_form::make_button('manage.php', array('confirm' => 1, 'msg' => $msg), get_string('yes'));
+                $formcancel = html_form::make_button('manage.php', $optionsno, get_string('no'), 'get');
+                echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
                 echo $OUTPUT->footer();
                 die;
             }
@@ -195,7 +200,7 @@
     include_once('managetabs.php');
 
 /// Initialise table.
-    $table = new object;
+    $table = new html_table();
     $table->tablealign = 'center';
     $table->align = array('left', 'left', 'left', 'left');
     $table->wrap = array('nowrap', '', 'nowrap','nowrap');
@@ -256,11 +261,11 @@
 
         $table->data[] = $row;
     }
-    print_table($table);
+    echo $OUTPUT->table($table);
 
-    echo '<div class="buttons">';
-    print_single_button($defineurl, array('action' => 'add'), get_string('addrole', 'role'), 'get');
-    echo '</div>';
+    echo $OUTPUT->container_start('buttons');
+    echo $OUTPUT->button(html_form::make_button($defineurl, array('action' => 'add'), get_string('addrole', 'role'), 'get'));
+    echo $OUTPUT->container_end();
 
     echo $OUTPUT->footer();
     die;

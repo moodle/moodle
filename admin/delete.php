@@ -22,16 +22,21 @@
 
     if (empty($sure)) {
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey());
-        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?',
-            'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        
+        $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'));
+        $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
+        echo $OUTPUT->confirm('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         exit;
     }
 
     if (!data_submitted() or empty($reallysure)) {
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey(), 'reallysure'=>'yes');
-        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?',
-            'delete.php', 'index.php', $optionsyes, NULL, 'post', 'get');
+        $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'));
+        $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
+        echo $OUTPUT->confirm('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. 
+                $deletedir .' (this includes all user images, and any other course files that have been created) ?', 
+                $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         exit;
     }

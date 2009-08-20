@@ -67,7 +67,7 @@ if (($CFG->fullnamedisplay == 'firstname lastname') or
     $fullnamedisplay = $hcolumns['lastname'].' / '.$hcolumns['firstname'];
 }
 
-$table = new object();
+$table = new html_table();
 $table->head  = array($hcolumns['timemodified'], $fullnamedisplay, $hcolumns['plugin'], $hcolumns['name'], $hcolumns['value'], $hcolumns['oldvalue']);
 $table->align = array('left',                    'left',           'left',              'left',            'left',             'left');
 $table->size  = array('30%',                     '10%',            '10%',               '10%',             '20%',              '20%');
@@ -104,6 +104,6 @@ foreach ($rs as $log) {
 }
 $rs->close();
 
-print_table($table);
+echo $OUTPUT->table($table);
 
 echo $OUTPUT->footer();

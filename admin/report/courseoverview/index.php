@@ -48,6 +48,7 @@
     echo '<form action="index.php" method="post">'."\n";
     echo '<div>';
 
+    $table = new html_table();
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
     
@@ -64,7 +65,7 @@
                            '<input type="text" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',
                            '<input type="submit" value="'.get_string('view').'" />') ;
 
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo '</div>';
     echo '</form>';
 
@@ -98,7 +99,7 @@
                 echo '<div class="graph"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
             }
 
-            $table = new StdClass;
+            $table = new html_table();
             $table->align = array('left','center','center','center');
             $table->head = array(get_string('course'),$param->line1);
             if (!empty($param->line2)) {
@@ -121,7 +122,7 @@
                 }
                 $table->data[] = $a;
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
     }
     echo $OUTPUT->footer();

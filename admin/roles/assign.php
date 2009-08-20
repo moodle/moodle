@@ -402,7 +402,7 @@
 
         // Get the names of role holders for roles with between 1 and MAX_USERS_TO_LIST_PER_ROLE users,
         // and so determine whether to show the extra column.
-        $rolehodlernames = array();
+        $roleholdernames = array();
         $strmorethanmax = get_string('morethan', 'role', MAX_USERS_TO_LIST_PER_ROLE);
         $showroleholders = false;
         foreach ($assignableroles as $roleid => $notused) {
@@ -414,17 +414,18 @@
                     foreach ($roleusers as $user) {
                         $strroleusers[] = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '" >' . fullname($user) . '</a>';
                     }
-                    $rolehodlernames[$roleid] = implode('<br />', $strroleusers);
+                    $roleholdernames[$roleid] = implode('<br />', $strroleusers);
                     $showroleholders = true;
                 }
             } else if ($assigncounts[$roleid] > MAX_USERS_TO_LIST_PER_ROLE) {
-                $rolehodlernames[$roleid] = '<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$strmorethanmax.'</a>';
+                $roleholdernames[$roleid] = '<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$strmorethanmax.'</a>';
             } else {
-                $rolehodlernames[$roleid] = '';
+                $roleholdernames[$roleid] = '';
             }
         }
 
         // Print overview table
+        $table = new html_table();
         $table->tablealign = 'center';
         $table->width = '60%';
         $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'role'));
@@ -441,12 +442,12 @@
             $row = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',
                     $description, $assigncounts[$roleid]);
             if ($showroleholders) {
-                $row[] = $rolehodlernames[$roleid];
+                $row[] = $roleholdernames[$roleid];
             }
             $table->data[] = $row;
         }
 
-        print_table($table);
+        echo $OUTPUT->table($table);
 
         if (!$isfrontpage && ($url = get_context_url($context))) {
             echo '<div class="backlink"><a href="' . $url . '">' .

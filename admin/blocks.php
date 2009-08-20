@@ -57,9 +57,7 @@
         }
 
         if (!$confirm) {
-            notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
-                         'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.sesskey(),
-                         'blocks.php');
+            echo $OUTPUT->confirm(get_string('blockdeleteconfirm', '', $strblockname), 'blocks.php?delete='.$block->id.'&confirm=1', 'blocks.php');
             echo $OUTPUT->footer();
             exit;
 

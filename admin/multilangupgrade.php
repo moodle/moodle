@@ -18,7 +18,7 @@ $strmultilangupgrade = get_String('multilangupgradeinfo', 'admin');
 
 if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
     $optionsyes = array('go'=>1, 'sesskey'=>sesskey());
-    notice_yesno($strmultilangupgrade, 'multilangupgrade.php', 'index.php', $optionsyes, null, 'post', 'get');
+    echo $OUTPUT->confirm($strmultilangupgrade, new moodle_url('multilangupgrade.php', $optionsyes), 'index.php');
     echo $OUTPUT->footer();
     die;
 }

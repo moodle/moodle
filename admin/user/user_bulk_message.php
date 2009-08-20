@@ -55,14 +55,13 @@ if ($msgform->is_cancelled()) {
     $in = implode(',', $SESSION->bulk_users);
     $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
-    $optionsyes = array();
-    $optionsyes['confirm'] = 1;
-    $optionsyes['sesskey'] = sesskey();
-    $optionsyes['msg']     = $msg;
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
-    notice_yesno(get_string('confirmmessage', 'bulkusers', $usernames), 'user_bulk_message.php', 'user_bulk.php', $optionsyes, NULL, 'post', 'get');
+    
+    $formcontinue = html_form::make_button('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg), get_string('yes'));
+    $formcancel = html_form::make_button('user_bulk.php', $optionsno, get_string('no'), 'get');
+    echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
     echo $OUTPUT->footer();
     die;
 }

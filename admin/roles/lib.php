@@ -1335,7 +1335,7 @@ abstract class role_allow_role_page {
      * one cell for each checkbox. 
      */
     public function get_table() {
-        $table = new stdClass;
+        $table = new html_table();
         $table->tablealign = 'center';
         $table->cellpadding = 5;
         $table->cellspacing = 0;

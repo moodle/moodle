@@ -245,6 +245,7 @@
     } else {
     /// Show UI for choosing a role to assign.
 
+        $table = new html_table();
         $table->tablealign = 'center';
         $table->width = '60%';
         $table->head = array(get_string('role'), get_string('description'), get_string('overrides', 'role'));
@@ -258,7 +259,7 @@
                     $description, $overridecounts[$roleid]);
         }
 
-        print_table($table);
+        echo $OUTPUT->table($table);
 
         if (!$isfrontpage && ($url = get_context_url($context))) {
             echo '<div class="backlink"><a href="' . $url . '">' .

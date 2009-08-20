@@ -47,7 +47,7 @@ print_tabs(array($tabs), 'mnetthemes');
     $options['choose'] = $unlikely_name;// Something unlikely to ever be a theme name... initially $unlikely_name = 'ZoqZoqZ';
     $options['sesskey'] = $sesskey;
     $options['hostid'] = $mnet_peer->id;
-    print_single_button('mnet_themes.php', $options, $strchoose);
+    echo $OUTPUT->button(html_form::make_button('mnet_themes.php', $options, $strchoose));
     echo '</td>';
     echo "</tr>";
 
@@ -116,7 +116,7 @@ print_tabs(array($tabs), 'mnetthemes');
         $options['choose'] = $theme;
         $options['sesskey'] = $sesskey;
         $options['hostid'] = $mnet_peer->id;
-        print_single_button('mnet_themes.php', $options, $strchoose);
+        echo $OUTPUT->button(html_form::make_button('mnet_themes.php', $options, $strchoose));
         echo '</td>';
         echo "</tr>";
     }

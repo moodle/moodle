@@ -73,7 +73,7 @@
             $fullname = fullname($user, true);
             echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
-            notice_yesno(get_string('deletecheckfull', '', "'$fullname'"), 'user.php', 'user.php', $optionsyes, NULL, 'post', 'get');
+            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), new moodle_url('user.php', $optionsyes), 'user.php');
             echo $OUTPUT->footer();
             die;
         } else if (data_submitted() and !$user->deleted) {
@@ -213,6 +213,8 @@
         } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname') 
             $fullnamedisplay = "$lastname / $firstname";
         }
+
+        $table = new html_table();
         $table->head = array ($fullnamedisplay, $email, $city, $country, $lastaccess, "", "", "");
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
@@ -296,7 +298,7 @@
         echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
     }
     if (!empty($table)) {
-        print_table($table);
+        echo $OUTPUT->table($table);
         echo $OUTPUT->paging_bar(moodle_paging_bar::make($usercount, $page, $perpage, $baseurl));
         if (has_capability('moodle/user:create', $sitecontext)) {
             echo $OUTPUT->heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');

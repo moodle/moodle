@@ -30,7 +30,7 @@
 
         $message = get_string("configintrotimezones", 'admin', $message);
 
-        notice_yesno($message, 'timezoneimport.php?ok=1&amp;sesskey='.sesskey(), 'index.php');
+        echo $OUTPUT->confirm($message, 'timezoneimport.php?ok=1', 'index.php');
 
         echo $OUTPUT->footer();
         exit;

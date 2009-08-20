@@ -46,6 +46,7 @@ function sort_compare($a, $b) {
 }
 usort($users, 'sort_compare');
 
+$table = new html_table();
 $table->width = "95%";
 $columns = array('fullname', /*'username', */'email', 'city', 'country', 'lastaccess');
 foreach ($columns as $column) {
@@ -73,7 +74,7 @@ foreach($users as $user) {
 }
 
 echo $OUTPUT->heading("$usercount / $usertotal ".get_string('users'));
-print_table($table);
+echo $OUTPUT->table($table);
 
 echo $OUTPUT->continue_button($return);
 

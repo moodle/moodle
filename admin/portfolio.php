@@ -101,7 +101,7 @@ if (!empty($edit) || !empty($new)) {
         }
         exit;
     }
-    notice_yesno(get_string('sure', 'portfolio', $instance->get('name')), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
+    echo $OUTPUT->confirm(get_string('sure', 'portfolio', $instance->get('name')), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
     $return = false;
 }
 

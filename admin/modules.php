@@ -77,9 +77,7 @@
         $strmodulename = get_string("modulename", "$delete");
 
         if (!$confirm) {
-            notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename),
-                         "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=".sesskey(),
-                         "modules.php");
+            echo $OUTPUT->confirm(get_string("moduledeleteconfirm", "", $strmodulename), "modules.php?delete=$delete&confirm=1", "modules.php");
             echo $OUTPUT->footer();
             exit;
 

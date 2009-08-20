@@ -120,9 +120,10 @@
             $title = get_string('deletefilterareyousure', 'admin', $filtername);
             admin_externalpage_print_header();
             echo $OUTPUT->heading($title);
-            notice_yesno(get_string('deletefilterareyousuremessage', 'admin', $filtername), $returnurl .
-                    '?action=delete&amp;filterpath=' . $filterpath . '&amp;confirm=1&amp;sesskey=' . sesskey(),
-                    $returnurl, NULL, NULL, 'post', 'get');
+            
+            $linkcontinue = new moodle_url($returnurl, array('action' => 'delete', 'filterpath' => $filterpath, 'confirm' => 1));
+            $formcancel = html_form::make_button($returnurl, null, get_string('no'), 'get');
+            echo $OUTPUT->confirm(get_string('deletefilterareyousuremessage', 'admin', $filtername), $linkcontinue, $formcancel);
             echo $OUTPUT->footer();
             exit;
         }
@@ -181,7 +182,7 @@
     }
     $stringfilters = filter_get_string_filters();
 
-    $table = new object();
+    $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
             get_string('order'), get_string('applyto', 'filters'), get_string('settings'), get_string('delete'));
     $table->align = array('left', 'left', 'center', 'left', 'left');
@@ -217,7 +218,7 @@
         $table->rowclasses[] = 'dimmed_text';
     }
 
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo '<p class="filtersettingnote">' . get_string('filterallwarning', 'filters') . '</p>';
     echo $OUTPUT->footer();
 

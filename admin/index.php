@@ -127,8 +127,7 @@ if (!core_tables_exist()) {
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
         echo $OUTPUT->box($copyrightnotice, 'copyrightnotice');
         echo '<br />';
-        notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang",
-                                               "http://docs.moodle.org/en/License");
+        echo $OUTPUT->confirm(get_string('doyouagree'), "index.php?agreelicense=1&lang=$CFG->lang", "http://docs.moodle.org/en/License");
         echo $OUTPUT->footer();
         die;
     }

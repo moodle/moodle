@@ -78,7 +78,7 @@ if ($requestedqtype) {
     echo $OUTPUT->heading($title);
 
     // Initialise the table.
-    $table = new stdClass;
+    $table = new html_table();
     $table->head = array(
             get_string('context', 'role'),
             get_string('totalquestions', 'report_questioninstances'),
@@ -124,7 +124,7 @@ if ($requestedqtype) {
             $totalhidden);
 
     // Print it.
-    print_table($table);
+    echo $OUTPUT->table($table);
 }
 
 // Footer.
