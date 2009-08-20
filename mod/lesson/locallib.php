@@ -1765,7 +1765,11 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
     $options  = 'menubar=0,location=0,left=5,top=5,scrollbars,resizable,width='. $lesson->mediawidth .',height='. $lesson->mediaheight;
     $name     = 'lessonmediafile';
 
-    $content  = link_to_popup_window ($url, $name, get_string('mediafilepopup', 'lesson'), '', '', get_string('mediafilepopup', 'lesson'), $options, true);
+    $link = html_link::make($url, get_string('mediafilepopup', 'lesson'));
+    $link->add_action(new popup_action('click', $link->url, $name, $options));
+    $link->title = get_string('mediafilepopup', 'lesson');
+    $content .= $OUTPUT->link($link);                    
+    
     $content .= $OUTPUT->help_icon(moodle_help_icon::make("mediafilestudent", get_string("mediafile", "lesson"), "lesson"));
 
     $bc = new block_contents();
