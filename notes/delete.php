@@ -60,7 +60,7 @@ if (data_submitted() && confirm_sesskey()) {
     $nav[] = array('name' => get_string('notes', 'notes'), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
     $nav[] = array('name' => get_string('delete'), 'link' => '', 'type' => 'activity');
     print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
-    notice_yesno(get_string('deleteconfirm', 'notes'), 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+    echo $OUTPUT->confirm(get_string('deleteconfirm', 'notes'), new moodle_url('delete.php',$optionsyes),  new moodle_url('index.php',$optionsno));
     echo '<br />';
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);
     echo $OUTPUT->footer();

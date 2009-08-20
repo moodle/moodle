@@ -164,7 +164,7 @@ function note_get_state_names() {
  * @param int   $detail OR-ed NOTES_SHOW_xyz flags that specify which note parts to print
  */
 function note_print($note, $detail = NOTES_SHOW_FULL) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
         debugging("User $note->userid not found");
@@ -189,7 +189,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     if ($detail & NOTES_SHOW_HEAD) {
         echo '<div class="header">';
         echo '<div class="user">';
-        print_user_picture($user, $note->courseid, $user->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($user, $note->courseid));
         echo fullname($user) . '</div>';
         echo '<div class="info">' .
             get_string('bynameondate', 'notes', $authoring) .
