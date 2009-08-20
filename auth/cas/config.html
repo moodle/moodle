@@ -162,7 +162,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         if (isset($err['hostname'])) {
 
-            formerr($err['hostname']);
+            echo $OUTPUT->error_text($err['hostname']);
 
         }
 
@@ -192,7 +192,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         if (isset($err['baseuri'])) {
 
-            formerr($err['baseuri']);
+            echo $OUTPUT->error_text($err['baseuri']);
 
         }
 
@@ -222,7 +222,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         if (isset($err['port'])) {
 
-            formerr($err['port']);
+            echo $OUTPUT->error_text($err['port']);
 
         }
 
@@ -252,7 +252,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         if (isset($err['casversion'])) {
 
-            formerr($err['casversion']);
+            echo $OUTPUT->error_text($err['casversion']);
 
         }
 
@@ -389,7 +389,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         <input name="host_url" id="host_url" type="text" size="30" value="<?php echo $config->host_url?>" />
 
-    <?php  if (isset($err['host_url'])) formerr($err['host_url']); ?>
+    <?php  if (isset($err['host_url'])) echo $OUTPUT->error_text($err['host_url']); ?>
 
     </td>
 
@@ -419,7 +419,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        echo $OUTPUT->select(html_select::make($versions, 'version', $config->version, false));
 
-       if (isset($err['version'])) formerr($err['version']);
+       if (isset($err['version'])) echo $OUTPUT->error_text($err['version']);
 
     ?>
 
@@ -449,7 +449,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
         if (isset($err['ldapencoding'])) {
 
-            formerr($err['ldapencoding']);
+            echo $OUTPUT->error_text($err['ldapencoding']);
 
         }
 
@@ -485,7 +485,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="bind_dn" id="bind_dn" type="text" size="30" value="<?php echo $config->bind_dn?>" />
 
-    <?php  if (isset($err['bind_dn'])) formerr($err['bind_dn']); ?>
+    <?php  if (isset($err['bind_dn'])) echo $OUTPUT->error_text($err['bind_dn']); ?>
 
     </td><td>
 
@@ -505,7 +505,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="bind_pw" id="bind_pw" type="password" size="30" value="<?php echo $config->bind_pw?>" />
 
-    <?php  if (isset($err['bind_pw'])) formerr($err['bind_pw']); ?>
+    <?php  if (isset($err['bind_pw'])) echo $OUTPUT->error_text($err['bind_pw']); ?>
 
     </td><td>
 
@@ -537,7 +537,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <?php echo $OUTPUT->select(html_select::make($this->ldap_suppported_usertypes(), 'user_type', $config->user_type, false)); ?>
 
-    <?php  if (isset($err['user_type'])) formerr($err['user_type']); ?>
+    <?php  if (isset($err['user_type'])) echo $OUTPUT->error_text($err['user_type']); ?>
 
     </td>
 
@@ -559,7 +559,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="contexts" id="contexts"  type="text" size="30" value="<?php echo $config->contexts?>" />
 
-    <?php  if (isset($err['contexts'])) formerr($err['contexts']); ?>
+    <?php  if (isset($err['contexts'])) echo $OUTPUT->error_text($err['contexts']); ?>
 
     </td>
 
@@ -609,7 +609,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
        echo $OUTPUT->select(html_select::make($opt_deref, 'opt_deref', $config->opt_deref, LDAP_DEREF_NEVER, false));
 
-       if (isset($err['opt_deref'])) formerr($err['opt_deref']);
+       if (isset($err['opt_deref'])) echo $OUTPUT->error_text($err['opt_deref']);
 
     ?>
 
@@ -637,7 +637,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="user_attribute" id="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute?>" />
 
-    <?php  if (isset($err['user_attribute'])) formerr($err['user_attribute']); ?>
+    <?php  if (isset($err['user_attribute'])) echo $OUTPUT->error_text($err['user_attribute']); ?>
 
     </td>
 
@@ -659,7 +659,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="memberattribute" id="memberattribute" type="text" size="30" value="<?php echo $config->memberattribute?>" />
 
-    <?php  if (isset($err['memberattribute'])) formerr($err['memberattribute']); ?>
+    <?php  if (isset($err['memberattribute'])) echo $OUTPUT->error_text($err['memberattribute']); ?>
 
     </td><td>
 
@@ -679,7 +679,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="memberattribute_isdn" id="memberattribute_isdn" type="text" size="30" value="<?php echo $config->memberattribute_isdn?>" />
 
-    <?php  if (isset($err['memberattribute_isdn'])) formerr($err['memberattribute_isdn']); ?>
+    <?php  if (isset($err['memberattribute_isdn'])) echo $OUTPUT->error_text($err['memberattribute_isdn']); ?>
 
     </td><td>
 
@@ -699,7 +699,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="objectclass" id="objectclass" type="text" size="30" value="<?php echo $config->objectclass?>" />
 
-    <?php  if (isset($err['objectclass'])) formerr($err['objectclass']); ?>
+    <?php  if (isset($err['objectclass'])) echo $OUTPUT->error_text($err['objectclass']); ?>
 
     </td>
 
@@ -733,7 +733,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="attrcreators" id="attrcreators" type="text" size="30" value="<?php echo $config->attrcreators?>" />
 
-    <?php  if (isset($err['attrcreators'])) formerr($err['attrcreators']); ?>
+    <?php  if (isset($err['attrcreators'])) echo $OUTPUT->error_text($err['attrcreators']); ?>
 
     </td><td>
 
@@ -753,7 +753,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
 
     <input name="groupecreators" id="groupecreators" type="text" size="30" value="<?php echo $config->groupecreators?>" />
 
-    <?php  if (isset($err['groupecreators'])) formerr($err['groupecreators']); ?>
+    <?php  if (isset($err['groupecreators'])) echo $OUTPUT->error_text($err['groupecreators']); ?>
 
     </td><td>
 

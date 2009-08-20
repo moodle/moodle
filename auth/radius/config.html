@@ -36,7 +36,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['host'])) {
-            formerr($err['host']);
+            echo $OUTPUT->error_text($err['host']);
         }
 
         ?>
@@ -51,7 +51,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['nasport'])) {
-            formerr($err['nasport']);
+            echo $OUTPUT->error_text($err['nasport']);
         }
 
         ?>
@@ -72,7 +72,7 @@ if (!isset($config->changepasswordurl)) {
     echo $OUTPUT->select(html_select::make($radiustype, 'radiustype', $config->radiustype, false));
 
     if (isset($err['radiustype'])) {
-        formerr($err['radiustype']);
+        echo $OUTPUT->error_text($err['radiustype']);
     }
 
 ?>
@@ -88,7 +88,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['secret'])) {
-            formerr($err['secret']);
+            echo $OUTPUT->error_text($err['secret']);
         }
 
         ?>
@@ -103,7 +103,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['changepasswordurl'])) {
-            formerr($err['changepasswordurl']);
+            echo $OUTPUT->error_text($err['changepasswordurl']);
         }
 
         ?>

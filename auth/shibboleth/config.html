@@ -126,7 +126,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
         <?php
 
         if (isset($err['changepasswordurl'])) {
-            formerr($err['changepasswordurl']);
+            echo $OUTPUT->error_text($err['changepasswordurl']);
         }
 
         ?>

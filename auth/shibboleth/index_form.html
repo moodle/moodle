@@ -23,7 +23,7 @@ if ($show_instructions) {
         <?php
           if (!empty($errormsg)) {
               echo '<div class="loginerrors">';
-              formerr($errormsg);
+              echo $OUTPUT->error_text($errormsg);
               echo '</div>';
           }
 

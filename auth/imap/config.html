@@ -24,7 +24,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['host'])) {
-            formerr($err['host']);
+            echo $OUTPUT->error_text($err['host']);
         }
 
         ?>
@@ -62,7 +62,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['port'])) {
-            formerr($err['port']);
+            echo $OUTPUT->error_text($err['port']);
         }
 
         ?>
@@ -77,7 +77,7 @@ if (!isset($config->changepasswordurl)) {
         <?php
 
         if (isset($err['changepasswordurl'])) {
-            formerr($err['changepasswordurl']);
+            echo $OUTPUT->error_text($err['changepasswordurl']);
         }
 
         ?>

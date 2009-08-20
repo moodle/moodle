@@ -59,7 +59,7 @@
         <?php
 
         if (isset($err["host"])) {
-            formerr($err["host"]);
+            echo $OUTPUT->error_text($err["host"]);
         }
 
         ?>
@@ -98,7 +98,7 @@
         <?php
 
         if (isset($err["name"])) {
-            formerr($err["name"]);
+            echo $OUTPUT->error_text($err["name"]);
         }
 
         ?>
@@ -113,7 +113,7 @@
         <?php
 
         if (isset($err["user"])) {
-            formerr($err["user"]);
+            echo $OUTPUT->error_text($err["user"]);
         }
 
         ?>
@@ -128,7 +128,7 @@
         <?php
 
         if (isset($err["pass"])) {
-            formerr($err["pass"]);
+            echo $OUTPUT->error_text($err["pass"]);
         }
 
         ?>
@@ -145,7 +145,7 @@
         <?php
 
         if (isset($err["table"])) {
-            formerr($err["table"]);
+            echo $OUTPUT->error_text($err["table"]);
         }
 
         ?>
@@ -160,7 +160,7 @@
         <?php
 
         if (isset($err["fielduser"])) {
-            formerr($err["fielduser"]);
+            echo $OUTPUT->error_text($err["fielduser"]);
         }
 
         ?>
@@ -175,7 +175,7 @@
         <?php
 
         if (isset($err["fieldpass"])) {
-            formerr($err["fieldpass"]);
+            echo $OUTPUT->error_text($err["fieldpass"]);
         }
 
         ?>
@@ -206,7 +206,7 @@
         <?php
 
         if (isset($err['extencoding'])) {
-            formerr($err['extencoding']);
+            echo $OUTPUT->error_text($err['extencoding']);
         }
 
         ?>
@@ -237,7 +237,7 @@
         <?php
 
         if (isset($err['changepasswordurl'])) {
-            formerr($err['changepasswordurl']);
+            echo $OUTPUT->error_text($err['changepasswordurl']);
         }
 
         ?>
