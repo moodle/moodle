@@ -8,7 +8,7 @@
  ?>
       </p>
 
-      <p align="center"><?php if (! empty($this->errormsg)) {formerr($this->errormsg);} ?></p>
+      <p align="center"><?php if (! empty($this->errormsg)) {echo $OUTPUT->error_text($this->errormsg);} ?></p>
 
 
       <form method="post" action="enrol.php">

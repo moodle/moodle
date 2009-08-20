@@ -96,7 +96,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_host_url:</td>
     <td>
         <input name="enrol_ldap_host_url" type="text" size="30" value="<?php echo $frm->enrol_ldap_host_url?>" />
-    <?php  if (isset($err["enrol_ldap_host_url"])) formerr($err["enrol_ldap_host_url"]); ?>
+    <?php  if (isset($err["enrol_ldap_host_url"])) echo $OUTPUT->error_text($err["enrol_ldap_host_url"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_host_url","enrol_ldap") ?>
@@ -109,7 +109,7 @@ if (!isset($frm->enrol_ldap_template)) {
        $versions[2] = "2";
        $versions[3] = "3";
        echo $OUTPUT->select(html_select::make($versions, "enrol_ldap_version", $frm->enrol_ldap_version, false));
-        if (isset($err["enrol_ldap_version"])) formerr($err["enrol_ldap_version"]); 
+        if (isset($err["enrol_ldap_version"])) echo $OUTPUT->error_text($err["enrol_ldap_version"]); 
     ?>
     </td>
     <td>
@@ -121,7 +121,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_bind_dn:</td>
     <td>
     <input name="enrol_ldap_bind_dn" type="text" size="30" value="<?php echo $frm->enrol_ldap_bind_dn?>" />
-    <?php  if (isset($err["enrol_ldap_bind_dn"])) formerr($err["ldap_bind_dn"]); ?>
+    <?php  if (isset($err["enrol_ldap_bind_dn"])) echo $OUTPUT->error_text($err["ldap_bind_dn"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_bind_dn","enrol_ldap") ?>
     </td>
@@ -131,7 +131,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">ldap_bind_pw:</td>
     <td>
     <input name="enrol_ldap_bind_pw" type="password" size="30" value="<?php echo $frm->enrol_ldap_bind_pw?>" />
-    <?php  if (isset($err["enrol_ldap_bind_pw"])) formerr($err["enrol_ldap_bind_pw"]); ?>
+    <?php  if (isset($err["enrol_ldap_bind_pw"])) echo $OUTPUT->error_text($err["enrol_ldap_bind_pw"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_bind_pw","enrol_ldap") ?>
     </td>
@@ -146,7 +146,7 @@ if (!isset($frm->enrol_ldap_template)) {
     $choices["1"] = get_string("yes");
     echo $OUTPUT->select(html_select::make ($choices, "enrol_ldap_search_sub", $frm->enrol_ldap_search_sub, false));
 ?>
-    <?php  if (isset($err["enrol_ldap_search_sub"])) formerr($err["enrol_ldap_search_sub"]); ?>
+    <?php  if (isset($err["enrol_ldap_search_sub"])) echo $OUTPUT->error_text($err["enrol_ldap_search_sub"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_search_sub","enrol_ldap") ?>
     </td>
@@ -162,7 +162,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_student_contexts:</td>
     <td>
     <input name="enrol_ldap_student_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_student_contexts?>" />
-    <?php  if (isset($err["enrol_ldap_student_contexts"])) formerr($err["enrol_ldap_student_contexts"]); ?>
+    <?php  if (isset($err["enrol_ldap_student_contexts"])) echo $OUTPUT->error_text($err["enrol_ldap_student_contexts"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_student_contexts","enrol_ldap") ?>
@@ -172,7 +172,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_student_memberattribute:</td>
         <td>
     <input name="enrol_ldap_student_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_student_memberattribute?>" />
-    <?php  if (isset($err["enrol_ldap_student_memberattribute"])) formerr($err["enrol_ldap_student_memberattribute"]); ?>
+    <?php  if (isset($err["enrol_ldap_student_memberattribute"])) echo $OUTPUT->error_text($err["enrol_ldap_student_memberattribute"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_student_memberattribute","enrol_ldap") ?>
     </td>
@@ -187,7 +187,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_teacher_contexts:</td>
     <td>
     <input name="enrol_ldap_teacher_contexts" type="text" SIZE="30 "value="<?php echo $frm->enrol_ldap_teacher_contexts?>" />
-    <?php  if (isset($err["enrol_ldap_teacher_contexts"])) formerr($err["enrol_ldap_teacher_contexts"]); ?>
+    <?php  if (isset($err["enrol_ldap_teacher_contexts"])) echo $OUTPUT->error_text($err["enrol_ldap_teacher_contexts"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_teacher_contexts","enrol_ldap") ?>
@@ -197,7 +197,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_teacher_memberattribute:</td>
         <td>
     <input name="enrol_ldap_teacher_memberattribute" type="text" size="30" value="<?php echo $frm->enrol_ldap_teacher_memberattribute?>" />
-    <?php  if (isset($err["enrol_ldap_teacher_memberattribute"])) formerr($err["enrol_ldap_teacher_memberattribute"]); ?>
+    <?php  if (isset($err["enrol_ldap_teacher_memberattribute"])) echo $OUTPUT->error_text($err["enrol_ldap_teacher_memberattribute"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_teacher_memberattribute","enrol_ldap") ?>
     </td>
@@ -237,7 +237,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td align="right">enrol_ldap_objectclass:</td>
     <td>
     <input name="enrol_ldap_objectclass" type="text" size="30" value="<?php echo $frm->enrol_ldap_objectclass?>"/>
-    <?php  if (isset($err["enrol_ldap_objectclass"])) formerr($err["enrol_ldap_objectclass"]); ?>
+    <?php  if (isset($err["enrol_ldap_objectclass"])) echo $OUTPUT->error_text($err["enrol_ldap_objectclass"]); ?>
     </td>
     <td>
     <?php  print_string("enrol_ldap_objectclass","enrol_ldap") ?>
@@ -247,7 +247,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_course_idnumber:</td>
         <td>
     <input name="enrol_ldap_course_idnumber" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_idnumber?>"/>
-    <?php  if (isset($err["enrol_ldap_course_idnumber"])) formerr($err["enrol_ldap_course_idnumber"]); ?>
+    <?php  if (isset($err["enrol_ldap_course_idnumber"])) echo $OUTPUT->error_text($err["enrol_ldap_course_idnumber"]); ?>
     <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_idnumber_updatelocal">
@@ -271,7 +271,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_course_shortname:</td>
         <td>
     <input name="enrol_ldap_course_shortname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_shortname?>"/>
-    <?php  if (isset($err["enrol_ldap_course_shortname"])) formerr($err["enrol_ldap_course_shortname"]); ?>
+    <?php  if (isset($err["enrol_ldap_course_shortname"])) echo $OUTPUT->error_text($err["enrol_ldap_course_shortname"]); ?>
     <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_shortname_updatelocal">
@@ -296,7 +296,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_course_fullname:</td>
         <td>
     <input name="enrol_ldap_course_fullname" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_fullname ?>"/>
-    <?php  if (isset($err["enrol_ldap_course_fullname"])) formerr($err["enrol_ldap_course_fullname"]); ?>
+    <?php  if (isset($err["enrol_ldap_course_fullname"])) echo $OUTPUT->error_text($err["enrol_ldap_course_fullname"]); ?>
     <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_fullname_updatelocal">
@@ -321,7 +321,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_course_summary:</td>
         <td>
     <input name="enrol_ldap_course_summary" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_summary?>"/>    
-    <?php  if (isset($err["enrol_ldap_course_summary"])) formerr($err["enrol_ldap_course_summary"]); ?>
+    <?php  if (isset($err["enrol_ldap_course_summary"])) echo $OUTPUT->error_text($err["enrol_ldap_course_summary"]); ?>
     <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
     <select name="enrol_ldap_course_summary_updatelocal">
@@ -352,7 +352,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td>
     <?php
        echo $OUTPUT->select(html_select::make(array('0'=>'no','1'=>'yes'), "enrol_ldap_autocreate", $frm->enrol_ldap_autocreate, false));
-           if (isset($err["enrol_ldap_autocreate"])) formerr($err["enrol_ldap_autocreate"]); 
+           if (isset($err["enrol_ldap_autocreate"])) echo $OUTPUT->error_text($err["enrol_ldap_autocreate"]); 
     ?>
     </td>
     <td>
@@ -369,7 +369,7 @@ if (!isset($frm->enrol_ldap_template)) {
            echo $OUTPUT->select(html_select::make($displaylist, "enrol_ldap_category", $frm->enrol_ldap_category, false));
            
     ?>
-    <?php  if (isset($err["enrol_ldap_category"])) formerr($err["enrol_ldap_category"]); ?>
+    <?php  if (isset($err["enrol_ldap_category"])) echo $OUTPUT->error_text($err["enrol_ldap_category"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_category","enrol_ldap") ?>
     </td>
@@ -379,7 +379,7 @@ if (!isset($frm->enrol_ldap_template)) {
         <td align="right">enrol_ldap_template:</td>
         <td>
     <input name="enrol_ldap_template" type="text" size="30" value="<?php echo $frm->enrol_ldap_template?>" />
-    <?php  if (isset($err["enrol_ldap_template"])) formerr($err["enrol_ldap_template"]); ?>
+    <?php  if (isset($err["enrol_ldap_template"])) echo $OUTPUT->error_text($err["enrol_ldap_template"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_template","enrol_ldap") ?>
     </td>
