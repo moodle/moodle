@@ -52,7 +52,7 @@
     $strweek  = get_string("week");
     $strtopic  = get_string("topic");
     $strnodeadline = get_string("nodeadline", "lesson");
-    $table = new stdClass;
+    $table = new html_table();
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);
@@ -102,7 +102,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
 /// Finish the page
 

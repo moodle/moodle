@@ -165,7 +165,7 @@
                 }
                 krsort($topscores);
                        
-                $table = new stdClass;
+                $table = new html_table();
                 $table->align = array('center', 'left', 'right');
                 $table->wrap = array();
                 $table->width = "30%";
@@ -188,7 +188,7 @@
                         break;
                     }
                 }
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
         
             if (!has_capability('mod/lesson:manage', $context)) {  // teachers don't need the links

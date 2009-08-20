@@ -25,7 +25,7 @@
             echo $title."<br />\n";
         }
     }
-    notice_yesno(get_string("confirmdeletionofthispage","lesson"), 
-         "lesson.php?action=delete&amp;id=$cm->id&amp;pageid=$pageid&amp;sesskey=".sesskey(),
+    echo $OUTPUT->confirm(get_string("confirmdeletionofthispage","lesson"), 
+         "lesson.php?action=delete&id=$cm->id&pageid=$pageid",
          "view.php?id=$cm->id");
 ?>

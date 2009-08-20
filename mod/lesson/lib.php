@@ -219,6 +219,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
     if ($attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params,
                 "retry, timeseen")) {
         echo $OUTPUT->box_start();
+        $table = new html_table();
         $table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
             get_string("numberofcorrectanswers", "lesson"), get_string("time"));
         $table->width = "100%";
@@ -252,7 +253,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         if ($npages) {
                 $table->data[] = array($retry + 1, $npages, $ncorrect, userdate($timeseen));
         }
-        print_table($table);
+        echo $OUTPUT->table($table);
         echo $OUTPUT->box_end();
         // also print grade summary
         $params = array ("lessonid" => $lesson->id, "userid" => $user->id);

@@ -257,7 +257,7 @@
             }
             
             // Setup table
-            $table = new stdClass;
+            $table = new html_table();
             $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('email', 'lesson'));
             $table->align = array('left', 'left', 'left');
             $table->wrap = array('nowrap', 'nowrap', 'nowrap');
@@ -309,14 +309,14 @@
                 // email link for this user
                 $emaillink = "<a href=\"$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id&amp;mode=email&amp;userid=$userid&amp;sesskey=".sesskey().'">'.get_string('emailgradedessays', 'lesson').'</a>';
 
-                $table->data[] = array(print_user_picture($userid, $course->id, $users[$userid]->picture, 0, true).$studentname, implode("<br />\n", $essaylinks), $emaillink);
+                $table->data[] = array($OUTPUT->user_picture(moodle_user_picture::make($users[$userid], $course->id)).$studentname, implode("<br />\n", $essaylinks), $emaillink);
             }
             // email link for all users
             $emailalllink = "<a href=\"$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id&amp;mode=email&amp;sesskey=".sesskey().'">'.get_string('emailallgradedessays', 'lesson').'</a>';
 
             $table->data[] = array(' ', ' ', $emailalllink);
             
-            print_table($table);
+            echo $OUTPUT->table($table);
             break;
         case 'grade':
             // Grading form
@@ -330,34 +330,34 @@
                   <input type="hidden" name="sesskey" value="'.sesskey().'" />';    
 
             // All tables will have these settings
-            $table = new stdClass;
-            $table->align = array('left');
-            $table->wrap = array();
-            $table->width = '50%';
-            $table->size = array('100%');
-            $table->class = 'generaltable gradetable';
+            $originaltable = new html_table();
+            $originaltable->align = array('left');
+            $originaltable->wrap = array();
+            $originaltable->width = '50%';
+            $originaltable->size = array('100%');
+            $originaltable->add_class('generaltable gradetable');
 
             // Print the question
+            $table = clone($originaltable);
             $table->head = array(get_string('question', 'lesson'));
             $options = new stdClass;
             $options->noclean = true;
             $table->data[] = array(format_text($page->contents, FORMAT_MOODLE, $options));
 
-            print_table($table);
-
-            unset($table->data);
+            echo $OUTPUT->table($table);
             
             // Now the user's answer
             $essayinfo = unserialize($attempt->useranswer);
             
+            $table = clone($originaltable);
+            $table = new html_table();
             $table->head = array(get_string('studentresponse', 'lesson', fullname($user, true)));
             $table->data[] = array(s($essayinfo->answer));
 
-            print_table($table);
-
-            unset($table->data);
+            echo $OUTPUT->table($table);
 
             // Now a response box and grade drop-down for grader
+            $table = clone($originaltable);
             $table->head = array(get_string('comments', 'lesson'));
             $table->data[] = array(print_textarea(false, 15, 60, 0, 0, 'response', $essayinfo->response, $course->id, true));
             $options = array();
@@ -373,7 +373,7 @@
             $select->nothingvalue = '';
             $table->data[] = array(get_string('essayscore', 'lesson').': '.$OUTPUT->select($select));
 
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo '<div class="buttons">
                   <input type="submit" name="cancel" value="'.get_string('cancel').'" />
                   <input type="submit" value="'.get_string('savechanges').'" />

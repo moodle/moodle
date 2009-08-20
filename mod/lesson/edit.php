@@ -62,7 +62,7 @@
         
         switch ($mode) {
             case 'collapsed':
-                $table = new stdClass;
+                $table = new html_table();
                 $table->head = array(get_string('pagetitle', 'lesson'), get_string('qtype', 'lesson'), get_string('jumps', 'lesson'), get_string('actions', 'lesson'));
                 $table->align = array('left', 'left', 'left', 'center');
                 $table->wrap = array('', 'nowrap', '', 'nowrap');
@@ -98,7 +98,7 @@
                     $pageid = $page->nextpageid;
                 }
                 
-                print_table($table);
+                echo $OUTPUT->table($table);
                 break;
                 
             case 'single':

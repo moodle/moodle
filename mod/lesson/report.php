@@ -185,7 +185,8 @@
         $lowscore      = NULL;
         $hightime      = NULL;
         $lowtime       = NULL;
-        $table         = new stdClass;
+
+        $table = new html_table();
 
         // set up the table object
         $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
@@ -268,7 +269,7 @@
                    <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n
                    <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
         }
-        print_table($table);
+        echo $OUTPUT->table($table);
         
         if (has_capability('mod/lesson:edit', $context)) {
             echo '<br /><table width="90%" align="center"><tr><td>'.
@@ -325,7 +326,7 @@
         $stattable->width = "90%";
         $stattable->data[] = array($avescore.'%', $avetime, $highscore.'%', $lowscore.'%', $hightime, $lowtime);
 
-        print_table($stattable);
+        echo $OUTPUT->table($stattable);
 }
     /**************************************************************************
     this action is for a student detailed view and for the general detailed view
@@ -822,7 +823,7 @@
         }
 
         /// actually start printing something
-        $table = new stdClass;
+        $table = new html_table();
         $table->wrap = array();
         $table->width = "60%";
 
@@ -866,16 +867,16 @@
                 
                 $gradeinfo = lesson_grade($lesson, $try, $user->id);
                 
-                $table->data[] = array(get_string('name').':', print_user_picture($user->id, $course->id, $user->picture, 0, true).fullname($user, true));
+                $table->data[] = array(get_string('name').':', $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id)).fullname($user, true));
                 $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
                 $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
                 $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);
                 $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
             
             // Don't want this class for later tables
-            unset($table->class);
+            $table->set_classes();
             echo "<br />";
         }
 
@@ -913,7 +914,7 @@
                 $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.format_text($page->answerdata->response,FORMAT_MOODLE,$formattextdefoptions).$fontend2, " ");
             }
             $table->data[] = array($page->answerdata->score, " ");
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "<br />";
         }
     }
