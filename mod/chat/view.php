@@ -49,7 +49,7 @@
         print_header_simple(format_string($chat->name), '', $navigation,
                       '', '', true, '', navmenu($course, $cm));
 
-        notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
+        echo $OUTPUT->confirm(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
                 get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
 
         echo $OUTPUT->footer();
@@ -172,7 +172,7 @@
             $lastping = $timenow - $chatuser->lastmessageping;
             echo '<tr><td class="chatuserimage">';
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$chat->course\">";
-            print_user_picture($chatuser, $COURSE->id, $chatuser->picture, false, false, false);
+            echo $OUTPUT->user_picture(moodle_user_picture::make($chatuser, $COURSE->id));
             echo '</a></td><td class="chatuserdetails">';
             echo '<p>';
             echo fullname($chatuser).'<br />';

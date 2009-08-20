@@ -59,8 +59,8 @@
         }
 
         if ($deletesession and has_capability('mod/chat:deletelog', $context)) {
-            notice_yesno(get_string('deletesessionsure', 'chat'),
-                         "report.php?id=$cm->id&amp;deletesession=1&amp;confirmdelete=1&amp;start=$start&amp;end=$end&amp;sesskey=".sesskey(),
+            echo $OUTPUT->confirm(get_string('deletesessionsure', 'chat'),
+                         "report.php?id=$cm->id&deletesession=1&confirmdelete=1&start=$start&end=$end",
                          "report.php?id=$cm->id");
         }
 
@@ -189,7 +189,7 @@
                 arsort($sessionusers);
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
                     if ($user = $DB->get_record('user', array('id'=>$sessionuser))) {
-                        print_user_picture($user, $course->id, $user->picture);
+                        $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
                         echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true
                         echo "&nbsp;($usermessagecount)<br />";
                     }

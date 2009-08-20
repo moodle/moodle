@@ -101,7 +101,9 @@
     echo '<div id="participants"><ul>';
     foreach($chatusers as $chu) {
         echo '<li>';
-        print_user_picture($chu->id, $course->id, $chu->picture, 24, false, false, '', false);
+        $userpic = moodle_user_picture::make($chu->id, $course->id);
+        $userpic->size = 24;
+        echo $OUTPUT->user_picture($userpic)
         echo '<div class="userinfo">';
         echo fullname($chu).' ';
         if ($idle = time() - $chu->lastmessageping) {

@@ -88,7 +88,7 @@
         $idle = $min.':'.$sec;
         echo '<tr><td width="35">';
         echo "<a target=\"_blank\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&amp;course=$courseid','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$courseid\">";
-        print_user_picture($chatuser->id, 0, $chatuser->picture, false, false, false);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($chatuser, 0));
         echo '</a></td><td valign="center">';
         echo '<p><font size="1">';
         echo fullname($chatuser).'<br />';
