@@ -19,7 +19,7 @@ if (!isset($CFG->message_offline_time)) {
 
 
 function message_print_contacts() {
-    global $USER, $CFG, $DB, $PAGE;
+    global $USER, $CFG, $DB, $PAGE, $OUTPUT;
 
     $timetoshowusers = 300; //Seconds default
     if (isset($CFG->block_online_users_timetosee)) {
@@ -152,13 +152,13 @@ function message_print_contacts() {
     $PAGE->requires->js('message/message.js');
     $PAGE->requires->js_function_call('refresh_page', Array(60*1000, $PAGE->url->out()));
 
-    echo '<div class="messagejsautorefresh note center">';
+    echo $OUTPUT->container_start('messagejsautorefresh note center');
     echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
-    echo '</div>';
+    echo $OUTPUT->container_end();
 
-    echo '<div class="messagejsmanualrefresh aligncenter">';
-    echo print_single_button('index.php', false, get_string('refresh'));
-    echo '</div>';
+    echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
+    echo $OUTPUT->button(html_form::make_button('index.php', false, get_string('refresh')));
+    echo $OUTPUT->container_end();
 }
 
 
@@ -332,7 +332,10 @@ function message_print_search_results($frm) {
                 $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
 
                 echo '<tr><td class="pix">';
-                print_user_picture($user, SITEID, $user->picture, 20, false, true, 'userwindow');
+                $userpic = moodle_user_picture::make($user, SITEID);
+                $userpic->size = 20;
+                $userpic->link = true;
+                echo $OUTPUT->user_picture($userpic);
                 echo '</td>';
                 echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user),
@@ -486,18 +489,22 @@ function message_print_search_results($frm) {
     }
 
     echo '<br />';
-    print_single_button('index.php', array( 'tab' => 'search'), get_string('newsearch', 'message') );
+    echo $OUTPUT->button(html_form::make_button('index.php', array( 'tab' => 'search'), get_string('newsearch', 'message')));
 
     echo '</div>';
 }
 
 
 function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
-    global $USER;
+    global $USER, $OUTPUT;
+    $userpic = moodle_user_picture::make($USER, SITEID);
+    $userpic->size = 20;
+    $userpic->link = true;
+    
     if ($user === false) {
-        print_user_picture($USER, SITEID, $USER->picture, 20, false, true, 'userwindow');
+        echo $OUTPUT->user_picture($userpic);
     } else {
-        print_user_picture($user, SITEID, $user->picture, 20, false, true, 'userwindow');
+        echo $OUTPUT->user_picture($userpic);
         echo '&nbsp;';
         if ($iscontact) {
             message_contact_link($user->id, 'remove');
@@ -987,7 +994,7 @@ function message_get_participants() {
 /**
  * Print a row of contactlist displaying user picture, messages waiting and 
  * block links etc
- * @param $contact contact object containing all fields required for print_user_picture()
+ * @param $contact contact object containing all fields required for $OUTPUT->user_picture()
  * @param $incontactlist is the user a contact of ours?
  */
 function message_print_contactlist_user($contact, $incontactlist = true){
@@ -1011,7 +1018,10 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
     echo '<tr><td class="pix">';
-    print_user_picture($contact, SITEID, $contact->picture, 20, false, true, 'userwindow');
+    $userpic = moodle_user_picture::make($contact, SITEID);
+    $userpic->size = 20;
+    $userpic->link = true;
+    echo $OUTPUT->user_picture($userpic);
     echo '</td>';
     echo '<td class="contact">';
 

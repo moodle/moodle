@@ -57,7 +57,10 @@
     echo $OUTPUT->box_start('center');
     echo '<table align="center" cellpadding="10"><tr>';
     echo '<td align="center">';
-    echo print_user_picture($user1, SITEID, $user1->picture, 100, true, true, 'userwindow').'<br />';
+    $userpic = moodle_user_picture::make($user1, SITEID);
+    $userpic->size = 100;
+    $userpic->link = true;
+    echo $OUTPUT->user_picture($userpic).'<br />';
     echo fullname($user1);
     echo '</td>';
     echo '<td align="center">';
@@ -65,7 +68,10 @@
     echo '<img src="'.$CFG->wwwroot.'/pix/t/right.gif" alt="'.get_string('to').'" />';
     echo '</td>';
     echo '<td align="center">';
-    echo print_user_picture($user2, SITEID, $user2->picture, 100, true, true, 'userwindow').'<br />';
+    $userpic = moodle_user_picture::make($user2, SITEID);
+    $userpic->size = 100;
+    $userpic->link = true;
+    echo $OUTPUT->user_picture($userpic).'<br />';
     echo fullname($user2);
     echo '</td>';
     echo '</tr></table>';

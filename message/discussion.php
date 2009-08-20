@@ -136,7 +136,10 @@
 
     echo '<div class="message-discussion-noframes">';
     echo '<div id="userinfo">';
-    echo print_user_picture($user, SITEID, $user->picture, 48, true, true, 'userwindow');
+    $userpic = moodle_user_picture::make($user, SITEID);
+    $userpic->size = 48;
+    $userpic->link = true;
+    echo $OUTPUT->user_picture($userpic);
     echo '<div class="name"><h1>'.$userfullname.'</h1></div>';
     echo '<div class="commands"><ul>';
     if ($contact = $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$user->id))) {
