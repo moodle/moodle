@@ -61,6 +61,7 @@ echo '<fieldset class="invisiblefieldset">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '</fieldset>';
+$table = new html_table();
 $table->head  = array (get_string('fullname'),
     get_string('content', 'notes') . $OUTPUT->help_icon(moodle_help_icon::make('writing', get_string('helpwriting'))),
     get_string('publishstate', 'notes') . $OUTPUT->help_icon(moodle_help_icon::make('status', get_string('publishstate', 'notes'), 'notes')),
@@ -88,7 +89,7 @@ foreach ($users as $k => $v) {
         $checkbox
     );
 }
-print_table($table);
+echo $OUTPUT->table($table);
 echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
 echo $OUTPUT->footer();
 ?>

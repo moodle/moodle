@@ -38,7 +38,7 @@ class user_edit_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $mform =& $this->_form;
         $userid = $mform->getElementValue('id');
@@ -72,7 +72,9 @@ class user_edit_form extends moodleform {
             if (!empty($CFG->gdversion)) {
                 $image_el =& $mform->getElement('currentpicture');
                 if ($user and $user->picture) {
-                    $image_el->setValue(print_user_picture($user, SITEID, $user->picture, 64,true,false,'',true));
+                    $userpic = moodle_user_picture::make($user, SITEID);
+                    $userpic->size = 64;
+                    $image_el->setValue($OUTPUT->user_picture($userpic));
                 } else {
                     $image_el->setValue(get_string('none'));
                 }
@@ -96,7 +98,7 @@ class user_edit_form extends moodleform {
                     }
                 }
             }
-            
+
             /// Next the customisable profile fields
             profile_definition_after_data($mform, $user->id);
 

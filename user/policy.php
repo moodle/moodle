@@ -48,12 +48,10 @@
     // we can not use our popups here, because the url may be arbitrary, see MDL-9823
     echo '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
     echo '</object></div>';
-
-    $linkyes    = 'policy.php';
-    $optionsyes = array('agree'=>1, 'sesskey'=>sesskey());
-    $linkno     = $CFG->wwwroot.'/login/logout.php';
-    $optionsno  = array('sesskey'=>sesskey());
-    notice_yesno($strpolicyagree, $linkyes, $linkno, $optionsyes, $optionsno);
+    
+    $formcontinue = html_form::make_button('policy.php', array('agree'=>1), get_string('yes'));
+    $formcancel = html_form::make_button($CFG->wwwroot.'/login/logout.php', array(), get_string('no'));
+    echo $OUTPUT->confirm($strpolicyagree, $formcontinue, $formcancel);
 
     echo $OUTPUT->footer();
 

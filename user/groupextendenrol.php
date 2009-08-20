@@ -113,6 +113,7 @@ echo $OUTPUT->heading($title . $OUTPUT->help_icon(moodle_help_icon::make('groupe
 echo '<form method="post" action="groupextendenrol.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+$table = new html_table();
 $table->head  = array (get_string('fullnameuser'), get_string('enrolmentstart'), get_string('enrolmentend'));
 $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
@@ -145,7 +146,7 @@ foreach ($_POST as $k => $v) {
         );
     }
 }
-print_table($table);
+echo $OUTPUT->table($table);
 echo '<div style="width:100%;text-align:center;"><strong>';
 echo get_string('extendperiod') . ' ';
 echo $OUTPUT->select(html_select::make($periodmenu, 'extendperiod'));

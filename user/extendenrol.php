@@ -116,6 +116,7 @@ echo $OUTPUT->heading($title . $OUTPUT->help_icon(moodle_help_icon::make('extend
 echo "<form method=\"post\" action=\"extendenrol.php\">\n";
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+$table = new html_table();
 $table->head  = array (get_string('fullnameuser'), get_string('enrolmentstart'), get_string('enrolmentend'), get_string('extendperiod'), get_string('startingfrom'));
 $table->align = array ('left', 'center', 'center', 'center');
 $table->width = "600";
@@ -154,7 +155,7 @@ foreach ($_POST as $k => $v) {
                 $checkbox2);
     }
 }
-print_table($table);
+echo $OUTPUT->table($table);
 echo "\n<div style=\"width:100%;text-align:center;\"><input type=\"submit\" value=\"".get_string('savechanges')."\" /></div>\n</form>\n";
 
 echo $OUTPUT->footer();

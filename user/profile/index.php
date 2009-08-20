@@ -53,7 +53,10 @@ switch ($action) {
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
         echo $OUTPUT->heading('profiledeletecategory', 'admin');
-        notice_yesno(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
+        
+        $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
+        $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
+        echo $OUTPUT->confirm(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
         break;
@@ -71,7 +74,9 @@ switch ($action) {
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
         echo $OUTPUT->heading('profiledeletefield', 'admin');
-        notice_yesno(get_string('profileconfirmfielddeletion', 'admin', $datacount), $redirect, $redirect, $optionsyes, null, 'post', 'get');
+        $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
+        $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
+        echo $OUTPUT->confirm(get_string('profileconfirmfielddeletion', 'admin', $datacount), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
         break;
@@ -109,11 +114,11 @@ if ($DB->count_records('user_info_category') == 0) {
 $categories = $DB->get_records('user_info_category', null, 'sortorder ASC');
 
 foreach ($categories as $category) {
-    $table = new object();
+    $table = new html_table();
     $table->head  = array(get_string('profilefield', 'admin'), get_string('edit'));
     $table->align = array('left', 'right');
     $table->width = '95%';
-    $table->class = 'generaltable profilefield';
+    $table->add_class ('generaltable profilefield');
     $table->data = array();
 
     if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
@@ -124,7 +129,7 @@ foreach ($categories as $category) {
 
     echo $OUTPUT->heading(format_string($category->name) .' '.profile_category_icons($category));
     if (count($table->data)) {
-        print_table($table);
+        echo $OUTPUT->table($table);
     } else {
         echo $OUTPUT->notification($strnofields);
     }
@@ -144,7 +149,7 @@ echo $OUTPUT->select(html_select::make_popup_form($popupurl, 'datatype', $option
 
 /// Create a new category link
 $options = array('action'=>'editcategory');
-print_single_button('index.php', $options, get_string('profilecreatecategory', 'admin'));
+echo $OUTPUT->button(html_form::make_button('index.php', $options, get_string('profilecreatecategory', 'admin')));
 
 echo '</div>';
 

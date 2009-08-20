@@ -97,7 +97,7 @@
             }
         } else {   // Normal course
             // check capabilities
-            if (!has_capability('moodle/user:viewdetails', $coursecontext) && 
+            if (!has_capability('moodle/user:viewdetails', $coursecontext) &&
                 !has_capability('moodle/user:viewdetails', $usercontext)) {
                 print_error('cannotviewprofile');
             }
@@ -218,7 +218,9 @@
     echo '<table width="80%" class="userinfobox" summary="">';
     echo '<tr>';
     echo '<td class="side">';
-    print_user_picture($user, $course->id, $user->picture, true, false, false);
+    $userpic = moodle_user_picture::make($user, $course->id);
+    $userpic->size = 100;
+    echo $OUTPUT->user_picture($userpic);
     echo '</td><td class="content">';
 
     // Print the description
@@ -382,7 +384,7 @@
         print_row(get_string("lastaccess").":", $datestring);
     }
 /// printing roles
-    
+
     if ($rolestring = get_user_roles_in_context($id, $coursecontext)) {
         print_row(get_string('roles').':', format_string($rolestring, false));
     }
@@ -404,7 +406,7 @@
 
 /// Printing Interests
 	if( !empty($CFG->usetags)) {
-	    if ( $interests = tag_get_tags_csv('user', $user->id) ) { 
+	    if ( $interests = tag_get_tags_csv('user', $user->id) ) {
             print_row(get_string('interests') .": ", $interests);
         }
     }

@@ -49,7 +49,7 @@ class user_editadvanced_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $OUTPUT;
 
         $mform =& $this->_form;
         if ($userid = $mform->getElementValue('id')) {
@@ -95,7 +95,9 @@ class user_editadvanced_form extends moodleform {
         if (!empty($CFG->gdversion)) {
             $image_el =& $mform->getElement('currentpicture');
             if ($user and $user->picture) {
-                $image_el->setValue(print_user_picture($user, SITEID, $user->picture, 64, true, false, '', true));
+                $userpic = moodle_user_picture::make($user, SITEID);
+                $userpic->alttext = true;
+                $image_el->setValue($OUTPUT->user_picture($userpic));
             } else {
                 $image_el->setValue(get_string('none'));
             }

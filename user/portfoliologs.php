@@ -36,7 +36,7 @@ include('tabs.php');
 
 $queued = $DB->get_records('portfolio_tempdata', array('userid' => $USER->id), '', 'id, expirytime');
 if (count($queued) > 0) {
-    $table = new stdClass;
+    $table = new html_table();
     $table->head = array(
         get_string('displayarea', 'portfolio'),
         get_string('plugin', 'portfolio'),
@@ -56,11 +56,11 @@ if (count($queued) > 0) {
         unset($e); // this could potentially be quite big, so free it.
     }
     echo $OUTPUT->heading(get_string('queuesummary', 'portfolio'));
-    print_table($table);
+    echo $OUTPUT->table($table);
 }
 $logcount = $DB->count_records('portfolio_log', array('userid' => $USER->id));
 if ($logcount > 0) {
-    $table = new StdClass;
+    $table = new html_table();
     $table->head = array(
         get_string('plugin', 'portfolio'),
         get_string('displayarea', 'portfolio'),
@@ -87,7 +87,7 @@ if ($logcount > 0) {
     echo $OUTPUT->heading(get_string('logsummary', 'portfolio'));
     $pagingbar = moodle_paging_bar::make($logcount, $page, $perpage, $CFG->wwwroot . '/user/portfoliologs.php?');
     echo $OUTPUT->paging_bar($pagingbar);
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo $OUTPUT->paging_bar($pagingbar);
 
 }

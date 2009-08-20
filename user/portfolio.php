@@ -81,7 +81,7 @@ if ($display) {
         print_error('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');
     }
 
-    $table = new StdClass;
+    $table = new html_table();
     $table->head = array($namestr, $pluginstr, '');
     $table->data = array();
 
@@ -94,7 +94,7 @@ if ($display) {
         );
     }
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 }
 echo $OUTPUT->footer();
 
