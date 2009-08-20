@@ -132,7 +132,7 @@
      *     display the entry in its abbreviated format (eg. index page)
      */
     function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
-        global $USER, $CFG, $COURSE, $DB;
+        global $USER, $CFG, $COURSE, $DB, $OUTPUT;
 
         $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
         $template['title'] = '<a id="b'. s($blogEntry->id) .'" />';
@@ -166,7 +166,7 @@
         echo '<table cellspacing="0" class="forumpost blogpost blog'.$template['publishstate'].'" width="100%">';
 
         echo '<tr class="header"><td class="picture left">';
-        print_user_picture($user, SITEID, $user->picture);
+        echo $OUTPUT->user_picture(moodle_user_picture::make($user, SITEID));
         echo '</td>';
 
         echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';

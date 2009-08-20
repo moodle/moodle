@@ -63,7 +63,7 @@ if ($action === 'delete'){
         print_header("$SITE->shortname: $strblogs", $SITE->fullname);
         blog_print_entry($existing);
         echo '<br />';
-        notice_yesno(get_string('blogdeleteconfirm', 'blog'), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'), new moodle_url('edit.php', $optionsyes),new moodle_url( 'index.php', $optionsno));
         echo $OUTPUT->footer();
         die;
     }
