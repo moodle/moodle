@@ -3770,7 +3770,7 @@ function forum_shorten_post($message) {
  * @return string|void
  */
 function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratings=null, $return=false) {
-
+    global $OUTPUT;
     $strratings = '';
 
     switch ($aggregatetype) {
@@ -3805,7 +3805,10 @@ function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratin
         $strratings .= ': ';
 
         if ($link) {
-            $strratings .= link_to_popup_window ("/mod/forum/report.php?id=$postid", "ratings", $agg, 400, 600, null, null, true);
+
+            $link = html_link::make("/mod/forum/report.php?id=$postid", $agg);
+            $link->add_action(new popup_action('click', $link->url, 'ratings', array('height' => 400, 'width' => 600)));
+            $strratings .= $OUTPUT->link($link);                    
         } else {
             $strratings .= "$agg ";
         }
