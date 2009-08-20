@@ -221,6 +221,8 @@ class renderer_factory_base_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class standard_renderer_factory_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     protected $factory;
 
     public function setUp() {
@@ -257,6 +259,8 @@ class standard_renderer_factory_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_corners_renderer_factory_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     protected $factory;
 
     public function setUp() {
@@ -293,6 +297,8 @@ class custom_corners_renderer_factory_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_theme_overridden_renderer_factory extends theme_overridden_renderer_factory {
+
+    public static $includecoverage = array('lib/outputlib.php');
     public function get_prefixes() {
         return $this->prefixes;
     }
@@ -306,6 +312,8 @@ class testable_theme_overridden_renderer_factory extends theme_overridden_render
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_overridden_renderer_factory_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputlib.php');
     protected $originalcfgthemedir;
     protected $workspace;
     protected $page;
@@ -464,6 +472,8 @@ class theme_overridden_renderer_factory_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_template_renderer_factory extends template_renderer_factory {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     public function get_search_paths() {
         return $this->searchpaths;
     }
@@ -477,6 +487,8 @@ class testable_template_renderer_factory extends template_renderer_factory {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template_renderer_factory_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     protected $originalcfgthemedir;
     protected $workspace;
     protected $page;
@@ -654,6 +666,8 @@ class template_renderer_factory_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class xhtml_container_stack_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputlib.php');
     protected function start_capture() {
         ob_start();
     }
@@ -807,6 +821,8 @@ class xhtml_container_stack_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template_renderer_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     protected $renderer;
     protected $templatefolder;
     protected $savedtemplates;
@@ -876,6 +892,8 @@ class template_renderer_test extends UnitTestCase {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_core_renderer_test extends UnitTestCase {
+
+    public static $includecoverage = array('lib/outputrenderers.php', 'lib/outputcomponents.php');
     protected $renderer;
 
     public function setUp() {
@@ -891,6 +909,24 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttribute('option', 'value', '10'), $html);
         $this->assert(new ContainsTagWithContents('option', 'two'), $html);
         $this->assert(new ContainsTagWithAttribute('option', 'value', 'c2'), $html);
+    }
+
+    public function test_select_with_label() {
+        $select = html_select::make(array(10 => 'ten', 'c2' => 'two'), 'mymenu');
+        $select->set_label('Cool menu');
+        $html = $this->renderer->select($select);
+        $this->assert(new ContainsTagWithAttribute('label', 'for', $select->id), $html);
+        $this->assert(new ContainsTagWithContents('label', 'Cool menu'), $html);
+    }
+
+    public function test_select_yesno() {
+        $select = html_select::make_yes_no('question', 1);
+        $html = $this->renderer->select($select);
+        $this->assert(new ContainsTagWithAttributes('select', array('class' => 'menuquestion select', 'name' => 'question', 'id' => 'menuquestion')), $html);
+        $this->assert(new ContainsTagWithContents('option', get_string('choosedots')), $html);
+        $this->assert(new ContainsTagWithContents('option', get_string('yes')), $html);
+        $this->assert(new ContainsTagWithContents('option', get_string('no')), $html);
+        $this->assert(new ContainsTagWithAttributes('option', array('value' => '1', 'selected' => 'selected')), $html);
     }
 
     public function test_error_text() {
