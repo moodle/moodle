@@ -10,7 +10,7 @@ class hotpot_report extends hotpot_default_report {
 		return true;
 	}
 	function create_scores_table(&$hotpot, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
-		global $CFG;
+		global $CFG, $OUTPUT;
 		$download = ($options['reportformat']=='htm') ? false : true;
 		$is_html = ($options['reportformat']=='htm');
 		$blank = ($download ? '' : '&nbsp;');
@@ -57,8 +57,8 @@ class hotpot_report extends hotpot_default_report {
 			$picture = '';
 			$name = fullname($u);
 			if ($is_html) {
-				$picture = print_user_picture($u->userid, $course->id, $u->picture, false, true);
-				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.$name.'</a>';
+				$picture = $OUTPUT->user_picture(moodle_user_picture::make($u, $course->id));
+				$name = $OUTPUT->link($CFG->wwwroot.'/user/view.php?id='.$u->userid.'&course='.$course->id, $name);
 			}
 			if (isset($user->grade)) {
 				$grade = $user->grade;

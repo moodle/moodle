@@ -9,7 +9,7 @@ class hotpot_report extends hotpot_default_report {
 		return true;
 	}
 	function create_overview_table(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options, &$tables) {
-		global $CFG;
+		global $CFG, $OUTPUT;
 		$strtimeformat = get_string('strftimedatetime');
 		$is_html = ($options['reportformat']=='htm');
 		$spacer = $is_html ? '&nbsp;' : ' ';
@@ -48,7 +48,7 @@ class hotpot_report extends hotpot_default_report {
 			$picture = '';
 			$name = fullname($u);
 			if ($is_html) {
-				$picture = print_user_picture($u->userid, $course->id, $u->picture, false, true);
+				$picture = $OUTPUT->user_picture(moodle_user_picture::make($u->userid, $course->id));
 				$name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.$name.'</a>';
 			}
 			$grade = isset($user->grade) && $user->grade<>'&nbsp;' ? $user->grade : $spacer;

@@ -257,6 +257,7 @@
     $strregraderequired = get_string('regraderequired', 'hotpot');
 
     // column headings and attributes
+    $table = new html_table();
     $table->head = array();
     $table->align = array();
 
@@ -399,7 +400,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     // Finish the page
     echo $OUTPUT->footer();
