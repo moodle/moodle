@@ -129,6 +129,7 @@
     }
 
     //This is the alignment of every row in the table
+    $table = new html_table();
     $table->align = array ("left","right");
 
     if ($allmods = $DB->get_records("modules") ) {
@@ -179,7 +180,7 @@
                         }
                     }
                     $table->data = $modcheckbackup($id,$backupprefs->$var,$backupprefs->backup_unique_code,$instancestopass);
-                    print_table($table);
+                    echo $OUTPUT->table($table);
                     echo "</td></tr>";
                 }
             }
@@ -199,7 +200,7 @@
             echo $user_options[$backupprefs->backup_users].'</b>';
             //Print info
             $table->data = user_check_backup($id,$backupprefs->backup_unique_code,$backupprefs->backup_users,$backupprefs->backup_messages, $backupprefs->backup_blogs);
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
 
         }
@@ -211,7 +212,7 @@
             echo get_string("includelogentries").'</b>';
             //Print info
             $table->data = log_check_backup($id);
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
         }
 
@@ -222,7 +223,7 @@
             echo get_string("includeuserfiles").'</b>';
             //Print info
             $table->data = user_files_check_backup($id,$backupprefs->backup_unique_code);
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
         }
 
@@ -233,7 +234,7 @@
             echo get_string("includecoursefiles").'</b>';
             //Print info
             $table->data = course_files_check_backup($id,$backupprefs->backup_unique_code);
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
         }
 
@@ -244,7 +245,7 @@
             echo get_string("includesitefiles").'</b>';
             //Print info
             $table->data = site_files_check_backup($id,$backupprefs->backup_unique_code);
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
         }
 
@@ -255,7 +256,7 @@
             echo get_string("includeroleassignments").'</b>';
             //Print info
             $table->data = array(array(get_string('roles'), count($backupprefs->backuproleassignments)));
-            print_table($table);
+            echo $OUTPUT->table($table);
             echo "</td></tr>";
         }
     }

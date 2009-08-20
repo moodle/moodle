@@ -7,7 +7,7 @@
     //Finally, it calls restore_execute to do the hard work
     //Get objects from session
 
-    global $DB;
+    global $DB, $OUTPUT;
 
     if ($SESSION) {
         $info = $SESSION->info;
@@ -333,7 +333,7 @@
 
 
         /// Restore button
-            print_single_button("restore.php", $hidden, get_string("restorecoursenow"),"post");
+            echo $OUTPUT->button(html_form::make_button("restore.php", $hidden, get_string("restorecoursenow")));
         }
         echo "</div>";
 

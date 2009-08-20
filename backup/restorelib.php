@@ -500,7 +500,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         $status = true;
         if ($info) {
-            $table = new object();
+            $table = new html_table();
             //This is tha align to every ingo table
             $table->align = array ("right","left");
             //This is the nowrap clause
@@ -533,7 +533,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo $OUTPUT->heading(get_string("backup").":");
             $table->data = $tab;
             //Print backup general info
-            print_table($table);
+            echo $OUTPUT->table($table);
 
             if ($info->backup_backup_version <= 2005070500) {
                  echo $OUTPUT->notification(get_string('backupnonisowarning'));  // Message informing that this backup may not work!
@@ -643,7 +643,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Print title
             echo $OUTPUT->heading(get_string("backupdetails").":");
             //Print backup general info
-            print_table($table);
+            echo $OUTPUT->table($table);
         } else {
             $status = false;
         }
@@ -656,7 +656,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         global $OUTPUT;
         $status = true;
         if ($course_header) {
-            $table = new object();
+            $table = new html_table();
             //This is tha align to every ingo table
             $table->align = array ("right","left");
             //The width
@@ -672,7 +672,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //Print title
             echo $OUTPUT->heading(get_string("course").":");
             //Print backup course header info
-            print_table($table);
+            echo $OUTPUT->table($table);
         } else {
             $status = false;
         }
@@ -7972,7 +7972,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $hidden["launch"]             = "form";
                 $hidden["file"]               =  $file;
                 $hidden["id"]                 =  $id;
-                print_single_button("restore.php", $hidden, get_string("continue"),"post");
+                echo $OUTPUT->button(html_form::make_button("restore.php", $hidden, get_string("continue")));
                 echo "</div>";
             }
             else {
