@@ -348,9 +348,10 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
             if (!isset($course->id)) {
                 $course->id = 1;
             }
-            $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-            $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".
-                     fullname($user)."</a>";
+            $userpic = moodle_user_picture::make($user->id, $course->id);
+            $userpic->link = true;
+            $picture = $OUTPUT->user_picture($userpic);
+            $value = $picture . $OUTPUT->link("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", fullname($user));
         }
 
         $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br />'.

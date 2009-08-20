@@ -47,6 +47,7 @@
     $strweek  = get_string('week');
     $strtopic  = get_string('topic');
 
+    $table = new html_table();
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strsummary, $strtype, $strlastmodified);
         $table->align = array ('CENTER', 'LEFT', 'LEFT', 'LEFT', 'LEFT');
@@ -99,7 +100,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
 /// Finish the page
 

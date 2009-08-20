@@ -874,7 +874,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
    if (strlen($params)) {
       $url .= (strpos($url,"?")!==false ? "&":"?") . $params;
    }
-   #-- fin
+   #-- fin
    if ($html) {
       //Don't replace & if it's part of encoded character (bug 2209)
       $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&amp;", $url);
@@ -1157,7 +1157,7 @@ function ewiki_page_search($id, &$data, $action) {
 function ewiki_page_info($id, &$data, $action) {
 
    global $ewiki_plugins, $ewiki_config, $ewiki_links;
-   global $CFG, $COURSE, $DB;  // MOODLE HACK
+   global $CFG, $COURSE, $DB, $OUTPUT;  // MOODLE HACK
 
    $pnum = optional_param(EWIKI_UP_PAGENUM, 0);
    $pend = optional_param(EWIKI_UP_PAGEEND, 0);
@@ -1281,8 +1281,10 @@ function ewiki_page_info($id, &$data, $action) {
                  if (!isset($COURSE->id)) {
                      $COURSE->id = SITEID;
                  }
-                 $picture = print_user_picture($user->id, $COURSE->id, $user->picture, false, true, true);
-                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$COURSE->id\">".fullname($user)."</a>";
+                 $userpic = moodle_user_picture::make($user->id, $COURSE->id);
+                 $userpic->link = true;
+                 $picture = $OUTPUT->user_picture($userpic);
+                 $value = $picture . $OUTPUT->link("$CFG->wwwroot/user/view.php?id=$user->id&course=$COURSE->id", fullname($user));
              } else {
                  continue;
                  //$value = @$current['author'];

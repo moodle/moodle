@@ -1596,7 +1596,7 @@ function wiki_admin_get_flagarray() {
  */
 function wiki_admin_setpageflags_list($pageflagstatus) {
   $FD = wiki_admin_get_flagarray();
-  $table = new Object();
+    $table = new html_table();
   $table->head = array(get_string("pagename","wiki"), get_string("flags","wiki"));
   if($pageflagstatus) {
     $table->head[]=get_string("status","wiki");
@@ -1675,7 +1675,7 @@ function wiki_admin_setpageflags($pageflags) {
  */
 function wiki_admin_remove_list($listall="") {
   /// Table header
-  $table = new Object();
+    $table = new html_table();
   $table->head = array("&nbsp;", get_string("pagename","wiki"), get_string("errororreason","wiki"));
 
   /// Get all pages
@@ -1808,7 +1808,7 @@ function wiki_admin_remove($pagestodelete, $course, $wiki, $userid, $groupid) {
  */
 function wiki_admin_strip_list($pagestostrip="",$version="",$err="") {
   /// Table header
-  $table = new Object();
+    $table = new html_table();
   $table->head = array("&nbsp;", get_string("pagename","wiki"), get_string("deleteversions","wiki"));
 
   $vc=ewiki_database("COUNTVERSIONS", array());

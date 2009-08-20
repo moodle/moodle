@@ -151,8 +151,8 @@
         case "removepages":
             if($form->proceed) {
               if(!$confirm && $form->pagestodelete) {
-                notice_yesno(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
-                  $link."&amp;confirm=".urlencode(join(" ",$form->pagestodelete)), $link);
+                echo $OUTPUT->confirm(get_string("removepagecheck", "wiki")."<br />".join(", ", $form->pagestodelete),
+                  $link."&confirm=".urlencode(join(" ",$form->pagestodelete)), $link);
                 echo $OUTPUT->footer();
                 exit;
               }
@@ -172,8 +172,7 @@
                   foreach($form->pagestostrip as $pagetostrip) {
                     $pagestostrip[]=htmlspecialchars(urldecode($pagetostrip));
                   }
-                  notice_yesno(get_string("strippagecheck", "wiki")."<br />".join(", ", $pagestostrip),
-                      $link.$confirm, $link);
+                  echo $OUTPUT->confirm(get_string("strippagecheck", "wiki")."<br />".join(", ", $pagestostrip), $link.$confirm, $link);
                   echo $OUTPUT->footer();
                   exit;
                 }
@@ -184,8 +183,7 @@
             if($form->proceed) {
               if(!$confirm && $form->pagetocheck) {
                 $confirm="&amp;confirm=".$form->pagetocheck;
-                notice_yesno(get_string("checklinkscheck", "wiki").$form->pagetocheck,
-                    $link.$confirm, $link);
+                echo $OUTPUT->confirm(get_string("checklinkscheck", "wiki").$form->pagetocheck, $link.$confirm, $link);
                 echo $OUTPUT->footer();
                 exit;
               }
@@ -204,8 +202,7 @@
                            "&confirm[deleteversions]=".urlencode($form->deleteversions);
                   $revertedpages=wiki_admin_revert("", $form->authorfieldpattern, $form->changesfield, $form->howtooperate, $form->deleteversions);
                   if($revertedpages) {
-                    notice_yesno(get_string("revertpagescheck", "wiki")."<br />".$revertedpages,
-                      $link.$confirm, $link);
+                    echo $OUTPUT->confirm(get_string("revertpagescheck", "wiki")."<br />".$revertedpages, $link.$confirm, $link);
                     echo $OUTPUT->footer();
                     exit;
                   } else {
