@@ -213,13 +213,13 @@
         $options = array();
         $options["id"] = "$cm->id";
         $options["download"] = "ods";
-        print_single_button("report.php", $options, get_string("downloadods"));
+        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadods")));
         echo "</td><td>";
         $options["download"] = "xls";
-        print_single_button("report.php", $options, get_string("downloadexcel"));
+        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadexcel")));
         echo "</td><td>";
         $options["download"] = "txt";
-        print_single_button("report.php", $options, get_string("downloadtext"));
+        echo $OUTPUT->button(html_form::make_button("report.php", $options, get_string("downloadtext")));
 
         echo "</td></tr></table>";
     }

@@ -42,6 +42,8 @@
 
     $timenow = time();
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         $table->head  = array (get_string("week"), get_string("question"), get_string("answer"));
         $table->align = array ("center", "left", "left");
@@ -92,7 +94,7 @@
         }
     }
     echo "<br />";
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     echo $OUTPUT->footer();
 

@@ -126,8 +126,8 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
         if (has_capability('moodle/legacy:guest', $sitecontext, NULL, false)) {      // Guest on whole site
-            notice_yesno(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
-                         get_login_url(), $_SERVER['HTTP_REFERER']);
+            echo $OUTPUT->confirm(get_string('noguestchoose', 'choice').'<br /><br />'.get_string('liketologin'),
+                         get_login_url(), new moodle_url);
 
         } else if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Guest in this course only
             $SESSION->wantsurl = $FULLME;
@@ -135,10 +135,9 @@
 
             echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
-            echo '<div class="continuebutton">';
-            print_single_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL,
-                                get_string('enrolme', '', format_string($course->shortname)), 'post', $CFG->framename);
-            echo '</div>'."\n";
+            echo $OUTPUT->container_start('continuebutton');
+            echo $OUTPUT->button(html_form::make_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL, get_string('enrolme', '', format_string($course->shortname))));
+            echo $OUTPUT->container_end();
             echo $OUTPUT->box_end();
 
         }
