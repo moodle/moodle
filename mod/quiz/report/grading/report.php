@@ -293,7 +293,7 @@ class quiz_grading_report extends quiz_default_report {
             $table->add_separator();
             foreach($attempts as $attempt) {
 
-                $picture = print_user_picture($attempt->userid, $quiz->course, $attempt->picture, false, true);
+                $picture = $OUTPUT->user_picture(moodle_user_picture::make($attempt->userid, $quiz->course));
 
                 // link to student profile
                 $userlink = "<a href=\"$CFG->wwwroot/user/view.php?id=$attempt->userid&amp;course=$quiz->course\">".

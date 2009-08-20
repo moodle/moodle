@@ -131,7 +131,7 @@
     if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() <> $USER->id) {
     /// If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
         $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
-        $picture = print_user_picture($student, $attemptobj->get_courseid(), $student->picture, false, true);
+        $picture = $OUTPUT->user_picture(moodle_user_picture::make($student, $attemptobj->get_courseid()));
         $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
                 $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $attemptobj->get_courseid() . '">' .
                 fullname($student, true) . '</a></td></tr>';

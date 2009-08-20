@@ -68,7 +68,8 @@ if ($attemptobj->is_preview_user()) {
 echo $OUTPUT->heading($title);
 
 /// Prepare the summary table header
-$table->class = 'generaltable quizsummaryofattempt boxaligncenter';
+$table = new html_table();
+$table->add_class('generaltable quizsummaryofattempt boxaligncenter');
 $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
 $table->align = array('left', 'left');
 $table->size = array('', '');
@@ -100,13 +101,13 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
 }
 
 /// Print the summary table.
-print_table($table);
+echo $OUTPUT->table($table);
 
 /// countdown timer
 echo $attemptobj->get_timer_html();
 
 /// Finish attempt button.
-echo "<div class=\"submitbtns mdl-align\">\n";
+echo $OUTPUT->container_start('submitbtns mdl-align');
 $options = array(
     'attempt' => $attemptobj->get_attemptid(),
     'finishattempt' => 1,
@@ -114,9 +115,13 @@ $options = array(
     'questionids' => '',
     'sesskey' => sesskey(),
 );
-print_single_button(s($attemptobj->processattempt_url()), $options, get_string('finishattempt', 'quiz'),
-        'post', '', false, '', false, get_string('confirmclose', 'quiz'), 'responseform');
-echo "</div>\n";
+
+$form = html_form::make_button($attemptobj->processattempt_url(), $options, get_string('finishattempt', 'quiz'));
+$form->id = 'responseform';
+$form->button->add_confirm_action(get_string('confirmclose', 'quiz'));
+
+echo $OUTPUT->button($form);
+echo $OUTPUT->container_end();
 
 /// Finish the page
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());

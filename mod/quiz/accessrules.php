@@ -195,6 +195,7 @@ class quiz_access_manager {
      */
     public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
     /// Do we need a confirm javascript alert?
+        global $OUTPUT;
         if ($unfinished) {
             $strconfirmstartattempt = '';
         } else {
@@ -206,9 +207,11 @@ class quiz_access_manager {
         if ($this->securewindow_required($canpreview)) {
             $this->_securewindowrule->print_start_attempt_button($buttontext, $strconfirmstartattempt);
         } else {
-            print_single_button($this->_quizobj->start_attempt_url(),
-                    array('cmid' => $this->_quizobj->get_cmid(), 'sesskey' => sesskey()),
-                    $buttontext, 'post', '', false, '', false, $strconfirmstartattempt);
+            $form = html_form::make_button($this->_quizobj->start_attempt_url(), array('cmid' => $this->_quizobj->get_cmid()), $buttontext);
+            if ($strconfirmstartattempt) {
+                $form->button->add_confirm_action($strconfirmstartattempt);
+            }
+            echo $OUTPUT->button($form);
         }
         echo "</div>\n";
     }

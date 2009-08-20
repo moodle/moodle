@@ -71,14 +71,14 @@ class quiz_report_responses_table extends table_sql {
     }
 
     function col_picture($attempt){
-        global $COURSE;
+        global $COURSE, $OUTPUT;
         $user = new object();
         $user->id = $attempt->userid;
         $user->lastname = $attempt->lastname;
         $user->firstname = $attempt->firstname;
         $user->imagealt = $attempt->imagealt;
         $user->picture = $attempt->picture;
-        return print_user_picture($user, $COURSE->id, $attempt->picture, false, true);
+        return $OUTPUT->user_picture(moodle_user_picture::make($user, $COURSE->id));
     }
 
 

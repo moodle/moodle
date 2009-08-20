@@ -193,10 +193,10 @@ class quiz_statistics_report extends quiz_default_report {
         if (!$this->table->is_downloading()){
             $datumfromtable = $this->table->format_row($question);
 
-            $questioninfotable = new object();
+            $questioninfotable = new html_table();
             $questioninfotable->align = array('center', 'center');
             $questioninfotable->width = '60%';
-            $questioninfotable->class = 'generaltable titlesleft';
+            $questioninfotable->add_class('generaltable titlesleft');
 
             $questioninfotable->data = array();
             $questioninfotable->data[] = array(get_string('modulename', 'quiz'), $quiz->name);
@@ -204,10 +204,10 @@ class quiz_statistics_report extends quiz_default_report {
             $questioninfotable->data[] = array(get_string('questiontype', 'quiz_statistics'), $datumfromtable['icon'].'&nbsp;'.get_string($question->qtype,'quiz').'&nbsp;'.$datumfromtable['icon']);
             $questioninfotable->data[] = array(get_string('positions', 'quiz_statistics'), $question->_stats->positions);
 
-            $questionstatstable = new object();
+            $questionstatstable = new html_table();
             $questionstatstable->align = array('center', 'center');
             $questionstatstable->width = '60%';
-            $questionstatstable->class = 'generaltable titlesleft';
+            $questionstatstable->add_class('generaltable titlesleft');
 
             unset($datumfromtable['number']);
             unset($datumfromtable['icon']);
@@ -226,12 +226,12 @@ class quiz_statistics_report extends quiz_default_report {
                 $questionstatstable->data[] = array($labels[$item], $value);
             }
             echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
-            print_table($questioninfotable);
+            echo $OUTPUT->table($questioninfotable);
 
             echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
 
             echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
-            print_table($questionstatstable);
+            echo $OUTPUT->table($questionstatstable);
 
         } else {
             $this->qtable->export_class_instance($this->table->export_class_instance());
@@ -349,7 +349,7 @@ class quiz_statistics_report extends quiz_default_report {
         global $DB, $OUTPUT;
         // Print information on the number of existing attempts
         $quizinformationtablehtml = $OUTPUT->heading(get_string('quizinformation', 'quiz_statistics'), 2, 'main');
-        $quizinformationtable = new object();
+        $quizinformationtable = new html_table();
         $quizinformationtable->align = array('center', 'center');
         $quizinformationtable->width = '60%';
         $quizinformationtable->class = 'generaltable titlesleft';
@@ -410,8 +410,8 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 $quizinformationtablehtml .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
                 $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
-                $quizinformationtablehtml .= print_single_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
-                                    get_string('recalculatenow', 'quiz_statistics'), 'post', '', true);
+                $quizinformationtablehtml .= $OUTPUT->button(html_form::make_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
+                                    get_string('recalculatenow', 'quiz_statistics')));
                 $quizinformationtablehtml .= $OUTPUT->box_end();
             }
             $downloadoptions = $this->table->get_download_menu();
@@ -425,7 +425,7 @@ class quiz_statistics_report extends quiz_default_report {
             $quizinformationtablehtml .= $OUTPUT->help_icon(moodle_help_icon::make('tableexportformats', get_string('tableexportformats', 'table')));
             $quizinformationtablehtml .= '</div></form>';
         }
-        $quizinformationtablehtml .= print_table($quizinformationtable, true);
+        $quizinformationtablehtml .= $OUTPUT->table($quizinformationtable);
         if (!$this->table->is_downloading()){
             echo $quizinformationtablehtml;
         } elseif ($everything) {

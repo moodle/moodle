@@ -87,6 +87,7 @@
         $showing = 'scores';  // default
     }
 
+    $table = new html_table();
     $table->head = $headings;
     $table->align = $align;
 
@@ -161,7 +162,7 @@
 
 // Display the table.
     echo '<br />';
-    print_table($table);
+    echo $OUTPUT->table($table);
 
 // Finish the page
     echo $OUTPUT->footer();

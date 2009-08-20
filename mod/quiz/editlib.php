@@ -602,19 +602,17 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                 echo "</div></div>";
 
                 if (!$reordertool && !$quiz->shufflequestions) {
-                    echo "<div class=\"addpage\">";
-                    print_single_button($pageurl->out(true),
+                    echo $OUTPUT->container_start('addpage');
+                    $form = html_form::make_button($pageurl->out(true),
                             array('cmid' => $quiz->cmid,
                                     'courseid' => $quiz->course,
                                     'addpage' => $count,
                                     'sesskey' => sesskey()),
                             get_string('addpagehere', 'quiz'),
-                             'get',
-                             '_self',
-                            false,
-                            '',
-                            $hasattempts);
-                    echo "</div>";
+                             'get');
+                    $form->button->disabled = $hasattempts;
+                    echo $OUTPUT->button($form);
+                    echo $OUTPUT->container_end();
                 }
                 $pageopen = false;
                 $count++;

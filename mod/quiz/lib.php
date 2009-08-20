@@ -540,10 +540,10 @@ function quiz_grade_item_update($quiz, $grades=NULL) {
                 $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
                 echo $OUTPUT->box_start('generalbox', 'notice');
                 echo '<p>'. $message .'</p>';
-                echo '<div class="buttons">';
-                print_single_button($regrade_link, null, get_string('regradeanyway', 'grades'), 'post', $CFG->framename);
-                print_single_button($back_link,  null,  get_string('cancel'),  'post',  $CFG->framename);
-                echo '</div>';
+                echo $OUTPUT->container_start('buttons');
+                echo $OUTPUT->button(html_form::make_button($regrade_link, null, get_string('regradeanyway', 'grades')));
+                echo $OUTPUT->button(html_form::make_button($back_link,  null,  get_string('cancel')));
+                echo $OUTPUT->container_end();
                 echo $OUTPUT->box_end();
 
                 return GRADE_UPDATE_ITEM_LOCKED;
@@ -822,7 +822,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
     echo '<table border="0" cellpadding="3" cellspacing="0" class="forum-recent">';
 
     echo "<tr><td class=\"userpicture\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($activity->user, $courseid));
     echo "</td><td>";
 
     if ($detail) {

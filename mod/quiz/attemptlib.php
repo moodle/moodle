@@ -750,11 +750,11 @@ class quiz_attempt extends quiz {
      * Print the HTML for the start new preview button.
      */
     public function print_restart_preview_button() {
-        global $CFG;
-        echo '<div class="controls">';
-        print_single_button($this->start_attempt_url(), array('cmid' => $this->cm->id,
-                'forcenew' => true, 'sesskey' => sesskey()), get_string('startagain', 'quiz'), 'post');
-        echo '</div>';
+        global $CFG, $OUTPUT;
+        echo $OUTPUT->container_start('controls');
+        $options = array('cmid' => $this->cm->id, 'forcenew' => true);
+        echo $OUTPUT->button(html_form::make_button($this->start_attempt_url(), $options, get_string('startagain', 'quiz')));
+        echo $OUTPUT->container_end();
     }
 
     /**
@@ -1068,11 +1068,11 @@ abstract class quiz_nav_panel_base {
     abstract protected function get_question_url($question);
 
     protected function get_user_picture() {
-        global $DB;
+        global $DB, $OUTPUT;
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
         $output = '';
         $output .= '<div id="user-picture" class="clearfix">';
-        $output .= print_user_picture($user, $this->attemptobj->get_courseid(), NULL, 0, true, false);
+        $output .= $OUTPUT->user_picture(moodle_user_picture::make($user, $this->attemptobj->get_courseid()));
         $output .= ' ' . fullname($user);
         $output .= '</div>';
         return $output;
