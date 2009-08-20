@@ -16,7 +16,9 @@
     if (has_capability('coursereport/log:viewlive', $context)) {
         echo $OUTPUT->heading(get_string('chooselivelogs') .':');
         echo '<p>';
-        link_to_popup_window('/course/report/log/live.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
+        $link = html_link::make('/course/report/log/live.php?id='. $course->id, get_string('livelogs'));
+        $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
+        echo $OUTPUT->link($link);                    
         echo '</p>';
     }
 ?>

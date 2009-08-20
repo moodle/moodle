@@ -395,9 +395,10 @@
                          $OUTPUT->old_icon_url('i/key') . '" alt="'.$strrequireskey.'" /></a>';
                 }
                 if (!empty($acourse->summary)) {
-                    link_to_popup_window ("/course/info.php?id=$acourse->id", "courseinfo",
-                                          '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->old_icon_url('i/info') . '" />',
-                                           400, 500, $strsummary);
+                    $link = html_link::make("/course/info.php?id=$acourse->id", '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->old_icon_url('i/info') . '" />');
+                    $link->add_action(new popup_action('click', $link->url, 'courseinfo'));
+                    $link->title = $strsummary;
+                    echo $OUTPUT->link($link);                    
                 }
                 echo "</td>";
             }

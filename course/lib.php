@@ -365,7 +365,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"cell c1\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
         echo "<td class=\"cell c2\">\n";
-        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 440, 700);
+        $link = html_link::make("/iplookup/index.php?ip=$log->ip&user=$log->userid", $log->ip);
+        $link->add_action(new popup_action('click', $link->url, 'iplookup', array('height' => 440, 'width' => 700)));
+        echo $OUTPUT->link($link);                    
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"cell c3\">\n";
@@ -376,7 +378,9 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         if($brokenurl) {
             echo $displayaction;
         } else {
-            link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',$displayaction, 440, 700);
+            $link = html_link::make(make_log_url($log->module,$log->url), $displayaction);
+            $link->add_action(new popup_action('click', $link->url, 'fromloglive'), array('height' => 440, 'width' => 700));
+            echo $OUTPUT->link($link);                    
         }
         echo "</td>\n";;
         echo "<td class=\"cell c5\">{$log->info}</td>\n";
@@ -473,7 +477,9 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         echo "<td class=\"r$row c1\" align=\"right\">".userdate($log->time, '%a').
              ' '.userdate($log->time, $strftimedatetime)."</td>\n";
         echo "<td class=\"r$row c2\" >\n";
-        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
+        $link = html_link::make("/iplookup/index.php?ip=$log->ip&user=$log->userid", $log->ip);
+        $link->add_action(new popup_action('click', $link->url, 'iplookup', array('height' => 400, 'width' => 700)));
+        echo $OUTPUT->link($link);                    
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"r$row c3\" >\n";
@@ -1962,9 +1968,10 @@ function print_category_info($category, $depth, $showcourses = false) {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
                 if ($course->summary) {
-                    link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
-                                          '<img alt="'.$strsummary.'" src="'.$OUTPUT->old_icon_url('i/info') . '" />',
-                                           400, 500, $strsummary);
+                    $link = html_link::make('/course/info.php?id='.$course->id, '<img alt="'.$strsummary.'" src="'.$OUTPUT->old_icon_url('i/info') . '" />');
+                    $link->add_action(new popup_action('click', $link->url, 'courseinfo', array('height' => 400, 'width' => 500)));
+                    $link->title = $strsummary;
+                    echo $OUTPUT->link($link);                    
                 } else {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
