@@ -182,12 +182,12 @@
                 $days2expire = $userauth->password_expire($USER->username);
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                     print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
-                    notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
+                    echo $OUTPUT->confirm(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                     echo $OUTPUT->footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
                     print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
-                    notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
+                    echo $OUTPUT->confirm(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     echo $OUTPUT->footer();
                     exit;
                 }
