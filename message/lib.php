@@ -338,9 +338,19 @@ function message_print_search_results($frm) {
                 echo $OUTPUT->user_picture($userpic);
                 echo '</td>';
                 echo '<td class="contact">';
-                link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user),
-                                     500, 500, get_string('sendmessageto', 'message', fullname($user)),
-                                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+                $popupoptions = array(
+                        'height' => 500,
+                        'width' => 500,
+                        'menubar' => false,
+                        'location' => false,
+                        'status' => true,
+                        'scrollbars' => true,
+                        'resizable' => true);
+
+                $link = html_link::make("/message/discussion.php?id=$user->id", fullname($user));
+                $link->add_action(new popup_action('click', $link->url, "message_$user->id", $popupoptions));
+                $link->title = get_string('sendmessageto', 'message', fullname($user));
+                echo $OUTPUT->link($link);
 
                 echo '</td>';
 
@@ -519,9 +529,20 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
         }
         echo '<br />';
 
-        link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id",
-                             fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)),
-                             'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+        $popupoptions = array(
+                'height' => 500,
+                'width' => 500,
+                'menubar' => false,
+                'location' => false,
+                'status' => true,
+                'scrollbars' => true,
+                'resizable' => true);
+
+        $link = html_link::make("/message/discussion.php?id=$user->id", fullname($user));
+        $link->add_action(new popup_action('click', $link->url, "message_$user->id", $popupoptions));
+        $link->title = get_string('sendmessageto', 'message', fullname($user));
+        echo $OUTPUT->link($link);
+
     }
 }
 
@@ -603,9 +624,19 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
         $fulllink = $strmessagehistory;
     }
 
-    $str = link_to_popup_window("/message/history.php?user1=$userid1&amp;user2=$userid2$keywords$position",
-                    "message_history_$userid1", $fulllink, 500, 500, $strmessagehistory,
-                    'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
+    $popupoptions = array(
+            'height' => 500,
+            'width' => 500,
+            'menubar' => false,
+            'location' => false,
+            'status' => true,
+            'scrollbars' => true,
+            'resizable' => true);
+
+    $link = html_link::make("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", $fulllink);
+    $link->add_action(new popup_action('click', $link->url, "message_history_$userid1", $popupoptions));
+    $link->title = $strmessagehistory;
+    echo $OUTPUT->link($link);
 
     $str = '<span class="history">'.$str.'</span>';
 
@@ -998,6 +1029,7 @@ function message_get_participants() {
  * @param $incontactlist is the user a contact of ours?
  */
 function message_print_contactlist_user($contact, $incontactlist = true){
+    global $OUTPUT;
     $fullname  = fullname($contact);
     $fullnamelink  = $fullname;
 
@@ -1024,10 +1056,20 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo $OUTPUT->user_picture($userpic);
     echo '</td>';
     echo '<td class="contact">';
+    
+    $popupoptions = array(
+            'height' => 500,
+            'width' => 500,
+            'menubar' => false,
+            'location' => false,
+            'status' => true,
+            'scrollbars' => true,
+            'resizable' => true);
 
-    link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id",
-        $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
-        'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
+    $link = html_link::make("/message/discussion.php?id=$contact->id", $fullnamelink);
+    $link->add_action(new popup_action('click', $link->url, "message_$contact->id", $popupoptions));
+    $link->title = get_string('sendmessageto', 'message', $fullname);
+    echo $OUTPUT->link($link);
 
     echo '</td>';
     echo '<td class="link">&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory.'</td>';
