@@ -1505,7 +1505,7 @@ function data_print_ratings($data, $record) {
 
             if ($data->scale < 0) {
                 if ($scale = $DB->get_record('scale', array('id'=>abs($data->scale)))) {
-                    echo $OUTPUT->help_button(helpbutton::make_scale_menu($data->course, $scale));
+                    echo $OUTPUT->help_button(moodle_help_icon::make_scale_menu($data->course, $scale));
                 }
             }
 
@@ -1699,7 +1699,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
  * @return void Output is echo'd
  */
 function data_print_comment($data, $comment, $page=0) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1712,7 +1712,7 @@ function data_print_comment($data, $comment, $page=0) {
     echo '<table cellspacing="0" align="center" width="50%" class="datacomment forumpost">';
 
     echo '<tr class="header"><td class="picture left">';
-    print_user_picture($user, $data->course, $user->picture);
+    echo $OUTPUT->user_picture(moodle_user_picture::make($user, $data->course));
     echo '</td>';
 
     echo '<td class="topic starter" align="left"><div class="author">';

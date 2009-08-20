@@ -184,8 +184,8 @@
                     // Print confirmation message.
                     $field = data_get_field_from_id($fid, $data);
 
-                    notice_yesno('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'),
-                                 'field.php?d='.$data->id.'&amp;mode=delete&amp;fid='.$fid.'&amp;sesskey='.sesskey().'&amp;confirm=1',
+                    echo $OUTPUT->confirm('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'),
+                                 'field.php?d='.$data->id.'&mode=delete&fid='.$fid.'&confirm=1',
                                  'field.php?d='.$data->id);
 
                     echo $OUTPUT->footer();
@@ -246,6 +246,7 @@
 
         } else {    //else print quiz style list of fields
 
+            $table = new html_table();
             $table->head = array(get_string('fieldname','data'), get_string('type','data'), get_string('fielddescription', 'data'), get_string('action','data'));
             $table->align = array('left','left','left', 'center');
             $table->wrap = array(false,false,false,false);
@@ -273,7 +274,7 @@
                     );
                 }
             }
-            print_table($table);
+            echo $OUTPUT->table($table);
         }
 
 

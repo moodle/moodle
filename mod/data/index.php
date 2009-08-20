@@ -61,6 +61,8 @@
     $strentries = get_string('entries', 'data');
     $strnumnotapproved = get_string('numnotapproved', 'data');
 
+    $table = new html_table();
+
     if ($course->format == 'weeks') {
         $table->head  = array ($strweek, $strname, $strdescription, $strentries, $strnumnotapproved);
         $table->align = array ('center', 'center', 'center', 'center', 'center');
@@ -137,7 +139,7 @@
     }
 
     echo "<br />";
-    print_table($table);
+    echo $OUTPUT->table($table);
     echo $OUTPUT->footer();
 
 ?>

@@ -66,9 +66,11 @@
                 echo '<tr class="forumpostheader">';
             }
             echo '<td class="picture">';
-            print_user_picture($rating->id, $data->course, $rating->picture, false, false, true);
+            $userpic = moodle_user_picture::make($rating, $data->course);
+            $userpic->link = true;
+            echo $OUTPUT->user_picture($userpic);
             echo '</td>';
-            echo '<td class="author"><a href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$data->course.'">'.fullname($rating).'</a></td>';
+            echo '<td class="author">' . $OUTPUT->link($CFG->wwwroot.'/user/view.php?id='.$rating->id.'&course='.$data->course, fullname($rating)) . '</td>';
             echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
             echo "</tr>\n";
         }

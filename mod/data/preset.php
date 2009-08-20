@@ -91,15 +91,12 @@ switch ($action) {
         $strwarning = get_string('deletewarning', 'data').'<br />'.
                       data_preset_name($shortname, $path);
 
-        $options = new object();
-        $options->fullname = $userid.'/'.$shortname;
-        $options->action   = 'delete';
-        $options->d        = $data->id;
-        $options->sesskey  = sesskey();
-
-        $optionsno = new object();
-        $optionsno->d = $data->id;
-        notice_yesno($strwarning, 'preset.php', 'preset.php', $options, $optionsno, 'post', 'get');
+        $optionsyes = array('fullname' => $userid.'/'.$shortname,
+                         'action' => 'delete',
+                         'd' => $data->id);
+                         
+        $optionsno = array('d' => $data->id);
+        echo $OUTPUT->confirm($strwarning, new moodle_url('preset.php', $optionsyes), new moodle_url('preset.php', $optionsno));
         echo $OUTPUT->footer();
         exit(0);
         break;
@@ -302,7 +299,7 @@ $options = new object();
 $options->action = 'export';
 $options->d = $data->id;
 $options->sesskey = sesskey();
-print_single_button('preset.php', $options, $strexport, 'post');
+echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strexport));
 echo '</td></tr>';
 
 echo '<tr><td><label>'.$strsaveaspreset.'</label>';
@@ -312,7 +309,7 @@ $options = new object();
 $options->action = 'save1';
 $options->d = $data->id;
 $options->sesskey = sesskey();
-print_single_button('preset.php', $options, $strsave, 'post');
+echo $OUTPUT->button(html_form::make_button('preset.php', $options, $strsave));
 echo '</td></tr>';
 echo '<tr><td valign="top" colspan="2" align="center"><h3>'.$strimport.'</h3></td></tr>';
 echo '<tr><td><label for="fromfile">'.$strfromfile.'</label>';

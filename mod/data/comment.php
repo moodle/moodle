@@ -113,10 +113,9 @@
                 print_header();
                 data_print_comment($data, $comment, $page);
 
-                notice_yesno(get_string('deletecomment','data'),
-                  'comment.php?rid='.$record->id.'&amp;commentid='.$comment->id.'&amp;page='.$page.
-                              '&amp;sesskey='.sesskey().'&amp;mode=delete&amp;confirm=1',
-                  'view.php?rid='.$record->id.'&amp;page='.$page);
+                echo $OUTPUT->confirm(get_string('deletecomment','data'),
+                        'comment.php?rid='.$record->id.'&commentid='.$comment->id.'&page='.$page.'&mode=delete&confirm=1',
+                        'view.php?rid='.$record->id.'&page='.$page);
                 echo $OUTPUT->footer();
             }
             die;

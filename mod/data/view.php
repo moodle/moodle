@@ -338,8 +338,8 @@
         } else {   // Print a confirmation page
             if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                    notice_yesno(get_string('confirmdeleterecord','data'),
-                            'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                    echo $OUTPUT->confirm(get_string('confirmdeleterecord','data'),
+                            'view.php?d='.$data->id.'&delete='.$delete.'&confirm=1',
                             'view.php?d='.$data->id);
 
                     $records[] = $deleterecord;
