@@ -625,9 +625,16 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     protected function display_content($question, $rowclasses) {
         global $OUTPUT;
         if (question_has_capability_on($question, 'use')) {
-            link_to_popup_window($this->qbank->preview_question_url($question->id), 'questionpreview',
-                    ' <img src="' . $OUTPUT->old_icon_url('t/preview') . '" class="iconsmall" alt="' . $this->strpreview . '" />',
-                    0, 0, $this->strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
+            parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
+            $image = new html_image();
+            $image->src = $OUTPUT->old_icon_url('t/preview');
+            $image->add_class('iconsmall');
+            $image->alt = $this->strpreview;
+
+            $link = html_link::make($this->qbank->preview_question_url($question->id), $this->strpreview);
+            $link->add_action(new popup_action('click', $link->url, 'questionpreview', $options));
+            $link->title = $this->strpreview;
+            echo $OUTPUT->link_to_popup($link, $image);
         }
     }
 
