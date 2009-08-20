@@ -108,7 +108,9 @@ foreach ($themes as $themename => $themedir) {
         $readmeurl = $CFG->themewww .'/'. $themename .'/README.txt';
     }
     if ($readmeurl) {
-        $infoitems['readme'] = link_to_popup_window($readmeurl, $themename, get_string('info'), 400, 500, '', 'none', true);
+        $link = html_link::make($readmeurl, get_string('info'));
+        $link->add_action(new popup_action('click', $link->url, $themename));
+        $infoitems['readme'] = $OUTPUT->link($link);                    
     }
 
     // Contents of the first screenshot/preview cell.
