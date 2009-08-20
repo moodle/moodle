@@ -78,6 +78,7 @@ require_once($CFG->dirroot.'/search/lib.php');
         $runindexerteststr = get_string('runindexertest', 'search');
         $runindexerstr = get_string('runindexer', 'search');
 
+        $admin_table = new html_table();
         $admin_table->tablealign = 'center';
         $admin_table->align = array ('right', 'left');
         $admin_table->wrap = array ('nowrap', 'nowrap');
@@ -103,7 +104,7 @@ require_once($CFG->dirroot.'/search/lib.php');
             }
         }
 
-        print_table($admin_table);
+        echo $OUTPUT->table($admin_table);
         $spacer = new html_image();
         $spacer->height = 20;
         echo $OUTPUT->spacer(clone($spacer)) . '<br />';
@@ -120,13 +121,14 @@ require_once($CFG->dirroot.'/search/lib.php');
         $admin_table->data[] = array($runindexerteststr, '<a href="tests/index.php" target="_blank">tests/index.php</a>');
         $admin_table->data[] = array($runindexerstr, '<a href="indexersplash.php" target="_blank">indexersplash.php</a>');
 
-        print_table($admin_table);
+        echo $OUTPUT->table($admin_table);
         echo $OUTPUT->spacer($spacer) . '<br />';
         print_spacer(20);
     }
 
 /// this is the standard summary table for normal users, shows document counts
 
+    $table = new html_table();
     $table->tablealign = 'center';
     $table->align = array ('right', 'left');
     $table->wrap = array ('nowrap', 'nowrap');
@@ -161,7 +163,7 @@ require_once($CFG->dirroot.'/search/lib.php');
     }
 
     echo $OUTPUT->heading($databasestatestr);
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     echo $OUTPUT->box_end();
     echo $OUTPUT->box_end();
