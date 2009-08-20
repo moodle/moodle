@@ -60,7 +60,9 @@ if ($id and $delete) {
         print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'group.php', 'index.php', $optionsyes, $optionsno, 'get', 'get');
+        $formcontinue = html_form::make_button('group.php', $optionsyes, get_string('yes'), 'get');
+        $formcancel = html_form::make_button($baseurl, $optionsno, get_string('no'), 'get');
+        echo $OUTPUT->confirm(get_string('deletegroupconfirm', 'group', $group->name), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
 

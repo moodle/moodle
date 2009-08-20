@@ -67,17 +67,17 @@ if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), '
         $data[] = $line;
     }
 }
-$table = new object();
+$table = new html_table();
 $table->head  = array($strgrouping, $strgroups, $struses, $stredit);
 $table->size  = array('30%', '50%', '10%', '10%');
 $table->align = array('left', 'left', 'center', 'center');
 $table->width = '90%';
 $table->data  = $data;
-print_table($table);
+echo $OUTPUT->table($table);
 
-echo '<div class="buttons">';
-print_single_button('grouping.php', array('courseid'=>$courseid), $srtnewgrouping);
-echo '</div>';
+echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->button(html_form::make_button('grouping.php', array('courseid'=>$courseid), $srtnewgrouping));
+echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 

@@ -66,7 +66,9 @@ if ($confirm && data_submitted()) {
         }
         $message.='</ul>';
     }
-    notice_yesno($message, 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+    $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'), 'post');
+    $formcancel = html_form::make_button('index.php', $optionsno, get_string('no'), 'get');
+    echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
     echo $OUTPUT->footer();
 }
 ?>

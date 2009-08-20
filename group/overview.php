@@ -151,7 +151,7 @@ foreach ($members as $gpgid=>$groupdata) {
     if ($groupingid and $groupingid != $gpgid) {
         continue; // do not show
     }
-    $table = new object();
+    $table = new html_table();
     $table->head  = array(get_string('groupscount', 'group', count($groupdata)), get_string('groupmembers', 'group'), get_string('usercount', 'group'));
     $table->size  = array('20%', '70%', '10%');
     $table->align = array('left', 'left', 'center');
@@ -191,7 +191,7 @@ foreach ($members as $gpgid=>$groupdata) {
             echo $OUTPUT->box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
-    print_table($table, false);
+    echo $OUTPUT->table($table);
     $printed = true;
 }
 
