@@ -124,7 +124,7 @@
             }
 
             if ($scousers=$DB->get_records_sql($sql, $params)) {
-                $table = new stdClass();
+                $table = new html_table();
                 $table->head = array();
                 $table->width = '100%';
                 if (has_capability('mod/scorm:deleteresponses',$contextmodule)) {
@@ -172,7 +172,9 @@
                         if (has_capability('mod/scorm:deleteresponses',$contextmodule)) {
                             $row[] = '<input type="checkbox" name="attemptid[]" value="'. $scouser->userid . ':' . $a . '" />';
                         }
-                        $row[] = print_user_picture($scouser->userid, $course->id, $userdata->picture, false, true);
+                        $userpic = moodle_user_picture::make($scouser->userid, $course->id);
+                        $userpic->image->src = $userdata->picture;
+                        $row[] = $OUTPUT->user_picture($userpic);
                         $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&amp;course='.$course->id.'">'.
                                  fullname($userdata).'</a>';
                         $row[] = '<a href="report.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$a.'">'.$a.'</a>';
@@ -194,7 +196,7 @@
                 if (has_capability('mod/scorm:deleteresponses',$contextmodule)) {
                     echo '<form id="attemptsform" method="post" action="'.$FULLSCRIPT.'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes_js(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                     echo '<input type="hidden" name="id" value="'.$id.'">';
-                    print_table($table);
+                    echo $OUTPUT->table($table);
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'scormtablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
@@ -211,7 +213,7 @@
                     $PAGE->requires->js_function_call('hide_item', Array('noscriptmenuaction'));
                     echo '</form>';
                 } else {
-                    print_table($table);
+                    echo $OUTPUT->table($table);
                 }
                 echo '</div>';
             } else {
@@ -224,7 +226,9 @@
                     if (!empty($userdata)) {
                         echo $OUTPUT->box_start('generalbox boxaligncenter');
                         echo '<div class="mdl-align">'."\n";
-                        print_user_picture($user, $course->id, $userdata->picture, false, false);
+                        $userpic = moodle_user_picture::make($user, $course->id);
+                        $userpic->image->src = $userdata->picture;
+                        echo $OUTPUT->user_picture($userpic);
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
@@ -232,7 +236,7 @@
                         echo $OUTPUT->box_end();
 
                         // Print general score data
-                        $table = new stdClass();
+                        $table = new html_table();
                         $table->head = array(get_string('title','scorm'),
                                              get_string('status','scorm'),
                                              get_string('time','scorm'),
@@ -272,7 +276,7 @@
                             }
                             $table->data[] = $row;
                         }
-                        print_table($table);
+                        echo $OUTPUT->table($table);
                     }
                 }
             } else {
@@ -286,7 +290,9 @@
             //print_heading(format_string($sco->title));
             echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
-            print_user_picture($user, $course->id, $userdata->picture, false, false);
+            $userpic = moodle_user_picture::make($user, $course->id);
+            $userpic->image->src = $userdata->picture;
+            echo $OUTPUT->user_picture($userpic);
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";
             $scoreview = '';
@@ -308,7 +314,7 @@
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';
 
             // Print general score data
-            $table = new stdClass();
+            $table = new html_table();
             $table->head = array(get_string('element','scorm'), get_string('value','scorm'));
             $table->align = array('left', 'left');
             $table->wrap = array('nowrap', 'nowrap');
@@ -342,11 +348,11 @@
             }
             if ($existelements) {
                 echo '<h3>'.get_string('general','scorm').'</h3>';
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
 
             // Print Interactions data
-            $table = new stdClass();
+            $table = new html_table();
             $table->head = array(get_string('identifier','scorm'),
                                  get_string('type','scorm'),
                                  get_string('result','scorm'),
@@ -384,11 +390,11 @@
             }
             if ($existinteraction) {
                 echo '<h3>'.get_string('interactions','scorm').'</h3>';
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
 
             // Print Objectives data
-            $table = new stdClass();
+            $table = new html_table();
             $table->head = array(get_string('identifier','scorm'),
                                  get_string('status','scorm'),
                                  get_string('raw','scorm'),
@@ -428,9 +434,9 @@
             }
             if ($existobjective) {
                 echo '<h3>'.get_string('objectives','scorm').'</h3>';
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
-            $table = new stdClass();
+            $table = new html_table();
             $table->head = array(get_string('element','scorm'), get_string('value','scorm'));
             $table->align = array('left', 'left');
             $table->wrap = array('nowrap', 'wrap');
@@ -452,7 +458,7 @@
             }
             if ($existelements) {
                 echo '<h3>'.get_string('othertracks','scorm').'</h3>';
-                print_table($table);
+                echo $OUTPUT->table($table);
             }
             echo $OUTPUT->box_end();
         } else {

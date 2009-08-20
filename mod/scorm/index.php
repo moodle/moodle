@@ -44,6 +44,8 @@
         exit;
     }
 
+    $table = new html_table();
+
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strsummary, $strreport);
         $table->align = array ("center", "left", "left", "left");
@@ -94,7 +96,7 @@
 
     echo "<br />";
 
-    print_table($table);
+    echo $OUTPUT->table($table);
 
     echo $OUTPUT->footer();
 
