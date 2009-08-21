@@ -3207,7 +3207,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
 function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=false, $reply=false, $link=false,
                           $ratings=NULL, $footer="", $highlight="", $post_read=null, $dummyifcantsee=true, $istracked=null) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune;
     static $strpruneheading, $displaymode;
