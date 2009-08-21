@@ -6,7 +6,7 @@ require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
-    protected $_helpbutton = '';
+    public $_helpbutton = '';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {

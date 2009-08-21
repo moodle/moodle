@@ -14,7 +14,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
  * @access       public
  */
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
-    protected $_helpbutton = '';
+    public $_helpbutton = '';
     protected $_options    = array('maxbytes'=>0, 'filetypes'=>'*', 'returnvalue'=>'*');
 
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {

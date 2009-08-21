@@ -12,7 +12,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
 //  * ajax format conversion
 
 class MoodleQuickForm_editor extends HTML_QuickForm_element {
-    protected $_helpbutton = '';
+    public $_helpbutton = '';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0,
                                    'context'=>null, 'noclean'=>0, 'trusttext'=>0);
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
