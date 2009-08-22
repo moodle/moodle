@@ -340,6 +340,20 @@ class question_dataset_dependent_items_form extends moodleform {
          //   if(!isset($errors['warning'])) $errors['warning']=' ';
            $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
         }
+        $numbers = $data['number'];
+        foreach ($numbers as $key => $number){
+            if(! is_numeric($number)){
+                if (stristr($number,',')){
+                    $errors['number['.$key.']'] = get_string('The , cannot be used, use . as in 0.013 or 1.3e-2', 'qtype_datasetdependent');
+                }else {    
+                    $errors['number['.$key.']'] = get_string('This is not a valid number', 'qtype_datasetdependent');
+                }
+            }else if( stristr($number,'x')){
+                $errors['number['.$key.']'] = get_string('Hexadecimal format (i.e. 0X12d) is not allowed', 'qtype_datasetdependent');
+            } else if( is_nan($number)){
+                $errors['number['.$key.']'] = get_string('is a NAN number', 'qtype_datasetdependent');
+            }        
+        }
         return $errors;
     }
 
