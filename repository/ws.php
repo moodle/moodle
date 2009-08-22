@@ -18,6 +18,7 @@
     $ctx_id = optional_param('ctx_id', SITEID, PARAM_INT);    // context ID
     $repo_id   = optional_param('repo_id', 1, PARAM_INT);     // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);          // path
+    $save_path = optional_param('savepath', '/', PARAM_PATH);
     $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $search_text = optional_param('s', '', PARAM_CLEANHTML);
 
@@ -232,7 +233,7 @@ EOD;
                     echo json_encode($info);
                 } else {
                     // normal file path name
-                    $info = repository::move_to_filepool($filepath, $title, $itemid);
+                    $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
                     $info['client_id'] = $client_id;
                     echo json_encode($info);
                 }

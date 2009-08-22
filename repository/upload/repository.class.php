@@ -22,8 +22,8 @@ class repository_upload extends repository {
         global $_FILES, $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
         $itemid = optional_param('itemid', '', PARAM_INT);
+        $filepath = optional_param('savepath', '/', PARAM_PATH);
         if($action=='upload'){
-            $filepath = '/';
             $this->info = repository::store_to_filepool('repo_upload_file', 'user_draft', $filepath, $itemid);
         }
     }

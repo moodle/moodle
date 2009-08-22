@@ -737,16 +737,19 @@ abstract class repository {
      * @param string $filearea file area
      * @return array information of file in file pool
      */
-    public static function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
+    public static function move_to_filepool($path, $name, $itemid, $filepath = '/', $filearea = 'user_draft') {
         global $DB, $CFG, $USER, $OUTPUT;
+        if ($filepath !== '/') {
+            $filepath = trim($filepath, '/');
+            $filepath = '/'.$filepath.'/';
+        }
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $now = time();
         $entry = new object();
         $entry->filearea  = $filearea;
         $entry->contextid = $context->id;
         $entry->filename  = $name;
-        //$entry->filepath  = '/'.uniqid().'/';
-        $entry->filepath  = '/';
+        $entry->filepath  = $filepath;
         $entry->timecreated  = $now;
         $entry->timemodified = $now;
         $entry->userid       = $USER->id;
@@ -792,6 +795,12 @@ abstract class repository {
      */
     public static function store_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
         global $USER;
+
+        if ($filepath !== '/') {
+            $filepath = trim($filepath, '/');
+            $filepath = '/'.$filepath.'/';
+        }
+
         if (!isset($_FILES[$elname])) {
             return false;
         }

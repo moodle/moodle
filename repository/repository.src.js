@@ -998,6 +998,7 @@ repository_client.download = function(client_id, repo_id) {
     }
     params['env']=fp.env;
     params['file']=file;
+    params['savepath']=fp.savepath;
     params['title']=title;
     params['sesskey']=moodle_cfg.sesskey;
     params['ctx_id']=fp_config.contextid;
@@ -1091,6 +1092,7 @@ repository_client.upload = function(client_id) {
                 moodle_cfg.wwwroot+'/repository/ws.php?action=upload&itemid='+fp.itemid
                     +'&sesskey='+moodle_cfg.sesskey
                     +'&ctx_id='+fp_config.contextid
+                    +'&savepath='+fp.savepath
                     +'&repo_id='+u.repo_id
                     +'&client_id='+client_id,
                 repository_client.upload_cb);
@@ -1210,6 +1212,7 @@ function open_filepicker(id, params) {
         r = new repository_client();
         r.env = params.env;
         r.target = params.target;
+        r.savepath = params.savepath;
         if(params.itemid){
             r.itemid = params.itemid;
         } else if(tinyMCE && id2itemid[tinyMCE.selectedInstance.editorId]){
