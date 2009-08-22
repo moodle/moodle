@@ -415,7 +415,7 @@ class qformat_xml extends qformat_default {
 
         // header parts particular to numerical
         $qo->qtype = CALCULATED ;//CALCULATED;
-
+        $qo->synchronize = $this->getpath( $question, array( '#','synchronize',0,'#' ), 0 );
         // get answers array
        // echo "<pre> question";print_r($question);echo "</pre>";
         $answers = $question['#']['answer'];
@@ -948,6 +948,12 @@ class qformat_xml extends qformat_default {
             }
             break;
         case CALCULATED:
+            if (!empty($question->options->synchronize)) {
+                $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
+            }
+            else {
+                $expout .= "    <synchronize>0</synchronize>\n";
+            }
         case CALCULATEDSIMPLE:
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
