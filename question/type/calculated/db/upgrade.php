@@ -27,13 +27,34 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
     $result = true;
 
     // MDL-16505.
-    if ($result && $oldversion < 2008091700) { //New version in version.php
+    if ($result && $oldversion < 2008091700 ) { //New version in version.php
         if (get_config('qtype_datasetdependent', 'version')) {
             $result = $result && unset_config('version', 'qtype_datasetdependent');
         }
         upgrade_plugin_savepoint($result, 2008091700, 'qtype', 'calculated');
     }
 
+//    let if ($dbman->table_exists()) replace the normal $oldversion test
+//    as in any case the question question_calculated_options should be created
+
+    /// Define table question_calculated_options to be created
+        $table = new xmldb_table('question_calculated_options');
+
+    /// Adding fields to table question_calculated_options
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('question', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('synchronize', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+    /// Adding keys to table question_calculated_options
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
+    /// Conditionally launch create table for question_calculated_options
+        if (!$dbman->table_exists($table)) {
+            $result = $dbman->create_table($table);
+        }
+
+/// calculated savepoint reached
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of database_manager methods
 ///     upgrade_plugin_savepoint($result, YYYYMMDD00, 'qtype', 'calculated');

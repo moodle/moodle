@@ -91,6 +91,12 @@ class question_edit_calculated_form extends question_edit_form {
             $firstunit->setPersistantFreeze(true);
         }
         //hidden elements
+        $mform->addElement('hidden', 'synchronize', '');
+        if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
+            $mform->setDefault("synchronize", $this->question->options->synchronize);
+        } else {
+            $mform->setDefault("synchronize", 0 );
+        }
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
         $mform->setType('wizard', PARAM_ALPHA);
 

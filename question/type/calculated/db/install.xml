@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/calculated/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/calculated. This question type also relies on the question_numerical_units table created by the numerical question type, and the tables created by the datasetdependent question type base class.">
+<XMLDB PATH="question/type/calculated/db" VERSION="20090819" COMMENT="XMLDB file for Moodle question/type/calculated. This question type also relies on the question_numerical_units table created by the numerical question type, and the tables created by the datasetdependent question type base class.">
   <TABLES>
-    <TABLE NAME="question_calculated" COMMENT="Options for questions of type calculated" NEXT="question_dataset_definitions">
+    <TABLE NAME="question_calculated" COMMENT="Options for questions of type calculated" NEXT="question_calculated_options">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="answer"/>
@@ -19,7 +19,18 @@
         <INDEX NAME="answer" UNIQUE="false" FIELDS="answer"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="question_dataset_definitions" COMMENT="Organises and stores properties for dataset items" PREVIOUS="question_calculated" NEXT="question_dataset_items">
+    <TABLE NAME="question_calculated_options" COMMENT="Options for questions of type calculated" PREVIOUS="question_calculated" NEXT="question_dataset_definitions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="synchronize"/>
+        <FIELD NAME="synchronize" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>      
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="question_dataset_definitions" COMMENT="Organises and stores properties for dataset items" PREVIOUS="question_calculated_options" NEXT="question_dataset_items">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="category"/>
         <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
