@@ -753,7 +753,9 @@ class block_manager {
     protected function create_block_instances($birecords) {
         $results = array();
         foreach ($birecords as $record) {
-            $results[] = block_instance($record->blockname, $record, $this->page);
+            if ($blockobject = block_instance($record->blockname, $record, $this->page)) {
+                $results[] = $blockobject;
+            }
         }
         return $results;
     }
@@ -1296,8 +1298,15 @@ function block_load_class($blockname) {
         return true;
     }
 
-    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-    @include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php'); // do not throw errors if block code not present
+    $blockpath = $CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php';
+
+    if (file_exists($blockpath)) {
+        require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+        include_once($blockpath);
+    }else{
+        debugging("$blockname code does not exist in $blockpath", DEBUG_DEVELOPER);
+        return false;
+    }
 
     return class_exists($classname);
 }
