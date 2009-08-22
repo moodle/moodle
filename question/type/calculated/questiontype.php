@@ -39,6 +39,9 @@ class question_calculated_qtype extends default_questiontype {
             echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
             return false;
         }
+        if (!$question->options->synchronize = $DB->get_field('question_calculated_options', 'synchronize', array('question' => $question->id)) ) {
+            $question->options->synchronize = 0;
+        }
 
 /*
        if(false === parent::get_question_options($question)) {
@@ -127,9 +130,28 @@ class question_calculated_qtype extends default_questiontype {
         //$options = $question->subtypeoptions;
         // Get old answers:
         global $CFG, $DB;
-
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
+        }
+        // calculated options
+        $update = true ; 
+        $options = $DB->get_record("question_calculated_options", array("question" => $question->id));
+        if (!$options) {
+            $update = false;
+            $options = new stdClass;
+            $options->question = $question->id;
+        }
+        $options->synchronize = $question->synchronize;
+        if ($update) {
+            if (!$DB->update_record("question_calculated_options", $options)) {
+                $result->error = "Could not update calculated question options! (id=$options->id)";
+                return $result;
+            }
+        } else {
+            if (!$DB->insert_record("question_calculated_options", $options)) {
+                $result->error = "Could not insert calculated question options!";
+                return $result;
+            }
         }
 
         // Get old versions of the objects
@@ -298,21 +320,30 @@ class question_calculated_qtype extends default_questiontype {
                             AND   a.id = b.datasetdefinition", array($question->id))) {
             print_error('cannotgetdsforquestion', 'question', '', $question->id);
         }
+                    $sql = "SELECT i.*
+                    FROM {question_datasets} d,
+                         {question_dataset_definitions} i
+                    WHERE d.question = ?
+                    AND   d.datasetdefinition = i.id  
+                    AND   i.category != 0 
+                   ";
+        if (!$question->options->synchronize || !$records = $DB->get_records_sql($sql, array($question->id))) {
+            $synchronize_calculated  =  false ; 
+        }else {
+            $synchronize_calculated  = true ; 
+        }    
 
         // Choose a random dataset
-        if (!isset($cmoptions->intro) || strstr($cmoptions->intro, 'synchronize_calculated') === false ) {
+        if ( $synchronize_calculated === false ) {
             $state->options->datasetitem = rand(1, $maxnumber);
         }else{
-            if( !isset($cmoptions->synchronize_calculated)) {
-               $state->options->datasetitem = rand(1, $maxnumber);
-               $cmoptions->synchronize_calculated = $state->options->datasetitem ;
-            }else {
-                if ($cmoptions->synchronize_calculated <= $maxnumber){
-                    $state->options->datasetitem = $cmoptions->synchronize_calculated ;
-                }else {
-                    $state->options->datasetitem = rand(1, $maxnumber);
-                }
+            $state->options->datasetitem = intval( $maxnumber * substr($attempt->timestart,-2) /100 ) ;            
+            if ($state->options->datasetitem < 1) {
+                $state->options->datasetitem =1 ;
+            } else if ($state->options->datasetitem > $maxnumber){
+                $state->options->datasetitem = $maxnumber ;
             }
+           
         };  
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
@@ -553,6 +584,7 @@ class question_calculated_qtype extends default_questiontype {
     * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
     */
     function save_question($question, $form, $course) {
+        global $DB;
         $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
         $id = optional_param('id', 0, PARAM_INT); // question id
         // in case 'question'
@@ -589,6 +621,26 @@ class question_calculated_qtype extends default_questiontype {
                 }
                 break;
             case 'datasetdefinitions':
+        // calculated options
+        $update = true ; 
+        $options = $DB->get_record("question_calculated_options", array("question" => $question->id));
+        if (!$options) {
+            $update = false;
+            $options = new stdClass;
+            $options->question = $question->id;
+        }
+        $options->synchronize = $form->synchronize;
+        if ($update) {
+            if (!$DB->update_record("question_calculated_options", $options)) {
+                $result->error = "Could not update calculated question options! (id=$options->id)";
+                return $result;
+            }
+        } else {
+            if (!$DB->insert_record("question_calculated_options", $options)) {
+                $result->error = "Could not insert calculated question options!";
+                return $result;
+            }
+        }
 
                 $this->save_dataset_definitions($form);
                 break;
@@ -611,6 +663,9 @@ class question_calculated_qtype extends default_questiontype {
     function delete_question($questionid) {
         global $DB;
         $DB->delete_records("question_calculated", array("question" => $questionid));
+        if ( $DB->table_exists("question_calculated_options") ){       
+            $DB->delete_records("question_calculated_options", array("question" => $questionid));
+        };
         $DB->delete_records("question_numerical_units", array("question" => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
@@ -1187,13 +1242,22 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function substitute_variables($str, $dataset) {
-          //  print_r(
+          //  testing for wrong numerical values
+          // all calculations used this function so testing here should be OK 
 
         foreach ($dataset as $name => $value) {
-            if($value < 0 ){
-                $str = str_replace('{'.$name.'}', '('.$value.')', $str);
+            $val = $value ;
+            if(! is_numeric($val)){
+                $a = new stdClass;
+                $a->name = '{'.$name.'}' ;
+                $a->value = $value ;
+                    echo $OUTPUT->notification(get_string('notvalidnumber','qtype_calculated',$a));
+                    $val = 1.0 ;
+            }                   
+            if($val < 0 ){
+                $str = str_replace('{'.$name.'}', '('.$val.')', $str);
             } else {
-                $str = str_replace('{'.$name.'}', $value, $str);
+                $str = str_replace('{'.$name.'}', $val, $str);
             }
         }
         return $str;
@@ -1256,6 +1320,8 @@ class question_calculated_qtype extends default_questiontype {
 
     function save_dataset_definitions($form) {
         global $DB;
+        // save synchronize
+        
         // Save datasets
         $datasetdefinitions = $this->get_dataset_definitions($form->id, $form->dataset);
         $tmpdatasets = array_flip($form->dataset);
@@ -1635,8 +1701,18 @@ class question_calculated_qtype extends default_questiontype {
                 //End calculated data
                 $status = $status &&fwrite ($bf,end_tag("CALCULATED",$level,true));
             }
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
+            $calculated_options = $DB->get_records("question_calculated_options",array("questionid" => $question),"id");
+            if ($calculated_options) {
+                //Iterate over each calculated_option
+                foreach ($calculated_options as $calculated_option) {
+                    $status = fwrite ($bf,start_tag("CALCULATED_OPTIONS",$level,true));
+                    //Print calculated_option contents
+                    fwrite ($bf,full_tag("SYNCHRONIZE",$level+1,false,$calculated_option->synchronize));
+                    $status = fwrite ($bf,end_tag("CALCULATED_OPTIONS",$level,true));
+                }
+                //Now print question_answers
+                $status = question_backup_answers($bf,$preferences,$question);
+            }
         }
         return $status;
     }
@@ -1689,6 +1765,37 @@ class question_calculated_qtype extends default_questiontype {
                     }
                 }
                 backup_flush(300);
+            }
+        //Get the calculated_options array
+        // need to check as old questions don't have calculated_options record
+        if(isset($info['#']['CALCULATED_OPTIONS'])){
+            $calculatedoptions = $info['#']['CALCULATED_OPTIONS'];
+    
+            //Iterate over calculated_options
+            for($i = 0; $i < sizeof($calculatedoptions); $i++) {
+                $cal_info = $calculatedoptions[$i];
+                //traverse_xmlize($cal_info);                                                                 //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+    
+                //Now, build the question_calculated_options record structure
+                $calculated_options->questionid = $new_question_id;
+                $calculated_options->synchronize = backup_todb($cal_info['#']['SYNCHRONIZE']['0']['#']);
+                }
+    
+                //The structure is equal to the db, so insert the question_calculated_options
+                $newid = $DB->insert_record ("question_calculated_options",$calculated_options);
+    
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
+                    }
+                    backup_flush(300);
+                }
             }
 
             //Now restore numerical_units
@@ -1875,8 +1982,7 @@ function qtype_calculated_find_formula_errors($formula) {
     $safeoperatorchar = '-+/*%>:^~<?=&|!'; /* */
     $operatorornumber = "[$safeoperatorchar.0-9eE]";
 
-
-    while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
+    while ( preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
             $formula, $regs)) {
 
         switch ($regs[2]) {
