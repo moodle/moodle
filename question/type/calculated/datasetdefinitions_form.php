@@ -96,6 +96,14 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $key++;
             }
         }
+        $mform->addElement('header', 'synchronizehdr', get_string("Synchronize the data from shared datasets with other questions in a quiz", $stringfile));
+        $mform->addElement('checkbox', "synchronize", '', "For each question in a quiz using a given wild card {x..} from a <strong>shared </strong> dataset,  wild card {x..}will be substituted by the same numerical value.");
+        if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
+            $mform->setDefault("synchronize", $this->question->options->synchronize);
+        } else {
+            $mform->setDefault("synchronize", 0 );
+        }
+
         $this->add_action_buttons(false, get_string('nextpage', 'qtype_calculated'));
 
 
