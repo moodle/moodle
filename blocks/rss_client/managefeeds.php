@@ -151,7 +151,7 @@ echo '<div class="actionbuttons">' . $OUTPUT->button($button) . '</div>';
 
 
 if ($returnurl) {
-    echo '<div class="backlink">' . $OUTPUT->link(get_string('back'), $returnurl) . '</div>';
+    echo '<div class="backlink">' . $OUTPUT->link($returnurl, get_string('back')) . '</div>';
 }
 
 echo $OUTPUT->footer();
