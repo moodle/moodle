@@ -269,6 +269,6 @@
 
     echo "</form>";
 
-    $OUTPUT->footer();
+    echo $OUTPUT->footer();
 
 ?>
