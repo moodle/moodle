@@ -932,7 +932,7 @@ class grade_report_grader extends grade_report {
     }
 
     function get_studentnameshtml() {
-        global $CFG, $USER;
+        global $CFG, $USER, $OUTPUT;
         $studentshtml = '';
 
         $showuserimage = $this->get_pref('showuserimage');

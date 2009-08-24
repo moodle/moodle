@@ -74,9 +74,9 @@ class grade_edit_tree {
      * Recursive function for building the table holding the grade categories and items,
      * with CSS indentation and styles.
      *
-     * @param array               $element The current tree element being rendered
-     * @param boolean             $totals Whether or not to print category grade items (category totals)
-     * @param array               $parents An array of parent categories for the current element (used for indentation and row classes)
+     * @param array   $element The current tree element being rendered
+     * @param boolean $totals Whether or not to print category grade items (category totals)
+     * @param array   $parents An array of parent categories for the current element (used for indentation and row classes)
      *
      * @return string HTML
      */
@@ -108,13 +108,22 @@ class grade_edit_tree {
 
         if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
             if ($this->element_deletable($element)) {
-                $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
-                         . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" alt="'
-                         . get_string('delete').'" title="'.get_string('delete').'"/></a>';
+                $actionicon = new moodle_action_icon();
+                $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'delete', 'eid' => $eid, 'sesskey' => sesskey()));
+                $actionicon->image->src = $OUTPUT->old_icon_url('t/delete');
+                $actionicon->image->alt = get_string('delete');
+                $actionicon->image->title = get_string('delete');
+                $actionicon->image->add_class('iconsmall');
+                $actions .= $OUTPUT->action_icon($actionicon);
             }
-            $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='
-                     . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->old_icon_url('t/move') . '" class="iconsmall" alt="'
-                     . get_string('move').'" title="'.get_string('move').'"/></a>';
+
+            $actionicon = new moodle_action_icon();
+            $actionicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'moveselect', 'eid' => $eid, 'sesskey' => sesskey()));
+            $actionicon->image->src = $OUTPUT->old_icon_url('t/move');
+            $actionicon->image->alt = get_string('move');
+            $actionicon->image->title = get_string('move');
+            $actionicon->image->add_class('iconsmall');
+            $actions .= $OUTPUT->action_icon($actionicon);
         }
 
         $actions .= $this->gtree->get_hiding_icon($element, $this->gpr);
@@ -171,7 +180,7 @@ class grade_edit_tree {
                 $first = '';
 
                 if ($child_el['object']->itemtype == 'course' || $child_el['object']->itemtype == 'category') {
-                    $first = '&amp;first=1';
+                    $first = array('first' => 1);
                     $child_eid = $eid;
                 }
 
@@ -181,9 +190,17 @@ class grade_edit_tree {
                     $strmovehere = get_string('movehere');
                     $actions = ''; // no action icons when moving
 
-                    $moveto = '<tr><td colspan="12"><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$this->moving.'&amp;moveafter='
-                            . $child_eid.'&amp;sesskey='.sesskey().$first.'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'
-                            . s($strmovehere).'" title="'.s($strmovehere).'" /></a></td></tr>';
+                    $moveicon = new moodle_action_icon();
+                    $moveicon->link->url = new moodle_url('index.php', array('id' => $COURSE->id, 'action' => 'move', 'eid' => $this->moving, 'moveafter' => $child_eid, 'sesskey' => sesskey()));
+                    if ($first) {
+                        $moveicon->link->url->params($first);
+                    }
+                    $moveicon->image->add_class('movetarget');
+                    $moveicon->image->src = $OUTPUT->old_icon_url('movehere');
+                    $moveicon->image->alt = $strmovehere;
+                    $moveicon->image->title = $strmovehere;
+
+                    $moveto = '<tr><td colspan="12">'.$OUTPUT->action_icon($moveicon) .'</td></tr>';
                 }
 
                 $newparents = $parents;
@@ -314,6 +331,8 @@ class grade_edit_tree {
      * @return string HTML
      */
     function get_weight_input($item, $type) {
+        global $OUTPUT;
+
         if (!is_object($item) || get_class($item) !== 'grade_item') {
             throw new Exception('grade_edit_tree::get_weight_input($item) was given a variable that is not of the required type (grade_item object)');
             return false;
@@ -323,18 +342,30 @@ class grade_edit_tree {
             return '';
         }
 
+        $weightfield = new html_field();
+
         $parent_category = $item->get_parent_category();
         $parent_category->apply_forced_settings();
         $aggcoef = $item->get_coefstring();
 
         if ((($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef') && $type == 'weight') ||
             ($aggcoef == 'aggregationcoefextra' && $type == 'extra')) {
-            return '<input type="text" size="6" id="aggregationcoef_'.$item->id.'" name="aggregationcoef_'.$item->id.'"
-                value="'.format_float($item->aggregationcoef, 4).'" />';
+            $weightfield->type = 'text';
+            $weightfield->id = "aggregationcoef_$item->id";
+            $weightfield->name = "aggregationcoef_$item->id";
+            $weightfield->value = format_float($item->aggregationcoef, 4);
+
+            return $OUTPUT->field($weightfield);;
         } elseif ($aggcoef == 'aggregationcoefextrasum' && $type == 'extra') {
             $checked = ($item->aggregationcoef > 0) ? 'checked="checked"' : '';
-            return '<input type="hidden" name="extracredit_'.$item->id.'" value="0" />
-                    <input type="checkbox" id="extracredit_'.$item->id.'" name="extracredit_'.$item->id.'" value="1" '."$checked />\n";
+            $weightfield->type = 'hidden';
+            $weightfield->name = "extracredit_$item->id";
+            $weightfield->value = 0;
+            
+            $extracredit = html_select_option::make_checkbox(1, ($item->aggregationcoef > 0), '&nbsp;');
+            $extracredit->id = "extracredit_$item->id";
+            $extracredit->name = "extracredit_$item->id";
+            return $OUTPUT->field($weightfield) . $OUTPUT->checkbox($extracredit);
         } else {
             return '';
         }
@@ -673,7 +704,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
     }
 
     public function get_item_cell($item, $params) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         // If the parent aggregation is Sum of Grades, this cannot be changed
         $parent_cat = $item->get_parent_category();
@@ -686,7 +717,10 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } else {
-            $grademax = '<input type="text" size="4" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
+            $grademaxinput = html_field::make_text("grademax_$item->id", format_float($item->grademax, $item->get_decimals()), get_string('grademax', 'grades'));
+            $grademaxinput->id = "grademax_$item->id";
+            $grademaxinput->title = get_string('grademax', 'grades');
+            $grademax = $OUTPUT->field($grademaxinput);
         }
 
         return '<td class="cell">'.$grademax.'</td>';
@@ -715,15 +749,22 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        $onlygradedcheck = ($category->aggregateonlygraded == 1) ? 'checked="checked"' : '';
-        $hidden = '<input type="hidden" name="aggregateonlygraded_'.$category->id.'" value="0" />';
-        $aggregateonlygraded ='<input type="checkbox" id="aggregateonlygraded_'.$category->id.'" name="aggregateonlygraded_'.$category->id.'" value="1" '.$onlygradedcheck . ' />';
+        global $OUTPUT;
+        
+        $hidden = new html_field();
+        $hidden->type = 'hidden';
+        $hidden->name = "aggregateonlygraded_$category->id";
+        $hidden->value = 0;
+        
+        $aggregateonlygraded = html_select_option::make_checkbox(1, ($category->aggregateonlygraded == 1), '&nbsp;');
+        $aggregateonlygraded->id = "aggregateonlygraded_$category->id";
+        $aggregateonlygraded->name = "aggregateonlygraded_$category->id";
 
         if ($this->forced) {
             $aggregateonlygraded = ($category->aggregateonlygraded) ? get_string('yes') : get_string('no');
         }
 
-        return '<td class="cell '.$levelclass.'">'.$hidden.$aggregateonlygraded.'</td>';
+        return '<td class="cell '.$levelclass.'">'.$OUTPUT->field($hidden).$OUTPUT->checkbox($aggregateonlygraded).'</td>';
     }
 
     public function get_item_cell($item, $params) {

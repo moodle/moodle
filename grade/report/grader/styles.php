@@ -218,7 +218,6 @@ vertical-align:middle;
 .grade-report-grader table {
 border-collapse:collapse;
 background-color:#fff;
-font-size:10px;
 border-color:#cecece;
 }
 
@@ -387,7 +386,7 @@ padding-top:20px;
 .grade-report-grader .right_scroller {
 width:auto;
 clear:none;
-overflow-x:auto;
+overflow-x:scroll;
 }
 
 .grade-report-grader table tr.avg,.grade-report-grader table tr.groupavg td,.grade-report-grader table tr.avg td,.grade-report-grader table tr.groupavg th,.grade-report-grader table tr.avg th,.grade-report-grader table tr.controls_row,.grade-report-grader table tr.controls_row th,.grade-report-grader table tr.range_row,.grade-report-grader table tr.range_row th,div.right_scroller tr {
@@ -442,37 +441,6 @@ white-space:nowrap;
 width:2000px;
 }
 
-.ie .right_scroller {
-padding-bottom:15px;
-overflow-y:hidden;
-}
-
-.ie table#fixed_column th {
-height:40.5px;
-}
-
-.ie table#fixed_column tr.avg th {
-height:21px;
-}
-
-.ie div.left_scroller td {
-height:42px;
-}
-
-.ie6 div.left_scroller {
-margin-top:40px;
-}
-
-.ie6 div.right_scroller {
-margin-top:40px;
-width:auto;
-position:absolute;
-}
-
-.ie6 .excludedfloater {
-font-size:7px;
-}
-
 .grade_icons img.ajax {
 float:right;
 }
@@ -520,7 +488,7 @@ background-color:#f3ead8;
 }
 
 .grade-report-grader div.left_scroller tr,.grade-report-grader div.right_scroller tr,.grade-report-grader div.left_scroller td,.grade-report-grader div.right_scroller td,.grade-report-grader div.left_scroller th,.grade-report-grader div.right_scroller th {
-height:4em;
+height:4.5em;
 font-size:10px;
 }
 
@@ -558,12 +526,6 @@ vertical-align:middle;
   text-align: left;
 }
 
-
-<?php include($CFG->dirroot.'/lib/yui/container/assets/skins/sam/container.css') ?>
-.yui-skin-sam .yui-panel .hd{padding:0 10px;font-size:93%;line-height:2;*line-height:1.9;font-weight:bold;color:#000;background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) repeat-x 0 -200px;}
-.yui-skin-sam .container-close{border-color: #45c;position:absolute;top:5px;right:6px;width:25px;height:15px;background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) no-repeat 0 -300px;cursor:pointer;}
-.yui-skin-sam .yui-simple-dialog .bd .yui-icon{background:url(<?php echo $CFG->wwwroot."/lib/yui" ?>/assets/skins/sam/sprite.png) no-repeat 0 0;width:16px;height:16px;margin-right:10px;float:left;}
-
 .grade-report-grader .yui-overlay a.container-close {
   margin-top: -3px;
 }
@@ -572,4 +534,34 @@ vertical-align:middle;
   display: none;
 }
 
+.ie .right_scroller {
+padding-bottom:15px;
+overflow-y:hidden;
+}
 
+.ie table#fixed_column th {
+height:4.5em;
+}
+
+.ie table#fixed_column tr.avg th {
+height:2.1em;
+}
+
+.ie div.left_scroller td {
+height:4.5em;
+}
+
+.ie div.left_scroller {
+margin-top:-0.6em;
+margin-right: -0.6em;
+}
+
+.ie6 div.right_scroller {
+margin-top:4em;
+width:auto;
+position:absolute;
+}
+
+.ie6 .excludedfloater {
+font-size:7px;
+}

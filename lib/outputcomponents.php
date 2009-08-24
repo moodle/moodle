@@ -899,7 +899,7 @@ class html_field extends labelled_html_component {
      * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
      * @return html_field The field component
      */
-    public static function make_text($name='unnamed', $value, $alt, $maxlength=0) {
+    public static function make_text($name='unnamed', $value, $alt='', $maxlength=0) {
         $field = new html_field();
         if (empty($alt)) {
             $alt = get_string('textfield');
@@ -1605,7 +1605,7 @@ class moodle_paging_bar extends moodle_html_component {
      * @return void
      */
     public function prepare() {
-        if (empty($this->totalcount)) {
+        if (!isset($this->totalcount) || is_null($this->totalcount)) {
             throw new coding_exception('moodle_paging_bar requires a totalcount value.');
         }
         if (!isset($this->page) || is_null($this->page)) {

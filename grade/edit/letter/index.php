@@ -15,6 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * List of grade letters.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
@@ -22,10 +30,12 @@ require_once $CFG->libdir.'/gradelib.php';
 $courseid  = optional_param('id', SITEID, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
+$PAGE->set_url('grade/edit/letter/index.php', array('id' => $courseid));
+
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
-require_login($course);
+
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:manageletters', $context)) {
@@ -59,8 +69,7 @@ $table->size  = array('30%', '30%', '40%');
 $table->align = array('left', 'left', 'left');
 $table->width = '30%';
 $table->data  = $data;
+$table->tablealign  = 'center';
 echo $OUTPUT->table($table);
 
-echo $OUTPUT->footer();
-
-?>
+echo $OUTPUT->footer(); 

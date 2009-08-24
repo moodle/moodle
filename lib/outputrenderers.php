@@ -1802,23 +1802,31 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string the HTML for the <input>
      */
     public function textfield($field) {
+        return $this->output_tag('span', array('class' => "textfield $field->name"), $this->field($field));
+    }
+
+    /**
+     * Output an <input/> element
+     *
+     * @param html_field $field a html_field object
+     * @return string the HTML for the <input>
+     */
+    public function field($field) {
         $field = clone($field);
         $field->prepare();
         $this->prepare_event_handlers($field);
-        $output = $this->output_start_tag('span', array('class' => "textfield $field->name"));
-        if (!empty($field->label)) {
+        if (!empty($field->label->text)) {
             $output .= $this->label($field->label);
         }
-        $output .= $this->output_empty_tag('input', array(
-                'type' => 'text',
+        return $this->output_empty_tag('input', array(
+                'type' => $field->type,
                 'name' => $field->name,
                 'id' => $field->id,
                 'value' => $field->value,
                 'style' => $field->style,
                 'alt' => $field->alt,
+                'title' => $field->title,
                 'maxlength' => $field->maxlength));
-        $output .= $this->output_end_tag('span');
-        return $output;
     }
 
     /**

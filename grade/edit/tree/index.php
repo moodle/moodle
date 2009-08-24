@@ -15,6 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Edit and review page for grade categories and items.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
@@ -28,6 +36,7 @@ $PAGE->requires->yui_lib('element');
 $PAGE->requires->yui_lib('container');
 $PAGE->requires->yui_lib('animation');
 $PAGE->requires->js('grade/edit/tree/functions.js');
+$PAGE->requires->css('/grade/edit/tree/tree.css');
 
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
@@ -35,6 +44,8 @@ $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
 $category        = optional_param('category', null, PARAM_INT);
 $aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
 $showadvanced    = optional_param('showadvanced', -1, PARAM_BOOL); // sticky editting mode
+
+$PAGE->set_url('grade/edit/tree/index.php', array('id' => $courseid));
 
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -198,8 +209,6 @@ if ($grade_edit_tree->moving) {
     $original_gradeediting = $USER->gradeediting[$course->id];
     $USER->gradeediting[$course->id] = 0;
 }
-
-$CFG->stylesheets[] = $CFG->wwwroot.'/grade/edit/tree/tree.css';
 
 $current_view_str = '';
 if ($current_view != '') {

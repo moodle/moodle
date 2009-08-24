@@ -15,13 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once '../../../config.php';
-require_once $CFG->libdir.'/gradelib.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once 'edit_form.php';
+/**
+ * Edit form for grade letters.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+require_once(dirname(__FILE__).'/../../../config.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->dirroot.'/grade/lib.php');
+require_once('edit_form.php');
 
 $contextid = optional_param('id', SYSCONTEXTID, PARAM_INT);
+
+$PAGE->set_url('grade/edit/letter/edit.php');
 
 if (!$context = get_context_instance_by_id($contextid)) {
     print_error('invalidcourseid');
@@ -131,4 +140,3 @@ if ($admin) {
 $mform->display();
 
 echo $OUTPUT->footer();
-?>
