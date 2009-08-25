@@ -501,4 +501,32 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         return $this->columns[$table];
     }
+
+    public function get_indexes($table) {
+        $indexes = parent::get_indexes($table); // AdoDB fails here, returning PK index while it shouldn't
+
+        // Going to look for the primary key to delete it from the list of indexes
+        $tablename = strtoupper($this->prefix.$table);
+
+        $sql = "SELECT c.column_name
+                  FROM INFORMATION_SCHEMA.key_column_usage c
+                  JOIN INFORMATION_SCHEMA.table_constraints t ON t.constraint_name = c.constraint_name
+                 WHERE t.table_name = '$tablename'
+                   AND t.constraint_type = 'PRIMARY KEY'
+              ORDER BY t.constraint_name, c.ordinal_position";
+
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
+        $columns = $this->adodb_recordset_to_array($rs);
+        $rs->Close();
+        /// Mimic one index array structure for easier search
+        $columns = array_keys($columns);
+        $primary_key = array('unique' => 1, 'columns' => $columns);
+        if ($found = array_search($primary_key, $indexes)) {
+            unset($indexes[$found]);
+        }
+        return $indexes;
+    }
 }
