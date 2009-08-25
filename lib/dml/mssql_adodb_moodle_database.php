@@ -193,6 +193,9 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
      * @return string sql fragment
      */
     public function sql_substr($expr, $start, $length=false) {
+        if (count(func_get_args()) < 2) {
+            throw new coding_exception('moodle_database::sql_substr() requires at least two parameters', 'Originaly this function was only returning name of SQL substring function, it now requires all parameters.');
+        }
         if ($length === false) {
             return "SUBSTRING($expr, $start, (LEN($expr) - $start + 1))";
         } else {
