@@ -449,4 +449,56 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         return true;
     }
+
+    public function get_columns($table, $usecache=true) {
+        if ($usecache and isset($this->columns[$table])) {
+            return $this->columns[$table];
+        }
+
+        $this->columns[$table] = array();
+
+        $tablename = strtoupper($this->prefix.$table);
+
+        $sql = "SELECT column_name AS name,
+                       data_type   AS type,
+                       numeric_precision AS max_length,
+                       character_maximum_length AS char_max_length,
+                       numeric_scale AS scale,
+                       is_nullable AS is_nullable,
+                       columnproperty(object_id(quotename(TABLE_SCHEMA) + '.' +
+                           quotename(TABLE_NAME)), COLUMN_NAME, 'IsIdentity') AS auto_increment,
+                       column_default AS default_value
+                  FROM INFORMATION_SCHEMA.Columns
+                 WHERE TABLE_NAME = '$tablename'
+              ORDER BY ordinal_position";
+
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $rs = $this->adodb->Execute($sql);
+        $this->query_end($rs);
+
+        $columns = $this->adodb_recordset_to_array($rs);
+        $rs->Close();
+
+        if (!$columns) {
+            return array();
+        }
+
+        $this->columns[$table] = array();
+
+        foreach ($columns as $column) {
+            $dict = NewDataDictionary($this->adodb); // use dictionary because mssql driver lacks proper MetaType() function
+            $column->meta_type = substr($dict->MetaType($column), 0 ,1); // only 1 character
+            $column->meta_type = $column->meta_type == 'F' ? 'N' : $column->meta_type; // floats are numbers for us
+            $column->meta_type = ($column->auto_increment && $column->meta_type == 'I') ? 'R' : $column->meta_type; // Proper 'R'
+            $column->max_length = $column->meta_type == 'C' ? $column->char_max_length : $column->max_length; //Pick correct for Chars
+            $column->max_length = ($column->meta_type == 'X' || $column->meta_type == 'B') ? -1 : $column->max_length; // -1 for xLOB
+            $column->auto_increment = $column->auto_increment ? true : false;
+            $column->not_null = $column->is_nullable == 'NO'  ? true : false; // Process not_null
+            $column->has_default = !empty($column->default_value); // Calculate has_default
+            $column->default_value = preg_replace("/^[\(N]+[']?(.*?)[']?[\)]+$/", '\\1', $column->default_value); // Clean default
+            $this->columns[$table][$column->name] = new database_column_info($column);
+        }
+
+        return $this->columns[$table];
+    }
 }
