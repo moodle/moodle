@@ -8,15 +8,21 @@ class login_forgot_password_form extends moodleform {
         $mform    =& $this->_form;
         $renderer =& $mform->defaultRenderer();
 
-        $mform->addElement('header', '', get_string('passwordforgotten'), '');
+        $mform->addElement('header', '', get_string('searchbyusername'), '');
 
         $mform->addElement('text', 'username', get_string('username'));
         $mform->setType('username', PARAM_RAW);
 
+        $submitlabel = get_string('search');
+        $mform->addElement('submit', 'submitbutton', $submitlabel);
+        
+        $mform->addElement('header', '', get_string('searchbyemail'), '');
+        
         $mform->addElement('text', 'email', get_string('email'));
         $mform->setType('email', PARAM_RAW);
 
-        $this->add_action_buttons(true, get_string('ok'));
+        $submitlabel = get_string('search');
+        $mform->addElement('submit', 'submitbutton', $submitlabel);
     }
 
     function validation($data, $files) {
