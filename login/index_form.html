@@ -38,6 +38,7 @@ if ($show_instructions) {
               <input type="password" name="password" id="password" size="15" value="" />
               <input type="submit" value="<?php print_string("login") ?>" />
               <input type="hidden" name="testcookies" value="1" />
+              <div><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
             </div>
             <div class="clearer"><!-- --></div>
           </div>
@@ -59,18 +60,6 @@ if ($show_instructions) {
         </form>
       </div>
 <?php } ?>
-
-      <div class="subcontent forgotsub">
-        <div class="desc">
-          <?php print_string("forgotten") ?>
-        </div>
-        <form action="forgot_password.php" method="post" id="changepassword">
-          <div class="forgotform">
-            <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-            <input type="submit" value="<?php print_string("passwordrecovery") ?>" />
-          </div>
-        </form>
-      </div>
      </div>
 <?php if ($show_instructions) { ?>
     <div class="signuppanel">
