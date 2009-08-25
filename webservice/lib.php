@@ -48,9 +48,11 @@ final class webservice_lib {
                 $path = $directorypath . '/' . $file;
                 ///browse the subfolder
                 if( is_dir($path) ) {
+                    if ($file != 'db') { //we don't want to browse the 'db' subfolder of webservice folder
                     require_once($path."/lib.php");
                     $classname = $file."_server";
                     $protocols[] = new $classname;
+                    }
                 }
                 ///retrieve api.php file
                 else  {
@@ -593,12 +595,12 @@ class ws_authentication {
      * @param array|struct $params
      * @return integer
      */
-    function get_token($params) {
+    function get_token($params) {     
         if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
             return '456';
         } else {
             throw new moodle_exception('wrongusernamepassword');
-        }
+        }      
     }
 }
 

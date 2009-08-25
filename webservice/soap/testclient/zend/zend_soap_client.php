@@ -28,13 +28,22 @@
  * Zend Soap sclient
  */
 
-require_once('../../../config.php');
-require_once('../lib.php');
+require_once('../../../../config.php');
+require_once('../../lib.php');
+
+
+
 include "Zend/Loader.php";
 Zend_Loader::registerAutoload();
 
+$PAGE->set_course($COURSE);
+$PAGE->set_url('webservice/soap/testclient/zend/zend_soap_client.php');
+
 ///Display Moodle page header
-print_header('Soap test client', 'Soap test client'.":", true);
+$PAGE->set_title('Soap test client');
+$PAGE->set_heading('Soap test client');
+echo $OUTPUT->header();
+//print_header('Soap test client', 'Soap test client'.":", true);
 
 /// check that webservices are enable into your Moodle
 /// WARNING: it makes sens here only because this client runs on the same machine as the 
@@ -43,16 +52,34 @@ if (!webservice_lib::display_webservices_availability("soap")) {
     echo "<br/><br/>";
     echo "Please fix the previous problem(s), the testing session has been interupted.";
     echo $OUTPUT->footer();
+    //  print_footer();
     exit();
 }
+
+/// Following some code in order to print the authentication WSDL into the end of the source code page
+/*
+    $client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl", array(
+        'maxredirects' => 0,
+        'timeout'      => 30));
+    $response = $client->request();
+    $wsdl = $response->getBody();
+    print $wsdl;
+    exit();
+*/
+
 
 /// authenticate => get a conversation token from the server
 /// You need a wsuser/wspassword user in the remote Moodle
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
 try {
+
+    $params = new stdClass();
+    $params->username = 'wsuser';
+    $params->password = 'wspassword';
     $token = $client->get_token(array('username' => "wsuser", 'password' => "wspassword"));
+    //$token = $client->get_token($params);
     print "<pre>\n";
-     print "<br><br><strong>Token: </strong>".$token;
+    print "<br><br><strong>Token: </strong>".$token;
     print "</pre>";
 } catch (exception $exception) {
     print "<br><br><strong>An exception occured during authentication: \n</strong>";
@@ -64,17 +91,16 @@ try {
 
 /// Following some code in order to print the WSDL into the end of the source code page
 /// Change the classpath to get specific service
-/*
-    $client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl", array(
-        'maxredirects' => 0,
-        'timeout'      => 30));
-    $response = $client->request();
-    $wsdl = $response->getBody();
-    print $wsdl;
-    exit();
- *
- */
- 
+/**
+ $client = new Zend_Http_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl", array(
+ 'maxredirects' => 0,
+ 'timeout'      => 30));
+ $response = $client->request();
+ $wsdl = $response->getBody();
+ print $wsdl;
+ exit();
+ **/
+
 
 /// build the Zend SOAP client from the remote WSDL
 $client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
@@ -97,7 +123,13 @@ print "</pre>";
 print "<br><br><strong>Create user:</strong>";
 print "<pre>\n";
 try {
-    var_dump($client->create_users(array(array('username' => "mockuser66",'firstname' => "firstname6",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6"))));
+    $user = new stdClass();
+    $user->password = "password6";
+    $user->email = "mockuser6@mockuser6.com";
+    $user->username = "mockuser66";
+    $user->firstname = "firstname6";
+    $user->lastname = "lastname6";
+    var_dump($client->create_users(array('users' => array($user))));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -109,7 +141,12 @@ print "</pre>";
 print "<br><br><strong>Update user:</strong>";
 print "<pre>\n";
 try {
-    var_dump($client->update_users(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b"))));
+    $user1 = new stdClass();
+    $user1->email = "mockuser6@mockuser6.com";
+    $user1->username = "mockuser66";
+    $user1->newusername = 'mockuser6b';
+    $user1->firstname = "firstname6b";
+    var_dump($client->update_users(array('users' => array($user1))));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -121,7 +158,7 @@ print "</pre>";
 print "<br><br><strong>Delete user:</strong>";
 print "<pre>\n";
 try {
-    var_dump($client->delete_users(array(array('username' => "mockuser6b"))));
+    var_dump($client->delete_users(array('usernames' => array("mockuser6b"))));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -131,6 +168,7 @@ print "</pre>";
 
 /// Display Moodle page footer
 echo $OUTPUT->footer();
+//print_footer();
 
 
 /**

@@ -22,6 +22,7 @@
  * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
  * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
+require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
 /**
@@ -29,31 +30,79 @@ require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
  *
  * @author Jerome Mouneyrac
  */
-final class user_external {
+final class user_external extends moodle_external {
+
+/**
+ * Constructor - We set the description of this API in order to be access by Web service
+ */
+    function __construct () {
+        $this->descriptions = array();
+        ///The desciption of the web service
+
+        $user = new stdClass();
+        $user->password = PARAM_ALPHANUMEXT;
+        $user->auth = PARAM_ALPHANUMEXT;
+        $user->confirmed = PARAM_NUMBER;
+        $user->username = PARAM_ALPHANUMEXT;
+        $user->idnumber = PARAM_ALPHANUMEXT;
+        $user->firstname = PARAM_ALPHANUMEXT;
+        $user->lastname = PARAM_ALPHANUMEXT;
+        $user->email = PARAM_NOTAGS;
+        $user->emailstop = PARAM_NUMBER;
+        $user->lang = PARAM_ALPHA;
+        $user->theme = PARAM_ALPHANUM;
+        $user->timezone = PARAM_ALPHANUMEXT;
+        $user->mailformat = PARAM_ALPHA;
+        $user->description = PARAM_TEXT;
+        $user->city = PARAM_ALPHANUMEXT;
+        $user->country = PARAM_ALPHANUMEXT;
+
+        $this->descriptions['create_users']   = array( 'params' => array('users' => array($user)),
+            'optionalinformation' => 'All params are not mandatory',
+            'return' => array('userids' => array(PARAM_NUMBER)));
+
+        $user = new stdClass();
+        $user->id = PARAM_NUMBER;
+        $user->auth = PARAM_ALPHANUMEXT;
+        $user->confirmed = PARAM_NUMBER;
+        $user->username = PARAM_ALPHANUMEXT;
+        $user->idnumber = PARAM_ALPHANUMEXT;
+        $user->firstname = PARAM_ALPHANUMEXT;
+        $user->lastname = PARAM_ALPHANUMEXT;
+        $user->email = PARAM_NOTAGS;
+        $user->emailstop = PARAM_NUMBER;
+        $user->lang = PARAM_ALPHA;
+        $user->theme = PARAM_ALPHANUM;
+        $user->timezone = PARAM_ALPHANUMEXT;
+        $user->mailformat = PARAM_ALPHA;
+        $user->description = PARAM_TEXT;
+        $user->city = PARAM_ALPHANUMEXT;
+        $user->country = PARAM_ALPHANUMEXT;
+
+        $this->descriptions['get_users']     = array( 'params' => array('search'=> PARAM_ALPHANUM),
+            'optionalparams' => 'All params are not mandatory',
+            'return' => array('user' => array( $user)));
+
+
+        $this->descriptions['delete_users']   = array( 'params' => array('usernames' => array(PARAM_ALPHANUMEXT)),
+            'optionalparams' => 'All params are not mandatory',
+            'return' => array('result' => PARAM_BOOL));
+
+        $user->newusername = PARAM_ALPHANUMEXT;
+        $this->descriptions['update_users']   = array( 'params' => array('users' => array($user),
+            'optionalparams' => 'All params are not mandatory',
+            'return' => array('result' => PARAM_BOOL)));
+    }
 
     /**
      * Retrieve all user
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params->search - the string to search
      * @return object $return
-     * @subreturn integer $return:user->id
-     * @subreturn integer $return:user->auth
-     * @subreturn integer $return:user->confirmed
-     * @subreturn string $return:user->username
-     * @subreturn string $return:user->idnumber
-     * @subreturn string $return:user->firstname
-     * @subreturn string $return:user->lastname
-     * @subreturn string $return:user->email
-     * @subreturn string $return:user->emailstop
-     * @subreturn string $return:user->lang
-     * @subreturn string $return:user->theme
-     * @subreturn string $return:user->timezone
-     * @subreturn string $return:user->mailformat
      */
-    static function get_users($params) {
+    public function get_users($params) {
         global $USER;
 
-        $params['search'] = clean_param($params['search'], PARAM_ALPHANUM);
+        $this->clean_function_params('get_users', $params);
 
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
             return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
@@ -63,90 +112,19 @@ final class user_external {
         }
     }
 
-     /**
+    /**
      * Create multiple users
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params:user->username
-     * @subparam string $params:user->firstname
-     * @subparam string $params:user->lastname
-     * @subparam string $params:user->email
-     * @subparam string $params:user->password
      * @return array $return ids of new user
-     * @subreturn integer $return:id user id
      */
-    static function create_users($params) {
+    public function create_users($params) {
         global $USER;
         if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
             $userids = array();
-            foreach ($params as $userparams) {
-
-                $user = new stdClass();
-                if (array_key_exists('email', $userparams)) {
-                    $user->email =  clean_param($userparams['email'], PARAM_NOTAGS);
-                }
-
-                if (array_key_exists('password', $userparams)) {
-                    $user->password =  clean_param($userparams['password'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('idnumber', $userparams)) {
-                    $user->idnumber =  clean_param($userparams['idnumber'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('description', $userparams)) {
-                    $user->description =  clean_param($userparams['description'], PARAM_TEXT);
-                }
-
-                if (array_key_exists('username', $userparams)) {
-                    $user->username =  clean_param($userparams['username'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('auth', $userparams)) {
-                    $user->auth =  clean_param($userparams['auth'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('confirmed', $userparams)) {
-                    $user->confirmed =  clean_param($userparams['confirmed'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('firstname', $userparams)) {
-                    $user->firstname =  clean_param($userparams['firstname'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('lastname', $userparams)) {
-                    $user->lastname =  clean_param($userparams['lastname'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('emailstop', $userparams)) {
-                    $user->emailstop =  clean_param($userparams['emailstop'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('lang', $userparams)) {
-                    $user->lang =  clean_param($userparams['lang'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('theme', $userparams)) {
-                    $user->theme =  clean_param($userparams['theme'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('timezone', $userparams)) {
-                    $user->timezone =  clean_param($userparams['timezone'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('city', $userparams)) {
-                    $user->city =  clean_param($userparams['city'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('country', $userparams)) {
-                    $user->country =  clean_param($userparams['country'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('mailformat', $userparams)) {
-                    $user->mailformat =  clean_param($userparams['mailformat'], PARAM_ALPHANUMEXT);
-                }
-
+            $this->clean_function_params('create_users', $params);
+            foreach ($params['users'] as $user) {
                 try {
-                    $userids[$userparams['username']] = create_user($user);
+                    $userids[$user->username] = create_user($user);
                 }
                 catch (dml_write_exception $e) {
                     throw new moodle_exception('wscouldnotcreateeuserindb');
@@ -159,27 +137,24 @@ final class user_external {
         }
     }
 
-     /**
+    /**
      * Delete multiple users
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params:user->username
      * @return boolean result true if success
      */
-    static function delete_users($params) {
+    public function delete_users($params) {
         global $DB,$USER;
         $deletionsuccessfull = true;
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
-            foreach ($params as $userparams) {
 
-                $username  = clean_param($userparams['username'], PARAM_ALPHANUMEXT);
-
+            $this->clean_function_params('delete_users', $params);
+            foreach ($params['usernames'] as $username) {
                 $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
-
                 if (empty($user)) {
                     throw new moodle_exception('wscouldnotdeletenoexistinguser');
                 }
-
+                
                 if (!delete_user($user)) {
                     $deletionsuccessfull = false; //this function is in moodlelib.php
                 }
@@ -191,87 +166,27 @@ final class user_external {
         }
     }
 
-     /**
+    /**
      * Update some users information
      * @global object $DB
      * @param array|struct $params - need to be define as struct for XMLRPC
-     * @subparam string $params:user->username
-     * @subparam string $params:user->newusername
-     * @subparam string $params:user->firstname
      * @return boolean result true if success
      */
-    static function update_users($params) {
+    public function update_users($params) {
         global $DB,$USER;
         if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
             $updatesuccessfull = true;
 
-            foreach ($params as $userparams) {
-                if (array_key_exists('username', $userparams)) {
-                    $username =  clean_param($userparams['username'], PARAM_NOTAGS);
-                }
+            $this->clean_function_params('update_users', $params);
 
-                $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
+            foreach ($params['users'] as $paramuser) {
+
+                $user = $DB->get_record('user', array('username'=> $paramuser->username, 'mnethostid'=>1));
 
                 if (empty($user)) {
                     throw new moodle_exception('wscouldnotupdatenoexistinguser');
                 }
-
-                if (array_key_exists('email', $userparams)) {
-                    $user->email =  clean_param($userparams['email'], PARAM_NOTAGS);
-                }
-
-                if (array_key_exists('description', $userparams)) {
-                    $user->description =  clean_param($userparams['description'], PARAM_TEXT);
-                }
-
-                if (array_key_exists('newusername', $userparams)) {
-                    $user->username =  clean_param($userparams['newusername'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('auth', $userparams)) {
-                    $user->auth =  clean_param($userparams['auth'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('confirmed', $userparams)) {
-                    $user->confirmed =  clean_param($userparams['confirmed'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('firstname', $userparams)) {
-                    $user->firstname =  clean_param($userparams['firstname'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('lastname', $userparams)) {
-                    $user->lastname =  clean_param($userparams['lastname'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('emailstop', $userparams)) {
-                    $user->emailstop =  clean_param($userparams['emailstop'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('lang', $userparams)) {
-                    $user->lang =  clean_param($userparams['lang'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('theme', $userparams)) {
-                    $user->theme =  clean_param($userparams['theme'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('timezone', $userparams)) {
-                    $user->timezone =  clean_param($userparams['timezone'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('city', $userparams)) {
-                    $user->city =  clean_param($userparams['city'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('country', $userparams)) {
-                    $user->country =  clean_param($userparams['country'], PARAM_ALPHANUMEXT);
-                }
-
-                if (array_key_exists('mailformat', $userparams)) {
-                    $user->mailformat =  clean_param($userparams['mailformat'], PARAM_ALPHANUMEXT);
-                }
-
+                $user->username = $paramuser->newusername;
                 try {
                     if( !update_user($user)) {
                         $updatesuccessfull = false;

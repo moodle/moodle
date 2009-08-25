@@ -108,7 +108,6 @@ final class soap_server extends webservice_server {
                 $classpath = optional_param('classpath',null,PARAM_ALPHANUM);
             }
             require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
-
             /// run the server
             if(isset($_GET['wsdl'])) {
                 $autodiscover = new Zend_Soap_AutoDiscover();
