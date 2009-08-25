@@ -1005,10 +1005,8 @@ class moodle_core_renderer extends moodle_renderer_base {
         $lis = array();
         foreach ($items as $key => $string) {
             $item = $this->output_start_tag('li', array('class' => 'r' . $row));
-            if ($icons) {
-                if (key_exists($key, $icons)) { //test if the content has an assigned icon
-                    $item .= $this->output_tag('div', array('class' => 'icon column c0'), $icons[$key]);
-                }
+            if (!empty($icons[$key])) { //test if the content has an assigned icon
+                $item .= $this->output_tag('div', array('class' => 'icon column c0'), $icons[$key]);
             }
             $item .= $this->output_tag('div', array('class' => 'column c1'), $string);
             $item .= $this->output_end_tag('li');
