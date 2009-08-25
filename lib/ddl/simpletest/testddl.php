@@ -455,7 +455,7 @@ class ddl_test extends UnitTestCase {
 
         /// add one float field and check it (not official type - must work as number)
         $field = new xmldb_field('onefloat');
-        $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 3.55);
+        $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 3.550);
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'onefloat'));
         $columns = $DB->get_columns('test_table1');
@@ -467,7 +467,11 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onefloat']->has_default  , true);
         $this->assertEqual($columns['onefloat']->default_value, 3.550);
         $this->assertEqual($columns['onefloat']->meta_type    ,'N');
-        $this->assertEqual($DB->get_field('test_table1', 'onefloat', array(), IGNORE_MULTIPLE), 3.550); //check default has been applied
+        // Just rounding DB information to 7 decimal digits. Fair enough to test 3.550 and avoids one nasty bug
+        // in MSSQL core returning wrong floats (http://social.msdn.microsoft.com/Forums/en-US/sqldataaccess/thread/5e08de63-16bb-4f24-b645-0cf8fc669de3)
+        // In any case, floats aren't officially supported by Moodle, with number/decimal type being the correct ones, so
+        // this isn't a real problem at all.
+        $this->assertEqual(round($DB->get_field('test_table1', 'onefloat', array(), IGNORE_MULTIPLE), 7), 3.550); //check default has been applied
 
         /// add one char field and check it
         $field = new xmldb_field('onechar');
