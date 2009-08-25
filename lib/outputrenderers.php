@@ -1552,6 +1552,24 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         return $output . $this->output_end_tag($tag);
     }
+    
+    /**
+     * Prints an inline span element with optional text contents.
+     *
+     * @param html_span $span A html_span object
+     * @return string A HTML fragment
+     */
+    public function span($span) {
+        $span = clone($span);
+        $span->prepare();
+        $this->prepare_event_handlers($span);
+        $attributes = array('class' => $span->get_classes_string(),
+                            'alt' => $span->alt,
+                            'style' => $span->style,
+                            'title' => $span->title,
+                            'id' => $span->id);
+        return $this->output_tag('span', $attributes, $span->contents);
+    }
 
     /**
      * Prints a simple button to close a window
@@ -2016,30 +2034,42 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= $this->output_start_tag('tr', array()) . "\n";
             $keys = array_keys($table->head);
             $lastkey = end($keys);
+
             foreach ($table->head as $key => $heading) {
-                $classes = array('header', 'c' . $key);
-                if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
-                    $colspan = $table->headspan[$key];
-                    $countcols += $table->headspan[$key] - 1;
-                } else {
-                    $colspan = '';
+                // Convert plain string headings into html_table_cell objects
+                if (!($heading instanceof html_table_cell)) {
+                    $headingtext = $heading;
+                    $heading = new html_table_cell();
+                    $heading->text = $headingtext;
+                    $heading->header = true;
                 }
+
+                $this->prepare_event_handlers($heading);
+
+                $heading->add_classes(array('header', 'c' . $key));
+                if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
+                    $heading->colspan = $table->headspan[$key];
+                    $countcols += $table->headspan[$key] - 1;
+                } 
+
                 if ($key == $lastkey) {
-                    $classes[] = 'lastcol';
+                    $heading->add_class('lastcol');
                 }
                 if (isset($table->colclasses[$key])) {
-                    $classes[] = $table->colclasses[$key];
+                    $heading->add_class($table->colclasses[$key]);
                 }
                 if ($table->rotateheaders) {
                     // we need to wrap the heading content
-                    $heading = $this->output_tag('span', '', $heading);
+                    $heading->text = $this->output_tag('span', '', $heading->text);
                 }
+
                 $attributes = array(
-                        'style'     => $table->align[$key] . $table->size[$key] . 'white-space:nowrap;',
-                        'class'     => moodle_renderer_base::prepare_classes($classes),
-                        'scope'     => 'col',
-                        'colspan'   => $colspan);
-                $output .= $this->output_tag('th', $attributes, $heading) . "\n";
+                        'style'     => $table->align[$key] . $table->size[$key] . $heading->style,
+                        'class'     => $heading->get_classes_string(),
+                        'scope'     => $heading->scope,
+                        'colspan'   => $heading->colspan);
+                
+                $output .= $this->output_tag('th', $attributes, $heading->text) . "\n";
             }
             $output .= $this->output_end_tag('tr') . "\n";
             $output .= $this->output_end_tag('thead') . "\n";
@@ -2063,10 +2093,13 @@ class moodle_core_renderer extends moodle_renderer_base {
                         foreach ($row as $unused => $item) {
                             $cell = new html_table_cell();
                             $cell->text = $item;
+                            $this->prepare_event_handlers($cell);
                             $newrow->cells[] = $cell;
                         }
                         $row = $newrow;
                     }
+                    
+                    $this->prepare_event_handlers($row);
 
                     $oddeven = $oddeven ? 0 : 1;
                     if (isset($table->rowclasses[$key])) {
@@ -2083,6 +2116,13 @@ class moodle_core_renderer extends moodle_renderer_base {
                     $lastkey = end($keys2);
 
                     foreach ($row->cells as $key => $cell) {
+                        if (!($cell instanceof html_table_cell)) {
+                            $mycell = new html_table_cell();
+                            $mycell->text = $cell;
+                            $this->prepare_event_handlers($mycell);
+                            $cell = $mycell;
+                        }
+
                         if (isset($table->colclasses[$key])) {
                             $cell->add_classes(array_unique(moodle_html_component::clean_classes($table->colclasses[$key])));
                         }

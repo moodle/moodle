@@ -133,8 +133,16 @@ $strcategoriesanditems = get_string('categoriesanditems', 'grades');
 
 $navigation = grade_build_nav(__FILE__, $strcategoriesanditems, array('courseid' => $courseid));
 $moving = false;
+$movingeid = false;
 
-$grade_edit_tree = new grade_edit_tree($gtree, $moving, $gpr);
+if ($action == 'moveselect') {
+    if ($eid and confirm_sesskey()) {
+        $movingeid = $eid;
+        $moving=true;
+    }
+}
+
+$grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
 
 switch ($action) {
     case 'delete':
@@ -190,13 +198,6 @@ switch ($action) {
             $object->move_after_sortorder($sortorder);
 
             redirect($returnurl);
-        }
-        break;
-
-    case 'moveselect':
-        if ($eid and confirm_sesskey()) {
-            $grade_edit_tree->moving = $eid;
-            $moving=true;
         }
         break;
 
@@ -304,11 +305,7 @@ echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
-// Build up an array of categories for move drop-down (by reference)
-$categories = array();
-$level      = 0;
-$row_count  = 0;
-echo $grade_edit_tree->build_html_tree($gtree->top_element, true, array(), $categories, $level, $row_count);
+echo $OUTPUT->table($grade_edit_tree->table);
 
 echo '<div id="gradetreesubmit">';
 if (!$moving) {
@@ -316,12 +313,12 @@ if (!$moving) {
 }
 
 // We don't print a bulk move menu if there are no other categories than course category
-if (!$moving && count($categories) > 1) {
+if (!$moving && count($grade_edit_tree->categories) > 1) {
     echo '<br /><br />';
     echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
     echo get_string('moveselectedto', 'grades') . ' ';
     $select = new html_select();
-    $select->options = $categories;
+    $select->options = $grade_edit_tree->categories;
     $select->name = 'moveafter';
     $select->disabled = true;
     $select->id = 'menumoveafter';

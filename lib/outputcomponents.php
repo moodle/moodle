@@ -929,6 +929,8 @@ class html_field extends labelled_html_component {
  */
 class html_table extends labelled_html_component {
     /**
+     * For more control over the rendering of the headers, an array of html_table_cell objects 
+     * can be passed instead of an array of strings.
      * @var array of headings. The n-th array item is used as a heading of the n-th column.
      *
      * Example of usage:
@@ -1144,6 +1146,17 @@ class html_table_row extends moodle_html_component {
     public function prepare() {
         parent::prepare();
     }
+    
+    /**
+     * Shortcut method for creating a row with an array of cells.
+     * @param array $cells
+     * @return html_table_row
+     */
+    public function make($cells=array()) {
+        $row = new html_table_row();
+        $row->cells = $cells;
+        return $row;
+    }
 }
 
 /**
@@ -1184,6 +1197,9 @@ class html_table_cell extends moodle_html_component {
      * @return void
      */
     public function prepare() {
+        if ($this->header && empty($this->scope)) {
+            $this->scope = 'col';
+        }
         parent::prepare();
     }
 }
@@ -1531,6 +1547,28 @@ class html_list_item extends moodle_html_component {
      */
     public $value;
 
+    /**
+     * @see lib/moodle_html_component#prepare()
+     * @return void
+     */
+    public function prepare() {
+        parent::prepare();
+    }
+}
+
+/**
+ * Component representing a span element. It has no special attributes, so 
+ * it is very low-level and can be used for styling and JS actions.
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
+class html_span extends moodle_html_component {
+    /**
+     * @var string $text The contents of the span
+     */
+    public $contents;
     /**
      * @see lib/moodle_html_component#prepare()
      * @return void

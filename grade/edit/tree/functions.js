@@ -1,14 +1,14 @@
 /**
  * Toggles the selection checkboxes of all grade items children of the given eid (a category id)
  */
-function togglecheckboxes(eid, value) {
-    var rows = YAHOO.util.Dom.getElementsByClassName(eid);
+function togglecheckboxes(event, args) {
+    var rows = YAHOO.util.Dom.getElementsByClassName(args.eid);
 
     for (var i = 0; i < rows.length; i++) {
         var element = new YAHOO.util.Element(rows[i]);
         var checkboxes = element.getElementsByClassName('itemselect');
         if (checkboxes[0]) {
-            checkboxes[0].checked=value;
+            checkboxes[0].checked=args.check;
         }
     }
 
