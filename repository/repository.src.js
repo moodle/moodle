@@ -1088,6 +1088,7 @@ repository_client.upload = function(client_id) {
         parent.appendChild(container);
         YAHOO.util.Connect.setForm(aform, true, true);
 
+        alert(fp.savepath);
         var trans = YAHOO.util.Connect.asyncRequest('POST',
                 moodle_cfg.wwwroot+'/repository/ws.php?action=upload&itemid='+fp.itemid
                     +'&sesskey='+moodle_cfg.sesskey
@@ -1212,7 +1213,6 @@ function open_filepicker(id, params) {
         r = new repository_client();
         r.env = params.env;
         r.target = params.target;
-        r.savepath = params.savepath;
         if(params.itemid){
             r.itemid = params.itemid;
         } else if(tinyMCE && id2itemid[tinyMCE.selectedInstance.editorId]){
@@ -1232,6 +1232,7 @@ function open_filepicker(id, params) {
         r.target = params.target;
         r.show();
     }
+    r.savepath = params.savepath;
     if(params.filetype) {
         if(params.filetype == 'image') {
             r.accepted_types = file_extensions.image;
