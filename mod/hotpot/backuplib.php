@@ -324,4 +324,14 @@
         }
         return $info;
     }
+
+    // Return content encoded to support interactivities linking.
+    // Called by "backup_encode_absolute_links()" in backup/backuplib.php
+    // Content will be decoded by "hotpot_decode_content_links()"
+    function hotpot_encode_content_links ($content, $preferences) {
+        global $CFG;
+        $base = preg_quote("$CFG->wwwroot/mod/hotpot/", '/');
+        $search = "/($base)([a-z]+).php\?([a-z]+)\=([0-9]+)/";
+        return preg_replace($search, '$@HOTPOT*$2*$3*$4@$', $content);
+    }
 ?>
