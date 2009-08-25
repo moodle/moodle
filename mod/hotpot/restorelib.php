@@ -480,4 +480,46 @@ function hotpot_restore_logs($restore, $log) {
     } // end switch
     return $status ? $log : false;
 }
+
+function hotpot_decode_content_links($content, $restore) {
+    $search = '/\$@(HOTPOT)\*([a-z]+)\*([a-z]+)\*([0-9]+)@\$/ise';
+    $replace = 'hotpot_decode_content_link("$2", "$3", "$4", $restore)';
+    return preg_replace($search, $replace, $content);
+}
+
+function hotpot_decode_content_link($scriptname, $paramname, $paramvalue, &$restore) {
+    global $CFG;
+
+    $table = '';
+    switch ($paramname) {
+        case 'id':
+            switch ($scriptname) {
+                case 'index':
+                    $table = 'course';
+                    break;
+                case 'report':
+                case 'review':
+                case 'view':
+                    $table = 'course_modules';
+                    break;
+                case 'attempt':
+                    $table = 'hotpot_attempts';
+                    break;
+            }
+            break;
+        case 'hp':
+        case 'hotpotid':
+            $table = 'hotpot';
+            break;
+    }
+
+    $new_id = 0;
+    if ($table) {
+        if ($rec = backup_getid($restore->backup_unique_code, $table, $paramvalue)) {
+            $new_id = $rec->new_id;
+        }
+    }
+
+    return "$CFG->wwwroot/mod/hotpot/$scriptname.php?$paramname=$new_id";
+}
 ?>
