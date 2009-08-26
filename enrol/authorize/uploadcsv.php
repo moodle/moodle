@@ -21,7 +21,7 @@
     $managebutton = "<form method='get' action='index.php'><div><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></div></form>";
 
     print_header_simple($struploadcsv, '', $navigation, '', '', false, $managebutton);
-    print_heading_with_help($struploadcsv, 'uploadcsv', 'enrol/authorize');
+    print_heading_with_help($struploadcsv, 'authorize/uploadcsv', 'enrol');
 
 /// Handle CSV file
     if (($form = data_submitted()) && confirm_sesskey()) {
