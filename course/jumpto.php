@@ -20,6 +20,8 @@
         redirect(new moodle_url(urldecode($jump)));
     }
 
-    redirect(new moodle_url($_SERVER['HTTP_REFERER']));   // Return to sender, just in case
+    if(isset($_SERVER['HTTP_REFERER'])) {
+        redirect(new moodle_url($_SERVER['HTTP_REFERER']));   // Return to sender, just in case
+    }
 
 ?>
