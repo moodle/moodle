@@ -97,9 +97,9 @@ class enrolment_plugin_authorize
                 }
             }
 
-            $OUTPUT->box_start();
+            echo $OUTPUT->box_start();
             $frmenrol->display();
-            $OUTPUT->box_end();
+            echo $OUTPUT->box_end();
         }
 
         if ($course->password) {

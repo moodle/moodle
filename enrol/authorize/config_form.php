@@ -101,8 +101,8 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">delete_current:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->delete_current)), 'delete_current');?> <br />
-        <?php print_string("deletecheck", "moodle", get_string('oldpassword')) ?><br /><hr /></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->delete_current), get_string("deletecheck", "moodle", get_string('oldpassword'))), 'delete_current');?> <br />
+        <hr /></td>
 </tr>
 
 <tr valign="top">
@@ -124,21 +124,21 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">an_avs:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_avs)), 'an_avs'); ?><br />
-        <?php print_string("adminavs", "enrol_authorize") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_avs), get_string("adminavs", "enrol_authorize")), 'an_avs'); ?><br />
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_authcode:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_authcode)), 'an_authcode');  ?>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_authcode), get_string("adminauthcode", "enrol_authorize")), 'an_authcode');  ?>
         <?php echo $OUTPUT->help_icon(moodle_help_icon::make('authcode', 'authcode', 'enrol/authorize')); ?><br />
-        <?php print_string("adminauthcode", "enrol_authorize") ?></td>
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">an_test:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_test)), 'an_test');  ?><br />
-        <?php print_string("antestmode", "enrol_authorize") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_test), get_string("antestmode", "enrol_authorize")), 'an_test');  ?><br />
+    </td>
 </tr>
 
 <tr valign="top">
@@ -182,9 +182,9 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">an_review:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_review)), 'an_review'); ?>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_review), get_string("adminreview", "enrol_authorize")), 'an_review'); ?>
         <?php echo $OUTPUT->help_icon(moodle_help_icon::make('review', get_string('adminhelpreviewtitle', 'enrol_authorize'), 'enrol/authorize')); ?><br />
-        <?php print_string("adminreview", "enrol_authorize") ?></td>
+    </td>
 </tr>
 
 <tr valign="top">
@@ -205,8 +205,8 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">an_emailexpiredteacher:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_emailexpiredteacher)), 'an_emailexpiredteacher');  ?><br />
-        <?php print_string("adminemailexpiredteacher", "enrol_authorize") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->an_emailexpiredteacher), get_string("adminemailexpiredteacher", "enrol_authorize")), 'an_emailexpiredteacher');  ?><br />
+    </td>
 </tr>
 
 <tr valign="top">
@@ -224,20 +224,20 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">enrol_mailstudents:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailstudents)), 'enrol_mailstudents'); ?><br />
-        <?php print_string("mailstudents") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailstudents), get_string("mailstudents")), 'enrol_mailstudents'); ?><br />
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailteachers:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailteachers)), 'enrol_mailteachers');  ?><br />
-        <?php print_string("mailteachers") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailteachers), get_string("mailteachers")), 'enrol_mailteachers');  ?><br />
+    </td>
 </tr>
 
 <tr valign="top">
     <td align="right">enrol_mailadmins:</td>
-    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailadmins)), 'enrol_mailadmins');  ?><br />
-        <?php print_string("mailadmins") ?></td>
+    <td><?php echo $OUTPUT->checkbox(html_select_option::make_checkbox('1', !empty($frm->enrol_mailadmins), get_string("mailadmins")), 'enrol_mailadmins');  ?><br />
+    </td>
 </tr>
 
 </table>
