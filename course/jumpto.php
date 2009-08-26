@@ -20,6 +20,8 @@
         redirect(urldecode($jump));
     }
 
-    redirect($_SERVER['HTTP_REFERER']);   // Return to sender, just in case
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        redirect($_SERVER['HTTP_REFERER']);   // Return to sender, just in case
+    }
 
 ?>
