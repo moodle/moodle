@@ -18,9 +18,9 @@
 
     //Check that we have all we need
     //backup_unique_code
-    $backup_unique_code = required_param( 'backup_unique_code' );
+    $backup_unique_code = required_param('backup_unique_code', PARAM_INT);
     //file
-    $file = required_param( 'file' );
+    $file = required_param('file', PARAM_PATH);
 
     //Check login
     require_login();

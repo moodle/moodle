@@ -60,9 +60,9 @@
     if (!isset($restore)) {
         //Check that we have all we need
         //backup_unique_code
-        $backup_unique_code = required_param( 'backup_unique_code' );
+        $backup_unique_code = required_param('backup_unique_code', PARAM_INT);
         //file
-        $file = required_param( 'file');
+        $file = required_param('file', PARAM_PATH);
         //Checks for the required restoremod parameters
         if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
