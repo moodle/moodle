@@ -118,13 +118,13 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $dummyform = new stdClass();
             $mandatorydatasets = array();
 
-            if  (  $dummyform->answer =optional_param('answer')) { // there is always at least one answer...
-                $fraction = optional_param('fraction') ;
-                $feedback = optional_param('feedback') ;
-                $tolerance = optional_param('tolerance') ;
-                $tolerancetype = optional_param('tolerancetype') ;
-                $correctanswerlength = optional_param('correctanswerlength') ;
-                $correctanswerformat = optional_param('correctanswerformat') ;
+            if  (  $dummyform->answer =optional_param('answer', '', PARAM_CLEAN)) { // there is always at least one answer... FIXME: sloppy coding
+                $fraction = optional_param('fraction', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $feedback = optional_param('feedback', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $tolerance = optional_param('tolerance', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $tolerancetype = optional_param('tolerancetype', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $correctanswerlength = optional_param('correctanswerlength', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $correctanswerformat = optional_param('correctanswerformat', '', PARAM_CLEAN); //FIXME: sloppy coding
                 
                 foreach( $dummyform->answer as $key => $answer ) {
                     if(trim($answer) != ''){  // just look for non-empty 
@@ -143,11 +143,11 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             $this->datasetdefs = array();
             // rebuild datasetdefs from old values
-            $olddef  = optional_param('datasetdef');
-            $oldoptions  = optional_param('defoptions');
-            $calcmin = optional_param('calcmin') ;
-            $calclength = optional_param('calclength') ;
-            $calcmax = optional_param('calcmax') ;
+            $olddef  = optional_param('datasetdef', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $oldoptions  = optional_param('defoptions', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $calcmin = optional_param('calcmin', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $calclength = optional_param('calclength', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $calcmax = optional_param('calcmax', '', PARAM_CLEAN); //FIXME: sloppy coding
             $newdatasetvalues = false ; 
 
             for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
@@ -206,7 +206,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         }
         $maxnumber = -1 ;
         if  (  "" !=optional_param('addbutton')){
-            $maxnumber = optional_param('selectadd') ;                             
+            $maxnumber = optional_param('selectadd', '', PARAM_CLEAN); //FIXME: sloppy coding
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 $datasetdef->itemcount = $maxnumber;
                 unset($datasetdef->items);
@@ -223,9 +223,9 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             // Handle reload dataset items
             if  (  "" !=optional_param('definition')&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){              
                 $i = 1;
-                $fromformdefinition = optional_param('definition');
-                $fromformnumber = optional_param('number');
-                $fromformitemid = optional_param('itemid');
+                $fromformdefinition = optional_param('definition', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $fromformnumber = optional_param('number', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $fromformitemid = optional_param('itemid', '', PARAM_CLEAN); //FIXME: sloppy coding
                 ksort($fromformdefinition);
               
                 foreach($fromformdefinition as $key => $defid) {
@@ -488,8 +488,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $j = $this->noofitems * count($this->datasetdefs);
         $k = 1 ;
         if ("" != optional_param('selectshow')){
-        $k = optional_param('selectshow') ; 
-      }
+            $k = optional_param('selectshow', '', PARAM_CLEAN); //FIXME: sloppy coding
+        }
 
         for ($i = $this->noofitems; $i >= 1 ; $i--){
             foreach ($this->datasetdefs as $defkey => $datasetdef){
