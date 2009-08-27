@@ -655,6 +655,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $qms    = implode(',', $qms);
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
@@ -775,6 +777,8 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $sets = implode(',', $sets);
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
