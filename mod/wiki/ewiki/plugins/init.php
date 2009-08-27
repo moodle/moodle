@@ -27,7 +27,7 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
    global $ewiki_plugins;
 
    $abort = optional_param('abort', false);
-   $init  = optional_param('init', '');
+   $init  = optional_param('init', '', PARAM_BOOL);
 
    #-- proceed only if frontpage missing or explicetely requested
    if ((strtolower($id)=="wikisetupwizard") || ($id==EWIKI_PAGE_INDEX) && ($action=="edit") && empty($data["version"]) && !($abort)) {

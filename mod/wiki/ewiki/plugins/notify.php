@@ -73,7 +73,7 @@ function ewiki_notify_edit_hook($id, $data, &$hidden_postdata) {
 
    global $ewiki_t, $ewiki_plugins;
 
-   $content = optional_param('content', '');
+   $content = optional_param('content', '', PARAM_CLEAN);
    $ret_err = 0;
    $save = optional_param('save', false);
 

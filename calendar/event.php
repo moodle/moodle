@@ -49,9 +49,9 @@
     $eventid = optional_param('id', 0, PARAM_INT);
     $eventtype = optional_param('type', 'select', PARAM_ALPHA);
     $urlcourse = optional_param('course', 0, PARAM_INT);
-    $cal_y = optional_param('cal_y');
-    $cal_m = optional_param('cal_m');
-    $cal_d = optional_param('cal_d');
+    $cal_y = optional_param('cal_y', 0, PARAM_INT);
+    $cal_m = optional_param('cal_m', 0, PARAM_INT);
+    $cal_d = optional_param('cal_d', 0, PARAM_INT);
 
     if(isguest()) {
         // Guests cannot do anything with events

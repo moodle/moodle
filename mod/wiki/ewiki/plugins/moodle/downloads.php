@@ -116,7 +116,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       }
       if (count($ewiki_upload_sections) > 1) {
          if (empty($def_sec)) {
-            $def_sec = optional_param('section', '');
+            $def_sec = optional_param('section', '', PARAM_CLEAN);
          }
          $o .= '<b>'.ewiki_t("UPL_INSECT").'</b><br /><select name="section">';
          foreach ($ewiki_upload_sections as $id => $title) {
@@ -198,13 +198,13 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
    #-- params (section, orderby)
-   $orderby = optional_param('orderby', 'created');
+   $orderby = optional_param('orderby', 'created', PARAM_ALPHA);
 
    if ($def_sec) {
       $section = $def_sec;
    }
    else {
-      $section = optional_param('section', '');
+      $section = optional_param('section', '', PARAM_CLEAN);
       if (count($ewiki_upload_sections) > 1) {
          $oa = array();
          $ewiki_upload_sections["*"] = "*";

@@ -232,13 +232,13 @@ class moodlelib_test extends UnitTestCase {
     {
         $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';
-        $this->assertEqual(optional_param('username', 'default_user'), 'post_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'post_user');
 
         unset($_POST['username']);
-        $this->assertEqual(optional_param('username', 'default_user'), 'get_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'get_user');
 
         unset($_GET['username']);
-        $this->assertEqual(optional_param('username', 'default_user'), 'default_user');
+        $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'default_user');
     }
 
     /**

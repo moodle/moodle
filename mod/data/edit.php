@@ -30,7 +30,7 @@
     $d     = optional_param('d', 0, PARAM_INT);    // database id
     $rid   = optional_param('rid', 0, PARAM_INT);    //record id
     $import   = optional_param('import', 0, PARAM_INT);    // show import form
-    $cancel   = optional_param('cancel', '');    // cancel an add
+    $cancel   = optional_param('cancel', '', PARAM_RAW);    // cancel an add
     $mode ='addtemplate';    //define the mode for this page, only 1 mode available
 
     if ($id) {

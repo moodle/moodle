@@ -6,7 +6,7 @@
     require_once("lib.php");
 
     $id   = required_param('id', PARAM_INT);
-    $mode = optional_param('mode');
+    $mode = optional_param('mode', '', PARAM_ACTION);
 
     admin_externalpage_setup('managemodules'); // this is hacky, tehre should be a special hidden page for it
 

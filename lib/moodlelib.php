@@ -329,7 +329,7 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
  * This function should be used to initialise all required values
  * in a script that are based on parameters.  Usually it will be
  * used like this:
- *    $id = required_param('id');
+ *    $id = required_param('id', PARAM_INT);
  *
  * @param string $parname the name of the page parameter we want, 
  *                        default PARAM_CLEAN
@@ -355,7 +355,7 @@ function required_param($parname, $type=PARAM_CLEAN) {
  * This function should be used to initialise all optional values
  * in a script that are based on parameters.  Usually it will be
  * used like this:
- *    $name = optional_param('name', 'Fred');
+ *    $name = optional_param('name', 'Fred', PARAM_TEXT);
  *
  * @param string $parname the name of the page parameter we want
  * @param mixed  $default the default value to return if nothing is found

@@ -735,7 +735,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
    global $ewiki_plugins, $ewiki_config;
    $o = "";
 
-   $thanks = optional_param('thankyou', '');
+   $thanks = optional_param('thankyou', '', PARAM_CLEAN);
 
    #-- render requested wiki page  <-- goal !!!
    $render_args = array(
@@ -762,7 +762,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
       foreach ($pf_a as $n => $pf) { $pf($o, $id, $data, $action); }
    }
 
-   if (!empty($thankyou) && $ewiki_config["edit_thank_you"]) {
+   if (!empty($thanks) && $ewiki_config["edit_thank_you"]) {
       $o = ewiki_t("THANKSFORCONTRIBUTION") . $o;
    }
 
@@ -1104,7 +1104,7 @@ function ewiki_page_search($id, &$data, $action) {
 
    global $CFG;
 
-   $q = optional_param('q', '');
+   $q = optional_param('q', '', PARAM_CLEAN);
    $o = ewiki_make_title($id, $id, 2, $action);
 
    if ($q == '') {
@@ -1367,10 +1367,10 @@ function ewiki_page_edit($id, $data, $action) {
 
    global $ewiki_links, $ewiki_author, $ewiki_plugins, $ewiki_ring, $ewiki_errmsg;
 
-   $content = optional_param('content', '');
-   $version = optional_param('version', '');
-   $preview = optional_param('preview', false);
-   $save    = optional_param('save', false);
+   $content = optional_param('content', '', PARAM_CLEAN);
+   $version = optional_param('version', '', PARAM_CLEAN);
+   $preview = optional_param('preview', false, PARAM_BOOL);
+   $save    = optional_param('save', false, PARAM_BOOL);
    
    $hidden_postdata = array();
 

@@ -21,7 +21,7 @@
     $cacheme      = optional_param('allowcache', 1, PARAM_INT);          // Set this to 0 to try and disable page caching.
 
     // Only want to add edit log entries if we have made some changes ie submitted a form
-    $editsave = optional_param('thankyou', '');
+    $editsave = optional_param('thankyou', '', PARAM_RAW);
 
     if($page) {
         // Split page command into action and page

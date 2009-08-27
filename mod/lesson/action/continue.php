@@ -445,7 +445,7 @@
             $newpageid = 0;
 
             if (isset($_POST['answer'])) {
-                $useranswer = (float) optional_param('answer');  // just doing default PARAM_CLEAN, not doing PARAM_INT because it could be a float
+                $useranswer = (float) optional_param('answer', 0, PARAM_RAW);  // just doing default PARAM_RAW, not doing PARAM_INT because it could be a float
             } else {
                 $noanswer = true;
                 break;

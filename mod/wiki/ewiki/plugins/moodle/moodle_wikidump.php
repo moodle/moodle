@@ -44,7 +44,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
   global $userid, $groupid, $cm, $wikipage, $wiki, $course, $CFG, $OUTPUT;
   #-- return legacy page
   $cont = true;
-  $wikiexport = optional_param('wikiexport', '');
+  $wikiexport = optional_param('wikiexport', '', PARAM_BOOL);
   $binaries = optional_param("exportbinaries", null);
   $exportformatval = optional_param("exportformats", null);
   $withvirtualpages = optional_param("withvirtualpages", null);

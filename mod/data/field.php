@@ -33,7 +33,7 @@
     $mode           = optional_param('mode','',PARAM_ALPHA);
     $defaultsort    = optional_param('defaultsort', 0, PARAM_INT);
     $defaultsortdir = optional_param('defaultsortdir', 0, PARAM_INT);
-    $cancel         = optional_param('cancel', '');
+    $cancel         = optional_param('cancel', 0, PARAM_BOOL);
 
     if ($cancel) {
         $mode = 'list';

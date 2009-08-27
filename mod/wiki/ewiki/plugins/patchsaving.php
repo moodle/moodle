@@ -19,8 +19,8 @@ if (function_exists("is_executable") && is_executable(EWIKI_BIN_PATCH) && is_exe
 
 function ewiki_edit_patch($id, &$data) {
 
-   $version = optional_param('version', null);
-   $content = optional_param('content', '');
+   $version = optional_param('version', null, PARAM_CLEAN);
+   $content = optional_param('content', '', PARAM_CLEAN);
 
    $r = false;
 

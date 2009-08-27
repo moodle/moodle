@@ -49,7 +49,7 @@
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
     $time = time();
-    $hppassword = optional_param('hppassword', '');
+    $hppassword = optional_param('hppassword', '', PARAM_RAW);
     if (HOTPOT_FIRST_ATTEMPT && !has_capability('mod/hotpot:grade', $context)) {
         // check this quiz is available to this student
         // error message, if quiz is unavailable

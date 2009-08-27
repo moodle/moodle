@@ -1439,11 +1439,12 @@ class question_bank_view {
 
         if (optional_param('deleteselected', false, PARAM_BOOL)) { // delete selected questions from the category
             if (($confirm = optional_param('confirm', '', PARAM_ALPHANUM)) and confirm_sesskey()) { // teacher has already confirmed the action
-                $deleteselected = required_param('deleteselected');
+                $deleteselected = required_param('deleteselected', PARAM_RAW);
                 if ($confirm == md5($deleteselected)) {
                     if ($questionlist = explode(',', $deleteselected)) {
                         // for each question either hide it if it is in use or delete it
                         foreach ($questionlist as $questionid) {
+                        	$questionid = (int)$questionid;
                             question_require_capability_on($questionid, 'edit');
                             if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
                                 if (!$DB->set_field('question', 'hidden', 1, array('id' => $questionid))) {

@@ -41,15 +41,14 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    $from = required_param('from');
-    $var = required_param('var');
-    $value = optional_param('value');
-    $id = optional_param('id');
-    $cal_d = optional_param('cal_d');
-    $cal_m = optional_param('cal_m');
-    $cal_y = optional_param('cal_y');
-    $action = optional_param('action');
-    $type = optional_param('type');
+    $from = required_param('from', PARAM_ALPHA);
+    $var = required_param('var', PARAM_ALPHA);
+    $id = optional_param('id', 0, PARAM_INT);
+    $cal_d = optional_param('cal_d', 0, PARAM_INT);
+    $cal_m = optional_param('cal_m', 0, PARAM_INT);
+    $cal_y = optional_param('cal_y', 0, PARAM_INT);
+    $action = optional_param('action', '', PARAM_ALPHA);
+    $type = optional_param('type', '', PARAM_ALPHA);
 
     // Initialize the session variables
     calendar_session_vars();

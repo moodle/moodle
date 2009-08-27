@@ -15,7 +15,7 @@
     }
 
 /// Optional variables that may be passed in
-    $tab            = optional_param('tab', 'contacts'); // current tab - default to contacts
+    $tab            = optional_param('tab', 'contacts', PARAM_ALPHA); // current tab - default to contacts
     $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
     $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
     $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact

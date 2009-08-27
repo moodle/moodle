@@ -579,7 +579,7 @@ class enrolment_plugin_authorize
 
         // REQUIRED fields;
         // an_login
-        $loginval = optional_param('an_login', '');
+        $loginval = optional_param('an_login', '', PARAM_RAW);
         if (empty($loginval) && empty($mconfig->an_login)) {
             return false;
         }
@@ -587,9 +587,9 @@ class enrolment_plugin_authorize
         set_config('an_login', $loginval, 'enrol/authorize');
 
         // an_tran_key, an_password
-        $tranval = optional_param('an_tran_key', '');
+        $tranval = optional_param('an_tran_key', '', PARAM_RAW);
         $tranval = !empty($tranval) ? rc4encrypt($tranval) : (isset($mconfig->an_tran_key)?$mconfig->an_tran_key:'');
-        $passwordval = optional_param('an_password', '');
+        $passwordval = optional_param('an_password', '', PARAM_RAW);
         $passwordval = !empty($passwordval) ? rc4encrypt($passwordval) :(isset($mconfig->an_password)?$mconfig->an_password:'');
         $deletecurrent = optional_param('delete_current', '0', PARAM_BOOL);
         if (!empty($deletecurrent) and !empty($tranval)) {

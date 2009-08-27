@@ -2764,8 +2764,8 @@
         $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
         $preferences->backup_blogs = optional_param('backup_blogs',1,PARAM_INT);
         $preferences->backup_course = $course->id;
-        $preferences->backup_name = required_param('backup_name',PARAM_FILE);
-        $preferences->backup_unique_code =  required_param('backup_unique_code');
+        $preferences->backup_name = required_param('backup_name', PARAM_FILE);
+        $preferences->backup_unique_code =  required_param('backup_unique_code', PARAM_INT);
 
         $roles = get_all_roles();
         $preferences->backuproleassignments = array();

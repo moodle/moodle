@@ -11,7 +11,7 @@
     $showall     = optional_param('showall', '', PARAM_INT); // show all discussions on one page
     $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
     $page        = optional_param('page', 0, PARAM_INT);     // which page to show
-    $search      = optional_param('search', '');             // search string
+    $search      = optional_param('search', '', PARAM_CLEAN);// search string
 
     $params = array();
     if ($id) {
