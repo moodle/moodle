@@ -1088,7 +1088,6 @@ repository_client.upload = function(client_id) {
         parent.appendChild(container);
         YAHOO.util.Connect.setForm(aform, true, true);
 
-        alert(fp.savepath);
         var trans = YAHOO.util.Connect.asyncRequest('POST',
                 moodle_cfg.wwwroot+'/repository/ws.php?action=upload&itemid='+fp.itemid
                     +'&sesskey='+moodle_cfg.sesskey
