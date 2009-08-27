@@ -493,6 +493,11 @@ function setup_get_remote_url() {
         $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
+        //nginx
+        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         //IIS
         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
