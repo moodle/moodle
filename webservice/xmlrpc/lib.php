@@ -66,7 +66,7 @@ final class xmlrpc_server extends webservice_server {
             }
 
             //retrieve the api name
-            $classpath = optional_param(classpath,null,PARAM_ALPHA);
+            $classpath = optional_param('classpath', null, PARAM_SAFEDIR);
             require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
             /// run the server

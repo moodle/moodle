@@ -1159,8 +1159,8 @@ function ewiki_page_info($id, &$data, $action) {
    global $ewiki_plugins, $ewiki_config, $ewiki_links;
    global $CFG, $COURSE, $DB, $OUTPUT;  // MOODLE HACK
 
-   $pnum = optional_param(EWIKI_UP_PAGENUM, 0);
-   $pend = optional_param(EWIKI_UP_PAGEEND, 0);
+   $pnum = optional_param(EWIKI_UP_PAGENUM, 0, PARAM_INT);
+   $pend = optional_param(EWIKI_UP_PAGEEND, 0, PARAM_INT);
 
    $o = ewiki_make_title($id, ewiki_t("INFOABOUTPAGE")." '{$id}'", 2, $action,"", "_MAY_SPLIT=1"); 
 
@@ -1662,7 +1662,7 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
 function ewiki_page_edit_preview(&$data) {
 #### BEGIN MOODLE CHANGES   
    global $moodle_format;   
-   $preview_text=$GLOBALS["ewiki_plugins"]["render"][0](optional_param("content", null), 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
+   $preview_text=$GLOBALS["ewiki_plugins"]["render"][0](optional_param("content", null, PARAM_CLEAN), 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
            . "<div class='mdl-right'>" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"

@@ -90,7 +90,7 @@ class auth_plugin_cas extends auth_plugin_base {
 
       $site = get_site();
       $CASform = get_string("CASform","auth_cas");
-      $username = optional_param("username");
+      $username = optional_param("username", '', PARAM_RAW);
 
       if (!empty($username)) {
 		  if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
@@ -124,7 +124,7 @@ class auth_plugin_cas extends auth_plugin_base {
 	  }		
 	 
      if ($this->config->multiauth) {
-          $authCAS = optional_param("authCAS");
+          $authCAS = optional_param("authCAS", '', PARAM_RAW);
           if ($authCAS=="NOCAS")
             return;
 
