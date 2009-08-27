@@ -15,11 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Grade export key management page.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */ 
 
 require_once '../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 
-$id     = required_param('id', PARAM_INT); // course id
+$id = required_param('id', PARAM_INT); // course id
+
+$PAGE->set_url('grade/export/keymanager.php', array('id' => $id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
@@ -32,8 +41,8 @@ require_capability('moodle/grade:export', $context);
 
 print_grade_page_head($course->id, 'export', 'keymanager', get_string('keymanager', 'grades'));
 
-$stredit         = get_string('edit');
-$strdelete       = get_string('delete');
+$stredit   = get_string('edit');
+$strdelete = get_string('delete');
 
 $data = array();
 $keys = $DB->get_records_select('user_private_key', "script='grade/export' AND instance=? AND userid=?", array($course->id, $USER->id));
@@ -44,10 +53,26 @@ if ($keys) {
         $line[1] = $key->iprestriction;
         $line[2] = empty($key->validuntil) ? get_string('always') : userdate($key->validuntil);
 
-        $buttons  = "<a title=\"$stredit\" href=\"key.php?id=$key->id\"><img".
-                    " src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
-        $buttons .= "<a title=\"$strdelete\" href=\"key.php?id=$key->id&amp;delete=1\"><img".
-                    " src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+        $icon = new moodle_action_icon();
+        $icon->link->url = new moodle_url('key.php');
+        if (!empty($key->id)) {
+            $icon->link->url->param('id', $key->id);
+        }
+        $icon->image->add_class('iconsmall');
+
+        $editicon = clone($icon);
+        $editicon->image->src = $OUTPUT->old_icon_url('t/edit');
+        $editicon->image->title = $stredit;
+        $editicon->image->alt = $stredit;
+        $buttons = $OUTPUT->action_icon($editicon);
+
+        $deleteicon = clone($icon);
+        $deleteicon->image->src = $OUTPUT->old_icon_url('t/delete');
+        $deleteicon->image->title = $strdelete;
+        $deleteicon->image->alt = $strdelete;
+        $deleteicon->link->url->param('delete', 1);
+        $deleteicon->link->url->param('sesskey', sesskey());
+        $buttons .= $OUTPUT->action_icon($deleteicon);
 
         $line[3] = $buttons;
         $data[] = $line;
@@ -61,7 +86,7 @@ $table->width = '90%';
 $table->data  = $data;
 echo $OUTPUT->table($table);
 
-echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->container_start('buttons mdl-align');
 echo $OUTPUT->button(html_form::make_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey')));
 echo $OUTPUT->container_end();
 

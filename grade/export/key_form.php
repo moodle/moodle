@@ -15,6 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Grade export key management form.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Petr Skodak
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -42,5 +49,3 @@ class key_form extends moodleform {
         $this->add_action_buttons();
     }
 }
-
-?>

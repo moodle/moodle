@@ -15,6 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Import key management.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('../../config.php');
 require_once('key_form.php');
 
@@ -23,6 +31,8 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
+
+$PAGE->set_url('grade/import/key.php', array('courseid' => $courseid, 'id' => $id));
 
 if ($id) {
     if (!$key = $DB->get_record('user_private_key', array('id' => $id))) {
@@ -118,4 +128,3 @@ print_header_simple($strkeys, ': '.$strkeys, $navigation, '', '', true, '', navm
 
 $editform->display();
 echo $OUTPUT->footer();
-?>

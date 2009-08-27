@@ -130,4 +130,3 @@ class grade_import_mapping_form extends moodleform {
 
     }
 }
-?>

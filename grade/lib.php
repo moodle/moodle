@@ -2258,3 +2258,38 @@ class grade_tree extends grade_structure {
         }
     }
 }
+
+/**
+ * Local shortcut function for creating an edit/delete button for a grade_* object.
+ * @param strong $type 'edit' or 'delete'
+ * @param int $courseid The Course ID
+ * @param grade_* $object The grade_* object
+ * @return string html
+ */
+function grade_button($type, $courseid, $object) {
+    global $CFG, $OUTPUT;
+    if (preg_match('/grade_(.*)/', get_class($object), $matches)) {
+        $objectidstring = $matches[1] . 'id';
+    } else {
+        throw new coding_exception('grade_button() only accepts grade_* objects as third parameter!');
+    }
+
+    $strdelete = get_string('delete');
+    $stredit   = get_string('edit');
+
+    $icon = new moodle_action_icon();
+
+    if ($type == 'delete') {
+        $icon->link->url = new moodle_url('index.php', array('id' => $courseid, $objectidstring => $object->id, 'action' => 'delete', 'sesskey' => sesskey()));
+    } else if ($type == 'edit') {
+        $icon->link->url = new moodle_url('edit.php', array('courseid' => $courseid, 'id' => $object->id));
+    }
+
+    $icon->image->src = $OUTPUT->old_icon_url('t/'.$type);
+    $icon->image->add_class('iconsmall');
+    $icon->image->title = ${'str'.$type};
+    $icon->image->alt = ${'str'.$type};
+
+    return $OUTPUT->action_icon($icon);
+
+}

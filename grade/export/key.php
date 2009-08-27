@@ -15,14 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Grade export key edit page.
+ *
+ * @package   moodlecore
+ * @copyright 2008 Petr Skoda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */ 
+
 require_once('../../config.php');
 require_once('key_form.php');
 
 /// get url variables
 $courseid = optional_param('courseid', 0, PARAM_INT);
-$id       = optional_param('id', 0, PARAM_INT);
+$id       = optional_param('id', 0, PARAM_INT); // The key's id
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
+
+$PAGE->set_url('grade/export/key.php', array('id' => $id, 'courseid' => $courseid));
 
 if ($id) {
     if (!$key = $DB->get_record('user_private_key', array('id' => $id))) {
@@ -35,12 +45,12 @@ if ($id) {
         print_error('invalidcourseid');
     }
 
-    if (!$course = $DB->get_record('course', array('id'=>$id))) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
 
 } else {
-    if (!$course = $DB->get_record('course', array('id'=>$id))) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
     $key = new object();
