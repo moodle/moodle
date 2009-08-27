@@ -22,7 +22,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 // require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
 // require_once $CFG->dirroot.'/grade/report/grader/lib.php';
 
-$courseid = required_param('id');                   // course id
+$courseid = required_param('id', PARAM_INT);                   // course id
 $userid = optional_param('userid', false, PARAM_INT);
 $itemid = optional_param('itemid', false, PARAM_INT);
 $type = optional_param('type', false, PARAM_ALPHA);
