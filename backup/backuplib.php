@@ -2724,11 +2724,11 @@
                 foreach ($preferences->$varname as $instance) {
                     $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
                     $var = 'backup_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
+                    $$var = optional_param($var,0, PARAM_CLEAN);
                     $preferences->$var = $$var;
                     $preferences->mods[$modname]->instances[$instance->id]->backup = $$var;
                     $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
+                    $$var = optional_param($var,0, PARAM_CLEAN);
                     $preferences->$var = $$var;
                     $preferences->mods[$modname]->instances[$instance->id]->userinfo = $$var;
                     $var = 'backup_'.$modname.'_instances';
@@ -2740,13 +2740,13 @@
                 $preferences->mods[$modname]->name = $modname;
 
                 $var = "backup_".$modname;
-                $$var = optional_param( $var,0);
+                $$var = optional_param( $var,0, PARAM_CLEAN);
                 $preferences->$var = $$var;
                 $preferences->mods[$modname]->backup = $$var;
 
                 //Check include user info
                 $var = "backup_user_info_".$modname;
-                $$var = optional_param( $var,0);
+                $$var = optional_param( $var,0, PARAM_CLEAN);
                 $preferences->$var = $$var;
                 $preferences->mods[$modname]->userinfo = $$var;
 

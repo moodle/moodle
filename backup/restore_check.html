@@ -68,9 +68,9 @@
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
-                $$var = optional_param( $var,0);
+                $$var = optional_param( $var,0, PARAM_CLEAN);
                 $var = "restore_user_info_".$modname;
-                $$var = optional_param( $var,0);
+                $$var = optional_param( $var,0, PARAM_CLEAN);
                 $instances = !empty($info->mods[$mod->name]->instances) ? $info->mods[$mod->name]->instances : NULL;
                 if ($instances === NULL) {
                     continue;

@@ -60,7 +60,7 @@ function moodle_ewiki_page_wiki_dump($id=0, $data=0, $action=0) {
     $cont=ewiki_page_wiki_dump_send($binaries, 
                                 $exportformatval, 
                                 $withvirtualpages, 
-                                optional_param("exportdestinations", null));
+                                optional_param("exportdestinations", null,PARAM_CLEAN));
   }  
   if($cont===false) {
      die;

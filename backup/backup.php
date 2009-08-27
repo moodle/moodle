@@ -8,10 +8,10 @@
     require_once ("backuplib.php");
     require_once ("$CFG->libdir/adminlib.php");
 
-    $id = optional_param( 'id' );       // course id
-    $to = optional_param( 'to' ); // id of course to import into afterwards.
-    $cancel = optional_param( 'cancel' );
-    $launch = optional_param( 'launch' );
+    $id = optional_param('id', 0, PARAM_INT);       // course id
+    $to = optional_param('to', 0, PARAM_INT); // id of course to import into afterwards.
+    $cancel = optional_param('cancel', '', PARAM_RAW);
+    $launch = optional_param('launch', '', PARAM_ACTION);
 
     $loginurl = get_login_url();
 

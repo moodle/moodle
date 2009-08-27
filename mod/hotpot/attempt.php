@@ -261,7 +261,7 @@ function hotpot_set_attempt_details(&$attempt) {
                 $responsevalue[$key] = clean_param($value, PARAM_CLEAN);
             }
         } else {
-            $responsevalue = optional_param($responsefield, '');
+            $responsevalue = optional_param($responsefield, '', PARAM_CLEAN);
         }
         if (is_array($responsevalue)) {
             // incomplete jquiz multi-select

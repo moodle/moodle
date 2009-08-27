@@ -235,7 +235,7 @@
 
     global $ewiki_config;
 
-    $ewiki_up_requestlv = optional_param(EWIKI_UP_REQUESTLV, 0);
+    $ewiki_up_requestlv = optional_param(EWIKI_UP_REQUESTLV, 0, PARAM_CLEAN);
     
     $html = "";
     srand(time()/17-1000*microtime());

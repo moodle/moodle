@@ -516,7 +516,7 @@ class flexible_table {
             $this->sess->i_last  = '';
         }
 
-        $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0);
+        $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0, PARAM_INT);
         $this->setup = true;
 
     /// Always introduce the "flexible" class for the table if not specified

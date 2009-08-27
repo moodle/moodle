@@ -14,12 +14,12 @@
     require_once("$CFG->libdir/adminlib.php");
 
     //Optional
-    $id = optional_param( 'id' );
-    $file = optional_param( 'file' );
-    $cancel = optional_param( 'cancel' );
-    $launch = optional_param( 'launch' );
-    $to = optional_param( 'to' );
-    $method = optional_param( 'method' );
+    $id = optional_param('id', 0, PARAM_INT);
+    $file = optional_param( 'file', 0, PARAM_PATH);
+    $cancel = optional_param('cancel', '', PARAM_RAW);
+    $launch = optional_param( 'launch', '', PARAM_ACTION);
+    $to = optional_param('to', '', PARAM_INT);
+    $method = optional_param('method', '', PARAM_ACTION);
     $backup_unique_code = optional_param('backup_unique_code',0,PARAM_INT);
 
     //Get and check course

@@ -157,7 +157,7 @@
                 }
             }
 
-        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0) and empty($pageid)) {
+        } else if ($lesson->highscores and !$lesson->practice and !optional_param('viewed', 0, PARAM_INT) and empty($pageid)) {
             // Display high scores before starting lesson
             redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id");
         }

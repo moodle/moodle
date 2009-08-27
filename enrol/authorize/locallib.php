@@ -339,7 +339,7 @@ function authorize_print_order($orderid)
             print_error('refoundtoorigi', '',
                     "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $order->amount);
         }
-        $amount = round(optional_param('amount', $upto), 2);
+        $amount = round(optional_param('amount', $upto, PARAM_RAW), 2);
         if ($amount > $upto) {
             print_error('refoundto', '',
                     "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $upto);

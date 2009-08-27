@@ -54,23 +54,23 @@
             //Check data
             //Check module info
             $var = "backup_".$modname;
-            $$var = optional_param( $var,1);
+            $$var = optional_param( $var,1, PARAM_CLEAN);
             //Check include user info
             $var = "backup_user_info_".$modname;
-            $$var = optional_param( $var,1);
+            $$var = optional_param( $var,1, PARAM_CLEAN);
         }
     }
 
     //Check other parameters
-    $backup_metacourse = optional_param('backup_metacourse',1);
-    $backup_users = optional_param('backup_users',1);
-    $backup_logs = optional_param('backup_logs',0);
-    $backup_user_files = optional_param('backup_user_files',1);
-    $backup_course_files = optional_param('backup_course_files',1);
-    $backup_site_files = optional_param('backup_site_files',1);
+    $backup_metacourse = optional_param('backup_metacourse',1, PARAM_BOOL);
+    $backup_users = optional_param('backup_users',1, PARAM_BOOL);
+    $backup_logs = optional_param('backup_logs',0, PARAM_BOOL);
+    $backup_user_files = optional_param('backup_user_files',1, PARAM_BOOL);
+    $backup_course_files = optional_param('backup_course_files',1, PARAM_BOOL);
+    $backup_site_files = optional_param('backup_site_files',1, PARAM_BOOL);
     $backup_gradebook_history =  optional_param('backup_gradebook_history', 0, PARAM_INT);
-    $backup_messages = optional_param('backup_messages',1);
-    $backup_blogs = optional_param('backup_blogs',1);
+    $backup_messages = optional_param('backup_messages',1, PARAM_BOOL);
+    $backup_blogs = optional_param('backup_blogs',1, PARAM_BOOL);
 
     if ($count == 0) {
         notice("No backupable modules are installed!");
@@ -175,11 +175,11 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 foreach ($instances as $instance) {
                     echo '<tr><td>';
                     $var = 'backup_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,1);
+                    $$var = optional_param($var,1, PARAM_CLEAN);
                     print_checkbox($var,$$var,$$var,$instance->name,$instance->name,'this.form.elements[\'backup_'.$modname.'\'].checked=1;');
                     echo '</td><td align="right">&nbsp;';
                     $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,1);
+                    $$var = optional_param($var,1, PARAM_CLEAN);
                     if (empty($to)) {
                         print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'backup_user_info_'.$modname.'\'].checked=1;');
                     } else {

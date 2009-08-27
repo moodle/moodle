@@ -311,7 +311,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL) || $newrandomcategory) && co
     redirect($thispageurl);
 }
 
-if (optional_param('addnewpagesafterselected', null) && !empty($selectedquestionids) && confirm_sesskey()) {
+if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) && !empty($selectedquestionids) && confirm_sesskey()) {
     foreach ($selectedquestionids as $questionid) {
         $quiz->questions = quiz_add_page_break_after($quiz->questions, $questionid);
     }

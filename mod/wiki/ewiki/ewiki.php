@@ -785,10 +785,10 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
     further whenever desired
 */
 function ewiki_id() {
-   ($id = optional_param("id", '')) or
-   ($id = optional_param("name", '')) or
-   ($id = optional_param("page", '')) or
-   ($id = optional_param("file", '')) or
+   ($id = optional_param("id", '', PARAM_CLEAN)) or
+   ($id = optional_param("name", '', PARAM_CLEAN)) or
+   ($id = optional_param("page", '', PARAM_CLEAN)) or
+   ($id = optional_param("file", '', PARAM_CLEAN)) or
    (EWIKI_USE_PATH_INFO) and ($id = ltrim(@$_SERVER["PATH_INFO"], "/")) or
    (!isset($_REQUEST["id"])) and ($id = trim(strtok($_SERVER["QUERY_STRING"], "&")));
    if (!strlen($id) || ($id=="id=")) {
@@ -1544,8 +1544,8 @@ function ewiki_data_update(&$data, $author="") {
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    global $ewiki_plugins, $ewiki_config, $moodle_format;   
 
-   $content = optional_param('content', '');
-   $version = optional_param('version', '');
+   $content = optional_param('content', '', PARAM_CLEAN);
+   $version = optional_param('version', '', PARAM_CLEAN);
 
    $o='';
       
@@ -2562,7 +2562,7 @@ function ewiki_binary($break=0) {
    global $ewiki_plugins;
    global $USER;   // MOODLE
 
-   $id = optional_param(EWIKI_UP_BINARY, '');
+   $id = optional_param(EWIKI_UP_BINARY, '', PARAM_CLEAN);
 
    #-- reject calls
    if (!strlen($id) || !EWIKI_IDF_INTERNAL) {

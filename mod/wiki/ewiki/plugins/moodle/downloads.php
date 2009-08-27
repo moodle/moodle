@@ -144,7 +144,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       if (($s = $upload_file["name"]) && (strlen($s) >= 3)
          || ($s = substr(md5(time()+microtime()),0,8) . ".dat"))
       {
-         if (strlen($uu = trim(optional_param("new_filename",''))) >= 3) {
+         if (strlen($uu = trim(optional_param("new_filename",'', PARAM_FILE))) >= 3) {
             if ($uu != $s) {
                $meta["Original-Filename"] = $s;
             }
@@ -156,7 +156,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
          ($p = strrpos($s, '\\')) and ($p++);
          $meta["Content-Disposition"] = 'attachment; filename="'.urlencode(substr($s, $p)).'"';
       }
-      if (strlen($sect = optional_param("section",''))) {
+      if (strlen($sect = optional_param("section",'', PARAM_CLEAN))) {
          if ($ewiki_upload_sections[$sect]
             || ($action==EWIKI_ACTION_ATTACHMENTS) && ($data["content"])
                && strlen($ewiki_plugins["action"][EWIKI_ACTION_ATTACHMENTS])) {
@@ -168,7 +168,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
             return($o);
          }
       }
-      if (strlen($s = trim(optional_param("comment",'')))) {
+      if (strlen($s = trim(optional_param("comment",'', PARAM_CLEAN)))) {
          $meta["comment"] = $s;
       }
 

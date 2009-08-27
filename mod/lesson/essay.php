@@ -83,7 +83,7 @@
             break;
         case 'update':
             if (confirm_sesskey() and $form = data_submitted()) {
-                if (optional_param('cancel', 0)) {
+                if (optional_param('cancel', 0, PARAM_RAW)) {
                     redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
                 }
                 
