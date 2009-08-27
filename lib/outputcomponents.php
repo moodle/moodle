@@ -193,10 +193,12 @@ class moodle_html_component {
      * Shortcut for adding a JS confirm dialog when the component is clicked.
      * The message must be a yes/no question.
      * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @param string $callback The name of a JS function whose scope will be set to the simpleDialog object and have this 
+     *    function's arguments set as this.args.
      * @return void
      */
-    public function add_confirm_action($message) {
-        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message)));
+    public function add_confirm_action($message, $callback=null) {
+        $this->add_action(new component_action('click', 'confirm_dialog', array('message' => $message, 'callback' => $callback)));
     }
 
     /**
