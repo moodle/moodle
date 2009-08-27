@@ -3272,7 +3272,7 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
     $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
     global $OUTPUT;
 
-    debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($select).');
+    // debugging('popup_form() has been deprecated. Please change your code to use $OUTPUT->select($select).');
 
     if (empty($options)) {
         return '';
