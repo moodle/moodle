@@ -492,8 +492,6 @@ class database_manager {
      * @return void
      */
     public function create_temp_table(xmldb_table $xmldb_table) {
-    /// hack for mssql - it requires names to start with #
-        $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
 
     /// Check table doesn't exist
         if ($this->table_exists($xmldb_table, true)) {
@@ -517,8 +515,6 @@ class database_manager {
      * @return void
      */
     public function drop_temp_table(xmldb_table $xmldb_table) {
-    /// mssql requires names to start with #
-        $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
 
     /// Check table doesn't exist
         if (!$this->table_exists($xmldb_table, true)) {

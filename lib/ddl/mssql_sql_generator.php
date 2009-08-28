@@ -125,16 +125,6 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * Tweaks the temp table instance - required for mssql # naming
-     */
-    public function tweakTempTable($xmldb_table) {
-        if (strpos($xmldb_table->getName(), '#') !== 0) {
-            $xmldb_table->setName('#'.$xmldb_table->getName()); // MSSQL requires temp table names to start with #
-        }
-        return $xmldb_table;
-    }
-
-    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {

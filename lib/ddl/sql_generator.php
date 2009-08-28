@@ -371,13 +371,6 @@ abstract class sql_generator {
     }
 
     /**
-     * Tweaks the temp table instance - required for mssql # naming
-     */
-    public function tweakTempTable($xmldb_table) {
-        return $xmldb_table;
-    }
-
-    /**
      * Given one correct xmldb_index, returns the SQL statements
      * needed to create it (in array)
      */
