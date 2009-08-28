@@ -1845,11 +1845,11 @@ class moodle_core_renderer extends moodle_renderer_base {
         $field = clone($field);
         $field->prepare();
         $this->prepare_event_handlers($field);
-        $returned = '';
+        $label = '';
         if (!empty($field->label->text)) {
-            $returned .= $this->label($field->label);
+            $label = $this->label($field->label);
         }
-        $returned .= $this->output_empty_tag('input', array(
+        return $label . $this->output_empty_tag('input', array(
                 'type' => $field->type,
                 'name' => $field->name,
                 'id' => $field->id,

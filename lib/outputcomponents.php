@@ -1163,13 +1163,21 @@ class html_table_row extends moodle_html_component {
     }
     
     /**
-     * Shortcut method for creating a row with an array of cells.
+     * Shortcut method for creating a row with an array of cells. Converts cells to html_table_cell objects.
      * @param array $cells
      * @return html_table_row
      */
     public function make($cells=array()) {
         $row = new html_table_row();
-        $row->cells = $cells;
+        foreach ($cells as $celltext) {
+            if (!($celltext instanceof html_table_cell)) {
+                $cell = new html_table_cell();
+                $cell->text = $celltext;
+                $row->cells[] = $cell;
+            } else {
+                $row->cells[] = $celltext;
+            }
+        }
         return $row;
     }
 }
