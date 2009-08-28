@@ -475,14 +475,14 @@ class ddl_test extends UnitTestCase {
 
         /// add one char field and check it
         $field = new xmldb_field('onechar');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '25', XMLDB_UNSIGNED, null, null, 'Nice dflt!');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '25', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'Nice dflt!');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'onechar'));
         $columns = $DB->get_columns('test_table1');
         $this->assertEqual($columns['onechar']->name         ,'onechar');
         $this->assertEqual($columns['onechar']->max_length   , 25);
         $this->assertEqual($columns['onechar']->scale        , null);
-        $this->assertEqual($columns['onechar']->not_null     , false);
+        $this->assertEqual($columns['onechar']->not_null     , true);
         $this->assertEqual($columns['onechar']->primary_key  , false);
         $this->assertEqual($columns['onechar']->binary       , false);
         $this->assertEqual($columns['onechar']->has_default  , true);
@@ -700,7 +700,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['anothernumber']->meta_type, 'I');
         //TODO: chek the rest of attributes
 
-        // change the column from number to text
+        // change the column from integer to text
         $field = new xmldb_field('anothernumber');
         $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_type($table, $field);
