@@ -173,6 +173,19 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->mysqli->set_charset('utf8');
         $this->query_end(true);
 
+        // If available, enforce strict mode for the session. That guaranties
+        // standard behaviour under some situations, avoiding some MySQL nasty
+        // habits like truncating data or performing some transparent cast losses.
+        // With strict mode enforced, Moodle DB layer will be consistenly throwing
+        // the corresponding exceptions as expected.
+        $si = $this->get_server_info();
+        if (version_compare($si['version'], '5.0.2', '>=')) {
+            $sql = "SET SESSION sql_mode = 'STRICT_ALL_TABLES'";
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end($result);
+        }
+
         return true;
     }
 
