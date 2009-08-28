@@ -166,20 +166,14 @@ if (!$managesharedfeeds) {
 }
 
 $urlparams = array('rssid' => $rssid);
-$manageparams = array();
 if ($courseid) {
     $urlparams['courseid'] = $courseid;
-    $manageparams[] = 'courseid=' . $courseid;
 }
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
-    $manageparams = 'returnurl=' . $returnurl;
 }
-if ($manageparams) {
-    $manageparams = '?' . implode('&', $manageparams);
-} else {
-    $manageparams = '';
-}
+$managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
+
 $PAGE->set_url('blocks/rss_client/editfeed.php', $urlparams);
 $PAGE->set_generaltype('form');
 
@@ -195,7 +189,7 @@ $mform = new feed_edit_form($PAGE->url, $isadding, $managesharedfeeds);
 $mform->set_data($rssrecord);
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/blocks/rss_client/managefeeds.php' . $manageparams);
+    redirect($managefeeds);
 
 } else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
@@ -210,7 +204,7 @@ if ($mform->is_cancelled()) {
         $DB->update_record('block_rss_client', $data);
     }
 
-    redirect($CFG->wwwroot . '/blocks/rss_client/managefeeds.php' . $manageparams);
+    redirect($managefeeds);
 
 } else {
     if ($isadding) {
@@ -222,17 +216,13 @@ if ($mform->is_cancelled()) {
     $PAGE->set_title($strtitle);
     $PAGE->set_heading($strtitle);
 
-    $navlinks = array(
-        array('name' => get_string('administration'), 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc'),
-        array('name' => get_string('managemodules'), 'link' => null, 'type' => 'misc'),
-        array('name' => get_string('blocks'), 'link' => null, 'type' => 'misc'),
-        array('name' => get_string('feedstitle', 'block_rss_client'), 'link' => "$CFG->wwwroot/$CFG->admin/settings.php?section=blocksettingrss_client", 'type' => 'misc'),
-        array('name' => get_string('managefeeds', 'block_rss_client'), 'link' => $CFG->wwwroot . '/blocks/rss_client/managefeeds.php' . $manageparams, 'type' => 'misc'),
-        array('name' => $strtitle, 'link' => null,  'type' => 'misc'),
-    );
-    $navigation = build_navigation($navlinks);
+    $settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
+    $PAGE->navbar->add(get_string('blocks'));
+    $PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $settingsurl);
+    $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));
+    $PAGE->navbar->add($strtitle);
 
-    echo $OUTPUT->header($navigation);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strtitle, 2);
 
     $mform->display();

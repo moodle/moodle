@@ -204,7 +204,9 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strcourses, 'link' => 'index.php', 'type' => 'misc');
     $navlinks[] = array('name' => $strsearch, 'link' => 'search.php', 'type' => 'misc');
-    $navlinks[] = array('name' => "'".s($search)."'", 'link' => null, 'type' => 'misc');
+    if (!empty($search)) {
+        $navlinks[] = array('name' => "'".s($search)."'", 'link' => null, 'type' => 'misc');
+    }
     $navigation = build_navigation($navlinks);
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, $navigation, "", "", "", $searchform);

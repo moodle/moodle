@@ -108,38 +108,6 @@
             $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
 
-        $edittype = 'none';
-        if (isguestuser($user)) {
-            // guest account can not be edited
-
-        } else if (is_mnet_remote_user($user)) {
-            // cannot edit remote users
-
-        } else if (isguestuser() or !isloggedin()) {
-            // guests and not logged in can not edit own profile
-
-        } else if ($USER->id == $user->id) {
-            if (has_capability('moodle/user:update', $systemcontext)) {
-                $edittype = 'advanced';
-            } else if (has_capability('moodle/user:editownprofile', $systemcontext)) {
-                $edittype = 'normal';
-            }
-
-        } else {
-            if (has_capability('moodle/user:update', $systemcontext) and !is_primary_admin($user->id)){
-                $edittype = 'advanced';
-            } else if (has_capability('moodle/user:editprofile', $personalcontext) and !is_primary_admin($user->id)){
-                //teachers, parents, etc.
-                $edittype = 'normal';
-            }
-        }
-
-        if ($edittype == 'advanced') {
-            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/editadvanced.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
-        } else if ($edittype == 'normal') {
-            $toprow[] = new tabobject('editprofile', $wwwroot.'/user/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmyprofile'));
-        }
-
     /// Everyone can see posts for this user
 
     /// add logic to see course read posts permission
@@ -247,57 +215,6 @@
         }
     }    //close last bracket (individual tags)
 
-
-    /// this needs permission checkings
-
-
-    if (!empty($showroles) and !empty($user)) { // this variable controls whether this roles is showed, or not, so only user/view page should set this flag
-        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-                'moodle/role:override', 'moodle/role:manage'), $usercontext)) {
-            $toprow[] = new tabobject('roles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/usersroles.php?userid='.$user->id.'&amp;courseid='.$course->id
-                    ,get_string('roles'));
-
-            if (in_array($currenttab, array('usersroles', 'assign', 'override', 'check'))) {
-                $inactive = array('roles');
-                $activetwo = array('roles');
-
-                $secondrow = array();
-                $secondrow[] = new tabobject('usersroles', $CFG->wwwroot.'/'.$CFG->admin.'/roles/usersroles.php?userid='.$user->id.'&amp;courseid='.$course->id
-                        ,get_string('thisusersroles', 'role'));
-                if (!empty($assignableroles) || $currenttab=='assign') {
-                    $secondrow[] = new tabobject('assign', $CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
-                            ,get_string('assignrolesrelativetothisuser', 'role'), '', true);
-                }
-                if (!empty($overridableroles) || $currenttab=='override') {
-                    $secondrow[] = new tabobject('override', $CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id
-                            ,get_string('overridepermissions', 'role'), '', true);
-                }
-                if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
-                        'moodle/role:override', 'moodle/role:assign'), $usercontext)) {
-                    $secondrow[] = new tabobject('check',
-                            $CFG->wwwroot.'/'.$CFG->admin.'/roles/check.php?contextid='.$usercontext->id.'&amp;userid='.$user->id.'&amp;courseid='.$course->id,
-                            get_string('checkpermissions', 'role'));
-                }
-            }
-        }
-    }
-
-    if (!empty($user) and empty($userindexpage) && $user->id == $USER->id && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', get_system_context())) {
-
-        /// Portfolio tab
-        if (portfolio_instances(true, false)) {
-            $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
-            if (in_array($currenttab, array('portfolioconf', 'portfoliologs'))) {
-                $inactive = array('portfolios');
-                $activetwo = array('portfolios');
-                $secondrow = array();
-                $secondrow[] = new tabobject('portfolioconf', $CFG->wwwroot . '/user/portfolio.php', get_string('configure', 'portfolio'));
-                $secondrow[] = new tabobject('portfoliologs', $CFG->wwwroot . '/user/portfoliologs.php', get_string('logs', 'portfolio'));
-            }
-        }
-    }
-
     // Repository Tab
     if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
@@ -308,12 +225,6 @@
         }
 
     }
-
-    /// Messaging tab
-    if (!empty($user) and empty($userindexpage) and has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
-        $toprow[] = new tabobject('editmessage', $CFG->wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
-    }
-
 
 /// Add second row to display if there is one
 

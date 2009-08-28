@@ -331,4 +331,53 @@ function upgrade_fix_incorrect_mnethostids() {
     }
 }
 
+/**
+ * This function is used as part of the great navigation upgrade of 20090828
+ * It is used to clean up contexts that are unique to a blocks that are about
+ * to be removed.
+ *
+ *
+ * Look at {@link blocklib.php::blocks_delete_instance()} the function from
+ * which I based this code. It is important to mention one very important fact
+ * before doing this I checked that the blocks did not override the
+ * {@link block_base::instance_delete()} method. Should this function ever
+ * be repeated check this again
+ * 
+ * @link lib/db/upgrade.php
+ *
+ * @since navigation upgrade 20090828
+ * @param array $contextidarray An array of block instance context ids
+ * @return bool
+ */
+function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
+    global $DB;
+
+    if (!is_array($contextidarray) || count($contextidarray)===0) {
+        // Ummmm no instances?
+        return true;
+    }
+
+    $contextidstring = join(',', $contextidarray);
+
+    $blockcontexts = $DB->get_recordset_select('context', 'contextlevel = '.CONTEXT_BLOCK.' AND id IN ('.$contextidstring.')', array(), '', 'id, contextlevel');
+    $blockcontextids = array();
+    foreach ($blockcontexts as $blockcontext) {
+        $blockcontextids[] = $blockcontext->id;
+    }
+
+    if (count($blockcontextids)===0) {
+        // None of the instances have unique contexts
+        return true;
+    }
+
+    $blockcontextidsstring = join(',', $blockcontextids);
+
+    $outcome1 = $DB->delete_records_select('role_assignments', 'contextid IN ('.$blockcontextidsstring.')');
+    $outcome2 = $DB->delete_records_select('role_capabilities', 'contextid IN ('.$blockcontextidsstring.')');
+    $outcome3 = $DB->delete_records_select('role_names', 'contextid IN ('.$blockcontextidsstring.')');
+    $outcome4 = $DB->delete_records_select('context', 'id IN ('.$blockcontextidsstring.')');
+
+    return ($outcome1 && $outcome2 && $outcome4 && $outcome4);
+}
+
 ?>

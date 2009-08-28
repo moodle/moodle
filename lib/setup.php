@@ -241,6 +241,7 @@ global $SCRIPT;
     require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI
     require_once($CFG->libdir .'/weblib.php');          // Functions relating to HTTP and content
     require_once($CFG->libdir .'/outputlib.php');       // Functions for generating output
+    require_once($CFG->libdir .'/navigationlib.php');   // Class for generating Navigation structure
     require_once($CFG->libdir .'/dmllib.php');          // Database access
     require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions

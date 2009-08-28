@@ -2133,15 +2133,6 @@ function print_header($title='', $heading='', $navigation='', $focus='',
     }
     $PAGE->set_button($button);
 
-    if ($navigation == 'home') {
-        $navigation = '';
-    }
-    if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
-        debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
-                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.", DEBUG_DEVELOPER);
-    }
-
-    // TODO $navigation
     // TODO $menu
 
     if ($meta) {
@@ -2155,7 +2146,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
         throw new coding_exception('The $bodytags parameter to print_header is no longer supported.');
     }
 
-    $output = $OUTPUT->header($navigation, $menu);
+    $output = $OUTPUT->header($menu);
 
     if ($return) {
         return $output;
@@ -3564,3 +3555,118 @@ function update_course_icon($courseid) {
     return $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $courseid)));
 }
 
+/**
+ * Prints breadcrumb trail of links, called in theme/-/header.html
+ *
+ * This function has now been deprecated please use output's navbar method instead
+ * as shown below
+ *
+ * <code php>
+ * echo $OUTPUT->navbar();
+ * </code>
+ *
+ * @deprecated since 2.0
+ * @param mixed $navigation deprecated
+ * @param string $separator OBSOLETE, and now deprecated
+ * @param boolean $return False to echo the breadcrumb string (default), true to return it.
+ * @return string|void String or null, depending on $return.
+ */
+function print_navigation ($navigation, $separator=0, $return=false) {
+    global $OUTPUT,$PAGE;
+
+    # debugging('print_navigation has been deprecated please update your theme to use $OUTPUT->navbar() instead', DEBUG_DEVELOPER);
+
+    $output = $OUTPUT->navbar();
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * This function will build the navigation string to be used by print_header
+ * and others.
+ *
+ * It automatically generates the site and course level (if appropriate) links.
+ *
+ * If you pass in a $cm object, the method will also generate the activity (e.g. 'Forums')
+ * and activityinstances (e.g. 'General Developer Forum') navigation levels.
+ *
+ * If you want to add any further navigation links after the ones this function generates,
+ * the pass an array of extra link arrays like this:
+ * array(
+ *     array('name' => $linktext1, 'link' => $url1, 'type' => $linktype1),
+ *     array('name' => $linktext2, 'link' => $url2, 'type' => $linktype2)
+ * )
+ * The normal case is to just add one further link, for example 'Editing forum' after
+ * 'General Developer Forum', with no link.
+ * To do that, you need to pass
+ * array(array('name' => $linktext, 'link' => '', 'type' => 'title'))
+ * However, becuase this is a very common case, you can use a shortcut syntax, and just
+ * pass the string 'Editing forum', instead of an array as $extranavlinks.
+ *
+ * At the moment, the link types only have limited significance. Type 'activity' is
+ * recognised in order to implement the $CFG->hideactivitytypenavlink feature. Types
+ * that are known to appear are 'home', 'course', 'activity', 'activityinstance' and 'title'.
+ * This really needs to be documented better. In the mean time, try to be consistent, it will
+ * enable people to customise the navigation more in future.
+ *
+ * When passing a $cm object, the fields used are $cm->modname, $cm->name and $cm->course.
+ * If you get the $cm object using the function get_coursemodule_from_instance or
+ * get_coursemodule_from_id (as recommended) then this will be done for you automatically.
+ * If you don't have $cm->modname or $cm->name, this fuction will attempt to find them using
+ * the $cm->module and $cm->instance fields, but this takes extra database queries, so a
+ * warning is printed in developer debug mode.
+ *
+ * @deprecated since 2.0
+ * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you
+ *      only want one extra item with no link, you can pass a string instead. If you don't want
+ *      any extra links, pass an empty string.
+ * @param mixed $cm deprecated
+ * @return array Navigation array
+ */
+function build_navigation($extranavlinks, $cm = null) {
+    global $CFG, $COURSE, $DB, $SITE, $PAGE;
+
+    if (is_array($extranavlinks) && count($extranavlinks)>0) {
+        # debugging('build_navigation() has been deprecated, please replace with $PAGE->navbar methods', DEBUG_DEVELOPER);
+        foreach ($extranavlinks as $nav) {
+            if (array_key_exists('name', $nav)) {
+                $link = (array_key_exists('link', $nav))?$nav['link']:null;
+                $PAGE->navbar->add($nav['name'],null, null, navbar::TYPE_CUSTOM, $link);
+            }
+        }
+    }
+    
+    return(array('newnav' => true, 'navlinks' => array()));
+}
+
+/**
+ * Returns a small popup menu of course activity modules
+ *
+ * Given a course and a (current) coursemodule
+ * his function returns a small popup menu with all the
+ * course activity modules in it, as a navigation menu
+ * The data is taken from the serialised array stored in
+ * the course record
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_COURSE
+ * @param object $course A {@link $COURSE} object.
+ * @param object $cm A {@link $COURSE} object.
+ * @param string $targetwindow The target window attribute to us
+ * @return string
+ */
+function navmenu($course, $cm=NULL, $targetwindow='self') {
+    global $CFG, $THEME, $USER, $DB, $OUTPUT;
+
+    // This function has been deprecated with the creation of the global nav in
+    // moodle 2.0
+
+    return '';
+}

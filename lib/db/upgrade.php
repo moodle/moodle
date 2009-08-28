@@ -2370,6 +2370,110 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009072400);
     }
 
+    /**
+     * This upgrade is to set up the new navigation blocks that have been developed
+     * as part of Moodle 2.0
+     * Now I [Sam Hemelryk] hit a conundrum while exploring how to go about this
+     * as not only do we want to install the new blocks but we also want to set up
+     * default instances of them, and at the same time remove instances of the blocks
+     * that were/will-be outmoded by the two new navigation blocks.
+     * After talking it through with Tim Hunt {@link http://moodle.org/mod/cvsadmin/view.php?conversationid=3112}
+     * we decided that the best way to go about this was to put the bulk of the
+     * upgrade operation into core upgrade `here` but to let the plugins block
+     * still install the blocks.
+     * This leaves one hairy end in that we will create block_instances within the
+     * DB before the blocks themselves are created within the DB
+     */
+    if ($result && $oldversion < 2009082800) {
+
+        echo $OUTPUT->notification(get_string('navigationupgrade', 'admin'));
+
+        // Get the system context so we can set the block instances to it
+        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // An array to contain the new block instances we will create
+        $newblockinstances = array('globalnavigation'=>new stdClass,'settingsnavigation'=>new stdClass);
+        // The new global navigation block instance as a stdClass
+        $newblockinstances['globalnavigation']->blockname = 'global_navigation_tree';
+        $newblockinstances['globalnavigation']->parentcontextid = $syscontext->id; // System context
+        $newblockinstances['globalnavigation']->showinsubcontexts = true; // Show absolutly everywhere
+        $newblockinstances['globalnavigation']->pagetypepattern = '*'; // Thats right everywhere
+        $newblockinstances['globalnavigation']->subpagetypepattern = null;
+        $newblockinstances['globalnavigation']->defaultregion = BLOCK_POS_LEFT;
+        $newblockinstances['globalnavigation']->defaultweight = -10; // Try make this first
+        $newblockinstances['globalnavigation']->configdata = '';
+        // The new settings navigation block instance as a stdClass
+        $newblockinstances['settingsnavigation']->blockname = 'settings_navigation_tree';
+        $newblockinstances['settingsnavigation']->parentcontextid = $syscontext->id;
+        $newblockinstances['settingsnavigation']->showinsubcontexts = true;
+        $newblockinstances['settingsnavigation']->pagetypepattern = '*';
+        $newblockinstances['settingsnavigation']->subpagetypepattern = null;
+        $newblockinstances['settingsnavigation']->defaultregion = BLOCK_POS_LEFT;
+        $newblockinstances['settingsnavigation']->defaultweight = -9; // Try make this second
+        $newblockinstances['settingsnavigation']->configdata = '';
+
+        // Blocks that are outmoded and for whom the bells will toll... by which I
+        // mean we will delete all instances of
+        $outmodedblocks = array('participants','admin_tree','activity_modules','admin','course_list');
+        $outmodedblocksstring = '\''.join('\',\'',$outmodedblocks).'\'';
+        unset($outmodedblocks);
+        // Retrieve the block instance id's and parent contexts, so we can join them an GREATLY
+        // cut down the number of delete queries we will need to run
+        $allblockinstances = $DB->get_recordset_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')', array(), '', 'id, parentcontextid');
+        
+        $contextids = array();
+        $instanceids = array();
+        // Iterate through all block instances
+        foreach ($allblockinstances as $blockinstance) {
+            if (!in_array($blockinstance->parentcontextid, $contextids)) {
+                $contextids[] = $blockinstance->parentcontextid;
+
+                // If we have over 1000 contexts clean them up and reset the array
+                // this ensures we don't hit any nasty memory limits or such
+                if (count($contextids) > 1000) {
+                    $result = $result && upgrade_cleanup_unwanted_block_contexts($contextids);
+                    $contextids = array();
+                }
+            }
+            if (!in_array($blockinstance->id, $instanceids)) {
+                $instanceids[] = $blockinstance->id;
+                // If we have more than 1000 block instances now remove all block positions
+                // and empty the array
+                if (count($contextids) > 1000) {
+                    $instanceidstring = join(',',$instanceids);
+                    $result = $result && $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
+                    $instanceids = array();
+                }
+            }
+        }
+
+        $result = $result && upgrade_cleanup_unwanted_block_contexts($contextids);
+
+        $instanceidstring = join(',',$instanceids);
+        $outcome1 = $result && $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
+        
+        unset($allblockinstances);
+        unset($contextids);
+        unset($instanceids);
+        unset($instanceidstring);
+        
+        // Now remove the actual block instance
+        $result = $result && $DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
+        unset($outmodedblocksstring);
+
+        // Insert the new block instances. Remember they have not been installed yet
+        // however this should not be a problem
+        foreach ($newblockinstances as $blockinstance) {
+            $blockinstance->id= $DB->insert_record('block_instances', $blockinstance);
+            // Ensure the block context is created.
+            get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
+        }
+        unset($newblockinstances);
+        
+        upgrade_main_savepoint($result, 2009082800);
+        // The end of the navigation upgrade
+    }
+
     return $result;
 }
 

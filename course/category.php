@@ -142,11 +142,6 @@
     $strcategory = get_string('category');
     $strcourses = get_string('courses');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcategories, 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => format_string($category->name), 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
     if ($editingon && can_edit_in_category()) {
         // Integrate into the admin tree only if the user can edit categories at the top level,
         // otherwise the admin block does not appear to this user, and you get an error.
@@ -156,7 +151,7 @@
         admin_externalpage_print_header();
     } else {
         $navbaritem = print_course_search('', true, 'navbar');
-        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", $navigation, '', '', true, $navbaritem);
+        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", array(), '', '', true, $navbaritem);
     }
 
 /// Print link to roles

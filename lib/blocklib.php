@@ -585,12 +585,12 @@ class block_manager {
      * @param string $pagetypepattern optional. Passed to @see add_block()
      * @param string $subpagepattern optional. Passed to @see add_block()
      */
-    public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL) {
+    public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL, $showinsubcontexts=false, $weight=0) {
         $this->add_regions(array_keys($blocks));
         foreach ($blocks as $region => $regionblocks) {
             $weight = 0;
             foreach ($regionblocks as $blockname) {
-                $this->add_block($blockname, $region, $weight, false, $pagetypepattern, $subpagepattern);
+                $this->add_block($blockname, $region, $weight, $showinsubcontexts, $pagetypepattern, $subpagepattern);
                 $weight += 1;
             }
         }
@@ -1626,10 +1626,16 @@ function blocks_parse_default_blocks_list($blocksstr) {
     $blocks = array();
     $bits = explode(':', $blocksstr);
     if (!empty($bits)) {
-        $blocks[BLOCK_POS_LEFT] = explode(',', array_shift($bits));
+        $leftbits = trim(array_shift($bits));
+        if ($leftbits != '') {
+            $blocks[BLOCK_POS_LEFT] = explode(',', $leftbits);
+        }
     }
     if (!empty($bits)) {
-        $blocks[BLOCK_POS_RIGHT] = explode(',', array_shift($bits));
+        $rightbits =trim(array_shift($bits));
+        if ($rightbits != '') {
+            $blocks[BLOCK_POS_RIGHT] = explode(',', $rightbits);
+        }
     }
     return $blocks;
 }
@@ -1644,7 +1650,7 @@ function blocks_get_default_site_course_blocks() {
         return blocks_parse_default_blocks_list($CFG->defaultblocks_site);
     } else {
         return array(
-            BLOCK_POS_LEFT => array('site_main_menu', 'admin_tree'),
+            BLOCK_POS_LEFT => array('site_main_menu'),
             BLOCK_POS_RIGHT => array('course_summary', 'calendar_month')
         );
     }
@@ -1682,8 +1688,8 @@ function blocks_add_default_course_blocks($course) {
 
             } else {
                 $blocknames = array(
-                    BLOCK_POS_LEFT => array('participants', 'activity_modules', 'search_forums', 'admin', 'course_list'),
-                    BLOCK_POS_RIGHT => array('news_items', 'calendar_upcoming', 'recent_activity')
+                    BLOCK_POS_LEFT => array(),
+                    BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
                 );
             }
         }
@@ -1706,5 +1712,6 @@ function blocks_add_default_course_blocks($course) {
 function blocks_add_default_system_blocks() {
     $page = new moodle_page();
     $page->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_tree', 'admin_bookmarks')), 'admin-*');
+    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('global_navigation_tree', 'settings_navigation_tree')), '*', null, true);
+    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
 }

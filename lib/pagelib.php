@@ -126,6 +126,12 @@ class moodle_page {
     protected $_button = '';
 
     protected $_theme = null;
+    /** @var null|global_navigation Contains the global navigation structure*/
+    protected $_navigation = null;
+    /** @var null|settings_navigation Contains the settings navigation structure*/
+    protected $_settingsnav = null;
+    /** @var null|navbar Contains the navbar structure*/
+    protected $_navbar = null;
 
     /**
      * Then the theme is initialsed, we save the stack trace, for use in error messages.
@@ -435,6 +441,40 @@ class moodle_page {
             $this->_opencontainers = new xhtml_container_stack();
         }
         return $this->_opencontainers;
+    }
+
+    /**
+     * Return the navigation object
+     * @return global_navigation
+     */
+    public function get_navigation() {
+        if ($this->_navigation === null) {
+            $this->_navigation = new global_navigation();
+        }
+        return $this->_navigation;
+    }
+
+    /**
+     * Return a navbar object
+     * @return navbar
+     */
+    public function get_navbar() {
+        if ($this->_navbar === null) {
+            $this->_navbar = new navbar($this);
+        }
+        return $this->_navbar;
+    }
+
+    /**
+     * Returns the settings navigation object
+     * @return settings_navigation
+     */
+    public function get_settingsnav() {
+        if ($this->_settingsnav === null) {
+            $this->_settingsnav = new settings_navigation($this);
+            $this->_settingsnav->initialise();
+        }
+        return $this->_settingsnav;
     }
 
     /**

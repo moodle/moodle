@@ -33,6 +33,10 @@ define('BLOCK_TYPE_LIST',    1);
  * Block type of text. Contents of block should be set to standard html text in the content object as items ($this->content->text). Optionally include footer text in $this->content->footer.
  */
 define('BLOCK_TYPE_TEXT',    2);
+/**
+ * Block type of tree. $this->content->items is a list of tree_item objects and $this->content->footer is a string.
+ */
+define('BLOCK_TYPE_TREE',    3);
 
 /**
  * Class for describing a moodle block, all Moodle blocks derive from this class
@@ -440,7 +444,7 @@ class block_base {
             $errors[] = 'title_not_set';
             $correct = false;
         }
-        if (!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT))) {
+        if (!in_array($this->get_content_type(), array(BLOCK_TYPE_LIST, BLOCK_TYPE_TEXT, BLOCK_TYPE_TREE))) {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
@@ -520,6 +524,20 @@ class block_base {
     /**
      * Return any HTML attributes that you want added to the outer <div> that
      * of the block when it is output.
+     *
+     * Because of the way certain JS events are wired it is a good idea to ensure
+     * that the default values here still get set.
+     * I found the easiest way to do this and still set anything you want is to
+     * override it within your block in the following way
+     *
+     * <code php>
+     * function html_attributes() {
+     *    $attributes = parent::html_attributes();
+     *    $attributes['class'] .= ' mynewclass';
+     *    return $attributes;
+     * }
+     * </code>
+     *
      * @return array attribute name => value.
      */
     function html_attributes() {
@@ -767,4 +785,55 @@ class block_list extends block_base {
     }
 }
 
-?>
+/**
+ * Specialized class for displaying a tree menu.
+ * 
+ * The {@link get_content()} method involves setting the content of
+ * <code>$this->content->items</code> with an array of {@link tree_item}
+ * objects (these are the top-level nodes). The {@link tree_item::children}
+ * property may contain more tree_item objects, and so on. The tree_item class
+ * itself is abstract and not intended for use, use one of it's subclasses.
+ * 
+ * Unlike {@link block_list}, the icons are specified as part of the items,
+ * not in a separate array.
+ *
+ * @author Alan Trick
+ * @package blocks
+ * @internal this extends block_list so we get is_empty() for free
+ */
+class block_tree extends block_list {
+    
+    /**
+     * @var int specifies the manner in which contents should be added to this
+     * block type. In this case <code>$this->content->items</code> is used with
+     * {@link tree_item}s.
+     */
+    public $content_type = BLOCK_TYPE_TREE;
+    
+    /**
+     * Make the formatted HTML ouput.
+     * 
+     * Also adds the required javascript call to the page output.
+     *
+     * @param moodle_core_renderer $output
+     * @return string HTML
+     */
+    protected function formatted_contents($output) {
+        // based of code in admin_tree
+        global $PAGE; // TODO change this when there is a proper way for blocks to get stuff into head.
+        static $eventattached;
+        if ($eventattached===null) {
+            $eventattached = true;
+        }
+        if (!$this->content) {
+            $this->content = new stdClass;
+            $this->content->items = array();
+        }
+        $this->get_content();
+        $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree'));
+        if (isset($this->id) && !is_numeric($this->id)) {
+            $content = $output->box($content, 'block_tree_box', $this->id);
+        }
+        return $content;
+    }
+}

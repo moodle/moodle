@@ -42,8 +42,6 @@
         require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
-        $PAGE->set_button(update_module_button($cm->id, $course->id, $strforum));
-
     } else if ($f) {
 
         if (! $forum = $DB->get_record("forum", array("id" => $f))) {
@@ -61,8 +59,6 @@
         require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
-        $PAGE->set_button(update_module_button($cm->id, $course->id, $strforum));
-
     } else {
         print_error('missingparameter');
     }
@@ -76,10 +72,9 @@
 
 
 /// Print header.
-    $navigation = build_navigation('', $cm);
     $PAGE->set_title(format_string($forum->name));
     $PAGE->set_heading(format_string($course->fullname));
-    echo $OUTPUT->header($navigation, navmenu($course, $cm));
+    echo $OUTPUT->header(navmenu($course, $cm));
 
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
@@ -122,89 +117,6 @@
             forum_print_mode_form($forum->id, $displaymode, $forum->type);
         }
     }
-
-
-//    print_box_start('forumcontrol clearfix');
-
-//    print_box_start('subscription clearfix');
-    echo '<div class="subscription">';
-
-    if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $context, NULL, false)) {
-        $SESSION->fromdiscussion = "$FULLME";
-        if (forum_is_forcesubscribed($forum)) {
-            $streveryoneisnowsubscribed = get_string('everyoneisnowsubscribed', 'forum');
-            $strallowchoice = get_string('allowchoice', 'forum');
-            echo '<span class="helplink">' . get_string("forcessubscribe", 'forum') . '</span><br />';
-            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strallowchoice, "forum"));
-            echo '&nbsp;<span class="helplink">';
-            if (has_capability('mod/forum:managesubscriptions', $context)) {
-                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$strallowchoice</a>";
-            } else {
-                echo $streveryoneisnowsubscribed;
-            }
-            echo '</span><br />';
-
-        } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
-            $strsubscriptionsoff = get_string('disallowsubscribe','forum');
-            echo $strsubscriptionsoff;
-            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strsubscriptionsoff, "forum"));
-        } else {
-            $streveryonecannowchoose = get_string("everyonecannowchoose", "forum");
-            $strforcesubscribe = get_string("forcesubscribe", "forum");
-            $strshowsubscribers = get_string("showsubscribers", "forum");
-            echo '<span class="helplink">' . get_string("allowsallsubscribe", 'forum') . '</span><br />';
-            echo $OUTPUT->help_icon(moodle_help_icon::make("subscription", $strforcesubscribe, "forum"));
-            echo '&nbsp;';
-
-            if (has_capability('mod/forum:managesubscriptions', $context)) {
-                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$strforcesubscribe</a></span>";
-            } else {
-                echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
-            }
-
-            if(has_capability('mod/forum:viewsubscribers', $context)){
-                echo "<br />";
-                echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
-            }
-
-            echo '<div class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context,
-                    array('forcesubscribed' => '', 'cantsubscribe' => '')), '</div>';
-        }
-
-        if (forum_tp_can_track_forums($forum)) {
-            echo '<div class="helplink" id="trackinglink">'. forum_get_tracking_link($forum). '</div>';
-        }
-
-    }
-
-    /// If rss are activated at site and forum level and this forum has rss defined, show link
-    if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
-        $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
-
-        if ($forum->rsstype == 1) {
-            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-        } else {
-            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-        }
-        if (empty($USER->id)) {
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
-        }
-//        print_box_start('rsslink');
-        echo '<span class="wrap rsslink">';
-        rss_print_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-        echo '</span>';
-//        print_box_end(); // subscription
-
-    }
-//    print_box_end(); // subscription
-    echo '</div>';
-
-//    print_box_end();  // forumcontrol
-
-//    print_box('&nbsp;', 'clearer');
-
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
         $a->blockafter = $forum->blockafter;

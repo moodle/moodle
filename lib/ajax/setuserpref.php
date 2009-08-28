@@ -35,9 +35,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 // Check access.
-if (!isloggedin()) {;
-    print_error('mustbeloggedin');
-}
 if (!confirm_sesskey()) {
     print_error('invalidsesskey');
 }

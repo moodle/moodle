@@ -495,21 +495,21 @@ class moodle_core_renderer extends moodle_renderer_base {
         $this->page->requires->js('lib/overlib/overlib.js')->in_head();
         $this->page->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
         $this->page->requires->js('lib/cookies.js')->in_head();
-        $this->page->requires->js_function_call('setTimeout', Array('fix_column_widths()', 20));
+        $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
             if (preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
                 // This is a horrifically bad way to handle focus but it is passed in
                 // through messy formslib::moodleform
-                $this->page->requires->js_function_call('old_onload_focus', Array($matches[1], $matches[2]));
+                $this->page->requires->js_function_call('old_onload_focus', array($matches[1], $matches[2]));
             } else if (strpos($focus, '.')!==false) {
                 // Old style of focus, bad way to do it
                 debugging('This code is using the old style focus event, Please update this code to focus on an element id or the moodleform focus method.', DEBUG_DEVELOPER);
                 $this->page->requires->js_function_call('old_onload_focus', explode('.', $focus, 2));
             } else {
                 // Focus element with given id
-                $this->page->requires->js_function_call('focuscontrol', Array($focus));
+                $this->page->requires->js_function_call('focuscontrol', array($focus));
             }
         }
 
@@ -691,7 +691,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      *      removed when there is a $PAGE->... replacement.
      * @return string HTML that you must output this, preferably immediately.
      */
-    public function header($navigation = '', $menu='') {
+    public function header($menu='') {
         // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
         global $USER, $CFG;
 
@@ -701,10 +701,10 @@ class moodle_core_renderer extends moodle_renderer_base {
         $templatefile = $this->page->theme->template_for_page($this->page->generaltype);
         if ($templatefile) {
             // Render the template.
-            $template = $this->render_page_template($templatefile, $menu, $navigation);
+            $template = $this->render_page_template($templatefile, $menu);
         } else {
             // New style template not found, fall back to using header.html and footer.html.
-            $template = $this->handle_legacy_theme($navigation, $menu);
+            $template = $this->handle_legacy_theme($menu);
         }
 
         // Slice the template output into header and footer.
@@ -734,7 +734,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param array $navigation The navigation that will be used in the included file
      * @return string HTML code
      */
-    protected function render_page_template($templatefile, $menu, $navigation) {
+    protected function render_page_template($templatefile, $menu) {
         global $CFG, $SITE, $THEME, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
         // of a renderer class, and this object may, or may not, be the same as
@@ -745,6 +745,9 @@ class moodle_core_renderer extends moodle_renderer_base {
         $OUTPUT = $this;
         $PAGE = $this->page;
         $COURSE = $this->page->course;
+
+        // Required for legacy template uses
+        $navigation = $this->has_navbar();
 
         ob_start();
         include($templatefile);
@@ -759,12 +762,13 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param array $menu The menu that will be used in the included file
      * @return string HTML code
      */
-    protected function handle_legacy_theme($navigation, $menu) {
+    protected function handle_legacy_theme($menu) {
         global $CFG, $SITE, $USER;
         // Set a pretend global from the properties of this class.
         // See the comment in render_page_template for a fuller explanation.
         $COURSE = $this->page->course;
         $THEME = $this->page->theme;
+        $OUTPUT = $this;
 
         // Set up local variables that header.html expects.
         $direction = $this->htmlattributes();
@@ -789,6 +793,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $course = $this->page->course;
         $performanceinfo = self::PERFORMANCE_INFO_TOKEN;
 
+        $navigation = $this->has_navbar();
         if (!$menu && $navigation) {
             $menu = $loggedinas;
         }
@@ -2258,6 +2263,84 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function container_end() {
         return $this->opencontainers->pop('container');
+    }
+
+   /**
+     * Make nested HTML lists out of the items
+     *
+     * The resulting list will look something like this:
+     *
+     * <pre>
+     * <<ul>>
+     * <<li>><div class='tree_item parent'>(item contents)</div>
+     *      <<ul>
+     *      <<li>><div class='tree_item'>(item contents)</div><</li>>
+     *      <</ul>>
+     * <</li>>
+     * <</ul>>
+     * </pre>
+     *
+     * @param array[]tree_item $items
+     * @param array[string]string $attrs html attributes passed to the top of
+     * the list
+     * @return string HTML
+     */
+    function tree_block_contents($items, $attrs=array()) {
+        // exit if empty, we don't want an empty ul element
+        if (empty($items)) {
+            return '';
+        }
+        // array of nested li elements
+        $lis = array();
+        foreach ($items as $item) {
+            // this applies to the li item which contains all child lists too
+            $content = $item->content($this);
+            $liclasses = array($item->get_css_type());
+            if (!$item->forceopen || (!$item->forceopen && $item->collapse) || (count($item->children)==0  && $item->nodetype==navigation_node::NODETYPE_BRANCH)) {
+                $liclasses[] = 'collapsed';
+            }
+            if ($item->isactive === true) {
+                $liclasses[] = 'current_branch';
+            }
+            $liattr = array('class'=>join(' ',$liclasses));
+            // class attribute on the div item which only contains the item content
+            $divclasses = array('tree_item');
+            if (!empty($item->children)  || $item->nodetype==navigation_node::NODETYPE_BRANCH) {
+                $divclasses[] = 'branch';
+            } else {
+                $divclasses[] = 'leaf';
+            }
+            if (!empty($item->classes) && count($item->classes)>0) {
+                $divclasses[] = join(' ', $item->classes);
+            }
+            $divattr = array('class'=>join(' ', $divclasses));
+            if (!empty($item->id)) {
+                $divattr['id'] = $item->id;
+            }
+            $content = $this->output_tag('p', $divattr, $content) . $this->tree_block_contents($item->children);
+            if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
+                $content = $this->output_tag('hr', array(), null).$content;
+            }
+            $content = $this->output_tag('li', $liattr, $content);
+            $lis[] = $content;
+        }
+        return $this->output_tag('ul', $attrs, implode("\n", $lis));
+    }
+
+    /**
+     * Return the navbar content so that it can be echoed out by the layout
+     * @return string XHTML navbar
+     */
+    public function navbar() {
+        return $this->page->navbar->content();
+    }
+
+    /**
+     * Checks to see if there are any items on the navbar object
+     * @return bool true if there are, false if not
+     */
+    public function has_navbar() {
+        return $this->page->navbar->has_items();
     }
 }
 

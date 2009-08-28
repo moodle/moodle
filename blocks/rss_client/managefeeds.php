@@ -82,16 +82,12 @@ $PAGE->set_generaltype('form');
 $PAGE->set_title($strmanage);
 $PAGE->set_heading($strmanage);
 
-$navlinks = array(
-    array('name' => get_string('administration'), 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc'),
-    array('name' => get_string('managemodules'), 'link' => null, 'type' => 'misc'),
-    array('name' => get_string('blocks'), 'link' => null, 'type' => 'misc'),
-    array('name' => get_string('feedstitle', 'block_rss_client'), 'link' => "$CFG->wwwroot/$CFG->admin/settings.php?section=blocksettingrss_client", 'type' => 'misc'),
-    array('name' => get_string('managefeeds', 'block_rss_client'), 'link' => null, 'type' => 'misc'),
-);
-$navigation = build_navigation($navlinks);
-
-echo $OUTPUT->header($navigation);
+$settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
+$managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
+$PAGE->navbar->add(get_string('blocks'));
+$PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $settingsurl);
+$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $managefeeds);
+echo $OUTPUT->header();
 
 $table = new flexible_table('rss-display-feeds');
 

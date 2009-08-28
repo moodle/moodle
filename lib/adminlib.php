@@ -5082,13 +5082,7 @@ function admin_externalpage_print_header($focus='') {
         $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(false), $options, $caption, 'get'));
     }
 
-    $navlinks = array();
-    foreach ($visiblepathtosection as $element) {
-        $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
-    }
-    $navigation = build_navigation($navlinks);
-
-    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
+    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, array(), $focus, '', true, $buttons, '');
 }
 
 /**
@@ -5551,6 +5545,7 @@ function print_plugin_tables() {
                                         'comments',
                                         'course_list',
                                         'course_summary',
+                                        'global_navigation_tree',
                                         'glossary_random',
                                         'html',
                                         'loancalc',
@@ -5567,6 +5562,7 @@ function print_plugin_tables() {
                                         'search',
                                         'search_forums',
                                         'section_links',
+                                        'settings_navigation_tree',
                                         'site_main_menu',
                                         'social_activities',
                                         'tag_flickr',

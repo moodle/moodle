@@ -48,19 +48,11 @@ if ($courseid) {
 }
 
 $urlparams = array('rssid' => $rssid);
-$manageparams = array();
 if ($courseid) {
     $urlparams['courseid'] = $courseid;
-    $manageparams[] = 'courseid=$courseid';
 }
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
-    $manageparams = 'returnurl=' . $returnurl;
-}
-if ($manageparams) {
-    $manageparams = '?' . implode('&', $manageparams);
-} else {
-    $manageparams = '';
 }
 $PAGE->set_url('blocks/rss_client/viewfeed.php', $urlparams);
 $PAGE->set_generaltype('popup');
@@ -79,18 +71,13 @@ $strviewfeed = get_string('viewfeed', 'block_rss_client');
 $PAGE->set_title($strviewfeed);
 $PAGE->set_heading($strviewfeed);
 
-$navlinks = array(
-    array('name' => get_string('administration'), 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc'),
-    array('name' => get_string('managemodules'), 'link' => null, 'type' => 'misc'),
-    array('name' => get_string('blocks'), 'link' => null, 'type' => 'misc'),
-    array('name' => get_string('feedstitle', 'block_rss_client'), 'link' => "$CFG->wwwroot/$CFG->admin/settings.php?section=blocksettingrss_client", 'type' => 'misc'),
-    array('name' => get_string('managefeeds', 'block_rss_client'), 'link' => $CFG->wwwroot . '/blocks/rss_client/managefeeds.php' . $manageparams, 'type' => 'misc'),
-    array('name' => $strviewfeed, 'link' => null,  'type' => 'misc'),
-);
-$navigation = build_navigation($navlinks);
-
-echo $OUTPUT->header($navigation);
-
+$settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
+$managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
+$PAGE->navbar->add(get_string('blocks'));
+$PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $settingsurl);
+$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));
+$PAGE->navbar->add($strviewfeed);
+echo $OUTPUT->header();
 
 if (!empty($rssrecord->preferredtitle)) {
     $feedtitle = $rssrecord->preferredtitle;

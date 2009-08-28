@@ -6,7 +6,6 @@
 // social format.
 //
 // The default blocks layout for this course format:
-    $format['defaultblocks'] = 'participants,search_forums,calendar_upcoming,'.
-                               'social_activities,recent_activity,admin,course_list';
+    $format['defaultblocks'] = ':search_forums,calendar_upcoming,social_activities,recent_activity,admin,course_list';
 
 ?>
