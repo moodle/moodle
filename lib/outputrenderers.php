@@ -1114,6 +1114,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $cancel = $cancelform;
         } else if ($cancel instanceof moodle_url) {
             $cancelform = new html_form();
+            $cancelform->button->text = get_string('cancel');
             $cancelform->url = $cancel;
             $cancel = $cancelform;
         } else {
