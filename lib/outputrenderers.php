@@ -1556,7 +1556,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         return $output . $this->output_end_tag($tag);
     }
-    
+
     /**
      * Prints an inline span element with optional text contents.
      *
@@ -1858,7 +1858,6 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'alt' => $field->alt,
                 'title' => $field->title,
                 'maxlength' => $field->maxlength));
-        return $returned;
     }
 
     /**
@@ -2064,7 +2063,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
                     $heading->colspan = $table->headspan[$key];
                     $countcols += $table->headspan[$key] - 1;
-                } 
+                }
 
                 if ($key == $lastkey) {
                     $heading->add_class('lastcol');
@@ -2082,7 +2081,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                         'class'     => $heading->get_classes_string(),
                         'scope'     => $heading->scope,
                         'colspan'   => $heading->colspan);
-                
+
                 $output .= $this->output_tag('th', $attributes, $heading->text) . "\n";
             }
             $output .= $this->output_end_tag('tr') . "\n";
@@ -2112,7 +2111,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                         }
                         $row = $newrow;
                     }
-                    
+
                     $this->prepare_event_handlers($row);
 
                     $oddeven = $oddeven ? 0 : 1;
