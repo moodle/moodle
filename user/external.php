@@ -39,7 +39,7 @@ final class user_external extends moodle_external {
         $this->descriptions = array();
         ///The desciption of the web service
 
-        $user = new stdClass();
+        $user = new object();
         $user->password = PARAM_ALPHANUMEXT;
         $user->auth = PARAM_ALPHANUMEXT;
         $user->confirmed = PARAM_NUMBER;
@@ -56,12 +56,15 @@ final class user_external extends moodle_external {
         $user->description = PARAM_TEXT;
         $user->city = PARAM_ALPHANUMEXT;
         $user->country = PARAM_ALPHANUMEXT;
+        $params = new object();
+        $params->users = array($user);
+        $return = new object();
+        $return->userids = array(PARAM_NUMBER);
+        $this->descriptions['create_users']   = array( 'params' => $params,
+            'optionalinformation' => 'Username, password, firstname, and username are the only mandatory',
+            'return' => $return);
 
-        $this->descriptions['create_users']   = array( 'params' => array('users' => array($user)),
-            'optionalinformation' => 'All params are not mandatory',
-            'return' => array('userids' => array(PARAM_NUMBER)));
-
-        $user = new stdClass();
+        $user = new object();
         $user->id = PARAM_NUMBER;
         $user->auth = PARAM_ALPHANUMEXT;
         $user->confirmed = PARAM_NUMBER;
@@ -78,25 +81,33 @@ final class user_external extends moodle_external {
         $user->description = PARAM_TEXT;
         $user->city = PARAM_ALPHANUMEXT;
         $user->country = PARAM_ALPHANUMEXT;
-
-        $this->descriptions['get_users']     = array( 'params' => array('search'=> PARAM_ALPHANUM),
+        $params = new object();
+        $params->search = PARAM_ALPHANUM;
+        $return = new object();
+        $return->users = array($user);
+        $this->descriptions['get_users']     = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => array('user' => array( $user)));
+            'return' => $return);
 
-
-        $this->descriptions['delete_users']   = array( 'params' => array('usernames' => array(PARAM_ALPHANUMEXT)),
+        $params = new object();
+        $params->usernames = array(PARAM_ALPHANUMEXT);
+        $return = new object();
+        $return->result = PARAM_BOOL;
+        $this->descriptions['delete_users']   = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => array('result' => PARAM_BOOL));
+            'return' => $return);
 
         $user->newusername = PARAM_ALPHANUMEXT;
-        $this->descriptions['update_users']   = array( 'params' => array('users' => array($user),
+        $params = new object();
+        $params->users = array($user);
+        $this->descriptions['update_users']   = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => array('result' => PARAM_BOOL)));
+            'return' => $return);
     }
 
     /**
      * Retrieve all user
-     * @param array|struct $params - need to be define as struct for XMLRPC
+     * @param object|struct $params - need to be define as struct for XMLRPC
      * @return object $return
      */
     public function get_users($params) {
@@ -105,7 +116,7 @@ final class user_external extends moodle_external {
         $this->clean_function_params('get_users', $params);
 
         if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
-            return get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
+            return get_users(true, $params->search, false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
         }
         else {
             throw new moodle_exception('wscouldnotvieweusernopermission');
@@ -114,15 +125,15 @@ final class user_external extends moodle_external {
 
     /**
      * Create multiple users
-     * @param array|struct $params - need to be define as struct for XMLRPC
-     * @return array $return ids of new user
+     * @param object|struct $params - need to be define as struct for XMLRPC
+     * @return object $return
      */
     public function create_users($params) {
         global $USER;
         if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
             $userids = array();
             $this->clean_function_params('create_users', $params);
-            foreach ($params['users'] as $user) {
+            foreach ($params->users as $user) {
                 try {
                     $userids[$user->username] = create_user($user);
                 }
@@ -140,7 +151,7 @@ final class user_external extends moodle_external {
     /**
      * Delete multiple users
      * @global object $DB
-     * @param array|struct $params - need to be define as struct for XMLRPC
+     * @param object|struct $params - need to be define as struct for XMLRPC
      * @return boolean result true if success
      */
     public function delete_users($params) {
@@ -149,7 +160,7 @@ final class user_external extends moodle_external {
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
 
             $this->clean_function_params('delete_users', $params);
-            foreach ($params['usernames'] as $username) {
+            foreach ($params->usernames as $username) {
                 $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
                 if (empty($user)) {
                     throw new moodle_exception('wscouldnotdeletenoexistinguser');
@@ -169,7 +180,7 @@ final class user_external extends moodle_external {
     /**
      * Update some users information
      * @global object $DB
-     * @param array|struct $params - need to be define as struct for XMLRPC
+     * @param object|struct $params - need to be define as struct for XMLRPC
      * @return boolean result true if success
      */
     public function update_users($params) {
@@ -179,7 +190,7 @@ final class user_external extends moodle_external {
 
             $this->clean_function_params('update_users', $params);
 
-            foreach ($params['users'] as $paramuser) {
+            foreach ($params->users as $paramuser) {
 
                 $user = $DB->get_record('user', array('username'=> $paramuser->username, 'mnethostid'=>1));
 

@@ -76,7 +76,7 @@ try {
     $params = new stdClass();
     $params->username = 'wsuser';
     $params->password = 'wspassword';
-    $token = $client->get_token(array('username' => "wsuser", 'password' => "wspassword"));
+    $token = $client->get_token($params);
     //$token = $client->get_token($params);
     print "<pre>\n";
     print "<br><br><strong>Token: </strong>".$token;
@@ -111,7 +111,9 @@ print "<br><br>".$CFG->wwwroot."/webservice/soap/server.php?token=".$token."&cla
 print "<br><br><strong>Get users:</strong>";
 print "<pre>\n";
 try {
-    var_dump($client->get_users(array('search' => "admin")));
+    $params = new stdClass();
+    $params->search = "admin";
+    var_dump($client->get_users($params));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -123,13 +125,16 @@ print "</pre>";
 print "<br><br><strong>Create user:</strong>";
 print "<pre>\n";
 try {
+
     $user = new stdClass();
     $user->password = "password6";
     $user->email = "mockuser6@mockuser6.com";
     $user->username = "mockuser66";
     $user->firstname = "firstname6";
     $user->lastname = "lastname6";
-    var_dump($client->create_users(array('users' => array($user))));
+    $params = new stdClass();
+    $params->users = array($user);
+    var_dump($client->create_users($params));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -141,12 +146,14 @@ print "</pre>";
 print "<br><br><strong>Update user:</strong>";
 print "<pre>\n";
 try {
-    $user1 = new stdClass();
-    $user1->email = "mockuser6@mockuser6.com";
-    $user1->username = "mockuser66";
-    $user1->newusername = 'mockuser6b';
-    $user1->firstname = "firstname6b";
-    var_dump($client->update_users(array('users' => array($user1))));
+    $usertoupdate = new stdClass();
+    $usertoupdate->email = "mockuser6@mockuser6.com";
+    $usertoupdate->username = "mockuser66";
+    $usertoupdate->newusername = 'mockuser6b';
+    $usertoupdate->firstname = "firstname6b";
+    $params = new stdClass();
+    $params->users = array($usertoupdate);
+    var_dump($client->update_users($params));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
@@ -158,7 +165,9 @@ print "</pre>";
 print "<br><br><strong>Delete user:</strong>";
 print "<pre>\n";
 try {
-    var_dump($client->delete_users(array('usernames' => array("mockuser6b"))));
+    $params = new stdClass();
+    $params->usernames = array("mockuser6b");
+    var_dump($client->delete_users($params));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";

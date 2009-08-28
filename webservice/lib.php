@@ -592,11 +592,13 @@ abstract class webservice_server {
 class ws_authentication {
     /**
      *
-     * @param array|struct $params
+     * @param object|struct $params
      * @return integer
      */
-    function get_token($params) {     
-        if ($params['username'] == 'wsuser' && $params['password'] == 'wspassword') {
+    function get_token($params) {
+        $params->username = clean_param($params->username, PARAM_ALPHANUM);
+        $params->password = clean_param($params->password, PARAM_ALPHANUM);
+        if ($params->username == 'wsuser' && $params->password == 'wspassword') {
             return '456';
         } else {
             throw new moodle_exception('wrongusernamepassword');

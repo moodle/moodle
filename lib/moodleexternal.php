@@ -49,12 +49,7 @@ abstract class moodle_external {
      */
     protected function clean_function_params($functionname, &$params) {
         $description = $this->get_function_webservice_description($functionname);
-         varlog($functionname);
-        foreach ($params as $param) { //we are applying the algo for all params
-            $key = key($description['params']); //get next key of the description array => params need to be ordered !         
-            $this->clean_params($description['params'][$key], $param);
-           
-        }
+        $this->clean_object($description['params'], $params);
     }
 
     /**
@@ -62,38 +57,41 @@ abstract class moodle_external {
      * @param <type> $params
      */
     protected function clean_params($description, &$params) {
-        if (!is_array($params)) {
-             $paramvalue = clean_param($params, $description);
-        } else {
-        foreach ($params as $paramname => &$paramvalue) {
-            if (is_array($paramvalue)) { //it's a list
-            //A description array does not support list of different objects
-            //it's why we retrieve the first key, because there should be only one key
-                $this->clean_params($description[key($description)], $paramvalue);
-            }
-            else {
-                if (is_object($paramvalue)) { //is it a object
-                    $this->clean_object_types($description[$paramname], $paramvalue);
-                }
-                else { //it's a primary type
-                    $paramvalue = clean_param($paramvalue, $description[$paramname]);
-                }
-            }
-             
 
+        if (is_array($params) ) { //it's a list
+            $nextdescriptionkey = key($description);
+            if (isset($nextdescriptionkey)) {
+                $this->clean_params($description[$nextdescriptionkey], $params[key($params)]);
+            } else {            
+                throw new moodle_exception('wswrongparams');
+            }
+        }
+        else {
+            if (is_object($params)) { //is it a object
+                $this->clean_object($description, $params);
+            }
+            else { //it's a primary type
+                $params = clean_param($params, $description);
+            }
         }
 
-        }
     }
 
-    protected function  clean_object_types($objectdescription, &$paramobject) {
+    protected function  clean_object($objectdescription, &$paramobject) {
         foreach (get_object_vars($paramobject) as $propertyname => $propertyvalue) {
             if (is_array($propertyvalue)) {
-                $this->clean_params($objectdescription->$propertyname, $propertyvalue);
-                $paramobject->$propertyname = $propertyvalue;
+                if (isset($objectdescription->$propertyname)) {
+                    $this->clean_params($objectdescription->$propertyname, $propertyvalue);
+                    $paramobject->$propertyname = $propertyvalue;
+                } else {               
+                    throw new moodle_exception('wswrongparams');
+                }
             } else {
-                $paramobject->$propertyname = clean_param($propertyvalue, $objectdescription->$propertyname);
-
+                if (isset($objectdescription->$propertyname)) {          
+                    $paramobject->$propertyname = clean_param($propertyvalue, $objectdescription->$propertyname);
+                } else { 
+                    throw new moodle_exception('wswrongparams');
+                }
             }
         }
     }
