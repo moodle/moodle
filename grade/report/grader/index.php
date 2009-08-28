@@ -180,22 +180,14 @@ $reporthtml .= $report->get_endhtml();
 $reporthtml .= '</div>';
 
 // print submit button
-if ($USER->gradeediting[$course->id] and !$report->get_pref('enableajax')) {
-    echo '<form action="index.php" method="post">';
-    echo '<div>';
-    echo '<input type="hidden" value="'.$courseid.'" name="id" />';
-    echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
-    echo '<input type="hidden" value="grader" name="report"/>';
-}
-
-echo $reporthtml;
-
-// print submit button
-if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback')
-    ||
-    $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
-    echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
-    echo '</div></form>';
+if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
+    $form = new html_form();
+    $form->url = new moodle_url('index.php', array('id' => $courseid, 'report' => 'grader'));
+    $form->button->text = get_string('update');
+    $form->button->add_class('submit');
+    echo $OUTPUT->form($form, $reporthtml);
+} else {
+    echo $reporthtml;
 }
 
 // prints paging bar at bottom for large pages
@@ -203,7 +195,7 @@ if (!empty($studentsperpage) && $studentsperpage >= 20) {
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($numusers, $report->page, $studentsperpage, $report->pbarurl));
 }
 
-echo '<div id="hiddentooltiproot">tooltip panel</div>';
+echo $OUTPUT->container('tooltip panel', '', 'hiddentooltiproot');
 // Print AJAX code
 if ($report->get_pref('enableajax')) {
     require_once 'ajax.php';

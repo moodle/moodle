@@ -323,10 +323,14 @@ vertical-align:middle;
 padding:0;
 }
 
-.grade-report-grader td input {
+.grade-report-grader td input.text {
 border:1px solid #666;
 margin-left:10px;
 margin-right:10px;
+}
+
+.grade-report-grader td input.submit {
+margin: 10px 10px 0px 10px;
 }
 
 .grade-report-grader table#quick_edit td.fullname {

@@ -316,15 +316,18 @@ abstract class grade_report {
     /**
      * Returns an arrow icon inside an <a> tag, for the purpose of sorting a column.
      * @param string $direction
-     * @param string $sort_link
+     * @param moodle_url $sort_link
      * @param string HTML
      */
-    protected function get_sort_arrow($direction='move', $sort_link=null) {
+    protected function get_sort_arrow($direction='move', $sortlink=null) {
+        global $OUTPUT;
         $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
         $arrow = print_arrow($direction, $strsort, true);
-        $html = '<a href="'.$sort_link .'" title="'.$strsort.'">' . $arrow . '</a>';
+        $link = html_link::make($sortlink, $arrow);
+        $link->title = $strsort;
+        $html = $OUTPUT->link($link);
         return $html;
     }
 }

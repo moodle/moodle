@@ -1052,6 +1052,19 @@ class html_table extends labelled_html_component {
      * @var bool true causes the contents of the heading cells to be rotated 90 degrees.
      */
     public $rotateheaders = false;
+    /**
+     * @var array $headclasses Array of CSS classes to apply to the table's thead.
+     */
+    public $headclasses = array();
+    /**
+     * @var array $bodyclasses Array of CSS classes to apply to the table's tbody.
+     */
+    public $bodyclasses = array();
+    /**
+     * @var array $footclasses Array of CSS classes to apply to the table's tfoot.
+     */
+    public $footclasses = array();
+    
 
     /**
      * @see moodle_html_component::prepare()
@@ -1416,12 +1429,8 @@ class html_form extends moodle_html_component {
      * @return void
      */
     public function __construct() {
-        static $yes;
         $this->button = new html_button();
-        if (!isset($yes)) {
-            $yes = get_string('yes');
-            $this->button->text = $yes;
-        }
+        $this->button->text = get_string('yes');
     }
 
     /**

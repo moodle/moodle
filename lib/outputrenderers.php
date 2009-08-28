@@ -1554,10 +1554,18 @@ class moodle_core_renderer extends moodle_renderer_base {
     /**
      * Prints an inline span element with optional text contents.
      *
-     * @param html_span $span A html_span object
+     * @param mixed $span A html_span object or some string content to wrap in a span
+     * @param mixed $classes A space-separated list or an array of classes. Only used if $span is a string
      * @return string A HTML fragment
      */
-    public function span($span) {
+    public function span($span, $classes='') {
+        if (!($span instanceof html_span)) {
+            $text = $span;
+            $span = new html_span();
+            $span->contents = $text;
+            $span->add_classes($classes);
+        }
+
         $span = clone($span);
         $span->prepare();
         $this->prepare_event_handlers($span);
@@ -2028,7 +2036,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         if (!empty($table->head)) {
             $countcols = count($table->head);
-            $output .= $this->output_start_tag('thead', array()) . "\n";
+            $output .= $this->output_start_tag('thead', $table->headclasses) . "\n";
             $output .= $this->output_start_tag('tr', array()) . "\n";
             $keys = array_keys($table->head);
             $lastkey = end($keys);
@@ -2077,7 +2085,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $oddeven    = 1;
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= $this->output_start_tag('tbody', array()) . "\n";
+            $output .= $this->output_start_tag('tbody', $table->bodyclasses) . "\n";
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {

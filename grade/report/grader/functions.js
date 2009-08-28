@@ -13,6 +13,10 @@ function set_row(idx) {
     }
 }
 
+function yui_set_row(e) {
+    set_row(this.parentNode.rowIndex);
+}
+
 /** highlight/unset the column of a table **/
 function set_col(idx) {
     var table = document.getElementById('user-grades');
