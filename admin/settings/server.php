@@ -91,20 +91,6 @@ $temp->add(new admin_setting_configtext('sessioncookiedomain', get_string('sessi
 $ADMIN->add('server', $temp);
 
 
-
-// "debugging" settingpage
-$temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
-$temp->add(new admin_setting_special_debug());
-$temp->add(new admin_setting_configcheckbox('debugdisplay', get_string('debugdisplay', 'admin'), get_string('configdebugdisplay', 'admin'), ini_get_bool('display_errors')));
-$temp->add(new admin_setting_configcheckbox('xmlstrictheaders', get_string('xmlstrictheaders', 'admin'), get_string('configxmlstrictheaders', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('debugsmtp', get_string('debugsmtp', 'admin'), get_string('configdebugsmtp', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('perfdebug', get_string('perfdebug', 'admin'), get_string('configperfdebug', 'admin'), '7', '15', '7'));
-$temp->add(new admin_setting_configcheckbox('debugstringids', get_string('debugstringids', 'admin'), get_string('configdebugstringids', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('debugvalidators', get_string('debugvalidators', 'admin'), get_string('configdebugvalidators', 'admin'), 0));
-$temp->add(new admin_setting_configcheckbox('debugpageinfo', get_string('debugpageinfo', 'admin'), get_string('configdebugpageinfo', 'admin'), 0));
-$ADMIN->add('server', $temp);
-
-
 // "stats" settingpage
 $temp = new admin_settingpage('stats', get_string('stats'), 'moodle/site:config', empty($CFG->enablestats));
 $temp->add(new admin_setting_configselect('statsfirstrun', get_string('statsfirstrun', 'admin'), get_string('configstatsfirstrun', 'admin'), 'none', array('none' => get_string('none'),

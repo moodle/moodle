@@ -21,8 +21,22 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('experimental', new admin_externalpage('dbtransfer', get_string('dbtransfer', 'dbtransfer'), $CFG->wwwroot.'/'.$CFG->admin.'/dbtransfer/index.php', 'moodle/site:config'));
     $ADMIN->add('experimental', new admin_externalpage('dbexport', get_string('dbexport', 'dbtransfer'), $CFG->wwwroot.'/'.$CFG->admin.'/dbtransfer/dbexport.php', 'moodle/site:config'));
 
+    // "debugging" settingpage
+    $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
+    $temp->add(new admin_setting_special_debug());
+    $temp->add(new admin_setting_configcheckbox('debugdisplay', get_string('debugdisplay', 'admin'), get_string('configdebugdisplay', 'admin'), ini_get_bool('display_errors')));
+    $temp->add(new admin_setting_configcheckbox('xmlstrictheaders', get_string('xmlstrictheaders', 'admin'), get_string('configxmlstrictheaders', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('debugsmtp', get_string('debugsmtp', 'admin'), get_string('configdebugsmtp', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('perfdebug', get_string('perfdebug', 'admin'), get_string('configperfdebug', 'admin'), '7', '15', '7'));
+    $temp->add(new admin_setting_configcheckbox('debugstringids', get_string('debugstringids', 'admin'), get_string('configdebugstringids', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('debugvalidators', get_string('debugvalidators', 'admin'), get_string('configdebugvalidators', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('debugpageinfo', get_string('debugpageinfo', 'admin'), get_string('configdebugpageinfo', 'admin'), 0));
+    $ADMIN->add('development', $temp);
+
+
     // XMLDB editor
     $ADMIN->add('development', new admin_externalpage('xmldbeditor', get_string('xmldbeditor'), "$CFG->wwwroot/$CFG->admin/xmldb/"));
+
 
 } // end of speedup
 
