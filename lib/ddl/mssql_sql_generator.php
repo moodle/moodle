@@ -320,8 +320,62 @@ class mssql_sql_generator extends sql_generator {
             $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field);
         }
 
+    /// Some changes of type require multiple alter statements, because mssql lacks direct implicit cast between such types
+    /// Here it is the matrix: http://msdn.microsoft.com/en-us/library/ms187928(SQL.90).aspx
+    /// Going to store such intermediate alters in array of objects, storing all the info needed
+        $multiple_alter_stmt = array();
+        $targettype = $xmldb_field->getType();
+
+        if ($targettype == XMLDB_TYPE_TEXT && $oldmetatype == 'I') { // integer to text
+            $multiple_alter_stmt[0] = new stdClass;                  // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+
+        } else if ($targettype == XMLDB_TYPE_TEXT && $oldmetatype == 'N') { // decimal to text
+            $multiple_alter_stmt[0] = new stdClass;                         // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+
+        } else if ($targettype == XMLDB_TYPE_TEXT && $oldmetatype == 'F') { // float to text
+            $multiple_alter_stmt[0] = new stdClass;                         // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+
+        } else if ($targettype == XMLDB_TYPE_INTEGER && $oldmetatype == 'X') { // text to integer
+            $multiple_alter_stmt[0] = new stdClass;                            // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+            $multiple_alter_stmt[1] = new stdClass;                            // and also needs conversion to decimal
+            $multiple_alter_stmt[1]->type = XMLDB_TYPE_NUMBER;                 // without decimal positions
+            $multiple_alter_stmt[1]->length = 10;
+
+        } else if ($targettype == XMLDB_TYPE_NUMBER && $oldmetatype == 'X') { // text to decimal
+            $multiple_alter_stmt[0] = new stdClass;                           // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+
+        } else if ($targettype ==  XMLDB_TYPE_FLOAT && $oldmetatype == 'X') { // text to float
+            $multiple_alter_stmt[0] = new stdClass;                           // needs conversion to varchar
+            $multiple_alter_stmt[0]->type = XMLDB_TYPE_CHAR;
+            $multiple_alter_stmt[0]->length = 255;
+        }
+
     /// Just prevent default clauses in this type of sentences for mssql and launch the parent one
-        $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, NULL, true, NULL)); // Call parent
+        if (empty($multiple_alter_stmt)) { // Direct implicit conversion allowed, launch it
+            $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, NULL, true, NULL));
+
+        } else { // Direct implicit conversion forbidden, use the intermediate ones
+            $final_type = $xmldb_field->getType(); // Save final type and length
+            $final_length = $xmldb_field->getLength();
+            foreach ($multiple_alter_stmt as $alter) {
+                $xmldb_field->setType($alter->type);  // Put our intermediate type and length and alter to it
+                $xmldb_field->setLength($alter->length);
+                $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, NULL, true, NULL));
+            }
+            $xmldb_field->setType($final_type); // Set the final type and length and alter to it
+            $xmldb_field->setLength($final_length);
+            $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field, NULL, true, NULL));
+        }
 
     /// Finally, process the default clause to add it back if necessary
         if ($typechanged || $lengthchanged) {
