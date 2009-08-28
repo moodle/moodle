@@ -36,5 +36,5 @@ $string['enablehoverexpansiondesc'] = 'Enable mouseover expansion of this block'
 $string['enablesidebarpopoutdesc'] = 'Allow the user to switch the block to a sidbar popout';
 $string['showmyhistorydesc'] = 'Show my history as a branch in the navigation';
 $string['showmyhistorytitle'] = 'My history';
-$string['toogleblockdisplay'] = 'Move to block position';
-$string['tooglesidetabdisplay'] = 'Move to side panel tab';
+$string['toggleblockdisplay'] = 'Move to block position';
+$string['togglesidetabdisplay'] = 'Move to side panel tab';

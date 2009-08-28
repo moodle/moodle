@@ -88,9 +88,9 @@ class block_global_navigation_tree extends block_tree {
         $this->page->requires->js('lib/javascript-navigation.js');
         // Navcount is used to allow us to have multiple trees although I dont' know why
         // you would want to trees the same
-        
+
         block_global_navigation_tree::$navcount++;
-        
+
         // Set the expansionlimit if one has been set in block config
         if (!empty($this->config->expansionlimit) && $this->config->expansionlimit!='0') {
             $this->page->navigation->expansionlimit = $this->config->expansionlimit;
@@ -100,7 +100,7 @@ class block_global_navigation_tree extends block_tree {
         $this->page->navigation->initialise();
 
         // Remove empty branches if the user has selected to
-        
+
         if (empty($this->config->showemptybranches) || $this->config->showemptybranches=='no') {
             $this->remove_empty_section_branches();
         }
@@ -114,16 +114,16 @@ class block_global_navigation_tree extends block_tree {
             $this->showmyhistory();
         }
 
-        $tooglesidetabdisplay = get_string('tooglesidetabdisplay', $this->blockname);
-        $toogleblockdisplay = get_string('toogleblockdisplay', $this->blockname);
+        $togglesidetabdisplay = get_string('togglesidetabdisplay', $this->blockname);
+        $toggleblockdisplay = get_string('toggleblockdisplay', $this->blockname);
 
 
         // Get the expandable items so we can pass them to JS
         $expandable = array();
         $this->page->navigation->find_expandable($expandable);
         $args = array('expansions'=>$expandable,'instance'=>$this->instance->id);
-        $args['tooglesidetabdisplay'] = $tooglesidetabdisplay;
-        $args['toogleblockdisplay'] = $toogleblockdisplay;
+        $args['togglesidetabdisplay'] = $togglesidetabdisplay;
+        $args['toggleblockdisplay'] = $toggleblockdisplay;
         // Give JS some information we will use within the JS tree object
         $this->page->requires->data_for_js('globalnav'.block_global_navigation_tree::$navcount, $args);
         // Initialise the JS tree object
@@ -140,10 +140,10 @@ class block_global_navigation_tree extends block_tree {
             user_preference_allow_ajax_update('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, PARAM_INT);
             if (get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0)) {
                 $icon = $OUTPUT->old_icon_url('t/movetoblock');
-                $string = $toogleblockdisplay;
+                $string = $toggleblockdisplay;
             } else {
                 $icon = $OUTPUT->old_icon_url('t/movetosidetab');
-                $string = $tooglesidetabdisplay;
+                $string = $togglesidetabdisplay;
             }
             $this->content->footer .= '<a class="moveto customcommand requiresjs"><img src="'.$icon.'" alt="'.$string.'" title="'.$string.'"></a>';
         }

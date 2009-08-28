@@ -87,11 +87,11 @@ class block_settings_navigation_tree extends block_tree {
         $this->page->requires->js('lib/javascript-navigation.js');
         block_settings_navigation_tree::$navcount++;
 
-        $tooglesidetabdisplay = get_string('tooglesidetabdisplay', $this->blockname);
-        $toogleblockdisplay = get_string('toogleblockdisplay', $this->blockname);
+        $togglesidetabdisplay = get_string('togglesidetabdisplay', $this->blockname);
+        $toggleblockdisplay = get_string('toggleblockdisplay', $this->blockname);
         $args = array('instance'=>$this->instance->id);
-        $args['tooglesidetabdisplay'] = $tooglesidetabdisplay;
-        $args['toogleblockdisplay'] = $toogleblockdisplay;
+        $args['togglesidetabdisplay'] = $togglesidetabdisplay;
+        $args['toggleblockdisplay'] = $toggleblockdisplay;
         // Give JS some information we will use within the JS tree object
         $this->page->requires->data_for_js('settingsnav'.block_settings_navigation_tree::$navcount, $args);
 
@@ -104,31 +104,49 @@ class block_settings_navigation_tree extends block_tree {
         // only do search if you have moodle/site:config
         if (count($this->content->items)>0) {
             if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {
-                $this->content->footer =
-                        '<div class="adminsearchform">'.
-                        '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
-                        '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
-                        '<input type="text" name="query" id="query" size="8" value="'.s(optional_param('query', '')).'" />'.
-                        '<input type="submit" value="'.get_string('search').'" /></div>'.
-                        '</form></div>';
+                $searchform = new html_form();
+                $searchform->url = new moodle_url("$CFG->wwwroot/$CFG->admin/search.php");
+                $searchform->method = 'get';
+                $searchform->button->text = get_string('search');
+
+                $searchfield = html_field::make_text('query', optional_param('query', '', PARAM_RAW));
+                $searchfield->id = 'query';
+                $searchfield->style .= 'width: 7em;';
+                $searchfield->set_label(get_string('searchinsettings', 'admin'), 'query');
+                $searchfield->label->add_class('accesshide');
+                $this->content->footer = $OUTPUT->container($OUTPUT->form($searchform, $OUTPUT->field($searchfield)), 'adminsearchform');
             } else {
                 $this->content->footer = '';
             }
 
+            $reloadicon = new moodle_action_icon();
             $url = $this->page->url;
             $url->param('regenerate','navigation');
-            $reloadstr = get_string('reload');
-            $this->content->footer .= '<a href="'.$url->out().'" class="customcommand"><img src="'.$OUTPUT->old_icon_url('t/reload').'" alt="'.$reloadstr.'" title="'.$reloadstr.'" /></a>';
+            $reloadicon->link->url = $url;
+            $reloadicon->link->add_class('customcommand');
+            $reloadicon->image->src = $OUTPUT->old_icon_url('t/reload');
+            $reloadicon->alt = get_string('reload');
+            $reloadicon->title = get_string('reload');
+
+            $this->content->footer .= $OUTPUT->action_icon($reloadicon);
+
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
+                $moveicon = new moodle_action_icon();
+                $moveicon->link->add_classes('moveto customcommand requiresjs');
+                $moveicon->link->url = ' ';
+
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
                 if (get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0)) {
-                    $icon = $OUTPUT->old_icon_url('t/movetoblock');
-                    $string = $toogleblockdisplay;
+                    $moveicon->image->src = $OUTPUT->old_icon_url('t/movetoblock');
+                    $string = $toggleblockdisplay;
+                    $moveicon->image->alt = $toggleblockdisplay;
+                    $moveicon->image->title = $toggleblockdisplay;
                 } else {
-                    $icon = $OUTPUT->old_icon_url('t/movetosidetab');
-                    $string = $tooglesidetabdisplay;
+                    $moveicon->image->src = $OUTPUT->old_icon_url('t/movetosidetab');
+                    $moveicon->image->alt = $togglesidetabdisplay;
+                    $moveicon->image->title = $togglesidetabdisplay;
                 }
-                $this->content->footer .= '<a class="moveto customcommand requiresjs"><img src="'.$icon.'" alt="'.$string.'" title="'.$string.'"></a>';
+                $this->content->footer .= $OUTPUT->action_icon($moveicon);
             }
         }
 

@@ -46,9 +46,9 @@ function end_interface ($ret = true) {
  */
 function show_xml ($xml) {
     echo '<div class="xmlshow">';
-    echo '<a onClick="document.getElementById(\'toogleme\').style.display = ' .
-            '(document.getElementById(\'toogleme\').style.display!=\'none\')?\'none\':\'\';">Hide/Show XML</a>';
-    echo "<div style=\"display:none;\" id=\"toogleme\">";
+    echo '<a onClick="document.getElementById(\'toggleme\').style.display = ' .
+            '(document.getElementById(\'toggleme\').style.display!=\'none\')?\'none\':\'\';">Hide/Show XML</a>';
+    echo "<div style=\"display:none;\" id=\"toggleme\">";
     echo '<pre>';echo htmlentities($xml);echo '</pre>';
     echo "</div>";
     echo "</div>";
