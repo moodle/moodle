@@ -1845,10 +1845,11 @@ class moodle_core_renderer extends moodle_renderer_base {
         $field = clone($field);
         $field->prepare();
         $this->prepare_event_handlers($field);
+        $returned = '';
         if (!empty($field->label->text)) {
-            $output .= $this->label($field->label);
+            $returned .= $this->label($field->label);
         }
-        return $this->output_empty_tag('input', array(
+        $returned .= $this->output_empty_tag('input', array(
                 'type' => $field->type,
                 'name' => $field->name,
                 'id' => $field->id,
@@ -1857,6 +1858,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'alt' => $field->alt,
                 'title' => $field->title,
                 'maxlength' => $field->maxlength));
+        return $returned;
     }
 
     /**
