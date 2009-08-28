@@ -30,22 +30,44 @@ require_once('../../../config.php');
 
 include "Zend/Loader.php";
 Zend_Loader::registerAutoload();
- 
+
 
 //1. authentication
 $client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/server.php");
-$token = $client->call('authentication.get_token', array(array('username' => "wsuser", 'password' => "wspassword")));
+$params = new stdClass();
+$params->username = 'wsuser';
+$params->password = 'wspassword';
+$token = $client->call('authentication.get_token', $params);
 var_dump($token);
 
 //2. test functions
 $client = new Zend_XmlRpc_Client($CFG->wwwroot."/webservice/xmlrpc/server.php?classpath=user&token=".$token);
-var_dump($users = $client->call('user.get_users', array(array('search' => "admin"))));
+$params = new stdClass();
+$params->search = "admin";
+var_dump($users = $client->call('user.get_users', $params));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.create_users', array(array(array('firstname' => "firstname6",'username' => "mockuser66",'lastname' => "lastname6",'email' => "mockuser6@mockuser6.com",'password' => "password6")))));
+$user = new stdClass();
+$user->password = "password6";
+$user->email = "mockuser6@mockuser6.com";
+$user->username = "mockuser66";
+$user->firstname = "firstname6";
+$user->lastname = "lastname6";
+$params = new stdClass();
+$params->users = array($user);
+var_dump($users = $client->call('user.create_users', $params));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.update_users', array(array(array('username' => "mockuser66",'newusername' => "mockuser6b",'firstname' => "firstname6b")))));
+$usertoupdate = new stdClass();
+$usertoupdate->email = "mockuser6@mockuser6.com";
+$usertoupdate->username = "mockuser66";
+$usertoupdate->newusername = 'mockuser6b';
+$usertoupdate->firstname = "firstname6b";
+$params = new stdClass();
+$params->users = array($usertoupdate);
+var_dump($users = $client->call('user.update_users', $params));
 print "<br/><br/>\n";
-var_dump($users = $client->call('user.delete_users', array(array(array('username' => "mockuser6b")))));
+$params = new stdClass();
+$params->usernames = array("mockuser6b");
+var_dump($users = $client->call('user.delete_users', $params));
 //print "<br/><br/>\n";
 //var_dump($users = $client->call('user.tmp_do_multiple_user_searches', array(array(array('search' => "jerome"),array('search' => "admin")))));
 //print "<br/><br/>\n";

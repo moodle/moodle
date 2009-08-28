@@ -36,7 +36,7 @@ final class xmlrpc_server extends webservice_server {
         $this->set_protocolname("XML-RPC");
         $this->set_protocolid("xmlrpc");
     }
-  
+
     public function run() {
         $enable = $this->get_enable();
         if (empty($enable)) {
@@ -53,14 +53,19 @@ final class xmlrpc_server extends webservice_server {
         if (empty($token)) {
             $server = new Zend_XmlRpc_Server();
             $server->setClass("ws_authentication", "authentication");
-            echo $server->handle();
+            // Create a request object
+            $request = new Zend_XmlRpc_Request_Http();
+            $params = $request->getParams();
+            $this->convertXmlrpcParams($params);
+            $request->setParams($params);
+            echo $server->handle($request);
         } else { // if token exist, do the authentication here
-            /// TODO: following function will need to be modified
+        /// TODO: following function will need to be modified
             $user = webservice_lib::mock_check_token($token);
             if (empty($user)) {
                 throw new moodle_exception('wrongidentification');
             } else {
-                /// TODO: probably change this
+            /// TODO: probably change this
                 global $USER;
                 $USER = $user;
             }
@@ -70,9 +75,38 @@ final class xmlrpc_server extends webservice_server {
             require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
 
             /// run the server
-            $server = new Zend_XmlRpc_Server(); 
+            $server = new Zend_XmlRpc_Server();
             $server->setClass($classpath."_external", $classpath);
-            echo $server->handle();
+            $request = new Zend_XmlRpc_Request_Http();
+            $params = $request->getParams();
+            $this->convertXmlrpcParams($params);
+            $request->setParams($params);         
+            echo $server->handle($request);
+        }
+    }
+
+    private function convertXmlrpcParams(&$params) {
+        if (is_array($params)) {
+        //get the first key
+            $key = key($params);
+
+            reset($params);
+
+            //if first key == 0 so do not change the params
+            if (strcmp($key, "0") == 0) {
+                foreach ($params as &$param) {
+                    $this->convertXmlrpcParams($param);
+                }
+            }
+
+            //first key is a string, params need to be converted into an object
+            //first go into
+            else {
+                foreach ($params as $paramkey => &$param) {
+                    $this->convertXmlrpcParams($param);
+                }
+                $params = (object) $params;
+            }
         }
     }
 
