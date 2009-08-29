@@ -1082,7 +1082,7 @@ class global_navigation extends navigation_node {
                 $node = $this->find_child($PAGE->cm->id, self::TYPE_ACTIVITY);
                 if ($node) {
                     $node->make_active();
-                    $function(&$node, $PAGE->course, $module, $PAGE->cm);
+                    $function($node, $PAGE->course, $module, $PAGE->cm);
                 }
             }
         }
@@ -1750,7 +1750,7 @@ class limited_global_navigation extends global_navigation {
             require_once($file);
             if (function_exists($function)) {
                 $node = $this->get($key);
-                $function(&$node, $course, $module, $cm);
+                $function($node, $course, $module, $cm);
             }
         }
     }
@@ -2100,7 +2100,7 @@ class settings_navigation extends navigation_node {
                 $branchkey = $this->add(get_string('administrationsite'),null, null, self::TYPE_SETTING);
                 $referencebranch = $this->get($branchkey);
                 foreach ($adminroot->children as $adminbranch) {
-                    $this->load_administration_settings(&$referencebranch, $adminbranch);
+                    $this->load_administration_settings($referencebranch, $adminbranch);
                 }
                 $this->cache->adminbranch = $this->get($branchkey);
             } else {
@@ -2136,7 +2136,7 @@ class settings_navigation extends navigation_node {
             if ($reference && isset($adminbranch->children) && is_array($adminbranch->children) && count($adminbranch->children)>0) {
                 foreach ($adminbranch->children as $branch) {
                     // Generate the child branches as well now using this branch as the reference
-                    $this->load_administration_settings(&$reference, $branch);
+                    $this->load_administration_settings($reference, $branch);
                 }
             } else {
                 $reference->icon = $OUTPUT->old_icon_url('i/settings');
@@ -2270,7 +2270,7 @@ class settings_navigation extends navigation_node {
                 }
 
                 if (!$this->cache->cached('course'.$course->id.'resources')) {
-                    $this->get_course_modules(&$course);
+                    $this->get_course_modules($course);
                 }
                 $resources = $this->cache->{'course'.$course->id.'resources'};
                 $activities = $this->cache->{'course'.$course->id.'activities'};
@@ -2545,7 +2545,7 @@ class settings_navigation extends navigation_node {
         if (!function_exists($function)) {
             return;
         }
-        return $function(&$this,$module);
+        return $function($this,$module);
     }
 
     /**
