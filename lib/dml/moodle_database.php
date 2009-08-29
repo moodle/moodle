@@ -1016,7 +1016,7 @@ abstract class moodle_database {
         if ($sort) {
             $sort = " ORDER BY $sort";
         }
-        return $this->get_records_sql("SELECT $fields FROM {$this->prefix}$table $select $sort", $params, $limitfrom, $limitnum);
+        return $this->get_records_sql("SELECT $fields FROM {" . $table . "} $select $sort", $params, $limitfrom, $limitnum);
     }
 
     /**
@@ -1156,7 +1156,7 @@ abstract class moodle_database {
             $select = "WHERE $select";
         }
         try {
-            return $this->get_record_sql("SELECT $fields FROM {$this->prefix}$table $select", $params, $strictness);
+            return $this->get_record_sql("SELECT $fields FROM {" . $table . "} $select", $params, $strictness);
         } catch (dml_missing_record_exception $e) {
             // create new exception which will contain correct table name
             throw new dml_missing_record_exception($table, $e->sql, $e->params);
@@ -1281,7 +1281,7 @@ abstract class moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->get_fieldset_sql("SELECT $return FROM {$this->prefix}$table $select", $params);
+        return $this->get_fieldset_sql("SELECT $return FROM {" . $table . "} $select", $params);
     }
 
     /**
@@ -1413,7 +1413,7 @@ abstract class moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->count_records_sql("SELECT $countitem FROM {$this->prefix}$table $select", $params);
+        return $this->count_records_sql("SELECT $countitem FROM {" . $table . "} $select", $params);
     }
 
     /**
@@ -1466,7 +1466,7 @@ abstract class moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->record_exists_sql("SELECT 'x' FROM {$this->prefix}$table $select", $params);
+        return $this->record_exists_sql("SELECT 'x' FROM {" . $table . "} $select", $params);
     }
 
     /**
