@@ -1247,7 +1247,8 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue($dbman->table_exists('test_table1'));
     }
 
-    public function testCreateTempTable() {
+    public function test_temp_tables() {
+        $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
         $table = $this->tables['test_table1'];
@@ -1256,11 +1257,26 @@ class ddl_test extends UnitTestCase {
         $dbman->create_temp_table($table);
         $this->assertTrue($dbman->table_exists('test_table1', true));
 
+        // Get columns and perform some basic tests
+        $columns = $DB->get_columns('test_table1', false);
+        $this->assertEqual(count($columns), 10);
+        $this->assertTrue($columns['name'] instanceof database_column_info);
+        $this->assertEqual($columns['name']->max_length, 30);
+        $this->assertTrue($columns['name']->has_default);
+        $this->assertEqual($columns['name']->default_value, 'Moodle');
+
+        // Insert some records
+        $inserted = $this->fill_deftable('test_table1');
+        $records = $DB->get_records('test_table1');
+        $this->assertEqual(count($records), $inserted);
+        $this->assertEqual($records[1]->course, $this->records['test_table1'][0]->course);
+        $this->assertEqual($records[1]->secondname, $this->records['test_table1'][0]->secondname);
+        $this->assertEqual($records[2]->intro, $this->records['test_table1'][1]->intro);
+
         // Delete
         $dbman->drop_temp_table($table);
         $this->assertFalse($dbman->table_exists('test_table1', true));
     }
-
 
     public function test_reset_sequence() {
         $DB = $this->tdb;
