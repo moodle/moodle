@@ -1687,11 +1687,43 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(count($records), 2);
     }
 
-    function test_concat() {
+    function test_sql_concat() {
         $DB = $this->tdb;
-        $sql = "SELECT ".$DB->sql_concat("?", "?", "?")." AS fullname ".$DB->sql_null_from_clause();
-        $params = array("name", "name2", "name3");
-        $this->assertEqual("namename2name3", $DB->get_field_sql($sql, $params));
+        $dbman = $DB->get_manager();
+
+        /// Testing all sort of values
+        $sql = "SELECT ".$DB->sql_concat("?", "?", "?")." AS fullname ". $DB->sql_null_from_clause();
+        // string, some unicode chars
+        $params = array('name', 'áéíóú', 'name3');
+        $this->assertEqual('nameáéíóúname3', $DB->get_field_sql($sql, $params));
+        // string, spaces and numbers
+        $params = array('name', '  ', 12345);
+        $this->assertEqual('name  12345', $DB->get_field_sql($sql, $params));
+        // float, empty and strings
+        $params = array(123.45, '', 'test');
+        $this->assertEqual('123.45test', $DB->get_field_sql($sql, $params));
+        // float, null and strings
+        $params = array(123.45, null, 'test');
+        $this->assertEqual('123.45test', $DB->get_field_sql($sql, $params));
+
+        /// Testing fieldnames + values
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('description'=>'áéíóú'));
+        $DB->insert_record($tablename, array('description'=>'dxxx'));
+        $DB->insert_record($tablename, array('description'=>'bcde'));
+
+        $sql = 'SELECT id, ' . $DB->sql_concat('description', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
+        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
+        $this->assertEqual(count($records), 3);
+        $this->assertEqual($records[1]->result, 'áéíóúharcoded123.45test');
     }
 
     function test_concat_join() {
