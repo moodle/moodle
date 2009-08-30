@@ -72,10 +72,13 @@ class mssql_sql_generator extends sql_generator {
     public $rename_key_sql = null; //SQL sentence to rename one key
                                           //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
+    private $temptables; // Control existing temptables (mssql_native_moodle_temptables object)
+
     /**
      * Creates one new XMLDBmssql
      */
-    public function __construct($mdb) {
+    public function __construct($mdb, $temptables = null) {
+        $this->temptables = $temptables;
         parent::__construct($mdb);
     }
 
@@ -99,15 +102,34 @@ class mssql_sql_generator extends sql_generator {
         return $this->mdb->change_database_structure("DBCC CHECKIDENT ('$this->prefix$tablename', RESEED, $value)");
     }
 
+    /**
+     * Given one xmldb_table, returns it's correct name, depending of all the parametrization
+     * Overriden to allow change of names in temp tables
+     *
+     * @param xmldb_table table whose name we want
+     * @param boolean to specify if the name must be quoted (if reserved word, only!)
+     * @return string the correct name of the table
+     */
+    public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
+    /// Get the name, supporting special mssql names for temp tables
+        $tablename = $this->temptables->get_correct_name($xmldb_table->getName());
+
+    /// Apply quotes optionally
+        if ($quoted) {
+            $tablename = $this->getEncQuoted($tablename);
+        }
+
+        return $tablename;
+    }
+
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array)
      */
     public function getCreateTempTableSQL($xmldb_table) {
+        $this->temptables->add_temptable($xmldb_table->getName());
         $sqlarr = $this->getCreateTableSQL($xmldb_table);
-        //ugly hack!
-        $this->mdb->temptables[trim($xmldb_table->getName(), '#')] = true;
         return $sqlarr;
     }
 
@@ -118,9 +140,7 @@ class mssql_sql_generator extends sql_generator {
     public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = $this->getDropTableSQL($xmldb_table);
         $tablename = $xmldb_table->getName();
-        array_unshift($sqlarr, "TRUNCATE TABLE {".$tablename."}"); // oracle requires truncate before being able to drop a temp table
-        //ugly hack!
-        unset($this->mdb->temptables[trim($xmldb_table->getName(), '#')]);
+        $this->temptables->delete_temptable($tablename);
         return $sqlarr;
     }
 
