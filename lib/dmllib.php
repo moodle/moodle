@@ -231,6 +231,14 @@ function setup_DB() {
                 $CFG->dblibrary = 'native';
                 break;
 
+            case 'mssql_n':
+                $CFG->dbtype = 'mssql';
+                // continue, no break here
+
+            case 'mssql':
+                $CFG->dblibrary = 'native';
+                break;
+
             case 'mysql' :
                 if (!extension_loaded('mysqli')) {
                     $CFG->dblibrary = 'adodb';
