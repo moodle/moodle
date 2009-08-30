@@ -1251,12 +1251,12 @@ class ddl_test extends UnitTestCase {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
-        // Create temp table
+        // Create temp table0
         $table0 = $this->tables['test_table0'];
         $dbman->create_temp_table($table0);
         $this->assertTrue($dbman->table_exists('test_table0', true));
 
-        // Create another temp table
+        // Create another temp table1
         $table1 = $this->tables['test_table1'];
         $dbman->create_temp_table($table1);
         $this->assertTrue($dbman->table_exists('test_table1'));
@@ -1277,9 +1277,18 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($records[1]->secondname, $this->records['test_table1'][0]->secondname);
         $this->assertEqual($records[2]->intro, $this->records['test_table1'][1]->intro);
 
-        // Drop table
+        // Drop table1
+        $dbman->drop_temp_table($table1);
+        $this->assertFalse($dbman->table_exists('test_table1'));
+
+        // Fill/modify/delete a few table0 records
+        // TODO: that's
+
+        // Drop table0
         $dbman->drop_temp_table($table0);
         $this->assertFalse($dbman->table_exists('test_table0'));
+
+        // Have dropped all these temp tables here, to avoid conflicts with other (normal tables) tests!
     }
 
     public function test_reset_sequence() {
