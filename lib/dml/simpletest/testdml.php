@@ -1704,7 +1704,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual('123.45test', $DB->get_field_sql($sql, $params));
         // float, null and strings
         $params = array(123.45, null, 'test');
-        $this->assertEqual('123.45test', $DB->get_field_sql($sql, $params));
+        $this->assertNull($DB->get_field_sql($sql, $params)); // Concatenate NULL with anything result = NULL
 
         /// Testing fieldnames + values
         $table = $this->get_test_table();
