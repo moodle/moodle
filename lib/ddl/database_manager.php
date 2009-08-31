@@ -109,11 +109,8 @@ class database_manager {
      * @return success
      */
     public function reset_sequence($table) {
-    /// Calculate the name of the table
-        if (is_string($table)) {
-            $tablename = $table;
-        } else {
-            $tablename = $table->getName();
+        if (!is_string($table) and !($table instanceof xmldb_table)) {
+            throw new ddl_exception('ddlunknownerror', NULL, 'incorrect table parameter!');
         }
 
     /// Check the table exists
@@ -121,7 +118,11 @@ class database_manager {
             throw new ddl_table_missing_exception($tablename);
         }
 
-        return $this->generator->reset_sequence($table);
+        if (!$sqlarr = $this->generator->getResetSequenceSQL($table)) {
+            throw new ddl_exception('ddlunknownerror', null, 'table reset sequence sql not generated');
+        }
+
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**

@@ -84,22 +84,21 @@ class mssql_sql_generator extends sql_generator {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool true
-     * @throws dml_exception if error
+     * @param string $table name of table or xmldb_table object
+     * @return array sql commands to execute
      */
-    public function reset_sequence($table) {
+    public function getResetSequenceSQL($table) {
+
         if (is_string($table)) {
-            $tablename = $table;
-        } else {
-            $tablename = $table->getName();
+            $table = new xmldb_table($table);
         }
+
         // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
-        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
+        $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'. $table->getName() . '}');
         if ($value == 0) {
             $value = 1;
         }
-        return $this->mdb->change_database_structure("DBCC CHECKIDENT ('$this->prefix$tablename', RESEED, $value)");
+        return array("DBCC CHECKIDENT ('" . $this->getTableName($table) . "', RESEED, $value)");
     }
 
     /**
@@ -517,7 +516,7 @@ class mssql_sql_generator extends sql_generator {
      * TODO: Moodle 2.1 - drop in Moodle 2.1
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
-        
+
 
         $results = array();
 

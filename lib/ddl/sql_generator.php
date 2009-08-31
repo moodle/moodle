@@ -185,7 +185,7 @@ abstract class sql_generator {
      * @param string $table name of table
      * @return success
      */
-    public abstract function reset_sequence($tablename);
+    public abstract function getResetSequenceSQL($tablename);
 
     /**
      * This function will return the SQL code needed to create db tables and statements

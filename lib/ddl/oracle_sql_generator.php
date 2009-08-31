@@ -66,11 +66,11 @@ class oracle_sql_generator extends sql_generator {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return bool true
-     * @throws dml_exception if error
+     * @param string $table name of table or xmldb_table object
+     * @return array sql commands to execute
      */
-    public function reset_sequence($table) {
+    public function getResetSequenceSQL($table) {
+
         if (is_string($table)) {
             $tablename = $table;
             $xmldb_table = new xmldb_table($tablename);
@@ -89,8 +89,8 @@ class oracle_sql_generator extends sql_generator {
             $seqname = $this->getNameForObject($table, 'id', 'seq');
         }
 
-        $this->mdb->change_database_structure("DROP SEQUENCE $seqname");
-        return $this->mdb->change_database_structure("CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
+        return array ("DROP SEQUENCE $seqname",
+                      "CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
     }
 
 
