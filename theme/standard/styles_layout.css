@@ -1792,7 +1792,13 @@ a.skip:focus, a.skip:active {
  padding:3px;
 }
 
-/* Navigation and settings block */
+/**
+ * Navigation and settings block
+ **/
+.customcommand img {
+    margin-left:2px;
+    margin-right:2px;
+}
 .sideblock .block_tree_box {
     margin:2px;
 }
@@ -1888,7 +1894,7 @@ body.has_navigation_bar {
   padding:0px;
 }
 .ie6 .navigation_bar li p {
-  background-color:inherit;
+    background-color:inherit;
 }
 .navigation_bar .sideblock_tab {
   
@@ -1902,8 +1908,6 @@ body.has_navigation_bar {
   cursor:pointer;
 }
 .navigation_bar .bd.oversized_content {
-  background-color:red;
-  margin:3px;
   overflow-y:auto;
   overflow-x:visible;
   height:inherit;

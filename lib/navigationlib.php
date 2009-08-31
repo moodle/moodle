@@ -587,6 +587,20 @@ class navigation_node {
     }
 
     /**
+     * Returns the child marked as active if there is one, false otherwise.
+     *
+     * @return navigation_node|bool The active node or false
+     */
+    public function get_active_node() {
+        foreach ($this->children as $child) {
+            if ($child->isactive) {
+                return $child;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Mark this node as active
      *
      * This function marks the node as active my forcing the node to be open,
@@ -1839,21 +1853,22 @@ class navbar extends navigation_node {
         $output = get_accesshide(get_string('youarehere','access'), 'h2')."<ul>\n";
         
         $firstnode = true;
+        $customchildren = (count($this->children) > 0);
         // Check if navigation contains the active node
         if ($this->page->navigation->contains_active_node()) {
             // Parse the navigation tree to get the active node
-            $output .= $this->parse_branch_to_html($this->page->navigation->children);
+            $output .= $this->parse_branch_to_html($this->page->navigation->children, $firstnode, $customchildren);
             $firstnode = false;
         } else if ($this->page->settingsnav->contains_active_node()) {
             // Parse the settings navigation to get the active node
-            $output .= $this->parse_branch_to_html($this->page->settingsnav->children);
+            $output .= $this->parse_branch_to_html($this->page->settingsnav->children, $firstnode, $customchildren);
             $firstnode = false;
         }
 
         // Check if there are any children added by code
-        if (count($this->children)>0) {
+        if ($customchildren) {
             // Add the custom children
-            $output .= $this->parse_branch_to_html($this->children,$firstnode);
+            $output .= $this->parse_branch_to_html($this->children,$firstnode, false);
         }
         $output .= "</ul>\n";
         $this->content = $output;
@@ -1866,7 +1881,7 @@ class navbar extends navigation_node {
      * @param bool $firstnode
      * @return string HTML
      */
-    protected function parse_branch_to_html($navarray, $firstnode=true) {
+    protected function parse_branch_to_html($navarray, $firstnode=true, $moreafterthis) {
         $separator = get_separator();
         $output = '';
         if ($firstnode===true) {
@@ -1881,6 +1896,7 @@ class navbar extends navigation_node {
             // on the navbar. If we get to 20 items just stop!
             $count++;
             if ($count>20) {
+                // Maximum number of nodes in the navigation branch
                 return $output;
             }
             $child = false;
@@ -1900,8 +1916,17 @@ class navbar extends navigation_node {
                 // We found an/the active node, set navarray to it's children so that
                 // we come back through this while with the children of the active node
                 $navarray = $child->children;
+                // If there are not more arrays being processed after this AND this is the last element
+                // then we want to set the action to null so that it is not used
+                if (!$moreafterthis && (!$child->contains_active_node() || ($child->find_active_node()==false || $child->find_active_node()->mainnavonly))) {
+                    $oldaction = $child->action;
+                    $child->action = null;
+                }
                 // Now display the node
                 $output .= '<li>'.$separator.' '.$child->content(true).'</li>';
+                if (isset($oldaction)) {
+                    $child->action = $oldaction;
+                }
             }
         }
         // XHTML
