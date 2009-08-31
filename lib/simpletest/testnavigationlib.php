@@ -586,7 +586,7 @@ class navbar_test extends UnitTestCase {
         global $CFG;
         $key = $this->node->add('test_add_1','testadd1','testadd1',navigation_node::TYPE_COURSE,'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get($key)->make_active();
-        $html = $this->node->exposed_parse_branch_to_html($this->node->children, true);
+        $html = $this->node->exposed_parse_branch_to_html($this->node->children, true, true);
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->action->out()), $html);
     }
 }
