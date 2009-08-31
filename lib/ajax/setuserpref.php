@@ -46,7 +46,7 @@ if (!isset($USER->ajax_updatable_user_prefs[$name])) {
 }
 
 // Get and the value.
-$value = required_param('value', PARAM_RAW);
+$value = required_param('value', $USER->ajax_updatable_user_prefs[$name]);
 
 // Update
 if (!set_user_preference($name, $value)) {
