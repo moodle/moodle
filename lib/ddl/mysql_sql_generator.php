@@ -75,10 +75,13 @@ class mysql_sql_generator extends sql_generator {
     public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
                                       //TABLENAME, OLDKEYNAME, NEWKEYNAME are dinamically replaced
 
+    private $temptables; // Control existing temptables (mssql_native_moodle_temptables object)
+
     /**
      * Creates one new XMLDBmysql
      */
-    public function __construct($mdb) {
+    public function __construct($mdb, $temptables = null) {
+        $this->temptables = $temptables;
         parent::__construct($mdb);
     }
 
@@ -101,61 +104,12 @@ class mysql_sql_generator extends sql_generator {
         return array("ALTER TABLE $this->prefix$tablename AUTO_INCREMENT = $value");
     }
 
-
-    /**
-     * Given one xmldb_table, check if it exists in DB (true/false)
-     *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param bool temp table (might need different checks)
-     * @return boolean true/false
-     */
-    public function table_exists($table, $temptable=false) {
-        global $CFG;
-
-        if (!$temptable) {
-            return parent::table_exists($table, $temptable);
-        }
-
-        if (is_string($table)) {
-            $tablename = $table;
-        } else {
-        /// Calculate the name of the table
-            $tablename = $table->getName();
-        }
-
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-        $oldcfgdebug = $CFG->debug;
-        $CFG->debug = 0;
-
-        // ugly hack - mysql does not list temporary tables :-(
-        // this polutes the db log with errors :-(
-        // TODO: is there a better way?
-        try {
-            $result = $this->mdb->execute("DESCRIBE {".$tablename."}");
-        } catch (Exception $e) {
-            $result = false;
-        }
-
-        if ($result === false) {
-            $exists = false;
-        } else {
-            $exists = true;
-        }
-
-    /// Re-set original debug
-        $this->mdb->set_debug($olddbdebug);
-        $CFG->debug = $oldcfgdebug;
-
-        return $exists;
-    }
-
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array)
      */
     public function getCreateTempTableSQL($xmldb_table) {
+        $this->temptables->add_temptable($xmldb_table->getName());
         $sqlarr = $this->getCreateTableSQL($xmldb_table);
         $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1 TYPE=MyISAM', $sqlarr);
         return $sqlarr;
@@ -168,6 +122,7 @@ class mysql_sql_generator extends sql_generator {
     public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = parent::getDropTableSQL($xmldb_table);
         $sqlarr = preg_replace('/^DROP TABLE/', "DROP TEMPORARY TABLE", $sqlarr);
+        $this->temptables->delete_temptable($xmldb_table->getName());
         return $sqlarr;
     }
 

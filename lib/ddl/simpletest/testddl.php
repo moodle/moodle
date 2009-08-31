@@ -1254,7 +1254,7 @@ class ddl_test extends UnitTestCase {
         // Create temp table0
         $table0 = $this->tables['test_table0'];
         $dbman->create_temp_table($table0);
-        $this->assertTrue($dbman->table_exists('test_table0', true));
+        $this->assertTrue($dbman->table_exists('test_table0'));
 
         // Create another temp table1
         $table1 = $this->tables['test_table1'];

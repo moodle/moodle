@@ -138,8 +138,7 @@ class mssql_sql_generator extends sql_generator {
      */
     public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = $this->getDropTableSQL($xmldb_table);
-        $tablename = $xmldb_table->getName();
-        $this->temptables->delete_temptable($tablename);
+        $this->temptables->delete_temptable($xmldb_table->getName());
         return $sqlarr;
     }
 

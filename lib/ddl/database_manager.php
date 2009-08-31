@@ -93,14 +93,13 @@ class database_manager {
      * Given one xmldb_table, check if it exists in DB (true/false)
      *
      * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param bool temp table (might need different checks)
      * @return boolean true/false
      */
-    public function table_exists($table, $temptable=false) {
+    public function table_exists($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
             throw new ddl_exception('ddlunknownerror', NULL, 'incorrect table parameter!');
         }
-        return $this->generator->table_exists($table, $temptable);
+        return $this->generator->table_exists($table);
     }
 
     /**
@@ -495,7 +494,7 @@ class database_manager {
     public function create_temp_table(xmldb_table $xmldb_table) {
 
     /// Check table doesn't exist
-        if ($this->table_exists($xmldb_table, true)) {
+        if ($this->table_exists($xmldb_table)) {
             $this->drop_temp_table($xmldb_table);
         }
 
@@ -518,7 +517,7 @@ class database_manager {
     public function drop_temp_table(xmldb_table $xmldb_table) {
 
     /// Check table doesn't exist
-        if (!$this->table_exists($xmldb_table, true)) {
+        if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 

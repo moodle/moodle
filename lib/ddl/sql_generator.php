@@ -162,10 +162,9 @@ abstract class sql_generator {
      * Given one xmldb_table, check if it exists in DB (true/false)
      *
      * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param bool temp table (might need different checks)
      * @return boolean true/false
      */
-    public function table_exists($table, $temptable=false) {
+    public function table_exists($table) {
         if (is_string($table)) {
             $tablename = $table;
         } else {
