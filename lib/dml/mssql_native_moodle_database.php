@@ -419,8 +419,6 @@ class mssql_native_moodle_database extends moodle_database {
 
         $this->columns[$table] = array();
 
-        $tablename = $this->temptables->get_correct_name($table);
-
         if (!$this->temptables->is_temptable($table)) { // normal table, get metadata from own schema
             $sql = "SELECT column_name AS name,
                            data_type AS type,
@@ -432,7 +430,7 @@ class mssql_native_moodle_database extends moodle_database {
                                quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
                       FROM information_schema.columns
-                     WHERE table_name = '$tablename'
+                     WHERE table_name = '{" . $table . "}'
                   ORDER BY ordinal_position";
         } else { // temp table, get metadata from tempdb schema
             $sql = "SELECT column_name AS name,
@@ -445,9 +443,11 @@ class mssql_native_moodle_database extends moodle_database {
                                quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
                       FROM tempdb.information_schema.columns
-                     WHERE table_name like '{$tablename}__________%'
+                     WHERE table_name like '{" . $table . "}__________%'
                   ORDER BY ordinal_position";
         }
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
@@ -871,19 +871,46 @@ class mssql_native_moodle_database extends moodle_database {
      * @throws dml_exception if error
      */
     public function import_record($table, $dataobject) {
-        $dataobject = (object)$dataobject;
+        if (!is_object($dataobject)) {
+            $dataobject = (object)$dataobject;
+        }
 
         $columns = $this->get_columns($table);
         $cleaned = array();
 
-        foreach ($dataobject as $field=>$value) {
+        foreach ($dataobject as $field => $value) {
             if (!isset($columns[$field])) {
                 continue;
             }
-            $cleaned[$field] = $value;
+            $column = $columns[$field];
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
-        return $this->insert_record_raw($table, $cleaned, false, true, true);
+        // Disable IDENTITY column before inserting record with id
+        $sql = 'SET IDENTITY_INSERT {' . $table . '} ON'; // Yes, it' ON!!
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
+
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = mssql_query($sql, $this->mssql);
+        $this->query_end($result);
+
+        $this->free_result($result);
+
+        $insertresult = $this->insert_record_raw($table, $cleaned, false, false, true);
+
+        // Enable IDENTITY column after inserting record with id
+        $sql = 'SET IDENTITY_INSERT {' . $table . '} OFF'; // Yes, it' OFF!!
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
+
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = mssql_query($sql, $this->mssql);
+        $this->query_end($result);
+
+        $this->free_result($result);
+
+        return $insertresult;
     }
 
     /**
