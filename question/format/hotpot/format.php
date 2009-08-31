@@ -102,7 +102,12 @@ class qformat_hotpot extends qformat_default {
                     notice("Unknown quiz type '$xml->quiztype'");
                 }
         } // end switch
-        return $questions;
+
+        if (count($questions)) {
+            return $questions;
+        } else {
+            return false;
+        }
     }
 
     function process_jcloze(&$xml, &$questions) {
