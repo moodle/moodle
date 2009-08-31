@@ -133,7 +133,7 @@ class block_settings_navigation_tree extends block_tree {
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
                 $moveicon = new moodle_action_icon();
                 $moveicon->link->add_classes('moveto customcommand requiresjs');
-                $moveicon->link->url = ' ';
+                $moveicon->link->url = '';
 
                 user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
                 if (get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0)) {
