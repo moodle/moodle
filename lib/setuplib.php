@@ -907,7 +907,7 @@ class bootstrap_renderer {
     public static function plain_redirect_message($encodedurl) {
         $message = '<p>' . get_string('pageshouldredirect') . '</p><p><a href="'.
                 $encodedurl .'">'. get_string('continue') .'</a></p>';
-        return plain_page(get_string('redirect'), $message);
+        return self::plain_page(get_string('redirect'), $message);
     }
 
     protected static function plain_page($title, $content) {
