@@ -88,7 +88,7 @@ class mssql_native_moodle_database extends moodle_database {
     /**
      * Returns sql generator used for db manipulation.
      * Used mostly in upgrade.php scripts. mssql overrides it
-     * in order to share the mssql_moodle_temptables
+     * in order to share the mssql_native_moodle_temptables
      * between the driver and the generator
      *
      * @return object database_manager instance

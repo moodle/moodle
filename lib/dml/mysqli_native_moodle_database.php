@@ -27,6 +27,7 @@
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/mysqli_native_moodle_recordset.php');
+require_once($CFG->libdir.'/dml/mysqli_native_moodle_temptables.php');
 
 /**
  * Native mysqli class representing moodle database interface.
@@ -34,6 +35,7 @@ require_once($CFG->libdir.'/dml/mysqli_native_moodle_recordset.php');
 class mysqli_native_moodle_database extends moodle_database {
 
     protected $mysqli = null;
+    private $temptables; // Control existing temptables (mysql_moodle_temptables object)
 
     /**
      * Attempt to create the database
@@ -121,6 +123,29 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns sql generator used for db manipulation.
+     * Used mostly in upgrade.php scripts. mysql overrides it
+     * in order to share the mysqli_native_moodle_temptables
+     * between the driver and the generator
+     *
+     * @return object database_manager instance
+     */
+    public function get_manager() {
+        global $CFG;
+
+        if (!$this->database_manager) {
+            require_once($CFG->libdir.'/ddllib.php');
+
+            $classname = $this->get_dbfamily().'_sql_generator';
+            require_once("$CFG->libdir/ddl/$classname.php");
+            $generator = new $classname($this, $this->temptables);
+
+            $this->database_manager = new database_manager($this, $generator);
+        }
+        return $this->database_manager;
+    }
+
+    /**
      * Returns localised database configuration help.
      * Note: can be used before connect()
      * @return string
@@ -185,6 +210,9 @@ class mysqli_native_moodle_database extends moodle_database {
             $result = $this->mysqli->query($sql);
             $this->query_end($result);
         }
+
+        // Connection stabilished and configured, going to instantiate the temptables controller
+        $this->temptables = new mysqli_native_moodle_temptables($this);
 
         return true;
     }
@@ -251,6 +279,9 @@ class mysqli_native_moodle_database extends moodle_database {
             }
             $result->close();
         }
+
+        // Add the currently available temptables
+        $this->tables = array_merge($this->tables, $this->temptables->get_temptables());
         return $this->tables;
     }
 
