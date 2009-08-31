@@ -168,7 +168,7 @@ class qformat_hotpot extends qformat_default {
                         $text = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['text'][0]['#']"));
                         $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
                         $feedback = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
-                        if ($text) {
+                        if (strlen($text)) {
                             // set score (0=0%, 1=100%)
                             $fraction = empty($correct) ? 0 : 1;
                             // store answer
