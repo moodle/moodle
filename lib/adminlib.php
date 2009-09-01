@@ -131,13 +131,8 @@ function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
     // recursively uninstall all the subplugins first
-    try {
-        $subpluginlocations = plugin_supports($type, $name, FEATURE_MOD_SUBPLUGINS);
-    } catch (Exception $e) {
-        // the plugin does not support plugin_supports() yet - this is probably a subplugin
-        $subpluginlocations = null;
-    }
-    if (!empty($subpluginlocations)) {
+    $subpluginlocations = plugin_supports($type, $name, FEATURE_MOD_SUBPLUGINS);
+    if (is_array($subpluginlocations)) {
         foreach ($subpluginlocations as $subplugintype => $notusedlocationpath) {
             $subplugins = get_plugin_list($subplugintype);
             foreach ($subplugins as $subpluginname => $notusedpluginpath) {
@@ -146,17 +141,24 @@ function uninstall_plugin($type, $name) {
         }
     }
 
-    $pluginname = $type . '_' . $name;  // eg. 'qtype_multichoice' or 'workshopgrading_accumulative'
-    $strpluginname = get_string('pluginname', $pluginname); // replaces string 'modulename'
+    $component = $type . '_' . $name;  // eg. 'qtype_multichoice' or 'workshopgrading_accumulative' or 'mod_forum'
+
+    if ($type === 'mod') {
+        $pluginname = $name;  // eg. 'forum'
+        $strpluginname = get_string('modulename', $pluginname);
+    } else {
+	    $pluginname = $component;
+	    $strpluginname = get_string('pluginname', $pluginname); // replaces string 'modulename'
+    }
     echo $OUTPUT->heading($pluginname);
 
     $plugindirectory = get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
     if (file_exists($uninstalllib)) {
         require_once($uninstalllib);
-        $uninstallfunction = $pluginname . '_uninstall';    // eg. 'mod_workshop_uninstall()'
+        $uninstallfunction = 'xmldb_' . $pluginname . '_uninstall';    // eg. 'xmldb_workshop_uninstall()'
         if (function_exists($uninstallfunction)) {
-            if (! $uninstallfunction() ) {
+            if (!$uninstallfunction()) {
                 echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $pluginname);
             }
         }
@@ -164,9 +166,6 @@ function uninstall_plugin($type, $name) {
 
     if ('mod' === $type) {
         // perform cleanup tasks specific for activity modules
-
-        $pluginname = $name;    // activity modules are expceptions for historical reasons
-        $strpluginname = get_string('modulename', $pluginname); // exception again - to be replaced in all langpacks
 
         if (!$module = $DB->get_record('modules', array('name' => $name))) {
             print_error('moduledoesnotexist', 'error');
@@ -190,9 +189,7 @@ function uninstall_plugin($type, $name) {
         $DB->execute($sql, array($module->id));
 
         // delete all the course module records
-        if (!$DB->delete_records('course_modules', array('module' => $module->id))) {
-            echo $OUTPUT->notification("Error occurred while deleting all $strpluginname records in course_modules table");
-        }
+        $DB->delete_records('course_modules', array('module' => $module->id));
 
         // delete module contexts
         if ($coursemods) {
@@ -204,9 +201,7 @@ function uninstall_plugin($type, $name) {
         }
 
         // delete the module entry itself
-        if (!$DB->delete_records('modules', array('name' => $module->name))) {
-            echo $OUTPUT->notification("Error occurred while deleting the $strpluginname record from modules table");
-        }
+        $DB->delete_records('modules', array('name' => $module->name));
 
         // cleanup the gradebook
         require_once($CFG->libdir.'/gradelib.php');
@@ -218,7 +213,7 @@ function uninstall_plugin($type, $name) {
             $uninstallfunction = $module->name . '_uninstall';
             if (function_exists($uninstallfunction)) {
                 debugging("{$uninstallfunction}() has been deprecated. Use the plugin's db/uninstall.php instead", DEBUG_DEVELOPER);
-                if (! $uninstallfunction() ) {
+                if (!$uninstallfunction()) {
                     echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $module->name.'!');
                 }
             }
@@ -228,31 +223,20 @@ function uninstall_plugin($type, $name) {
     // perform clean-up taks common for all the plugin/subplugin types
 
     // delete calendar events
-    if (!$DB->delete_records('event', array('modulename' => $pluginname))) {
-        echo $OUTPUT->notification("Error occurred while deleting all $strpluginname records in calendar event table");
-    }
+    $DB->delete_records('event', array('modulename' => $pluginname));
 
     // delete all the logs
-    if (!$DB->delete_records('log', array('module' => $pluginname))) {
-        echo $OUTPUT->notification("Error occurred while deleting all $strpluginname records in log table");
-    }
+    $DB->delete_records('log', array('module' => $pluginname));
 
     // delete log_display information
-    if (!$DB->delete_records('log_display', array('module' => $pluginname))) {
-        echo $OUTPUT->notification("Error occurred while deleting all $strpluginname records in log_display table");
-    }
+    $DB->delete_records('log_display', array('module' => $pluginname));
 
     // delete the module configuration records
-    if (!unset_all_config_for_plugin($pluginname)) {
-        echo $OUTPUT->notification(get_string('errordeletingconfig', 'admin', $strpluginname));
-    }
+    unset_all_config_for_plugin($pluginname);
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
     drop_plugin_tables($pluginname, $xmldbfilepath, false);
-
-    // the following functions do not accept $pluginname
-    $component = get_plugin_directory($type, $name, false); // eg. 'mod/forum'
 
     // delete the capabilities that were defined by this module
     capabilities_cleanup($component);
