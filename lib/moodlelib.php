@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -331,7 +331,7 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
  * used like this:
  *    $id = required_param('id', PARAM_INT);
  *
- * @param string $parname the name of the page parameter we want, 
+ * @param string $parname the name of the page parameter we want,
  *                        default PARAM_CLEAN
  * @param int $type expected type of parameter
  * @return mixed
@@ -482,7 +482,7 @@ function clean_param($param, $type) {
             return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
         case PARAM_SAFEPATH:     // Remove everything not a-zA-Z0-9/_-
-            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param); 
+            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param);
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
             $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\/]~u', '', $param);
@@ -2455,7 +2455,7 @@ function over_bounce_threshold($user) {
 }
 
 /**
- * Used to increment or reset email sent count 
+ * Used to increment or reset email sent count
  *
  * @global object
  * @param user $user object containing an id
@@ -2484,7 +2484,7 @@ function set_send_count($user,$reset=false) {
 }
 
 /**
- * Increment or reset user's email bounce count 
+ * Increment or reset user's email bounce count
  *
  * @global object
  * @param user $user object containing an id
@@ -2687,10 +2687,10 @@ function &get_fast_modinfo(&$course, $userid=0) {
         }
         $cm->modplural = $modlurals[$cm->modname];
         $modcontext = get_context_instance(CONTEXT_MODULE,$cm->id);
-        
+
         if(!empty($CFG->enableavailability)) {
-            // Unfortunately the next call really wants to call 
-            // get_fast_modinfo, but that would be recursive, so we fake up a 
+            // Unfortunately the next call really wants to call
+            // get_fast_modinfo, but that would be recursive, so we fake up a
             // modinfo for it already
             if(empty($minimalmodinfo)) {
                 $minimalmodinfo=new stdClass();
@@ -2754,7 +2754,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
  *
- * @todo finish timeend and timestart maybe we could rely on cron 
+ * @todo finish timeend and timestart maybe we could rely on cron
  *       job to do the cleaning from time to time
  *
  * @global object
@@ -3509,7 +3509,7 @@ function complete_user_login($user, $setcookie=true) {
     // regenerate session id and delete old session,
     // this helps prevent session fixation attacks from the same domain
     session_regenerate_id(true);
-    
+
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
 
@@ -4230,7 +4230,7 @@ function reset_course_userdata($data) {
 
 /**
  * Generate an email processing address
- * 
+ *
  * @param int $modid
  * @param string $modargs
  * @return string Returns email processing address
@@ -4900,7 +4900,7 @@ function email_is_not_allowed($email) {
  *
  * @global object
  * @global object
- * @param object $course 
+ * @param object $course
  * @param user $user A {@link $USER} object
  * @return bool
  */
@@ -5649,7 +5649,7 @@ class string_manager {
     // Some of our arrays need $CFG.
     /**
     * string_manager construct method to instatiate this instance
-    * 
+    *
     * @param string $dirroot root directory path.
     * @param string $dataroot Path to the data root.
     * @param string $admin path to the admin directory.
@@ -5679,7 +5679,7 @@ class string_manager {
 
     /**
      * This returns an array of all the types of plugin that may have language
-     * strings. 
+     * strings.
      *
      * The array keys are the lang file prefix, like qtype_, and the value is
      * an array of paths relative to $CFG->dirroot.
@@ -5875,7 +5875,7 @@ class string_manager {
      * @param string $module The module the help file is associated with
      * @param string $forcelang override the default language
      * @param bool $skiplocal Skip local help files
-     * @return array An array containing the filepath, and then the language 
+     * @return array An array containing the filepath, and then the language
      */
     public function find_help_file($file, $module, $forcelang, $skiplocal) {
         if ($forcelang) {
@@ -5971,7 +5971,7 @@ class string_manager {
 
         if (!is_null($this->installstrings) && in_array($identifier, $this->installstrings)) {
             $module = 'installer';
-            $locations = array_merge(array($this->dirroot . '/install/lang/' => ''), $locations); 
+            $locations = array_merge(array($this->dirroot . '/install/lang/' => ''), $locations);
         }
 
         if ($extralocations) {
@@ -6091,7 +6091,7 @@ function get_strings($array, $module='') {
 /**
  * Returns a list of language codes and their full names
  * hides the _local files from everyone.
- * 
+ *
  * @global object
  * @param bool $refreshcache force refreshing of lang cache
  * @param bool $returnall ignore langlist, return all languages available
@@ -6537,7 +6537,7 @@ function endecrypt ($pwd, $data, $case) {
  *
  * @global object
  * @global object
- * @param array $event An associative array representing an event from the calendar table. 
+ * @param array $event An associative array representing an event from the calendar table.
  * The event will be identified by the id field. The object event should include the following:
  *  <ul>
  *    <li><b>$event->name</b> - Name for the event
@@ -6723,7 +6723,7 @@ function get_component_directory($component, $fullpaths=true) {
     } else {
         list($type, $plugin) = explode('_', $component, 2);
         $path = get_plugin_directory($type, $plugin, $fullpaths);
-    }        
+    }
 
     return $path;
 }
@@ -6856,7 +6856,7 @@ function get_plugin_list($plugintype, $fullpaths=true) {
  * This function was originally used for standar Moodle plugins, please use
  * new get_plugin_list() now.
  *
- * This function is used for general directory listing and backwards compability. 
+ * This function is used for general directory listing and backwards compability.
  *
  * @param string $directory relatice directory from root
  * @param string $exclude dir name to exclude from the list (defaults to none)
@@ -6980,7 +6980,7 @@ function plugin_supports($type, $name, $feature, $default=null) {
     	// we need this special case because we support subplugins in modules,
     	// otherwise it would end up in infinite loop
     	if ($name === 'NEWMODULE') {
-    		//somebody forgot to rename the module template 
+    		//somebody forgot to rename the module template
     		return false;
     	}
     	include_once("$CFG->dirroot/mod/$name/lib.php");
@@ -9179,4 +9179,3 @@ function check_consecutive_identical_characters($password, $maxchars) {
     return true;
 }
 
-?>
