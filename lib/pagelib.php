@@ -132,6 +132,8 @@ class moodle_page {
     protected $_settingsnav = null;
     /** @var null|navbar Contains the navbar structure*/
     protected $_navbar = null;
+    /** @var string */
+    protected $_headingmenu = null;
 
     /**
      * Then the theme is initialsed, we save the stack trace, for use in error messages.
@@ -320,6 +322,14 @@ class moodle_page {
      */
     public function get_heading() {
         return $this->_heading;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->heading syntax. {@link __get()}.
+     * @return string The menu (or actions) to display in the heading
+     */
+    public function get_headingmenu() {
+        return $this->_headingmenu;
     }
 
     /**
@@ -705,7 +715,7 @@ class moodle_page {
     }
 
     /**
-     * $param string $title the title that should go in the <head> section of the HTML of this page.
+     * @param string $title the title that should go in the <head> section of the HTML of this page.
      */
     public function set_title($title) {
         $title = format_string($title);
@@ -714,10 +724,17 @@ class moodle_page {
     }
 
     /**
-     * $param string $heading the main heading that should be displayed at the top of the <body>.
+     * @param string $heading the main heading that should be displayed at the top of the <body>.
      */
     public function set_heading($heading) {
         $this->_heading = format_string($heading);
+    }
+
+    /**
+     * @param string $menu The menu/content to show in the heading
+     */
+    public function set_headingmenu($menu) {
+        $this->_headingmenu = $menu;
     }
 
     /**

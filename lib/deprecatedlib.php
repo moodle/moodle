@@ -2120,7 +2120,7 @@ function print_continue($link, $return = false) {
  * @return string|void If return=true then string else void
  */
 function print_header($title='', $heading='', $navigation='', $focus='',
-                      $meta='', $cache=true, $button='&nbsp;', $menu='',
+                      $meta='', $cache=true, $button='&nbsp;', $menu=null,
                       $usexml=false, $bodytags='', $return=false) {
     global $PAGE, $OUTPUT;
 
@@ -2132,6 +2132,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
         $button = '&nbsp;';
     }
     $PAGE->set_button($button);
+    $PAGE->set_headingmenu($menu);
 
     // TODO $menu
 
@@ -2146,7 +2147,7 @@ function print_header($title='', $heading='', $navigation='', $focus='',
         throw new coding_exception('The $bodytags parameter to print_header is no longer supported.');
     }
 
-    $output = $OUTPUT->header($menu);
+    $output = $OUTPUT->header();
 
     if ($return) {
         return $output;

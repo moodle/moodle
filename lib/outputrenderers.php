@@ -685,13 +685,9 @@ class moodle_core_renderer extends moodle_renderer_base {
      * Not that, in due course, the remaining $navigation, $menu parameters here
      * will be replaced by more properties of $PAGE, but that is still to do.
      *
-     * @param string $navigation legacy, like the old parameter to print_header. Will be
-     *      removed when there is a $PAGE->... replacement.
-     * @param string $menu legacy, like the old parameter to print_header. Will be
-     *      removed when there is a $PAGE->... replacement.
      * @return string HTML that you must output this, preferably immediately.
      */
-    public function header($menu='') {
+    public function header() {
         // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
         global $USER, $CFG;
 
@@ -701,10 +697,10 @@ class moodle_core_renderer extends moodle_renderer_base {
         $templatefile = $this->page->theme->template_for_page($this->page->generaltype);
         if ($templatefile) {
             // Render the template.
-            $template = $this->render_page_template($templatefile, $menu);
+            $template = $this->render_page_template($templatefile);
         } else {
             // New style template not found, fall back to using header.html and footer.html.
-            $template = $this->handle_legacy_theme($menu);
+            $template = $this->handle_legacy_theme();
         }
 
         // Slice the template output into header and footer.
@@ -734,7 +730,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param array $navigation The navigation that will be used in the included file
      * @return string HTML code
      */
-    protected function render_page_template($templatefile, $menu) {
+    protected function render_page_template($templatefile) {
         global $CFG, $SITE, $THEME, $USER;
         // The next lines are a bit tricky. The point is, here we are in a method
         // of a renderer class, and this object may, or may not, be the same as
@@ -762,7 +758,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param array $menu The menu that will be used in the included file
      * @return string HTML code
      */
-    protected function handle_legacy_theme($menu) {
+    protected function handle_legacy_theme() {
         global $CFG, $SITE, $USER;
         // Set a pretend global from the properties of this class.
         // See the comment in render_page_template for a fuller explanation.
@@ -780,6 +776,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $pageclass = $this->page->bodyclasses;
         $bodytags = ' class="' . $pageclass . '" id="' . $pageid . '"';
         $home = $this->page->generaltype == 'home';
+        $menu = $this->page->headingmenu;
 
         $meta = $this->standard_head_html();
         // The next line is a nasty hack. having set $meta to standard_head_html, we have already

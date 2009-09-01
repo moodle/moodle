@@ -14,8 +14,8 @@
     <div id="header-home" class="clearfix">
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
         <div class="headermenu"><?php
-        if ($menu) {
-            echo $menu;
+        if ($PAGE->headingmenu) {
+            echo $PAGE->headingmenu;
         } else {
             echo $OUTPUT->login_info();
         }
