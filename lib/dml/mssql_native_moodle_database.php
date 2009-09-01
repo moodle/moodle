@@ -1152,26 +1152,22 @@ s only returning name of SQL substring function, it now requires all parameters.
 /// session locking
 
     public function session_lock_supported() {
-        return false;
+        return true;
     }
 
     public function get_session_lock($rowid) {
-        // NOTE: there is a potential locking problem for database running
-        //       multiple instances of moodle, we could try to use pg_advisory_lock(int, int),
-        //       luckily there is not a big chance that they would collide
         if (!$this->session_lock_supported()) {
             return;
         }
-
         parent::get_session_lock($rowid);
-        $sql = "SELECT pg_advisory_lock($rowid)";
+
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  120000";
         $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = pg_query($this->pgsql, $sql);
+        $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
-        if ($result) {
-            pg_free_result($result);
-        }
+        $this->free_result($result);
     }
 
     public function release_session_lock($rowid) {
@@ -1180,14 +1176,13 @@ s only returning name of SQL substring function, it now requires all parameters.
         }
         parent::release_session_lock($rowid);
 
-        $sql = "SELECT pg_advisory_unlock($rowid)";
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $sql = "sp_releaseapplock '$fullname', 'Exclusive', 'Session'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
-        $result = pg_query($this->pgsql, $sql);
+        $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
-        if ($result) {
-            pg_free_result($result);
-        }
+        $this->free_result($result);
     }
 
 /// transactions
