@@ -108,8 +108,7 @@ class block_settings_navigation_tree extends block_tree {
                 $searchform->url = new moodle_url("$CFG->wwwroot/$CFG->admin/search.php");
                 $searchform->method = 'get';
                 $searchform->button->text = get_string('search');
-
-                $searchfield = html_field::make_text('query', optional_param('query', '', PARAM_RAW));
+                $searchfield = html_field::make_text('query', optional_param('query', '', PARAM_RAW), '', 50);
                 $searchfield->id = 'query';
                 $searchfield->style .= 'width: 7em;';
                 $searchfield->set_label(get_string('searchinsettings', 'admin'), 'query');
