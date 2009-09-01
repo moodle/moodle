@@ -105,6 +105,9 @@ class qformat_hotpot extends qformat_default {
         if (count($questions)) {
             return $questions;
         } else {
+            if (method_exists($this, 'error')) { // Moodle >= 1.8
+                $this->error(get_string('giftnovalidquestion', 'quiz'));
+            }
             return false;
         }
     }
