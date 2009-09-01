@@ -1852,23 +1852,20 @@ class navbar extends navigation_node {
         // For screen readers
         $output = get_accesshide(get_string('youarehere','access'), 'h2')."<ul>\n";
         
-        $firstnode = true;
         $customchildren = (count($this->children) > 0);
         // Check if navigation contains the active node
         if ($this->page->navigation->contains_active_node()) {
             // Parse the navigation tree to get the active node
-            $output .= $this->parse_branch_to_html($this->page->navigation->children, $firstnode, $customchildren);
-            $firstnode = false;
+            $output .= $this->parse_branch_to_html($this->page->navigation->children, true, $customchildren);
         } else if ($this->page->settingsnav->contains_active_node()) {
             // Parse the settings navigation to get the active node
-            $output .= $this->parse_branch_to_html($this->page->settingsnav->children, $firstnode, $customchildren);
-            $firstnode = false;
+            $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
         }
 
         // Check if there are any children added by code
         if ($customchildren) {
             // Add the custom children
-            $output .= $this->parse_branch_to_html($this->children,$firstnode, false);
+            $output .= $this->parse_branch_to_html($this->children, false, false);
         }
         $output .= "</ul>\n";
         $this->content = $output;
@@ -1958,7 +1955,8 @@ class navbar extends navigation_node {
         $this->keys[] = $key;
         $child = $this->get_by_path($this->keys);
         if ($child!==false) {
-            $child->forceopen = true;
+            // This ensure that the child will be shown
+            $child->make_active();
         }
         return $key;
     }

@@ -3635,7 +3635,11 @@ function build_navigation($extranavlinks, $cm = null) {
         # debugging('build_navigation() has been deprecated, please replace with $PAGE->navbar methods', DEBUG_DEVELOPER);
         foreach ($extranavlinks as $nav) {
             if (array_key_exists('name', $nav)) {
-                $link = (array_key_exists('link', $nav))?$nav['link']:null;
+                if (array_key_exists('link', $nav) && !empty($nav['link'])) {
+                    $link = $nav['link'];
+                } else {
+                    $link = null;
+                }
                 $PAGE->navbar->add($nav['name'],null, null, navbar::TYPE_CUSTOM, $link);
             }
         }
