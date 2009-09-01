@@ -6988,6 +6988,10 @@ function plugin_supports($type, $name, $feature, $default=null) {
         $function = $name.'_supports';
 
     } else {
+    	if ($feature == FEATURE_MOD_SUBPLUGINS) {
+    		//sorry only modules
+    		return false;
+    	}
 	    if (!$dir = get_plugin_directory($type, $name)) {
 	        throw new coding_exception("Unsupported plugin type or name ($type/$name)");
 	    }
