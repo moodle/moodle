@@ -1086,8 +1086,10 @@ class moodle_core_renderer extends moodle_renderer_base {
     }
 
    /**
-    * Print a message along with button choices for Continue/Cancel. Labels default to Yes(Continue)/No(Cancel).
-    * If a string or moodle_url is given instead of a html_button, method defaults to post and text to Yes/No
+    * Print a message along with button choices for Continue/Cancel
+    *
+    * If a string or moodle_url is given instead of a html_button, method defaults to post.
+    *
     * @param string $message The question to ask the user
     * @param mixed $continue The html_form component representing the Continue answer. Can also be a moodle_url or string URL
     * @param mixed $cancel The html_form component representing the Cancel answer. Can also be a moodle_url or string URL
@@ -1098,10 +1100,12 @@ class moodle_core_renderer extends moodle_renderer_base {
             $continue = clone($continue);
         } else if (is_string($continue)) {
             $continueform = new html_form();
+            $continueform->button->text = get_string('continue');
             $continueform->url = new moodle_url($continue);
             $continue = $continueform;
         } else if ($continue instanceof moodle_url) {
             $continueform = new html_form();
+            $continueform->button->text = get_string('continue');
             $continueform->url = $continue;
             $continue = $continueform;
         } else {
@@ -1112,6 +1116,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $cancel = clone($cancel);
         } else if (is_string($cancel)) {
             $cancelform = new html_form();
+            $cancelform->button->text = get_string('cancel');
             $cancelform->url = new moodle_url($cancel);
             $cancel = $cancelform;
         } else if ($cancel instanceof moodle_url) {
@@ -1121,13 +1126,6 @@ class moodle_core_renderer extends moodle_renderer_base {
             $cancel = $cancelform;
         } else {
             throw new coding_exception('The cancel param to $OUTPUT->confirm must be either a URL (string/moodle_url) or a html_form object.');
-        }
-
-        if (empty($continue->button->text)) {
-            $continue->button->text = get_string('yes');
-        }
-        if (empty($cancel->button->text)) {
-            $cancel->button->text = get_string('no');
         }
 
         $output = $this->box_start('generalbox', 'notice');
