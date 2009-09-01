@@ -32,6 +32,7 @@ $PAGE->set_course($COURSE);
 $PAGE->set_url('webservice/wsdoc.php');
 $PAGE->set_title(get_string('wspagetitle', 'webservice'));
 $PAGE->set_heading(get_string('wspagetitle', 'webservice'));
+$PAGE->set_generaltype("form");
 echo $OUTPUT->header();
 webservice_lib::display_webservices_availability($protocol);
 generate_documentation($protocol);
@@ -222,6 +223,20 @@ function converterMoodleParamIntoWsParam($moodleparam) {
         case PARAM_TEXT:
             return "string";
             break;
+        //here we check that the value has not already been changed
+        //the algo could want to do it in the case two functions of the web description use the
+        //same object ($params or $return could be the same for two functions, so the guy
+        //writing the web description use the same object)
+        //as the convertDescriptionType function passes parameter in reference
+        case "integer":
+            return "integer";
+            break;
+        case "boolean":
+            return "boolean";
+            break;
+        case "string":
+            return "string";
+            break;
         default:
             
             //return get_object_vars($moodleparam);
@@ -260,6 +275,3 @@ function setListApiFiles( &$files, $directorypath ) {
         }
     }
 }
-
-
-?>
