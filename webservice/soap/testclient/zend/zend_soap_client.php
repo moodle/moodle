@@ -38,6 +38,7 @@ Zend_Loader::registerAutoload();
 
 $PAGE->set_course($COURSE);
 $PAGE->set_url('webservice/soap/testclient/zend/zend_soap_client.php');
+$PAGE->set_generaltype("form");
 
 ///Display Moodle page header
 $PAGE->set_title('Soap test client');
@@ -77,7 +78,7 @@ try {
     $params->username = 'wsuser';
     $params->password = 'wspassword';
     $token = $client->get_token($params);
-    //$token = $client->get_token($params);
+
     print "<pre>\n";
     print "<br><br><strong>Token: </strong>".$token;
     print "</pre>";

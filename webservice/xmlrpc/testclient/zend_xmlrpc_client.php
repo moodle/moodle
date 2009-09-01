@@ -68,8 +68,3 @@ print "<br/><br/>\n";
 $params = new stdClass();
 $params->usernames = array("mockuser6b");
 var_dump($users = $client->call('user.delete_users', $params));
-//print "<br/><br/>\n";
-//var_dump($users = $client->call('user.tmp_do_multiple_user_searches', array(array(array('search' => "jerome"),array('search' => "admin")))));
-//print "<br/><br/>\n";
-
-?>
