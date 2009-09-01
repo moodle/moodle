@@ -6969,41 +6969,49 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
  * @param string $feature Feature code (FEATURE_xx constant)
  * @param mixed $default default value if feature support unknown
  * @return mixed Feature result (false if not supported, null if feature is unknown,
- *         otherwise usually true but may have other feature-specific value)
+ *         otherwise usually true but may have other feature-specific value such as array)
  */
 function plugin_supports($type, $name, $feature, $default=null) {
     global $CFG;
 
-    $name = clean_param($name, PARAM_SAFEDIR);
+    $name = clean_param($name, PARAM_SAFEDIR); //bit of extra security
 
-    switch($type) {
-        case 'mod' :
-            $file = $CFG->dirroot.'/mod/'.$name.'/lib.php';
-            $function = $name.'_supports';
-            break;
-        default:
-            throw new Exception('Unsupported plugin type ('.$type.')');
+    if ($type === 'mod') {
+    	// we need this special case because we support subplugins in modules,
+    	// otherwise it would end up in infinite loop
+    	if ($name === 'NEWMODULE') {
+    		//somebody forgot to rename the module template 
+    		return false;
+    	}
+    	include_once("$CFG->dirroot/mod/$name/lib.php");
+    	
+        $function = $name.'_supports';
+
+    } else {
+	    if (!$dir = get_plugin_directory($type, $name)) {
+	        throw new coding_exception("Unsupported plugin type or name ($type/$name)");
+	    }
+	
+	    $libfile = $dir.'/lib.php';
+	    if (file_exists($libfile)) {
+	    	include_once($libfile);
+	    }
+	
+	    $function = $type.'_'.$name.'_supports';
     }
 
-    // Load library and look for function
-    if (file_exists($file)) {
-        require_once($file);
-    }
     if (function_exists($function)) {
-        // Function exists, so just return function result
         $supports = $function($feature);
         if (is_null($supports)) {
+        	// plugin does not know - use default
             return $default;
         } else {
             return $supports;
         }
-    } else {
-        switch($feature) {
-            // If some features can also be checked in other ways
-            // for legacy support, this could be added here
-            default: return $default;
-        }
     }
+
+    //plugin does not care, so use default
+    return $default;
 }
 
 /**
@@ -7928,7 +7936,7 @@ function make_menu_from_list($list, $separator=',') {
 
 /**
  * Creates an array that represents all the current grades that
- * can be chosen using the given grading type.  
+ * can be chosen using the given grading type.
  *
  * Negative numbers
  * are scales, zero is no grade, and positive numbers are maximum
@@ -9010,7 +9018,7 @@ function is_proxybypass( $url ) {
 
 /**
  * Check if the passed navigation is of the new style
- * 
+ *
  * @param mixed $navigation
  * @return bool true for yes false for no
  */
