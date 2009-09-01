@@ -106,6 +106,9 @@ class qformat_hotpot extends qformat_default {
         if (count($questions)) {
             return $questions;
         } else {
+            if (method_exists($this, 'error')) { // Moodle >= 1.8
+                $this->error(get_string('giftnovalidquestion', 'quiz'));
+            }
             return false;
         }
     }
@@ -231,8 +234,6 @@ class qformat_hotpot extends qformat_default {
             } else {
                 // no gaps found in this text so don't add this question
                 // import will fail and error message will be displayed:
-                // "There are no questions in the import file"
-                unset($question);
             }
 
             $x++;
