@@ -54,13 +54,16 @@ for ($i=1; $i<=10; $i++) {
     }
     $dbinfos[$i]['installed'] = true;
 
-    if ($d->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions)) {
+    try {
+        $d->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
         $dbinfos[$i]['configured'] = true;
         if (data_submitted() and !empty($selected[$i])) {
             $tests[$i] = $d;
         } else {
             $d->dispose();
         }
+    } catch (dml_connection_exception $e) {
+        $dbinfos[$i]['configured'] = false;
     }
 }
 
