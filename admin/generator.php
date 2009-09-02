@@ -1,17 +1,35 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Random course generator. By Nicolas Connault and friends.
  *
  * To use go to .../admin/generator.php?web_interface=1 in your browser.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package generator
- *//** */
+ * @copyright 2009 Nicolas Connault
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__).'/../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->dirroot .'/mod/resource/lib.php');
+require_once($CFG->libdir .'/filelib.php');
 
 define('GENERATOR_RANDOM', 0);
 define('GENERATOR_SEQUENCE', 1);
@@ -41,7 +59,7 @@ class generator {
     public $resource_types = array('text', 'file', 'html', 'repository', 'directory', 'ims');
     public $glossary_formats = array('continuous', 'encyclopedia', 'entrylist', 'faq', 'fullwithauthor', 'fullwithoutauthor', 'dictionary');
     public $assignment_types = array('upload', 'uploadsingle', 'online', 'offline');
-    public $forum_types = array('single', 'eachuser', 'qanda', 'general');
+    public $forum_types = array('general'); // others include 'single', 'eachuser', 'qanda'
 
     public $resource_type_counter = 0;
     public $assignment_type_counter = 0;
@@ -57,7 +75,7 @@ class generator {
         global $CFG;
 
         $this->starttime = time()+microtime();
-
+        
         $arguments = array(
              array('short'=>'u', 'long'=>'username',
                    'help' => 'Your moodle username', 'type'=>'STRING', 'default' => ''),
@@ -65,7 +83,7 @@ class generator {
                    'help' => 'Your moodle password', 'type'=>'STRING', 'default' => ''),
              array('short'=>'P', 'long' => 'database_prefix',
                    'help' => 'Database prefix to use: tables must already exist or the script will abort!',
-                   'type'=>'STRING', 'default' => 'tst_'),
+                   'type'=>'STRING', 'default' => $CFG->prefix),
              array('short'=>'c', 'long' => 'pre_cleanup', 'help' => 'Delete previously generated data'),
              array('short'=>'C', 'long' => 'post_cleanup',
                    'help' => 'Deletes all generated data at the end of the script (for benchmarking of generation only)'),
@@ -158,11 +176,17 @@ class generator {
 
     public function connect() {
         global $DB, $CFG;
-        $this->original_db = clone($DB);
+        $this->original_db = $DB;
 
         $class = get_class($DB);
         $DB = new $class();
         $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $this->get('database_prefix'));
+    }
+
+    public function dispose() {
+        global $DB;
+        $DB->dispose();
+        $DB = $this->original_db;
     }
 
     public function generate_users() {
@@ -452,6 +476,7 @@ class generator {
                                 $module->name = 'test';
                                 break;
                             case 'choice':
+                                $module->intro = $description;
                                 $module->text = $content;
                                 $module->option = array('Good choice', 'Bad choice', 'No choice');
                                 $module->limit  = array(1, 5, 0);
@@ -462,6 +487,7 @@ class generator {
                                 break;
                             case 'feedback':
                                 $module->intro = $description;
+                                $module->page_after_submit = $description;
                                 $module->comments = $content;
                                 break;
                             case 'forum':
@@ -502,6 +528,7 @@ class generator {
                                 $module->alltext = $content;
                                 $module->summary = $description;
                                 $module->windowpopup = rand(0,1);
+                                $module->display = rand(0,1);
                                 $module->resizable = rand(0,1);
                                 $module->scrollbars = rand(0,1);
                                 $module->directories = rand(0,1);
@@ -512,6 +539,7 @@ class generator {
                                 $module->width = rand(200,600);
                                 $module->height = rand(200,600);
                                 $module->directories = rand(0,1);
+                                $module->files = false;
                                 $module->param_navigationmenu = rand(0,1);
                                 $module->param_navigationbuttons = rand(0,1);
                                 $module->reference = 1;
@@ -522,6 +550,7 @@ class generator {
                                 $module->intro = $description;
                                 break;
                             case 'wiki':
+                                $module->intro = $description;
                                 $module->summary = $description;
                                 break;
                         }
@@ -545,6 +574,7 @@ class generator {
                         if (function_exists($add_instance_function)) {
                             $this->verbose("Calling module function $add_instance_function");
                             $module->instance = $add_instance_function($module, '');
+                            $DB->set_field('course_modules', 'instance', $module->instance, array('id'=>$module->coursemodule));
                         } else {
                             $this->verbose("Function $add_instance_function does not exist!");
                             if (!$this->get('ignore_errors')) {
@@ -727,13 +757,18 @@ class generator {
 
                     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-                    $discussion = new stdClass();
-                    $discussion->name = 'Test discussion';
-                    $discussion->intro = 'This is just a test forum discussion';
-                    $discussion->format = 1;
-                    $discussion->forum = $forum->id;
-                    $discussion->mailnow = false;
-                    $discussion->course = $forum->course;
+                    $discussion = new object();
+                    $discussion->course        = $forum->course;
+                    $discussion->forum         = $forum->id;
+                    $discussion->name          = 'Test discussion';
+                    $discussion->intro         = 'This is just a test forum discussion';
+                    $discussion->assessed      = 0;
+                    $discussion->messageformat = 1;
+                    $discussion->messagetrust = 0;
+                    $discussion->mailnow       = false;
+                    $discussion->groupid       = -1;
+                    $discussion->attachments   = null;
+                    $discussion->itemid = 752157083;
 
                     $message = '';
                     $super_global_user = clone($USER);
@@ -756,6 +791,8 @@ class generator {
                             $post->subject = 'Re: test discussion';
                             $post->message = '<p>Nothing much to say, since this is just a test...</p>';
                             $post->format = 1;
+                            $post->attachments = null;
+                            $post->itemid = 752157083;
                             $post->parent = $post_ids[array_rand($post_ids)];
 
                             if ($post_ids[] = forum_add_new_post($post, $mform, $message)) {
@@ -1198,27 +1235,20 @@ class generator_web extends generator {
     }
 
     public function display() {
-        global $OUTPUT;
-        print_header("Data generator");
+        global $OUTPUT, $PAGE;
+        $PAGE->set_title("Data generator");
+        echo $OUTPUT->header();
         echo $OUTPUT->heading("Data generator: web interface");
         echo $OUTPUT->heading("FOR DEVELOPMENT PURPOSES ONLY. DO NOT USE ON A PRODUCTION SITE!", 3);
         echo $OUTPUT->heading("Your database contents will probably be massacred. You have been warned", 5);
 
-
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-        if (!has_capability('moodle/site:doanything', $systemcontext)) {
-            // If not logged in, give link to login page for current site
-            echo $OUTPUT->notification("You must be logged in as administrator before using this script.");
-            echo $OUTPUT->footer();
-            require_login();
-        } else {
-            $this->mform->display();
-        }
+        $this->mform->display();
         $this->connect();
     }
 
-    public function __destroy() {
+    public function complete() {
         global $OUTPUT;
+        $this->dispose();
         echo $OUTPUT->footer();
     }
 }
@@ -1280,7 +1310,7 @@ class generator_form extends moodleform {
             }
 
             $mform->addElement($type, $setting->long, $label, $options, $htmloptions);
-            $mform->setHelpButton($setting->long, array(false, $label, $setting->help));
+            //$mform->setHelpButton($setting->long, array(false, $label, $setting->help));
 
             if (isset($setting->default)) {
                 $mform->setDefault($setting->long, $setting->default);
@@ -1298,12 +1328,17 @@ if (isset($argv) && isset($argc)) {
     $generator = new generator_cli($argv, $argc);
     $generator->generate_data();
 } elseif (strstr($_SERVER['REQUEST_URI'], 'generator.php')) {
+    require_login();
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    require_capability('moodle/site:config', $systemcontext);
+
+    $PAGE->set_url($CFG->wwwroot.'/admin/generator.php');
+    $PAGE->set_generaltype('form');
     $generator = new generator_web();
     $generator->setup();
     $generator->display();
     $generator->generate_data();
+    $generator->complete();
 } else {
     $generator = new generator_silent();
 }
-
-?>
