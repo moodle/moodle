@@ -591,7 +591,7 @@ function error($message, $link='') {
     }
 
     list($message, $moreinfourl, $link) = prepare_error_message('notlocalisederrormessage', 'error', $link, $message);
-    $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace(), null, true); // show debug warning
+    echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace(), null, true); // show debug warning
     die;
 }
 
