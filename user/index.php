@@ -150,12 +150,14 @@
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
 
-    if ($isseparategroups and (!$currentgroup) ) {
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('participants'), 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add(get_string('participants'));
+    $PAGE->set_title("$course->shortname: ".get_string('participants'));
+    $PAGE->set_heading($course->fullname);
 
-        print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+    echo $OUTPUT->header();
+
+    if ($isseparategroups and (!$currentgroup) ) {
+        // The user is not in the group so show message and exit
         echo $OUTPUT->heading(get_string("notingroup"));
         echo $OUTPUT->footer();
         exit;
@@ -169,14 +171,6 @@
             'perpage' => $perpage,
             'accesssince' => $accesssince,
             'search' => s($search)));
-
-/// Print headers
-
-    $navlinks = array();
-    $navlinks[] = array('name' => get_string('participants'), 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 /// setting up tags
     if ($course->id == SITEID) {

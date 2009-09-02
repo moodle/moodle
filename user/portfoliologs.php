@@ -22,13 +22,10 @@ require_login($course, false);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 10, PARAM_INT);
 
-$navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
-$navlinks[] = array('name' => $strportfolios, 'link' => null, 'type' => 'misc');
+$PAGE->set_title("$course->fullname: $fullname: $strportfolios");
+$PAGE->set_heading($course->fullname);
 
-$navigation = build_navigation($navlinks);
-
-print_header("$course->fullname: $fullname: $strportfolios", $course->fullname,
-             $navigation, "", "", true, "&nbsp;", navmenu($course));
+echo $OUTPUT->header();
 
 $currenttab = 'portfoliologs';
 $showroles = 1;

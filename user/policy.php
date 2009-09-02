@@ -33,8 +33,11 @@
     $strpolicyagreement = get_string('policyagreement');
     $strpolicyagreementclick = get_string('policyagreementclick');
 
-    print_header($strpolicyagreement, $SITE->fullname, build_navigation(array(array('name'=>$strpolicyagreement, 'link'=>null, 'type'=>'misc'))));
+    $PAGE->set_title($strpolicyagreement);
+    $PAGE->set_heading($SITE->fullname);
+    $PAGE->navbar->add($strpolicyagreement);
 
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strpolicyagreement);
 
     $mimetype = mimeinfo('type', $CFG->sitepolicy);

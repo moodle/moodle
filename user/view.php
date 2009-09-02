@@ -74,23 +74,26 @@
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 
-    $navlinks = array();
+    $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+        $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
     }
+    $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_SETTING, $link);
 
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
 
     if (!$currentuser) {
+
+        $PAGE->set_title("$strpersonalprofile: ");
+        $PAGE->set_heading("$strpersonalprofile: ");
+
         if ($course->id == SITEID) {  // Reduce possibility of "browsing" userbase at site level
             if ($CFG->forceloginforprofiles and !isteacherinanycourse()
                     and !isteacherinanycourse($user->id)
                     and !has_capability('moodle/user:viewdetails', $usercontext)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
 
-                $navlinks[] = array('name' => $struser, 'link' => null, 'type' => 'misc');
-                $navigation = build_navigation($navlinks);
-
-                print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
+                $PAGE->navbar->add($struser);
+                echo $OUTPUT->header();
                 echo $OUTPUT->heading(get_string('usernotavailable', 'error'));
                 echo $OUTPUT->footer();
                 exit;
@@ -104,14 +107,10 @@
 
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
                 if (has_capability('moodle/course:view', $coursecontext)) {
-                    $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
+                    $PAGE->navbar->add($fullname);
                     echo $OUTPUT->heading(get_string('notenrolled', $fullname));
                 } else {
-                    $navlinks[] = array('name' => $struser, 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
+                    $PAGE->navbar->add($struser);
                     echo $OUTPUT->heading(get_string('notenrolledprofile'));
                 }
                 echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
@@ -124,12 +123,9 @@
         // If groups are in use, make sure we can see that group
         if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
             require_login();
-
             ///this is changed because of mygroupid
             $gtrue = (bool)groups_get_all_groups($course->id, $user->id);
             if (!$gtrue) {
-                $navigation = build_navigation($navlinks);
-                print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                 print_error("groupnotamember", '', "../course/view.php?id=$course->id");
             }
         }
@@ -138,13 +134,10 @@
 
 /// We've established they can see the user's name at least, so what about the rest?
 
-    $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
-
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->fullname: $strpersonalprofile: $fullname", $course->fullname,
-                 $navigation, "", "", true, "&nbsp;", navmenu($course));
-
+    $PAGE->navbar->add($struser);
+    $PAGE->set_title("$course->fullname: $strpersonalprofile: $fullname");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
 
     if (($course->id != SITEID) and ! isguest() ) {   // Need to have access to a course to see that info
         if (!has_capability('moodle/course:view', $coursecontext, $user->id)) {

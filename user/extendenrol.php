@@ -81,11 +81,11 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
 /// Print headers
 
-$navlinks = array();
-$navlinks[] = array('name' => get_string('extendenrol'), 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add(get_string('extendenrol'));
+$PAGE->set_title("$course->shortname: ".get_string('extendenrol'));
+$PAGE->set_heading( $course->fullname);
 
-print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+echo $OUTPUT->header();
 
 $timeformat = get_string('strftimedate');
 $unlimited = get_string('unlimited');

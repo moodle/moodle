@@ -41,15 +41,14 @@ if (!empty($users) && !empty($content) && confirm_sesskey()) {
     redirect("$CFG->wwwroot/user/index.php?id=$id");
 }
 
-/// Print headers
-
 $straddnote = get_string('groupaddnewnote', 'notes');
 
-$navlinks = array();
-$navlinks[] = array('name' => $straddnote, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($straddnote);
+$PAGE->set_title("$course->shortname: ".get_string('extendenrol'));
+$PAGE->set_heading($course->fullname);
 
-print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+/// Print headers
+echo $OUTPUT->header();
 
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 

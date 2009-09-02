@@ -77,13 +77,12 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     redirect("$CFG->wwwroot/user/index.php?id=$id", get_string('changessaved'));
 }
 
+$PAGE->navbar->add(get_string('extendenrol'));
+$PAGE->set_title("$course->shortname: ".get_string('extendenrol'));
+$PAGE->set_heading($course->fullname);
+
 /// Print headers
-
-$navlinks = array();
-$navlinks[] = array('name' => get_string('extendenrol'), 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-
-print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
+echo $OUTPUT->header();
 
 $timeformat = get_string('strftimedate');
 $unlimited = get_string('unlimited');

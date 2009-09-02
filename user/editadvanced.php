@@ -60,7 +60,7 @@
     }
 
     if ($user->deleted) {
-        print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('userdeleted'));
         echo $OUTPUT->footer();
         die;
@@ -203,8 +203,13 @@
     } else if (!empty($USER->newadminuser)) {
         $strinstallation = get_string('installation', 'install');
         $strprimaryadminsetup = get_string('primaryadminsetup');
-        $navigation = build_navigation(array(array('name'=>$strprimaryadminsetup, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+
+        $PAGE->navbar->add($strprimaryadminsetup);
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation);
+        $PAGE->set_cacheable(false);
+
+        echo $OUTPUT->header();
         echo $OUTPUT->box(get_string('configintroadmin', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
         echo '<br />';
     } else {
@@ -213,17 +218,19 @@
         $strnewuser       = get_string('newuser');
         $userfullname     = fullname($user, true);
 
-        $navlinks = array();
+        $link = null;
         if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-            $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+            $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
         }
-        $navlinks[] = array('name' => $userfullname,
-                            'link' => "view.php?id=$user->id&amp;course=$course->id",
-                            'type' => 'misc');
-        $navlinks[] = array('name' => $streditmyprofile, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-        print_header("$course->shortname: $streditmyprofile", $course->fullname, $navigation, "");
+        $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_SETTING, $link);
+        $link = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
+        $PAGE->navbar->add($userfullname, null, null, navigation_node::TYPE_SETTING, $link);
+        $PAGE->navbar->add($streditmyprofile);
 
+        $PAGE->set_title("$course->shortname: $streditmyprofile");
+        $PAGE->set_heading($course->fullname);
+
+        echo $OUTPUT->header();
         /// Print tabs at the top
         $showroles = 1;
         $currenttab = 'editprofile';

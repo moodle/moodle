@@ -21,13 +21,13 @@ $pluginstr = get_string('plugin', 'repository');
 
 require_login($course, false);
 
-$navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
-$navlinks[] = array('name' => $strrepos, 'link' => null, 'type' => 'misc');
+$link = new moodle_url($CFG->wwwroot . '/user/view.php', array('id'=>$user->id));
+$PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_SETTING, $link);
+$PAGE->navbar->add($strrepos);
+$PAGE->set_title("$course->fullname: $fullname: $strrepos");
+$PAGE->set_heading($course->fullname);
 
-$navigation = build_navigation($navlinks);
-
-print_header("$course->fullname: $fullname: $strrepos", $course->fullname,
-             $navigation, "", "", true, "&nbsp;", navmenu($course));
+echo $OUTPUT->header();
 
 $currenttab = 'repositories';
 include('tabs.php');

@@ -15,7 +15,11 @@ $preferences = get_user_preferences(null, null, $user->id);
 $a = new stdClass();
 $a->fullname = fullname($user, true);
 $stremailupdate = get_string('auth_emailupdate', 'auth_email', $a);
-print_header(format_string($SITE->fullname) . ": $stremailupdate", format_string($SITE->fullname) . ": $stremailupdate");
+
+$PAGE->set_title(format_string($SITE->fullname) . ": $stremailupdate");
+$PAGE->set_heading(format_string($SITE->fullname) . ": $stremailupdate");
+
+echo $OUTPUT->header();
 
 if (empty($preferences['newemailattemptsleft'])) {
     redirect("$CFG->wwwroot/user/view.php?id=$user->id");

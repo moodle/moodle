@@ -56,21 +56,19 @@
 
     $strtitle = get_string('coursemessage');
 
-    if (empty($messagebody)) {
-        $formstart = "theform.messagebody";
-    } else {
-        $formstart = "";
-    }
-
-    $navlinks = array();
+    $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $navlinks[] = array('name' => get_string('participants'), 'link' => "index.php?id=$course->id", 'type' => 'misc');
+        $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
     }
-    $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add(get_string('participants'), null, null, navigation_node::TYPE_SETTING, $link);
+    $PAGE->navbar->add($strtitle);
+    $PAGE->set_title($strtitle);
+    $PAGE->set_heading($strtitle);
+    if (empty($messagebody)) {
+        $PAGE->set_focuscontrol('theform.messagebody');
+    }
 
-    print_header($strtitle,$strtitle,$navigation,$formstart);
-
+    echo $OUTPUT->header();
     // if messaging is disabled on site, we can still allow users with capabilities to send emails instead
     if (empty($CFG->messaging)) {
         echo $OUTPUT->notification(get_string('messagingdisabled','message'));

@@ -29,14 +29,7 @@ $display = true; // set this to false in the conditions to stop processing
 
 require_login($course, false);
 
-$navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
-$navlinks[] = array('name' => $strportfolios, 'link' => null, 'type' => 'misc');
-
-$navigation = build_navigation($navlinks);
-
-print_header("$course->fullname: $fullname: $strportfolios", $course->fullname,
-             $navigation, "", "", true, "&nbsp;", navmenu($course));
-
+echo $OUTPUT->header();
 $currenttab = 'portfolioconf';
 $showroles = 1;
 include('tabs.php');
