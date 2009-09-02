@@ -62,12 +62,12 @@ abstract class moodle_external {
             $nextdescriptionkey = key($description);
             if (isset($nextdescriptionkey)) {
                 $this->clean_params($description[$nextdescriptionkey], $params[key($params)]);
-            } else {            
+            } else {
                 throw new moodle_exception('wswrongparams');
             }
         }
         else {
-            if (is_object($params)) { //is it a object
+            if (is_object($params)) { //it's an object
                 $this->clean_object($description, $params);
             }
             else { //it's a primary type
@@ -79,18 +79,22 @@ abstract class moodle_external {
 
     protected function  clean_object($objectdescription, &$paramobject) {
         foreach (get_object_vars($paramobject) as $propertyname => $propertyvalue) {
-            if (is_array($propertyvalue)) {
-                if (isset($objectdescription->$propertyname)) {
-                    $this->clean_params($objectdescription->$propertyname, $propertyvalue);
+            if (!isset($objectdescription->$propertyname)) { //if the param is not defined into the web service description
+                throw new moodle_exception('wswrongparams'); //throw exception
+            }
+            if (is_array($propertyvalue)) { //the object property is a list
+                $this->clean_params($objectdescription->$propertyname, $propertyvalue);
+                $paramobject->$propertyname = $propertyvalue;
+
+            }
+            else {
+                if (is_object($propertyvalue)) { //the object property is an object
+                    $this->clean_object($objectdescription->$propertyname, $propertyvalue);
                     $paramobject->$propertyname = $propertyvalue;
-                } else {               
-                    throw new moodle_exception('wswrongparams');
                 }
-            } else {
-                if (isset($objectdescription->$propertyname)) {          
+                else { //the object property is a primary type
                     $paramobject->$propertyname = clean_param($propertyvalue, $objectdescription->$propertyname);
-                } else { 
-                    throw new moodle_exception('wswrongparams');
+
                 }
             }
         }

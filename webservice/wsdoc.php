@@ -96,8 +96,8 @@ function generate_functionlist () {
 EOF;
                 $arrayparams = array();
                 $comma="";
+                //TODO: this is not an array anymore!!! (all algo function)
                 foreach($functiondescription['params'] as $param => $type) {
-                //  $type = converterMoodleParamIntoWsParam($type);
                     $documentation .= <<<EOF
                 <span style=color:green>{$comma} {$type} <b>{$param}</b>
 EOF;
@@ -110,7 +110,6 @@ EOF;
 EOF;
                 if (array_key_exists('return', $functiondescription)) {
                     foreach($functiondescription['return'] as $return => $type) {
-                    //   $thetype = converterMoodleParamIntoWsParam($type);
                         $documentation .= <<<EOF
                 <span style=color:blue>
                 <i>
@@ -137,7 +136,6 @@ EOF;
 EOF;
                     }
                     else {
-                    // $type = converterMoodleParamIntoWsParam($type);
                         $documentation .= <<<EOF
          <b>{$param}</b> : {$type} <br>
 EOF;
@@ -167,26 +165,28 @@ function convertDescriptionType(&$description) {
         }
         else {
             if (is_object($type)) { //is it a object
-               convertObjectTypes($type);
+                convertObjectTypes($type);
             }
             else { //it's a primary type
-            
-            $type = converterMoodleParamIntoWsParam($type);
+                $type = converterMoodleParamIntoWsParam($type);
             }
         }
-      
     }
 }
 
 function convertObjectTypes(&$type) {
-   foreach (get_object_vars($type) as $propertyname => $propertytype) {
-       if (is_array($propertytype)) {
-           convertDescriptionType($propertytype);
-           $type->$propertyname = $propertytype;
-       } else {
-           $type->$propertyname = converterMoodleParamIntoWsParam($propertytype);
-       }
-   }
+    foreach (get_object_vars($type) as $propertyname => $propertytype) { //browse all properties of the object
+        if (is_array($propertytype)) { //the property is an array
+            convertDescriptionType($propertytype);
+            $type->$propertyname = $propertytype;
+        } else if (is_object($propertytype)) { //the property is an object
+                convertObjectTypes($propertytype);
+                $type->$propertyname = $propertytype;
+            }
+            else { //the property is a primary type
+                $type->$propertyname = converterMoodleParamIntoWsParam($propertytype);
+            }
+    }
 }
 
 /**
@@ -208,7 +208,7 @@ function converterMoodleParamIntoWsParam($moodleparam) {
         case PARAM_ALPHANUM:
             return "string";
             break;
-         case PARAM_ALPHA:
+        case PARAM_ALPHA:
             return "string";
             break;
         case PARAM_RAW:
@@ -238,8 +238,6 @@ function converterMoodleParamIntoWsParam($moodleparam) {
             return "string";
             break;
         default:
-            
-            //return get_object_vars($moodleparam);
             return "object";
             break;
     }
