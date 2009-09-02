@@ -1860,8 +1860,9 @@ class navbar extends navigation_node {
         } else if ($this->page->settingsnav->contains_active_node()) {
             // Parse the settings navigation to get the active node
             $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
+        } else {
+            $output .= $this->parse_branch_to_html($this, true, $customchildren);
         }
-
         // Check if there are any children added by code
         if ($customchildren) {
             // Add the custom children
@@ -1887,6 +1888,7 @@ class navbar extends navigation_node {
             $output .= '<li class="first">'.parent::content(true).'</li>';
         }
         $count = 0;
+        if (!is_array($navarray)) return $output;
         // Iterate the navarray and display each node
         while (count($navarray)>0) {
             // Sanity check make sure we don't display WAY too much information
