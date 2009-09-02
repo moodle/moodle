@@ -37,7 +37,6 @@ final class user_external extends moodle_external {
  */
     function __construct () {
         $this->descriptions = array();
-        ///The desciption of the web service
 
         $user = new object();
         $user->password = PARAM_ALPHANUMEXT;
@@ -62,7 +61,9 @@ final class user_external extends moodle_external {
         $return->userids = array(PARAM_NUMBER);
         $this->descriptions['create_users']   = array( 'params' => $params,
             'optionalinformation' => 'Username, password, firstname, and username are the only mandatory',
-            'return' => $return);
+            'return' => $return,
+            'service' => 'user',
+            'requiredlogin' => 0);
 
         $user = new object();
         $user->id = PARAM_NUMBER;
@@ -87,7 +88,9 @@ final class user_external extends moodle_external {
         $return->users = array($user);
         $this->descriptions['get_users']     = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => $return);
+            'return' => $return,
+            'service' => 'user',
+            'requiredlogin' => 0);
 
         $params = new object();
         $params->usernames = array(PARAM_ALPHANUMEXT);
@@ -95,14 +98,18 @@ final class user_external extends moodle_external {
         $return->result = PARAM_BOOL;
         $this->descriptions['delete_users']   = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => $return);
+            'return' => $return,
+            'service' => 'user',
+            'requiredlogin' => 0);
 
         $user->newusername = PARAM_ALPHANUMEXT;
         $params = new object();
         $params->users = array($user);
         $this->descriptions['update_users']   = array( 'params' => $params,
             'optionalparams' => 'All params are not mandatory',
-            'return' => $return);
+            'return' => $return,
+            'service' => 'user',
+            'requiredlogin' => 0);
     }
 
     /**
@@ -160,8 +167,10 @@ final class user_external extends moodle_external {
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
 
             $this->clean_function_params('delete_users', $params);
+            
             foreach ($params->usernames as $username) {
                 $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
+             
                 if (empty($user)) {
                     throw new moodle_exception('wscouldnotdeletenoexistinguser');
                 }
