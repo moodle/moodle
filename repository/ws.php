@@ -8,18 +8,18 @@
     require_login();
 
 /// Parameters
-    $page  = optional_param('page', '', PARAM_RAW);           // page
+    $action =    optional_param('action', '', PARAM_ALPHA);
+    $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
-    $env   = optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
-    $file  = optional_param('file', '', PARAM_RAW);           // file to download
-    $title = optional_param('title', '', PARAM_FILE);         // new file name
-    $itemid = optional_param('itemid', '', PARAM_INT);
-    $action = optional_param('action', '', PARAM_ALPHA);
-    $ctx_id = optional_param('ctx_id', SITEID, PARAM_INT);    // context ID
+    $contextid = optional_param('ctx_id', SITEID, PARAM_INT);    // context ID
+    $env   =     optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
+    $file  =     optional_param('file', '', PARAM_RAW);           // file to download
+    $title =     optional_param('title', '', PARAM_FILE);         // new file name
+    $itemid =    optional_param('itemid', '', PARAM_INT);
+    $page  =     optional_param('page', '', PARAM_RAW);           // page
     $repo_id   = optional_param('repo_id', 1, PARAM_INT);     // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);          // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
-    $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $search_text = optional_param('s', '', PARAM_CLEANHTML);
 
 /// Headers to make it not cacheable
@@ -29,7 +29,7 @@
     $err->client_id = $client_id;
 
 /// Check permissions
-    if (! (isloggedin() && repository::check_context($ctx_id)) ) {
+    if (! (isloggedin() && repository::check_context($contextid)) ) {
         $err->e = get_string('nopermissiontoaccess', 'repository');
         die(json_encode($err));
     }
@@ -62,7 +62,7 @@
             }
             break;
         case 'gsearch':     //  Global Search
-            $repos = repository::get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
+            $repos = repository::get_instances(array(get_context_instance_by_id($contextid), get_system_context()));
             $list = array();
             foreach($repos as $repo){
                 if ($repo->global_search()) {
@@ -104,7 +104,7 @@
         require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
         $classname = 'repository_' . $type;
         try {
-            $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true, 'name'=>$repository->name, 'client_id'=>$client_id));
+            $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'client_id'=>$client_id));
         } catch (repository_exception $e){
             $err->e = $e->getMessage();
             die(json_encode($err));
@@ -208,7 +208,16 @@ EOD;
                 if (empty($itemid)) {
                     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
                 }
-                if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
+                if (is_array($filepath)) {
+                    // file api don't have real file path, so we need more file api specific info for "local" plugin
+                    $fileinfo = $filepath;
+                    $info = array();
+                    $info['client_id'] = $client_id;
+                    $info['file'] = $fileinfo['title'];
+                    $info['id'] = $itemid;
+                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+                    echo json_encode($info);
+                } else if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
                     // youtube plugin return a url instead a file path
                     $url = $filepath;
                     echo json_encode(array(
@@ -222,15 +231,6 @@ EOD;
                                 'file'=>$url
                                 )
                             );
-                } else if (is_array($filepath)) {
-                    // file api don't have real file path, so we need more file api specific info for "local" plugin
-                    $fileinfo = $filepath;
-                    $info = array();
-                    $info['client_id'] = $client_id;
-                    $info['file'] = $fileinfo['title'];
-                    $info['id'] = $itemid;
-                    $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-                    echo json_encode($info);
                 } else {
                     // normal file path name
                     $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
