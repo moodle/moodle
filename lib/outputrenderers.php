@@ -1851,6 +1851,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'name' => $field->name,
                 'id' => $field->id,
                 'value' => $field->value,
+                'disabled' => $field->disabled,
                 'style' => $field->style,
                 'alt' => $field->alt,
                 'title' => $field->title,

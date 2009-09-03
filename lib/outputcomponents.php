@@ -878,6 +878,10 @@ class html_field extends labelled_html_component {
      * @var string $maxlength The maxlength attribute of the field (only applies to text type)
      */
     public $maxlength;
+    /**
+     * @var boolean $disabled Whether or not this field is disabled
+     */
+    public $disabled = false;
 
     public function __construct() {
         $this->label = new html_label();
