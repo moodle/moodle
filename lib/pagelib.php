@@ -350,9 +350,9 @@ class moodle_page {
      * should normally use this in preference to $ME or $FULLME.)
      */
     public function get_url() {
+        global $FULLME;
         if (is_null($this->_url)) {
-            debugging('This page did no call $PAGE->set_url(...). Relaying on a guess.', DEBUG_DEVELOPER);
-            global $FULLME;
+            debugging('This page did not call $PAGE->set_url(...). Using '.s($FULLME), DEBUG_DEVELOPER);
             $this->_url = new moodle_url($FULLME);
             // Make sure the guessed URL cannot lead to dangerous redirects.
             $this->_url->remove_params('sesskey');
