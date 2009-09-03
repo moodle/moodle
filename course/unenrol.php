@@ -83,12 +83,10 @@
 
 
     $strunenrol = get_string('unenrol');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strunenrol, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->shortname: $strunenrol", $course->fullname, $navigation);
-
+    $PAGE->navbar->add($strunenrol);
+    $PAGE->set_title("$course->shortname: $strunenrol");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
     if ($userid) {
         if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('nousers');

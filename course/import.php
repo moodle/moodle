@@ -31,11 +31,12 @@
     }
 
     $strimport = get_string('import');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strimport, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
 
-    print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, $navigation);
+    $PAGE->set_title($course->fullname.': '.$strimport);
+    $PAGE->set_heading($course->fullname.': '.$strimport);
+    $PAGE->navbar->add($strimport);
+
+    echo $OUTPUT->header();
 
     $imports = get_plugin_list('import');
 

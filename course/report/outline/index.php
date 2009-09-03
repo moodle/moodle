@@ -30,13 +30,12 @@
     $strreports        = get_string('reports');
     $strviews          = get_string('views');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $stractivityreport, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->shortname: $stractivityreport", $course->fullname, $navigation);
-
+    $PAGE->set_title($course->shortname .': '. $stractivityreport);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($stractivityreport);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($course->fullname));
 
     if (!$logstart = $DB->get_field_sql("SELECT MIN(time) FROM {log}")) {

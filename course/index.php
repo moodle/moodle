@@ -55,10 +55,11 @@
             $strcourses = get_string('courses');
             $strcategories = get_string('categories');
 
-            $navlinks = array();
-            $navlinks[] = array('name'=>$strcategories,'link'=>'','type'=>'misc');
-            $navigation = build_navigation($navlinks);
-            print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_category_button());
+            $PAGE->navbar->add($strcategories);
+            $PAGE->set_title("$site->shortname: $strcategories");
+            $PAGE->set_heading($strcourses);
+            $PAGE->set_button(update_category_button());
+            echo $OUTPUT->header();
             echo $OUTPUT->heading($strcategories);
             echo skip_main_destination();
             echo $OUTPUT->box_start('categorybox');
@@ -66,10 +67,11 @@
             echo $OUTPUT->box_end();
             print_course_search();
         } else {
-            $strfulllistofcourses = get_string('fulllistofcourses');
-            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses,
-                    build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
-                         '', '', true, update_category_button());
+            $PAGE->navbar->add($strfulllistofcourses);
+            $PAGE->set_title("$site->shortname: $strfulllistofcourses");
+            $PAGE->set_heading($strfulllistofcourses);
+            $PAGE->set_button(update_category_button());
+            echo $OUTPUT->header();
             echo skip_main_destination();
             echo $OUTPUT->box_start('courseboxes');
             print_courses(0);

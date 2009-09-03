@@ -26,7 +26,8 @@
     $strhelptext = get_string("helptext");
     $stractivities = get_string("activities");
 
-    print_header($strscales);
+    $PAGE->set_title($strscales);
+    echo $OUTPUT->header();
 
     if ($scaleid) {
         if ($scale = $DB->get_record("scale", array('id'=>$scaleid))) {

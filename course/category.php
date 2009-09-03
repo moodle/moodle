@@ -149,9 +149,11 @@
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
         admin_externalpage_print_header();
-    } else {
-        $navbaritem = print_course_search('', true, 'navbar');
-        print_header("$site->shortname: $category->name", "$site->fullname: $strcourses", array(), '', '', true, $navbaritem);
+    } else {        
+        $PAGE->set_title("$site->shortname: $category->name");
+        $PAGE->set_heading("$site->fullname: $strcourses");
+        $PAGE->set_button(print_course_search('', true, 'navbar'));
+        echo $OUTPUT->header();
     }
 
 /// Print link to roles

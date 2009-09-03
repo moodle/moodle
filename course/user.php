@@ -32,7 +32,7 @@
     }
 
     if ($user->deleted) {
-        print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('userdeleted'));
         echo $OUTPUT->footer();
         die;
@@ -101,19 +101,18 @@
     $strmode           = get_string($mode);
     $fullname          = fullname($user, true);
 
-    $navlinks = array();
-
+    $link = null;
     if ($course->id != SITEID && has_capability('moodle/course:viewparticipants', $coursecontext)) {
-        $navlinks[] = array('name' => $strparticipants, 'link' => "../user/index.php?id=$course->id", 'type' => 'misc');
+        $link = new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$course->id));
     }
-
-    $navlinks[] = array('name' => $fullname, 'link' => "../user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $stractivityreport, 'link' => null, 'type' => 'misc');
-    $navlinks[] = array('name' => $strmode, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname, $navigation);
-
+    $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_CUSTOM, $link);
+    $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($stractivityreport);
+    $PAGE->navbar->add($strmode);
+    $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
 
 /// Print tabs at top
 /// This same call is made in:

@@ -118,30 +118,25 @@
     $straddnewcourse = get_string("addnewcourse");
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");
-    $navlinks = array();
 
     if (!empty($course)) {
-        $navlinks[] = array('name' => $streditcoursesettings,
-                            'link' => null,
-                            'type' => 'misc');
+        $PAGE->navbar->add($streditcoursesettings);
         $title = $streditcoursesettings;
         $fullname = $course->fullname;
     } else {
-        $navlinks[] = array('name' => $stradministration,
-                            'link' => "$CFG->wwwroot/$CFG->admin/index.php",
-                            'type' => 'misc');
-        $navlinks[] = array('name' => $strcategories,
-                            'link' => 'index.php',
-                            'type' => 'misc');
-        $navlinks[] = array('name' => $straddnewcourse,
-                            'link' => null,
-                            'type' => 'misc');
+        $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($strcategories, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($straddnewcourse);
         $title = "$site->shortname: $straddnewcourse";
         $fullname = $site->fullname;
     }
 
-    $navigation = build_navigation($navlinks);
-    print_header($title, $fullname, $navigation, $editform->focus());
+    $PAGE->set_title($title);
+    $PAGE->set_heading($fullname);
+    $PAGE->set_focuscontrol($editform->focus());
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($streditcoursesettings);
 
     $editform->display();

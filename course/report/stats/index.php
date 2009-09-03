@@ -50,14 +50,13 @@
         $strreports = get_string("reports");
         $strstats = get_string('stats');
 
-        $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
-
-        $navlinks = array();
-        $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
-        $navlinks[] = array('name' => $strstats, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-
-        print_header("$course->shortname: $strstats", $course->fullname, $navigation, '', '', true, '&nbsp;', $menu);
+        $PAGE->set_title("$course->shortname: $strstats");
+        $PAGE->set_heading($course->fullname);
+        $PAGE->set_headingmenu();
+        $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($strstats);
+        echo $OUTPUT->header(report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php"));
     }
 
     require($CFG->dirroot.'/course/report/stats/report.php');

@@ -57,7 +57,11 @@
         redirect($returnurl);
 
     } else if ($data = $requestform->get_data()) {
-        print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
+        $PAGE->set_title($strtitle);
+        $PAGE->set_heading($strtitle);
+        $PAGE->navbar->add($strtitle);
+        $PAGE->set_focuscontrol($requestform->focus());
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strtitle);
 
     /// Record the request.
@@ -91,7 +95,12 @@
     }
 
 /// Show the request form.
-    print_header($strtitle, $strtitle, build_navigation($strtitle), $requestform->focus());
+
+    $PAGE->set_title($strtitle);
+    $PAGE->set_heading($strtitle);
+    $PAGE->navbar->add($strtitle);
+    $PAGE->set_focuscontrol($requestform->focus());
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strtitle);
     $requestform->display();
     echo $OUTPUT->footer();

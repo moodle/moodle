@@ -33,8 +33,8 @@
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
 
-    print_header(get_string("summaryof", "", $course->fullname));
-
+    $PAGE->set_title(get_string("summaryof", "", $course->fullname));
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
 
     if ($course->guest || $course->password) {

@@ -25,11 +25,12 @@
         admin_externalpage_print_header();
 
     } else {
-        $navlinks = array();
-        $navlinks[] = array('name' => $strreports, 'link' => "$CFG->wwwroot/course/report.php?id=$course->id", 'type' => 'misc');
-        $navlinks[] = array('name' => $strlogs, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-        print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation, '');
+        $PAGE->set_title($course->shortname .': '. $strlogs);
+        $PAGE->set_heading($course->fullname);
+        $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($strlogs);
+        echo $OUTPUT->header();
     }
 
     echo $OUTPUT->heading(get_string('loglive', 'coursereport_log'));

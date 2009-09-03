@@ -16,10 +16,10 @@
 
     $strreports = get_string('reports');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strreports, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, $navigation);
+    $PAGE->navbar->add($strreports);
+    $PAGE->set_title($course->fullname.': '.$strreports);
+    $PAGE->set_heading($course->fullname.': '.$strreports);
+    echo $OUTPUT->header();
 
     $reports = get_plugin_list('coursereport');
 

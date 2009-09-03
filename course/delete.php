@@ -27,19 +27,21 @@
     }
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
-    $navlinks = array();
 
+    $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php/'));
+    $PAGE->navbar->add($strcategories, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($category->name, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
 
-        $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
-        $navlinks[] = array('name' => $strcategories, 'link' => "index.php", 'type' => 'misc');
-        $navlinks[] = array('name' => $category->name, 'link' => "category.php?id=$course->category", 'type' => 'misc');
-        $navlinks[] = array('name' => $strdeletecheck, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-
-        print_header("$site->shortname: $strdeletecheck", $site->fullname, $navigation);
+        $PAGE->navbar->add($strdeletecheck);
+        $PAGE->set_title("$site->shortname: $strdeletecheck");
+        $PAGE->set_heading($site->fullname);
+        echo $OUTPUT->header();
 
         $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .  " (" . format_string($course->shortname) . ")";
         echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "category.php?id=$course->category");
@@ -62,14 +64,10 @@
 
     $strdeletingcourse = get_string("deletingcourse", "", format_string($course->shortname));
 
-    $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $strcategories, 'link' => "index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $category->name, 'link' => "category.php?id=$course->category", 'type' => 'misc');
-    $navlinks[] = array('name' => $strdeletingcourse, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header("$site->shortname: $strdeletingcourse", $site->fullname, $navigation);
-
+    $PAGE->navbar->add($strdeletingcourse);
+    $PAGE->set_title("$site->shortname: $strdeletingcourse");
+    $PAGE->set_heading($site->fullname);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
 
     delete_course($course);

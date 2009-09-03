@@ -83,10 +83,14 @@ if($csv) {
     // Navigation and header
     $strreports = get_string("reports");
     $strcompletion = get_string('completionreport','completion');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $strcompletion, 'link' => null, 'type' => 'misc');
-    print_header($strcompletion,$course->fullname,build_navigation($navlinks));
+
+    $PAGE->set_title($strcompletion);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strcompletion);
+    echo $OUTPUT->header();
+
     if($svgcleverness) {
         $PAGE->requires->yui_lib('event');
         $PAGE->requires->js('course/report/progress/textrotate.js');

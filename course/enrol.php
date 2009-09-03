@@ -67,7 +67,7 @@
             foreach ($roles as $role) {
                 if ($role->timestart and ($role->timestart >= time())) {
                     $message = get_string('enrolmentnotyet', '', userdate($student->timestart));
-                    print_header();
+                    echo $OUTPUT->header();
                     notice($message, "$CFG->wwwroot/index.php");
                 }
             }
@@ -84,7 +84,10 @@
             ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
             ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
             ) {
-        print_header($course->shortname, $course->fullname, build_navigation(array(array('name'=>$course->shortname,'link'=>'','type'=>'misc'))) );
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
+        $PAGE->navbar->add($course->shortname);
+        echo $OUTPUT->header();
         notice(get_string('notenrollable'), "$CFG->wwwroot/index.php");
     }
 

@@ -43,10 +43,11 @@
     $strcourses   = get_string("courses");
     $strshowall = get_string("showall");
 
-    print_header("$course->shortname: $strassigncourses",
-                 $site->fullname,
-                 build_navigation(array(array('name' => $strassigncourses, 'link' => null, 'type' => 'misc'))), "searchtext");
-
+    $PAGE->navbar->add($strassigncourses);
+    $PAGE->set_title("$course->shortname: $strassigncourses");
+    $PAGE->set_heading($site->fullname);
+    $PAGE->set_focuscontrol("searchtext");
+    echo $OUTPUT->header();
 
 /// Print a help notice about the need to use this page
 

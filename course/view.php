@@ -194,9 +194,12 @@
     }
 
     $title = get_string('course') . ': ' . $course->fullname;
-    $navigation = build_navigation(array());
-    print_header($title, $course->fullname, $navigation, '', '', true,
-                 $buttons, user_login_string($course, $USER), false, $bodytags);
+
+    $PAGE->set_title($title);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($buttons);
+    $PAGE->set_headingmenu(user_login_string($course, $USER));
+    echo $OUTPUT->header();
 
     if ($completion->is_enabled() && ajaxenabled()) {
         // This value tracks whether there has been a dynamic change to the page.

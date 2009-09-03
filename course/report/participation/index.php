@@ -49,11 +49,12 @@
         $action = '';
     }
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $strparticipation, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header("$course->shortname: $strparticipation", $course->fullname, $navigation);
+    $PAGE->set_title($course->shortname .': '. $strparticipation);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strparticipation);
+    echo $OUTPUT->header();
 
     $modinfo = get_fast_modinfo($course);
 

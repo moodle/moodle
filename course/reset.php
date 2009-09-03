@@ -24,8 +24,9 @@ $strreset       = get_string('reset');
 $strresetcourse = get_string('resetcourse');
 $strremove      = get_string('remove');
 
-$navlinks = array(array('name' => $strresetcourse, 'link' => null, 'type' => 'misc'));
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($strresetcourse);
+$PAGE->set_title($course->fullname.': '.$strresetcourse);
+$PAGE->set_heading($course->fullname.': '.$strresetcourse);
 
 $mform = new course_reset_form();
 
@@ -44,7 +45,7 @@ if ($mform->is_cancelled()) {
         $mform = new course_reset_form();
 
     } else {
-        print_header($course->fullname.': '.$strresetcourse, $course->fullname.': '.$strresetcourse, $navigation);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strresetcourse);
 
         $data->reset_start_date_old = $course->startdate;
@@ -73,7 +74,7 @@ if ($mform->is_cancelled()) {
     }
 }
 
-print_header($course->fullname.': '.$strresetcourse, $course->fullname.': '.$strresetcourse, $navigation);
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strresetcourse);
 
 echo $OUTPUT->box(get_string('resetinfo'));

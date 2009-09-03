@@ -55,17 +55,16 @@
         }
     }
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $course->shortname,
-                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                        'type' => 'misc');
-    $navlinks[] = array('name' => get_string('import'),
-                        'link' => "$CFG->wwwroot/course/import.php?id=$course->id",
-                        'type' => 'misc');
-    $navlinks[] = array('name' => $strimportactivities, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add($course->shortname, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(get_string('import'), null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strimportactivities);
 
-    print_header("$course->shortname: $strimportactivities", $course->fullname, $navigation);
+    $PAGE->set_title("$course->shortname: $strimportactivities");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
+
     require_once('mod.php');
 
     echo $OUTPUT->footer();

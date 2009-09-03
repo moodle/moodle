@@ -95,12 +95,12 @@
     $strnovalidcourses = get_string('novalidcourses');
 
     if (empty($search) and empty($blocklist) and empty($modulelist)) {
-        $navlinks = array();
-        $navlinks[] = array('name' => $strcourses, 'link' => "index.php", 'type' => 'misc');
-        $navlinks[] = array('name' => $strsearch, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
+        $PAGE->navbar->add($strcourses, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($strsearch);
+        $PAGE->set_title("$site->fullname : $strsearch");
+        $PAGE->set_heading($site->fullname);
 
-        print_header("$site->fullname : $strsearch", $site->fullname, $navigation, "", "");
+        echo $OUTPUT->header();
         echo $OUTPUT->box_start();
         echo "<center>";
         echo "<br />";
@@ -201,15 +201,16 @@
         }
     }
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcourses, 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => $strsearch, 'link' => 'search.php', 'type' => 'misc');
+    $PAGE->navbar->add($strcourses, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($strsearch, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/search.php'));
     if (!empty($search)) {
-        $navlinks[] = array('name' => "'".s($search)."'", 'link' => null, 'type' => 'misc');
+        $PAGE->navbar->add(s($search));
     }
-    $navigation = build_navigation($navlinks);
+    $PAGE->set_title("$site->fullname : $strsearchresults");
+    $PAGE->set_heading($site->fullname);
+    $PAGE->set_button($searchform);
 
-    print_header("$site->fullname : $strsearchresults", $site->fullname, $navigation, "", "", "", $searchform);
+    echo $OUTPUT->header();
 
     $lastcategory = -1;
     if ($courses) {

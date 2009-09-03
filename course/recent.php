@@ -18,8 +18,6 @@
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    $meta = '<meta name="robots" content="none" />'; // prevent duplicate content in search engines MDL-7299
-
     $lastlogin = time() - COURSE_MAX_RECENT_PERIOD;
     if (!isguestuser() and !empty($USER->lastcourseaccess[$COURSE->id])) {
         if ($USER->lastcourseaccess[$COURSE->id] > $lastlogin) {
@@ -52,11 +50,12 @@
     }
 
     $strrecentactivity = get_string('recentactivity');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strrecentactivity, 'link' => "recent.php?id=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $userinfo, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header("$course->shortname: $strrecentactivity", $course->fullname, $navigation, '', $meta);
+    $PAGE->navbar->add($strrecentactivity, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/course/recent.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($userinfo);
+    $PAGE->set_title("$course->shortname: $strrecentactivity");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo", 3);
 
     $mform->display();
