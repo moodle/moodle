@@ -643,7 +643,7 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
     return $output;
 }
 
-/*
+/**
  * Try and close the current window using JavaScript, either immediately, or after a delay.
  *
  * Echo's out the resulting XHTML & javascript
@@ -658,7 +658,8 @@ function close_window($delay = 0, $reloadopener = false) {
     global $THEME, $PAGE, $OUTPUT;
 
     if (!$PAGE->headerprinted) {
-        print_header(get_string('closewindow'));
+        $PAGE->set_title(get_string('closewindow'));
+        echo $OUTPUT->header();
     } else {
         print_container_end_all(false, $THEME->open_header_containers);
     }
@@ -1813,23 +1814,26 @@ function send_headers($contenttype, $cacheable = true) {
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
 
-    global $COURSE, $CFG;
+    global $COURSE, $CFG, $PAGE, $OUTPUT;
 
-    // if we have no navigation specified, build it
-    if( empty($navigation) ){
-       $navigation = build_navigation('');
+    if ($meta) {
+        throw new coding_exception('The $meta parameter to print_header is no longer supported. '.
+                'You should be able to do everything you want with $PAGE->requires and other such mechanisms.');
+    }
+    if ($usexml) {
+        throw new coding_exception('The $usexml parameter to print_header is no longer supported.');
+    }
+    if ($bodytags) {
+        throw new coding_exception('The $bodytags parameter to print_header is no longer supported.');
     }
 
-    // If old style nav prepend course short name otherwise leave $navigation object alone
-    if (!is_newnav($navigation)) {
-        if ($COURSE->id != SITEID) {
-            $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
-            $navigation = $shortname.' '.$navigation;
-        }
-    }
+    $PAGE->set_title($title);
+    $PAGE->set_heading($heading);
+    $PAGE->set_focuscontrol($focus);
+    $PAGE->set_cacheable(true);
+    $PAGE->set_button($button);
 
-    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $navigation, $focus, $meta,
-                           $cache, $button, $menu, $usexml, $bodytags, true);
+    $output = $OUTPUT->header();
 
     if ($return) {
         return $output;
@@ -2725,7 +2729,8 @@ function notice ($message, $link='', $course=NULL) {
 
     if (!$PAGE->headerprinted) {
         //header not yet printed
-        print_header(get_string('notice'));
+        $PAGE->set_title(get_string('notice'));
+        echo $OUTPUT->header();
     } else {
         print_container_end_all(false, $THEME->open_header_containers);
     }
@@ -2922,7 +2927,9 @@ function print_maintenance_message() {
 
     $PAGE->set_pagetype('maintenance-message');
     $PAGE->set_generaltype('maintenance');
-    print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
+    $PAGE->set_title(strip_tags($SITE->fullname));
+    $PAGE->set_heading($SITE->fullname);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('sitemaintenance', 'admin'));
     if (isset($CFG->maintenance_message) and !html_is_blank($CFG->maintenance_message)) {
         echo $OUTPUT->box_start('maintenance_message generalbox boxwidthwide boxaligncenter');

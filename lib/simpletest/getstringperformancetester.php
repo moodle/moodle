@@ -41,7 +41,10 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $title = 'get_string performance test';
-print_header($title, $title, build_navigation($title));
+$PAGE->navbar->add($title);
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+echo $OUTPUT->header();
 
 $installedlangs = get_list_of_languages();
 $requiredlangs = $TEST_LANGUAGES;

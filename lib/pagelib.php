@@ -1598,7 +1598,7 @@ class page_generic_activity extends page_base {
     // people upgrading legacy code need to copy it. See
     // http://docs.moodle.org/en/Development:Migrating_your_code_code_to_the_2.0_rendering_API
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE, $OUTPUT;
 
         $this->init_full();
         $replacements = array(
@@ -1617,11 +1617,22 @@ class page_generic_activity extends page_base {
         }
         $buttons .= '</tr></table>';
 
-        if (empty($morenavlinks)) {
-            $morenavlinks = array();
+        if (!empty($morenavlinks) && is_array($morenavlinks)) {
+            foreach ($morenavlinks as $navitem) {
+                if (is_array($navitem) && array_key_exists('name', $navitem)) {
+                    $link = null;
+                    if (array_key_exists('link', $navitem)) {
+                        $link = $navitem['link'];
+                    }
+                    $PAGE->navbar->add($navitem['name'], null, null, navigation_node::TYPE_CUSTOM, $link);
+                }
+            }
         }
-        $navigation = build_navigation($morenavlinks, $this->modulerecord);
-        print_header($title, $this->course->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->course, $this->modulerecord), false, $bodytags);
+
+        $PAGE->set_title($title);
+        $PAGE->set_heading($this->course->fullname);
+        $PAGE->set_button($buttons);
+        echo $OUTPUT->heading();
     }
 }
 

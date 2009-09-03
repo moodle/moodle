@@ -171,11 +171,13 @@ if (!empty($dataid)) {
     // todo this will have to change when we have things exporting content outside the course context (eg blogs)
     require_login($course, false, $cm);
 
-    $extranav[] = array('type' => 'title', 'name' => get_string('exporting', 'portfolio'));
-    $navigation = build_navigation($extranav, $cm);
+    foreach ($extranav as $navitem) {
+        $PAGE->navbar->add($navitem['name']);
+    }
+    $PAGE->navbar->add(get_string('exporting', 'portfolio'));
 
-    // finally! set up the exporter object with the portfolio instance, caller information, and navigation elements
-    $exporter = new portfolio_exporter($instance, $caller, $callbackfile, $navigation);
+    // finally! set up the exporter object with the portfolio instance, and caller information elements
+    $exporter = new portfolio_exporter($instance, $caller, $callbackfile);
 
     // set the export-specific variables, and save.
     $exporter->set('user', $USER);

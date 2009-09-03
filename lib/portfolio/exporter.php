@@ -126,8 +126,10 @@ class portfolio_exporter {
     * @param portfolio_caller_base subclass $caller portfolio caller (passed by reference)
     * @param string $callerfile path to callerfile (relative to dataroot)
     * @param string $navigation result of build_navigation (passed to print_header)
+    *                deprecated argument as of Moodle 2.0, please use $PAGE methods
+    *                instead.
     */
-    public function __construct(&$instance, &$caller, $callerfile, $navigation) {
+    public function __construct(&$instance, &$caller, $callerfile, $navigation='') {
         $this->instance =& $instance;
         $this->caller =& $caller;
         if ($instance) {
@@ -572,11 +574,13 @@ class portfolio_exporter {
     * @param string $headerstring key for a portfolio language string
     */
     public function print_header($headingstr, $summary=true) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
         $titlestr = get_string('exporting', 'portfolio');
         $headerstr = get_string('exporting', 'portfolio');
 
-        print_header($titlestr, $headerstr, $this->navigation);
+        $PAGE->set_title($titlestr);
+        $PAGE->set_heading($headerstr);
+        echo $OUTPUT->header();
         $hstr = get_string($headingstr, 'portfolio');
         if (strpos($hstr, '[[') === 0) {
             $hstr = $headingstr;
@@ -788,9 +792,12 @@ class portfolio_exporter {
     * through the usage of the backbutton
     */
     public static function print_expired_export() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
         $title = get_string('exportexpired', 'portfolio');
-        print_header($title, $title, build_navigation(get_string('exportexpired', 'portfolio')));
+        $PAGE->navbar->add(get_string('exportexpired', 'portfolio'));
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('exportexpireddesc', 'portfolio'));
         echo $OUTPUT->continue_button($CFG->wwwroot);
         echo $OUTPUT->footer();

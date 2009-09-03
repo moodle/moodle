@@ -770,7 +770,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
  * @global object
  */
 function upgrade_started($preinstall=false) {
-    global $CFG, $DB, $PAGE;
+    global $CFG, $DB, $PAGE, $OUTPUT;
 
     static $started = false;
 
@@ -786,9 +786,11 @@ function upgrade_started($preinstall=false) {
             $strupgrade  = get_string('upgradingversion', 'admin');
             $PAGE->set_generaltype('maintenance');
             upgrade_get_javascript();
-            print_header($strupgrade.' - Moodle '.$CFG->target_release, $strupgrade,
-                build_navigation(array(array('name' => $strupgrade, 'link' => null, 'type' => 'misc'))), '',
-                '', false, '&nbsp;', '&nbsp;');
+            $PAGE->set_title($strupgrade.' - Moodle '.$CFG->target_release);
+            $PAGE->set_heading($strupgrade);
+            $PAGE->navbar->add($strupgrade);
+            $PAGE->set_cacheable(false);
+            echo $OUTPUT->header();
         }
 
         ignore_user_abort(true);

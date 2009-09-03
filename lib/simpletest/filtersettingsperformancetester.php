@@ -41,7 +41,10 @@ require_capability('moodle/site:config', $syscontext);
 $baseurl = $CFG->wwwroot . '/lib/simpletest/filtersettingsperformancetester.php';
 
 $title = 'filter_get_active_in_context performance test';
-print_header($title, $title, build_navigation($title));
+$PAGE->navbar->add($title);
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+echo $OUTPUT->header();
 
 // Complain if we get this far and $CFG->unittestprefix is not set.
 if (empty($CFG->unittestprefix)) {

@@ -2197,8 +2197,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
                 default:    /// Guests not allowed
                     $strloggedinasguest = get_string('loggedinasguest');
-                    print_header_simple('', '',
-                            build_navigation(array(array('name' => $strloggedinasguest, 'link' => null, 'type' => 'misc'))));
+                    $PAGE->navbar->add($strloggedinasguest);
+                    print_header_simple();
                     if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     } else {

@@ -5185,8 +5185,11 @@ function admin_externalpage_print_header($focus='') {
         // During initial install.
         $strinstallation = get_string('installation', 'install');
         $strsettings = get_string('settings');
-        $navigation = build_navigation(array(array('name'=>$strsettings, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation, $strinstallation, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+        $PAGE->navbar->add($strsettings);
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         return;
     }
 
@@ -5210,7 +5213,11 @@ function admin_externalpage_print_header($focus='') {
         $buttons = $OUTPUT->button(html_form::make_button($PAGE->url->out(false), $options, $caption, 'get'));
     }
 
-    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, array(), $focus, '', true, $buttons, '');
+    $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
+    $PAGE->set_heading($SITE->fullname);
+    $PAGE->set_focuscontrol($focus);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 }
 
 /**
