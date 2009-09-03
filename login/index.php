@@ -11,9 +11,7 @@
     $context = get_context_instance(CONTEXT_SYSTEM);
     $PAGE->set_course($SITE);
 
-    $PAGE->set_url($CFG->wwwroot.'/login/index.php');
-
-    //initialize variables
+/// Initialize variables
     $errormsg = '';
     $errorcode = 0;
 
@@ -37,6 +35,8 @@
 
 //HTTPS is potentially required in this page
     httpsrequired();
+
+    $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 
 /// Define variables used in page
     if (!$site = get_site()) {
