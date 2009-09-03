@@ -162,7 +162,7 @@ if (!core_tables_exist()) {
     upgrade_get_javascript();
     $PAGE->navbar->add($strdatabasesetup);
     $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
-    $PAGE->heading($strinstallation);
+    $PAGE->set_heading($strinstallation);
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
 
