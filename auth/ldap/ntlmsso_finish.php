@@ -27,9 +27,10 @@ if (!$authplugin->ntlmsso_finish()) {
     // Display the page header. This makes redirect respect the timeout we specify
     // here (and not add 3 more secs).
     $loginsite = get_string("loginsite");
-    $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
-    $navigation = build_navigation($navlinks);
-    print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '', '', true);
+    $PAGE->navbar->add($loginsite);
+    $PAGE->set_title("$site->fullname: $loginsite");
+    $PAGE->set_heading($site->fullname);
+    echo $OUTPUT->header();
     redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1', 
              get_string('ntlmsso_failed','auth_ldap'), 3);
 }

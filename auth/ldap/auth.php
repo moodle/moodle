@@ -439,11 +439,10 @@ class auth_plugin_ldap extends auth_plugin_base {
         if ($notify) {
             global $CFG;
             $emailconfirm = get_string('emailconfirm');
-            $navlinks = array();
-            $navlinks[] = array('name' => $emailconfirm, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-
-            print_header($emailconfirm, $emailconfirm, $navigation);
+            $PAGE->navbar->add($emailconfirm);
+            $PAGE->set_title($emailconfirm);
+            $PAGE->set_heading($emailconfirm);
+            echo $OUTPUT->header();
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
         } else {
             return true;

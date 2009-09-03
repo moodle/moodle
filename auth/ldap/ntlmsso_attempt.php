@@ -27,9 +27,10 @@ $sesskey = sesskey();
 // and FF 3.x (Windows version at least) where javascript timers fire up even
 // when we've already left the page that set the timer.
 $loginsite = get_string("loginsite");
-$navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
-$navigation = build_navigation($navlinks);
-print_header("$site->fullname: $loginsite", $site->fullname, $navigation, '', '', true);
+$PAGE->navbar->add($loginsite);
+$PAGE->set_title("$site->fullname: $loginsite");
+$PAGE->set_heading($site->fullname);
+echo $OUTPUT->header();
 
 $msg = '<p>'.get_string('ntlmsso_attempting','auth_ldap').'</p>'
     . '<img width="1", height="1" '

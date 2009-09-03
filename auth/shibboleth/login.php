@@ -71,12 +71,14 @@ httpsrequired();
     }
 
     $loginsite = get_string("loginsite");
-    $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
-    $navigation = build_navigation($navlinks);
-    $focus = 'idp';
-    print_header("$site->fullname: $loginsite", $site->fullname, $navigation, $focus,
-                 '', true, '<div class="langmenu">'.$langmenu.'</div>');
 
+    $PAGE->navbar->add($loginsite);
+    $PAGE->set_title("$site->fullname: $loginsite");
+    $PAGE->set_heading($site->fullname);
+    $PAGE->set_focuscontrol('idp');
+    $PAGE->set_headingmenu('<div class="langmenu">'.$langmenu.'</div>');
+    
+    echo $OUTPUT->header();
     include("index_form.html");
     echo $OUTPUT->footer();
 

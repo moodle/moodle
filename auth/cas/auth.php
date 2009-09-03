@@ -132,11 +132,10 @@ class auth_plugin_cas extends auth_plugin_base {
 // test pgtIou parameter for proxy mode (https connection
 // in background from CAS server to the php server)
       if ($authCAS!="CAS" && !isset($_GET["pgtIou"])) {
-            $navlinks = array();
-            $navlinks[] = array('name' => $CASform, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-
-            print_header("$site->fullname: $CASform", $site->fullname, $navigation);
+            $PAGE->navbar->add($CASform);
+            $PAGE->set_title("$site->fullname: $CASform");
+            $PAGE->set_heading($site->fullname);
+            echo $OUTPUT->header();
             include($CFG->dirroot."/auth/cas/cas_form.html");
             echo $OUTPUT->footer();
             exit();
