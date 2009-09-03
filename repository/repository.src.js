@@ -188,6 +188,9 @@ var repository_client = (function(){
                     }else{
                         support = true;
                     }
+                    if (repo.type=='draft' && this.env == 'filemanager') {
+                        continue;
+                    }
                     if(repo.supported_types == '*' || support){
                         var li = document.createElement('li');
                         li.id = 'repo-'+this.client_id+'-'+repo.id;

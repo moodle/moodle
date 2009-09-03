@@ -31,7 +31,7 @@ class repository_draft extends repository {
      * @param string $path not used by this plugin
      * @return mixed
      */
-    public function get_listing($path = '', $page = '') {
+    public function get_listing($path = '/', $page = '') {
         global $CFG, $USER, $itemid, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
@@ -39,10 +39,13 @@ class repository_draft extends repository {
         $ret['nologin'] = true;
         $ret['draftfiles'] = true;
         $list = array();
+        if (empty($path)) {
+            $path = '/';
+        }
 
         $fs = get_file_storage();
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
-        $files = $fs->get_area_files($context->id, 'user_draft', $itemid);
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        $files = $fs->get_directory_files($user_context->id, 'user_draft', $itemid, $path, false);
         foreach ($files as $file) {
             if ($file->get_filename()!='.') {
                 $node = array(
@@ -51,6 +54,17 @@ class repository_draft extends repository {
                     'date' => '',
                     'source'=> $file->get_id(),
                     'thumbnail' => $OUTPUT->old_icon_url('f/text-32')
+                );
+                $list[] = $node;
+            } else {
+                $foldername = explode('/', trim($file->get_filepath(), '/'));
+                $foldername = trim(array_pop($foldername), '/');
+                $node = array(
+                    'title' => $foldername,
+                    'size' => 0,
+                    'date' => '',
+                    'children' => array(),
+                    'thumbnail' => $OUTPUT->old_icon_url('f/folder-32')
                 );
                 $list[] = $node;
             }

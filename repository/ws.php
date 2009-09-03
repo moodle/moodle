@@ -11,14 +11,14 @@
     $action =    optional_param('action', '', PARAM_ALPHA);
     $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
-    $contextid = optional_param('ctx_id', SITEID, PARAM_INT);    // context ID
-    $env   =     optional_param('env', 'filepicker', PARAM_ALPHA);// opened in editor or moodleform
-    $file  =     optional_param('file', '', PARAM_RAW);           // file to download
-    $title =     optional_param('title', '', PARAM_FILE);         // new file name
+    $contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
+    $env   =     optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
+    $file  =     optional_param('file', '', PARAM_RAW);             // file to download
+    $title =     optional_param('title', '', PARAM_FILE);           // new file name
     $itemid =    optional_param('itemid', '', PARAM_INT);
-    $page  =     optional_param('page', '', PARAM_RAW);           // page
-    $repo_id   = optional_param('repo_id', 1, PARAM_INT);     // repository ID
-    $req_path  = optional_param('p', '', PARAM_RAW);          // path
+    $page  =     optional_param('page', '', PARAM_RAW);             // page
+    $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
+    $req_path  = optional_param('p', '', PARAM_RAW);                // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
     $search_text = optional_param('s', '', PARAM_CLEANHTML);
 
@@ -200,7 +200,10 @@ EOD;
             break;
         case 'download':
             try {
-                $filepath = $repo->get_file($file, $title, $itemid);
+                // $file is the specific information of file, such as url, or meta information
+                // $title is the file name in file pool
+                // $itemid and $save_path will be used by local plugin only
+                $filepath = $repo->get_file($file, $title, $itemid, $save_path);
                 if ($filepath === false) {
                     $err->e = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
@@ -218,21 +221,11 @@ EOD;
                     $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
                     echo json_encode($info);
                 } else if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
-                    // youtube plugin return a url instead a file path
+                    // process external link
                     $url = $filepath;
-                    echo json_encode(array(
-                                /* File picker need to know this is a link
-                                 * in order to attach title to url
-                                 */
-                                'type'=>'link',
-                                'client_id'=>$client_id,
-                                'url'=>$url,
-                                'id'=>$url,
-                                'file'=>$url
-                                )
-                            );
+                    echo json_encode(array('type'=>'link', 'client_id'=>$client_id, 'url'=>$url, 'id'=>$url, 'file'=>$url));
                 } else {
-                    // normal file path name
+                    // move downloaded file to file pool
                     $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
                     $info['client_id'] = $client_id;
                     echo json_encode($info);

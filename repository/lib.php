@@ -1116,7 +1116,7 @@ abstract class repository {
      * reused by sub class
      * @param string filename
      */
-    public function prepare_file($file) {
+    public function prepare_file($filename) {
         global $CFG;
         if (!file_exists($CFG->dataroot.'/temp/download')) {
             mkdir($CFG->dataroot.'/temp/download/', 0777, true);
@@ -1124,13 +1124,13 @@ abstract class repository {
         if (is_dir($CFG->dataroot.'/temp/download')) {
             $dir = $CFG->dataroot.'/temp/download/';
         }
-        if (empty($file)) {
-            $file = uniqid('repo').'_'.time().'.tmp';
+        if (empty($filename)) {
+            $filename = uniqid('repo').'_'.time().'.tmp';
         }
-        if (file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
+        if (file_exists($dir.$filename)) {
+            $filename = uniqid('m').$filename;
         }
-        return $dir.$file;
+        return $dir.$filename;
     }
 
     /**
@@ -1139,19 +1139,17 @@ abstract class repository {
      *
      * @global object $CFG
      * @param string $url the url of file
-     * @param string $file save location
+     * @param string $filename save location
      * @return string the location of the file
      * @see curl package
      */
-    public function get_file($url, $file = '') {
+    public function get_file($url, $filename = '') {
         global $CFG;
 
-        $path = $this->prepare_file($file);
+        $path = $this->prepare_file($filename);
         $fp = fopen($path, 'w');
         $c = new curl;
-        $c->download(array(
-                    array('url'=>$url, 'file'=>$fp)
-                    ));
+        $c->download(array(array('url'=>$url, 'file'=>$fp)));
         return $path;
     }
 
@@ -1486,7 +1484,7 @@ abstract class repository {
      * Show the search screen, if required
      * @return null
      */
-    public function print_search($client_id) {
+    public function print_search() {
         $str = '';
         $str .= '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
         $str .= '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
