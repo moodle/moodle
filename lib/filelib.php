@@ -484,6 +484,113 @@ function file_get_draft_area_info($draftitemid) {
     return $results;
 }
 
+
+/**
+ * Convert any string to a valid filepath
+ * @param string $str
+ * @return string path
+ */
+function file_correct_filepath($str) {
+    return '/'.trim($str, './@#$ ').'/';
+}
+
+/**
+ * Generate a folder tree of currect draft area recursively
+ * @param int $itemid
+ * @param string $filepath
+ * @param mixed $data
+ */
+function file_get_draft_area_folders($draftitemid, $filepath, &$data) {
+    global $USER, $OUTPUT, $CFG;
+    $data->children = array();
+    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+    if ($files = $fs->get_directory_files($context->id, 'user_draft', $draftitemid, $filepath, false)) {
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                $item = new stdclass;
+                $item->filepath = $file->get_filepath();
+
+                $foldername = explode('/', trim($item->filepath, '/'));
+                $item->fullname = trim(array_pop($foldername), '/');
+
+                $item->id = uniqid();
+                file_get_draft_area_folders($draftitemid, $item->filepath, $item);
+                $data->children[] = $item;
+            } else {
+                continue;
+            }
+        }
+    }
+}
+
+/**
+ * Listing all files (including folders) in current path (draft area)
+ * used by file manager
+ * @param int $draftitemid
+ * @param string $filepath
+ * @return mixed
+ */
+function file_get_draft_area_files($draftitemid, $filepath = '/') {
+    global $USER, $OUTPUT, $CFG;
+
+    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+
+    $data = new stdclass;
+    $data->path = array();
+    $data->path[] = array('name'=>get_string('files'), 'path'=>'/');
+
+    // will be used to build breadcrumb
+    $trail = '';
+    if ($filepath !== '/') {
+        $filepath = file_correct_filepath($filepath);
+        $parts = explode('/', $filepath);
+        foreach ($parts as $part) {
+            if ($part != '' && $part != null) {
+                $trail .= ('/'.$part.'/');
+                $data->path[] = array('name'=>$part, 'path'=>$trail);
+            }
+        }
+    }
+
+    $list = array();
+    if ($files = $fs->get_directory_files($context->id, 'user_draft', $draftitemid, $filepath, false)) {
+        foreach ($files as $file) {
+            $item = new stdclass;
+            $item->filename = $file->get_filename();
+            $item->filepath = $file->get_filepath();
+            $item->fullname = trim($item->filename, '/');
+            $filesize = $file->get_filesize();
+            $item->filesize = $filesize ? display_size($filesize) : '';
+
+            $icon = mimeinfo_from_type('icon', $file->get_mimetype());
+            $icon = str_replace('.gif', '', $icon);
+            $item->icon = $OUTPUT->old_icon_url('f/' . $icon);
+
+            if ($icon == 'zip') {
+                $item->type = 'zip';
+            } else {
+                $item->type = 'file';
+            }
+
+            if ($file->is_directory()) {
+                $item->filesize = 0;
+                $item->icon = $OUTPUT->old_icon_url('f/folder');
+                $item->type = 'folder';
+                $foldername = explode('/', trim($item->filepath, '/'));
+                $item->fullname = trim(array_pop($foldername), '/');
+            } else {
+                $item->url = $CFG->wwwroot . '/draftfile.php/' . $context->id .'/user_draft/'.$draftitemid.$item->filepath.$item->fullname;
+            }
+            $list[] = $item;
+        }
+    }
+    $data->itemid = $draftitemid;
+    $data->list = $list;
+    return $data;
+}
+
 /**
  * Returns draft area itemid for a given element.
  *

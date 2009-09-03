@@ -73,7 +73,7 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     }
 }
 
-$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid));
+$url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env));
 $home_url = new moodle_url($url, array('action' => 'embedded'));
 
 switch ($action) {
@@ -263,6 +263,9 @@ case 'plugins':
         $icon->link->url = clone($url);
         $icon->link->url->params(array('action' => 'list', 'repo_id' => $info->id, 'draftpath'=>$draftpath));
         $icon->linktext = $info->name;
+        if ($env == 'filemanager' && $info->type == 'draft') {
+            continue;
+        }
         echo '<li>' . $OUTPUT->action_icon($icon) . '</li>';
     }
     echo '</ul>';
@@ -272,10 +275,15 @@ case 'plugins':
 
 case 'mkdir':
     $fs = get_file_storage();
-    $fs->create_directory($user_context->id, 'user_draft', $itemid, trim_path(trim_path($draftpath).$newdirname));
+    $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath(file_correct_filepath($draftpath).trim($newdirname, '/')));
     $url->param('action', 'browse');
     $url->param('draftpath', $draftpath);
-    redirect($url, get_string('Created folder success!','repository'));
+    if (empty($newdirname)) {
+        $str = get_string('createfoldersuccess', 'repository');
+    } else {
+        $str = get_string('createfolderfail', 'repository');
+    }
+    redirect($url, $str);
     break;
 
 case 'zip':
@@ -322,7 +330,7 @@ default:
     echo '<a href="'.$url->out().'">'.'Files</a> ▶';
     $trail = '';
     if ($draftpath !== '/') {
-        $path = trim_path($draftpath);
+        $path = file_correct_filepath($draftpath);
         $parts = explode('/', $path);
         foreach ($parts as $part) {
             if (!empty($part)) {
@@ -402,13 +410,4 @@ default:
 
     echo $OUTPUT->footer();
     break;
-}
-
-/**
- * trim filepath, and add slash to it
- * @param string $str
- * @return string path
- */
-function trim_path($str) {
-    return '/'.trim(trim($str), './@#$').'/';
 }
