@@ -173,22 +173,21 @@
     $strparticipants  = get_string('participants');
     $userfullname     = fullname($user, true);
 
-    $navlinks = array();
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || 
         has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+        $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/message/index.php', array('id'=>$course->id)));
     }
-    $navlinks[] = array('name' => $userfullname,
-                        'link' => "view.php?id=$user->id&amp;course=$course->id",
-                        'type' => 'misc');
-    $navlinks[] = array('name' => $streditmymessage, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
+    $PAGE->navbar->add($userfullname, null, null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/message/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($streditmymessage);
+    $PAGE->set_title("$course->shortname: $streditmymessage");
     if ($course->id != SITEID) {
-        print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmymessage", $navigation);
+        $PAGE->set_heading("$course->fullname: $streditmymessage");
     } else {
-        print_header("$course->shortname: $streditmymessage", $course->fullname, $navigation);
+        $PAGE->set_heading($course->fullname);
     }
+    echo $OUTPUT->header();
 
 /// Print tabs at the top
     $showroles = 1;
