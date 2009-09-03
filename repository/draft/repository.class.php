@@ -63,6 +63,7 @@ class repository_draft extends repository {
                     'title' => $foldername,
                     'size' => 0,
                     'date' => '',
+                    'path' => $file->get_filepath(),
                     'children' => array(),
                     'thumbnail' => $OUTPUT->old_icon_url('f/folder-32')
                 );
