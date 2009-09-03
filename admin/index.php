@@ -197,7 +197,7 @@ if ($version > $CFG->version) {  // upgrade
     if (empty($confirmupgrade)) {
         $PAGE->navbar->add($strdatabasechecking);
         $PAGE->set_title($strdatabasechecking);
-        $PAGE->heading($stradministration);
+        $PAGE->set_heading($stradministration);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         $continueform = new html_form();
@@ -214,7 +214,7 @@ if ($version > $CFG->version) {  // upgrade
         $strcurrentrelease = get_string('currentrelease');
         $PAGE->navbar->add($strcurrentrelease);
         $PAGE->set_title($strcurrentrelease);
-        $PAGE->heading($strcurrentrelease);
+        $PAGE->set_heading($strcurrentrelease);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
@@ -242,7 +242,7 @@ if ($version > $CFG->version) {  // upgrade
         $strplugincheck = get_string('plugincheck');
         $PAGE->navbar->add($strplugincheck);
         $PAGE->set_title($strplugincheck);
-        $PAGE->heading($strplugincheck);
+        $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strplugincheck);
