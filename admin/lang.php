@@ -100,8 +100,6 @@
             $title = $strlanguage;
             break;
     }
-    $navlinks[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/$CFG->admin/lang.php", 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
 
     admin_externalpage_print_header();
 

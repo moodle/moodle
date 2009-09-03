@@ -56,8 +56,12 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
 }
 
 /// print header stuff ------------------------------------------------------------
+$PAGE->set_focuscontrol($focus);
 if (empty($SITE->fullname)) {
-    print_header($settingspage->visiblename, $settingspage->visiblename, '', $focus);
+    $PAGE->set_title($settingspage->visiblename);
+    $PAGE->set_heading($settingspage->visiblename);
+    
+    echo $OUTPUT->header();
     echo $OUTPUT->box(get_string('configintrosite', 'admin'));
 
     if ($errormsg !== '') {
@@ -96,13 +100,11 @@ if (empty($SITE->fullname)) {
     }
 
     $visiblepathtosection = array_reverse($settingspage->visiblepath);
-    $navlinks = array();
-    foreach ($visiblepathtosection as $element) {
-        $navlinks[] = array('name' => $element, 'link' => null, 'type' => 'misc');
-    }
-    $navigation = build_navigation($navlinks);
 
-    print_header("$SITE->shortname: " . implode(": ",$visiblepathtosection), $SITE->fullname, $navigation, $focus, '', true, $buttons, '');
+    $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
+    $PAGE->set_heading($SITE->fullname);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
     if ($errormsg !== '') {
         echo $OUTPUT->notification($errormsg);

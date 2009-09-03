@@ -122,24 +122,20 @@ $straction = get_string('thisusersroles', 'role');
 $title = get_string('xroleassignments', 'role', $fullname);
 
 /// Course header
-$navlinks = array();
+$PAGE->set_title($title);
 if ($courseid != SITEID) {
+    $PAGE->set_heading($fullname);
     if (has_capability('moodle/course:viewparticipants', $coursecontext)) {
-        $navlinks[] = array('name' => get_string('participants'), 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
+        $PAGE->navbar->add(get_string('participants'), null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
     }
-    $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
-    $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
-    print_header($title, $fullname, $navigation, '', '', true, '&nbsp;', navmenu($course));
-
-/// Site header
 } else {
-    $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
-    $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header($title, $course->fullname, $navigation, '', '', true, '&nbsp;', navmenu($course));
+    $PAGE->set_heading($course->fullname);
 }
+$PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
+                   new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
+$PAGE->navbar->add($straction);
+echo $OUTPUT->header();
 
 $showroles = 1;
 $currenttab = 'usersroles';

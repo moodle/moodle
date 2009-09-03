@@ -164,11 +164,11 @@ class edit_index_save extends XMLDBAction {
             $tempindex->setFields($fieldsarr);
         /// Prepare the output
             $site = get_site();
-            $navlinks = array();
-            $navlinks[] = array('name' => $this->str['administration'], 'link' => '../index.php', 'type' => 'misc');
-            $navlinks[] = array('name' => 'XMLDB', 'link' => 'index.php', 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-            print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
+            $PAGE->navbar->add($this->str['administration'], null, null. navigation_node::TYPE_CUSTOM, '../index.php');
+            $PAGE->navbar->add('XMLDB', null, null. navigation_node::TYPE_CUSTOM, 'index.php');
+            $PAGE->set_title("$site->shortname: XMLDB");
+            $PAGE->set_heading($site->fullname);
+            echo $OUTPUT->header();
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempindex->readableInfo() . '</p>',
                     'index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));

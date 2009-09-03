@@ -44,23 +44,23 @@ if (!isset($availablefilters)) {
     }
 }
 
-$navlinks = array();
 if ($currenttab != 'update') {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
-            $navlinks[] = array('name' => $stradministration, 'link' => '../index.php', 'type' => 'misc');
-            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
-            $navigation = build_navigation($navlinks);
             if (empty($title)) {
                 $title = $SITE->fullname;
             }
-            print_header($title, "$SITE->fullname", $navigation);
+            $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_SETTING, new moodle_url($CFG->wwwroot.'/admin/'));
+            $PAGE->navbar->add($straction);
+            $PAGE->set_title($title);
+            $PAGE->set_heading($SITE->fullname);
+            echo $OUTPUT->header();
             break;
 
         case CONTEXT_USER:
-            print_header();
+            echo $OUTPUT->header();
             break;
 
         case CONTEXT_COURSECAT:
@@ -69,18 +69,15 @@ if ($currenttab != 'update') {
             $strcategory = get_string("category");
             $strcourses = get_string("courses");
 
-            $navlinks[] = array('name' => $strcategories,
-                                'link' => "$CFG->wwwroot/course/index.php",
-                                'type' => 'misc');
-            $navlinks[] = array('name' => $category->name,
-                                'link' => "$CFG->wwwroot/course/category.php?id=$category->id",
-                                'type' => 'misc');
-            $navigation = build_navigation($navlinks);
-
             if (empty($title)) {
                 $title = "$SITE->shortname: $category->name";
             }
-            print_header($title, "$SITE->fullname: $strcourses", $navigation, "", "", true);
+            
+            $PAGE->navbar->add($strcategories, null, null, navigation_node::TYPE_SETTING, new moodle_url($CFG->wwwroot.'/course/index.php'));
+            $PAGE->navbar->add($category->name, null, null, navigation_node::TYPE_SETTING, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id)));
+            $PAGE->set_title($title);
+            $PAGE->set_heading("$SITE->fullname: $strcourses");
+            echo $OUTPUT->header();
             break;
 
         case CONTEXT_COURSE:
@@ -88,14 +85,14 @@ if ($currenttab != 'update') {
                 $course = $DB->get_record('course', array('id'=>$context->instanceid));
 
                 require_login($course);
-                $navlinks[] = array('name' => get_string('roles'),
-                                    'link' => "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$context->id",
-                                    'type' => 'misc');
-                $navigation = build_navigation($navlinks);
                 if (empty($title)) {
                     $title = get_string("editcoursesettings");
                 }
-                print_header($title, $course->fullname, $navigation);
+                $roleslink = new moodle_url("$CFG->wwwroot/$CFG->admin/roles/assign.php", array('contextid'=>$context->id));
+                $PAGE->navbar->add(get_string('roles'), null, null, navigation_node::TYPE_SETTING, $roleslink);
+                $PAGE->set_title($title);
+                $PAGE->set_heading($course->fullname);
+                echo $OUTPUT->header();
             }
             break;
 
@@ -108,12 +105,13 @@ if ($currenttab != 'update') {
             }
 
             require_login($course);
-            $navigation = build_navigation(get_string('roles'), $cm);
 
+            $PAGE->navigation->add(get_string('roles'));
+            
             if (empty($title)) {
                 $title = get_string("editinga", "moodle", $fullmodulename);
             }
-            print_header_simple($title, '', $navigation, '', '', false);
+            print_header_simple($title, '', '', '', '', false);
 
             break;
 
@@ -122,8 +120,6 @@ if ($currenttab != 'update') {
                 $blockname = print_context_name($context);
 
                 $parentcontext = get_context_instance_by_id($blockinstance->parentcontextid);
-                $navlinks[] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
-                $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
                 switch ($parentcontext->contextlevel) {
                     case CONTEXT_SYSTEM:
                         break;
@@ -150,7 +146,11 @@ if ($currenttab != 'update') {
 
 
                 }
-                print_header("$straction: $blockname", $PAGE->course->fullname, build_navigation($navlinks));
+                $PAGE->navbar->add($blockname);
+                $PAGE->navbar->add($straction);
+                $PAGE->set_title("$straction: $blockname");
+                $PAGE->set_heading($PAGE->course->fullname);
+                echo $OUTPUT->header();
             }
             break;
 

@@ -18,8 +18,11 @@
     $strusers = get_string("users");
     $strall = get_string("all");
 
-    print_header($strtimezone, $strtimezone, build_navigation(array(array('name' => $strtimezone, 'link' => null, 'type' => 'misc'))));
-
+    $PAGE->set_title($strtimezone);
+    $PAGE->set_heading($strtimezone);
+    $PAGE->navbar->add($strtimezone);
+    echo $OUTPUT->header();
+    
     echo $OUTPUT->heading("");
 
     if (data_submitted() and !empty($zone) and confirm_sesskey()) {

@@ -31,11 +31,6 @@
     $strregistration = get_string("registration");
     $strregistrationinfo = get_string("registrationinfo");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $strregistration, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
     echo $OUTPUT->heading($strregistration);
 
     echo $OUTPUT->box($strregistrationinfo);

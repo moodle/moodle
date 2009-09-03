@@ -119,8 +119,11 @@ if (!core_tables_exist()) {
 
     if (empty($agreelicense)) {
         $strlicense = get_string('license');
-        $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        $PAGE->navbar->add($strlicense);
+        $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
+        $PAGE->set_heading($strinstallation);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
         echo $OUTPUT->heading(get_string('copyrightnotice'));
         $copyrightnotice = text_to_html(get_string('gpl'));
@@ -133,8 +136,11 @@ if (!core_tables_exist()) {
     }
     if (empty($confirmrelease)) {
         $strcurrentrelease = get_string('currentrelease');
-        $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-        print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        $PAGE->navbar->add($strcurrentrelease);
+        $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
+        $PAGE->set_heading($strinstallation);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -153,9 +159,12 @@ if (!core_tables_exist()) {
     }
 
     $strdatabasesetup = get_string('databasesetup');
-    $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
     upgrade_get_javascript();
-    print_header($strinstallation.' - Moodle '.$CFG->target_release, $strinstallation, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+    $PAGE->navbar->add($strdatabasesetup);
+    $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
+    $PAGE->heading($strinstallation);
+    $PAGE->set_cacheable(false);
+    echo $OUTPUT->header();
 
     if (!$DB->setup_is_unicodedb()) {
         if (!$DB->change_db_encoding()) {
@@ -186,8 +195,11 @@ if ($version > $CFG->version) {  // upgrade
     $strdatabasechecking = get_string('databasechecking', '', $a);
 
     if (empty($confirmupgrade)) {
-        $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
-        print_header($strdatabasechecking, $stradministration, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        $PAGE->navbar->add($strdatabasechecking);
+        $PAGE->set_title($strdatabasechecking);
+        $PAGE->heading($stradministration);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         $continueform = new html_form();
         $continueform->method = 'get';
         $continueform->url = new moodle_url('index.php', array('confirmupgrade' => 1));
@@ -200,8 +212,11 @@ if ($version > $CFG->version) {  // upgrade
 
     } else if (empty($confirmrelease)){
         $strcurrentrelease = get_string('currentrelease');
-        $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-        print_header($strcurrentrelease, $strcurrentrelease, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        $PAGE->navbar->add($strcurrentrelease);
+        $PAGE->set_title($strcurrentrelease);
+        $PAGE->heading($strcurrentrelease);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
@@ -225,8 +240,11 @@ if ($version > $CFG->version) {  // upgrade
 
     } elseif (empty($confirmplugins)) {
         $strplugincheck = get_string('plugincheck');
-        $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
-        print_header($strplugincheck, $strplugincheck, $navigation, '', '', false, '&nbsp;', '&nbsp;');
+        $PAGE->navbar->add($strplugincheck);
+        $PAGE->set_title($strplugincheck);
+        $PAGE->heading($strplugincheck);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strplugincheck);
         echo $OUTPUT->box_start('generalbox', 'notice');
         print_string('pluginchecknotice');

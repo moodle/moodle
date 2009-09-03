@@ -20,10 +20,12 @@ error('TODO: rewrite db perf code'); // TODO: rewrite
     $stradministration = get_string("administration");
     $site = get_site();
 
-    $navigation = build_navigation(array(
-        array('name'=>$stradministration, 'link'=>'index.php', 'type'=>'misc'),
-        array('name'=>$strdatabaseperformance, 'link'=>null, 'type'=>'misc')));
     if (!empty($topframe)) {
-        print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", $navigation);
+        $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
+                            new moodle_url($CFG->wwwroot.'/admin/index.php'));
+        $PAGE->navbar->add($strdatabaseperformance);
+        $PAGE->set_title("$site->shortname: $strdatabaseperformance");
+        $PAGE->set_heading($site->fullname);
+        echo $OUTPUT->header();
         exit;
     }

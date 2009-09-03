@@ -1,11 +1,13 @@
 <?php
-$navlinks = array();
-$navlinks[] = array('name' => $stradministration, 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc');
-$navlinks[] = array('name' => get_string('mnetsettings', 'mnet'), 'link' => "$CFG->wwwroot/$CFG->admin/mnet/index.php", 'type' => 'misc');
-$navlinks[] = array('name' => get_string('deletehost', 'mnet'), 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-print_header("$site->shortname: $strmnetsettings", "$site->fullname", $navigation);
+$PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM, 
+                   new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+$PAGE->navbar->add(get_string('mnetsettings', 'mnet'), null, null, navigation_node::TYPE_CUSTOM,
+                   new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/mnet/index.php'));
+$PAGE->navbar->add(get_string('deletehost', 'mnet'));
 
+$PAGE->set_title("$site->shortname: $strmnetsettings");
+$PAGE->set_heading($site->fullname);
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('mnetsettings', 'mnet'));
 ?>
 <div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
