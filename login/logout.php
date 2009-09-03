@@ -14,7 +14,9 @@
         redirect($redirect);
 
     } else if (!confirm_sesskey($sesskey)) {
-        print_header($SITE->fullname, $SITE->fullname, 'home');
+        $PAGE->set_title($SITE->fullname);
+        $PAGE->set_heading($SITE->fullname);
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('logoutconfirm'), 'logout.php', $CFG->wwwroot.'/');
         echo $OUTPUT->footer();
         die;

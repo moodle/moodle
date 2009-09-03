@@ -56,12 +56,14 @@
         $langmenu = $OUTPUT->select($select);
     }
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $login, 'link' => "index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $newaccount, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header($newaccount, $newaccount, $navigation, $mform_signup->focus(), "", true, "<div class=\"langmenu\">$langmenu</div>");
-    
+    $PAGE->navbar->add($login);
+    $PAGE->navbar->add($newaccount);
+    $PAGE->set_title($newaccount);
+    $PAGE->set_heading($newaccount);
+    $PAGE->set_focuscontrol($mform_signup->focus());
+    $PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
+
+    echo $OUTPUT->header();
     $mform_signup->display();
     echo $OUTPUT->footer();
 

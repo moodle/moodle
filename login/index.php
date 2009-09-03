@@ -53,8 +53,7 @@
     }
 
     $loginsite = get_string("loginsite");
-    $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add($loginsite);
 
     if ($user !== false or $frm !== false) {
         // some auth plugin already supplied these
@@ -127,7 +126,9 @@
             }
 
             if (empty($user->confirmed)) {       // This account was never confirmed
-                print_header(get_string("mustconfirm"), get_string("mustconfirm") );
+                $PAGE->set_title(get_string("mustconfirm"));
+                $PAGE->set_heading(get_string("mustconfirm"));
+                echo $OUTPUT->header();
                 echo $OUTPUT->heading(get_string("mustconfirm"));
                 echo $OUTPUT->box(get_string("emailconfirmsent", "", $user->email), "generalbox boxaligncenter");
                 echo $OUTPUT->footer();
@@ -180,13 +181,16 @@
                     $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
                 }
                 $days2expire = $userauth->password_expire($USER->username);
+                $PAGE->set_title("$site->fullname: $loginsite");
+                $PAGE->set_heading("$site->fullname");
+                $PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
                 if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
+                    echo $OUTPUT->header();
                     echo $OUTPUT->confirm(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
                     echo $OUTPUT->footer();
                     exit;
                 } elseif (intval($days2expire) < 0 ) {
-                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, '', '', true, "<div class=\"langmenu\">$langmenu</div>");
+                    echo $OUTPUT->header();
                     echo $OUTPUT->confirm(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
                     echo $OUTPUT->footer();
                     exit;
@@ -281,11 +285,13 @@
         $show_instructions = false;
     }
 
-    print_header("$site->fullname: $loginsite", $site->fullname, $navigation, $focus,
-                 '', true, '<div class="langmenu">'.$langmenu.'</div>');
+    $PAGE->set_title("$site->fullname: $loginsite");
+    $PAGE->set_heading("$site->fullname");
+    $PAGE->set_headingmenu("<div class=\"langmenu\">$langmenu</div>");
+    $PAGE->set_focuscontrol($focus);
 
+    echo $OUTPUT->header();
     include("index_form.html");
-
     echo $OUTPUT->footer();
 
 

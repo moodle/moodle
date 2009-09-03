@@ -78,13 +78,12 @@
 
         $fullname = fullname($USER, true);
 
-        $navlinks[] = array('name' => $fullname,
-                            'link' => "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id",
-                            'type' => 'misc');
-        $navlinks[] = array('name' => $strpasswordchanged, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-
-        print_header($strpasswordchanged, $strpasswordchanged, $navigation);
+        $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+        $PAGE->navbar->add($strpasswordchanged);
+        $PAGE->set_title($strpasswordchanged);
+        $PAGE->set_header($strpasswordchanged);
+        echo $OUTPUT->header();
 
         if (empty($SESSION->wantsurl) or $SESSION->wantsurl == $CFG->httpswwwroot.'/login/change_password.php') {
             $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$id";
@@ -103,11 +102,13 @@
 
     $fullname = fullname($USER, true);
 
-    $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id", 'type' => 'misc');
-    $navlinks[] = array('name' => $strchangepassword, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($strchangepassword);
+    $PAGE->set_title($strchangepassword);
+    $PAGE->set_header($strchangepassword);
+    echo $OUTPUT->header();
 
-    print_header($strchangepassword, $strchangepassword, $navigation);
     if (get_user_preferences('auth_forcepasswordchange')) {
         echo $OUTPUT->notification(get_string('forcepasswordchangenotice'));
     }

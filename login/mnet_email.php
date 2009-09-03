@@ -10,9 +10,13 @@ $sesskey = sesskey();
 if (isloggedin() and !isguestuser()) {
     redirect( $CFG->wwwroot.'/', get_string('loginalready'), 5);
 }
-$navigation = build_navigation(array(array('name' => 'MNET ID Provider', 'link' => null, 'type' => 'misc')));
 
-print_header('MNET ID Provider', 'MNET ID Provider', $navigation, 'form.email' );
+$PAGE->navbar->add('MNET ID Provider');
+$PAGE->set_title('MNET ID Provider');
+$PAGE->set_heading('MNET ID Provider');
+$PAGE->set_focuscontrol('email');
+
+echo $OUTPUT->header();
 
 if ($form = data_submitted() and confirm_sesskey()) {
     if ($user = $DB->get_record('user', array('username'=>$username, 'email'=>$form->email))) {
@@ -29,7 +33,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
   <form method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>">
     <?php echo get_string('email') ?>:
-    <input type="text" name="email" size="" maxlength="100" />
+    <input type="text" name="email" id="email" size="" maxlength="100" />
     <input type="submit" value="Find Login" />
   </form>
 <?php
