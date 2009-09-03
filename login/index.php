@@ -11,6 +11,8 @@
     $context = get_context_instance(CONTEXT_SYSTEM);
     $PAGE->set_course($SITE);
 
+    $PAGE->set_url($CFG->wwwroot.'/login/index.php');
+
     //initialize variables
     $errormsg = '';
     $errorcode = 0;
