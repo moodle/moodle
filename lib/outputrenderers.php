@@ -1784,6 +1784,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                 'name' => $name,
                 'id' => $option->id,
                 'alt' => $option->alt,
+                'disabled' => $option->disabled,
                 'class' => $option->get_classes_string(),
                 'checked' => $option->selected));
         $output .= $this->label($option->label);
@@ -1808,6 +1809,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         if ($option instanceof html_select_option) {
             return $this->output_tag('option', array(
                     'value' => $option->value,
+                    'disabled' => $option->disabled,
                     'class' => $option->get_classes_string(),
                     'selected' => $option->selected), $option->text);
         } else if ($option instanceof html_select_optgroup) {
@@ -2051,6 +2053,10 @@ class moodle_core_renderer extends moodle_renderer_base {
                     $heading->text = $headingtext;
                     $heading->header = true;
                 }
+                
+                if ($heading->header !== false) {
+                    $heading->header = true;
+                }
 
                 $this->prepare_event_handlers($heading);
 
@@ -2077,7 +2083,11 @@ class moodle_core_renderer extends moodle_renderer_base {
                         'scope'     => $heading->scope,
                         'colspan'   => $heading->colspan);
 
-                $output .= $this->output_tag('th', $attributes, $heading->text) . "\n";
+                $tagtype = 'td';
+                if ($heading->header === true) {
+                    $tagtype = 'th';
+                }
+                $output .= $this->output_tag($tagtype, $attributes, $heading->text) . "\n";
             }
             $output .= $this->output_end_tag('tr') . "\n";
             $output .= $this->output_end_tag('thead') . "\n";
@@ -2153,7 +2163,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                                 'abbr' => $cell->abbr,
                                 'scope' => $cell->scope);
                         $tagtype = 'td';
-                        if ($cell->header) {
+                        if ($cell->header === true) {
                             $tagtype = 'th';
                         }
                         $output .= $this->output_tag($tagtype, $tdattributes, $cell->text) . "\n";

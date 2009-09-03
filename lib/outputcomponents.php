@@ -777,6 +777,10 @@ class html_select_option extends labelled_html_component {
      * @var boolean $selected Whether or not this option is selected
      */
     public $selected = false;
+    /**
+     * @var boolean $disabled Whether or not this option is disabled
+     */
+    public $disabled = false;
 
     public function __construct() {
         $this->label = new html_label();
@@ -1213,7 +1217,7 @@ class html_table_cell extends moodle_html_component {
     /**
      * @var boolean $header Whether or not this cell is a header cell
      */
-    public $header = false;
+    public $header = null;
 
     /**
      * @see lib/moodle_html_component#prepare()
