@@ -13,6 +13,7 @@
 class repository_local extends repository {
 
     /**
+     * initialize local plugin
      * @param int $repositoryid
      * @param int $context
      * @param array $options
@@ -22,30 +23,29 @@ class repository_local extends repository {
     }
 
     /**
-     * @param boolean $ajax
+     * local plugin don't need login, so list all files
      * @return mixed
      */
-    public function print_login($ajax = true) {
+    public function print_login() {
         return $this->get_listing();
     }
 
     /**
-     *
+     * Not supported by File API yet
      * @param string $search_text
      * @return mixed
      */
     public function search($search_text) {
-        return $this->get_listing('', '', $search_text);
+        return array();
     }
 
     /**
      *
      * @param string $encodedpath
      * @param string $path not used by this plugin
-     * @param string $search
      * @return mixed
      */
-    public function get_listing($encodedpath = '', $page = '', $search = '') {
+    public function get_listing($encodedpath = '', $page = '') {
         global $CFG, $USER, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
@@ -98,12 +98,13 @@ class repository_local extends repository {
                         $list[] = $node;
                     } else {
                         $params = base64_encode(serialize($child->get_params()));
+                        $icon = 'f/'.str_replace('.gif', '', mimeinfo('icon', $child->get_visible_name())).'-32';
                         $node = array(
                             'title' => $child->get_visible_name(),
                             'size' => 0,
                             'date' => '',
                             'source'=> $params,
-                            'thumbnail' => $OUTPUT->old_icon_url('f/text-32') . ''
+                            'thumbnail' => $OUTPUT->old_icon_url($icon)
                         );
                         $list[] = $node;
                     }
@@ -121,12 +122,14 @@ class repository_local extends repository {
      * subclass.
      *
      * @global object $CFG
-     * @param string $url the url of file
-     * @param string $file save location
-     * @return string the location of the file
+     * @param string $encoded The metainfo of file, it is base64 encoded php seriablized data
+     * @param string $title The intended name of file
+     * @param string $itemid itemid
+     * @param string $save_path the new path in draft area
+     * @return array The metainfo of file
      * @see curl package
      */
-    public function get_file($encoded, $title = '', $itemid = '') {
+    public function get_file($encoded, $title = '', $itemid = '', $save_path = '/') {
         global $USER, $DB;
         $ret = array();
 
@@ -141,7 +144,7 @@ class repository_local extends repository {
         $fileitemid = $params['itemid'];
         $context    = get_context_instance_by_id($contextid);
         $file_info  = $browser->get_file_info($context, $filearea, $fileitemid, $filepath, $filename);
-        $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, '/', $title);
+        $file_info->copy_to_storage($user_context->id, 'user_draft', $itemid, $save_path, $title);
 
         $ret['itemid'] = $itemid;
         $ret['title']  = $title;
@@ -151,7 +154,6 @@ class repository_local extends repository {
     }
 
     /**
-     *
      * @return string
      */
     public function get_name(){
