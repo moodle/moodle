@@ -177,7 +177,8 @@ $strperm = array(
 );
 
 // Start the output.
-print_header(get_string('explainpermission', 'role'));
+$PAGE->set_title(get_string('explainpermission', 'role'));
+echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('explainpermission', 'role'));
 
 // Print a summary of what we are doing.
