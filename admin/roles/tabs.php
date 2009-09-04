@@ -52,7 +52,7 @@ if ($currenttab != 'update') {
             if (empty($title)) {
                 $title = $SITE->fullname;
             }
-            $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/admin/'), null, null, navigation_node::TYPE_SETTING);
+            $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/admin/'), navigation_node::TYPE_SETTING);
             $PAGE->navbar->add($straction);
             $PAGE->set_title($title);
             $PAGE->set_heading($SITE->fullname);
@@ -73,8 +73,8 @@ if ($currenttab != 'update') {
                 $title = "$SITE->shortname: $category->name";
             }
             
-            $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'), null, null, navigation_node::TYPE_SETTING);
-            $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id)), null, null, navigation_node::TYPE_SETTING);
+            $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'), navigation_node::TYPE_SETTING);
+            $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id)), navigation_node::TYPE_SETTING);
             $PAGE->set_title($title);
             $PAGE->set_heading("$SITE->fullname: $strcourses");
             echo $OUTPUT->header();
@@ -89,7 +89,7 @@ if ($currenttab != 'update') {
                     $title = get_string("editcoursesettings");
                 }
                 $roleslink = new moodle_url("$CFG->wwwroot/$CFG->admin/roles/assign.php", array('contextid'=>$context->id));
-                $PAGE->navbar->add(get_string('roles'), $roleslink, null, null, navigation_node::TYPE_SETTING);
+                $PAGE->navbar->add(get_string('roles'), $roleslink, navigation_node::TYPE_SETTING);
                 $PAGE->set_title($title);
                 $PAGE->set_heading($course->fullname);
                 echo $OUTPUT->header();
