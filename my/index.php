@@ -10,7 +10,8 @@
     $strmymoodle = get_string('mymoodle','my');
 
     if (isguest()) {
-        print_header($strmymoodle);
+        $PAGE->set_title($strmymoodle);
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguest', 'my') . '<br /><br />' . get_string('liketologin'), get_login_url(), $CFG->wwwroot);
         echo $OUTPUT->footer();
         die;
@@ -55,7 +56,11 @@
         $langmenu = $OUTPUT->select($select);
     }
 
-    print_header($strmymoodle, $header, $navigation, '', '', true, $button, $loggedinas . $langmenu);
+    $PAGE->set_title($strmymoodle);
+    $PAGE->set_heading($header);
+    $PAGE->set_button($button);
+    $PAGE->set_headingmenu($loggedinas . $langmenu);
+    echo $OUTPUT->header();
 
 /// The main overview in the middle of the page
 

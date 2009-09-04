@@ -54,7 +54,7 @@ for ($i=1; ; $i++){
     }
 
 }
-print_header();
+echo $OUTPUT->header();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('editorhelptopics'));
 
