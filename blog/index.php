@@ -207,9 +207,7 @@ if (!empty($search)) {
 if (!empty($entryid)) {
     $filters['entry'] = $entryid;
 }
-$blog_headers = blog_get_headers();
-
-$navigation = build_navigation($blog_headers['navlinks'], $blog_headers['cm']);
+$blogheaders = blog_get_headers();
 
 // prints the tabs
 $showroles = !empty($userid);
@@ -223,16 +221,13 @@ if (empty($entryid) && empty($modid) && empty($groupid)) {
     $PAGE->set_context(get_context_instance(CONTEXT_USER, $userid));
 }
 
-$PAGE->set_title($blog_headers['title']);
-$PAGE->set_heading($blog_headers['title']);
-
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 if (!empty($tabsfile)) {
     require_once($tabsfile);
 }
 
-echo $OUTPUT->heading($blog_headers['heading'], 2);
+echo $OUTPUT->heading($blogheaders['heading'], 2);
 
 $blog_listing = new blog_listing($filters);
 $blog_listing->print_entries();

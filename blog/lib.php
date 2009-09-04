@@ -498,9 +498,8 @@ function blog_get_context_url($context=null) {
  * navigation, titles and headings of the blog listing page, depending
  * on URL params. It builds and returns an array containing:
  *
- * 1. The navlinks used to build the breadcrumbs
- * 2. The title shown in the browser and at the top of the web page
- * 3. The heading displayed above the blog entries
+ * 1. The heading displayed above the blog entries
+ * All other variables are set directly in $PAGE
  *
  * It uses the current URL to build these variables.
  * A number of mutually exclusive use cases are used to structure this function.
@@ -551,6 +550,8 @@ function blog_get_headers() {
         $cm = $DB->get_record('course_modules', array('id' => $modid));
         $cm->modname = $DB->get_field('modules', 'name', array('id' => $cm->module));
         $cm->name = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance));
+        $cm->context = get_context_instance(CONTEXT_MODULE, $modid);
+        $PAGE->set_cm($cm, $course);
     }
 
     // Case 1: only entryid is requested, ignore all other filters. courseid is used to give more contextual information
@@ -570,13 +571,14 @@ function blog_get_headers() {
         } else {
             $courseid = $site->id;
         }
+        
+        $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$courseid");
+        $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($entry->subject);
 
-        $headers['navlinks'][] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$user->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => $entry->subject, 'link' => null, 'type' => 'misc');
-
-        $headers['title'] = "$site->shortname: " . fullname($user) . ": $entry->subject";
+        $PAGE->set_title("$site->shortname: " . fullname($user) . ": $entry->subject");
+        $PAGE->set_heading("$site->shortname: " . fullname($user) . ": $entry->subject");
         $headers['heading'] = get_string('blogentrybyuser', 'blog', fullname($user));
 
         // We ignore tag and search params
@@ -589,10 +591,11 @@ function blog_get_headers() {
     // Heading: [user fullname]'s blog
     if (!empty($userid) && empty($modid) && empty($courseid)) {
         $blog_url->param('userid', $userid);
-        $headers['navlinks'][] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$site->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$user->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
-        $headers['title'] = "$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog');
+        $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$site->id");
+        $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->set_title("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
+        $PAGE->set_heading("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
         $headers['heading'] = get_string('userblog', 'blog', fullname($user));
 
     } else
@@ -607,10 +610,11 @@ function blog_get_headers() {
 
         // Course module navigation is handled by build_navigation as the second param
         $headers['cm'] = $cm;
-        $headers['navlinks'][] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$user->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
 
-        $headers['title'] = "$site->shortname: $cm->name: " . fullname($user) . ': ' . get_string('blogentries', 'blog');
+        $PAGE->set_title("$site->shortname: $cm->name: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
+        $PAGE->set_heading("$site->shortname: $cm->name: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
 
         $a->user = fullname($user);
         $a->mod = $cm->name;
@@ -625,11 +629,12 @@ function blog_get_headers() {
         $blog_url->param('userid', $userid);
         $blog_url->param('courseid', $courseid);
 
-        $headers['navlinks'][] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$user->id", 'type' => 'misc');
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$course->id");
+        $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
 
-        $headers['title'] = "$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog');
+        $PAGE->set_title("$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
+        $PAGE->set_heading("$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
 
         $a->user = fullname($user);
         $a->course = $course->fullname;
@@ -642,12 +647,14 @@ function blog_get_headers() {
     // Heading: Blog entries by [group name] about [course fullname]
     if (!empty($groupid) && empty($modid)) {
         $blog_url->param('courseid', $course->id);
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
+        
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
         $blog_url->remove_params(array('courseid'));
         $blog_url->param('groupid', $groupid);
-        $headers['navlinks'][] = array('name' => $group->name, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add($group->name, $blog_url->out());
 
-        $headers['title'] = "$site->shortname: $course->shortname: " . get_string('blogentries', 'blog') . ": $group->name";
+        $PAGE->set_title("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog') . ": $group->name");
+        $PAGE->set_heading("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog') . ": $group->name");
 
         $a->group = $group->name;
         $a->course = $course->fullname;
@@ -661,12 +668,13 @@ function blog_get_headers() {
     if (!empty($groupid) && !empty($modid)) {
         $headers['cm'] = $cm;
         $blog_url->param('modid', $modid);
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
 
         $blog_url->param('groupid', $groupid);
-        $headers['navlinks'][] = array('name' => $group->name, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add($group->name, $blog_url->out());
 
-        $headers['title'] = "$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog') . ": $group->name";
+        $PAGE->set_title("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog') . ": $group->name");
+        $PAGE->set_heading("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog') . ": $group->name");
 
         $a->group = $group->name;
         $a->mod = $cm->name;
@@ -679,10 +687,11 @@ function blog_get_headers() {
     // Title: [site shortname]: [course shortname]: [activity name] : blog entries
     // Heading: Blog entries about [activity fullname]
     if (!empty($modid) && empty($userid) && empty($groupid)) {
-        $headers['cm'] = $cm;
+        $PAGE->set_cm($cm, $course);
         $blog_url->param('modid', $modid);
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
-        $headers['title'] = "$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog');
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->set_title("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog'));
+        $PAGE->set_heading("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog'));
         $headers['heading'] = get_string('blogentriesabout', 'blog', $cm->name);
     } else
 
@@ -692,8 +701,9 @@ function blog_get_headers() {
     // Heading: Blog entries about [course fullname]
     if (!empty($courseid) && empty($userid) && empty($groupid) && empty($modid)) {
         $blog_url->param('courseid', $courseid);
-        $headers['navlinks'][] = array('name' => $strblogentries, 'link' => $blog_url->out(), 'type' => 'misc');
-        $headers['title'] = "$site->shortname: $course->shortname: " . get_string('blogentries', 'blog');
+        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->set_title("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog'));
+        $PAGE->set_heading("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog'));
         $headers['heading'] = get_string('blogentriesabout', 'blog', $course->fullname);
     }
 
@@ -701,23 +711,23 @@ function blog_get_headers() {
     if (!empty($tagid)) {
         $blog_url->param('tagid', $tagid);
         $tagrec = $DB->get_record('tag', array('id'=>$tagid));
-        $headers['navlinks'][] = array('name' => $tagrec->name, 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add($tagrec->name, $blog_url->out());
     } elseif (!empty($tag)) {
         $blog_url->param('tag', $tag);
-        $headers['navlinks'][] = array('name' => get_string('tagparam', 'blog', $tag), 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blog_url->out());
     }
 
     // Append Search info
     if (!empty($search)) {
         $blog_url->param('search', $search);
-        $headers['navlinks'][] = array('name' => get_string('searchterm', 'blog', $search), 'link' => $blog_url->out(), 'type' => 'misc');
+        $PAGE->navbar->add(get_string('searchterm', 'blog', $search), $blog_url->out());
     }
 
     // Append edit mode info
     if (!empty($action) && $action == 'add') {
-        $headers['navlinks'][] = array('name' => get_string('addnewentry', 'blog'), 'link' => null, 'type' => 'misc');
+        $PAGE->navbar->add(get_string('addnewentry', 'blog'));
     } else if (!empty($action) && $action == 'edit') {
-        $headers['navlinks'][] = array('name' => get_string('editentry', 'blog'), 'link' => null, 'type' => 'misc');
+        $PAGE->navbar->add(get_string('editentry', 'blog'));
     }
     return $headers;
 }
