@@ -250,7 +250,7 @@ class navigation_node {
         }
         $itemarray['key'] = $key;
         $this->children[$key] = new navigation_node($itemarray);
-        if ($type==self::TYPE_CATEGORY || (isloggedin() && $type==self::TYPE_COURSE)) {
+        if (($type==self::TYPE_CATEGORY) || (isloggedin() && $type==self::TYPE_COURSE)) {
             $this->children[$key]->nodetype = self::NODETYPE_BRANCH;
         }
         if ($this->hidden) {
