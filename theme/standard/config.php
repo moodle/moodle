@@ -79,6 +79,11 @@ $THEME->layouts = array(
         'layout' => 'layout-popup.php',
         'regions' => array(),
     ),
+    // Embeded pages, like iframe embeded in moodleform
+    'embeded' => array(
+        'layout' => 'layout-embeded.php',
+        'regions' => array(),
+    )
 );
 
 $THEME->resource_mp3player_colors =
