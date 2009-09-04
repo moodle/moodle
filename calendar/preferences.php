@@ -58,18 +58,16 @@
     $strcalendar = get_string('calendar', 'calendar');
     $strpreferences = get_string('preferences', 'calendar');
 
-    $navlinks = array();
     if ($course->id != SITEID) {
-        $navlinks[] = array('name' => $course->shortname,
-                            'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                            'type' => 'misc');
+       $PAGE->navbar-add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
     }
-    $navlinks[] = array('name' => $strpreferences, 'link' => 'view.php', 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add($strpreferences, new moodle_url($CFG->wwwroot.'/calendar/view.php'));
 
-    print_header("$site->shortname: $strcalendar: $strpreferences", $strcalendar, $navigation,
-                 '', '', true, '', user_login_string($site));
+    $PAGE->set_title("$site->shortname: $strcalendar: $strpreferences");
+    $PAGE->set_heading($strcalendar);
+    $PAGE->set_headingmenu(user_login_string($site));
 
+    echo $OUTPUT->header();
 
     echo $OUTPUT->heading($strpreferences);
 

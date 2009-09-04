@@ -68,12 +68,10 @@
     $pagetitle = '';
 
     $strcalendar = get_string('calendar', 'calendar');
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcalendar,
-                        'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
-                                                        $now['mday'], $now['mon'], $now['year']),
-                        'type' => 'misc');
-
+    
+    $link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
+                                   $now['mday'], $now['mon'], $now['year']);
+    $PAGE->navbar->add($strcalendar, new moodle_url($link));
 
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
@@ -84,11 +82,11 @@
 
     switch($view) {
         case 'day':
-            $navlinks[] = array('name' => userdate($time, get_string('strftimedate')), 'link' => null, 'type' => 'misc');
+            $PAGE->navbar->add(userdate($time, get_string('strftimedate')));
             $pagetitle = get_string('dayview', 'calendar');
         break;
         case 'month':
-            $navlinks[] = array('name' => userdate($time, get_string('strftimemonthyear')), 'link' => null, 'type' => 'misc');
+            $PAGE->navbar->add(userdate($time, get_string('strftimemonthyear')));
             $pagetitle = get_string('detailedmonthview', 'calendar');
         break;
         case 'upcoming':
@@ -136,9 +134,12 @@
     $prefsbutton = calendar_preferences_button();
 
     // Print title and header
-    $navigation = build_navigation($navlinks);
-    print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $navigation,
-                 '', '', true, $prefsbutton, user_login_string($site));
+    $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
+    $PAGE->set_heading($strcalendar);
+    $PAGE->set_headingmenu(user_login_string($site));
+    $PAGE->set_button($prefsbutton);
+
+    echo $OUTPUT->header();
 
     echo calendar_overlib_html();
 

@@ -70,11 +70,6 @@
     calendar_session_vars();
 
     $now = usergetdate(time());
-    $navlinks = array();
-    $calendar_navlink = array('name' => $strcalendar,
-                          'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;',
-                                                          $now['mday'], $now['mon'], $now['year']),
-                          'type' => 'misc');
 
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
@@ -276,11 +271,17 @@
     }
     require_login($course, false);
 
-    $navlinks[] = $calendar_navlink;
-    $navlinks[] = array('name' => $title, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $navigation,
-                 'eventform.name', '', true, '', user_login_string($site));
+    $link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;',
+                                   $now['mday'], $now['mon'], $now['year']);
+    $PAGE->navbar->add($strcalendar, new moodle_url($link));
+    $PAGE->navbar->add($title);
+
+    $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
+    $PAGE->set_heading($strcalendar);
+    $PAGE->set_headingmenu(user_login_string($site));
+    $PAGE->set_focuscontrol('eventform.name');
+
+    echo $OUTPUT->header();
 
     echo calendar_overlib_html();
 

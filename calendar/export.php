@@ -33,16 +33,8 @@ $navlinks = array();
 $now = usergetdate(time());
 
 if (!empty($courseid) && $course->id != SITEID) {
-    $navlinks[] = array('name' => $course->shortname,
-                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
-                        'type' => 'misc');
+    $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
 }
-$navlinks[] = array('name' => get_string('calendar', 'calendar'),
-                    'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
-                                                    $now['mday'], $now['mon'], $now['year']),
-                    'type' => 'misc');
-$navlinks[] = array('name' => $pagetitle, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
 
 if(!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
@@ -70,8 +62,18 @@ $strcalendar = get_string('calendar', 'calendar');
 $prefsbutton = calendar_preferences_button();
 
 // Print title and header
-print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $navigation,
-             '', '', true, $prefsbutton, user_login_string($site));
+$link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
+                                   $now['mday'], $now['mon'], $now['year']);
+$PAGE->navbar->add(get_string('calendar', 'calendar'), new moodle_url($link));
+$PAGE->navbar->add($pagetitle);
+
+$PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);
+$PAGE->set_heading($strcalendar);
+$PAGE->set_headingmenu(user_login_string($site));
+$PAGE->set_button($prefsbutton);
+$PAGE->set_focuscontrol('eventform.name');
+
+echo $OUTPUT->header();
 
 echo calendar_overlib_html();
 
