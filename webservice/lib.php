@@ -30,18 +30,17 @@ require_once(dirname(dirname(__FILE__)) . '/lib/formslib.php');
  */
 final class webservice_lib {
 
-    /**
-     * Return list of all web service protocol into the webservice folder
-     * @global <type> $CFG
-     * @return <type>
-     */
+/**
+ * Return list of all web service protocol into the webservice folder
+ * @global <type> $CFG
+ * @return <type>
+ */
     public static function get_list_protocols() {
         global $CFG;
         $protocols = array();
         $directorypath = $CFG->dirroot . "/webservice";
         if( $dh = opendir($directorypath)) {
-            while( false !== ($file = readdir($dh)))
-            {
+            while( false !== ($file = readdir($dh))) {
                 if( $file == '.' || $file == '..' || $file == 'CVS') {   // Skip '.' and '..'
                     continue;
                 }
@@ -49,13 +48,13 @@ final class webservice_lib {
                 ///browse the subfolder
                 if( is_dir($path) ) {
                     if ($file != 'db') { //we don't want to browse the 'db' subfolder of webservice folder
-                    require_once($path."/lib.php");
-                    $classname = $file."_server";
-                    $protocols[] = new $classname;
+                        require_once($path."/lib.php");
+                        $classname = $file."_server";
+                        $protocols[] = new $classname;
                     }
                 }
                 ///retrieve api.php file
-                else  {
+                else {
                     continue;
                 }
             }
@@ -71,9 +70,9 @@ final class webservice_lib {
      * @return <type>
      */
     public static function mock_check_token($token) {
-        //fake test
+    //fake test
         if ($token == 456) {
-            ///retrieve the user
+        ///retrieve the user
             global $DB;
             $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));
 
@@ -93,16 +92,13 @@ final class webservice_lib {
      * @param <type> $directorypath
      * @return boolean true if n
      */
-    public static function setListApiFiles( &$files, $directorypath )
-    {
+    public static function setListApiFiles( &$files, $directorypath ) {
         global $CFG;
 
-        if(is_dir($directorypath)){ //check that we are browsing a folder not a file
+        if(is_dir($directorypath)) { //check that we are browsing a folder not a file
 
-            if( $dh = opendir($directorypath))
-            {
-                while( false !== ($file = readdir($dh)))
-                {
+            if( $dh = opendir($directorypath)) {
+                while( false !== ($file = readdir($dh))) {
 
                     if( $file == '.' || $file == '..') {   // Skip '.' and '..'
                         continue;
@@ -114,8 +110,8 @@ final class webservice_lib {
                     }
                     ///retrieve api.php file
                     else if ($file == "external.php") {
-                        $files[] = $path;
-                    }
+                            $files[] = $path;
+                        }
                 }
                 closedir($dh);
 
@@ -124,12 +120,130 @@ final class webservice_lib {
 
     }
 
+    public static function services_discovery() {
+        global $CFG, $DB;
+        $externalfiles = array();
+        webservice_lib::setListApiFiles($externalfiles, $CFG->dirroot);
+
+        //retrieve all saved services
+        $services = $DB->get_records('external_services', array('custom' => 0)); //we only retrieve not custom service
+        $dbservices = array();
+        foreach ($services as $service) {
+            $dbservices[$service->name] = false; //value false will define obsolote status
+        //once we parse all services from the external files
+        }
+
+        //retrieve all saved servicefunction association including their function name,
+        //service name, function id and service id
+
+        $servicesfunctions = $DB->get_records_sql("SELECT fs.id as id, s.name as servicename, s.id as serviceid, f.name as functionname, f.id as functionid
+                                    FROM {external_services} s, {external_functions} f, {external_services_functions} fs
+                                   WHERE fs.externalserviceid = s.id AND fs.externalfunctionid = f.id AND s.custom = 0");
+        $dbservicesfunctions = array();
+        foreach ($servicesfunctions as $servicefunction) {
+            $dbservicesfunctions[$servicefunction->servicename][$servicefunction->functionname] = array('serviceid' => $servicefunction->serviceid,
+                'functionid' => $servicefunction->functionid,
+                'id' => $servicefunction->id,
+                'notobsolete' => false);
+        //once we parse all services from the external files
+        }
+
+        foreach ($externalfiles as $file) {
+            require($file);
+            $classpath = substr($file,strlen($CFG->dirroot)+1); //remove the dir root + / from the file path
+            $classpath = substr($classpath,0,strlen($classpath) - 13); //remove /external.php from the classpath
+            $classpath = str_replace('/','_',$classpath); //convert all / into _
+            $classname = $classpath."_external";
+            $api = new $classname();
+            if (method_exists($api, 'get_descriptions')) {
+                $descriptions = $api->get_descriptions();
+
+                //retrieve all saved function into the DB for this specific external file/component
+                $functions = $DB->get_records('external_functions', array('component' => $classpath));
+                //remove the obsolete ones
+                $dbfunctions = array();
+                foreach ($functions as $function) {
+                    $dbfunctions[$function->name] = false; //value false is not important we just need the key
+                    if (!array_key_exists($function->name, $descriptions)) {
+                    //remove all obsolete function from the db
+                        $DB->delete_records('external_functions', array('name' => $function->name, 'component' => $classpath));
+                    }
+                }
+
+                foreach ($descriptions as $functionname => $functiondescription) {
+
+
+
+                //only create the one not already saved into the database
+                    if (!array_key_exists($functionname, $dbfunctions)) {
+                        $newfunction = new object();
+                        $newfunction->component = $classpath;
+                        $newfunction->name = $functionname;
+                        $newfunction->enabled = 0;
+                        $DB->insert_record('external_functions', $newfunction);
+                    }
+
+                    //check if the service is into the database
+                    if (array_key_exists('service', $functiondescription) && !empty($functiondescription['service'])) { //check that the service has been set in the description
+                        if (!array_key_exists($functiondescription['service'], $dbservices)) {
+                            $newservice = new object();
+                            $newservice->name = $functiondescription['service'];
+                            $newservice->enable = 0;
+                            $newservice->custom = 0;
+                            $DB->insert_record('external_services', $newservice);
+                        }
+                        $dbservices[$functiondescription['service']] = true; //mark the service as not obsolete
+                    //and add it if it wasn't in the list
+                    }
+                    else {
+                        $errors = new object();
+                        $errors->classname = $classname;
+                        $errors->functionname = $functionname;
+                        throw new moodle_exception("wsdescriptionserviceisempty",'','', $errors);
+
+                    }
+
+
+                    //check if the couple service/function is into the database
+                    if (!array_key_exists($functiondescription['service'], $dbservicesfunctions) || !array_key_exists($functionname, $dbservicesfunctions[$functiondescription['service']])) {
+                        $newassociation = new object();
+                        $newassociation->externalserviceid = $DB->get_field('external_services','id',array('name' => $functiondescription['service']));
+                        $newassociation->externalfunctionid = $DB->get_field('external_functions','id',array('name' => $functionname, 'component' => $classpath));
+                        $DB->insert_record('external_services_functions', $newassociation);
+                    }
+                    $dbservicesfunctions[$functiondescription['service']][$functionname]['notobsolete'] = true;
+                }
+
+
+            }
+            else {
+                throw new moodle_exception("wsdoesntextendbaseclass",'','', $classname);
+            }
+        }
+
+        //remove all obsolete service (not the custom ones)
+        foreach ($dbservices as $servicename => $notobsolete) {
+            if (!$notobsolete) {
+                $DB->delete_records('external_services', array('name' => $servicename));
+            }
+        }
+
+        //remove all obsolete association (not the custom ones)
+        foreach ($dbservicesfunctions as $servicename => $servicefunctions ) {
+            foreach ($servicefunctions as $functioname => $servicefunction) {
+                if (!$servicefunction['notobsolete']) {
+                    $DB->delete_records('external_services_functions', array('id' => $servicefunction['id']));
+                }
+            }
+        }
+    }
+
     /**
      * Check if the Moodle site has the web service protocol enable
      * @global object $CFG
      * @param string $protocol
      */
-    function display_webservices_availability($protocol){
+    function display_webservices_availability($protocol) {
         global $CFG;
 
         $available = true;
@@ -173,10 +287,10 @@ final class webservice_lib {
  */
 abstract class webservice_server {
 
-    /**
-     * Web Service Protocol name (eg. SOAP, REST, XML-RPC,...)
-     * @var String
-     */
+/**
+ * Web Service Protocol name (eg. SOAP, REST, XML-RPC,...)
+ * @var String
+ */
     private $protocolname;
 
     /**
@@ -231,11 +345,11 @@ abstract class webservice_server {
  * Temporary authentication class to be removed/modified
  */
 class ws_authentication {
-    /**
-     *
-     * @param object|struct $params
-     * @return integer
-     */
+/**
+ *
+ * @param object|struct $params
+ * @return integer
+ */
     function get_token($params) {
         $params->username = clean_param($params->username, PARAM_ALPHANUM);
         $params->password = clean_param($params->password, PARAM_ALPHANUM);
@@ -243,7 +357,7 @@ class ws_authentication {
             return '456';
         } else {
             throw new moodle_exception('wrongusernamepassword');
-        }      
+        }
     }
 }
 
