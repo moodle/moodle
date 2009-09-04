@@ -25,6 +25,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id, false, $cm);
     require_capability('mod/chat:chat',$context);
+    $PAGE->set_generaltype('form');
 
 /// Check to see if groups are being used here
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
@@ -103,7 +104,7 @@
         echo '<li>';
         $userpic = moodle_user_picture::make($chu->id, $course->id);
         $userpic->size = 24;
-        echo $OUTPUT->user_picture($userpic)
+        echo $OUTPUT->user_picture($userpic);
         echo '<div class="userinfo">';
         echo fullname($chu).' ';
         if ($idle = time() - $chu->lastmessageping) {
