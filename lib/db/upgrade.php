@@ -2298,18 +2298,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009063000);
     }
 
-    if ($result && $oldversion < 2009070100) {
-        // MDL-19677 Change $CFG->bloglevel to BLOG_SITE_LEVEL if BLOG_COURSE_LEVEL or BLOG_GROUP_LEVEL
-        $current_bloglevel = get_config(null, 'bloglevel');
-
-        if ($current_bloglevel == BLOG_GROUP_LEVEL || $current_bloglevel == BLOG_COURSE_LEVEL) {
-            set_config('bloglevel', BLOG_SITE_LEVEL);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009070100);
-    }
-
     if ($result && $oldversion < 2009071000) {
 
     /// Rename field contextid on table block_instances to parentcontextid
@@ -2342,7 +2330,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009071300);
     }
-    
+
     if ($result && $oldversion < 2009071600) {
 
     /// Define field summaryformat to be added to post
@@ -2435,7 +2423,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Retrieve the block instance id's and parent contexts, so we can join them an GREATLY
         // cut down the number of delete queries we will need to run
         $allblockinstances = $DB->get_recordset_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')', array(), '', 'id, parentcontextid');
-        
+
         $contextids = array();
         $instanceids = array();
         // Iterate through all block instances
@@ -2466,12 +2454,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         $instanceidstring = join(',',$instanceids);
         $outcome1 = $result && $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
-        
+
         unset($allblockinstances);
         unset($contextids);
         unset($instanceids);
         unset($instanceidstring);
-        
+
         // Now remove the actual block instance
         $result = $result && $DB->delete_records_select('block_instances', 'blockname IN ('.$outmodedblocksstring.')');
         unset($outmodedblocksstring);
@@ -2484,12 +2472,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
         }
         unset($newblockinstances);
-        
+
         upgrade_main_savepoint($result, 2009082800);
         // The end of the navigation upgrade
     }
 
+/// BLOG UPGRADE
     if ($result && $oldversion < 2009090400) {
+        // MDL-19677 Change $CFG->bloglevel to BLOG_SITE_LEVEL if BLOG_COURSE_LEVEL or BLOG_GROUP_LEVEL
+        $current_bloglevel = get_config(null, 'bloglevel');
+
+        if ($current_bloglevel == BLOG_GROUP_LEVEL || $current_bloglevel == BLOG_COURSE_LEVEL) {
+            set_config('bloglevel', BLOG_SITE_LEVEL);
+        }
+
     /// Define table blog_association to be created
         $table = new xmldb_table('blog_association');
 
@@ -2506,13 +2502,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         /// Launch create table for blog_association
             $dbman->create_table($table);
         }
-
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009090400);
-    }
-
-    if ($result && $oldversion < 2009090400) {
 
     /// Define table blog_external to be created
         $table = new xmldb_table('blog_external');
@@ -2533,12 +2522,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->create_table($table);
         }
 
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009090400);
-    }
-     
-    if ($result && $oldversion < 2009090400) {
-
     /// Define field timefetched to be added to blog_external
         $table = new xmldb_table('blog_external');
         $field = new xmldb_field('timefetched', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
@@ -2548,7 +2531,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
     /// Conditionally launch add index userid_idx
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
@@ -2556,7 +2539,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009090400);
     }
-
 
     return $result;
 }
