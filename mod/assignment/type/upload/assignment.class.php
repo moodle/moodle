@@ -525,7 +525,7 @@ class assignment_upload extends assignment_base {
     }
 
     function upload_responsefile() {
-        global $CFG, $USER, $OUTPUT;
+        global $CFG, $USER, $OUTPUT, $PAGE;
 
         $userid = required_param('userid', PARAM_INT);
         $mode   = required_param('mode', PARAM_ALPHA);
@@ -545,7 +545,8 @@ class assignment_upload extends assignment_base {
                 }
             }
         }
-        print_header(get_string('upload'));
+        $PAGE->set_title(get_string('upload'));
+        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('uploaderror', 'assignment'));
         echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();
@@ -751,7 +752,7 @@ class assignment_upload extends assignment_base {
 
 
     function delete_responsefile() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT,$PAGE;
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
@@ -770,7 +771,8 @@ class assignment_upload extends assignment_base {
 
         if (!data_submitted() or !$confirm) {
             $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset);
-            print_header(get_string('delete'));
+            $PAGE->set_title(get_string('delete'));
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('delete'));
             echo $OUTPUT->confirm(get_string('confirmdeletefile', 'assignment', $file), new moodle_url('delete.php', $optionsyes), new moodle_url($urlreturn, $optionsreturn));
             echo $OUTPUT->footer();
@@ -785,7 +787,8 @@ class assignment_upload extends assignment_base {
         }
 
         // print delete error
-        print_header(get_string('delete'));
+        $PAGE->set_title(get_string('delete'));
+        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('deletefilefailed', 'assignment'));
         echo $OUTPUT->continue_button($returnurl);
         echo $OUTPUT->footer();

@@ -41,7 +41,8 @@
 
     if ($submission = $assignmentinstance->get_submission($user->id)
       and !empty($submission->data1)) {
-        print_header(fullname($user,true).': '.$assignment->name);
+        $PAGE->set_title(fullname($user,true).': '.$assignment->name);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
         echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML), 'generalbox boxaligncenter boxwidthwide');
         if ($mode != 'single') {
@@ -51,7 +52,8 @@
         }
         echo $OUTPUT->footer();
     } else {
-        print_header(fullname($user,true).': '.$assignment->name);
+        $PAGE->set_title(fullname($user,true).': '.$assignment->name);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
         echo $OUTPUT->box(get_string('notesempty', 'assignment'), 'generalbox boxaligncenter boxwidthwide');
         if ($mode != 'single') {

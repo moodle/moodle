@@ -36,8 +36,8 @@
     $assignmentinstance = new assignment_online($cm->id, $assignment, $cm, $course);
 
     if ($submission = $assignmentinstance->get_submission($user->id)) {
-        print_header(fullname($user,true).': '.$assignment->name);
-
+        $PAGE->set_title(fullname($user,true).': '.$assignment->name);
+        echo $OUTPUT->header();
         echo $OUTPUT->box_start('generalbox boxaligcenter', 'dates');
         echo '<table>';
         if ($assignment->timedue) {

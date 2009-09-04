@@ -178,19 +178,17 @@ class assignment_base {
      * @param string $subpage Description of subpage to be used in navigation trail
      */
     function view_header($subpage='') {
-
-        global $CFG;
-
+        global $CFG, $PAGE, $OUTPUT;
 
         if ($subpage) {
-            $navigation = build_navigation($subpage, $this->cm);
-        } else {
-            $navigation = build_navigation('', $this->cm);
+            $PAGE->navbar->add($subpage);
         }
 
-        print_header($this->pagetitle, $this->course->fullname, $navigation, '', '',
-                     true, update_module_button($this->cm->id, $this->course->id, $this->strassignment),
-                     navmenu($this->course, $this->cm));
+        $PAGE->set_title($this->pagetitle);
+        $PAGE->set_heading($this->course->fullname);
+        $PAGE->set_button(update_module_button($this->cm->id, $this->course->id, $this->strassignment));
+
+        echo $OUTPUT->header();
 
         groups_print_activity_menu($this->cm, 'view.php?id=' . $this->cm->id);
 
@@ -574,7 +572,8 @@ class assignment_base {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
                     //IE needs proper header with encoding
-                    print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
+                    $PAGE->set_title(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
+                    echo $OUTPUT->header();
                     echo $OUTPUT->heading(get_string('changessaved'));
                     print $this->update_main_listing($submission);
                 }
@@ -926,7 +925,8 @@ class assignment_base {
             }
         }
 
-        print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
+        $PAGE->set_title(get_string('feedback', 'assignment').':'.fullname($user, true).':'.format_string($this->assignment->name));
+        echo $OUTPUT->header();
 
         /// Print any extra javascript needed for saveandnext
         echo $extra_javascript;
@@ -1121,9 +1121,10 @@ class assignment_base {
 
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
-        $navigation = build_navigation($this->strsubmissions, $this->cm);
-        print_header_simple(format_string($this->assignment->name,true), "", $navigation,
-                '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+        $PAGE->add($this->strsubmissions);
+        $PAGE->set_title(format_string($this->assignment->name,true));
+        $PAGE->set_button( update_module_button($cm->id, $course->id, $this->strassignment));
+        echo $OUTPUT->header();
 
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
