@@ -53,11 +53,10 @@
     //
     // Print the page header
     //
-    $navlinks = array();
-    $navigation = build_navigation($navlinks, $cm);
-    
-    print_header($pagetitle, $course->fullname, $navigation,
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
+    $PAGE->set_title($pagetitle);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strscorm));
+    echo $OUTPUT->header();
 
     if (has_capability('mod/scorm:viewreport', $context)) {
         

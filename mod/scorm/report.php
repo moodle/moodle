@@ -66,32 +66,21 @@
         $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
 
+        $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
+        $PAGE->set_heading($course->fullname);
+        $PAGE->navbar->add($strreport, null, null, navigation_node::TYPE_CUSTOM,
+                           new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('id'=>$cm->id)));
+
         if (empty($b)) {
-            if (empty($a)) {
-                $navigation = build_navigation($strreport, $cm);
-                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
-                             '', '', true);
-            } else {
-
-                $navlinks = array();
-                $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
-                $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
-                $navigation = build_navigation($navlinks, $cm);
-
-                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
-                             $navigation, '', '', true);
+            if (!empty($a)) {
+                $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata));
             }
         } else {
-
-            $navlinks = array();
-            $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
-            $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&amp;user=$user&amp;attempt=$attempt", 'type' => 'title');
-            $navlinks[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
-            $navigation = build_navigation($navlinks, $cm);
-
-            print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
-                     '', '', true);
+            $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), null, null, navigation_node::TYPE_CUSTOM,
+                                new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
+            $PAGE->navbar->add($sco->title);
         }
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(format_string($scorm->name));
     }
 

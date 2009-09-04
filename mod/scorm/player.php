@@ -45,25 +45,26 @@
     $strpopup = get_string('popup','scorm');
     $strexit = get_string('exitactivity','scorm');
 
-    $navlinks = array();
-
     if ($course->id != SITEID) {
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM/AICC activity with the first id is the course
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+                $PAGE->navbar->add($strscorms, null ,null, navigation_node::TYPE_CUSTOM,
+                                   new moodle_url($CFG->wwwroot.'/mod/scorm/index.php', array('id'=>$course->id)));
             }
         }
     }
 
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
-        $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navigation = build_navigation($navlinks);
+    $PAGE->set_title($pagetitle);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->navbar->add(format_string($scorm->name,true), null ,null, navigation_node::TYPE_CUSTOM,
+                       new moodle_url($CFG->wwwroot.'/mode/scorm/view.php', array('id'=>$cm->id)));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strscorm));
 
-        print_header($pagetitle, $course->fullname, $navigation,
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
+        echo $OUTPUT->header();
         notice(get_string("activityiscurrentlyhidden"));
         echo $OUTPUT->footer();
         die;
@@ -73,18 +74,12 @@
     $timenow = time();
     if ($scorm->timeclose !=0) {
         if ($scorm->timeopen > $timenow) {
-            $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-            $navigation = build_navigation($navlinks);
-            print_header($pagetitle, $course->fullname, $navigation,
-                     '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+            echo $OUTPUT->header();
             echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
             echo $OUTPUT->footer();
             die;
         } elseif ($timenow > $scorm->timeclose) {
-            $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-            $navigation = build_navigation($navlinks);
-            print_header($pagetitle, $course->fullname, $navigation,
-                     '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
+            echo $OUTPUT->header();
             echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
             echo $OUTPUT->footer();
             die;
@@ -150,20 +145,18 @@
         $bodyscript = 'onunload="main.close();"';
     }
 
-    $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navigation = build_navigation($navlinks);
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
 
-    print_header($pagetitle, $course->fullname,
-                 $navigation,
-                 '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
+    $PAGE->set_button($exitlink.update_module_button($cm->id, $course->id, $strscorm));
 
-    echo $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->asap();
-    echo $PAGE->requires->js('mod/scorm/request.js')->asap();
-    echo $PAGE->requires->js('mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->asap();
-    echo $PAGE->requires->js('mod/scorm/rd.js')->asap();
+    echo $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->in_head();
+    echo $PAGE->requires->js('mod/scorm/request.js')->in_head();
+    echo $PAGE->requires->js('mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr)->in_head();
+    echo $PAGE->requires->js('mod/scorm/rd.js')->in_head();
+
+    echo $OUTPUT->header();
+
     $PAGE->requires->js_function_call('attach_resize_event');
-
     if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
         $PAGE->requires->js_function_call('scorm_set_prev', Array($CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr));
