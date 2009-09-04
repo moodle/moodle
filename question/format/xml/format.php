@@ -967,7 +967,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <tolerance>$tolerance</tolerance>\n";
                 $expout .= "    <tolerancetype>$tolerancetype</tolerancetype>\n";
                 $expout .= "    <correctanswerformat>$correctanswerformat</correctanswerformat>\n";
-                $expout .= "    <correctanswerlength>$correctanswerformat</correctanswerlength>\n";
+                $expout .= "    <correctanswerlength>$correctanswerlength</correctanswerlength>\n";
                 $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
                 $expout .= "</answer>\n";
             }
