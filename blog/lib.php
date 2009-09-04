@@ -403,32 +403,30 @@ function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filters
  */
 function blog_fetch_external_entries($external_blog) {
     global $CFG, $DB;
-    require_once($CFG->libdir . '/magpie/rss_fetch.inc');
+    require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 
     if (!blog_is_valid_url($external_blog->url)) {
         return null;
     }
 
-    if (!$rss = fetch_rss($external_blog->url)) {
+    $rss = new moodle_simplepie($external_blog->url);
+
+    if (empty($rss->data)) {
         return null;
     }
 
-    if (empty($rss->channel) || empty($rss->items)) {
-        return null;
-    }
-
-    foreach ($rss->items as $entry) {
+    foreach ($rss->get_items() as $entry) {
         $params = array('userid' => $external_blog->userid,
                         'module' => 'blog',
-                        'uniquehash' => $entry['link'],
+                        'uniquehash' => $entry->get_permalink(),
                         'publishstate' => 'site',
                         'format' => FORMAT_HTML);
 
         if (!$DB->record_exists('post', $params)) {
-            $params['subject']      = $entry['title'];
-            $params['summary']      = $entry['description'];
-            $params['created']      = $entry['date_timestamp'];
-            $params['lastmodified'] = $entry['date_timestamp'];
+            $params['subject']      = $entry->get_title();
+            $params['summary']      = $entry->get_description();
+            $params['created']      = $entry->get_date('U');
+            $params['lastmodified'] = $entry->get_date('U');
 
             $id = $DB->insert_record('post', $params);
 
@@ -571,7 +569,7 @@ function blog_get_headers() {
         } else {
             $courseid = $site->id;
         }
-        
+
         $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$courseid");
         $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
         $PAGE->navbar->add($strblogentries, $blog_url->out());
@@ -647,7 +645,7 @@ function blog_get_headers() {
     // Heading: Blog entries by [group name] about [course fullname]
     if (!empty($groupid) && empty($modid)) {
         $blog_url->param('courseid', $course->id);
-        
+
         $PAGE->navbar->add($strblogentries, $blog_url->out());
         $blog_url->remove_params(array('courseid'));
         $blog_url->param('groupid', $groupid);

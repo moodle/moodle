@@ -28,7 +28,7 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once('external_form.php');
-require_once($CFG->libdir . '/magpie/rss_fetch.inc');
+require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
 require_login();
@@ -63,10 +63,11 @@ if ($externalblogform->is_cancelled()){
     //save stuff in db
     switch ($action) {
         case 'add':
-            $rss = fetch_rss($data->url);
+            $rss = new moodle_simplepie($data->url);
+
             $new_external = new stdClass();
-            $new_external->name = (empty($data->name)) ? $rss->channel['title'] : $data->name;
-            $new_external->description = (empty($data->description)) ? $rss->channel['description'] : $data->description;
+            $new_external->name = (empty($data->name)) ? $rss->get_title() : $data->name;
+            $new_external->description = (empty($data->description)) ? $rss->get_description() : $data->description;
             $new_external->userid = $user->id;
             $new_external->url = $data->url;
             $new_external->timemodified = mktime();
@@ -83,10 +84,11 @@ if ($externalblogform->is_cancelled()){
         case 'edit':
             if ($data->id && $DB->record_exists('blog_external', array('id' => $data->id))) {
 
-                $rss = fetch_rss($data->url);
+                $rss = new moodle_simplepie($data->url);
+
                 $external->id = $data->id;
-                $external->name = (empty($data->name)) ? $rss->channel['title'] : $data->name;
-                $external->description = (empty($data->description)) ? $rss->channel['description'] : $data->description;
+                $external->name = (empty($data->name)) ? $rss->get_title() : $data->name;
+                $external->description = (empty($data->description)) ? $rss->get_description() : $data->description;
                 $external->userid = $user->id;
                 $external->url = $data->url;
                 $external->timemodified = mktime();

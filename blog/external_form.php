@@ -70,8 +70,8 @@ class blog_edit_external_form extends moodleform {
         if (!blog_is_valid_url($data['url'])) {
             $errors['url'] = get_string('invalidurl', 'blog');
         } else {
-            $rss = fetch_rss($data['url']);
-            if (empty($rss->channel)) {
+            $rss = new moodle_simplepie($data['url']);
+            if (!$rss->init()) {
                 $errors['url'] = get_string('emptyrssfeed', 'blog');
             }
         }
@@ -89,14 +89,14 @@ class blog_edit_external_form extends moodleform {
         $url = $mform->getElementValue('url');
 
         if (empty($name) || empty($description)) {
-            $rss = fetch_rss($url);
+            $rss = new moodle_simplepie($url);
 
-            if (empty($name) && !empty($rss->channel['title'])) {
-                $mform->setDefault('name', $rss->channel['title']);
+            if (empty($name) && $rss->get_title()) {
+                $mform->setDefault('name', $rss->get_title());
             }
 
-            if (empty($description) && !empty($rss->channel['description'])) {
-                $mform->setDefault('description', $rss->channel['description']);
+            if (empty($description) && $rss->get_description()) {
+                $mform->setDefault('description', $rss->get_description());
             }
         }
 
