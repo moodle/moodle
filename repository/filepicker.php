@@ -24,7 +24,7 @@ set_time_limit(0);
 require_login();
 
 // disable blocks in this page
-$PAGE->set_generaltype('form');
+$PAGE->set_generaltype('embedded');
 
 // general parameters
 $action      = optional_param('action', '',        PARAM_ALPHA);
@@ -38,6 +38,7 @@ $env         = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in f
 $filename    = optional_param('filename', '',      PARAM_FILE);
 $fileurl     = optional_param('fileurl', '',       PARAM_FILE);
 $thumbnail   = optional_param('thumbnail', '',     PARAM_RAW);
+$targetpath  = optional_param('targetpath', '',    PARAM_PATH);
 $repo_id     = optional_param('repo_id', 0,        PARAM_INT);    // repository ID
 $req_path    = optional_param('p', '',             PARAM_RAW);    // the path in repository
 $page        = optional_param('page', '',          PARAM_RAW);    // What page in repository?
@@ -45,6 +46,7 @@ $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 
 // draft area
 $newdirname  = optional_param('newdirname', '',    PARAM_FILE);
+$newfilename = optional_param('newfilename', '',   PARAM_FILE);
 // path in draft area
 $draftpath   = optional_param('draftpath', '/',    PARAM_PATH);
 
@@ -74,7 +76,7 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
 }
 
 $url = new moodle_url($CFG->httpswwwroot."/repository/filepicker.php", array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env));
-$home_url = new moodle_url($url, array('action' => 'embedded'));
+$home_url = new moodle_url($url, array('action' => 'browse'));
 
 switch ($action) {
 case 'upload':
@@ -87,8 +89,17 @@ case 'deletedraft':
     $contextid = $user_context->id;
     $fs = get_file_storage();
     if ($file = $fs->get_file($contextid, 'user_draft', $itemid, $draftpath, $filename)) {
+        if ($file->is_directory()) {
+            if ($file->get_parent_directory()) {
+                $draftpath = $file->get_parent_directory()->get_filepath();
+            } else {
+                $draftpath = '/';
+            }
+        }
         if($result = $file->delete()) {
-            header('Location: ' . $home_url->out(false, array(), false));
+            $url->param('draftpath', $draftpath);
+            $url->param('action', 'browse');
+            redirect($url);
         } else {
             print_error('cannotdelete', 'repository');
         }
@@ -141,7 +152,7 @@ case 'search':
 
 case 'list':
 case 'sign':
-    print_header();
+    echo $OUTPUT->header();
     echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     if ($repo->check_login()) {
         $list = $repo->get_listing($req_path, $page);
@@ -225,8 +236,29 @@ case 'download':
 
     break;
 
+case 'downloaddir':
+    $zipper = new zip_packer();
+    $fs = get_file_storage();
+
+    $file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, '.');
+    if ($file->get_parent_directory()) {
+        $parent_path = $file->get_parent_directory()->get_filepath();
+        $filename = trim($draftpath, '/').'.zip';
+    } else {
+        $parent_path = '/';
+        $filename = 'draft_area.zip';
+    }
+
+    if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user_draft', $itemid, $parent_path, $filename, $USER->id)) {
+        $fileurl  = $CFG->wwwroot . '/draftfile.php/' . $user_context->id .'/user_draft/'.$itemid.$parent_path.$filename;
+        header('Location: ' . $fileurl );
+    } else {
+        print_error('cannotdownloaddir', 'repository');
+    }
+    break;
+
 case 'confirm':
-    print_header();
+    echo $OUTPUT->header();
     echo '<div><a href="'.me().'">'.get_string('back', 'repository').'</a></div>';
     echo '<img src="'.$thumbnail.'" />';
     echo '<form method="post">';
@@ -251,7 +283,7 @@ case 'confirm':
 case 'plugins':
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
     $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
-    print_header();
+    echo $OUTPUT->header();
     echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     echo '<div>';
     echo '<ul>';
@@ -271,19 +303,6 @@ case 'plugins':
     echo '</ul>';
     echo '</div>';
     echo $OUTPUT->footer();
-    break;
-
-case 'mkdir':
-    $fs = get_file_storage();
-    $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath(file_correct_filepath($draftpath).trim($newdirname, '/')));
-    $url->param('action', 'browse');
-    $url->param('draftpath', $draftpath);
-    if (empty($newdirname)) {
-        $str = get_string('createfoldersuccess', 'repository');
-    } else {
-        $str = get_string('createfolderfail', 'repository');
-    }
-    redirect($url, $str);
     break;
 
 case 'zip':
@@ -319,43 +338,137 @@ case 'unzip':
     redirect($url, $str);
     break;
 
+case 'movefile':
+    if (!empty($targetpath)) {
+        $fb = get_file_browser();
+        $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $draftpath, $filename);
+        $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $targetpath, $filename);
+        if ($file->delete()) {
+            $url->param('action', 'browse');
+            $url->param('draftpath', $targetpath);
+            redirect($url, '');
+            exit;
+        }
+    }
+    echo $OUTPUT->header();
+    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
+    $data = new stdclass;
+    $url->param('action', 'movefile');
+    $url->param('draftpath', $draftpath);
+    $url->param('filename', $filename);
+    file_get_draft_area_folders($itemid, '/', $data);
+    print_draft_area_tree($data, true, $url);
+    echo $OUTPUT->footer();
+    break;
+case 'mkdirform':
+    echo $OUTPUT->header();
+    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
+    $url->param('draftpath', $draftpath);
+    $url->param('action', 'mkdir');
+    echo ' <form method="post" action="'.$url->out().'">';
+    echo '  <input name="newdirname" type="text" />';
+    echo '  <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
+    echo '  <input type="submit" value="'.get_string('makeafolder', 'moodle').'" />';
+    echo ' </form>';
+    echo $OUTPUT->footer();
+    break;
+
+case 'mkdir':
+    $fs = get_file_storage();
+    $fs->create_directory($user_context->id, 'user_draft', $itemid, file_correct_filepath(file_correct_filepath($draftpath).trim($newdirname, '/')));
+    $url->param('action', 'browse');
+    $url->param('draftpath', $draftpath);
+    if (!empty($newdirname)) {
+        $str = get_string('createfoldersuccess', 'repository');
+    } else {
+        $str = get_string('createfolderfail', 'repository');
+    }
+    redirect($url, $str);
+    break;
+
+case 'rename':
+    $fs = get_file_storage();
+    if ($file = $fs->get_file($user_context->id, 'user_draft', $itemid, $draftpath, $filename)) {
+        if ($file->is_directory()) {
+            if ($file->get_parent_directory()) {
+                $draftpath = $file->get_parent_directory()->get_filepath();
+            } else {
+                $draftpath = '/';
+            }
+            // use file storage to create new folder
+            $newdir = $draftpath . trim($newfilename , '/') . '/';
+            $fs->create_directory($user_context->id, 'user_draft', $itemid, $newdir);
+        } else {
+            // use file browser to copy file
+            $fb = get_file_browser();
+            $file = $fb->get_file_info($user_context, 'user_draft', $itemid, $draftpath, $filename);
+            $file->copy_to_storage($user_context->id, 'user_draft', $itemid, $draftpath, $newfilename);
+        }
+    }
+    $file->delete();
+    $url->param('action', 'browse');
+    $url->param('draftpath', $draftpath);
+    redirect($url);
+    break;
+
+case 'renameform':
+    echo $OUTPUT->header();
+    echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
+    $url->param('draftpath', $draftpath);
+    $url->param('action', 'rename');
+    echo ' <form method="post" action="'.$url->out().'">';
+    echo '  <input name="newfilename" type="text" value="'.$filename.'" />';
+    echo '  <input name="filename" type="hidden" value="'.$filename.'" />';
+    echo '  <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
+    echo '  <input type="submit" value="'.get_string('rename', 'moodle').'" />';
+    echo ' </form>';
+    echo $OUTPUT->footer();
+    break;
+
 case 'browse':
 default:
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
     $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
-    print_header();
-
-    echo '<div>';
-    $url->param('draftpath', '/');
-    echo '<a href="'.$url->out().'">'.'Files</a> ▶';
-    $trail = '';
-    if ($draftpath !== '/') {
-        $path = file_correct_filepath($draftpath);
-        $parts = explode('/', $path);
-        foreach ($parts as $part) {
-            if (!empty($part)) {
-                $trail .= ('/'.$part.'/');
-                $data->path[] = array('name'=>$part, 'path'=>$trail);
-                $url->param('draftpath', $trail);
-                echo ' <a href="'.$url->out().'">'.$part.'</a> ▶ ';
-            }
-        }
-    }
-    echo '</div>';
-
-
     $fs = get_file_storage();
     $files = $fs->get_directory_files($user_context->id, 'user_draft', $itemid, $draftpath, false);
 
-    $iconzip  = $CFG->wwwroot . '/pix/f/zip.gif';
+    echo $OUTPUT->header();
+    if (!empty($files) or $draftpath != '/') {
+        echo '<div class="fm-breadcrumb">';
+        $url->param('action', 'browse');
+        $url->param('draftpath', '/');
+        echo '<a href="'.$url->out().'">'.'Files</a> ▶';
+        $trail = '';
+        if ($draftpath !== '/') {
+            $path = file_correct_filepath($draftpath);
+            $parts = explode('/', $path);
+            foreach ($parts as $part) {
+                if (!empty($part)) {
+                    $trail .= ('/'.$part.'/');
+                    $data->path[] = array('name'=>$part, 'path'=>$trail);
+                    $url->param('draftpath', $trail);
+                    echo ' <a href="'.$url->out().'">'.$part.'</a> ▶ ';
+                }
+            }
+        }
+        echo '</div>';
+    }
 
-    if (empty($files)) {
-        echo get_string('nofilesattached', 'repository');
-    } else {
+    $url->param('draftpath', $draftpath);
+    $url->param('action', 'plugins');
+    echo '<div class="filemanager-toolbar">';
+    echo ' <a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a>';
+    $url->param('action', 'mkdirform');
+    echo ' <a href="'.$url->out().'">'.get_string('makeafolder', 'moodle').'</a>';
+    $url->param('action', 'downloaddir');
+    echo ' <a href="'.$url->out().'" target="_blank">'.get_string('downloadfolder', 'repository').'</a>';
+    echo '</div>';
+
+    if (!empty($files)) {
         echo '<ul>';
         foreach ($files as $file) {
             $drafturl = new moodle_url($CFG->httpswwwroot.'/draftfile.php/'.$user_context->id.'/user_draft/'.$itemid.'/'.$file->get_filename());
-            if ($file->get_filename()!='.') {
+            if ($file->get_filename() != '.') {
                 // a file
                 $fileicon = $CFG->wwwroot.'/pix/'.(file_extension_icon($file->get_filename()));
                 $type = str_replace('.gif', '', mimeinfo('icon', $file->get_filename()));
@@ -364,13 +477,21 @@ default:
                 echo ' <a href="'.$drafturl->out().'">'.$file->get_filename().'</a> ';
 
                 $url->param('filename', $file->get_filename());
+
                 $url->param('action', 'deletedraft');
-                echo ' <a href="'.$url->out().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" /></a>';
+                $url->param('draftpath', $file->get_filepath());
+                echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('delete').'</a>]';
+
+                $url->param('action', 'movefile');
+                echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('move').'</a>]';
+
+                $url->param('action', 'renameform');
+                echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('rename').'</a>]';
 
                 if ($type == 'zip') {
                     $url->param('action', 'unzip');
                     $url->param('draftpath', $file->get_filepath());
-                    echo ' [<a href="'.$url->out().'">Unzip</a>]';
+                    echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('unzip').'</a>]';
                 }
 
                 echo '</li>';
@@ -387,27 +508,59 @@ default:
                 $url->param('draftpath', $file->get_filepath());
                 $url->param('filename',  $file->get_filename());
                 $url->param('action', 'deletedraft');
-                echo ' <a href="'.$url->out().'"><img src="'.$OUTPUT->old_icon_url('t/delete') . '" class="iconsmall" /></a>';
+                echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('delete').'</a>]';
+
+                // file doesn't support rename yet
+                // for folder with existing files, we need to move these files one by one
+                //$url->param('action', 'renameform');
+                //echo ' [<a href="'.$url->out().'" class="fm-operation">'.get_string('rename').'</a>]';
 
                 $url->param('action', 'zip');
-                echo ' [<a href="'.$url->out().'">Zip</a>]';
+                echo ' [<a href="'.$url->out().'" class="fm-operation">Zip</a>]';
                 echo '</li>';
             }
         }
         echo '</ul>';
+    } else {
+        //echo get_string('nofilesattached', 'repository');
     }
-    $url->param('draftpath', $draftpath);
-    $url->param('action', 'plugins');
-
-    echo '<div>';
-    echo ' <a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a>';
-    $url->param('action', 'mkdir');
-    echo ' <form method="post" action="'.$url->out().'">';
-    echo '  <input name="newdirname" type="text" /><input type="submit" value="Make a folder" /></a>';
-    echo '  <input name="draftpath" type="hidden" value="'.$draftpath.'" />';
-    echo ' </form>';
-    echo '</div>';
-
     echo $OUTPUT->footer();
     break;
 }
+function print_draft_area_tree($tree, $root, $url) {
+    echo '<ul>';
+    if ($root) {
+        $url->param('targetpath', '/');
+        if ($url->param('draftpath') == '/') {
+            echo '<li>'.get_string('files').'</li>';
+        } else {
+            echo '<li><a href="'.$url->out().'">'.get_string('files').'</a></li>';
+        }
+        echo '<ul>';
+        if (isset($tree->children)) {
+            $tree = $tree->children;
+        }
+    }
+
+    if (!empty($tree)) {
+        foreach ($tree as $node) {
+            echo '<li>';
+            $url->param('targetpath', $node->filepath);
+            if ($url->param('draftpath') != $node->filepath) {
+                echo '<a href="'.$url->out().'">'.$node->fullname.'</a>';
+            } else {
+                echo $node->fullname;
+            }
+            echo '</li>';
+            if (!empty($node->children)) {
+                print_draft_area_tree($node->children, false, $url);
+            }
+        }
+    }
+    if ($root) {
+        echo '</ul>';
+    }
+
+    echo '</ul>';
+}
+
