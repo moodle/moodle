@@ -278,7 +278,7 @@ class block_global_navigation_tree extends block_tree {
         // If we have `more than nothing` in the history display it :D
         if ($historycount > 0) {
             // Add a branch to hold the users history
-            $myhistorybranch = $PAGE->navigation->add(get_string('showmyhistorytitle', $this->blockname), null, 'myhistory',navigation_node::TYPE_CATEGORY);
+            $myhistorybranch = $PAGE->navigation->add(get_string('showmyhistorytitle', $this->blockname), null, null, 'myhistory',navigation_node::TYPE_CATEGORY);
             $PAGE->navigation->get($myhistorybranch)->children = array_reverse($history);
         }
 
@@ -318,7 +318,7 @@ class block_global_navigation_tree extends block_tree {
         }
 
         // Add a branch labelled something like My Courses
-        $mycoursesbranch = $PAGE->navigation->add(get_string('mycourses'), null, 'mycourses',navigation_node::TYPE_CATEGORY);
+        $mycoursesbranch = $PAGE->navigation->add(get_string('mycourses'), null, null, 'mycourses',navigation_node::TYPE_CATEGORY);
         $PAGE->navigation->add_courses($courses, $mycoursesbranch);
 
         return true;

@@ -32,8 +32,7 @@
 
     $PAGE->set_title($course->shortname .': '. $stractivityreport);
     $PAGE->set_heading($course->fullname);
-    $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
     $PAGE->navbar->add($stractivityreport);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($course->fullname));

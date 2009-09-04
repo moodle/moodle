@@ -3640,7 +3640,7 @@ function build_navigation($extranavlinks, $cm = null) {
                 } else {
                     $link = null;
                 }
-                $PAGE->navbar->add($nav['name'],null, null, navbar::TYPE_CUSTOM, $link);
+                $PAGE->navbar->add($nav['name'],$link);
             }
         }
     }

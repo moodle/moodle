@@ -218,7 +218,7 @@ if ($mform->is_cancelled()) {
 
     $settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
     $PAGE->navbar->add(get_string('blocks'));
-    $PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $settingsurl);
+    $PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), $settingsurl);
     $PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'));
     $PAGE->navbar->add($strtitle);
 

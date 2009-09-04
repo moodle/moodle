@@ -83,10 +83,8 @@
                 } else {
                     $PAGE->set_title($course->shortname .': '. $strlogs);
                     $PAGE->set_heading($course->fullname);
-                    $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
-                                       new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
-                    $PAGE->navbar->add($strlogs, null, null, navigation_node::TYPE_CUSTOM,
-                                       new moodle_url($CFG->wwwroot.'/course/index.php', array('id'=>$course->id)));
+                    $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+                    $PAGE->navbar->add($strlogs, new moodle_url($CFG->wwwroot.'/course/index.php', array('id'=>$course->id)));
                     $PAGE->navbar->add("$userinfo, $dateinfo");
                     echo $OUTPUT->header();
                 }
@@ -133,8 +131,7 @@
         } else {
             $PAGE->set_title($course->shortname .': '. $strlogs);
             $PAGE->set_heading($course->fullname);
-            $PAGE->navbar->add($strreports, null, null, navigation_node::TYPE_CUSTOM,
-                               new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
+            $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
             $PAGE->navbar->add($strlogs);
             echo $OUTPUT->header();
         }

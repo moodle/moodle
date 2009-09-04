@@ -1,8 +1,6 @@
 <?php
-$PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM, 
-                   new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-$PAGE->navbar->add(get_string('mnetsettings', 'mnet'), null, null, navigation_node::TYPE_CUSTOM,
-                   new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/mnet/index.php'));
+$PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+$PAGE->navbar->add(get_string('mnetsettings', 'mnet'), new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/mnet/index.php'));
 $PAGE->navbar->add(get_string('deletehost', 'mnet'));
 
 $PAGE->set_title("$site->shortname: $strmnetsettings");

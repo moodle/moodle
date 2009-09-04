@@ -211,9 +211,9 @@
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
         $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
     }
-    $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_SETTING, $link);
+    $PAGE->navbar->add($strparticipants, $link);
     $link = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
-    $PAGE->navbar->add($userfullname, null, null, navigation_node::TYPE_SETTING, $link);
+    $PAGE->navbar->add($userfullname, $link);
     $PAGE->navbar->add($streditmyprofile);
     $PAGE->set_title("$course->shortname: $streditmyprofile");
     $PAGE->set_heading($course->fullname);

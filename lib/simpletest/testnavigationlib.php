@@ -40,18 +40,18 @@ class navigation_node_test extends UnitTestCase {
         $FULLME = 'http://www.moodle.org/test.php';
         $this->node = new navigation_node('Test Node');
         $this->node->type = navigation_node::TYPE_SYSTEM;
-        $this->node->add('demo1', null, 'demo1', navigation_node::TYPE_COURSE, 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo2', null, 'demo2', navigation_node::TYPE_COURSE, 'http://www.moodle.com/',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo3', null, 'demo3', navigation_node::TYPE_CATEGORY, 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo4', null, 'demo4', navigation_node::TYPE_COURSE, new moodle_url('http://www.moodle.org/'),$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo5', null, 'demo5', navigation_node::TYPE_COURSE, 'http://www.moodle.org/test.php',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('demo1', 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo1', navigation_node::TYPE_COURSE);
+        $this->node->add('demo2', 'http://www.moodle.com/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo2', navigation_node::TYPE_COURSE);
+        $this->node->add('demo3', 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo3', navigation_node::TYPE_CATEGORY);
+        $this->node->get('demo3')->add('demo4', new moodle_url('http://www.moodle.org/'), null, 'demo4', navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('demo3')->add('demo5', 'http://www.moodle.org/test.php', null, 'demo5', navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('demo3')->get('demo5')->make_active();
-        $this->node->get('demo3')->get('demo5')->add('activity1', null, 'activity1',navigation_node::TYPE_ACTIVITY);
+        $this->node->get('demo3')->get('demo5')->add('activity1', null, null, 'activity1',navigation_node::TYPE_ACTIVITY);
         $this->node->get('demo3')->get('demo5')->get('activity1')->make_active();
-        $this->node->add('hiddendemo1', null, 'hiddendemo1', navigation_node::TYPE_CATEGORY, 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('hiddendemo1', 'http://www.moodle.org/', null, 'hiddendemo1', navigation_node::TYPE_CATEGORY,$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('hiddendemo1')->hidden = true;
-        $this->node->get('hiddendemo1')->add('hiddendemo2', null, 'hiddendemo2', navigation_node::TYPE_COURSE, new moodle_url('http://www.moodle.org/'),$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('hiddendemo1')->add('hiddendemo3', null, 'hiddendemo3', navigation_node::TYPE_COURSE, new moodle_url('http://www.moodle.org/'),$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('hiddendemo1')->add('hiddendemo2', new moodle_url('http://www.moodle.org/'),null, 'hiddendemo2', navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('hiddendemo1')->add('hiddendemo3', new moodle_url('http://www.moodle.org/'),null, 'hiddendemo3', navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('hiddendemo1')->get('hiddendemo2')->helpbutton = 'Here is a help button';
         $this->node->get('hiddendemo1')->get('hiddendemo3')->display = false;
         $FULLME = $oldfullme;
@@ -77,9 +77,9 @@ class navigation_node_test extends UnitTestCase {
     public function test_add() {
         global $CFG;
         // Add a node with all args set
-        $key1 = $this->node->add('test_add_1','testadd1','key',navigation_node::TYPE_COURSE,'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $key1 = $this->node->add('test_add_1','http://www.moodle.org/','testadd1','key',navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
         // Add a node with the minimum args required
-        $key2 = $this->node->add('test_add_2','testadd2');
+        $key2 = $this->node->add('test_add_2',null, 'testadd2');
         $key3 = $this->node->add(str_repeat('moodle ', 15),str_repeat('moodle', 15));
         $this->assertEqual('key',$key1);
         $this->assertEqual($key2, $this->node->get($key2)->key);
@@ -102,7 +102,7 @@ class navigation_node_test extends UnitTestCase {
     public function test_add_to_path() {
         global $CFG;
         $path = array('demo3','demo5');
-        $key1 = $this->node->add_to_path($path, 'testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $key1 = $this->node->add_to_path($path, 'http://www.moodle.org/','testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->assertEqual($key1, 'testatp1');
 
         // This should generate an exception as we have not provided any text for
@@ -248,8 +248,8 @@ class navigation_node_test extends UnitTestCase {
 
     public function test_make_active() {
         global $CFG;
-        $key1 = $this->node->add('active node 1', null, 'anode1');
-        $key2 = $this->node->add('active node 2', null, 'anode2', navigation_node::TYPE_COURSE, new moodle_url($CFG->wwwroot));
+        $key1 = $this->node->add('active node 1', null, null, 'anode1');
+        $key2 = $this->node->add('active node 2', new moodle_url($CFG->wwwroot), null, 'anode2', navigation_node::TYPE_COURSE);
         $this->node->get($key1)->make_active();
         $this->node->get($key2)->make_active();
         $this->assertTrue($this->node->get($key1)->isactive);
@@ -268,9 +268,9 @@ class navigation_node_test extends UnitTestCase {
         $FULLME = $oldfullme;
     }
     public function test_remove_child() {
-        $this->node->add('child to remove 1', null, 'remove1');
-        $this->node->add('child to remove 2', null, 'remove2');
-        $this->node->get('remove2')->add('child to remove 3', null, 'remove3');
+        $this->node->add('child to remove 1', null, null, 'remove1');
+        $this->node->add('child to remove 2', null, null, 'remove2');
+        $this->node->get('remove2')->add('child to remove 3', null, null, 'remove3');
         $this->assertIsA($this->node->get('remove1'), 'navigation_node');
         $this->assertTrue($this->node->remove_child('remove1'));
         $this->assertFalse($this->node->remove_child('remove3'));
@@ -329,24 +329,24 @@ class global_navigation_test extends UnitTestCase {
         $this->cache = new navigation_cache('simpletest_nav');
         $this->node = new exposed_global_navigation();
         // Create an initial tree structure to work with
-        $this->node->add('category 1', null, 'cat1', navigation_node::TYPE_CATEGORY);
-        $this->node->add('category 2', null, 'cat2', navigation_node::TYPE_CATEGORY);
-        $this->node->add('category 3', null, 'cat3', navigation_node::TYPE_CATEGORY);
-        $this->node->get('cat2')->add('sub category 1', null, 'sub1', navigation_node::TYPE_CATEGORY);
-        $this->node->get('cat2')->add('sub category 2', null, 'sub2', navigation_node::TYPE_CATEGORY);
-        $this->node->get('cat2')->add('sub category 3', null, 'sub3', navigation_node::TYPE_CATEGORY);
-        $this->node->get('cat2')->get('sub2')->add('course 1', null, 'course1', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->add('course 2', null, 'course2', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->add('course 3', null, 'course3', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 1', null, 'sec1', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 2', null, 'sec2', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 3', null, 'sec3', navigation_node::TYPE_COURSE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 1', null, 'act1', navigation_node::TYPE_ACTIVITY);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 2', null, 'act2', navigation_node::TYPE_ACTIVITY);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 3', null, 'act3', navigation_node::TYPE_ACTIVITY);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 1', null, 'res1', navigation_node::TYPE_RESOURCE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 2', null, 'res2', navigation_node::TYPE_RESOURCE);
-        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 3', null, 'res3', navigation_node::TYPE_RESOURCE);
+        $this->node->add('category 1', null, null, 'cat1', navigation_node::TYPE_CATEGORY);
+        $this->node->add('category 2', null, null, 'cat2', navigation_node::TYPE_CATEGORY);
+        $this->node->add('category 3', null, null, 'cat3', navigation_node::TYPE_CATEGORY);
+        $this->node->get('cat2')->add('sub category 1', null, null, 'sub1', navigation_node::TYPE_CATEGORY);
+        $this->node->get('cat2')->add('sub category 2', null, null, 'sub2', navigation_node::TYPE_CATEGORY);
+        $this->node->get('cat2')->add('sub category 3', null, null, 'sub3', navigation_node::TYPE_CATEGORY);
+        $this->node->get('cat2')->get('sub2')->add('course 1', null, null, 'course1', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->add('course 2', null, null, 'course2', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->add('course 3', null, null, 'course3', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 1', null, null, 'sec1', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 2', null, null, 'sec2', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->add('section 3', null, null, 'sec3', navigation_node::TYPE_COURSE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 1', null, null, 'act1', navigation_node::TYPE_ACTIVITY);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 2', null, null, 'act2', navigation_node::TYPE_ACTIVITY);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('activity 3', null, null, 'act3', navigation_node::TYPE_ACTIVITY);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 1', null, null, 'res1', navigation_node::TYPE_RESOURCE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 2', null, null, 'res2', navigation_node::TYPE_RESOURCE);
+        $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 3', null, null, 'res3', navigation_node::TYPE_RESOURCE);
 
         $this->cache->clear();
         $this->cache->modinfo5 = unserialize('O:6:"object":6:{s:8:"courseid";s:1:"5";s:6:"userid";s:1:"2";s:8:"sections";a:1:{i:0;a:1:{i:0;s:3:"288";}}s:3:"cms";a:1:{i:288;O:6:"object":17:{s:2:"id";s:3:"288";s:8:"instance";s:2:"19";s:6:"course";s:1:"5";s:7:"modname";s:5:"forum";s:4:"name";s:10:"News forum";s:7:"visible";s:1:"1";s:10:"sectionnum";s:1:"0";s:9:"groupmode";s:1:"0";s:10:"groupingid";s:1:"0";s:16:"groupmembersonly";s:1:"0";s:6:"indent";s:1:"0";s:10:"completion";s:1:"0";s:5:"extra";s:0:"";s:4:"icon";s:0:"";s:11:"uservisible";b:1;s:9:"modplural";s:6:"Forums";s:9:"available";b:1;}}s:9:"instances";a:1:{s:5:"forum";a:1:{i:19;R:8;}}s:6:"groups";N;}');
@@ -354,7 +354,7 @@ class global_navigation_test extends UnitTestCase {
         $this->cache->canviewhiddenactivities = true;
         $this->cache->canviewhiddensections = true;
         $this->cache->canviewhiddencourses = true;
-        $this->node->get('cat2')->get('sub2')->add('Test Course 5',null,'5',navigation_node::TYPE_COURSE, new moodle_url('http://moodle.org'));
+        $this->node->get('cat2')->get('sub2')->add('Test Course 5', new moodle_url('http://moodle.org'),null,'5',navigation_node::TYPE_COURSE);
     }
     public function test_add_categories() {
         $categories = array();
@@ -482,7 +482,7 @@ class global_navigation_test extends UnitTestCase {
         $keys = array('cat2', 'sub2', '5');
         $course = new stdClass;
         $course->id = '5';
-        $this->node->get_by_path($keys)->add('Test Section 1', null, $this->cache->coursesections5[1]->id, navigation_node::TYPE_SECTION);
+        $this->node->get_by_path($keys)->add('Test Section 1', null, null, $this->cache->coursesections5[1]->id, navigation_node::TYPE_SECTION);
         $modinfo = $this->cache->modinfo5;
         $modinfo->sections[1] = array(289, 290);
         $modinfo->cms[289] = clone($modinfo->cms[288]);
@@ -564,7 +564,7 @@ class navbar_test extends UnitTestCase {
     public function test_add() {
         global $CFG;
         // Add a node with all args set
-        $this->node->add('test_add_1','testadd1','testadd1',navigation_node::TYPE_COURSE,'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('test_add_1','http://www.moodle.org/','testadd1','testadd1',navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
         // Add a node with the minimum args required
         $key2 = $this->node->add('test_add_2');
         $this->assertIsA($this->node->get('testadd1'), 'navigation_node');
@@ -584,7 +584,7 @@ class navbar_test extends UnitTestCase {
     }
     public function test_parse_branch_to_html() {
         global $CFG;
-        $key = $this->node->add('test_add_1','testadd1','testadd1',navigation_node::TYPE_COURSE,'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $key = $this->node->add('test_add_1','http://www.moodle.org/','testadd1','testadd1',navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get($key)->make_active();
         $html = $this->node->exposed_parse_branch_to_html($this->node->children, true, true);
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->action->out()), $html);
@@ -682,10 +682,10 @@ class settings_navigation_test extends UnitTestCase {
         $this->assertFalse($this->node->exposed_in_alternative_role());
     }
     public function test_remove_empty_root_branches() {
-        $this->node->add('rootbranch1', null, 'rootbranch1');
-        $this->node->add('rootbranch2', null, 'rootbranch2');
-        $this->node->add('rootbranch3', null, 'rootbranch3');
-        $this->node->get('rootbranch2')->add('something', null, null, navigation_node::TYPE_SETTING);
+        $this->node->add('rootbranch1', null, null, 'rootbranch1');
+        $this->node->add('rootbranch2', null, null, 'rootbranch2');
+        $this->node->add('rootbranch3', null, null, 'rootbranch3');
+        $this->node->get('rootbranch2')->add('something', null, null, null, navigation_node::TYPE_SETTING);
         $this->node->remove_empty_root_branches();
         $this->assertFalse($this->node->get('rootbranch1'));
         $this->assertIsA($this->node->get('rootbranch2'), 'navigation_node');

@@ -22,7 +22,7 @@ $pluginstr = get_string('plugin', 'repository');
 require_login($course, false);
 
 $link = new moodle_url($CFG->wwwroot . '/user/view.php', array('id'=>$user->id));
-$PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_SETTING, $link);
+$PAGE->navbar->add($fullname, $link);
 $PAGE->navbar->add($strrepos);
 $PAGE->set_title("$course->fullname: $fullname: $strrepos");
 $PAGE->set_heading($course->fullname);

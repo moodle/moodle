@@ -105,9 +105,8 @@
     if ($course->id != SITEID && has_capability('moodle/course:viewparticipants', $coursecontext)) {
         $link = new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$course->id));
     }
-    $PAGE->navbar->add($strparticipants, null, null, navigation_node::TYPE_CUSTOM, $link);
-    $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($strparticipants, $link);
+    $PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id)));
     $PAGE->navbar->add($stractivityreport);
     $PAGE->navbar->add($strmode);
     $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");

@@ -18,7 +18,7 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
-$PAGE->navbar->add($strlogin, null, null, navigation_node::TYPE_CUSTOM, get_login_url());
+$PAGE->navbar->add($strlogin, get_login_url());
 $PAGE->navbar->add($strforgotten);
 
 // if alternatepasswordurl is defined, then we'll just head there

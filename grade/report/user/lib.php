@@ -461,6 +461,7 @@ function grade_report_user_settings_definition(&$mform) {
 }
 
 function grade_report_user_profilereport($course, $user) {
+    global $OUTPUT;
     if (!empty($course->showgrades)) {
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);

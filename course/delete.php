@@ -28,12 +28,9 @@
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
 
-    $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php/'));
-    $PAGE->navbar->add($strcategories, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/index.php'));
-    $PAGE->navbar->add($category->name, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$course->category)));
+    $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php/'));
+    $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");

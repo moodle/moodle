@@ -21,8 +21,7 @@ error('TODO: rewrite db perf code'); // TODO: rewrite
     $site = get_site();
 
     if (!empty($topframe)) {
-        $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
-                            new moodle_url($CFG->wwwroot.'/admin/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/admin/index.php'));
         $PAGE->navbar->add($strdatabaseperformance);
         $PAGE->set_title("$site->shortname: $strdatabaseperformance");
         $PAGE->set_heading($site->fullname);

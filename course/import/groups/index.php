@@ -40,10 +40,8 @@
     }
 
 /// Print the header
-    $PAGE->navbar->add($course->shortname, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(get_string('import'), null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(get_string('import'), new moodle_url($CFG->wwwroot.'/course/import.php', array('id'=>$course->id)));
     $PAGE->navbar->add($strimportgroups);
 
     $PAGE->set_title("$course->shortname: $strimportgroups");

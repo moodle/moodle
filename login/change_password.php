@@ -78,11 +78,10 @@
 
         $fullname = fullname($USER, true);
 
-        $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+        $PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
         $PAGE->navbar->add($strpasswordchanged);
         $PAGE->set_title($strpasswordchanged);
-        $PAGE->set_header($strpasswordchanged);
+        $PAGE->set_heading($strpasswordchanged);
         echo $OUTPUT->header();
 
         if (empty($SESSION->wantsurl) or $SESSION->wantsurl == $CFG->httpswwwroot.'/login/change_password.php') {
@@ -102,11 +101,10 @@
 
     $fullname = fullname($USER, true);
 
-    $PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
+    $PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
     $PAGE->navbar->add($strchangepassword);
     $PAGE->set_title($strchangepassword);
-    $PAGE->set_header($strchangepassword);
+    $PAGE->set_heading($strchangepassword);
     echo $OUTPUT->header();
 
     if (get_user_preferences('auth_forcepasswordchange')) {

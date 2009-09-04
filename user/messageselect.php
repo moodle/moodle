@@ -60,7 +60,7 @@
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
         $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
     }
-    $PAGE->navbar->add(get_string('participants'), null, null, navigation_node::TYPE_SETTING, $link);
+    $PAGE->navbar->add(get_string('participants'), $link);
     $PAGE->navbar->add($strtitle);
     $PAGE->set_title($strtitle);
     $PAGE->set_heading($strtitle);

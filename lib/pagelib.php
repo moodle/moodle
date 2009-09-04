@@ -1624,7 +1624,7 @@ class page_generic_activity extends page_base {
                     if (array_key_exists('link', $navitem)) {
                         $link = $navitem['link'];
                     }
-                    $PAGE->navbar->add($navitem['name'], null, null, navigation_node::TYPE_CUSTOM, $link);
+                    $PAGE->navbar->add($navitem['name'], $link);
                 }
             }
         }
@@ -1632,7 +1632,7 @@ class page_generic_activity extends page_base {
         $PAGE->set_title($title);
         $PAGE->set_heading($this->course->fullname);
         $PAGE->set_button($buttons);
-        echo $OUTPUT->heading();
+        echo $OUTPUT->header();
     }
 }
 

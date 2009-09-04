@@ -68,16 +68,14 @@
 
         $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
         $PAGE->set_heading($course->fullname);
-        $PAGE->navbar->add($strreport, null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add($strreport, new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('id'=>$cm->id)));
 
         if (empty($b)) {
             if (!empty($a)) {
                 $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata));
             }
         } else {
-            $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), null, null, navigation_node::TYPE_CUSTOM,
-                                new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
+            $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
             $PAGE->navbar->add($sco->title);
         }
         echo $OUTPUT->header();

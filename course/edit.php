@@ -124,10 +124,8 @@
         $title = $streditcoursesettings;
         $fullname = $course->fullname;
     } else {
-        $PAGE->navbar->add($stradministration, null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
-        $PAGE->navbar->add($strcategories, null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
         $PAGE->navbar->add($straddnewcourse);
         $title = "$site->shortname: $straddnewcourse";
         $fullname = $site->fullname;

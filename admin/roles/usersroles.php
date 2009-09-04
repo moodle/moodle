@@ -126,14 +126,12 @@ $PAGE->set_title($title);
 if ($courseid != SITEID) {
     $PAGE->set_heading($fullname);
     if (has_capability('moodle/course:viewparticipants', $coursecontext)) {
-        $PAGE->navbar->add(get_string('participants'), null, null, navigation_node::TYPE_CUSTOM,
-                           new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+        $PAGE->navbar->add(get_string('participants'),new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
     }
 } else {
     $PAGE->set_heading($course->fullname);
 }
-$PAGE->navbar->add($fullname, null, null, navigation_node::TYPE_CUSTOM,
-                   new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
+$PAGE->navbar->add($fullname, new moodle_url("$CFG->wwwroot/user/view.php", array('id'=>$userid,'course'=>$courseid)));
 $PAGE->navbar->add($straction);
 echo $OUTPUT->header();
 

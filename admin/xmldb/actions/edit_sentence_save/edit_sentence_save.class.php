@@ -120,8 +120,8 @@ class edit_sentence_save extends XMLDBAction {
         if (!empty($errors)) {
         /// Prepare the output
             $site = get_site();
-            $PAGE->navbar->add($this->str['administration'], null, null. navigation_node::TYPE_CUSTOM, '../index.php');
-            $PAGE->navbar->add('XMLDB', null, null. navigation_node::TYPE_CUSTOM, 'index.php');
+            $PAGE->navbar->add($this->str['administration'], '../index.php');
+            $PAGE->navbar->add('XMLDB', 'index.php');
             $PAGE->set_title("$site->shortname: XMLDB");
             $PAGE->set_heading($site->fullname);
             echo $OUTPUT->header();

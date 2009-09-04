@@ -50,8 +50,7 @@
     }
 
     $strrecentactivity = get_string('recentactivity');
-    $PAGE->navbar->add($strrecentactivity, null, null, navigation_node::TYPE_CUSTOM,
-                       new moodle_url($CFG->wwwroot.'/course/recent.php', array('id'=>$course->id)));
+    $PAGE->navbar->add($strrecentactivity, new moodle_url($CFG->wwwroot.'/course/recent.php', array('id'=>$course->id)));
     $PAGE->navbar->add($userinfo);
     $PAGE->set_title("$course->shortname: $strrecentactivity");
     $PAGE->set_heading($course->fullname);

@@ -95,7 +95,7 @@
     $strnovalidcourses = get_string('novalidcourses');
 
     if (empty($search) and empty($blocklist) and empty($modulelist)) {
-        $PAGE->navbar->add($strcourses, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/index.php'));
+        $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/index.php'));
         $PAGE->navbar->add($strsearch);
         $PAGE->set_title("$site->fullname : $strsearch");
         $PAGE->set_heading($site->fullname);
@@ -201,8 +201,8 @@
         }
     }
 
-    $PAGE->navbar->add($strcourses, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/index.php'));
-    $PAGE->navbar->add($strsearch, null, null, navigation_node::TYPE_CUSTOM, new moodle_url($CFG->wwwroot.'/course/search.php'));
+    $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/course/search.php'));
     if (!empty($search)) {
         $PAGE->navbar->add(s($search));
     }

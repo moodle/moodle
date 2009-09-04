@@ -85,8 +85,8 @@ $PAGE->set_heading($strmanage);
 $settingsurl = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksettingrss_client');
 $managefeeds = new moodle_url($CFG->wwwroot . '/blocks/rss_client/managefeeds.php', $urlparams);
 $PAGE->navbar->add(get_string('blocks'));
-$PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $settingsurl);
-$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), null, null, navbar::TYPE_SETTING, $managefeeds);
+$PAGE->navbar->add(get_string('feedstitle', 'block_rss_client'), $settingsurl);
+$PAGE->navbar->add(get_string('managefeeds', 'block_rss_client'), $managefeeds);
 echo $OUTPUT->header();
 
 $table = new flexible_table('rss-display-feeds');
