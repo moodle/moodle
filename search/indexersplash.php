@@ -45,12 +45,14 @@
         $strquery  = get_string('stats');
         
         // print page header
-        $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
-        $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
-        $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
         $site = get_site();
-        print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
+
+        $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/search/index.php'));
+        $PAGE->navbar->add($strquery, new moodle_url($CFG->wwwroot.'/search/stats.php'));
+        $PAGE->navbar->add(get_string('runindexer','search'));
+        $PAGE->set_title($strsearch);
+        $PAGE->set_heading($site->fullname);
+        echo $OUTPUT->header();
      
         mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
               ."there are ".$indexinfo->dbcount." records in the <em>block_search_documents</em> table.\n"

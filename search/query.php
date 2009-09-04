@@ -157,11 +157,13 @@
     $strquery  = get_string('enteryoursearchquery', 'search');
 
     // print the header
-    $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $strquery, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
     $site = get_site();
-    print_header("$strsearch", "$site->fullname" , $navigation, '', '', true, '&nbsp;', navmenu($site));
+
+    $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/search/index.php'));
+    $PAGE->navbar->add($strquery, new moodle_url($CFG->wwwroot.'/search/stats.php'));
+    $PAGE->set_title($strsearch);
+    $PAGE->set_heading($site->fullname);
+    echo $OUTPUT->header();
 
     if (!empty($error)){
         notice ($error);
