@@ -815,8 +815,12 @@ class global_navigation extends navigation_node {
      * This gets called by {@link initialise()} when the context is CONTEXT_USER
      */
     protected function load_for_user() {
-        global $DB, $SITE;
-        $courseid = optional_param('course', false, PARAM_INT);
+        global $DB, $SITE, $PAGE;
+        if (!empty($PAGE->course->id)) {
+            $courseid = $PAGE->course->id;
+        } else {
+            $courseid = optional_param('course', false, PARAM_INT);
+        }
         if ($courseid!==false && $courseid!=$SITE->id) {
             $course = $DB->get_record('course', array('id'=>$courseid));
         }
