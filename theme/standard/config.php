@@ -80,8 +80,8 @@ $THEME->layouts = array(
         'regions' => array(),
     ),
     // Embeded pages, like iframe embeded in moodleform
-    'embeded' => array(
-        'layout' => 'layout-embeded.php',
+    'embedded' => array(
+        'layout' => 'layout-embedded.php',
         'regions' => array(),
     )
 );
