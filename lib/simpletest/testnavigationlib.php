@@ -40,9 +40,9 @@ class navigation_node_test extends UnitTestCase {
         $FULLME = 'http://www.moodle.org/test.php';
         $this->node = new navigation_node('Test Node');
         $this->node->type = navigation_node::TYPE_SYSTEM;
-        $this->node->add('demo1', 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo1', navigation_node::TYPE_COURSE);
-        $this->node->add('demo2', 'http://www.moodle.com/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo2', navigation_node::TYPE_COURSE);
-        $this->node->add('demo3', 'http://www.moodle.org/',$CFG->httpswwwroot . '/pix/i/course.gif', null, 'demo3', navigation_node::TYPE_CATEGORY);
+        $this->node->add('demo1', 'http://www.moodle.org/', null, 'demo1', navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('demo2', 'http://www.moodle.com/', null, 'demo2', navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('demo3', 'http://www.moodle.org/', null, 'demo3', navigation_node::TYPE_CATEGORY,$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('demo3')->add('demo4', new moodle_url('http://www.moodle.org/'), null, 'demo4', navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('demo3')->add('demo5', 'http://www.moodle.org/test.php', null, 'demo5', navigation_node::TYPE_COURSE,$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('demo3')->get('demo5')->make_active();
@@ -102,7 +102,7 @@ class navigation_node_test extends UnitTestCase {
     public function test_add_to_path() {
         global $CFG;
         $path = array('demo3','demo5');
-        $key1 = $this->node->add_to_path($path, 'http://www.moodle.org/','testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, $CFG->httpswwwroot . '/pix/i/course.gif');
+        $key1 = $this->node->add_to_path($path,'testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, 'http://www.moodle.org/', $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->assertEqual($key1, 'testatp1');
 
         // This should generate an exception as we have not provided any text for
