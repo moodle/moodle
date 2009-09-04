@@ -13,14 +13,14 @@
 
 /// Print header
     $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
-    $navlinks = array();
-    $navlinks[] = array('name' => get_string('paymentmanagement', 'enrol_authorize'), 'link' => 'index.php', 'type' => 'misc');
-    $navlinks[] = array('name' => $struploadcsv, 'link' => "uploadcsv.php", 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
     $managebutton = "<form method='get' action='index.php'><div><input type='submit' value='".get_string('paymentmanagement', 'enrol_authorize')."' /></div></form>";
 
-    print_header_simple($struploadcsv, '', $navigation, '', '', false, $managebutton);
+    $PAGE->navbar->add(get_string('paymentmanagement', 'enrol_authorize'), 'index.php');
+    $PAGE->navbar->add($struploadcsv, 'uploadcsv.php');
+    $PAGE->set_title($struploadcsv);
+    $PAGE->set_cacheable(false);
+    $PAGE->set_button($managebutton);
+    echo $OUTPUT->header();
     print_heading_with_help($struploadcsv, 'authorize/uploadcsv', 'enrol');
 
 /// Handle CSV file

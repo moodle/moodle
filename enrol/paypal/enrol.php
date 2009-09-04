@@ -9,7 +9,7 @@ class enrolment_plugin_paypal {
 
 /// Override the base print_entry() function
 function print_entry($course) {
-    global $CFG, $USER, $OUTPUT;
+    global $CFG, $USER, $OUTPUT, $PAGE;
 
 
     $strloginto = get_string("loginto", "", $course->shortname);
@@ -29,12 +29,11 @@ function print_entry($course) {
         $manual->print_entry($course);
 
     } else {
-        $navlinks = array();
-        $navlinks[] = array('name' => $strcourses, 'link' => "$CFG->wwwroot/course", 'type' => 'misc');
-        $navlinks[] = array('name' => $strloginto, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-
-        print_header($strloginto, $course->fullname, $navigation);
+        $PAGE->navbar->add($strcourses, new moodle_url($CFG->wwwroot.'/course/'));
+        $PAGE->navbar->add($strloginto);
+        $PAGE->set_title($strloginto);
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
         print_course($course, "80%");
 
         if ($course->password) {  // Presenting two options

@@ -48,7 +48,7 @@ var $errormsg;
 * @param    course  current course object
 */
 function print_entry($course) {
-    global $CFG, $USER, $SESSION, $THEME, $OUTPUT;
+    global $CFG, $USER, $SESSION, $THEME, $OUTPUT, $PAGE;
 
     $strloginto = get_string('loginto', '', $course->shortname);
     $strcourses = get_string('courses');
@@ -57,10 +57,8 @@ function print_entry($course) {
 
     $context = get_context_instance(CONTEXT_SYSTEM);
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcourses, 'link' => ".", 'type' => 'misc');
-    $navlinks[] = array('name' => $strloginto, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
+    $PAGE->navbar->add($strcourses);
+    $PAGE->navbar->add($strloginto);
 
     if ($course->password == '') {   // no password, so enrol
 
@@ -68,8 +66,9 @@ function print_entry($course) {
             add_to_log($course->id, 'course', 'guest', 'view.php?id='.$course->id, getremoteaddr());
 
         } else if (empty($_GET['confirm']) && empty($_GET['cancel'])) {
-
-            print_header($strloginto, $course->fullname, $navigation);
+            $PAGE->set_title($strloginto);
+            $PAGE->set_heading($course->fullname);
+            echo $OUTPUT->header();
             echo '<br />';
             echo $OUTPUT->confirm(get_string('enrolmentconfirmation'), "enrol.php?id=$course->id&confirm=1", "enrol.php?id=$course->id&cancel=1");
             echo $OUTPUT->footer();
@@ -110,7 +109,10 @@ function print_entry($course) {
         $password = '';
     }
 
-    print_header($strloginto, $course->fullname, $navigation, "form.password");
+    $PAGE->set_title($strloginto);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_focuscontrol('form.password');
+    echo $OUTPUT->header();
 
     print_course($course, "80%");
 

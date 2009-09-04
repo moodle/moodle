@@ -9,13 +9,13 @@ if (!$site = get_site()) {
 
 /// get language strings
 $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
-$navlinks = array();
-$navlinks[] = array('name' => $str->administration, 'link' => "../../$CFG->admin/index.php", 'type' => 'misc');
-$navlinks[] = array('name' => $str->enrolments, 'link' => null, 'type' => 'misc');
-$navlinks[] = array('name' => 'IMS import', 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
 
-print_header("$site->shortname: $str->enrolments", $site->fullname, $navigation);
+$PAGE->set_title("$site->shortname: $str->enrolments");
+$PAGE->set_heading($site->fullname);
+$PAGE->navbar->add($str->administration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+$PAGE->navbar->add($str->enrolments);
+$PAGE->navbar->add('IMS import');
+echo $OUTPUT->header();
 
 require_once('enrol.php');
 

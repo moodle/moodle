@@ -77,13 +77,15 @@ function authorize_print_orders($courseid, $userid) {
         $popupmenu .= $OUTPUT->checkbox($checkbox, 'showonlymy');
     }
 
-    $navlinks = array();
     if (SITEID != $courseid) {
-        $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=".$course->id, 'type' => 'misc');
+        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
     }
-    $navlinks[] = array('name' => $authstrs->paymentmanagement, 'link' => 'index.php', 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header("$course->shortname: $authstrs->paymentmanagement", $authstrs->paymentmanagement, $navigation, '', '', false, $buttons, $popupmenu);
+    $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php');
+    $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
+    $PAGE->set_heading($authstrs->paymentmanagement);
+    $PAGE->set_headingmenu($popupmenu);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
     $table = new flexible_table('enrol-authorize');
     $table->set_attribute('width', '100%');
@@ -221,7 +223,7 @@ function authorize_print_orders($courseid, $userid) {
  */
 function authorize_print_order($orderid)
 {
-    global $CFG, $USER, $DB, $OUTPUT;
+    global $CFG, $USER, $DB, $OUTPUT, $PAGE;
     global $strs, $authstrs;
 
     $do = optional_param('do', '', PARAM_ALPHA);
@@ -265,14 +267,16 @@ function authorize_print_order($orderid)
         }
     }
 
-    $navlinks = array();
-    if (SITEID != $course->id) {
-        $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=".$course->id, 'type' => 'misc');
+    if (SITEID != $courseid) {
+        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
     }
-    $navlinks[] = array('name' => $authstrs->paymentmanagement, 'link' => 'index.php?course='.$course->id, 'type' => 'misc');
-    $navlinks[] = array('name' => $authstrs->orderid . ': ' . $orderid, 'link' => '', 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-    print_header("$course->shortname: $authstrs->paymentmanagement", $authstrs->orderdetails, $navigation, '', '', false, $buttons);
+    $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
+    $PAGE->navbar->add($authstrs->orderid . ': ' . $orderid, 'index.php');
+    $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
+    $PAGE->set_heading($authstrs->orderdetails);
+    $PAGE->set_cacheable(false);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
     $table = new html_table();
     $table->width = '100%';
