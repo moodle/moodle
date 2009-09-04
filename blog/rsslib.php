@@ -24,7 +24,7 @@
                 $path = $filterselect.'/'.$userid.'/blog/course/'.$filterselect;
             break;
             case 'group':
-                $path = SITEID.'/'.$userid.'/blog/group/'.$filterselect;  
+                $path = SITEID.'/'.$userid.'/blog/group/'.$filterselect;
             break;
             case 'user':
                 $path = SITEID.'/'.$userid.'/blog/user/'.$filterselect;
@@ -62,21 +62,21 @@
             }
         }
 
-    /// Get all the posts from the database
+    /// Get all the entries from the database
 
-        $blogposts = blog_fetch_entries('', 20, '', $type, $id, $tagid);
+        $blogentries = blog_fetch_entries('', 20, '', $type, $id, $tagid);
 
     /// Now generate an array of RSS items
-        if ($blogposts) {
+        if ($blogentries) {
             $items = array();
-            foreach ($blogposts as $blogpost) {
+            foreach ($blogentries as $blog_entry) {
                 $item = NULL;
-                $item->author = fullname($DB->get_record('user', array('id'=>$blogpost->userid))); // TODO: this is slow
-                $item->title = $blogpost->subject;
-                $item->pubdate = $blogpost->lastmodified;
-                $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
-                $item->description = format_text($blogpost->summary, $blogpost->format);
-                if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blogpost->id)) ) {
+                $item->author = fullname($DB->get_record('user', array('id'=>$blog_entry->userid))); // TODO: this is slow
+                $item->title = $blog_entry->subject;
+                $item->pubdate = $blog_entry->lastmodified;
+                $item->link = $CFG->wwwroot.'/blog/index.php?entryid='.$blog_entry->id;
+                $item->description = format_text($blog_entry->summary, $blog_entry->format);
+                if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blog_entry->id)) ) {
                     if ($blogtags) {
                         $item->tags = $blogtags;
                     }
@@ -90,7 +90,7 @@
         }
 
     /// Get header and footer information
-     
+
         switch ($type) {
             case 'user':
                 $info = fullname($DB->get_record('user', array('id'=>$id), 'firstname,lastname'));
@@ -114,10 +114,10 @@
             $info .= ': '.$DB->get_field('tags', 'text', array('id'=>$tagid));
         }
 
-        $header = rss_standard_header(get_string($type.'blog','blog', $info), 
-                                      $CFG->wwwroot.'/blog/index.php', 
+        $header = rss_standard_header(get_string($type.'blog','blog', $info),
+                                      $CFG->wwwroot.'/blog/index.php',
                                       get_string('intro','blog'));
-                                                      
+
         $footer = rss_standard_footer();
 
 
@@ -142,7 +142,7 @@
             return "$CFG->dataroot/rss/blog/$type/$id.xml";
         }
     }
-    
+
     //This function saves to file the rss feed specified in the parameters
     function blog_rss_save_file($type, $id, $tagid=0, $contents='') {
         global $CFG;

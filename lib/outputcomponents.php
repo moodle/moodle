@@ -1349,6 +1349,17 @@ class html_image extends labelled_html_component {
         $this->add_class('image');
         parent::prepare();
     }
+
+    /**
+     * Shortcut for initialising a html_image.
+     *
+     * @param mixed $url The URL to the image (string or moodle_url)
+     */
+    public function make($url) {
+        $image = new html_image();
+        $image->src = $url;
+        return $image;
+    }
 }
 
 /**

@@ -1977,15 +1977,31 @@ body.has_navigation_bar {
   text-align: center;
 }
 
-.blogpost .audience {
+.blog_entry .audience {
   text-align: right;
 }
 
-.blogpost .tags {
+.blog_entry .tags {
   margin-top: 15px;
 }
 
+#blog-external form input {
+  width: 260px;
+}
 
+#blog-external #id_submitbutton, #blog-external #id_cancel {
+  width: auto;
+}
+
+.block_blog_externals a.delete {
+  margin-left: 6px;
+}
+
+.block_blog_externals div.newlink {
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+}
 /***
  *** Calendar
  ***/

@@ -36,7 +36,7 @@ $string['blockediplist'] = 'Blocked IP List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['blocksettings'] = 'Manage blocks';
-$string['bloglevel'] = 'Blog Visibility';
+$string['bloglevel'] = 'Blog visibility';
 $string['bookmarkadded'] = 'Bookmark added.';
 $string['bookmarkalreadyexists'] = 'You have already bookmarked this page.';
 $string['bookmarkdeleted'] = 'Bookmark deleted.';
@@ -933,6 +933,8 @@ $string['webservicesystemsettings'] = 'common settings';
 $string['webserviceusersettings'] = 'Web service users settings';
 $string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is useful for Moodle Networking functionality.';
 $string['xmlstrictheaders'] = 'XML strict headers';
+$string['useblogassociations'] = 'Enable associations';
+$string['configuseblogassociations'] = 'Should users be able to organize their blog by associating entries with courses and course modules?';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 
 ?>

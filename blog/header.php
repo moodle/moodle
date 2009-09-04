@@ -2,75 +2,24 @@
 
 /// Sets up blocks and navigation for index.php
 
-require_once($CFG->dirroot .'/blog/lib.php');
-require_once($CFG->dirroot .'/blog/blogpage.php');
 require_once($CFG->dirroot .'/course/lib.php');
+require_once($CFG->dirroot.'/tag/lib.php');
 
-$blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid  = optional_param('instanceid', 0, PARAM_INT);
-$blockid     = optional_param('blockid',    0, PARAM_INT);
-
-/// If user has never visited this page before, install 2 blocks for him
-blog_check_and_install_blocks();
-
-
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourseid', '', '', $courseid);
-}
-
-//_____________ new page class code ________
-$pagetype = PAGE_BLOG_VIEW;
-$pageclass = 'page_blog';
-
-// map our page identifier to the actual name
-// of the class which will be handling its operations.
-page_map_class($pagetype, $pageclass);
-
-// Now, create our page object.
-if (empty($USER->id)) {
-    $PAGE = page_create_object($pagetype);
-} else {
-    $PAGE = page_create_object($pagetype, $USER->id);
-}
-$PAGE->set_course($course);
-$PAGE->filtertype   = $filtertype;
-$PAGE->filterselect = $filterselect;
-$PAGE->tagid        = $tagid;
-$array = array();
-if (!empty($course->id)) {
-    $array['courseid'] = $course->id;
-}
-if (!empty($filtertype)) {
-    $array['filtertype'] = $filtertype;
-}
-if (!empty($filterselect)) {
-    $array['filterselect'] = $filterselect;
-}
-if (!empty($tagid)) {
-    $array['tagid'] = $tagid;
-}
-$PAGE->set_url('blog/index.php', $array);
-$PAGE->set_blocks_editing_capability('moodle/blog:create');
-$PAGE->init_full(); //init the BlogInfo object and the courserecord object
-
-$editing = false;
-if ($PAGE->user_allowed_editing()) {
-    $editing = $PAGE->user_is_editing();
-}
-
-if (!empty($tagid)) {
-    $taginstance = $DB->get_record('tag', array('id'=>$tagid));
-} elseif (!empty($tag)) {
-    $taginstance = tag_id($tag);
-}
 
 /// navigations
-/// site blogs - sitefullname -> blogs -> (?tag)
-/// course blogs - sitefullname -> course fullname ->blogs ->(?tag)
-/// group blogs - sitefullname -> course fullname ->group ->(?tag)
-/// user blogs - sitefullname -> (?coursefullname) -> participants -> blogs -> (?tag)
+/// site blogs - sitefullname -> blog entries -> (?tag) -> (?search)
+///      heading: Site Blog Entries
+/// course blogs - sitefullname -> course fullname ->  blog entries -> (?tag) -> (?search)
+///      heading: Blog Entries associated with [course fullname]
+/// mod blogs    - sitefullname -> course fullname -> mod name -> (?user/group) -> blog entries -> (?tag) -> (?search)
+///      heading: Blog Entries associated with [module fullname]
+/// group blogs - sitefullname -> course fullname ->group ->(?tag) -> (?search)
+///      heading: Blog Entries associated with [course fullname] by group [group name]
+/// user blogs   - sitefullname -> (?coursefullname) -> (?mod name) -> participants -> blog entries -> (?tag) -> (?search)
+///      heading: Blog Entries by [fullname]
 
-$blogstring = get_string('blogs','blog');
+$blogstring = get_string('blogentries','blog');
 $tagstring = get_string('tag');
 
 // needed also for user tabs later
@@ -80,150 +29,85 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 
 $navlinks = array();
 
-/// This is very messy atm.
+if (!empty($modid)) { //mod
+    $cm = $DB->get_record('course_modules', array('id' => $modid));
+    $cm->modname = $DB->get_field('modules', 'name', array('id' => $cm->module));
+    $cm->name = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance));
+}
 
-    switch ($filtertype) {
-        case 'site':
-            if ($tagid || !empty($tag)) {
-                $navlinks[] = array('name' => $blogstring, 'link' => "index.php?filtertype=site", 'type' => 'misc');
-                $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
-                $navigation = build_navigation($navlinks);
-                print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-            } else {
-                $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
-                $navigation = build_navigation($navlinks);
-                print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-            }
-        break;
-
-        case 'course':
-            if ($tagid || !empty($tag)) {
-                $navlinks[] = array('name' => $blogstring,
-                                    'link' => "index.php?filtertype=course&amp;filterselect=$filterselect",
-                                    'type' => 'misc');
-                $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
-                $navigation = build_navigation($navlinks);
-                print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-            } else {
-                $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
-                $navigation = build_navigation($navlinks);
-                print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-            }
-        break;
-
-        case 'group':
-
-            if ($thisgroup = groups_get_group($filterselect, false)) { //TODO:
-                if ($tagid || !empty($tag)) {
-                    $navlinks[] = array('name' => $thisgroup->name,
-                                        'link' => "$CFG->wwwroot/user/index.php?id=$course->id&amp;group=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => $blogstring,
-                                        'link' => "index.php?filtertype=group&amp;filterselect=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                    print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-                } else {
-                    $navlinks[] = array('name' => $thisgroup->name,
-                                        'link' => "$CFG->wwwroot/user/index.php?id=$course->id&amp;group=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                    print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-                }
-            } else {
-                print_error('cannotfindgroup');
-            }
-
-        break;
-
-        case 'user':
-            $participants = get_string('participants');
-            if (!$user = $DB->get_record('user', array('id'=>$filterselect))) {
-               print_error('invaliduserid');
-            }
-
-            if ($course->id != SITEID) {
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
-                $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
-
-                if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-                    $navlinks[] = array('name' => $participants,
-                                        'link' => "$CFG->wwwroot/user/index.php?id=$course->id",
-                                        'type' => 'misc');
-                }
-                $navlinks[] = array('name' => fullname($user),
-                                    'link' => "$CFG->wwwroot/user/view.php?id=$filterselect&amp;course=$course->id",
-                                    'type' => 'misc');
-
-                if ($tagid || !empty($tag)) {
-                    $navlinks[] = array('name' => $blogstring,
-                                        'link' => "index.php?courseid=$course->id&amp;filtertype=user&amp;filterselect=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-
-                } else {
-                    $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                }
-                print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-
-            } else {
-
-            //in top view
-
-                if ($postid) {
-                    $navlinks[] = array('name' => fullname($user),
-                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => $blogstring,
-                                        'link' => "index.php?filtertype=user&amp;filterselect=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => format_string($postobject->subject), 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-
-                } else if ($tagid || !empty($tag)) {
-                    $navlinks[] = array('name' => fullname($user),
-                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => $blogstring,
-                                        'link' => "index.php?filtertype=user&amp;filterselect=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-
-                } else {
-                    $navlinks[] = array('name' => fullname($user),
-                                        'link' => "$CFG->wwwroot/user/view.php?id=$filterselect",
-                                        'type' => 'misc');
-                    $navlinks[] = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
-                    $navigation = build_navigation($navlinks);
-                }
-                print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
-
-            }
-        break;
-
-        default:
-            print_error('unknownfiletype');
-        break;
+if (!empty($groupid)) {
+    if ($thisgroup = groups_get_group($groupid, false)) { //TODO:
+        $navlinks[] = array('name' => $thisgroup->name,
+                            'link' => "$CFG->wwwroot/user/index.php?id=$course->id&amp;group=$groupid",
+                            'type' => 'misc');
+    } else {
+        print_error('cannotfindgroup');
     }
 
+}
+
+if (!empty($userid)) {
+    $user = $DB->get_record('user', array('id'=>$userid));
+    $navlinks[] = array('name' => fullname($user),
+                        'link' => "$CFG->wwwroot/user/view.php?id=$userid".(empty($courseid)?'':"&amp;course=$courseid"),
+                        'type' => 'misc');
+
+}
+
+// After this we have dynamic navigation elements, with links that depend on each other
+$blogentries_link = array('name' => $blogstring, 'link' => null, 'type' => 'misc');
+$pure_url = new moodle_url();
+$pure_url->remove_params(array('tag', 'tagid', 'search'));
+$pure_blog_entries_link = $pure_url->out();
+
+// If Tag or Search is set, the "Blog entries" nav is set to the current Query String without tag or search params
+if (!empty($tagid)) {
+    $tagrec = $DB->get_record('tag', array('id'=>$tagid));
+    $tag_link = array('name' => $tagrec->name,
+                      'link' => "index.php",
+                      'type' => 'misc');
+    $blogentries_link['link'] = $pure_blog_entries_link;
+} elseif (!empty($tag)) {
+    $tag_link = array('name' => get_string('tagparam', 'blog', $tag),
+                      'link' => null,
+                      'type' => 'misc');
+    $blogentries_link['link'] = $pure_blog_entries_link;
+}
+
+if (!empty($search)) {
+    $search_link = array('name' => get_string('searchterm', 'blog', $search),
+                         'link' => null,
+                         'type' => 'misc');
+    $blogentries_link['link'] = $pure_blog_entries_link;
+
+    $pure_url = new moodle_url();
+    $pure_url->remove_params(array('search'));
+
+    if (!empty($tag_link)) {
+        $tag_link['link'] = $pure_url->out();
+    }
+}
+
+$navlinks[] = $blogentries_link;
+
+if (!empty($tag_link)) {
+    $navlinks[] = $tag_link;
+}
+if (!empty($search_link)) {
+    $navlinks[] = $search_link;
+}
+
+$blog_headers = blog_get_headers();
+
+if (isset($cm)) {
+    $navigation = build_navigation($blog_headers['navlinks'], $cm);
+} else {
+    $navigation = build_navigation($blog_headers['navlinks']);
+}
 
 // prints the tabs
-if ($filtertype=='user') {
-    $showroles = true;
-} else {
-    $showroles = false;
-}
+$showroles = !empty($userid);
 $currenttab = 'blogs';
 
-require_once($CFG->dirroot .'/user/tabs.php');
-
-
-?>
-<table width="100%">
-<tr>
-<td valign="top">
+$user = $USER;
+$userid = $USER->id;

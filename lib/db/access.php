@@ -799,6 +799,22 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+    
+    'moodle/blog:manageexternal' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'legacy' => array(
+            'student' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
 
     'moodle/calendar:manageownentries' => array( // works in CONTEXT_SYSTEM only
 

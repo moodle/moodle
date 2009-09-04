@@ -1,4 +1,30 @@
-<?php //$Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Blog Menu Block page.
+ *
+ * @package    moodlecore
+ * @subpackage blog
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 require_once($CFG->dirroot .'/blog/lib.php');
 
@@ -6,12 +32,29 @@ class block_blog_menu extends block_base {
 
     function init() {
         $this->title = get_string('blockmenutitle', 'blog');
-        $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2007101509;
+        $this->version = 2009071700;
+    }
+
+    function instance_allow_multiple() {
+        return true;
+    }
+
+    function has_config() {
+        return false;
+    }
+
+    function applicable_formats() {
+        return array('all' => true, 'my' => false, 'tag' => false);
+    }
+
+    function instance_allow_config() {
+        return true;
     }
 
     function get_content() {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
+
+        $context = $PAGE->get_context();
 
         if (empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -24,95 +67,88 @@ class block_blog_menu extends block_base {
             return $this->content;
         }
 
-        if (!isset($userBlog)) {
-            $userBlog ->userid = 0;
-        }
-
-        if (!empty($USER->id)) {
-            $userBlog->userid = $USER->id;
-        }   //what is $userBlog anyway
-        if($this->content !== NULL) {
-            return $this->content;
-        }
-
         $output = '';
 
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        //if ( blog_isLoggedIn() && !isguest() ) {
-            $courseviewlink = '';
-            $addentrylink = '';
-            $coursearg = '';
+        $viewblogentries_url = blog_get_context_url();
+        $strlevel = '';
 
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        switch ($context->contextlevel) {
+            case CONTEXT_COURSE:
+                $strlevel = ($context->instanceid == SITEID) ? '' : get_string('course');
+                break;
+            case CONTEXT_MODULE:
+                $strlevel = print_context_name($context);
+                break;
+            case CONTEXT_USER:
+                $strlevel = get_string('user');
+                break;
+        }
 
-            if ($this->page->course->id != SITEID) {
+        $canviewblogs = has_capability('moodle/blog:view', $context);
 
-                $incoursecontext = true;
-                $curcontext = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
-            } else {
-                $incoursecontext = false;
-                $curcontext = $sitecontext;
+        /// Accessibility: markup as a list.
+
+        $blogmodon = false;
+
+        if (!empty($strlevel)) {
+            $output = '<li><a href="'.$viewblogentries_url.'">'.get_string('viewblogentries', 'blog', $strlevel).'</a></li>';
+        }
+
+        $parts = array();
+        $query = parse_url($viewblogentries_url);
+
+        if (!empty($query['query'])) {
+            parse_str($query['query'], $parts);
+        }
+
+        // show View site entries link
+        if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
+            $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php">';
+            $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
+        }
+
+        $output .= '';
+
+        // show View my entries link
+        if ($context->contextlevel != CONTEXT_USER) {
+            $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $USER->id;
+
+            foreach ($parts as $var => $val) {
+                $output .= "&amp;$var=$val";
             }
+            $output .= '">'.get_string('viewmyentries', 'blog').  "</a></li>\n";
+        }
 
-            $canviewblogs = has_capability('moodle/blog:view', $curcontext);
+        // show link to manage blog prefs
+        $output .= '<li><a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
+                         $USER->id .'">'.
+                         get_string('blogpreferences', 'blog')."</a></li>\n";
 
-            /// Accessibility: markup as a list.
-
-            if ( (isloggedin() && !isguest()) && $incoursecontext
-                    && $CFG->bloglevel >= BLOG_COURSE_LEVEL && $canviewblogs) {
-
-                $coursearg = '&amp;courseid='.$this->page->course->id;
-                // a course is specified
-
-                $courseviewlink = '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=course&amp;filterselect='. $this->page->course->id .'">';
-                $courseviewlink .= get_string('viewcourseentries', 'blog') ."</a></li>\n";
+        // show Add entry link
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        if (has_capability('moodle/blog:create', $sitecontext)) {
+            $output .= '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?action=add';
+            foreach ($parts as $var => $val) {
+                $output .= "&amp;$var=$val";
             }
+            $output .= '">'.get_string('addnewentry', 'blog') ."</a></li>\n";
+        }
 
-            $blogmodon = false;
+        // Full-text search field
 
-            if ( (isloggedin() && !isguest())
-                        && (!$blogmodon || ($blogmodon && $coursearg != ''))
-                        && $CFG->bloglevel >= BLOG_USER_LEVEL ) {
+        $output .= '<li><form method="get" action="'.$viewblogentries_url.'">';
+        $output .= '<div><input type="text" name="search" /><input type="submit" value="'.get_string('search').'" />';
 
-                // show Add entry link
-                if (has_capability('moodle/blog:create', $sitecontext)) {
-                    $addentrylink = '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?action=add'
-                                   .$coursearg.'">'.get_string('addnewentry', 'blog') ."</a></li>\n";
-                }
-                // show View my entries link
-                $addentrylink .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?userid='.
-                                 $userBlog->userid.'">'.get_string('viewmyentries', 'blog').
-                                 "</a></li>\n";
-
-                // show link to manage blog prefs
-                $addentrylink .= '<li><a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
-                                 $userBlog->userid . $coursearg .'">'.
-                                 get_string('blogpreferences', 'blog')."</a></li>\n";
-
-                $output = $addentrylink;
-                $output .= $courseviewlink;
+        if (!empty($parts)) {
+            foreach ($parts as $var => $val) {
+                $output .= '<input type="hidden" name="'.$var.'" value="'.$val.'" />';
             }
+        }
 
-            // show View site entries link
-            if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-                $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?filtertype=site&amp;">';
-                $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
-            }
-
-            // took out tag management interface/link, should use tag/manage.php
-
-            // show Help with blogging link
-            //$output .= '<li><a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
-            //$output .= get_string('helpblogging', 'blog') ."</a></li>\n";
-        //} else {
-        //    $output = ''; //guest users and users who are not logged in do not get menus
-        //}
-
+        $output .= '</div></form></li>';
         $this->content->text = '<ul class="list">'. $output ."</ul>\n";
-        return $this->content;
     }
 }
-
-?>

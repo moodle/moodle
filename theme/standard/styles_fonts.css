@@ -406,11 +406,11 @@ a.skip-block {
  *** Blogs
  ***/
 
-.blogpost .audience {
+.blog_entry .audience {
   font-size: 0.85em;
 }
 
-.blogpost .tags {
+.blog_entry .tags {
   font-size: 0.85em;
 }
 

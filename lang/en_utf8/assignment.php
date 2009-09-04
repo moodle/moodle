@@ -133,6 +133,7 @@ $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
 $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
+$string['typeblog'] = 'Blog post';
 $string['unfinalize'] = 'Revert to draft';
 $string['unfinalizeerror'] = 'An error occurred and that submission could not be reverted to draft';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
@@ -147,5 +148,7 @@ $string['usermisconf'] = 'User is misconfigured';
 $string['viewfeedback'] = 'View assignment grades and feedback';
 $string['viewsubmissions'] = 'View $a submitted assignments';
 $string['yoursubmission'] = 'Your submission';
-
+$string['maxpublishstate'] = 'Maximum visibility for blog entry before duedate';
+$string['selectblog'] = 'Select which blog entry you wish to submit';
+$string['noblogs'] = 'You have no blog entries to submit!';
 ?>

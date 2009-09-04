@@ -155,9 +155,9 @@
 
         //Now, add blog users if necessary
         if ($includeblogs) {
-            include_once("$CFG->dirroot/blog/lib.php");
             //Get users
-            $blogusers = blog_get_participants();
+            $blogusers = $DB->get_records_sql("SELECT u.id, u.id FROM {user} u WHERE u.id IN (SELECT DISTINCT userid FROM {post})");
+
             //Add blog users to results
             if ($blogusers) {
                 foreach ($blogusers as $bloguser) {
@@ -922,54 +922,10 @@
             fwrite ($bf, start_tag("BLOGS",2,true));
 
             if ($siteblogs) {
-                $rs_blogs = $DB->get_recordset('post', array('module'=>'blog', 'courseid'=>0));
+                $rs_blogs = $DB->get_records('post', array('module'=>'blog', 'courseid'=>0));
             /// Iterate over every blog
                 foreach ($rs_blogs as $blog) {
-                /// start blog
-                    fwrite($bf, start_tag("BLOG",3,true));
-                /// blog body
-                    fwrite ($bf,full_tag("ID",4,false,$blog->id));
-                    fwrite ($bf,full_tag("MODULE",4,false,$blog->module));
-                    fwrite ($bf,full_tag("USERID",4,false,$blog->userid));
-                    fwrite ($bf,full_tag("COURSEID",4,false,$blog->courseid));
-                    fwrite ($bf,full_tag("GROUPID",4,false,$blog->groupid));
-                    fwrite ($bf,full_tag("MODULEID",4,false,$blog->moduleid));
-                    fwrite ($bf,full_tag("COURSEMODULEID",4,false,$blog->coursemoduleid));
-                    fwrite ($bf,full_tag("SUBJECT",4,false,$blog->subject));
-                    fwrite ($bf,full_tag("SUMMARY",4,false,$blog->summary));
-                    fwrite ($bf,full_tag("CONTENT",4,false,$blog->content));
-                    fwrite ($bf,full_tag("UNIQUEHASH",4,false,$blog->uniquehash));
-                    fwrite ($bf,full_tag("RATING",4,false,$blog->rating));
-                    fwrite ($bf,full_tag("FORMAT",4,false,$blog->format));
-                    fwrite ($bf,full_tag("ATTACHMENT",4,false,$blog->attachment));
-                    fwrite ($bf,full_tag("PUBLISHSTATE",4,false,$blog->publishstate));
-                    fwrite ($bf,full_tag("LASTMODIFIED",4,false,$blog->lastmodified));
-                    fwrite ($bf,full_tag("CREATED",4,false,$blog->created));
-                    fwrite ($bf,full_tag("USERMODIFIED",4,false,$blog->usermodified));
-
-                /// Blog tags
-                /// Check if we have blog tags to backup
-                    if (!empty($CFG->usetags)) {
-                        if ($tags = tag_get_tags('post', $blog->id)) { //This return them ordered by default
-                        /// Start BLOG_TAGS tag
-                            fwrite ($bf,start_tag("BLOG_TAGS",4,true));
-                        /// Write blog tags fields
-                            foreach ($tags as $tag) {
-                                fwrite ($bf,start_tag("BLOG_TAG",5,true));
-                                fwrite ($bf,full_tag("NAME",6,false,$tag->name));
-                                fwrite ($bf,full_tag("RAWNAME",6,false,$tag->rawname));
-                                fwrite ($bf,end_tag("BLOG_TAG",5,true));
-                            }
-                        /// End BLOG_TAGS tag
-                            fwrite ($bf,end_tag("BLOG_TAGS",4,true));
-                        }
-                    }
-
-                /// Blog comments
-                    /// TODO: Blog comments go here (2.0)
-
-                /// end blog
-                    fwrite($bf, end_tag("BLOG",3,true));
+                    backup_blog($bf, $blog->id, 3);
 
                 /// Do some output
                     $counter++;
@@ -989,6 +945,69 @@
 
         return $status;
     }
+
+
+    function backup_course_blogs($bf, $preferences) {
+        global $DB;
+            fwrite ($bf, start_tag("BLOGS",2,true));
+
+        $sql = 'SELECT as.data1 FROM {assignment} a, {assignment_submissions} as WHERE 
+                as.assignment = a.id AND a.assignmenttype = \'blog\' AND a.course = ?';
+        $records = $DB->get_records_sql($sql, array($preferences->backup_course));
+        foreach ($records as $rec) {
+            backup_blog($bf, $rec->data1, 3); 
+        }
+        fwrite($bf, end_tag("BLOGS",2,true));
+    }
+    
+    function backup_blog($bf, $blogid, $level) {
+        global $DB;
+        $blog = $DB->get_record('post', array('module'=>'blog', 'id'=>$blogid));
+    
+                /// start blog
+        fwrite($bf, start_tag("BLOG",$level,true));
+                /// blog body
+        fwrite ($bf,full_tag("ID",$level+1,false,$blog->id));
+        fwrite ($bf,full_tag("MODULE",$level+1,false,$blog->module));
+        fwrite ($bf,full_tag("USERID",$level+1,false,$blog->userid));
+        fwrite ($bf,full_tag("COURSEID",$level+1,false,$blog->courseid));
+        fwrite ($bf,full_tag("GROUPID",$level+1,false,$blog->groupid));
+        fwrite ($bf,full_tag("MODULEID",$level+1,false,$blog->moduleid));
+        fwrite ($bf,full_tag("COURSEMODULEID",$level+1,false,$blog->coursemoduleid));
+        fwrite ($bf,full_tag("SUBJECT",$level+1,false,$blog->subject));
+        fwrite ($bf,full_tag("SUMMARY",$level+1,false,$blog->summary));
+        fwrite ($bf,full_tag("CONTENT",$level+1,false,$blog->content));
+        fwrite ($bf,full_tag("UNIQUEHASH",$level+1,false,$blog->uniquehash));
+        fwrite ($bf,full_tag("RATING",$level+1,false,$blog->rating));
+        fwrite ($bf,full_tag("FORMAT",$level+1,false,$blog->format));
+        fwrite ($bf,full_tag("ATTACHMENT",$level+1,false,$blog->attachment));
+        fwrite ($bf,full_tag("PUBLISHSTATE",$level+1,false,$blog->publishstate));
+        fwrite ($bf,full_tag("LASTMODIFIED",$level+1,false,$blog->lastmodified));
+        fwrite ($bf,full_tag("CREATED",$level+1,false,$blog->created));
+        fwrite ($bf,full_tag("USERMODIFIED",$level+1,false,$blog->usermodified));
+
+        /// Blog tags
+        /// Check if we have blog tags to backup
+        if (!empty($CFG->usetags)) {
+            if ($tags = tag_get_tags('post', $blog->id)) { //This return them ordered by default
+            /// Start BLOG_TAGS tag
+                fwrite ($bf,start_tag("BLOG_TAGS",$level+1,true));
+            /// Write blog tags fields
+                foreach ($tags as $tag) {
+                    fwrite ($bf,start_tag("BLOG_TAG",$level+2,true));
+                    fwrite ($bf,full_tag("NAME",$level+3,false,$tag->name));
+                    fwrite ($bf,full_tag("RAWNAME",$level+3,false,$tag->rawname));
+                    fwrite ($bf,end_tag("BLOG_TAG",$level+2,true));
+                }
+            /// End BLOG_TAGS tag
+                fwrite ($bf,end_tag("BLOG_TAGS",$level+1,true));
+            }
+        } 
+        /// end blog
+        fwrite($bf, end_tag("BLOG",$level,true));
+    }
+    
+    
 
     /**
      * Prints course's blocks info (table block_instance)
@@ -3352,6 +3371,23 @@
                     }
                 }
             }
+
+            //Backup course blog assignment data, if any.
+            if (!defined('BACKUP_SILENTLY')) {
+                echo '<li>'.get_string("courseblogdata").'</li>';
+            }
+            if($status) {
+                if (!$status = backup_course_blogs($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up the course blog assignment data");
+                    }
+                    else {
+                        $errorstr = "An error occurred while backing up the course blog assignment data";
+                        return false;
+                    }
+                }
+            }
+
 
             //Prints course end
             if ($status) {

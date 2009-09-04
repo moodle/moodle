@@ -2522,6 +2522,7 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
 function delete_course_module($id) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/blog/lib.php');
 
     if (!$cm = $DB->get_record('course_modules', array('id'=>$id))) {
         return true;
@@ -2542,7 +2543,8 @@ function delete_course_module($id) {
     }
 
     delete_context(CONTEXT_MODULE, $cm->id);
-    return $DB->delete_records('course_modules', array('id'=>$cm->id));
+    return $DB->delete_records('course_modules', array('id'=>$cm->id)) &&
+           $DB->delete_records('blog_association', array('contextid'=>$context->id));
 }
 
 function delete_mod_from_section($mod, $section) {

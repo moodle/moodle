@@ -544,6 +544,17 @@
             }
         }
     }
+    
+    // Run external blog cron if needed
+    if ($CFG->useexternalblogs) {
+        require_once($CFG->dirroot . '/blog/lib.php');
+        $sql = "SELECT * FROM {blog_external} WHERE timefetched < ? - ? OR timefetched = 0";
+        $external_blogs = $DB->get_records_sql($sql, array(mktime(), $CFG->externalblogcrontime));
+        
+        foreach ($external_blogs as $eb) {
+            blog_fetch_external_entries($eb);
+        }
+    }
 
     // cleanup file trash
     $fs = get_file_storage();

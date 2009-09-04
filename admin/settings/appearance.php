@@ -49,6 +49,22 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('calendar_exportsalt', get_string('calendarexportsalt','admin'), get_string('configcalendarexportsalt', 'admin'), random_string(60)));
     $ADMIN->add('appearance', $temp);
 
+    // blog
+    $temp = new admin_settingpage('blog', get_string('blog','blog'));
+    $temp->add(new admin_setting_configcheckbox('useblogassociations', get_string('useblogassociations', 'blog'), get_string('configuseblogassociations','blog'), 1));
+    $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
+                                                                                                                                              4 => get_string('siteblogs','blog'),
+                                                                                                                                              1 => get_string('personalblogs','blog'),
+                                                                                                                                              0 => get_string('disableblogs','blog'))));
+    $temp->add(new admin_setting_configcheckbox('useexternalblogs', get_string('useexternalblogs', 'blog'), get_string('configuseexternalblogs','blog'), 1));
+    $temp->add(new admin_setting_configselect('externalblogcrontime', get_string('externalblogcrontime', 'blog'), get_string('configexternalblogcrontime', 'blog'), 86400,
+        array(43200 => get_string('numhours', '', 12),
+              86400 => get_string('numhours', '', 24),
+              172800 => get_string('numdays', '', 2),
+              604800 => get_string('numdays', '', 7))));
+    $temp->add(new admin_setting_configtext('maxexternalblogsperuser', get_string('maxexternalblogsperuser','blog'), get_string('configmaxexternalblogsperuser', 'blog'), 1));
+    $ADMIN->add('appearance', $temp);
+
 /* TODO: reimplement editor settings and preferences, editors are now full plugins ;-)
     // "htmleditor" settingpage
     $ADMIN->add('appearance', new admin_category('htmleditor', get_string('htmleditor', 'admin')));

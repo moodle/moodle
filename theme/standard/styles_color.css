@@ -511,7 +511,7 @@ table.flexible .r1 {
  *** Blogs
  ***/
 
-.blogpost.blogdraft .content {
+.blog_entry.blogdraft .content {
   background-color:#EEEEEE;
 }
 

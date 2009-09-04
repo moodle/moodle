@@ -38,7 +38,7 @@ class block_tags extends block_base {
 
     function get_content() {
 
-        global $CFG, $SITE, $USER, $SCRIPT, $OUTPUT;
+        global $CFG, $COURSE, $SITE, $USER, $SCRIPT, $OUTPUT;
 
         if (empty($CFG->usetags)) {
             $this->content->text = '';
@@ -237,7 +237,7 @@ class block_tags extends block_base {
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"
                                 onsubmit="return ctags_checkinput(this.coursetag_new_tag.value)">
                             <div style="display: none;">
-                                <input type="hidden" name="entryid" value="$this->page->course->id" />
+                                <input type="hidden" name="entryid" value="$COURSE->id" />
                                 <input type="hidden" name="userid" value="$USER->id" />
                                 <input type="hidden" name="sesskey" value="$sesskey" />
                             </div>

@@ -2,6 +2,7 @@
 /// This file to be included so we can assume config.php has already been included.
 /// We also assume that $user, $course, $currenttab have been set
 
+    require_once($CFG->dirroot.'/blog/lib.php');
     require_once($CFG->libdir . '/portfoliolib.php');
 
     if (!isset($filtertype)) {
@@ -42,7 +43,7 @@
                     get_string('participants'));
             }
 
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=site&amp;',
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array()),
                 get_string('blogs','blog'));
         }
 
@@ -59,7 +60,7 @@
             get_string('participants'));
 
         if ($CFG->bloglevel >= 3) {
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs','blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('course'=>$filterselect)), get_string('blogs','blog'));
         }
 
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
@@ -80,7 +81,7 @@
                 get_string('participants'));
 
 
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=group&amp;filterselect='.$filterselect, get_string('blogs','blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('group'=>$filterselect)), get_string('blogs','blog'));
         }
 
     /**************************************
@@ -138,7 +139,7 @@
             ) // able to read blogs in site or course context
         ) { //end if
 
-            $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blog', 'blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('user'=>$user->id,'course'=>$course->id)), get_string('blog', 'blog'));
         }
 
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
