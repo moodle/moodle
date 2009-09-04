@@ -384,12 +384,11 @@
 
 
     /// Output the page
-    $navlinks = array();
-    $navlinks[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
-
-    print_header("$course->shortname: $strforums", $course->fullname,
-                    build_navigation($navlinks),
-                    "", "", true, $searchform, navmenu($course));
+    $PAGE->navbar->add($strforums);
+    $PAGE->set_title("$course->shortname: $strforums");
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($searchform);
+    echo $OUTPUT->header();
 
     if (!isguest()) {
         echo $OUTPUT->box_start('subscription');

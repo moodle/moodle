@@ -50,9 +50,10 @@
             require_login();
         }
 
-        $navigation = build_navigation('', $cm);
-        print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
-
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
+        
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'), get_login_url(), get_referer(false));
         echo $OUTPUT->footer();
         exit;
@@ -314,7 +315,7 @@
                     print_error("couldnotdeletereplies", "forum",
                           forum_go_back_to("discuss.php?d=$post->discussion"));
                 }
-                print_header();
+                echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string("deletesureplural", "forum", $replycount+1),
                              "post.php?delete=$delete&confirm=$delete",
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
@@ -327,7 +328,7 @@
                     forum_print_posts_nested($course, $cm, $forum, $discussion, $post, false, false, $forumtracked, $posts);
                 }
             } else {
-                print_header();
+                echo $OUTPUT->header();
                 echo $OUTPUT->confirm(get_string("deletesure", "forum", $replycount),
                              "post.php?delete=$delete&confirm=$delete",
                              $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
@@ -403,12 +404,10 @@
 
             $course = $DB->get_record('course', array('id' => $forum->course));
 
-            $navlinks = array();
-            $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
-            $navlinks[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
-            $navigation = build_navigation($navlinks, $cm);
-            print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
-
+            $PAGE->navbar->add(format_string($post->subject, true), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('d'=>$discussion->id)));
+            $PAGE->navbar->add(get_string("prune", "forum"));
+            $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('pruneheading', 'forum'));
             echo '<center>';
 
@@ -749,18 +748,17 @@
 
     $forcefocus = empty($reply) ? NULL : 'message';
 
-    $navlinks = array();
-    if ($post->parent) {
-        $navlinks[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
-        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'title');
-    } else {
-        $navlinks[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'title');
-    }
-    $navigation = build_navigation($navlinks, $cm);
 
-    print_header("$course->shortname: $strdiscussionname ".
-                  format_string($toppost->subject), $course->fullname,
-                  $navigation, $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
+    $PAGE->navbar->add(format_string($toppost->subject, true), "discuss.php?d=$discussion->id");
+    if ($post->parent) {
+        $PAGE->navbar->add(get_string('editing', 'forum'));
+    }
+
+    $PAGE->set_title("$course->shortname: $strdiscussionname ".format_string($toppost->subject));
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_focuscontrol($mform_post->focus($forcefocus));
+
+    echo $OUTPUT->header();
 
 // checkup
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {

@@ -55,7 +55,8 @@
     $strname    = get_string('name');
     $strtime    = get_string('time');
 
-    print_header("$strratings: ".format_string($post->subject));
+    $PAGE->set_title("$strratings: ".format_string($post->subject));
+    echo $OUTPUT->header();
 
     if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
         print_error('noresult', 'forum', '', format_string($post->subject));

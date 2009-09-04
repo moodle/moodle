@@ -14,11 +14,11 @@ if (isguestuser()) {
 }
 
 $strunsubscribeall = get_string('unsubscribeall', 'forum');
-$navlinks = array(array('name' => get_string('modulename', 'forum'), 'link' => null, 'type' => 'misc'),
-                  array('name' => $strunsubscribeall, 'link' => null, 'type' => 'misc'));
-$navigation = build_navigation($navlinks);
-
-print_header($strunsubscribeall, format_string($COURSE->fullname), $navigation);
+$PAGE->navbar->add(get_string('modulename', 'forum'));
+$PAGE->navbar->add($strunsubscribeall);
+$PAGE->set_title($strunsubscribeall);
+$PAGE->set_heading(format_string($COURSE->fullname));
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strunsubscribeall);
 
 if (data_submitted() and $confirm and confirm_sesskey()) {

@@ -36,18 +36,17 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums = get_string("forums", "forum");
 
-    $navigation = build_navigation($strsubscribers, $cm);
-
+    $PAGE->navbar->add($strsubscribers);
+    $PAGE->set_title($strsubscribers);
     if (has_capability('mod/forum:managesubscriptions', $context)) {
-        print_header_simple("$strsubscribers", "", $navigation,
-            "", "", true, forum_update_subscriptions_button($course->id, $id));
+        $PAGE->set_button(forum_update_subscriptions_button($course->id, $id));
         if ($edit != -1) {
             $USER->subscriptionsediting = $edit;
         }
     } else {
-        print_header_simple("$strsubscribers", "", $navigation, "", "", true, '');
         unset($USER->subscriptionsediting);
     }
+    echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this forum
     groups_print_activity_menu($cm, "subscribers.php?id=$forum->id");

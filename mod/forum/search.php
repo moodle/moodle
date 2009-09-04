@@ -99,13 +99,12 @@
 
     if (!$search || $showform) {
 
-        $navlinks = array();
-        $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
+        $PAGE->navbar->add($strforums, new moodle_url($CFG->wwwroot.'/mod/forum/index.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($strsearch);
 
-        print_header_simple("$strsearch", "", $navigation, 'search.words',
-                  "", "", "&nbsp;", navmenu($course));
+        $PAGE->set_title($strsearch);
+        $PAGE->set_focuscontrol('search.words');
+        echo $OUTPUT->header();
 
         forum_print_big_search_form($course);
         echo $OUTPUT->footer();
@@ -119,14 +118,12 @@
 
     $searchform = forum_search_form($course, $search);
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
-    $navigation = build_navigation($navlinks);
-
-
+    $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/mod/forum/search.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(s($search, true));
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
-        print_header_simple("$strsearchresults", "", $navigation, 'search.words', "", "", "&nbsp;", navmenu($course));
+        $PAGE->set_title($strsearchresults);
+        $PAGE->set_focuscontrol('search.words');
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string("nopostscontaining", "forum", $search));
 
         if (!$individualparams) {
@@ -139,9 +136,9 @@
         exit;
     }
 
-
-    print_header_simple("$strsearchresults", "", $navigation, '', "", "",  $searchform, navmenu($course));
-
+    $PAGE->set_title($strsearchresults);
+    $PAGE->set_button($searchform);
+    echo $OUTPUT->header();
     echo '<div class="reportlink">';
     echo '<a href="search.php?id='.$course->id.
                              '&amp;user='.urlencode($user).

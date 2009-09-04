@@ -46,10 +46,9 @@
     require_login($course->id, false, $cm);
 
     if (isguest()) {   // Guests can't subscribe
-
-        $navigation = build_navigation('', $cm);
-        print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
-
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      get_login_url(), new moodle_url());
         echo $OUTPUT->footer();

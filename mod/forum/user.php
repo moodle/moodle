@@ -35,7 +35,7 @@ if (!$DB->get_record('role_assignments', array('userid' => $USER->id, 'contextid
 }
 
 if ($user->deleted) {
-    print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
@@ -49,18 +49,18 @@ $strparticipants = get_string('participants');
 $strmode         = get_string($mode, 'forum');
 $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
-$navlinks = array();
+$link = null;
 if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEXT_COURSE, $course->id)) || has_capability('moodle/site:viewparticipants', $syscontext)) {
-    $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'core');
+    $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
 }
-$navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'title');
-$navlinks[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
-$navlinks[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
+$PAGE->navbar->add($strparticipants, $link);
+$PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php',array('id'=>$user->id,'course'=>$course->id)));
+$PAGE->navbar->add($strforumposts);
+$PAGE->navbar->add($strmode);
 
-$navigation = build_navigation($navlinks);
-
-print_header("$course->shortname: $fullname: $strmode", $course->fullname,$navigation);
-
+$PAGE->set_title("$course->shortname: $fullname: $strmode");
+$PAGE->set_heading($course->fullname);
+echo $OUTPUT->header();
 
 $currenttab = $mode;
 $showroles = 1;

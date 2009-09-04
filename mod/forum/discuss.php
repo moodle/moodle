@@ -141,16 +141,14 @@
 
     $searchform = forum_search_form($course);
 
-    $navlinks = array();
-    $navlinks[] = array('name' => format_string($discussion->name), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+    $PAGE->navbar->add(format_string($discussion->name), new moodle_url($CFG->wwwroot.'/mod/forum/discuss.php', array('id'=>$discussion->id)));
     if ($parent != $discussion->firstpost) {
-        $navlinks[] = array('name' => format_string($post->subject), 'type' => 'title');
+        $PAGE->navbar->add(format_string($post->subject));
     }
-
-    $navigation = build_navigation($navlinks, $cm);
-    print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
-                     $navigation, "", "", true, $searchform, navmenu($course, $cm));
-
+    $PAGE->set_title("$course->shortname: ".format_string($discussion->name));
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($searchform);
+    echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
