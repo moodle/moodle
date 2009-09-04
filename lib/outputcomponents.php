@@ -109,7 +109,7 @@ class moodle_html_component {
      * @return void
      */
     public function add_classes($classes) {
-        $this->classes += self::clean_classes($classes);
+        $this->classes = array_merge($this->classes, self::clean_classes($classes));
     }
 
     /**
