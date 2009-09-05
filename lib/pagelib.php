@@ -783,7 +783,7 @@ class moodle_page {
     public function set_url($url, $params = array()) {
         global $CFG;
         if ($url instanceof moodle_url) {
-            $shorturl = str_replace($CFG->wwwroot, '', $url->out(true));
+            $shorturl = str_replace($CFG->wwwroot . '/', '', $url->out(true));
             $this->_url = clone($url);
             if (!empty($params)) {
                 throw new coding_exception('Cannot pass params together with moodle_url to moodle_page::set_url().');
