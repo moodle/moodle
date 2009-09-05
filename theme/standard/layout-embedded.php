@@ -9,24 +9,7 @@
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
-
-<?php if ($PAGE->heading) { ?>
-    <div id="header" class="clearfix">
-        <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-        <div class="headermenu"><?php echo $PAGE->headingmenu ?></div>
-    </div>
-<?php } ?>
-
-<?php if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
-    <div class="navbar clearfix">
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
-        <div class="navbutton"><?php echo $PAGE->button; ?></div>
-    </div>
-<?php } else if ($PAGE->heading) { // If no navigation, but a heading, then print a line ?>
-    <hr />
-<?php } ?>
 <!-- END OF HEADER -->
-
     <div id="content" class="clearfix">
         [MAIN CONTENT GOES HERE]
     </div>
