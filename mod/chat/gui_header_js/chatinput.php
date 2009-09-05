@@ -24,7 +24,6 @@
     }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
 
     //Get the user theme
     $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
@@ -32,6 +31,7 @@
     //Setup course, lang and theme
     $PAGE->set_course($course);
     $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
+    $PAGE->set_generaltype('embedded');
 
     print_header('', '', '', 'input_chat_message', '', false);
 

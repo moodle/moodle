@@ -26,6 +26,7 @@
     require_login($course->id, false, $cm);
     require_capability('mod/chat:chat',$context);
     $PAGE->set_generaltype('form');
+    $PAGE->requires->css('mod/chat/chat.css');
 
 /// Check to see if groups are being used here
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
