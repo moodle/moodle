@@ -1,7 +1,6 @@
 <?php
 require_once('../../../config.php');
 require_once('../lib.php');
-require_once('common.php');
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
@@ -46,17 +45,11 @@ if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
     print_error('cantlogin', 'chat');
 }
 
-// language string
-$str_chat     = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
-$str_send    = get_string('send', 'chat');
-$str_sending = get_string('sending', 'chat');
-$str_title   = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
-$str_inputarea = get_string('inputarea', 'chat');
-$str_userlist  = get_string('userlist',  'chat');
+$str_title = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
+$str_send  = get_string('send', 'chat'); 
 
 $PAGE->set_generaltype('popup');
 $PAGE->set_title('Chat');
-
 $PAGE->requires->yui_lib('dragdrop');
 $PAGE->requires->yui_lib('resize');
 $PAGE->requires->yui_lib('layout');
@@ -65,39 +58,55 @@ $PAGE->requires->yui_lib('connection');
 $PAGE->requires->yui_lib('json');
 $PAGE->requires->yui_lib('button');
 $PAGE->requires->yui_lib('selector');
-$PAGE->requires->data_for_js('chat_cfg', array('home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id, 'userid'=>$USER->id, 'sid'=>$chat_sid,'timer'=>5000, 'chat_lasttime'=>0,'chat_lastrow'=>null,'header_title'=>$str_chat,'chatroom_name'=>$str_title));
-$PAGE->requires->data_for_js('chat_lang', array('send'=>$str_send, 'sending'=>$str_sending, 'inputarea'=>$str_inputarea, 'userlist'=>$str_userlist));
+$PAGE->requires->data_for_js('chat_cfg', array(
+    'home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
+    'userid'=>$USER->id,
+    'sid'=>$chat_sid,
+    'timer'=>5000,
+    'chat_lasttime'=>0,
+    'chat_lastrow'=>null,
+    'chatroom_name'=>$str_title
+));
+
+$PAGE->requires->string_for_js('send', 'chat');
+$PAGE->requires->string_for_js('sending', 'chat');
+$PAGE->requires->string_for_js('inputarea', 'chat');
+$PAGE->requires->string_for_js('userlist', 'chat');
+$PAGE->requires->string_for_js('modulename', 'chat');
+$PAGE->requires->string_for_js('beep', 'chat');
+$PAGE->requires->string_for_js('talk', 'chat');
+
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
+$PAGE->requires->yui_lib('animation')->in_head();
+$PAGE->requires->css('mod/chat/chat.css');
+
 $PAGE->add_body_class('yui-skin-sam');
 
 echo $OUTPUT->header();
-echo <<<STY
-<style type='text/css'>
-#messageslist{list-style-type:none;padding:0;margin:0}
-#listing a{text-decoration:none;color:gray}
-#listing a:hover {text-decoration:underline;color:white;background:blue}
-#listing{padding: .5em}
-h2{margin:0}
-</style>
-STY;
+echo $OUTPUT->heading($str_title, 1);
+$intro = format_text($chat->intro, $chat->introformat);
 
-echo $OUTPUT->heading($str_title,1);
 echo <<<DIVS
-<div id="chat_header">
+<div id="chat-header">
+{$chat->name} {$intro}
 </div>
-<div id="chat_input">
-    <input type="text" id="input_msgbox" value="" size="48" />
-    <input type="button" id="btn_send" value="$str_send" />
-</div>
-<div id="chat_user_list">
-    <ul id="listing">
+<div id="chat-userlist">
+    <ul id="users-list">
+        <li></li>
     </ul>
 </div>
 <div id="chat_options">
 </div>
-<div id="chat_panel">
-    <ul id="messageslist">
-    <ul>
+<div id="chat-messages">
+    <div>
+        <ul id="messages-list">
+            <li></li>
+        <ul>
+    </div>
+</div>
+<div id="chat-input">
+    <input type="text" id="input_msgbox" value="" size="70" />
+    <input type="button" id="btn_send" value="$str_send" />
 </div>
 <div id="notify">
 </div>

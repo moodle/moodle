@@ -26,9 +26,6 @@
 /** Include portfoliolib.php */
 require_once($CFG->libdir.'/portfoliolib.php');
 
-$CFG->chat_ajax_debug  = false;
-$CFG->chat_use_cache   = false;
-
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
 global $CHAT_HTMLHEAD;
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body>\n\n".padding(200);
@@ -758,11 +755,11 @@ function chat_update_chat_times($chatid=0) {
  * @return bool|string Returns HTML or false
  */
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
-    global $CFG, $USER, $OUTPUT;
+    global $CFG, $USER, $OUTPUT, $COURSE;
 
-    $output = new object();
-    $output->beep = false;       // by default
-    $output->refreshusers = false; // by default
+    $result = new object();
+    $result->beep = false;         // by default
+    $result->refreshusers = false; // by default
 
     // Use get_user_timezone() to find the correct timezone for displaying this message:
     // It's either the current user's timezone or else decided by some Moodle config setting
@@ -778,9 +775,10 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = $OUTPUT->user_picture(moodle_user_picture::make($sender, $courseid));
-    if ($courseid) {
-        $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
+    if (empty($courseid)) {
+        $courseid = $COURSE->id;
     }
+    $message->picture = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
     //Calculate the row class
     if ($chat_lastrow !== NULL) {
@@ -790,32 +788,35 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     // Start processing the message
-
     if(!empty($message->system)) {
         // System event
-        $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
-        $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
-        $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
-        $output->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>';
+        $result->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
+
+        $result->html  = '<div class="chat-event">';
+        $result->html .= '<span class="time">'.$message->strtime.'</span> ';
+        $userlink = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">".fullname($sender)."</a>";
+        $result->html .= '<span class="event">'.get_string('message'.$message->message, 'chat', $userlink).'</span> ';
+        $result->html .= '</div>';
+
+        $result->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>';
 
         if($message->message == 'exit' or $message->message == 'enter') {
-            $output->refreshusers = true; //force user panel refresh ASAP
+            $result->refreshusers = true; //force user panel refresh ASAP
         }
-        return $output;
+        return $result;
     }
 
     // It's not a system event
-
     $text = $message->message;
 
     /// Parse the text to clean and filter it
-
     $options = new object();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases
     $special = false;
+    $outtime = $message->strtime;
 
     if (substr($text, 0, 5) == 'beep ') {
         /// It's a beep!
@@ -823,15 +824,13 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
-            $outinfo = $message->strtime.': '.get_string('messagebeepseveryone', 'chat', fullname($sender));
-            $outmain = '';
-            $output->beep = true;  // (eventually this should be set to
+            $outmain =  get_string('messagebeepseveryone', 'chat', fullname($sender));
+            $result->beep = true;  // (eventually this should be set to
                                    //  to a filename uploaded by the user)
 
         } else if ($beepwho == $currentuser->id) {  // current user
-            $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
-            $outmain = '';
-            $output->beep = true;
+            $outmain = get_string('messagebeepsyou', 'chat', fullname($sender));
+            $result->beep = true;
 
         } else {  //something is not caught?
             return false;
@@ -844,7 +843,6 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         switch ($command){
         case 'me':
             $special = true;
-            $outinfo = $message->strtime;
             $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
             break;
         }
@@ -852,29 +850,35 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $pattern = '#To[[:space:]](.*):(.*)#';
         preg_match($pattern, trim($text), $matches);
         $special = true;
-        $outinfo = $message->strtime;
-        $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+        $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
     }
 
     if(!$special) {
-        $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
 
-    /// Format the message as a small table
+    $result->text = strip_tags($outtime.': '.$outmain);
 
-    $output->text  = strip_tags($outinfo.': '.$outmain);
+    $result->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\" valign=\"top\">$message->picture</td><td class=\"text\">";
 
-    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\" valign=\"top\">$message->picture</td><td class=\"text\">";
-    $output->html .= "<span class=\"title\">$outinfo</span>";
-    if ($outmain) {
-        $output->html .= ": $outmain";
-        $output->basic = '<dl><dt class="title">'.$outinfo.':</dt><dd class="text">'.$outmain.'</dd></dl>';
+    $result->html .= "<span class=\"time\">[{$outtime}]</span> ";
+    if(!$special) {
+        $result->html .= "<span class=\"user\">{$sender->firstname}</span>";
+        $result->html .= ": $outmain";
     } else {
-        $output->basic = '<dl><dt class="title">'.$outinfo.'</dt></dl>';
+        $result->html .= "$outmain";
     }
-    $output->html .= "</td></tr></table>";
-    return $output;
+    $result->html .= "</td></tr></table>";
+
+    $result->basic = '<dl><dt>';
+    $result->basic .= '<span cass="time">['.$outtime.']</span> '; 
+    $result->basic .= '<span class="user">'.$sender->firstname.'</span>'; 
+    $result->basic .= ': ';
+    $result->basic .= '</dt>';
+    $result->basic .= '<dd class="text">'.$outmain.'</dd>';
+    $result->basic .= '</dl>';
+
+    return $result;
 }
 
 /**
@@ -901,6 +905,45 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
         return NULL;
     }
     return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
+}
+
+/**
+ * @global object $DB
+ * @global object $CFG
+ * @global object $COURSE
+ * @global object $OUTPUT
+ * @param object $users
+ * @param object $course
+ * @return array return formatted user list
+ */
+function chat_format_userlist($users, $course) {
+    global $CFG, $DB, $COURSE, $OUTPUT;
+    $result = array();
+    foreach($users as $user){
+        $item = array();
+        $item['name'] = fullname($user);
+        $item['url'] = $CFG->wwwroot.'/user/view.php?id='.$v->id.'&amp;course='.$course->id;
+        $item['picture'] = $OUTPUT->user_picture(moodle_user_picture::make($user, $COURSE->id));
+        $item['id'] = $user->id;
+        $result[] = $item;
+    }
+    return $result;
+}
+
+/**
+ * Print json format error
+ * @param string $level
+ * @param string $msg
+ */
+function chat_print_error($level, $msg) {
+    header('Content-Length: ' . ob_get_length() );
+    $error = new stdclass;
+    $error->level = $level;
+    $error->msg   = $msg;
+    $response['error'] = $error;
+    echo json_encode($response);
+    ob_end_flush();
+    exit;
 }
 
 /**

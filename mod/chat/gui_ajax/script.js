@@ -1,7 +1,11 @@
 // record msg IDs
-var msgs = [];
-var interval = null;
-var scrollable = true;
+
+YAHOO.namespace('moodle.chat');
+YAHOO.moodle.chat.api = moodle_cfg.wwwroot+'/mod/chat/chat_ajax.php';
+YAHOO.moodle.chat.interval = null;
+YAHOO.moodle.chat.chat_input_element = null;
+YAHOO.moodle.chat.msgs = [];
+YAHOO.moodle.chat.scrollable = true;
 
 (function() {
 var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;
@@ -10,11 +14,11 @@ Event.onDOMReady(function() {
     // build layout
     var layout = new YAHOO.widget.Layout({
         units: [
-        { position: 'top', height: 60, body: 'chat_header', header: chat_cfg.header_title, gutter: '5px', collapse: true, resize: false },
-        { position: 'right', header: chat_lang.userlist, width: 180, resize: true, gutter: '5px', footer: null, collapse: true, scroll: true, body: 'chat_user_list', animate: false },
-        { position: 'bottom', header: chat_lang.inputarea, height: 60, resize: true, body: 'chat_input', gutter: '5px', collapse: false, resize: false },
+        { position: 'top', height: 50, body: 'chat-header', gutter: '5px', resize: false },
+        { position: 'right', width: 180, resize: true, gutter: '5px', scroll: true, body: 'chat-userlist', animate: false },
+        { position: 'bottom', height: 42, resize: false, body: 'chat-input', gutter: '5px', collapse: false, resize: false },
         //{ position: 'left', header: 'Options', width: 200, resize: true, body: 'chat_options', gutter: '5px', collapse: true, close: true, collapseSize: 50, scroll: true, animate: false },
-        { position: 'center', body: 'chat_panel', gutter: '5px', scroll: true }
+        { position: 'center', body: 'chat-messages', gutter: '5px', scroll: true }
         ]
     });
     layout.on('render', function() {
@@ -25,37 +29,45 @@ Event.onDOMReady(function() {
     layout.render();
     Event.on('btn_send', 'click', function(ev) {
         Event.stopEvent(ev);
-        send_message();
+        YAHOO.moodle.chat.send_message();
     });
-    Event.on('chat_panel', 'mouseover', function(ev) {
+    Event.on('chat-messages', 'mouseover', function(ev) {
         Event.stopEvent(ev);
-        scrollable = false;
+        YAHOO.moodle.chat.scrollable = false;
     });
-    Event.on('chat_panel', 'mouseout', function(ev) {
+    Event.on('chat-messages', 'mouseout', function(ev) {
         Event.stopEvent(ev);
-        scrollable = true;
+        YAHOO.moodle.chat.scrollable = true;
     });
-    var key_send = new YAHOO.util.KeyListener(document, { keys:13 }, {fn:send_message, correctScope:true });
-    key_send.enable();
-    document.getElementById('input_msgbox').focus();
+    YAHOO.moodle.chat.chat_input_element = document.getElementById('input_msgbox');
+    YAHOO.moodle.chat.chat_input_element.onkeypress = function(ev) {
+        var e = (ev)?ev:event;
+        if (e.keyCode == 13) {
+            YAHOO.moodle.chat.send_message();
+        }
+    }
     document.title = chat_cfg.chatroom_name;
-
 
     this.cb = {
         success: function(o){
+            YAHOO.moodle.chat.chat_input_element.focus();
             if(o.responseText){
                 var data = YAHOO.lang.JSON.parse(o.responseText);
             } else {
                 return;
             }
             if (data.users) {
-                update_users(data.users);
+                YAHOO.moodle.chat.update_users(data.users);
             }
         }
     }
-    var transaction = YAHOO.util.Connect.asyncRequest('POST', "update.php?chat_sid="+chat_cfg.sid+"&chat_init=1", this.cb, null);
-    interval = setInterval(function(){
-        update_messages();
+    var params = {};
+    params.action = 'init';
+    params.chat_init = 1;
+    params.chat_sid = chat_cfg.sid;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', YAHOO.moodle.chat.api, this.cb, build_querystring(params));
+    YAHOO.moodle.chat.interval = setInterval(function(){
+        YAHOO.moodle.chat.update_messages();
     }, chat_cfg.timer);
 });
 })();
@@ -71,129 +83,151 @@ function in_array(f, t){
     return a;
 }
 
-function talkto(name) {
+YAHOO.moodle.chat.talkto = function(name) {
     var msg = document.getElementById('input_msgbox');
     msg.value = "To "+name+": ";
     msg.focus();
 }
 
-function send_message() {
+YAHOO.moodle.chat.send_callback = {
+    success: function(o) {
+        if(o.responseText == 200){
+            document.getElementById('btn_send').value = mstr.chat.send;
+            document.getElementById('input_msgbox').value = '';
+        }
+
+        clearInterval(YAHOO.moodle.chat.interval)
+        YAHOO.moodle.chat.update_messages();
+        YAHOO.moodle.chat.interval = setInterval(function(){
+            YAHOO.moodle.chat.update_messages();
+        }, chat_cfg.timer);
+        //document.getElementById('input_msgbox').focus();
+    }
+}
+YAHOO.moodle.chat.send_message = function(ev) {
     var msg = document.getElementById('input_msgbox').value;
     var el_send = document.getElementById('btn_send');
     if (!msg) {
         alert('Empty message not allowed');
         return;
     }
-    var url = 'post.php?chat_sid='+chat_cfg.sid;
-    el_send.value = chat_lang.sending;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "chat_message="+msg);
-}
-function send_beep(id){
-    var url = 'post.php?chat_sid='+chat_cfg.sid;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', url, send_cb, "beep="+id);
+    el_send.value = mstr.chat.sending;
+    var params = {};
+    params.chat_message=msg;
+    params.chat_sid=chat_cfg.sid;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', YAHOO.moodle.chat.api+"?action=chat", YAHOO.moodle.chat.send_callback, build_querystring(params));
 }
 
-var send_cb = {
-    success: function(o) {
-        if(o.responseText == 200){
-            document.getElementById('btn_send').value = chat_lang.send;
-            document.getElementById('input_msgbox').value = '';
-        }
-        clearInterval(interval)
-        update_messages();
-        interval = setInterval(function(){
-            update_messages();
-        }, chat_cfg.timer);
-        document.getElementById('input_msgbox').focus();
-    }
+YAHOO.moodle.chat.send_beep = function(user_id) {
+    var url = 'post.php?chat_sid='+chat_cfg.sid;
+    var params = {};
+    params.chat_sid = chat_cfg.sid;
+    params.beep=user_id;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', YAHOO.moodle.chat.api+"?action=chat", YAHOO.moodle.chat.send_callback, build_querystring(params));
 }
 
-function update_users(users) {
+YAHOO.moodle.chat.update_users = function(users) {
     if(!users){
         return;
     }
-    var list = document.getElementById('listing');
+    var list = document.getElementById('users-list');
     list.innerHTML = '';
     var html = '';
     for(var i in users){
         var el = document.createElement('li');
-        html += '<table><tr><td>' + users[i].picture + '</td><td>'
-        html += '<a target="_blank" href="'+users[i].url+'">'+ users[i].name+'<br/>';
-        html += '<a href="###" onclick="talkto(\''+users[i].name+'\')">Talk</a> ';
-        html += '<a href="###" onclick="send_beep('+users[i].id+')">Beep</a>';
-        html += '</td></tr></table>';
+        html += '<table>';
+        html += '<tr>';
+        html += '<td>' + users[i].picture + '</td>';
+        html += '<td>';
+        html += ' <a target="_blank" href="'+users[i].url+'">'+ users[i].name+'<br/>';
+        html += ' <a href="###" onclick="YAHOO.moodle.chat.talkto(\''+users[i].name+'\')">'+mstr.chat.talk+'</a> ';
+        html += ' <a href="###" onclick="YAHOO.moodle.chat.send_beep('+users[i].id+')">'+mstr.chat.beep+'</a>';
+        html += '</td>';
+        html += '</tr>';
+        html += '</table>';
         el.innerHTML = html;
         list.appendChild(el);
     }
 }
-function update_messages() {
+
+YAHOO.moodle.chat.update_messages = function() {
     if(!chat_cfg.req_count){
         chat_cfg.req_count = 1;
     } else {
         chat_cfg.req_count++;
     }
-    console.info('Update count: '+chat_cfg.req_count);
-    var url = "update.php?chat_sid="+chat_cfg.sid+"&chat_lasttime="+chat_cfg.chat_lasttime;
+    var params = {};
     if(chat_cfg.chat_lastrow != null){
-        url += "&chat_lastrow="+chat_cfg.chat_lastrow;
+        params.chat_lastrow = chat_cfg.chat_lastrow;
     }
-    var trans = YAHOO.util.Connect.asyncRequest('POST', url, update_cb, null);
+    params.chat_lasttime = chat_cfg.chat_lasttime;
+    params.chat_sid = chat_cfg.sid;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', YAHOO.moodle.chat.api+"?action=update", YAHOO.moodle.chat.update_cb, build_querystring(params));
 }
-function append_msg(msg) {
-    var list = document.getElementById('messageslist');
+
+YAHOO.moodle.chat.mymsg_cfg = {
+    color: { to: '#06e' },
+    backgroundColor: { to: '#e06' }
+};
+YAHOO.moodle.chat.oddmsg_cfg = {
+    color: { to: 'red' },
+    backgroundColor: { to: '#FFFFCC' }
+};
+YAHOO.moodle.chat.evenmsg_cfg = {
+    color: { to: 'blue' }
+};
+
+YAHOO.moodle.chat.append_msg = function(key, msg, row) {
+    var list = document.getElementById('messages-list');
     var item = document.createElement('li');
-    console.info('New message:'+msg.msg);
+    item.id="mdl-chat-entry-"+key;
+    if (msg.mymessage) {
+        item.className = 'mdl-chat-my-entry';
+    } else {
+        item.className = 'mdl-chat-entry';
+    }
     item.innerHTML = msg.msg;
     if(msg.type && msg.type == 'beep'){
         document.getElementById('notify').innerHTML = '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
     }
     list.appendChild(item);
-}
-var update_cb = {
-success: function(o){
-    try {
-        if(o.responseText){
-            var data = YAHOO.lang.JSON.parse(o.responseText);
-        } else {
-            return;
-        }
-    } catch(e) {
-        alert('json invalid');
-        alert(o.responseText);
-        return;
+    if (!row) {
+        var anim = new YAHOO.util.ColorAnim(item.id, YAHOO.moodle.chat.oddmsg_cfg);
+        anim.animate(); 
     }
-    if(data.error) {
-        if(data.error.level == 'ERROR'){
-            clearInterval(interval);
-            window.location = chat_cfg.home;
-        }
+    if (msg.mymessage) {
+        //var anim = new YAHOO.util.ColorAnim(item.id, YAHOO.moodle.chat.mymsg_cfg);
+        //anim.animate(); 
     }
-    if(!data)
-         return false;
-    chat_cfg.chat_lasttime = data['lasttime'];
-    chat_cfg.chat_lastrow  = data['lastrow'];
-    // update messages
-    for (key in data['msgs']){
-        if(!in_array(key, msgs)){
-            msgs.push(key);
-            append_msg(data['msgs'][key]);
-        }
-    }
-    // update users
-    update_users(data['users']);
-    // scroll to the bottom of the message list
-    if(scrollable){
-        document.getElementById('chat_panel').parentNode.scrollTop+=500;
-    }
-}
 }
 
-// debug code
-if(!console){
-    var console = {
-        info: function(){
-        },
-        log: function(){
+YAHOO.moodle.chat.update_cb = {
+    success: function(o){
+        var data = json_decode(o.responseText);
+        if (!data) {
+            return;
         }
+        if(data.error) {
+            if(data.error.level == 'ERROR'){
+                clearInterval(YAHOO.moodle.chat.interval);
+                window.location = chat_cfg.home;
+            }
+        }
+        chat_cfg.chat_lasttime = data['lasttime'];
+        chat_cfg.chat_lastrow  = data['lastrow'];
+        // update messages
+        for (key in data['msgs']){
+            if(!in_array(key, YAHOO.moodle.chat.msgs)){
+                YAHOO.moodle.chat.msgs.push(key);
+                YAHOO.moodle.chat.append_msg(key, data['msgs'][key], data.lastrow);
+            }
+        }
+        // update users
+        YAHOO.moodle.chat.update_users(data['users']);
+        // scroll to the bottom of the message list
+        if(YAHOO.moodle.chat.scrollable){
+            document.getElementById('chat-messages').parentNode.scrollTop+=500;
+        }
+        YAHOO.moodle.chat.chat_input_element.focus();
     }
 }
