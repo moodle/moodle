@@ -56,9 +56,7 @@ Event.onDOMReady(function() {
             } else {
                 return;
             }
-            if (data.users) {
-                YAHOO.moodle.chat.update_users(data.users);
-            }
+            YAHOO.moodle.chat.update_users(data.users);
         }
     }
     var params = {};
@@ -132,9 +130,9 @@ YAHOO.moodle.chat.update_users = function(users) {
     }
     var list = document.getElementById('users-list');
     list.innerHTML = '';
-    var html = '';
     for(var i in users){
         var el = document.createElement('li');
+        var html = '';
         html += '<table>';
         html += '<tr>';
         html += '<td>' + users[i].picture + '</td>';
