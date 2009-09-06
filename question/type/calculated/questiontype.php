@@ -1979,7 +1979,7 @@ function qtype_calculated_find_formula_errors($formula) {
     // Strip away empty space and lowercase it
     $formula = strtolower(str_replace(' ', '', $formula));
 
-    $safeoperatorchar = '-+/*%>:^~<?=&|!'; /* */
+    $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
     $operatorornumber = "[$safeoperatorchar.0-9eE]";
 
     while ( preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
