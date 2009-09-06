@@ -104,7 +104,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         }else { 
             // handle reload to get values from the form-elements
             // answers, datasetdefs and data_items
-            // verify for the specific dataset values as the other parameters 
+            // In any case the validation step will warn the user of any error in settings the values. 
+            // Verification for the specific dataset values as the other parameters 
             // unints, feeedback etc are handled elsewhere
             // handle request buttons :
             //    'analyzequestion' (Identify the wild cards {x..} present in answers) 
@@ -115,63 +116,64 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             // the mandatory (i.e. in answers) datasets
             //  to implement : don't do any changes if the question is used in a quiz.
             // If new datadef, new properties should erase items. 
+            // Most of the data 
+            $datasettoremove = false;
+            $newdatasetvalues = false ; 
+            $newdataset = false ; 
             $dummyform = new stdClass();
             $mandatorydatasets = array();
+            // should not test on adding a new answer 
+            // should test if there are already olddatasets or if the 'analyzequestion' submit button has been clicked
+            if (''  != optional_param('datasetdef', '', PARAM_RAW) || ''  != optional_param('analyzequestion', '', PARAM_RAW)){ 
 
-            if  (  $dummyform->answer =optional_param('answer', '', PARAM_CLEAN)) { // there is always at least one answer... FIXME: sloppy coding
-                $fraction = optional_param('fraction', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $feedback = optional_param('feedback', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $tolerance = optional_param('tolerance', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $tolerancetype = optional_param('tolerancetype', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $correctanswerlength = optional_param('correctanswerlength', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $correctanswerformat = optional_param('correctanswerformat', '', PARAM_CLEAN); //FIXME: sloppy coding
-                
-                foreach( $dummyform->answer as $key => $answer ) {
-                    if(trim($answer) != ''){  // just look for non-empty 
-                        $this->answer[$key]=new stdClass();
-                        $this->answer[$key]->answer = $answer;
-                        $this->answer[$key]->fraction = $fraction[$key];
-                        $this->answer[$key]->feedback = $feedback[$key];
-                        $this->answer[$key]->tolerance = $tolerance[$key];
-                        $this->answer[$key]->tolerancetype = $tolerancetype[$key];
-                        $this->answer[$key]->correctanswerlength = $correctanswerlength[$key];
-                        $this->answer[$key]->correctanswerformat = $correctanswerformat[$key];
-                        $this->nonemptyanswer[]= $this->answer[$key];
-                        $mandatorydatasets +=$this->qtypeobj->find_dataset_names($answer);
+                if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer... 
+                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER); 
+                    $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER); 
+                    $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT); 
+                    $correctanswerformat = optional_param('correctanswerformat', '', PARAM_INT); 
+                    
+                    foreach( $dummyform->answer as $key => $answer ) {
+                        if(trim($answer) != ''){  // just look for non-empty 
+                            $this->answer[$key]=new stdClass();
+                            $this->answer[$key]->answer = $answer;
+                            $this->answer[$key]->tolerance = $tolerance[$key];
+                            $this->answer[$key]->tolerancetype = $tolerancetype[$key];
+                            $this->answer[$key]->correctanswerlength = $correctanswerlength[$key];
+                            $this->answer[$key]->correctanswerformat = $correctanswerformat[$key];
+                            $this->nonemptyanswer[]= $this->answer[$key];
+                            $mandatorydatasets +=$this->qtypeobj->find_dataset_names($answer);
+                        }
                     }
                 }
-            }
-            $this->datasetdefs = array();
-            // rebuild datasetdefs from old values
-            $olddef  = optional_param('datasetdef', '', PARAM_CLEAN); //FIXME: sloppy coding
-            $oldoptions  = optional_param('defoptions', '', PARAM_CLEAN); //FIXME: sloppy coding
-            $calcmin = optional_param('calcmin', '', PARAM_CLEAN); //FIXME: sloppy coding
-            $calclength = optional_param('calclength', '', PARAM_CLEAN); //FIXME: sloppy coding
-            $calcmax = optional_param('calcmax', '', PARAM_CLEAN); //FIXME: sloppy coding
-            $newdatasetvalues = false ; 
-
-            for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
-                $def = $olddef[$key] ;
-                $this->datasetdefs[$def]= new stdClass ;
-                $this->datasetdefs[$def]->type = 1;
-                $this->datasetdefs[$def]->category = 0;
-              //  $this->datasets[$key]->name = $datasetname;
-                $this->datasetdefs[$def]->options = $oldoptions[$key] ;
-                $this->datasetdefs[$def]->calcmin = $calcmin[$key] ;
-                $this->datasetdefs[$def]->calcmax = $calcmax[$key] ;
-                $this->datasetdefs[$def]->calclength = $calclength[$key] ;
-                //then compare with new values
-                if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~', $this->datasetdefs[$def]->options, $regs)) {
-                   if( $this->datasetdefs[$def]->calcmin != $regs[2]||
-                    $this->datasetdefs[$def]->calcmax != $regs[3] ||
-                    $this->datasetdefs[$def]->calclength != $regs[4]){
-                         $newdatasetvalues = true ;
-                    }                        
-                }
-                $this->datasetdefs[$def]->options="uniform:".$this->datasetdefs[$def]->calcmin.":".$this->datasetdefs[$def]->calcmax.":".$this->datasetdefs[$def]->calclength;
-            }
-            
-            // detect new datasets        
+                $this->datasetdefs = array();
+                // rebuild datasetdefs from old values
+                if ($olddef  = optional_param('datasetdef', '', PARAM_RAW)){ 
+                    $calcmin = optional_param('calcmin', '', PARAM_NUMBER); 
+                    $calclength = optional_param('calclength', '', PARAM_INT); 
+                    $calcmax = optional_param('calcmax', '', PARAM_NUMBER); 
+                    $newdatasetvalues = false ; 
+                    for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
+                        $def = $olddef[$key] ;
+                        $this->datasetdefs[$def]= new stdClass ;
+                        $this->datasetdefs[$def]->type = 1;
+                        $this->datasetdefs[$def]->category = 0;
+                      //  $this->datasets[$key]->name = $datasetname;
+                      //  $this->datasetdefs[$def]->options = $oldoptions[$key] ;
+                        $this->datasetdefs[$def]->calcmin = $calcmin[$key] ;
+                        $this->datasetdefs[$def]->calcmax = $calcmax[$key] ;
+                        $this->datasetdefs[$def]->calclength = $calclength[$key] ;
+                        //then compare with new values
+                        if (preg_match('~^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$~', $this->datasetdefs[$def]->options, $regs)) {
+                           if( $this->datasetdefs[$def]->calcmin != $regs[2]||
+                            $this->datasetdefs[$def]->calcmax != $regs[3] ||
+                            $this->datasetdefs[$def]->calclength != $regs[4]){
+                                 $newdatasetvalues = true ;
+                            }                        
+                        }
+                        $this->datasetdefs[$def]->options="uniform:".$this->datasetdefs[$def]->calcmin.":".$this->datasetdefs[$def]->calcmax.":".$this->datasetdefs[$def]->calclength;
+                    }
+                }// if (olddef...
+                // detect new datasets        
             $newdataset = false ; 
             foreach ($mandatorydatasets as $datasetname) {
                 if (!isset($this->datasetdefs["1-0-$datasetname"])) {
@@ -193,7 +195,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $datasettoremove = true;
                     unset($this->datasetdefs[$defkey]);
                 }
-            }                    
+            }
+        }                    
         } // handle reload
         // create items if  $newdataset and noofitems > 0 and !$newdatasetvalues
         // eliminate any items if $newdatasetvalues
@@ -206,7 +209,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         }
         $maxnumber = -1 ;
         if  (  "" !=optional_param('addbutton')){
-            $maxnumber = optional_param('selectadd', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $maxnumber = optional_param('selectadd', '', PARAM_INT); //FIXME: sloppy coding
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 $datasetdef->itemcount = $maxnumber;
                 unset($datasetdef->items);
@@ -223,9 +226,9 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             // Handle reload dataset items
             if  (  "" !=optional_param('definition')&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){              
                 $i = 1;
-                $fromformdefinition = optional_param('definition', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $fromformnumber = optional_param('number', '', PARAM_CLEAN); //FIXME: sloppy coding
-                $fromformitemid = optional_param('itemid', '', PARAM_CLEAN); //FIXME: sloppy coding
+                $fromformdefinition = optional_param('definition', '', PARAM_NOTAGS); 
+                $fromformnumber = optional_param('number', '', PARAM_INT); 
+                $fromformitemid = optional_param('itemid', '', PARAM_INT); 
                 ksort($fromformdefinition);
               
                 foreach($fromformdefinition as $key => $defid) {
@@ -488,7 +491,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $j = $this->noofitems * count($this->datasetdefs);
         $k = 1 ;
         if ("" != optional_param('selectshow')){
-            $k = optional_param('selectshow', '', PARAM_CLEAN); //FIXME: sloppy coding
+            $k = optional_param('selectshow', '', PARAM_INT); 
         }
 
         for ($i = $this->noofitems; $i >= 1 ; $i--){
@@ -570,7 +573,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
     function set_data($question) {
             $answer = $this->answer;
         $default_values = array();
-            if (count($answer)) {
+         /*   if (count($answer)) {
                 $key = 0;
                 foreach ($answer as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
@@ -582,7 +585,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $default_values['feedback['.$key.']'] = $answer->feedback;
                     $key++;
                 }
-            }
+            }*/
             if (isset($question->options)){
                 $units  = array_values($question->options->units);
                 // make sure the default unit is at index 0
@@ -664,7 +667,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $qtext = "";
         $qtextremaining = $data['questiontext'] ;
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
-            foreach ($possibledatasets as $name => $value) {
+        foreach ($possibledatasets as $name => $value) {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
         while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
