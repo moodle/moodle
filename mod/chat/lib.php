@@ -922,7 +922,7 @@ function chat_format_userlist($users, $course) {
     foreach($users as $user){
         $item = array();
         $item['name'] = fullname($user);
-        $item['url'] = $CFG->wwwroot.'/user/view.php?id='.$v->id.'&amp;course='.$course->id;
+        $item['url'] = $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id;
         $item['picture'] = $OUTPUT->user_picture(moodle_user_picture::make($user, $COURSE->id));
         $item['id'] = $user->id;
         $result[] = $item;

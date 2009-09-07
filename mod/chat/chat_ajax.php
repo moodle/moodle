@@ -54,16 +54,7 @@ header('X-Powered-By: MOODLE-Chat-V2');
 
 switch ($action) {
 case 'init':
-    if($CFG->chat_use_cache){
-        $cache = new file_cache();
-        $users = $cache->get('user');
-        if(empty($users)) {
-            $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
-            $cache->set('user', $users);
-        }
-    } else {
-        $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
-    }
+    $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
     $users = chat_format_userlist($users, $course);
     $response['users'] = $users;
     echo json_encode($response);
