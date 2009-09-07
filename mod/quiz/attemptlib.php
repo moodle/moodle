@@ -334,7 +334,9 @@ class quiz {
      * parameter.
      */
     public function navigation($title) {
-        return build_navigation($title, $this->cm);
+        global $PAGE;
+        $PAGE->navbar->add($title);
+        return '';
     }
 
     // Private methods =====================================================================

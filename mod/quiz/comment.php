@@ -35,7 +35,7 @@
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 /// Print the page header
-    print_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($attemptobj->get_question($questionid)->name));
 
 /// Process any data that was submitted.

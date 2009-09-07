@@ -83,8 +83,10 @@
     }
     $buttons .= '</tr></table>';
 
-    $navigation = build_navigation(array(), $cm);
-    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm), false, $bodytags);
+    $PAGE->set_title($title);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
 /// Print heading and tabs (if there is more than one).
     $currenttab = 'info';

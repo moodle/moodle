@@ -443,8 +443,8 @@ $strupdatemodule = has_capability('moodle/course:manageactivities',
         update_module_button($cm->id, $course->id,
         get_string('modulename', 'quiz')) :
         "";
-$navigation = build_navigation($pagetitle, $cm);
-
+        
+$PAGE->navbar->add($pagetitle);
 $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 

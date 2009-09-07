@@ -71,7 +71,7 @@ $strupdatemodule = '';
 if (has_capability('moodle/course:manageactivities', $contexts->lowest())) {
     $strupdatemodule = update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'));
 }
-$navigation = build_navigation($streditingquiz, $cm);
+$PAGE->navbar->add($streditingquiz);
 print_header_simple($streditingquiz, '', $navigation, '', '', true, $strupdatemodule);
 
 if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {

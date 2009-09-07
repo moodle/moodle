@@ -62,9 +62,9 @@
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 /// Print the page header
-    $headtags = $attemptobj->get_question_html_head_contributions($questionid);
-    print_header('', '', '', '', $headtags);
+    $attemptobj->get_question_html_head_contributions($questionid);
 
+    echo $OUTPUT->header();
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print infobox

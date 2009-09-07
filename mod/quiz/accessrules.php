@@ -226,7 +226,7 @@ class quiz_access_manager {
         global $CFG, $OUTPUT;
         $url = $this->_quizobj->view_url();
         if ($this->securewindow_required($canpreview)) {
-            print_header();
+            echo $OUTPUT->header();
             echo $OUTPUT->box_start();
             if ($message) {
                 echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
@@ -599,7 +599,7 @@ class password_access_rule extends quiz_access_rule_base {
      * @return mixed return null, unless $return is true, and a form needs to be displayed.
      */
     public function do_password_check($canpreview, $accessmanager, $return = false) {
-        global $CFG, $SESSION, $OUTPUT;
+        global $CFG, $SESSION, $OUTPUT, $PAGE;
 
     /// We have already checked the password for this quiz this session, so don't ask again.
         if (!empty($SESSION->passwordcheckedquizzes[$this->_quiz->id])) {
@@ -623,7 +623,8 @@ class password_access_rule extends quiz_access_rule_base {
 
     /// Start the page and print the quiz intro, if any.
         if (!$return) {
-            print_header('', '', '', 'quizpassword');
+            $PAGE->set_focuscontrol('quizpassword');
+            echo $OUTPUT->header();
         }
         if (trim(strip_tags($this->_quiz->intro))) {
             $cm = get_coursemodule_from_id('quiz', $this->_quiz->id);
@@ -744,11 +745,15 @@ class securewindow_access_rule extends quiz_access_rule_base {
      *
      * @param string $title HTML title tag content, passed to printheader.
      * @param string $headtags extra stuff to go in the HTML head tag, passed to printheader.
+     *                $headtags has been deprectaed since Moodle 2.0
      */
-    public function setup_secure_page($title, $headtags) {
+    public function setup_secure_page($title, $headtags=null) {
+        global $OUTPUT, $PAGE;
     /// This prevents the message window coming up.
         define('MESSAGE_WINDOW', true);
-        print_header($title, '', '', '', $headtags, false, '', '', false, '');
+        $PAGE->set_title($title);
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
         echo "\n\n", '<script type="text/javascript">';
     /// This used to be in protect_js.php. I really don't understand this bit.
     /// I have just moved it here for cleanliness reasons.

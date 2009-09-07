@@ -30,10 +30,7 @@
                    </div>
                  </form>";
     }
-    $navlinks = array();
-    $navlinks[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
+    $PAGE->navbar->add($strquizzes);
     print_header_simple($strquizzes, '', $navigation,
                  '', '', true, $streditquestions, navmenu($course));
 
