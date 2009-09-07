@@ -37,13 +37,12 @@
     $strexportfile = get_string("exportfile", "glossary");
     $strexportentries = get_string('exportentriestoxml', 'glossary');
 
-    $navigation = build_navigation($strexportentries, $cm);
-    print_header_simple(format_string($glossary->name), "",$navigation,
-        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-        navmenu($course, $cm));
+    $PAGE->navbar->add($strexportentries);
+    $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
 
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strexportentries);
-
     echo $OUTPUT->box_start('glossarydisplay generalbox');
     ?>
     <form action="exportfile.php" method="post">

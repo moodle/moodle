@@ -40,10 +40,10 @@
     $strcomments = get_string("comments", "glossary");
     $straddcomment = get_string("addcomment", "glossary");
 
-    $navigation = build_navigation($strcomments, $cm);
-    print_header_simple(strip_tags("$strcomments: $entry->concept"), "", $navigation,
-        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-        navmenu($course, $cm));
+    $PAGE->navbar->add($strcomments);
+    $PAGE->set_title(strip_tags("$strcomments: $entry->concept"));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    echo $OUTPUT->header();
 
 /// original glossary entry
 

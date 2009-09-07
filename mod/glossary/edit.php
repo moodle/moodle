@@ -165,10 +165,9 @@ if ($mform->is_cancelled()){
 
 $stredit = empty($entry->id) ? get_string('addentry', 'glossary') : get_string('edit');
 
-$navigation = build_navigation($stredit, $cm);
-print_header_simple(format_string($glossary->name), "", $navigation, "",
-              "", true, "", navmenu($course, $cm));
-
+$PAGE->navbar->add($stredit);
+$PAGE->set_title(format_string($glossary->name));
+echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($glossary->name));
 
 $mform->display();

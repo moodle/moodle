@@ -47,16 +47,12 @@
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id&amp;tab=GLOSSARY_CATEGORY_VIEW", 'type' => 'activityinstance');
-    $navlinks[] = array('name' => get_string("categories","glossary"), 'link' => '', 'type' => 'title');
-    
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple(format_string($glossary->name), "", $navigation,
-                        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-                        navmenu($course, $cm));
+    $PAGE->navbar->add($strglossaries, new moodle_url($CFG->wwwroot.'/mod/glossary/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(format_string($glossary->name),  new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id,'tab'=>'GLOSSARY_CATEGORY_VIEW')));
+    $PAGE->navbar->add(get_string("categories","glossary"));
+    $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    echo $OUTPUT->header();
 
     if ( $hook >0 ) {
 

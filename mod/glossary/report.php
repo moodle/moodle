@@ -48,7 +48,8 @@
     $strname    = get_string('name');
     $strtime    = get_string('time');
 
-    print_header("$strratings: $entry->concept");
+    $PAGE->set_title("$strratings: $entry->concept");
+    echo $OUTPUT->header();
 
     if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
         print_error('ratingno', 'glossary');

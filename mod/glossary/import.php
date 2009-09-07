@@ -44,11 +44,11 @@
     $strsearch = get_string("search");
     $strimportentries = get_string('importentriesfromxml', 'glossary');
 
-    $navigation = build_navigation($strimportentries, $cm);
-    print_header_simple(format_string($glossary->name), "", $navigation,
-        "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-        navmenu($course, $cm));
-
+    $PAGE->navbar->add($strimportentries);
+    $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strimportentries);
 
     if ( !$step ) {

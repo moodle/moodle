@@ -115,7 +115,7 @@
         require_login($course->id);
     }
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-        print_header();
+        echo $OUTPUT->header();
         notice(get_string("activityiscurrentlyhidden"));
     }
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);
@@ -226,18 +226,15 @@
     $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
 /// If we are in approval mode, prit special header
+    $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
     if ($tab == GLOSSARY_APPROVAL_VIEW) {
         require_capability('mod/glossary:approve', $context);
-
-        $navigation = build_navigation($strwaitingapproval, $cm);
-        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
-            update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
-
+        $PAGE->navbar->add($strwaitingapproval);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($strwaitingapproval);
-    } else { /// Print standard header
-        $navigation = build_navigation('', $cm);
-        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
-            update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
+    } else { /// Print standard header    
+        echo $OUTPUT->header();
     }
 
 /// All this depends if whe have $showcommonelements

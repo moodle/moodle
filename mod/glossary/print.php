@@ -30,7 +30,7 @@
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
-    print_header();
+    echo $OUTPUT->header();
 
     require_course_login($course, true, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

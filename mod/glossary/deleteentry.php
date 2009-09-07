@@ -38,8 +38,6 @@
 
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
-    $navigation = build_navigation('', $cm);
-
     if (($entry->userid != $USER->id) and !$manageentries) { // guest id is never matched, no need for special check here
         print_error('nopermissiontodelentry');
     }
@@ -92,9 +90,9 @@
         redirect("view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook");
 
     } else {        // the operation has not been confirmed yet so ask the user to do so
-        print_header_simple(format_string($glossary->name), "", $navigation,
-                      "", "", true, update_module_button($cm->id, $course->id, $strglossary),
-                      navmenu($course, $cm));
+        $PAGE->set_title(format_string($glossary->name));
+        $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+        echo $OUTPUT->header();
         $areyousure = "<b>".format_string($entry->concept)."</b><p>$strareyousuredelete</p>";
         $linkyes    = 'deleteentry.php';
         $linkno     = 'view.php';

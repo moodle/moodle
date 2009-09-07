@@ -58,11 +58,10 @@
     $entryalreadyexist = get_string('entryalreadyexist','glossary');
     $entryexported     = get_string('entryexported','glossary');
 
-    $navigation = build_navigation('', $cm);
-
     if (!$mainglossary->allowduplicatedentries) {
         if ($DB->get_record('glossary_entries', array('glossaryid'=>$mainglossary->id, 'lower(concept)'=>moodle_strtolower($entry->concept)))) {
-            print_header_simple(format_string($glossary->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
+            $PAGE->set_title(format_string($glossary->name));
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('errconceptalreadyexists', 'glossary'));
             echo $OUTPUT->continue_button($returnurl);
             echo $OUTPUT->box_end();
@@ -72,7 +71,8 @@
     }
 
     if (!data_submitted() or !$confirm or !confirm_sesskey()) {
-        print_header_simple(format_string($glossary->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
+        $PAGE->set_title(format_string($glossary->name));
+        echo $OUTPUT->header();
         echo '<div class="boxaligncenter">';
         $areyousure = '<h2>'.format_string($entry->concept).'</h2><p align="center">'.get_string('areyousureexport','glossary').'<br /><b>'.format_string($mainglossary->name).'</b>?';
         $linkyes    = 'exportentry.php';

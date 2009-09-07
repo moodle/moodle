@@ -207,6 +207,7 @@ function glossary_comment_edit() {
 //////////////////////////////////
 
 function glossary_comment_print_header($course, $cm, $glossary, $entry, $action) {
+    global $PAGE, $OUTPUT;
     switch ($action){
         case 'add':
             $straction = get_string('addingcomment','glossary');
@@ -222,14 +223,12 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $strglossary   = get_string('modulename', 'glossary');
     $strcomments   = get_string('comments', 'glossary');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strcomments, 'link' => "comments.php?id=$cm->id&amp;eid=$entry->id", 'type' => 'title');
-    $navlinks[] = array('name' => $straction, 'link' => '', 'type' => 'action');
-    $navigation = build_navigation($navlinks, $cm);
-
-    print_header_simple(format_string($glossary->name), '', $navigation,
-        '', '', true, update_module_button($cm->id, $course->id, $strglossary),
-        navmenu($course, $cm));
+    $PAGE->navbar->add($strcomments, new moodle_url($CFG->wwwroot.'/mod/glossary/comments.php', array('id'=>$cm->id,'eid'=>$entry->id)));
+    $PAGE->navbar->add($straction);
+    $PAGE->set_title(format_string($glossary->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    echo $OUTPUT->header();
+    
 /// print original glossary entry for any comment action (add, update, delete)
     glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
 }

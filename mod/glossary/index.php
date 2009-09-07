@@ -28,11 +28,9 @@
 
 
 /// Print the header
-    $navlinks = array();
-    $navlinks[] = array('name' => $strglossarys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple("$strglossarys", "", $navigation, "", "", true, "", navmenu($course));
+    $PAGE->navbar->add($strglossarys, "index.php?id=$course->id");
+    $PAGE->set_title($strglossarys);
+    echo $OUTPUT->header();
 
 /// Get all the appropriate data
 
