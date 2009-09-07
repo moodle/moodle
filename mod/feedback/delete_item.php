@@ -58,14 +58,12 @@
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
+    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(format_string($feedback->name));
 
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple(format_string($feedback->name), "",
-                 $navigation, "", "", true, $buttontext, navmenu($course, $cm));
+    $PAGE->set_title(format_string($feedback->name));
+    $PAGE->set_button($buttontext);
+    echo $OUTPUT->header();
 
     /// Print the main part of the page
     ///////////////////////////////////////////////////////////////////////////

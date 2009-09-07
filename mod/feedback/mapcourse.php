@@ -58,35 +58,16 @@
     }
 
     /// Print the page header
-    // $strfeedbacks = get_string("modulenameplural", "feedback");
-    // $strfeedback = get_string("modulename", "feedback");
-    // $navigation = '';
-
-    // $feedbackindex = '<a href="'.htmlspecialchars('index.php?id='.$course->id).'">'.$strfeedbacks.'</a> ->';
-    // if ($course->category) {
-        // $navigation = '<a href="'.htmlspecialchars('../../course/view.php?id='.$course->id).'">'.$course->shortname.'</a> ->';
-    // }else if ($courseid > 0 AND $courseid != SITEID) {
-        // $usercourse = $DB->get_record('course', array('id'=>$courseid));
-        // $navigation = '<a href="'.htmlspecialchars('../../course/view.php?id='.$usercourse->id).'">'.$usercourse->shortname.'</a> ->';
-        // $feedbackindex = '';
-    // }
-
-    // print_header($course->shortname.': '.$feedback->name, $course->fullname,
-                // $navigation.' '.$feedbackindex.' <a href="'.htmlspecialchars('view.php?id='.$id).'">'.$feedback->name.'</a> -> '.get_string('mapcourses', 'feedback'),
-                // '', '', true, update_module_button($cm->id, $course->id, $strfeedback), navmenu($course, $cm));
-    /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strfeedbacks, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => format_string($feedback->name), 'link' => "", 'type' => 'activityinstance');
+    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
+    $PAGE->navbar->add(format_string($feedback->name));
 
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple(format_string($feedback->name), "",
-                 $navigation, "", "", true, $buttontext, navmenu($course, $cm));
+    $PAGE->set_title(format_string($feedback->name));
+    $PAGE->set_button($buttontext);
+    echo $OUTPUT->header();
 
     include('tabs.php');
 

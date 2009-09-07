@@ -26,14 +26,10 @@
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
-    
-    $navlinks = array();
-    $navlinks[] = array('name' => $strfeedbacks, 'link' => "", 'type' => 'activity');
-    
-    $navigation = build_navigation($navlinks);
-    
-    print_header_simple(get_string('modulename', 'feedback').' '.get_string('activities'), "",
-                 $navigation, "", "", true, null, navmenu($course));
+
+    $PAGE->navbar->add($strfeedbacks);
+    $PAGE->set_title(get_string('modulename', 'feedback').' '.get_string('activities'));
+    echo $OUTPUT->header();
 
     /// Get all the appropriate data
 
