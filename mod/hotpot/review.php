@@ -51,12 +51,11 @@
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
     // print header
-    $title = format_string($course->shortname) . ": $hotpot->name";
-    $heading = $course->fullname;
-    
-    $navigation = build_navigation('', $cm);
-    $button = update_module_button($cm->id, $course->id, $strmodulename);
-    print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
+   
+    $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strmodulename));
+    echo $OUTPUT->header();
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
     echo $OUTPUT->heading($hotpot->name);
     hotpot_print_attempt_summary($hotpot, $attempt);

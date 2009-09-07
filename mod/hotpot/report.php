@@ -426,9 +426,6 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     global $OUTPUT;
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
-
-    $title = format_string($course->shortname) . ": $hotpot->name";
-    $heading = $course->fullname;
     
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
@@ -438,13 +435,16 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
             $module = "hotpot";
         }
 
-        $navigation = build_navigation(get_string("report$mode", $module), $cm);
+        $PAGE->navbar->add(get_string("report$mode", $module));
     } else {
-        $navigation = build_navigation(get_string("report", "quiz"), $cm);
+        $PAGE->navbar->add(get_string("report", "quiz"));
     }
 
-    $button = update_module_button($cm->id, $course->id, $strmodulename);
-    print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
+    $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strmodulename));
+    echo $OUTPUT->header();
+    
     $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
         echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 

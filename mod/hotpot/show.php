@@ -19,7 +19,9 @@
         $params->location = HOTPOT_LOCATION_COURSEFILES;
     }
     $title = get_string($params->action, 'hotpot').': '.$params->reference;
-    print_header($title, $title);
+    $PAGE->set_title($title);
+    $PAGE->set_heading($title);
+    echo $OUTPUT->header();
     hotpot_print_show_links($params->course, $params->location, $params->reference);
 ?>
 <script type="text/javascript">

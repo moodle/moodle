@@ -43,11 +43,15 @@
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
 
-    $navigation = build_navigation('', $cm);
-
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
+
+    $PAGE->set_title($title);
+    $PAGE->set_heading($heading);
+    $PAGE->set_button($button);
+    $PAGE->set_headingmenu($loggedinas);
+
     $time = time();
     $hppassword = optional_param('hppassword', '', PARAM_RAW);
     if (HOTPOT_FIRST_ATTEMPT && !has_capability('mod/hotpot:grade', $context)) {
@@ -65,7 +69,7 @@
             $error = get_string("nomoreattempts", "quiz");
         // get password
         } else if ($hotpot->password && empty($hppassword)) {
-            print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
+            echo $OUTPUT->header();
             echo $OUTPUT->heading($hotpot->name);
             $boxalign = 'center';
             $boxwidth = 500;
@@ -99,7 +103,7 @@
             $error = get_string("quizclosed", "quiz", userdate($hotpot->timeclose))."<br />\n";
         }
         if ($error) {
-            print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas, false);
+            echo $OUTPUT->header();
             notice($error, $nextpage);
             //
             // script stops here, if quiz is unavailable to student
@@ -328,7 +332,7 @@
     } else if ($frameset) { // HP5 v5
         switch ($framename) {
             case 'top':
-                print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
+                echo $OUTPUT->header();
                 print $footer;
             break;
             default:
@@ -367,8 +371,7 @@
     switch ($hotpot->navigation) {
         case HOTPOT_NAVIGATION_BAR:
             //update_module_button($cm->id, $course->id, $strmodulename.'" style="font-size:0.8em')
-            print_header($title, $heading, $navigation, "", $head.$styles.$scripts, true, $button, $loggedinas, false, $body_tags
-            );
+            print_header($title, $heading, '', "", $head.$styles.$scripts, true, $button, $loggedinas, false, $body_tags);
             if (!empty($available_msg)) {
                 echo $OUTPUT->notification($available_msg);
             }
@@ -377,7 +380,7 @@
         case HOTPOT_NAVIGATION_FRAME:
             switch ($framename) {
                 case 'top':
-                    print_header($title, $heading, $navigation, "", "", true, $button, $loggedinas);
+                    echo $OUTPUT->header();
                     print $footer;
                 break;
                 case 'main':
@@ -418,13 +421,9 @@
                 break;
                 default:
                     $iframe_id = 'hotpot_iframe';
-                    $body_tags = " onload=\"set_iframe_height('$iframe_id')\"";
-                    $iframe_js = '<script src="iframe.js" type="text/javascript"></script>'."\n";
-                    print_header(
-                        $title, $heading, $navigation,
-                        "", $head.$styles.$scripts.$iframe_js, true, $button,
-                        $loggedinas, false, $body_tags
-                    );
+                    $PAGE->requires->js('mod/hotpot/iframe.js');
+                    $PAGE->requires->js_function_call('set_iframe_height', array($iframe_id))->on_dom_ready();
+                    echo $OUTPUT->header();
                     if (!empty($available_msg)) {
                         echo $OUTPUT->notification($available_msg);
                     }

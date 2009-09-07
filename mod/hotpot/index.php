@@ -28,15 +28,10 @@
     $quotes = array("'"=>"\'", '"'=>'&quot;');
 
     // Print the header
-
-    $title = format_string($course->shortname) . ": $strmodulenameplural";
-    $heading = $course->fullname;
-    
-    $navlinks = array();
-    $navlinks[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-    
-    print_header($title, $heading, $navigation, "", "", true, "", navmenu($course));
+    $PAGE->navbar->add($strmodulenameplural);
+    $PAGE->set_title(format_string($course->shortname) . ": $strmodulenameplural");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
 
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
 
