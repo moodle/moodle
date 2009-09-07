@@ -97,13 +97,12 @@
     $stradministration = get_string("administration");
 
     //If no file has been selected from the FileManager, inform and end
-    $navlinks = array();
-    $navlinks[] = array('name' => $stradministration, 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc');
-    $navlinks[] = array('name' => $strcourserestore, 'link' => null, 'type' => 'misc');
-    $navigation = build_navigation($navlinks);
-
+    $PAGE->set_title("$site->shortname: $strcourserestore");
+    $PAGE->set_heading($site->fullname);
     if (!$file) {
-        print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
+        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($strcourserestore);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string("nofilesselected"));
         echo $OUTPUT->continue_button("$CFG->wwwroot/$CFG->admin/index.php");
         echo $OUTPUT->footer();
@@ -112,7 +111,9 @@
 
     //If cancel has been selected, inform and end
     if ($cancel) {
-        print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
+        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add($strcourserestore);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string("restorecancelled"));
         echo $OUTPUT->continue_button("$CFG->wwwroot/course/view.php?id=".$id);
         echo $OUTPUT->footer();
@@ -123,16 +124,12 @@
 
     //Print header
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        $navlinks[] = array('name' => basename($file), 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-
-        print_header("$site->shortname: $strcourserestore", $site->fullname, $navigation);
+        $PAGE->navbar->add(basename($file));
+        echo $OUTPUT->header();
     } else {
-        $navlinks = array();
-        $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=$course->id", 'type' => 'misc');
-        $navlinks[] = array('name' => $strcourserestore, 'link' => null, 'type' => 'misc');
-        $navigation = build_navigation($navlinks);
-        print_header("$course->shortname: $strcourserestore", $course->fullname, $navigation);
+        $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
+        $PAGE->navbar->add($strcourserestore);
+        echo $OUTPUT->header();
     }
     //Print form
     echo $OUTPUT->heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
