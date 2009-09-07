@@ -32,28 +32,24 @@
     }
 
     /// Header
+    $PAGE->set_title($strexportquestions);
     if ($cm!==null) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
             ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
-        $navlinks[] = array('name' => $strexportquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        print_header_simple($strexportquestions, '', $navigation, "", "", true, $strupdatemodule);
-
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add($strexportquestions);
+        $PAGE->set_button($strupdatemodule);
+        echo $OUTPUT->header();
         $currenttab = 'edit';
         $mode = 'export';
         ${$cm->modname} = $module;
         include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
         // Print basic page layout.
-        $navlinks = array();
-        $navlinks[] = array('name' => $strexportquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-
-        print_header_simple($strexportquestions, '', $navigation);
+        $PAGE->navbar->add($strexportquestions);
+        echo $OUTPUT->header();
         // print tabs
         $currenttab = 'export';
         include('tabs.php');

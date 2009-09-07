@@ -200,8 +200,9 @@
 
     $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);
     $questionlist = array($id);
-    $headtags = get_html_head_contributions($questionlist, $questions, $states[$historylength]);
-    print_header($strpreview, '', '', '', $headtags);
+    get_html_head_contributions($questionlist, $questions, $states[$historylength]);
+    $PAGE->set_title($strpreview);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading($strpreview);
 
     if (!empty($quizid)) {

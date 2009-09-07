@@ -241,6 +241,7 @@ if ($mform->is_cancelled()){
 } else {
 
     $streditingquestion = $QTYPES[$question->qtype]->get_heading();
+    $PAGE->set_title($streditingquestion);
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
@@ -249,25 +250,21 @@ if ($mform->is_cancelled()){
 
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);
 
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$cm->course", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$cm->course)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
         if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
             //don't need this link if returnurl returns to view.php
-            $navlinks[] = array('name' => $streditingmodule, 'link' => $returnurl, 'type' => 'title');
+            $PAGE->navbar->add($streditingmodule, $returnurl);
         }
-        $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestion, '', $navigation, '', '', true, $strupdatemodule);
+        $PAGE->navbar->add($streditingquestion);
+        $PAGE->set_button($strupdatemodule);
+        echo $OUTPUT->header();
 
     } else {
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
-        $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
-        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.
-                get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-        $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestion, '', $navigation, '', '');
+        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
+        $PAGE->navbar->add(get_string('editquestions', "quiz"), $returnurl);
+        $PAGE->navbar->add($streditingquestion);
+        echo $OUTPUT->header();
     }
 
     // Display a heading, question editing form and possibly some extra content needed for

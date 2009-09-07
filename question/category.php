@@ -79,32 +79,28 @@
         $thispageurl->remove_params('cat', 'category');
         redirect($thispageurl);
     }
-    $navlinks = array();
     if ($cm!==null) {
         // Page header
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
             ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname),
-                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id",
-                            'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name),
-                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}",
-                            'type' => 'title');
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
     } else {
         // Print basic page layout.
         $strupdatemodule = '';
     }
 
     if (!$param->edit){
-        $navlinks[] = array('name' => $streditingcategories, 'link' => '', 'type' => 'title');
+        $PAGE->navbar->add($streditingcategories);
     } else {
-        $navlinks[] = array('name' => $streditingcategories, 'link' => $thispageurl->out(), 'type' => 'title');
-        $navlinks[] = array('name' => get_string('editingcategory', 'question'), 'link' => '', 'type' => 'title');
+        $PAGE->navbar->add($streditingcategories, $thispageurl->out());
+        $PAGE->navbar->add(get_string('editingcategory', 'question'));
     }
 
-    $navigation = build_navigation($navlinks);
-    print_header_simple($streditingcategories, '', $navigation, "", "", true, $strupdatemodule);
+    $PAGE->set_title($streditingcategories);
+    $PAGE->set_button($strupdatemodule);
+    echo $OUTPUT->header();
 
     // print tabs
     if ($cm!==null) {

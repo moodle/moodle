@@ -78,21 +78,19 @@ if (!empty($appendqnumstring)) {
 
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 if ($cm !== null) {
-    $navlinks = array();
     if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0) {
         //don't need this link if returnurl returns to view.php
-        $navlinks[] = array('name' => get_string('editinga', 'moodle', get_string('modulename', $cm->modname)), 'link' => $returnurl, 'type' => 'title');
+        $PAGE->navbar->add(get_string('editinga', 'moodle', get_string('modulename', $cm->modname)),$returnurl);
     }
-    $navlinks[] = array('name' => $chooseqtype, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks, $cm);
-    print_header_simple($chooseqtype, '', $navigation, '', '', true, update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname)));
-
+    $PAGE->navbar->add($chooseqtype);
+    $PAGE->set_title($chooseqtype);
+    $PAGE->set_button(update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname)));
+    echo $OUTPUT->header();
 } else {
-    $navlinks = array();
-    $navlinks[] = array('name' => get_string('editquestions', 'question'), 'link' => $returnurl, 'type' => 'title');
-    $navlinks[] = array('name' => $chooseqtype, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($navlinks);
-    print_header_simple($chooseqtype, '', $navigation);
+    $PAGE->navbar->add(get_string('editquestions', 'question'),$returnurl);
+    $PAGE->navbar->add($chooseqtype);
+    $PAGE->set_title($chooseqtype);
+    echo $OUTPUT->header();
 }
 
 // Display a form to choose the question type.

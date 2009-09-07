@@ -58,12 +58,12 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
             ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
-        $navlinks[] = array('name' => $txt->importquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        print_header_simple($txt->importquestions, '', $navigation, "", "", true, $strupdatemodule);
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add($txt->importquestions);
+        $PAGE->set_title($txt->importquestions);
+        $PAGE->set_button($strupdatemodule);
+        echo $OUTPUT->header();
 
         $currenttab = 'edit';
         $mode = 'import';
@@ -71,11 +71,9 @@
         include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
         // Print basic page layout.
-        $navlinks = array();
-        $navlinks[] = array('name' => $txt->importquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-
-        print_header_simple($txt->importquestions, '', $navigation);
+        $PAGE->navbar->add($txt->importquestions);
+        $PAGE->set_title($txt->importquestions);
+        echo $OUTPUT->header();
         // print tabs
         $currenttab = 'import';
         include('tabs.php');

@@ -169,28 +169,23 @@ if ($contextmoveform->is_cancelled()){
 }
 
 $streditingcategories = get_string('editcategories', 'quiz');
-$crumbs = array();
 if ($cmid) {
     // Page header
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
         ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
         : "";
-    $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname),
-                        'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id",
-                        'type' => 'activity');
-    $crumbs[] = array('name' => format_string($module->name),
-                        'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}",
-                        'type' => 'title');
+    $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
+    $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
 } else {
     // Print basic page layout.
     $strupdatemodule = '';
 }
 $strmovingquestions = get_string('movingquestions', 'question');
-$crumbs[] = array('name' => $strmovingquestions, 'link' => '', 'type' => 'title');
-
-$navigation = build_navigation($crumbs);
-print_header_simple($strmovingquestions, '', $navigation, "", "", true, $strupdatemodule);
+$PAGE->navbar->add($strmovingquestions);
+$PAGE->set_title($strmovingquestions);
+$PAGE->set_button($strupdatemodule);
+echo $OUTPUT->header();
 
 // print tabs
 if ($cm!==null) {
