@@ -39,7 +39,7 @@
         $filterselect = $user->id;
 
         if ($user->deleted) {
-            print_header();
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('userdeleted'));
             echo $OUTPUT->footer();
             die;
@@ -67,16 +67,20 @@
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
 
     $strnotes = get_string('notes', 'notes');
-    $nav = array();
+    $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-        $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+        $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
     }
+    $PAGE->navbar->add(get_string('participants'), $link);
     if ($userid) {
-        $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+        $PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
     }
-    $nav[] = array('name' => $strnotes, 'link' => '', 'type' => 'misc');
-
-    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
+    $PAGE->navbar->add($strnotes);
+    $PAGE->set_title($course->shortname . ': ' . $strnotes);
+    $PAGE->set_heading($course->fullname);
+    
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(fullname($user));
 
     $showroles = 1;
     $currenttab = 'notes';

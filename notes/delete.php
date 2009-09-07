@@ -53,13 +53,17 @@ if (data_submitted() && confirm_sesskey()) {
     $optionsno  = array('course'=>$course->id, 'user'=>$note->userid);
 
 // output HTML
+    $link = null;
     if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
-        $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+        $link = new moodle_url($CFG->wwwroot.'/user/index.php',array('id'=>$course->id));
     }
-    $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
-    $nav[] = array('name' => get_string('notes', 'notes'), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
-    $nav[] = array('name' => get_string('delete'), 'link' => '', 'type' => 'activity');
-    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
+    $PAGE->navbar->add(get_string('participants'), $link);
+    $PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id,'course'=>$course->id)));
+    $PAGE->navbar->add(get_string('notes', 'notes'), new moodle_url($CFG->wwwroot.'/notes/index.php', array('user'=>$user->id,'course'=>$course->id)));
+    $PAGE->navbar->add(get_string('delete'));
+    $PAGE->set_title($course->shortname . ': ' . $strnotes);
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
     echo $OUTPUT->confirm(get_string('deleteconfirm', 'notes'), new moodle_url('delete.php',$optionsyes),  new moodle_url('index.php',$optionsno));
     echo '<br />';
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);
