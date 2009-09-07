@@ -29,12 +29,10 @@
 
 
 /// Print the header
-    $navlinks = array();
-    $navlinks[] = array('name' => $strlessons, 'link' => '', 'type' => 'activity');
-
-    $navigation = build_navigation($navlinks);
-
-    print_header("$course->shortname: $strlessons", $course->fullname, $navigation, "", "", true, "", navmenu($course));
+    $PAGE->navbar->add($strlessons);
+    $PAGE->set_title("$course->shortname: $strlessons");
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
 
 /// Get all the appropriate data
 

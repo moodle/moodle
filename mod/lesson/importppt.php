@@ -44,8 +44,10 @@
     $strimportppt = get_string("importppt", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    $navigation = build_navigation($strimportppt, $cm);
-    print_header_simple("$strimportppt", " $strimportppt", $navigation);
+    $PAGE->navbar->add($strimportppt);
+    $PAGE->set_title($strimportppt);
+    $PAGE->set_heading($strimportppt);
+    echo $OUTPUT->header();
 
     if ($form = data_submitted()) {   /// Filename
 

@@ -35,8 +35,10 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    $navigation = build_navigation($strimportquestions, $cm);
-    print_header_simple("$strimportquestions", " $strimportquestions", $navigation);
+    $PAGE->navbar->add($strimportquestions);
+    $PAGE->set_title($strimportquestions);
+    $PAGE->set_heading($strimportquestions);
+    echo $OUTPUT->header();
 
     if ($form = data_submitted()) {   /// Filename
 

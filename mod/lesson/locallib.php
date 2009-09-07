@@ -260,8 +260,10 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
     }
 
 /// Header setup
-    $navigation = build_navigation(array(), $cm);
-    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
+    $PAGE->set_title($title);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
     if (has_capability('mod/lesson:manage', $context)) {
         print_heading_with_help($activityname, 'overview', 'lesson');

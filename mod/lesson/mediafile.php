@@ -36,12 +36,14 @@
     $mimetype = mimeinfo("type", $lesson->mediafile);
 
     if (!is_url($lesson->mediafile) and !in_array($mimetype, array('text/plain', 'text/html'))) {
-        print_header($course->shortname);
+        $PAGE->set_title($course->shortname);
+        echo $OUTPUT->header();
     }
 
     if ($printclose) {  // this is for framesets
         if ($lesson->mediaclose) {
-            print_header($course->shortname);
+            $PAGE->set_title($course->shortname);
+            echo $OUTPUT->header();
             echo '<div class="lessonmediafilecontrol">
                 <form>
                 <div>
