@@ -41,13 +41,8 @@
     $str->topic = get_string('topic');
     $str->week = get_string('week');
 
-    // build navigation
-    $navlinks = array();
-    $navlinks[] = array('name' => $str->assignments, 
-        'link' => "$CFG->wwwroot/mod/assignment/index.php?id=$id", 'type' => 'activity');
-    $navlinks[] = array('name' => $str->onlinetext, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
+    $PAGE->navbar->add($str->assignments, new moodle_url($CFG->wwwroot.'/mod/assignment/index.php', array('id'=>$id)));
+    $PAGE->navbar->add($str->onlinetext);
 
     // get all the assignments in the course
     $assignments = get_all_instances_in_course('assignment',$course, $USER->id );
@@ -133,7 +128,8 @@
 // DISPLAY
 //===================
 
-    print_header_simple($str->assignments, "", $navigation, "", "", true, "", navmenu($course));
+    $PAGE->set_title($str->assignments);
+    echo $OUTPUT->header();
 
     foreach ($views as $view) {
         echo $OUTPUT->container_start('clearfix generalbox assignment');

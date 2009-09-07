@@ -798,7 +798,7 @@ class assignment_upload extends assignment_base {
 
 
     function delete_file() {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
@@ -832,7 +832,8 @@ class assignment_upload extends assignment_base {
             if (empty($mode)) {
                 $this->view_header(get_string('delete'));
             } else {
-                print_header(get_string('delete'));
+                $PAGE->set_title(get_string('delete'));
+                echo $OUTPUT->header();
             }
             echo $OUTPUT->heading(get_string('delete'));
             echo $OUTPUT->confirm(get_string('confirmdeletefile', 'assignment', $file), new moodle_url('delete.php', $optionsyes), new moodle_url($urlreturn, $optionsreturn));
@@ -861,7 +862,8 @@ class assignment_upload extends assignment_base {
         if (empty($mode)) {
             $this->view_header(get_string('delete'));
         } else {
-            print_header(get_string('delete'));
+            $PAGE->set_title(get_string('delete'));
+            echo $OUTPUT->header();
         }
         echo $OUTPUT->notification(get_string('deletefilefailed', 'assignment'));
         echo $OUTPUT->continue_button($returnurl);

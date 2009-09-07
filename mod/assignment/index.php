@@ -23,12 +23,10 @@
     $strsubmitted = get_string("submitted", "assignment");
     $strgrade = get_string("grade");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strassignments, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple($strassignments, "", $navigation, "", "", true, "", navmenu($course));
-
+    $PAGE->navbar->add($strassignments);
+    $PAGE->set_title($strassignments);
+    echo $OUTPUT->header();
+    
     if (!$cms = get_coursemodules_in_course('assignment', $course->id, 'm.assignmenttype, m.timedue')) {
         notice(get_string('noassignments', 'assignment'), "../../course/view.php?id=$course->id");
         die;
