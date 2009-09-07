@@ -98,7 +98,7 @@ if (isset($_FILES['newfile']) and data_submitted() and confirm_sesskey()) {
 
 if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $delete)) {
     if (!data_submitted() or !confirm_sesskey()) {
-        print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('deletecheckwarning').': '.s($file->get_filepath().$file->get_filename()));
         $optionsno  = array('itemid'=>$itemid, 'filepath'=>$filepath, 'subdirs'=>$subdirs);
         $optionsyes = array('itemid'=>$itemid, 'filepath'=>$filepath, 'delete'=>$delete, 'sesskey'=>sesskey(), 'subdirs'=>$subdirs);
@@ -117,7 +117,7 @@ if ($delete !== '' and $file = $fs->get_file($contextid, $filearea, $itemid, $fi
     }
 }
 
-print_header();
+echo $OUTPUT->header();
 
 if ($notice !== '') {
     echo $OUTPUT->notification($notice);

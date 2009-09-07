@@ -108,7 +108,7 @@ if ($file_info and $file_info->is_directory() and $file_info->is_writable() and 
 
 if ($file_info and $delete) {
     if (!data_submitted() or !confirm_sesskey()) {
-        print_header();
+        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('deletecheckwarning').': '.$file_info->get_visible_name());
         $parent_info = $file_info->get_parent();
 
@@ -180,15 +180,12 @@ function html_footer() {
 }
 
 function html_header($context, $file_info){
-    global $CFG, $SITE;
+    global $CFG, $SITE, $PAGE, $OUTPUT;
 
-    $navlinks = array();
     $strfiles = get_string("files");
-
-    $navlinks[] = array('name' => $strfiles, 'link' => null, 'type' => 'misc');
-
-    $navigation = build_navigation($navlinks);
-    print_header("$SITE->shortname: $strfiles", '', $navigation);
+    $PAGE->navbar->add($strfiles);
+    $PAGE->set_title("$SITE->shortname: $strfiles");
+    echo $OUTPUT->header();
 
     echo "<table border=\"0\" style=\"margin-left:auto;margin-right:auto\" cellspacing=\"3\" cellpadding=\"3\" width=\"740\">";
     echo "<tr>";
