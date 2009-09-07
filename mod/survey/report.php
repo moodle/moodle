@@ -56,19 +56,12 @@
 
     add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id", $cm->id);
 
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                       <a href=\"index.php?id=$course->id\">$strsurveys</a> ->
-                       <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
-    } else {
-        $navigation = "<a href=\"index.php?id=$course->id\">$strsurveys</a> ->
-                       <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
-    }
-    
-    $navigation = build_navigation($strreport, $cm);
-    print_header("$course->shortname: ".format_string($survey->name), $course->fullname, $navigation,
-                 "", "", true,
-                 update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
+    $PAGE->navbar->add($strreport);
+
+    $PAGE->set_title("$course->shortname: ".format_string($survey->name));
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strsurvey));
+    echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
