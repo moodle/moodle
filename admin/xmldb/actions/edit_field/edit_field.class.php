@@ -166,9 +166,9 @@ class edit_field extends XMLDBAction {
         $o.= '      <tr valign="top"><td><label for="menunotnull" accesskey="n">Not Null:</label></td>';
         $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
     /// xmldb_field Sequence
+        $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
         $select = html_select::make($sequenceoptions, 'sequence', $field->getSequence(), false);
         $select->nothingvalue = '';
-        $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
         $o.= '        <td colspan="2">' . $OUTPUT->select($select) . '</td></tr>';
     /// xmldb_field Default
