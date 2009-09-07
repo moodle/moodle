@@ -69,25 +69,22 @@
 
 
 /// Create navigation links
-    $navlinks = array();
     if (!empty($course)) {
-        $navlinks[] = array('name' => $pagename,
-                'link' => null,
-                'type' => 'misc');
+        $PAGE->navbar->add($pagename);
         $fullname = $course->fullname;
     } else {
         $fullname = fullname($user);
         $strrepos = get_string('repositories', 'repository');
-        $navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
-        $navlinks[] = array('name' => $strrepos, 'link' => null, 'type' => 'misc');
+        $PAGE->navbar->add($fullname, new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id)));
+        $PAGE->navbar->add($strrepos);
     }
 
     $title = $pagename;
-    $navigation = build_navigation($navlinks);
-
 
 /// Display page header
-    print_header($title, $fullname, $navigation);
+    $PAGE->set_title();
+    $PAGE->set_heading($fullname);
+    echo $OUTPUT->header();
 
     if ($context->contextlevel == CONTEXT_USER) {
         if ( !$course = $DB->get_record('course', array('id'=>$usercourseid))) {
