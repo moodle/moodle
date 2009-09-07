@@ -82,7 +82,7 @@ if (!empty($courseid) && empty($modid)) {
 // If a modid is given, guess courseid
 if (!empty($modid)) {
     $returnurl->param('modid', $modid);
-    $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid)); 
+    $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
     $returnurl->param('courseid', $courseid);
     $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
 }
@@ -99,7 +99,9 @@ if ($action === 'delete'){
     } else {
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'courseid'=>$courseid);
         $optionsno = array('userid'=>$existing->userid, 'courseid'=>$courseid);
-        print_header("$SITE->shortname: $strblogs", $SITE->fullname);
+        $PAGE->set_title("$SITE->shortname: $strblogs");
+        $PAGE->set_heading($SITE->fullname);
+        echo $OUTPUT->header();
         //blog_print_entry($existing);
         $existing->print_html();
         echo '<br />';
@@ -226,19 +228,9 @@ if (!$user = $DB->get_record('user', array('id'=>$userid))) {
 
 $blog_headers = blog_get_headers();
 
-$navigation = build_navigation($blog_headers['navlinks'], $blog_headers['cm']);
-/*
-$navlinks = array();
-$navlinks[] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$userid", 'type' => 'misc');
-$navlinks[] = array('name' => $strblogs, 'link' => "$CFG->wwwroot/blog/index.php?userid=$userid", 'type' => 'misc');
-$navlinks[] = array('name' => $strformheading, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-*/
-$PAGE->requires->js('blog/edit_form.js'); 
-$PAGE->set_title($blog_headers['title']);
-$PAGE->set_heading($blog_headers['title']);
+$PAGE->requires->js('blog/edit_form.js');
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 $blogeditform->set_data($entry);
 $blogeditform->display();

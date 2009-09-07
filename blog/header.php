@@ -99,12 +99,6 @@ if (!empty($search_link)) {
 
 $blog_headers = blog_get_headers();
 
-if (isset($cm)) {
-    $navigation = build_navigation($blog_headers['navlinks'], $cm);
-} else {
-    $navigation = build_navigation($blog_headers['navlinks']);
-}
-
 // prints the tabs
 $showroles = !empty($userid);
 $currenttab = 'blogs';

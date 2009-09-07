@@ -113,16 +113,13 @@ if ($externalblogform->is_cancelled()){
     redirect($returnurl);
 }
 
-$navlinks = array();
-$navlinks[] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$user->id", 'type' => 'misc');
-$navlinks[] = array('name' => $strblogs, 'link' => "$CFG->wwwroot/blog/index.php?userid=$user->id", 'type' => 'misc');
-$navlinks[] = array('name' => $strformheading, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-
+$PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id)));
+$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/index.php', array('userid'=>$user->id)));
+$PAGE->navbar->add($strformheading);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strformheading, 2);
 
 $external->returnurl = $returnurl;

@@ -518,7 +518,7 @@ function blog_get_headers() {
     $action   = optional_param('action', null, PARAM_ALPHA);
     $confirm  = optional_param('confirm', false, PARAM_BOOL);
 
-    $headers = array('navlinks' => array(), 'title' => '', 'heading' => '', 'cm' => null);
+    $headers = array('title' => '', 'heading' => '', 'cm' => null);
 
     $blog_url = new moodle_url($CFG->wwwroot . '/blog/index.php');
     $site = $DB->get_record('course', array('id' => SITEID));

@@ -67,15 +67,14 @@ $site = get_site();
 
 $strpreferences = get_string('preferences');
 $strblogs       = get_string('blogs', 'blog');
-$navlinks = array(array('name' => $strblogs, 'link' => "$CFG->wwwroot/blog/", 'type' => 'misc'));
-$navlinks[] = array('name' => $strpreferences, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
 
 $title = "$site->shortname: $strblogs : $strpreferences";
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/'));
+$PAGE->navbar->add($strpreferences);
 
-echo $OUTPUT->header($navigation);
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading("$strblogs : $strpreferences", 2);
 
