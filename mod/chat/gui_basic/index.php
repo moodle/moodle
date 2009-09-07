@@ -95,9 +95,9 @@
         redirect('index.php?id='.$id.'&amp;newonly='.$newonly.'&amp;last='.$last);
     }
 
-
-    print_header("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname", '', '', 'message');
-
+    $PAGE->set_title("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
+    $PAGE->set_focuscontrol('message');
+    echo $OUTPUT->header();
     echo '<div id="mod-chat-gui_basic">';
     echo '<h1>'.get_string('participants').'</h1>';
     echo '<div id="participants"><ul>';

@@ -18,14 +18,15 @@
     $PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
     $PAGE->requires->js('mod/chat/gui_sockets/chat_gui_sockets.js')->in_head();
     $PAGE->requires->js_function_call('setfocus');
-    // TODO: there will be two onload in body tag, does it matter?
-    print_header('', '', '', 'inputform.chat_message', '', false, '&nbsp;', '', false);
+    $PAGE->set_focuscontrol('chat_message');
+    $PAGE->set_cacheable(false);
+    echo $OUTPUT->header();
 
 ?>
 
     <form action="../empty.php" method="get" target="empty" id="inputform"
           onsubmit="return empty_field_and_submit();">
-        <input type="text" name="chat_message" size="60" value="" />
+        <input type="text" name="chat_message" id="chat_message" size="60" value="" />
         <?php echo $OUTPUT->help_icon(moodle_help_icon::make("chatting", get_string("helpchatting", "chat"), "chat", true)); ?>
     </form>
     

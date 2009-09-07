@@ -39,9 +39,9 @@
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
-        $navigation = build_navigation($strchatreport, $cm);
-        print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
-                      '', '', true, '', navmenu($course, $cm));
+        $PAGE->navbar->add($strchatreport);
+        $PAGE->set_title(format_string($chat->name).": $strchatreport");
+        echo $OUTPUT->header();
 
     /// Check to see if groups are being used here
         $groupmode = groups_get_activity_groupmode($cm);
@@ -103,9 +103,9 @@
 
 
 /// Print the Sessions display
-    $navigation = build_navigation($strchatreport, $cm);
-    print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
-                  '', '', true, '', navmenu($course, $cm));
+    $PAGE->navbar->add($strchatreport);
+    $PAGE->set_title(format_string($chat->name).": $strchatreport");
+    echo $OUTPUT->header();
 
     echo $OUTPUT->heading(format_string($chat->name).': '.get_string('sessions', 'chat'));
 

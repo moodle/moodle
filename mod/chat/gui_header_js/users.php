@@ -65,11 +65,8 @@
     }
     $PAGE->requires->data_for_js('uidles', $uidles)->in_head();
     $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
-
-    // Use ob to support Keep-Alive
-    ob_start();
-    print_header('', '', '', '', '', false, '', '', false, 'onload="start()" onunload="stop()"');
-
+    $PAGE->requires->js_function_call('start')->on_dom_ready();
+    echo $OUTPUT->header();
 
     /// Print user panel body
     $timenow    = time();

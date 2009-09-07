@@ -32,8 +32,9 @@
     $PAGE->set_course($course);
     $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
     $PAGE->set_generaltype('embedded');
-
-    print_header('', '', '', 'input_chat_message', '', false);
+    $PAGE->set_focuscontrol('input_chat_message');
+    $PAGE->set_cacheable(false);
+    echo $OUTPUT->header();
 
 ?>
     <form action="../empty.php" method="post" target="empty" id="inputForm"

@@ -21,12 +21,9 @@
 
 
 /// Print the header
-
-    $navlinks = array();
-    $navlinks[] = array('name' => $strchats, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple($strchats, '', $navigation, '', '', true, '', navmenu($course));
+    $PAGE->navbar->add($strchats);
+    $PAGE->set_title($strchats);
+    echo $OUTPUT->header();
 
 /// Get all the appropriate data
 

@@ -45,10 +45,8 @@
 
     // show some info for guests
     if (isguestuser()) {
-        $navigation = build_navigation('', $cm);
-        print_header_simple(format_string($chat->name), '', $navigation,
-                      '', '', true, '', navmenu($course, $cm));
-
+        $PAGE->set_title(format_string($chat->name));
+        echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
                 get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
 
@@ -83,8 +81,10 @@
     }
     $buttons .= '</tr></table>';
 
-    $navigation = build_navigation(array(), $cm);
-    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
+    $PAGE->set_title($title);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
 
     /// Check to see if groups are being used here
     $groupmode = groups_get_activity_groupmode($cm);

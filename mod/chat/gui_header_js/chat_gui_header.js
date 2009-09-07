@@ -28,6 +28,7 @@ function stop() {
 
 function start() {
     timer = setTimeout("update()", f*1000);
+    YAHOO.util.Event.addListener(document.body, 'unload', stop);
 }
 
 function update() {
