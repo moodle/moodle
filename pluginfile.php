@@ -281,9 +281,11 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
     $filefunction = $modname.'_pluginfile';
     if (function_exists($filefunction)) {
-        if ($filefunction($course, $cminfo, $context, $filearea, $args, $forcedownload) !== false) {
-            die;
+        // if the function exists, it must send the file and terminate. Whatever it returns leads to "not found"
+        $filefunction($course, $cminfo, $context, $filearea, $args, $forcedownload);
         }
+
+    send_file_not_found();
     }
 
 } else if ($context->contextlevel == CONTEXT_BLOCK) {
