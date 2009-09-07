@@ -43,11 +43,9 @@
     $strdata = get_string('modulename','data');
     $strdataplural  = get_string('modulenameplural','data');
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
+    $PAGE->navbar->add($strdata, new moodle_url($CFG->wwwroot.'/mod/data/index.php', array('id'=>$course->id)));
+    $PAGE->set_title($strdata);
+    echo $OUTPUT->header();
 
     if (! $datas = get_all_instances_in_course("data", $course)) {
         notice(get_string('thereareno', 'moodle',$strdataplural) , "$CFG->wwwroot/course/view.php?id=$course->id");

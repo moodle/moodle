@@ -55,10 +55,9 @@ if($mform->is_cancelled()) {
     redirect('view.php?d='.$data->id);
 } elseif (!$formdata = (array) $mform->get_data()) {
     // build header to match the rest of the UI
-    $nav = build_navigation('', $cm);
-    print_header_simple($data->name, '', $nav,
-        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
-        navmenu($course, $cm), '', '');
+    $PAGE->set_title($data->name);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 
     // these are for the tab display

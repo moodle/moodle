@@ -288,9 +288,11 @@
     }
     $buttons .= '</tr></table>';
 
-    $navigation = build_navigation(array(), $cm);
-    print_header($title, $course->fullname, $navigation, '', '', true, $buttons, navmenu($course, $cm));
-
+    $PAGE->set_title($title);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->set_button($buttons);
+    echo $OUTPUT->header();
+    
 /// Check to see if groups are being used here
     $returnurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
     groups_print_activity_menu($cm, $returnurl);

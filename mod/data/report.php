@@ -47,7 +47,8 @@
     $strrating  = get_string('rating', 'data');
     $strname    = get_string('name');
 
-    print_header($strratings);
+    $PAGE->set_title($strratings);
+    echo $OUTPUT->header();
 
     if (!$ratings = data_get_ratings($record->id, $sqlsort)) {
         print_error('noratingforrecord', 'data');

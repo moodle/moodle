@@ -65,8 +65,8 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
     
-    $navigation = build_navigation('', $cm);
-    print_header_simple($data->name, "", $navigation, "", "", true, "", navmenu($course));
+    $PAGE->set_title($data->name);
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 
 /// Groups needed for Add entry tab

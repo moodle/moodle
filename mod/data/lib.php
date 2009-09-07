@@ -2051,13 +2051,11 @@ function data_get_available_presets($context) {
  */
 function data_print_header($course, $cm, $data, $currenttab='') {
 
-    global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT;
+    global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT, $PAGE;
 
-    $navigation = build_navigation('', $cm);
-    print_header_simple($data->name, '', $navigation,
-            '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
-            navmenu($course, $cm));
-
+    $PAGE->set_title($data->name);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 
 // Groups needed for Add entry tab

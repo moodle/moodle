@@ -68,8 +68,8 @@
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
 
-        $navigation = build_navigation('', $cm);
-        print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
+        $PAGE->set_title(format_string($data->name));
+        echo $OUTPUT->header();
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -108,10 +108,9 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
 
-    $navigation = build_navigation('', $cm);
-    print_header_simple($data->name, '', $navigation,
-                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
-                        navmenu($course, $cm), '', '');
+    $PAGE->set_title($data->name);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
     groups_print_activity_menu($cm, 'edit.php?d='.$data->id);

@@ -79,11 +79,9 @@
     $bodytag .= '" ';
 
     $PAGE->requires->js('mod/data/data.js');
-    $navigation = build_navigation('', $cm);
-    print_header_simple($data->name, '', $navigation,
-                        '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
-                        navmenu($course, $cm), '', $bodytag);
-
+    $PAGE->set_title($data->name);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 
 

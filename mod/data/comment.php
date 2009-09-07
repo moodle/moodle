@@ -110,7 +110,7 @@
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentdeleted', 'data'));
 
             } else {    //print confirm delete form
-                print_header();
+                echo $OUTPUT->header();
                 data_print_comment($data, $comment, $page);
 
                 echo $OUTPUT->confirm(get_string('deletecomment','data'),
@@ -123,7 +123,7 @@
 
     }
 
-    print_header();
+    echo $OUTPUT->header();
     data_print_comments($data, $record, $page, $mform);
     echo $OUTPUT->footer();
 
