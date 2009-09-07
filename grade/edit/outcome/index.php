@@ -104,7 +104,8 @@ switch ($action) {
         $deleteconfirmed = optional_param('deleteconfirmed', 0, PARAM_BOOL);
 
         if(!$deleteconfirmed){
-            print_header(get_string('outcomedelete', 'grades'));
+            $PAGE->set_title(get_string('outcomedelete', 'grades'));
+            echo $OUTPUT->header();
             $confirmurl = new moodle_url('index.php', array(
                     'id' => $courseid, 'outcomeid' => $outcome->id,
                     'action'=> 'delete',

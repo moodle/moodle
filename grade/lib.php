@@ -812,7 +812,7 @@ class grade_plugin_info {
 function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $heading = false, $return=false,
                                $buttons=false, $extracss=array()) {
-    global $CFG, $COURSE, $OUTPUT;
+    global $CFG, $COURSE, $OUTPUT, $PAGE;
     $strgrades = get_string('grades');
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
 
@@ -820,7 +820,6 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     $stractive_plugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
     $stractive_type = $plugin_info['strings'][$active_type];
 
-    $navlinks = array();
     $first_link = '';
 
     if ($active_type == 'settings' && $active_plugin != 'coursesettings') {
@@ -837,9 +836,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         $CFG->stylesheets[] = $css_url;
     }
 
-    $navlinks[] = array('name' => $strgrades,
-                        'link' => $first_link,
-                        'type' => 'misc');
+    $PAGE->navbar->add($strgrades, $first_link);
 
     $active_type_link = '';
 
@@ -849,24 +846,27 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
 
     if (!empty($plugin_info[$active_type]->parent->link)) {
         $active_type_link = $plugin_info[$active_type]->parent->link;
-        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+        $PAGE->navbar->add($stractive_type, $active_type_link);
     }
 
     if (empty($plugin_info[$active_type]->id)) {
-        $navlinks[] = array('name' => $stractive_type, 'link' => $active_type_link, 'type' => 'misc');
+        $PAGE->navbar->add($stractive_type, $active_type_link);
     }
 
-    $navlinks[] = array('name' => $stractive_plugin, 'link' => null, 'type' => 'misc');
-
-    $navigation = build_navigation($navlinks);
-
+    $PAGE->navbar->add($stractive_plugin);
+    
     $title = ': ' . $stractive_plugin;
     if (empty($plugin_info[$active_type]->id) || !empty($plugin_info[$active_type]->parent)) {
         $title = ': ' . $stractive_type . ': ' . $stractive_plugin;
     }
 
-    $returnval = print_header_simple($strgrades . ': ' . $stractive_type, $title, $navigation, '',
-            '', true, $buttons, navmenu($COURSE), false, '', $return);
+    $PAGE->set_title($strgrades . ': ' . $stractive_type);
+    $PAGE->set_heading($title);
+    $PAGE->set_button($buttons);
+    $returnval = $OUTPUT->header();
+    if (!$return) {
+        echo $returnval;
+    }
 
     // Guess heading if not given explicitly
     if (!$heading) {
@@ -1105,7 +1105,7 @@ class grade_plugin_return {
  * @return string
  */
 function grade_build_nav($path, $pagename=null, $id=null) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $PAGE;
 
     $strgrades = get_string('grades', 'grades');
 
@@ -1119,23 +1119,20 @@ function grade_build_nav($path, $pagename=null, $id=null) {
     $path_elements_count = count($path_elements);
 
     // First link is always 'grade'
-    $navlinks = array();
-    $navlinks[] = array('name' => $strgrades,
-                        'link' => $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id,
-                        'type' => 'misc');
+    $PAGE->navbar->add($strgrades, new moodle_url($CFG->wwwroot.'/grade/index.php', array('id'=>$COURSE->id)));
 
-    $link = '';
+    $link = null;
     $numberofelements = 3;
 
     // Prepare URL params string
-    $id_string = '?';
+    $linkparams = array();
     if (!is_null($id)) {
         if (is_array($id)) {
             foreach ($id as $idkey => $idvalue) {
-                $id_string .= "$idkey=$idvalue&amp;";
+                $linkparams[$idkey] = $idvalue;
             }
         } else {
-            $id_string .= "id=$id";
+            $linkparams['id'] = $id;
         }
     }
 
@@ -1160,7 +1157,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
         case 'report':
             // $id is required for this link. Do not print it if $id isn't given
             if (!is_null($id)) {
-                $link = $CFG->wwwroot . '/grade/report/index.php' . $id_string;
+                $link = new moodle_url($CFG->wwwroot.'/grade/report/index.php', $linkparams);
             }
 
             if ($path_elements[2] == 'grader') {
@@ -1174,8 +1171,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
                     " as the second path element after 'grade'.");
             return false;
     }
-
-    $navlinks[] = array('name' => get_string($path_elements[1], 'grades'), 'link' => $link, 'type' => 'misc');
+    $PAGE->navbar->add(get_string($path_elements[1], 'grades'), $link);
 
     // Third level links
     if (empty($pagename)) {
@@ -1184,21 +1180,17 @@ function grade_build_nav($path, $pagename=null, $id=null) {
 
     switch ($numberofelements) {
         case 3:
-            $navlinks[] = array('name' => $pagename, 'link' => $link, 'type' => 'misc');
+            $PAGE->navbar->add($pagename, $link);
             break;
         case 4:
-
             if ($path_elements[2] == 'grader' AND $path_elements[3] != 'index.php') {
-                $navlinks[] = array('name' => get_string('modulename', 'gradereport_grader'),
-                                    'link' => "$CFG->wwwroot/grade/report/grader/index.php$id_string",
-                                    'type' => 'misc');
+                $PAGE->navbar->add(get_string('modulename', 'gradereport_grader'), new moodle_url($CFG->wwwroot.'/grade/report/grader/index.php', $linkparams));
             }
-            $navlinks[] = array('name' => $pagename, 'link' => '', 'type' => 'misc');
+            $PAGE->navbar->add($pagename);
             break;
     }
-    $navigation = build_navigation($navlinks);
 
-    return $navigation;
+    return '';
 }
 
 /**
