@@ -283,10 +283,9 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
     if (function_exists($filefunction)) {
         // if the function exists, it must send the file and terminate. Whatever it returns leads to "not found"
         $filefunction($course, $cminfo, $context, $filearea, $args, $forcedownload);
-        }
+    }
 
     send_file_not_found();
-    }
 
 } else if ($context->contextlevel == CONTEXT_BLOCK) {
     //not supported yet
