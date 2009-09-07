@@ -87,27 +87,21 @@ $strcategories = get_string('categories');
 $navlinks = array();
 
 if ($id) {
-    $navlinks[] = array('name' => $strtitle,
-                        'link' => null,
-                        'type' => 'misc');
+    $PAGE->navbar->add($strtitle);
     $title = $strtitle;
     $fullname = $category->name;
 } else {
-    $navlinks[] = array('name' => $stradministration,
-                        'link' => "$CFG->wwwroot/$CFG->admin/index.php",
-                        'type' => 'misc');
-    $navlinks[] = array('name' => $strcategories,
-                        'link' => 'index.php',
-                        'type' => 'misc');
-    $navlinks[] = array('name' => $straddnewcategory,
-                        'link' => null,
-                        'type' => 'misc');
+    $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+    $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'));
+    $PAGE->navbar->add($straddnewcategory);
     $title = "$SITE->shortname: $straddnewcategory";
     $fullname = $SITE->fullname;
 }
 
-$navigation = build_navigation($navlinks);
-print_header($title, $fullname, $navigation, $mform->focus());
+$PAGE->set_title($title);
+$PAGE->set_heading($fullname);
+$PAGE->set_focuscontrol($mform->focus());
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strtitle);
 
 $mform->display();
