@@ -795,7 +795,7 @@ class global_navigation extends navigation_node {
             case CONTEXT_COURSE: 
                 $depth = $this->load_for_course();
                 break;
-            case CONTEXT_MODULE: 
+            case CONTEXT_MODULE:
                 $depth = $this->load_for_activity();
                 break;
             case CONTEXT_USER: 
@@ -1090,17 +1090,15 @@ class global_navigation extends navigation_node {
             return;
         }
 
-        $this->context = $PAGE->course->context;
-
-        $file = $CFG->dirroot.'/mod/'.$module->name.'/lib.php';
-        $function = $module->name.'_extend_navigation';
-
-        if (file_exists($file)) {
-            require_once($file);
-            if (function_exists($function)) {
-                $node = $this->find_child($PAGE->cm->id, self::TYPE_ACTIVITY);
-                if ($node) {
-                    $node->make_active();
+        $node = $this->find_child($PAGE->cm->id, self::TYPE_ACTIVITY);
+        if ($node) {
+            $node->make_active();
+            $this->context = $PAGE->course->context;
+            $file = $CFG->dirroot.'/mod/'.$module->name.'/lib.php';
+            $function = $module->name.'_extend_navigation';
+            if (file_exists($file)) {
+                require_once($file);
+                if (function_exists($function)) {    
                     $function($node, $PAGE->course, $module, $PAGE->cm);
                 }
             }
