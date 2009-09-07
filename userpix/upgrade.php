@@ -15,7 +15,10 @@
 
     $title = get_string("users");
 
-    print_header($title, $title, build_navigation(array(array('name' => $title, 'link' => null, 'type' => 'misc'))));
+    $PAGE->navbar->add($title);
+    $PAGE->set_title($title);
+    $PAGE->set_heading($title);
+    echo $OUTPUT->header();
 
     foreach ($users as $user) {
         upgrade_profile_image($user->id);

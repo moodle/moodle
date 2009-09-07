@@ -93,7 +93,8 @@ if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
 }
 
 // Do the main output.
-print_header($title);
+$PAGE->set_title($title);
+echo $OUTPUT->header();
 echo $OUTPUT->box_start();
 print $output;
 echo $OUTPUT->box_end();
