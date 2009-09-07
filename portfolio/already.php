@@ -67,8 +67,10 @@ if ($dataid) {
 }
 
 $strheading = get_string('activeexport', 'portfolio');
-print_header($strheading, $strheading);
 
+$PAGE->set_title($strheading);
+$PAGE->set_heading($strheading);
+echo $OUTPUT->header();
 echo $OUTPUT->confirm(get_string('alreadyexporting', 'portfolio'), $CFG->wwwroot . '/portfolio/add.php', $CFG->wwwroot . '/portfolio/add.php?cancel=1');
 
 if (count($table->data) > 0) {
