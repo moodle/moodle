@@ -37,11 +37,6 @@ $strparticipants     = get_string('participants');
 $strautocreategroups = get_string('autocreategroups', 'group');
 
 // Print the page and form
-$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name' => $strgroups, 'link' => "$CFG->wwwroot/group/index.php?id=$courseid", 'type' => 'misc'),
-                  array('name' => $strautocreategroups, 'link' => null, 'type' => 'misc'));
-$navigation = build_navigation($navlinks);
-
 $preview = '';
 $error = '';
 
@@ -231,8 +226,14 @@ if ($editform->is_cancelled()) {
     }
 }
 
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strautocreategroups);
+
 /// Print header
-print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
+$PAGE->set_title($strgroups);
+$PAGE->set_heading(': '.$strgroups);
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strautocreategroups);
 
 if ($error != '') {

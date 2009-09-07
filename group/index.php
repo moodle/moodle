@@ -124,12 +124,14 @@ switch ($action) {
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 
-$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$strgroups, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups);
 
 /// Print header
-print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
+$PAGE->set_title($strgroups);
+$PAGE->set_heading(': '.$strgroups);
+echo $OUTPUT->header();
+
 // Add tabs
 $currenttab = 'groups';
 require('tabs.php');

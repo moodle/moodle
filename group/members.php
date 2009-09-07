@@ -75,15 +75,17 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 
 $groupname = format_string($group->name);
 
-$navlinks = array();
-$navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
-$navlinks[] = array('name' => $strgroups, 'link' => "$CFG->wwwroot/group/index.php?id=$courseid", 'type' => 'misc');
-$navlinks[] = array('name' => $stradduserstogroup, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-
 $PAGE->requires->js('group/clientlib.js');
 $PAGE->requires->js_function_call('init_add_remove_members_page');
-print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($stradduserstogroup);
+
+/// Print header
+$PAGE->set_title("$course->shortname: $strgroups");
+$PAGE->set_heading($course->fullname);
+$PAGE->set_headingmenu(user_login_string($course, $USER));
+echo $OUTPUT->header();
 check_theme_arrows();
 ?>
 

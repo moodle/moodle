@@ -94,13 +94,15 @@ $straddgroupstogroupings = get_string('addgroupstogroupings', 'group');
 
 $groupingname = format_string($grouping->name);
 
-$navlinks = array();
-$navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
-$navlinks[] = array('name' => $strgroups, 'link' => "$CFG->wwwroot/group/index.php?id=$courseid", 'type' => 'misc');
-$navlinks[] = array('name' => $straddgroupstogroupings, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($straddgroupstogroupings);
 
-print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
+/// Print header
+$PAGE->set_title("$course->shortname: $strgroups");
+$PAGE->set_heading($course->fullname);
+$PAGE->set_headingmenu(user_login_string($course, $USER));
+echo $OUTPUT->header();
 
 ?>
 <div id="addmembersform">

@@ -26,12 +26,13 @@ $struses         = get_string('activities');
 $strparticipants = get_string('participants');
 $strmanagegrping = get_String('showgroupsingrouping', 'group');
 
-$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$strgroupings, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroupings);
 
 /// Print header
-print_header_simple($strgroupings, ': '.$strgroupings, $navigation, '', '', true, '', navmenu($course));
+$PAGE->set_title($strgroupings);
+$PAGE->set_heading(': '.$strgroupings);
+echo $OUTPUT->header();
 
 // Add tabs
 $currenttab = 'groupings';

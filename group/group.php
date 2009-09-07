@@ -57,7 +57,9 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
 
 if ($id and $delete) {
     if (!$confirm) {
-        print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
+        $PAGE->set_title(get_string('deleteselectedgroup', 'group'));
+        $PAGE->set_heading(get_string('deleteselectedgroup', 'group'));
+        echo $OUTPUT->header();
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
         $formcontinue = html_form::make_button('group.php', $optionsyes, get_string('yes'), 'get');
@@ -103,15 +105,14 @@ if ($id) {
     $strheading = get_string('creategroup', 'group');
 }
 
-
-$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$strgroups, 'link'=>$CFG->wwwroot.'/group/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$strheading, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
+$PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strheading);
 
 /// Print header
-print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
-
+$PAGE->set_title($strgroups);
+$PAGE->set_heading(': '.$strgroups);
+echo $OUTPUT->header();
 echo '<div id="grouppicture">';
 if ($id) {
     print_group_picture($group, $course->id);
