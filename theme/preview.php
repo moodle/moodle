@@ -36,14 +36,13 @@ $PAGE->force_theme($preview);
 $strthemes = get_string('themes');
 $strpreview = get_string('preview');
 
-$navlinks = array();
-$navlinks[] = array('name' => $strthemes, 'link' => null, 'type' => 'misc');
-$navlinks[] = array('name' => $strpreview, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-print_header("$SITE->shortname: $strpreview", $SITE->fullname, $navigation);
+$PAGE->navbar->add($strthemes);
+$PAGE->navbar->add($strpreview);
+$PAGE->set_title("$SITE->shortname: $strpreview");
+$PAGE->set_heading($SITE->fullname);
 
+echo $OUTPUT->header();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading($preview);
 echo $OUTPUT->box_end();
-
 echo $OUTPUT->footer();
