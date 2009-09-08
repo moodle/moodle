@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20081010" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090904" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1702,6 +1702,7 @@
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'block contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('group', 'view', 'groups', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('tag', 'update', 'tag', 'name')" />
       </SENTENCES>
     </STATEMENT>
   </STATEMENTS>

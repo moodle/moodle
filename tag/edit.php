@@ -1,4 +1,4 @@
-<?php // $Id$
+ <?php // $Id$
 
 require_once('../config.php');
 require_once('lib.php');
@@ -92,7 +92,17 @@ if ($tagnew = $tagform->get_data()) {
                 error('Error updating tag record');
             }
         }
-    
+        
+        //log tag changes activity
+        //if tag name exist from form, renaming is allow.  record log action as rename
+        //otherwise, record log action as update       
+        if (isset($tagnew->name) && ($tag->name != $tagnew->name)){
+            add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name . '->'. $tagnew->name);
+
+        } elseif ($tag->description != $tagnew->description) {  
+            add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name);
+        }
+        
         //updated related tags
         tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
         //print_object($tagnew); die();

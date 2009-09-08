@@ -3169,6 +3169,21 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101547);
     }
 
+    if ($result && $oldversion < 2007101551){
+        //insert new record for log_display table
+        //used to record tag update.
+        if (!record_exists("log_display", "action", "update",
+                    "module", "tag")){
+            $log_action = new stdClass();
+            $log_action->module = 'tag';
+            $log_action->action = 'update';
+            $log_action->mtable = 'tag';
+            $log_action->field  = 'name';
+
+            $result  = $result && insert_record('log_display', $log_action);
+        }
+        upgrade_main_savepoint($result, 2007101551);
+    }
     return $result;
 }
 
