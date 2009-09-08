@@ -1285,7 +1285,7 @@ function grade_course_reset($courseid) {
 }
 
 /**
- * Convert number to 5 decimalfloat, empty tring or null db compatible format
+ * Convert number to 5 decimalfloat, empty string or null db compatible format
  * (we need this to decide if db value changed)
  *
  * @param mixed $number
@@ -1313,4 +1313,17 @@ function grade_floats_different($f1, $f2) {
     return (grade_floatval($f1) !== grade_floatval($f2));
 }
 
-?>
+/**
+ * Compare two float numbers safely. Uses 5 decimals php precision.
+ *
+ * Do not use rounding for 10,5 at the database level as the results may be
+ * different from php round() function.
+ *
+ * @since 2.0
+ * @param float $f1
+ * @param float $f2
+ * @return bool true if the values should be considered as the same grades
+ */
+function grade_floats_equal($f1, $f2) {
+    return (grade_floatval($f1) === grade_floatval($f2));
+}
