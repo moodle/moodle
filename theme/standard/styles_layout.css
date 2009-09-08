@@ -2811,7 +2811,6 @@ div.allcoursegrades {
 /* gradebook edit tree */
 
 .grade-edit-tree .gradetreebox {
-  width:70%;
   margin-left:auto;
   margin-right:auto;
   margin-top:10px;
@@ -2876,6 +2875,10 @@ div.allcoursegrades {
 #grade-aggregation-help code {
   display: block;
   margin-top: 7px;
+}
+
+.gradetreebox table.simple {
+  width: 70%;
 }
 
 /***
