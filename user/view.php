@@ -78,7 +78,9 @@
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
         $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
     }
-    $PAGE->navbar->ignore_active();
+    if ($course->id===SITEID) {
+        $PAGE->navbar->ignore_active();
+    }
     $PAGE->navbar->add($strparticipants, $link);
 
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
