@@ -413,7 +413,6 @@ class question_multichoice_qtype extends default_questiontype {
         global $DB;
         $status = true;
 
-        $multichoices = $DB->get_records("question_multichoice",array("question"=>$question),"id");
         $multichoices = $DB->get_records("question_multichoice",array("question" => $question),"id");
         if ($multichoices) {
             //Iterate over each multichoice
