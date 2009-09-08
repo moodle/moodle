@@ -1081,7 +1081,7 @@ class assignment_base {
      * @return bool|void
      */
     function display_submissions($message='') {
-        global $CFG, $DB, $USER, $DB, $OUTPUT;
+        global $CFG, $DB, $USER, $DB, $OUTPUT, $PAGE;
         require_once($CFG->libdir.'/gradelib.php');
 
         /* first we check to see if the form has just been submitted
@@ -1121,7 +1121,7 @@ class assignment_base {
 
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
-        $PAGE->add($this->strsubmissions);
+        $PAGE->navbar->add($this->strsubmissions);
         $PAGE->set_title(format_string($this->assignment->name,true));
         $PAGE->set_button( update_module_button($cm->id, $course->id, $this->strassignment));
         echo $OUTPUT->header();
