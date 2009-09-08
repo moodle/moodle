@@ -584,7 +584,7 @@
 
         $PAGE->navbar->add($strmodulenameplural, new moodle_url($CFG->wwwroot.'/mod/'.$module->name.'/index.php', array('id'=>$course->id)));
         if ($navlinksinstancename) {
-            $PAGE->navbar->add($navlinksinstancename);
+            $PAGE->navbar->add($navlinksinstancename['name'], $navlinksinstancename['link']);
         }
         $PAGE->navbar->add($streditinga);
         $PAGE->set_title($streditinga);
