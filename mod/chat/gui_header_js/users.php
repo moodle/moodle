@@ -21,6 +21,9 @@
     if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
         print_error('invaliduser');
     }
+
+    $PAGE->set_generaltype('embedded');
+
     $USER->description = '';
 
     //Setup course, lang and theme
@@ -66,6 +69,7 @@
     $PAGE->requires->data_for_js('uidles', $uidles)->in_head();
     $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
     $PAGE->requires->js_function_call('start')->on_dom_ready();
+    ob_start();
     echo $OUTPUT->header();
 
     /// Print user panel body
@@ -85,7 +89,7 @@
         $idle = $min.':'.$sec;
         echo '<tr><td width="35">';
         echo "<a target=\"_blank\" onClick=\"return openpopup('/user/view.php?id=$chatuser->id&amp;course=$courseid','user$chatuser->id','');\" href=\"$CFG->wwwroot/user/view.php?id=$chatuser->id&amp;course=$courseid\">";
-        echo $OUTPUT->user_picture(moodle_user_picture::make($chatuser, 0));
+        echo $OUTPUT->user_picture(moodle_user_picture::make($chatuser, $courseid));
         echo '</a></td><td valign="center">';
         echo '<p><font size="1">';
         echo fullname($chatuser).'<br />';
