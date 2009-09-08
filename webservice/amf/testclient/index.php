@@ -17,7 +17,9 @@ $PAGE->requires->js('lib/ufo.js')->in_head();
 $PAGE->requires->data_for_js('FO', $args);
 $PAGE->requires->js_function_call('create_UFO_object', Array('moodletestclient'));
 
-print_header_simple('Test Client', 'Test Client');
+$PAGE->set_title('Test Client');
+$PAGE->set_heading('Test Client');
+echo $OUTPUT->header();
 echo '<div id="moodletestclient">
       <p>You need to install Flash 9.0</p>
     </div>';

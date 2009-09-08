@@ -2147,7 +2147,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             //
             if ( !($COURSE->visible && course_parent_visible($COURSE)) &&
                    !has_capability('moodle/course:viewhiddencourses', $COURSE->context)) {
-                print_header_simple();
+                echo $OUTPUT->header();
                 notice(get_string('coursehidden'), $CFG->wwwroot .'/');
             }
         }
@@ -2174,7 +2174,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
                 case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
-                        print_header_simple();
+                        echo $OUTPUT->header();
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
@@ -2198,7 +2198,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                 default:    /// Guests not allowed
                     $strloggedinasguest = get_string('loggedinasguest');
                     $PAGE->navbar->add($strloggedinasguest);
-                    print_header_simple();
+                    echo $OUTPUT->header();
                     if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), get_login_url());
                     } else {
@@ -2216,7 +2216,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
             if (session_is_loggedinas()) {   // Make sure the REAL person can also access this course
                 $realuser = session_get_realuser();
                 if (!has_capability('moodle/course:view', $COURSE->context, $realuser->id)) {
-                    print_header_simple();
+                    echo $OUTPUT->header();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
             }

@@ -42,7 +42,7 @@
     $button = $OUTPUT->button($form);
 
     $header = $SITE->shortname . ': ' . $strmymoodle;
-    $navigation = build_navigation($strmymoodle);
+    $PAGE->navbar->add($strmymoodle);
     $loggedinas = user_login_string();
 
     if (empty($CFG->langmenu)) {

@@ -111,8 +111,9 @@ if ($currenttab != 'update') {
             if (empty($title)) {
                 $title = get_string("editinga", "moodle", $fullmodulename);
             }
-            print_header_simple($title, '', '', '', '', false);
-
+            $PAGE->set_title($title);
+            $PAGE->set_cacheable(false);
+            echo $OUTPUT->header();
             break;
 
         case CONTEXT_BLOCK:
