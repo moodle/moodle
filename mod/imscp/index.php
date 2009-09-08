@@ -44,8 +44,8 @@ $strlastmodified = get_string('lastmodified');
 $PAGE->set_url('mod/imscp/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strimscps);
 $PAGE->set_heading($course->fullname);
-$navlinks = array(array('name' => $strimscps, 'link' => '', 'type' => 'activityinstance'));
-echo $OUTPUT->header(build_navigation($navlinks), navmenu($course));
+$PAGE->navbar->add($strimscps);
+echo $OUTPUT->header();
 
 if (!$imscps = get_all_instances_in_course('imscp', $course)) {
     notice(get_string('thereareno', 'moodle', $strimscps), "$CFG->wwwroot/course/view.php?id=$course->id");
