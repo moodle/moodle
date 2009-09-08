@@ -87,7 +87,8 @@
     $editing = $PAGE->user_is_editing();
     $PAGE->set_title($SITE->fullname);
     $PAGE->set_heading($SITE->fullname);
-    echo $OUTPUT->header(user_login_string($SITE) . $langmenu);
+    $PAGE->set_headingmenu(user_login_string($SITE) . $langmenu);
+    echo $OUTPUT->header();
 
 /// Print Section
     if ($SITE->numsections > 0) {

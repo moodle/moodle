@@ -55,7 +55,8 @@
         $PAGE->set_headingmenu();
         $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
         $PAGE->navbar->add($strstats);
-        echo $OUTPUT->header(report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php"));
+        $PAGE->headingmenu(report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php"));
+        echo $OUTPUT->header();
     }
 
     require($CFG->dirroot.'/course/report/stats/report.php');
