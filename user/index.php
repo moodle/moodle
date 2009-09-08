@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php // $Id$
 
 //  Lists all the users within a given course
 
@@ -23,7 +23,15 @@
     $contextid    = optional_param('contextid', 0, PARAM_INT);                // one of this or
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
 
-    $PAGE->set_url('user/index.php', compact('page', 'perpage', 'mode', 'accesssince', 'search', 'roleid', 'contextid', 'courseid'));
+    $PAGE->set_url('user/index.php', array(
+            'page' => $page, 
+            'perpage' => $perpage, 
+            'mode' => $mode, 
+            'accesssince' => $accesssince, 
+            'search' => $search, 
+            'roleid' => $roleid, 
+            'contextid' => $contextid, 
+            'courseid' => $courseid));
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
@@ -188,7 +196,6 @@
 
     require_once($CFG->dirroot .'/user/tabs.php');
 
-
 /// Get the hidden field list
     if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $hiddenfields = array();  // teachers and admins are allowed to see everything
@@ -202,12 +209,13 @@
     }
 
 /// Print settings and things in a table across the top
-
-    echo '<table class="controls" cellspacing="0"><tr>';
+    $controlstable = new html_table();
+    $controlstable->add_class('controls');
+    $controlstable->cellspacing = 0;
+    $controlstable->data[] = new html_table_row();
 
 /// Print my course menus
     if ($mycourses = get_my_courses($USER->id)) {
-        echo '<td class="left">';
         $courselist = array();
         $popupurl = new moodle_url($CFG->wwwroot.'/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
@@ -219,13 +227,10 @@
         }
         $select = html_select::make_popup_form($popupurl, 'id', $courselist, 'courseform', $course->id);
         $select->set_label(get_string('mycourses'));
-        echo $OUTPUT->select($select);
-        echo '</td>';
+        $controlstable->data[0]->cells[] = $OUTPUT->select($select);
     }
 
-    echo '<td class="left">';
-    groups_print_course_menu($course, $baseurl->out());
-    echo '</td>';
+    $controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out());
 
     if (!isset($hiddenfields['lastaccess'])) {
         // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
@@ -278,11 +283,9 @@
         }
 
         if (count($timeoptions) > 1) {
-            echo '<td class="left">';
             $select = html_select::make_popup_form($baseurl, 'accesssince', $timeoptions, 'timeoptions', $accesssince);
             $select->set_label(get_string('usersnoaccesssince'));
-            echo $OUTPUT->select($select);
-            echo '</td>';
+            $controlstable->data[0]->cells[] = $OUTPUT->select($select);
         }
     }
 
@@ -303,7 +306,6 @@
         $mode = MODE_BRIEF;
     }
 
-    echo '<td class="right">';
     $formatmenu = array( '0' => get_string('brief'),
                          '1' => get_string('userdetails'));
     if ($allowenroldetails) {
@@ -312,24 +314,39 @@
     $select = html_select::make_popup_form($baseurl, 'mode', $formatmenu, 'formatmenu', $mode);
     $select->nothinglabel = false;
     $select->set_label(get_string('userlist'));
-    echo $OUTPUT->select($select);
-    echo '</td></tr></table>';
+    $userlistcell = new html_table_cell();
+    $userlistcell->add_class('right');
+    $userlistcell->text = $OUTPUT->select($select);
+    $controlstable->data[0]->cells[] = $userlistcell;
+
+    echo $OUTPUT->table($controlstable);
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = groups_get_group($currentgroup)) {
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
-                echo '<table class="groupinfobox"><tr><td class="left side picture">';
-                print_group_picture($group, $course->id, true, false, false);
-                echo '</td><td class="content">';
-                echo '<h3>'.$group->name;
+                $groupinfotable = new html_table();
+                $groupinfotable->add_class('groupinfobox');
+                $picturecell = new html_table_cell();
+                $picturecell->add_classes(array('left', 'side', 'picture'));
+                $picturecell->text = print_group_picture($group, $course->id, true, false, false);
+                
+                $contentcell = new html_table_cell();
+                $contentcell->add_class('content');
+                $contentcell->text = print_group_picture($group, $course->id, true, false, false);
+
+                $contentheading = $group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
-                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.$CFG->wwwroot.'/group/group.php?id='.$group->id.'&amp;courseid='.$group->courseid.'">';
-                    echo '<img src="'.$OUTPUT->old_icon_url('t/edit') . '" alt="'.get_string('editgroupprofile').'" />';
-                    echo '</a>';
+                    $editgroupaction = new moodle_action_icon();
+                    $editgroupaction->link->url = new moodle_url($CFG->wwwroot.'/group/group.php', array('id' => $group->id, 'courseid' => $group->courseid));
+                    $editgroupaction->link->title = get_string('editgroupprofile');
+                    $editgroupaction->image->src = $OUTPUT->old_icon_url('t/edit');
+                    $editgroupaction->image->alt = get_string('editgroupprofile');
+
+                    $contentheading .= '&nbsp;' . $OUTPUT->action_icon($editgroupaction);
                 }
-                echo '</h3>';
-                echo format_text($group->description);
-                echo '</td></tr></table>';
+                $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description);
+                $groupinfotable->data[] = html_table_row::make(array($picturecell, $contentcell));
+                echo $OUTPUT->table($groupinfotable);
             }
         }
     }
@@ -990,11 +1007,11 @@
     $perpageurl->remove_params('perpage');
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
         $perpageurl->param('perpage', DEFAULT_PAGE_SIZE);
-        echo '<div id="showall"><a href="'.$perpageurl->out().'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+        echo $OUTPUT->container($OUTPUT->link(html_link::make($perpageurl, get_string('showperpage', '', DEFAULT_PAGE_SIZE))), array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
         $perpageurl->param('perpage', SHOW_ALL_PAGE_SIZE);
-        echo '<div id="showall"><a href="'.$perpageurl.'">'.get_string('showall', '', $matchcount).'</a></div>';
+        echo $OUTPUT->container($OUTPUT->link(html_link::make($perpageurl, get_string('showall', '', $matchcount))), array(), 'showall');
     }
 
     echo $OUTPUT->footer();
