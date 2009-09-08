@@ -1793,6 +1793,8 @@ class navbar extends navigation_node {
     /** @var page object */
     protected $page;
     /** @var bool */
+    protected $ignoreactive = false;
+    /** @var bool */
     protected $duringinstall = false;
 
     /**
@@ -1822,7 +1824,14 @@ class navbar extends navigation_node {
             return false;
         }
         $this->page->navigation->initialise();
-        return (count($this->page->navbar->children)>0 || $this->page->navigation->contains_active_node() || $this->page->settingsnav->contains_active_node());
+        return (count($this->page->navbar->children)>0 || (!$this->ignoreactive && (
+                        $this->page->navigation->contains_active_node() ||
+                        $this->page->settingsnav->contains_active_node())
+                ));
+    }
+
+    public function ignore_active($setting=true) {
+        $this->ignoreactive = ($setting);
     }
 
     /**
@@ -1857,10 +1866,10 @@ class navbar extends navigation_node {
         
         $customchildren = (count($this->children) > 0);
         // Check if navigation contains the active node
-        if ($this->page->navigation->contains_active_node()) {
+        if (!$this->ignoreactive && $this->page->navigation->contains_active_node()) {
             // Parse the navigation tree to get the active node
             $output .= $this->parse_branch_to_html($this->page->navigation->children, true, $customchildren);
-        } else if ($this->page->settingsnav->contains_active_node()) {
+        } else if (!$this->ignoreactive && $this->page->settingsnav->contains_active_node()) {
             // Parse the settings navigation to get the active node
             $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
         } else {
@@ -2688,9 +2697,9 @@ class settings_navigation extends navigation_node {
 
         // Add a link to view the user profile
         if ($currentuser) {
-            $usersetting->add(get_string('viewmyprofile'), $profileurl, self::TYPE_SETTING);
+            $usersetting->add(get_string('viewprofile'), $profileurl, self::TYPE_SETTING);
         } else {
-            $usersetting->add(get_string('userprofilefor','',$fullname), $profileurl, self::TYPE_SETTING);
+            $usersetting->add(get_string('viewprofile','',$fullname), $profileurl, self::TYPE_SETTING);
         }
 
         // Add the profile edit link
