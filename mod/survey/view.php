@@ -34,9 +34,9 @@
     $showscales = ($template->name != 'ciqname');
 
     $strsurvey = get_string("modulename", "survey");
-    $navigation = build_navigation('', $cm);
-    print_header_simple(format_string($survey->name), "", $navigation, "", "", true,
-                  update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
+    $PAGE->set_title(format_string($survey->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strsurvey));
+    echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used

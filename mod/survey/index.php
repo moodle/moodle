@@ -21,12 +21,9 @@
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple("$strsurveys", "", $navigation,
-                 "", "", true, "", navmenu($course));
+    $PAGE->navbar->add($strsurveys);
+    $PAGE->set_title($strsurveys);
+    echo $OUTPUT->header();
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {
         notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");

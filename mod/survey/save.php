@@ -33,9 +33,8 @@
 
     $strsurveysaved = get_string('surveysaved', 'survey');
 
-    $navigation = build_navigation('', $cm);
-    print_header_simple("$strsurveysaved", "", $navigation, "");
-
+    $PAGE->set_title($strsurveysaved);
+    echo $OUTPUT->header();
 
     if (survey_already_done($survey->id, $USER->id)) {
         notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);
