@@ -1791,58 +1791,6 @@ function send_headers($contenttype, $cacheable = true) {
 }
 
 /**
- * This version of print_header is simpler because the course name does not have to be
- * provided explicitly in the strings. It can be used on the site page as in courses
- * Eventually all print_header could be replaced by print_header_simple
- *
- * @global object
- * @global object
- * @uses SITEID
- * @param string $title Appears at the top of the window
- * @param string $heading Appears at the top of the page
- * @param string $navigation Premade navigation string (for use as breadcrumbs links)
- * @param string $focus Indicates form element to get cursor focus on load eg  inputform.password
- * @param string $meta Meta tags to be added to the header
- * @param boolean $cache Should this page be cacheable?
- * @param string $button HTML code for a button (usually for module editing)
- * @param string $menu HTML code for a popup menu
- * @param boolean $usexml use XML for this page
- * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
- * @param bool   $return If true, return the visible elements of the header instead of echoing them.
- * @return string|void If $return=true the return string else nothing
- */
-function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
-                       $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
-
-    global $COURSE, $CFG, $PAGE, $OUTPUT;
-
-    if ($meta) {
-        throw new coding_exception('The $meta parameter to print_header is no longer supported. '.
-                'You should be able to do everything you want with $PAGE->requires and other such mechanisms.');
-    }
-    if ($usexml) {
-        throw new coding_exception('The $usexml parameter to print_header is no longer supported.');
-    }
-    if ($bodytags) {
-        throw new coding_exception('The $bodytags parameter to print_header is no longer supported.');
-    }
-
-    $PAGE->set_title($title);
-    $PAGE->set_heading($heading);
-    $PAGE->set_focuscontrol($focus);
-    $PAGE->set_cacheable(true);
-    $PAGE->set_button($button);
-
-    $output = $OUTPUT->header();
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
  * Returns text to be displayed to the user which reflects their login status
  *
  * @global object
