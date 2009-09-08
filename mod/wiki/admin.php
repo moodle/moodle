@@ -114,12 +114,12 @@
           default: break;
        }
     }
-
-    $navigation = build_navigation(get_string("administration","wiki"), $cm);
-    print_header_simple("$wiki_entry->pagename", "", $navigation,
-                $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
-                navmenu($course, $cm));
-
+    
+    $PAGE->navbar->add(get_string("administration","wiki"));
+    $PAGE->set_title($wiki_entry->pagename);
+    $PAGE->set_focuscontrol($focus);
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strwiki));
+    echo $OUTPUT->header();
 
     ////////////////////////////////////////////////////////////
     /// Check if the Form has been submitted and display confirmation

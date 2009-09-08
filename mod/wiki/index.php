@@ -24,11 +24,9 @@
 
 
 /// Print the header
-    $navlinks = array();
-    $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple("$strwikis", "", $navigation, "", "", true, "", navmenu($course));
+    $PAGE->navbar->add($strwikis);
+    $PAGE->set_title($strwikis);
+    echo $OUTPUT->header();
 
 /// Get all the appropriate data
 
