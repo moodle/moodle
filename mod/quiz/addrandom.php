@@ -72,7 +72,9 @@ if (has_capability('moodle/course:manageactivities', $contexts->lowest())) {
     $strupdatemodule = update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'));
 }
 $PAGE->navbar->add($streditingquiz);
-print_header_simple($streditingquiz, '', $navigation, '', '', true, $strupdatemodule);
+$PAGE->set_title($streditingquiz);
+$PAGE->set_button($strupdatemodule);
+echo $OUTPUT->header();
 
 if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instance))) {
             print_error('invalidcoursemodule');

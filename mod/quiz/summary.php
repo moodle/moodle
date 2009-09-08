@@ -50,8 +50,10 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
             format_string($attemptobj->get_quiz_name()), '');
 } else {
-    print_header_simple(format_string($attemptobj->get_quiz_name()), '',
-            $attemptobj->navigation($title), '', '', true, $attemptobj->update_module_button());
+    $attemptobj->navigation($title);
+    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_button($attemptobj->update_module_button());
+    echo $OUTPUT->header();
 }
 
 /// Print tabs if they should be there.

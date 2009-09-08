@@ -27,9 +27,9 @@ class quiz_default_report {
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
     /// Print the page header
-        
-        print_header_simple(format_string($quiz->name), "", $navigation,
-                     '', '', true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+        $PAGE->set_title(format_string($quiz->name));
+        $PAGE->set_button(update_module_button($cm->id, $course->id, $strquiz));
+        echo $OUTPUT->header();
     /// Print the tabs    
         $currenttab = 'reports';
         $mode = $reportmode;

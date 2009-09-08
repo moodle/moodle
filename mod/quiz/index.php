@@ -31,8 +31,9 @@
                  </form>";
     }
     $PAGE->navbar->add($strquizzes);
-    print_header_simple($strquizzes, '', $navigation,
-                 '', '', true, $streditquestions, navmenu($course));
+    $PAGE->set_title($strquizzes);
+    $PAGE->set_button($streditquestions);
+    echo $OUTPUT->header();
 
 // Get all the appropriate data
     if (!$quizzes = get_all_instances_in_course("quiz", $course)) {

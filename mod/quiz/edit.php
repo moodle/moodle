@@ -448,8 +448,9 @@ $PAGE->navbar->add($pagetitle);
 $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 
-print_header_simple($pagetitle, '', $navigation, '', '', true,
-        $questionbankmanagement.$strupdatemodule);
+$PAGE->set_title($pagetitle);
+$PAGE->set_button($questionbankmanagement.$strupdatemodule);
+echo $OUTPUT->header();
 
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass;

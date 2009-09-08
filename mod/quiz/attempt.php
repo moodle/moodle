@@ -92,8 +92,9 @@
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
                 format_string($attemptobj->get_quiz_name()), $headtags);
     } else {
-        print_header_simple(format_string($attemptobj->get_quiz_name()), '', $attemptobj->navigation($title),
-                '', $headtags, true, $attemptobj->update_module_button());
+        $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+        $PAGE->set_button($attemptobj->update_module_button());
+        echo $OUTPUT->header();
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
