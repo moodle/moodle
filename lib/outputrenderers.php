@@ -2054,7 +2054,7 @@ class moodle_core_renderer extends moodle_renderer_base {
                     $heading->text = $headingtext;
                     $heading->header = true;
                 }
-                
+
                 if ($heading->header !== false) {
                     $heading->header = true;
                 }
@@ -2098,7 +2098,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $oddeven    = 1;
             $keys       = array_keys($table->data);
             $lastrowkey = end($keys);
-            $output .= $this->output_start_tag('tbody', $table->bodyclasses) . "\n";
+            $output .= $this->output_start_tag('tbody', array('class' => moodle_renderer_base::prepare_classes($table->bodyclasses))) . "\n";
 
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
