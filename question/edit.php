@@ -47,12 +47,12 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
             ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
-        $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
-        $navlinks[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        print_header_simple($streditingquestions, '', $navigation, '', '', true, $strupdatemodule);
+        $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
+        $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
+        $PAGE->navbar->add($streditingquestions);
+        $PAGE->set_title($streditingquestions);
+        $PAGE->set_button($strupdatemodule);
+        echo $OUTPUT->header();
 
         $currenttab = 'edit';
         $mode = 'questions';
@@ -60,11 +60,9 @@
         include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
         // Print basic page layout.
-        $navlinks = array();
-        $navlinks[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-
-        print_header_simple($streditingquestions, '', $navigation, '', '');
+        $PAGE->navbar->add($streditingquestions);
+        $PAGE->set_title($streditingquestions);
+        echo $OUTPUT->header();
 
         // print tabs
         $currenttab = 'questions';
