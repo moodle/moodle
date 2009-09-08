@@ -162,6 +162,7 @@ $string['resourcetyperepository'] = 'Link to a repository object';
 $string['resourcetypetext'] = 'Compose a text page';
 $string['searchweb'] = 'Search for web page';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
+$string['setmainfile'] = 'Set main file';
 $string['showcourseblocks'] = 'Show the course blocks';
 $string['skipsubmenus'] = 'Skip sub-menu pages';
 $string['tableofcontents'] = 'Table of contents';

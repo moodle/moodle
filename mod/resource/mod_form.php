@@ -57,10 +57,10 @@ class mod_resource_mod_form extends moodleform_mod {
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
         $mform->addElement('static', 'note', '', '<i>(TODO: This filemanager + textfield is temporary until we create new file manager with main file support.)</i>');
-        $mform->addElement('filemanager', 'files', get_string('file'));
+        $options = array('mainfile'=>'id_mainfile', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
+        $mform->addElement('filemanager', 'files', get_string('file'), null, $options);
         $mform->addElement('static', 'notex', '', '<i>(TODO: Ignore main file when uploading only one file, if multiple files present use "/myfile.ext" to specify the main file.)</i>');
         $mform->addElement('text', 'mainfile', 'Main file');
-
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
 
