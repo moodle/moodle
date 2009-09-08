@@ -22,7 +22,7 @@ class quiz_default_report {
     }
 
     function print_header_and_tabs($cm, $course, $quiz, $reportmode="overview") {
-        global $CFG;
+        global $CFG, $PAGE, $OUTPUT;
     /// Define some strings
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
