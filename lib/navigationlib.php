@@ -912,7 +912,7 @@ class global_navigation extends navigation_node {
             $course = $PAGE->course;
         }
 
-        if (!$this->cache->cached('modinfo'.$course->id)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
@@ -969,7 +969,7 @@ class global_navigation extends navigation_node {
             $course = $PAGE->course;
         }
 
-        if (!$this->cache->cached('modinfo'.$course->id)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
@@ -1276,7 +1276,7 @@ class global_navigation extends navigation_node {
             $sections = $this->cache->$coursesecstr;
         }
         
-        if (!$this->cache->cached('modinfo'.$course->id)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
@@ -3072,6 +3072,27 @@ class navigation_cache {
             return false;
         }
         return true;
+    }
+    /**
+     * Compare something to it's equivilant in the cache
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param bool $serialise Whether to serialise the value before comparison
+     *              this should only be set to false if the value is already
+     *              serialised
+     * @return bool If the value is the same false if it is not set or doesn't match
+     */
+    public function compare($key, $value, $serialise=true) {
+        if ($this->cached($key)) {
+            if ($serialise) {
+                $value = serialize($value);
+            }
+            if ($this->session[$key][self::CACHEVALUE] === $value) {
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * Whipes the entire cache, good to force regeneration
