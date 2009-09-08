@@ -109,11 +109,6 @@ function blog_user_can_edit_entry($blog_entry) {
 function blog_user_can_view_user_entry($targetuserid, $blog_entry=null) {
     global $CFG, $USER, $DB;
 
-    $pagingbar = moodle_paging_bar::make($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect));
-    $pagingbar->pagevar = 'blogpage';
-    echo $OUTPUT->paging_bar($pagingbar);
-
-
     if (empty($CFG->bloglevel)) {
         return false; // blog system disabled
     }
@@ -136,14 +131,6 @@ function blog_user_can_view_user_entry($targetuserid, $blog_entry=null) {
     if ($blog_entry && $blog_entry->publishstate != 'public' && !isloggedin()) {
         return false;
     }
-            $count = 0;
-            foreach ($blogEntries as $blogEntry) {
-                blog_print_entry($blogEntry, 'list', $filtertype, $filterselect); //print this entry.
-                $count++;
-            }
-            $pagingbar = moodle_paging_bar::make($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect));
-            $pagingbar->pagevar = 'blogpage';
-            echo $OUTPUT->paging_bar($pagingbar);
 
     switch ($CFG->bloglevel) {
         case BLOG_GLOBAL_LEVEL:
@@ -262,137 +249,6 @@ function blog_is_valid_url($url) {
     return false;
 }
 
-/**
- * This function is in lib and not in BlogInfo because entries being searched
- * might be found in any number of blogs rather than just one.
- *
- * This function builds an array which can be used by the included
- * template file, making predefined and nicely formatted variables available
- * to the template. Template creators will not need to become intimate
- * with the internal objects and vars of moodle blog nor will they need to worry
- * about properly formatting their data
- *
- *   @param BlogEntry blogEntry - a hopefully fully populated BlogEntry object
- *   @param string viewtype Default is 'full'. If 'full' then display this blog entry
- *     in its complete form (eg. archive page). If anything other than 'full'
- *     display the entry in its abbreviated format (eg. index page)
- */
-function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
-    global $USER, $CFG, $COURSE, $DB, $OUTPUT;
-
-    $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
-    $template['title'] = '<a id="b'. s($blogEntry->id) .'" />';
-    //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
-    $template['title'] .= '<span class="nolink">'. format_string($blogEntry->subject) .'</span>';
-    $template['userid'] = $blogEntry->userid;
-    $template['author'] = fullname($DB->get_record('user', array('id'=>$blogEntry->userid)));
-    $template['created'] = userdate($blogEntry->created);
-
-    if($blogEntry->created != $blogEntry->lastmodified){
-        $template['lastmod'] = userdate($blogEntry->lastmodified);
-    }
-
-    $template['publishstate'] = $blogEntry->publishstate;
-
-    /// preventing user to browse blogs that they aren't supposed to see
-    /// This might not be too good since there are multiple calls per page
-
-    /*
-    if (!blog_user_can_view_user_post($template['userid'])) {
-        print_error('cannotviewuserblog', 'blog');
-    }*/
-
-    $stredit = get_string('edit');
-    $strdelete = get_string('delete');
-
-    $user = $DB->get_record('user', array('id'=>$template['userid']));
-
-    /// Start printing of the blog
-
-    echo '<table cellspacing="0" class="forumpost blogpost blog'.$template['publishstate'].'" width="100%">';
-
-    echo '<tr class="header"><td class="picture left">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($user, SITEID));
-    echo '</td>';
-
-    echo '<td class="topic starter"><div class="subject">'.$template['title'].'</div><div class="author">';
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id)));
-    $by = new object();
-    $by->name =  '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                $user->id.'&amp;course='.$COURSE->id.'">'.$fullname.'</a>';
-    $by->date = $template['created'];
-    print_string('bynameondate', 'forum', $by);
-    echo '</div></td></tr>';
-
-    echo '<tr><td class="left side">';
-
-/// Actual content
-
-    echo '</td><td class="content">'."\n";
-
-    if ($blogEntry->attachment) {
-        echo '<div class="attachments">';
-        $attachedimages = blog_print_attachments($blogEntry);
-        echo '</div>';
-    } else {
-        $attachedimages = '';
-    }
-
-    switch ($template['publishstate']) {
-        case 'draft':
-            $blogtype = get_string('publishtonoone', 'blog');
-        break;
-        case 'site':
-            $blogtype = get_string('publishtosite', 'blog');
-        break;
-        case 'public':
-            $blogtype = get_string('publishtoworld', 'blog');
-        break;
-        default:
-            $blogtype = '';
-        break;
-
-    }
-
-    echo '<div class="audience">'.$blogtype.'</div>';
-
-    // Print whole message
-    echo $template['body'];
-
-    /// Print attachments
-    echo $attachedimages;
-/// Links to tags
-
-    if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_csv('post', $blogEntry->id)) ) {
-        echo '<div class="tags">';
-        if ($blogtags) {
-            print(get_string('tags', 'tag') .': '. $blogtags);
-       }
-        echo '</div>';
-    }
-
-/// Commands
-
-    echo '<div class="commands">';
-
-    if (blog_user_can_edit_post($blogEntry)) {
-        echo '<a href="'.$CFG->wwwroot.'/blog/edit.php?action=edit&amp;id='.$blogEntry->id.'">'.$stredit.'</a>';
-        echo '| <a href="'.$CFG->wwwroot.'/blog/edit.php?action=delete&amp;id='.$blogEntry->id.'">'.$strdelete.'</a> | ';
-    }
-
-    echo '<a href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blogEntry->id.'">'.get_string('permalink', 'blog').'</a>';
-
-    echo '</div>';
-
-    if( isset($template['lastmod']) ){
-        echo '<div style="font-size: 55%;">';
-        echo ' [ '.get_string('modified').': '.$template['lastmod'].' ]';
-        echo '</div>';
-    }
-
-    echo '</td></tr></table>'."\n\n";
-
-}
 
 /**
  * Given a record in the {blog_external} table, checks the blog's URL
@@ -507,6 +363,7 @@ function blog_get_context_url($context=null) {
 function blog_get_headers() {
     global $CFG, $PAGE, $DB, $USER;
 
+    $id       = optional_param('id', null, PARAM_INT);
     $tag      = optional_param('tag', null, PARAM_NOTAGS);
     $tagid    = optional_param('tagid', null, PARAM_INT);
     $userid   = optional_param('userid', null, PARAM_INT);
@@ -564,34 +421,38 @@ function blog_get_headers() {
         $blog_url->param('userid', $user->id);
 
         if (!empty($course)) {
-            $courseid = $course->id;
-            $blog_url->param('courseid', $courseid);
+            $mycourseid = $course->id;
+            $blog_url->param('courseid', $mycourseid);
         } else {
-            $courseid = $site->id;
+            $mycourseid = $site->id;
         }
 
-        $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$courseid");
+        $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$mycourseid");
         $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
-        $PAGE->navbar->add($entry->subject);
+        $PAGE->navbar->add($strblogentries, $blog_url);
+        $blog_url->param('entryid', $entryid);
+        $blog_url->remove_params('userid');
+        $PAGE->navbar->add($entry->subject, $blog_url);
 
         $PAGE->set_title("$site->shortname: " . fullname($user) . ": $entry->subject");
         $PAGE->set_heading("$site->shortname: " . fullname($user) . ": $entry->subject");
         $headers['heading'] = get_string('blogentrybyuser', 'blog', fullname($user));
 
         // We ignore tag and search params
-        return $headers;
+        if (empty($action)) {
+            return $headers;
+        }
     }
 
     // Case 2: A user's blog entries
     // Breadcrumbs: [site shortname] -> participants -> [user fullname] -> Blog entries
     // Title: [site shortname]: [user fullname]: Blog
     // Heading: [user fullname]'s blog
-    if (!empty($userid) && empty($modid) && empty($courseid)) {
+    if (!empty($userid) && empty($modid) && empty($courseid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$site->id");
         $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
         $PAGE->set_title("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
         $PAGE->set_heading("$site->shortname: " . fullname($user) . ": " . get_string('blog', 'blog'));
         $headers['heading'] = get_string('userblog', 'blog', fullname($user));
@@ -602,14 +463,14 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> [user fullname] -> Blog entries
     // Title: [site shortname]: [course shortname]: [activity name]: [user fullname]: blog entries
     // Heading: Blog entries by [user fullname] about [activity name]
-    if (!empty($userid) && !empty($modid)) {
+    if (!empty($userid) && !empty($modid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $blog_url->param('modid', $modid);
 
         // Course module navigation is handled by build_navigation as the second param
         $headers['cm'] = $cm;
         $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
 
         $PAGE->set_title("$site->shortname: $cm->name: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
         $PAGE->set_heading("$site->shortname: $cm->name: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
@@ -623,13 +484,13 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> participants -> [user fullname] -> Blog entries
     // Title: [site shortname]: [course shortname]: participants: [user fullname]: blog entries
     // Heading: Blog entries by [user fullname] about [course fullname]
-    if (!empty($userid) && !empty($courseid) && empty($modid)) {
+    if (!empty($userid) && !empty($courseid) && empty($modid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $blog_url->param('courseid', $courseid);
 
         $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$course->id");
         $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
 
         $PAGE->set_title("$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
         $PAGE->set_heading("$site->shortname: $course->shortname: " . fullname($user) . ': ' . get_string('blogentries', 'blog'));
@@ -643,13 +504,13 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> Blog entries -> [group name]
     // Title: [site shortname]: [course shortname]: blog entries : [group name]
     // Heading: Blog entries by [group name] about [course fullname]
-    if (!empty($groupid) && empty($modid)) {
+    if (!empty($groupid) && empty($modid) && empty($entryid)) {
         $blog_url->param('courseid', $course->id);
 
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
         $blog_url->remove_params(array('courseid'));
         $blog_url->param('groupid', $groupid);
-        $PAGE->navbar->add($group->name, $blog_url->out());
+        $PAGE->navbar->add($group->name, $blog_url);
 
         $PAGE->set_title("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog') . ": $group->name");
         $PAGE->set_heading("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog') . ": $group->name");
@@ -663,13 +524,13 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> Blog entries -> [group name]
     // Title: [site shortname]: [course shortname]: [activity name] : blog entries : [group name]
     // Heading: Blog entries by [group name] about [activity fullname]
-    if (!empty($groupid) && !empty($modid)) {
+    if (!empty($groupid) && !empty($modid) && empty($entryid)) {
         $headers['cm'] = $cm;
         $blog_url->param('modid', $modid);
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
 
         $blog_url->param('groupid', $groupid);
-        $PAGE->navbar->add($group->name, $blog_url->out());
+        $PAGE->navbar->add($group->name, $blog_url);
 
         $PAGE->set_title("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog') . ": $group->name");
         $PAGE->set_heading("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog') . ": $group->name");
@@ -684,10 +545,10 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> Blog entries
     // Title: [site shortname]: [course shortname]: [activity name] : blog entries
     // Heading: Blog entries about [activity fullname]
-    if (!empty($modid) && empty($userid) && empty($groupid)) {
+    if (!empty($modid) && empty($userid) && empty($groupid) && empty($entryid)) {
         $PAGE->set_cm($cm, $course);
         $blog_url->param('modid', $modid);
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
         $PAGE->set_title("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog'));
         $PAGE->set_heading("$site->shortname: $course->shortname: $cm->name: " . get_string('blogentries', 'blog'));
         $headers['heading'] = get_string('blogentriesabout', 'blog', $cm->name);
@@ -697,9 +558,9 @@ function blog_get_headers() {
     // Breadcrumbs: [site shortname] -> [course shortname] -> Blog entries
     // Title: [site shortname]: [course shortname]: blog entries
     // Heading: Blog entries about [course fullname]
-    if (!empty($courseid) && empty($userid) && empty($groupid) && empty($modid)) {
+    if (!empty($courseid) && empty($userid) && empty($groupid) && empty($modid) && empty($entryid)) {
         $blog_url->param('courseid', $courseid);
-        $PAGE->navbar->add($strblogentries, $blog_url->out());
+        $PAGE->navbar->add($strblogentries, $blog_url);
         $PAGE->set_title("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog'));
         $PAGE->set_heading("$site->shortname: $course->shortname: " . get_string('blogentries', 'blog'));
         $headers['heading'] = get_string('blogentriesabout', 'blog', $course->fullname);
@@ -709,20 +570,21 @@ function blog_get_headers() {
     if (!empty($tagid)) {
         $blog_url->param('tagid', $tagid);
         $tagrec = $DB->get_record('tag', array('id'=>$tagid));
-        $PAGE->navbar->add($tagrec->name, $blog_url->out());
+        $PAGE->navbar->add($tagrec->name, $blog_url);
     } elseif (!empty($tag)) {
         $blog_url->param('tag', $tag);
-        $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blog_url->out());
-    }
-
-    // Append Search info
-    if (!empty($search)) {
-        $blog_url->param('search', $search);
-        $PAGE->navbar->add(get_string('searchterm', 'blog', $search), $blog_url->out());
+        $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blog_url);
     }
 
     // Append edit mode info
     if (!empty($action) && $action == 'add') {
+        if (empty($modid) && empty($courseid)) {
+            if (empty($user)) {
+                $user = $USER;
+            }
+            $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$site->id");
+            $PAGE->navbar->add(fullname($user), "$CFG->wwwroot/user/view.php?id=$user->id");
+        }
         $PAGE->navbar->add(get_string('addnewentry', 'blog'));
     } else if (!empty($action) && $action == 'edit') {
         $PAGE->navbar->add(get_string('editentry', 'blog'));

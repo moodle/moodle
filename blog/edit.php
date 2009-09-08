@@ -30,14 +30,18 @@ include_once('locallib.php');
 include_once($CFG->dirroot.'/tag/lib.php');
 
 $action   = required_param('action', PARAM_ALPHA);
-$id       = optional_param('id', 0, PARAM_INT);
+$id       = optional_param('entryid', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 $modid    = optional_param('modid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tab - does nothing here
 
-$PAGE->set_url('blog/edit.php', compact('id', 'action', 'confirm', 'modid', 'courseid'));
+$PAGE->set_url('blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
 
 require_login($courseid);
+
+if ($action == 'edit') {
+    $id = required_param('entryid', PARAM_INT);
+}
 
 if (empty($CFG->bloglevel)) {
     print_error('blogdisable', 'blog');
@@ -97,7 +101,7 @@ if ($action === 'delete'){
         $existing->delete();
         redirect($returnurl);
     } else {
-        $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'courseid'=>$courseid);
+        $optionsyes = array('entryid'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'courseid'=>$courseid);
         $optionsno = array('userid'=>$existing->userid, 'courseid'=>$courseid);
         $PAGE->set_title("$SITE->shortname: $strblogs");
         $PAGE->set_heading($SITE->fullname);

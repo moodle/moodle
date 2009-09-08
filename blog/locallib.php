@@ -257,13 +257,13 @@ class blog_entry {
         $contentcell->text .= $OUTPUT->container_start('commands');
 
         if (blog_user_can_edit_entry($this)) {
-            $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'id' => $this->id)), $stredit)) . ' | ';
+            $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit)) . ' | ';
             if (!$DB->record_exists_sql('SELECT a.timedue, a.preventlate, a.emailteachers, a.var2, asub.grade
                                           FROM {assignment} a, {assignment_submissions} as asub WHERE
                                           a.id = asub.assignment AND userid = '.$USER->id.' AND a.assignmenttype = \'blog\'
                                           AND asub.data1 = \''.$this->id.'\'')) {
 
-                $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'id' => $this->id)), $strdelete)) . ' | ';
+                $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete)) . ' | ';
             }
         }
 
