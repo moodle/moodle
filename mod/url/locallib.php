@@ -84,7 +84,7 @@ function url_print_header($url, $cm, $course) {
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($url);
     $PAGE->set_button(update_module_button($cm->id, '', get_string('modulename', 'url')));
-    echo $OUTPUT->header(build_navigation('', $cm), navmenu($course, $cm));
+    echo $OUTPUT->header();
 }
 
 /**

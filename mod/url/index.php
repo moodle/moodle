@@ -44,8 +44,8 @@ $strlastmodified = get_string('lastmodified');
 $PAGE->set_url('mod/url/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strurls);
 $PAGE->set_heading($course->fullname);
-$navlinks = array(array('name' => $strurls, 'link' => '', 'type' => 'activityinstance'));
-echo $OUTPUT->header(build_navigation($navlinks), navmenu($course));
+$PAGE->navbar->add($strurls);
+echo $OUTPUT->header();
 
 if (!$urls = get_all_instances_in_course('url', $course)) {
     notice(get_string('thereareno', 'moodle', $strurls), "$CFG->wwwroot/course/view.php?id=$course->id");
