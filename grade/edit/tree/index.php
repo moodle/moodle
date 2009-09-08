@@ -131,7 +131,7 @@ $strgraderreport       = get_string('graderreport', 'grades');
 $strcategoriesedit     = get_string('categoriesedit', 'grades');
 $strcategoriesanditems = get_string('categoriesanditems', 'grades');
 
-$navigation = grade_build_nav(__FILE__, $strcategoriesanditems, array('courseid' => $courseid));
+grade_build_nav(__FILE__, $strcategoriesanditems, array('courseid' => $courseid));
 $moving = false;
 $movingeid = false;
 
@@ -159,7 +159,9 @@ switch ($action) {
                 redirect($returnurl);
 
             } else {
-                print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, null, navmenu($course));
+                $PAGE->set_title($strgrades . ': ' . $strgraderreport);
+                $PAGE->set_heading(': ' . $strcategoriesedit);
+                echo $OUTPUT->header();
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);

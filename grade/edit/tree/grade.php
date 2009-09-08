@@ -248,13 +248,13 @@ $strgraderreport = get_string('graderreport', 'grades');
 $strgradeedit    = get_string('editgrade', 'grades');
 $struser         = get_string('user');
 
-$navigation = grade_build_nav(__FILE__, $strgradeedit, array('courseid' => $courseid));
+grade_build_nav(__FILE__, $strgradeedit, array('courseid' => $courseid));
 
 /*********** BEGIN OUTPUT *************/
+$PAGE->set_title($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit);
+$PAGE->set_heading(': ' . $strgradeedit);
 
-print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit,
-    ': ' . $strgradeedit , $navigation, '', '', true, '', navmenu($course));
-
+echo $OUTPUT->header();
 echo $OUTPUT->heading($strgradeedit);
 
 echo $OUTPUT->box_start();

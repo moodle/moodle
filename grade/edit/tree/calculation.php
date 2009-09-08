@@ -96,9 +96,10 @@ $strgrades          = get_string('grades');
 $strgraderreport    = get_string('graderreport', 'grades');
 $strcalculationedit = get_string('editcalculation', 'grades');
 
-$navigation = grade_build_nav(__FILE__, $strcalculationedit, array('courseid' => $courseid));
-
-print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcalculationedit, $navigation, '', '', true, '', navmenu($course));
+grade_build_nav(__FILE__, $strcalculationedit, array('courseid' => $courseid));
+$PAGE->set_title($strgrades . ': ' . $strgraderreport);
+$PAGE->set_heading(': ' . $strcalculationedit);
+echo $OUTPUT->header();
 
 $mform->display();
 // Now show the gradetree with the idnumbers add/edit form
