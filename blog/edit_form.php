@@ -26,6 +26,7 @@ class blog_edit_form extends moodleform {
         $mform    =& $this->_form;
 
         $existing       = $this->_customdata['existing'];
+        $entryid        = $this->_customdata['id'];
         $summaryoptions = $this->_customdata['textfieldoptions'];
 
         if (!empty($this->_customdata['assignmentdata'])) {
@@ -145,9 +146,9 @@ class blog_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
+        $mform->addElement('hidden', 'entryid');
+        $mform->setType('entryid', PARAM_INT);
+        $mform->setDefault('entryid', $entryid);
 
         $mform->addElement('hidden', 'modid');
         $mform->setType('modid', PARAM_INT);
@@ -185,9 +186,9 @@ class blog_edit_form extends moodleform {
         if ($blogassignment = $DB->get_record_sql('SELECT a.timedue, a.preventlate, a.emailteachers, a.var2, asub.grade
                                           FROM {assignment} a, {assignment_submissions} as asub WHERE
                                           a.id = asub.assignment AND userid = '.$USER->id.' AND a.assignmenttype = \'blog\'
-                                          AND asub.data1 = \''.$data['id'].'\'')) {
+                                          AND asub.data1 = \''.$data['entryid'].'\'')) {
 
-            $original = $DB->get_record('post', array('id' => $data['id']));
+            $original = $DB->get_record('post', array('id' => $data['entryid']));
             //don't allow updates of the summary, subject, or attachment
             $changed = ($original->summary != $data['summary'] ||
                         $original->subject != $data['subject'] ||

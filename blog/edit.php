@@ -24,7 +24,7 @@
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../config.php');
+require_once(dirname(dirname(__FILE__)).'/config.php');
 include_once('lib.php');
 include_once('locallib.php');
 include_once($CFG->dirroot.'/tag/lib.php');
@@ -141,7 +141,7 @@ if (!empty($existing)) {
 }
 
 $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
-$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'assignmentdata', 'textfieldoptions'));
+$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'assignmentdata', 'textfieldoptions', 'id'));
 
 $existing = file_prepare_standard_editor($existing, 'summary', $textfieldoptions, $PAGE->get_context());
 
@@ -219,7 +219,6 @@ switch ($action) {
         print_error('unknowaction');
 }
 
-// Add filter params for return url
 $entry->modid = $modid;
 $entry->courseid = $courseid;
 
