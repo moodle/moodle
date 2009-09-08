@@ -64,8 +64,9 @@
             $strdeletecheckfull = get_string('deletecheckfull', '', "$fullmodulename '$cm->name'");
 
             $PAGE->set_pagetype('mod-' . $cm->modname . '-delete');
-
-            print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck, 'link'=>'', 'type'=>'misc'))));
+            $PAGE->set_title($strdeletecheck);
+            $PAGE->navbar->add($strdeletecheck);
+            echo $OUTPUT->header();
 
             // print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
             echo $OUTPUT->box_start('noticebox');

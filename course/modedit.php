@@ -582,16 +582,15 @@
         $streditinga = get_string('editinga', 'moodle', $fullmodulename);
         $strmodulenameplural = get_string('modulenameplural', $module->name);
 
-        $navlinks = array();
-        $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
+        $PAGE->navbar->add($strmodulenameplural, new moodle_url($CFG->wwwroot.'/mod/'.$module->name.'/index.php', array('id'=>$course->id)));
         if ($navlinksinstancename) {
-            $navlinks[] = $navlinksinstancename;
+            $PAGE->navbar->add($navlinksinstancename);
         }
-        $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');
-
-        $navigation = build_navigation($navlinks);
-
-        print_header_simple($streditinga, '', $navigation, $mform->focus(), "", false);
+        $PAGE->navbar->add($streditinga);
+        $PAGE->set_title($streditinga);
+        $PAGE->set_focuscontrol($mform->focus());
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
 
         if (!empty($cm->id)) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);

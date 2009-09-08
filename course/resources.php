@@ -61,8 +61,8 @@ $strlastmodified = get_string('lastmodified');
 $PAGE->set_url('course/resources.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strresources);
 $PAGE->set_heading($course->fullname);
-$navlinks = array(array('name' => $strresources, 'link' => '', 'type' => 'activityinstance'));
-echo $OUTPUT->header(build_navigation($navlinks), navmenu($course));
+$PAGE->navbar->add($strresources);
+echo $OUTPUT->header();
 
 $modinfo = get_fast_modinfo($course);
 $cms = array();

@@ -69,8 +69,9 @@
     $strloginas    = get_string('loginas');
     $strloggedinas = get_string('loggedinas', '', $newfullname);
 
-    print_header_simple($strloggedinas, '', build_navigation(array(array('name'=>$strloggedinas, 'link'=>'','type'=>'misc'))),
-            '', '', true, '&nbsp;', navmenu($course));
+    $PAGE->set_title($strloggedinas);
+    $PAGE->navbar->add($strloggedinas);
+    echo $OUTPUT->header();
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 

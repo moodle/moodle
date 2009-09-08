@@ -50,13 +50,13 @@
 
 /// Check if the course is a meta course  (bug 5734)
     if ($course->metacourse) {
-        print_header_simple();
+        echo $OUTPUT->header();
         notice(get_string('coursenotaccessible'), "$CFG->wwwroot/index.php");
     }
 
 /// Users can't enroll to site course
     if ($course->id == SITEID) {
-        print_header_simple();
+        echo $OUTPUT->header();
         notice(get_string('enrollfirst'), "$CFG->wwwroot/index.php");
     }
 
@@ -76,7 +76,7 @@
 
 /// Check if the course is enrollable
     if (!method_exists($enrol, 'print_entry')) {
-        print_header_simple();
+        echo $OUTPUT->header();
         notice(get_string('enrolmentnointernal'), "$CFG->wwwroot/index.php");
     }
 

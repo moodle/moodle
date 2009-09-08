@@ -50,8 +50,10 @@
         $strsummaryof = get_string('summaryof', '', " $sectionname $section->section");
     }
 
-    print_header_simple($stredit, '', build_navigation(array(array('name' => $stredit, 'link' => null, 'type' => 'misc'))), 'theform.summary' );
-
+    $PAGE->set_title($stredit);
+    $PAGE->navbar->add($stredit);
+    $PAGE->set_focuscontrol('theform.summary');
+    echo $OUTPUT->header();
     print_heading_with_help($strsummaryof, 'summaries');
     $mform->display();
     echo $OUTPUT->footer();
