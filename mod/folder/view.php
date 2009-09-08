@@ -54,7 +54,7 @@ $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
 $PAGE->set_button(update_module_button($cm->id, '', get_string('modulename', 'folder')));
-echo $OUTPUT->header(build_navigation('', $cm), navmenu($course, $cm));
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading(format_string($folder->name), 2);
 

@@ -44,8 +44,8 @@ $strlastmodified = get_string('lastmodified');
 $PAGE->set_url('mod/folder/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strfolders);
 $PAGE->set_heading($course->fullname);
-$navlinks = array(array('name' => $strfolders, 'link' => '', 'type' => 'activityinstance'));
-echo $OUTPUT->header(build_navigation($navlinks), navmenu($course));
+$PAGE->navbar->add($strfolders);
+echo $OUTPUT->header();
 
 if (!$folders = get_all_instances_in_course('folder', $course)) {
     notice(get_string('thereareno', 'moodle', $strfolders), "$CFG->wwwroot/course/view.php?id=$course->id");
