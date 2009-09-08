@@ -1774,8 +1774,10 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         $output = $this->output_start_tag('span', array('class' => "checkbox $name")) . "\n";
 
-        if ($option->selected == 'selected') {
+        if ($option->selected) {
             $option->selected = 'checked';
+        } else {
+            $option->selected = '';
         }
 
         $output .= $this->output_empty_tag('input', array(
