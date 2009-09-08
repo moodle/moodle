@@ -29,13 +29,10 @@ if ($perpage != DEFAULT_PAGE_SIZE) {
 $PAGE->set_url('tag/manage.php', $params);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-
-$navlinks = array();
-$navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
-$navlinks[] = array('name' => get_string('managetags', 'tag'), 'link' => '', 'type' => '');
-
-$navigation = build_navigation($navlinks);
-print_header_simple(get_string('managetags', 'tag'), '', $navigation);
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add(get_string('managetags', 'tag'));
+$PAGE->set_title(get_string('managetags', 'tag'));
+echo $OUTPUT->header();
 
 $err_notice = '';
 $notice = '';

@@ -56,10 +56,10 @@ if ($data = data_submitted()) {
 $title = get_string('edittitle', $tagslang);
 $coursefullname = format_string($course->fullname);
 $courseshortname = format_string($course->shortname);
-//$navigation[] = array('name' => $coursefullname, 'link' => $CFG->wwwroot.'/course/view.php?id='.$courseid, 'type' => 'misc');
-$navigation[] = array('name' => $title, 'link' => null, 'type' => 'misc');
-$nav = build_navigation($navigation);
-print_header_simple($title, '', $nav, '', '', false);
+$PAGE->navbar->add($title);
+$PAGE->set_title($title);
+$PAGE->set_cacheable(false);
+echo $OUTPUT->header();
 
     // Print personal tags for all courses
     $title = get_string('edittitle', $tagslang);

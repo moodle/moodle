@@ -27,14 +27,12 @@ if ($perpage) {
 $PAGE->set_url('tag/search.php', $params);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
-$navlinks = array();
-$navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
-$navigation = build_navigation($navlinks);
-
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $manage_link = '&nbsp;';
 
-print_header_simple(get_string('tags', 'tag'), '', $navigation);
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->set_title(get_string('tags', 'tag'));
+echo $OUTPUT->header();
 
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {
     echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">' . get_string('managetags', 'tag') . '</a></div>' ;

@@ -51,13 +51,11 @@ $welcome = get_string('morewelcome', $tagslang);
 
 // The title and breadcrumb
 if ($courseid) {
-    $navigation[] = array('name' => format_string($course->shortname), 'link' => $CFG->wwwroot.'/course/view.php?id='.$courseid, 'type' => 'misc');
-    $navigation[] = array('name' => $title, 'link' => null, 'type' => 'misc');
-} else {
-    $navigation[] = array('name' => $title, 'link' => null, 'type' => 'misc');
+    $PAGE->navbar->add(format_string($course->shortname), new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$courseid)));
 }
-$nav = build_navigation($navigation);
-print_header_simple($title, '', $nav, '', '', false);
+$PAGE->navbar->add($title);
+$PAGE->set_title($title);
+echo $OUTPUT->header();
 echo $OUTPUT->heading($title, 'centre');
 
 // Prepare data for tags

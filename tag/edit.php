@@ -108,14 +108,10 @@ if ($tagnew = $tagform->get_data()) {
     }
 }
 
-
-$navlinks = array();
-$navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
-$navlinks[] = array('name' => $tagname, 'link' => '', 'type' => '');
-
-$navigation = build_navigation($navlinks);
-print_header_simple(get_string('tag', 'tag') . ' - '. $tagname, '', $navigation);
-
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add($tagname);
+$PAGE->set_title(get_string('tag', 'tag') . ' - '. $tagname);
+echo $OUTPUT->header();
 echo $OUTPUT->heading($tagname, 2);
 
 if (!empty($errorstring)) {

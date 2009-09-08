@@ -41,19 +41,18 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
 }
 
 $tagname = tag_display_name($tag);
-
-$navlinks = array();
-$navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
-$navlinks[] = array('name' => $tagname, 'link' => '', 'type' => '');
-
-$navigation = build_navigation($navlinks);
 $title = get_string('tag', 'tag') .' - '. $tagname;
 
 $button = '';
 if ($PAGE->user_allowed_editing() ) {
     $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tagid)));
 }
-print_header_simple($title, '', $navigation, '', '', '', $button);
+
+$PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url($CFG->wwwroot.'/tag/search.php'));
+$PAGE->navbar->add($tagname);
+$PAGE->set_title($title);
+$PAGE->set_button($button);
+echo $OUTPUT->header();
 
 // Manage all tags links
 if (has_capability('moodle/tag:manage', $systemcontext)) {
@@ -100,7 +99,7 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
 if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see blogs obviously
 
     $count = 10;
-    if ($blogs = blog_fetch_entries(array('tag'=>$tag->id)), $count) {
+    if ($blogs = blog_fetch_entries(array('tag'=>$tag->id), $count)) {
 
         echo $OUTPUT->box_start('generalbox', 'tag-blogs');
         $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
