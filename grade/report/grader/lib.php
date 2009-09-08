@@ -967,7 +967,7 @@ class grade_report_grader extends grade_report {
             $fixedcolumntable = new html_table();
             $fixedcolumntable->id = 'fixed_column';
             $fixedcolumntable->add_class('fixed_grades_column');
-            $fixedcolumntable->bodyclasses = array('leftbody');
+            $fixedcolumntable->bodyclasses = 'leftbody';
 
             $colspan = null;
             if ($showuseridnumber) {

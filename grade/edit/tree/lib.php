@@ -38,9 +38,9 @@ class grade_edit_tree {
     public $uses_extra_credit = false;
 
     public $uses_weight = false;
-    
+
     public $table;
-    
+
     public $categories = array();
     /**
      * Constructor
@@ -75,7 +75,7 @@ class grade_edit_tree {
         $this->columns[] = grade_edit_tree_column::factory('select');
 
         $mode = ($USER->gradeediting[$COURSE->id]) ? 'advanced' : 'simple';
-        
+
         $widthstyle = '';
         if ($mode == 'simple') {
             $widthstyle = ' style="width:auto;" ';
@@ -84,7 +84,7 @@ class grade_edit_tree {
         $this->table = new html_table();
         $this->table->id = "grade_edit_tree_table";
         $this->table->cellpadding = 5;
-        $this->table->add_class('generaltable');
+        $this->table->add_classes(array('generaltable', $mode));
         $this->table->style = $widthstyle;
 
         foreach ($this->columns as $column) {
@@ -109,7 +109,7 @@ class grade_edit_tree {
      */
     public function build_html_tree($element, $totals, $parents, $level, &$row_count) {
         global $CFG, $COURSE, $USER, $OUTPUT;
-        
+
         $object = $element['object'];
         $eid    = $element['eid'];
         $object->name = $this->gtree->get_element_header($element, true, true, false);
@@ -227,7 +227,7 @@ class grade_edit_tree {
                     $moveicon->image->src = $OUTPUT->old_icon_url('movehere');
                     $moveicon->image->alt = $strmovehere;
                     $moveicon->image->title = $strmovehere;
-                    
+
                     $cell = new html_table_cell();
                     $cell->colspan = 12;
                     $cell->text = $OUTPUT->action_icon($moveicon);
@@ -291,7 +291,7 @@ class grade_edit_tree {
             if ($level == 1) {
                 $courseclass = 'coursecategory';
             }
-            
+
             $row = new html_table_row();
             $row->add_classes(array($courseclass, 'category', $dimmed));
             foreach ($rowclasses as $class) {
@@ -311,7 +311,7 @@ class grade_edit_tree {
                     $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id, 'name' => $object->name, 'level' => $level, 'actions' => $actions, 'eid' => $eid));
                 }
             }
-            
+
             $returnrows[] = $row;
 
             $returnrows = array_merge($returnrows, $html_children);
@@ -393,7 +393,8 @@ class grade_edit_tree {
             $weightfield->name = "extracredit_$item->id";
             $weightfield->value = 0;
 
-            $extracredit = html_select_option::make_checkbox(1, ($item->aggregationcoef > 0), '&nbsp;');
+            $extracredit = html_select_option::make_checkbox(1, ($item->aggregationcoef > 0), get_string($aggcoef, 'grades'));
+            $extracredit->label->add_class('accesshide');
             $extracredit->id = "extracredit_$item->id";
             $extracredit->name = "extracredit_$item->id";
             return $OUTPUT->field($weightfield) . $OUTPUT->checkbox($extracredit);
@@ -844,7 +845,7 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
         global $OUTPUT;
         $headercell = clone($this->headercell);
         $headercell->style .= 'width: 40px;';
-        $headercell->text = get_string('aggregateonlygraded', 'grades') 
+        $headercell->text = get_string('aggregateonlygraded', 'grades')
                 . $OUTPUT->help_icon(moodle_help_icon::make('aggregateonlygraded', 'aggregateonlygraded', 'grade'));
         return $headercell;
     }
@@ -857,7 +858,8 @@ class grade_edit_tree_column_aggregateonlygraded extends grade_edit_tree_column_
         $hidden->name = "aggregateonlygraded_$category->id";
         $hidden->value = 0;
 
-        $aggregateonlygraded = html_select_option::make_checkbox(1, ($category->aggregateonlygraded == 1), '&nbsp;');
+        $aggregateonlygraded = html_select_option::make_checkbox(1, ($category->aggregateonlygraded == 1), get_string('aggregateonlygraded', 'grades'));
+        $aggregateonlygraded->label->add_class('accesshide');
         $aggregateonlygraded->id = "aggregateonlygraded_$category->id";
         $aggregateonlygraded->name = "aggregateonlygraded_$category->id";
         $aggregateonlygraded = $OUTPUT->checkbox($aggregateonlygraded);
@@ -901,7 +903,8 @@ class grade_edit_tree_column_aggregatesubcats extends grade_edit_tree_column_cat
         $hidden->name = "aggregatesubcats_$category->id";
         $hidden->value = 0;
 
-        $aggregatesubcats = html_select_option::make_checkbox(1, ($category->aggregatesubcats == 1), '&nbsp;');
+        $aggregatesubcats = html_select_option::make_checkbox(1, ($category->aggregatesubcats == 1), get_string('aggregatesubcats', 'grades'));
+        $aggregatesubcats->label->add_class('accesshide');
         $aggregatesubcats->id = "aggregatesubcats_$category->id";
         $aggregatesubcats->name = "aggregatesubcats_$category->id";
         $aggregatesubcats = $OUTPUT->checkbox($aggregatesubcats);
@@ -946,7 +949,8 @@ class grade_edit_tree_column_aggregateoutcomes extends grade_edit_tree_column_ca
         $hidden->name = "aggregateoutcomes_$category->id";
         $hidden->value = 0;
 
-        $aggregateoutcomes = html_select_option::make_checkbox(1, ($category->aggregateoutcomes == 1), '&nbsp;');
+        $aggregateoutcomes = html_select_option::make_checkbox(1, ($category->aggregateoutcomes == 1), get_string('aggregateoutcomes', 'grades'));
+        $aggregateoutcomes->label->add_class('accesshide');
         $aggregateoutcomes->id = "aggregateoutcomes_$category->id";
         $aggregateoutcomes->name = "aggregateoutcomes_$category->id";
         $aggregateoutcomes = $OUTPUT->checkbox($aggregateoutcomes);
@@ -1141,7 +1145,7 @@ class grade_edit_tree_column_plusfactor extends grade_edit_tree_column {
 class grade_edit_tree_column_actions extends grade_edit_tree_column {
 
     public function __construct($params) {
-        parent::__construct(); 
+        parent::__construct();
     }
 
     public function get_header_cell() {
@@ -1215,7 +1219,8 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         $itemselect = '';
 
         if ($params['itemtype'] != 'course' && $params['itemtype'] != 'category') {
-            $itemselect = html_select_option::make_checkbox('0', false, '&nbsp;');
+            $itemselect = html_select_option::make_checkbox('0', false, get_string('select'));
+            $itemselect->label->add_class('accesshide');
             $itemselect->add_action('change', 'toggleCategorySelector');
             $itemselect->add_class('itemselect');
             $itemselect = $OUTPUT->checkbox($itemselect, 'select_'.$params['eid']);
