@@ -39,10 +39,10 @@
     }
 
     if (!$download) {
-
-        $navigation = build_navigation($strresponses, $cm);
-        print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
-                  update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
+        $PAGE->navbar->add($strresponses);
+        $PAGE->set_title(format_string($choice->name).": $strresponses");
+        $PAGE->set_button(update_module_button($cm->id, $course->id, $strchoice));
+        echo $OUTPUT->header();
         /// Check to see if groups are being used in this choice
         $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode) {

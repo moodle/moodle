@@ -15,12 +15,9 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
-    $navlinks = array();
-    $navlinks[] = array('name' => $strchoices, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple("$strchoices", "", $navigation, "", "", true, "", navmenu($course));
-
+    $PAGE->set_title($strchoices);
+    $PAGE->navbar->add($strchoices);
+    echo $OUTPUT->header();
 
     if (! $choices = get_all_instances_in_course("choice", $course)) {
         notice(get_string('thereareno', 'moodle', $strchoices), "../../course/view.php?id=$course->id");

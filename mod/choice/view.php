@@ -36,9 +36,9 @@
         }
     }
 
-    $navigation = build_navigation('', $cm);
-    print_header_simple(format_string($choice->name), "", $navigation, "", "", true,
-                  update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
+    $PAGE->set_title(format_string($choice->name));
+    $PAGE->set_button(update_module_button($cm->id, $course->id, $strchoice));
+    echo $OUTPUT->header();
 
 /// Submit any new data if there is any
     if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
