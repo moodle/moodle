@@ -40,7 +40,10 @@ class block_global_navigation_tree extends block_tree {
     public static $navcount;
     /** @var string */
     public $blockname = null;
+    /** @var bool */
     protected $contentgenerated = false;
+    /** @var bool|null */
+    protected $docked = null;
 
     /**
      * Set the initial properties for the block
@@ -91,6 +94,24 @@ class block_global_navigation_tree extends block_tree {
 
         block_global_navigation_tree::$navcount++;
 
+        // Check if this block has been docked
+        if ($this->docked === null) {
+            $this->docked = get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0);
+        }
+
+        // Check if there is a param to change the docked state
+        if ($this->docked && optional_param('undock', null, PARAM_INT)==$this->instance->id) {
+            unset_user_preference('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount);
+            $url = $this->page->url;
+            $url->remove_params(array('undock'));
+            redirect($url);
+        } else if (!$this->docked && optional_param('dock', null, PARAM_INT)==$this->instance->id) {
+            set_user_preferences(array('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount=>1));
+            $url = $this->page->url;
+            $url->remove_params(array('dock'));
+            redirect($url);
+        }
+
         // Set the expansionlimit if one has been set in block config
         if (!empty($this->config->expansionlimit) && $this->config->expansionlimit!='0') {
             $this->page->navigation->expansionlimit = $this->config->expansionlimit;
@@ -131,21 +152,34 @@ class block_global_navigation_tree extends block_tree {
         $this->page->requires->js_function_call('setup_new_navtree', array($this->id))->on_dom_ready();
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
-
-        $url = $this->page->url;
-        $url->param('regenerate','navigation');
-        $reloadstr = get_string('reload');
-        $this->content->footer .= '<a href="'.$url->out().'" class="customcommand"><img src="'.$OUTPUT->old_icon_url('t/reload').'" alt="'.$reloadstr.'" title="'.$reloadstr.'" /></a>';
+        
+        $reloadicon = new moodle_action_icon();
+        $reloadicon->link->url = $this->page->url;
+        $reloadicon->link->url->param('regenerate','navigation');
+        $reloadicon->link->add_class('customcommand');
+        $reloadicon->image->src = $OUTPUT->old_icon_url('t/reload');
+        $reloadicon->alt = get_string('reload');
+        $reloadicon->title = get_string('reload');
+        $this->content->footer .= $OUTPUT->action_icon($reloadicon);
+        
         if (empty($this->config->enablesidebarpopout) || $this->config->enablesidebarpopout == 'yes') {
             user_preference_allow_ajax_update('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, PARAM_INT);
-            if (get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0)) {
-                $icon = $OUTPUT->old_icon_url('t/movetoblock');
-                $string = $toggleblockdisplay;
+            
+            $moveicon = new moodle_action_icon();
+            $moveicon->link->add_classes('moveto customcommand requiresjs');
+            $moveicon->link->url = $this->page->url;
+            if ($this->docked) {
+                $moveicon->image->src = $OUTPUT->old_icon_url('t/movetoblock');
+                $moveicon->image->alt = $toggleblockdisplay;
+                $moveicon->image->title = $toggleblockdisplay;
+                $moveicon->link->url->param('undock', $this->instance->id);
             } else {
-                $icon = $OUTPUT->old_icon_url('t/movetosidetab');
-                $string = $togglesidetabdisplay;
+                $moveicon->image->src = $OUTPUT->old_icon_url('t/movetosidetab');
+                $moveicon->image->alt = $togglesidetabdisplay;
+                $moveicon->image->title = $togglesidetabdisplay;
+                $moveicon->link->url->param('dock', $this->instance->id);
             }
-            $this->content->footer .= '<a class="moveto customcommand requiresjs"><img src="'.$icon.'" alt="'.$string.'" title="'.$string.'"></a>';
+            $this->content->footer .= $OUTPUT->action_icon($moveicon);
         }
 
         // Set content generated to true so that we know it has been done
@@ -166,10 +200,15 @@ class block_global_navigation_tree extends block_tree {
      */
     public function html_attributes() {
         $attributes = parent::html_attributes();
+
+        if ($this->docked===null) {
+            $this->docked = get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0);
+        }
+
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
             $attributes['class'] .= ' sideblock_js_expansion';
         }
-        if (get_user_preferences('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, 0)) {
+        if ($this->docked) {
             $attributes['class'] .= ' sideblock_js_sidebarpopout';
         }
         return $attributes;

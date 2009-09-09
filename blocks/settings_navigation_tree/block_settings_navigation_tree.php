@@ -39,8 +39,11 @@ class block_settings_navigation_tree extends block_tree {
     /** @var string */
     public static $navcount;
     public $blockname = null;
-    protected $contentgenerated = false;
     public $id = null;
+    /** @var bool */
+    protected $contentgenerated = false;
+    /** @var bool|null */
+    protected $docked = null;
 
     /**
      * Set the initial properties for the block
@@ -87,6 +90,24 @@ class block_settings_navigation_tree extends block_tree {
         $this->page->requires->js('lib/javascript-navigation.js');
         block_settings_navigation_tree::$navcount++;
 
+        // Check if this block has been docked
+        if ($this->docked === null) {
+            $this->docked = get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+        }
+
+        // Check if there is a param to change the docked state
+        if ($this->docked && optional_param('undock', null, PARAM_INT)==$this->instance->id) {
+            unset_user_preference('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+            $url = $this->page->url;
+            $url->remove_params(array('undock'));
+            redirect($url);
+        } else if (!$this->docked && optional_param('dock', null, PARAM_INT)==$this->instance->id) {
+            set_user_preferences(array('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount=>1));
+            $url = $this->page->url;
+            $url->remove_params(array('dock'));
+            redirect($url);
+        }
+
         $togglesidetabdisplay = get_string('togglesidetabdisplay', $this->blockname);
         $toggleblockdisplay = get_string('toggleblockdisplay', $this->blockname);
         $args = array('instance'=>$this->instance->id);
@@ -130,20 +151,21 @@ class block_settings_navigation_tree extends block_tree {
             $this->content->footer .= $OUTPUT->action_icon($reloadicon);
 
             if (!empty($this->config->enablesidebarpopout) && $this->config->enablesidebarpopout == 'yes') {
+                user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
+                
                 $moveicon = new moodle_action_icon();
                 $moveicon->link->add_classes('moveto customcommand requiresjs');
-                $moveicon->link->url = '';
-
-                user_preference_allow_ajax_update('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, PARAM_INT);
-                if (get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0)) {
+                $moveicon->link->url = $this->page->url;
+                if ($this->docked) {
                     $moveicon->image->src = $OUTPUT->old_icon_url('t/movetoblock');
-                    $string = $toggleblockdisplay;
                     $moveicon->image->alt = $toggleblockdisplay;
                     $moveicon->image->title = $toggleblockdisplay;
+                    $moveicon->link->url->param('undock', $this->instance->id);
                 } else {
                     $moveicon->image->src = $OUTPUT->old_icon_url('t/movetosidetab');
                     $moveicon->image->alt = $togglesidetabdisplay;
                     $moveicon->image->title = $togglesidetabdisplay;
+                    $moveicon->link->url->param('dock', $this->instance->id);
                 }
                 $this->content->footer .= $OUTPUT->action_icon($moveicon);
             }
@@ -155,10 +177,16 @@ class block_settings_navigation_tree extends block_tree {
 
     function html_attributes() {
         $attributes = parent::html_attributes();
+
+        // Check if this block has been docked
+        if ($this->docked === null) {
+            $this->docked = get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0);
+        }
+
         if (!empty($this->config->enablehoverexpansion) && $this->config->enablehoverexpansion == 'yes') {
             $attributes['class'] .= ' sideblock_js_expansion';
         }
-        if (get_user_preferences('nav_in_tab_panel_settingsnav'.block_settings_navigation_tree::$navcount, 0)) {
+        if ($this->docked) {
             $attributes['class'] .= ' sideblock_js_sidebarpopout';
         }
         return $attributes;
