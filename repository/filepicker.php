@@ -228,7 +228,9 @@ case 'sign':
 case 'download':
     $filepath = $repo->get_file($fileurl, $filename, $itemid);
     if (!empty($filepath)) {
-        $info = repository::move_to_filepool($filepath, $filename, $itemid, $draftpath);
+        if (!is_array($filepath)) {
+            $info = repository::move_to_filepool($filepath, $filename, $itemid, $draftpath);
+        }
         redirect($url, get_string('downloadsucc','repository'));
     } else {
         print_error('cannotdownload', 'repository');
@@ -433,7 +435,7 @@ default:
     $files = $fs->get_directory_files($user_context->id, 'user_draft', $itemid, $draftpath, false);
 
     echo $OUTPUT->header();
-    if (!empty($files) or $draftpath != '/') {
+    if ((!empty($files) or $draftpath != '/') and $env == 'filemanager') {
         echo '<div class="fm-breadcrumb">';
         $url->param('action', 'browse');
         $url->param('draftpath', '/');
@@ -457,11 +459,16 @@ default:
     $url->param('draftpath', $draftpath);
     $url->param('action', 'plugins');
     echo '<div class="filemanager-toolbar">';
-    echo ' <a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a>';
-    $url->param('action', 'mkdirform');
-    echo ' <a href="'.$url->out().'">'.get_string('makeafolder', 'moodle').'</a>';
-    $url->param('action', 'downloaddir');
-    echo ' <a href="'.$url->out().'" target="_blank">'.get_string('downloadfolder', 'repository').'</a>';
+    if ($env == 'filepicker' and sizeof($files) > 0) {
+    } else {
+        echo ' <a href="'.$url->out().'">'.get_string('addfile', 'repository').'</a>';
+    }
+    if ($env == 'filemanager') {
+        $url->param('action', 'mkdirform');
+        echo ' <a href="'.$url->out().'">'.get_string('makeafolder', 'moodle').'</a>';
+        $url->param('action', 'downloaddir');
+        echo ' <a href="'.$url->out().'" target="_blank">'.get_string('downloadfolder', 'repository').'</a>';
+    }
     echo '</div>';
 
     if (!empty($files)) {

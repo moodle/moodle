@@ -850,9 +850,10 @@ repository_client.view_as_icons = function(client_id, data) {
             });
             el_title.on('contentReady', function() {
                 this.on('click', function(){
-                    folder.fireEvent('click');
+                    this.folder.fireEvent('click');
                 });
             });    
+            el_title.folder = folder;
         } else {
             var el_title = new YAHOO.util.Element(title.id);
             var file = new YAHOO.util.Element(link.id);

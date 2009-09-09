@@ -101,14 +101,18 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $str .= $repojs;
 
         $str .= <<<EOD
-<a href="#nonjsfp" onclick="return launch_filepicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
-<span id="file_info_{$client_id}" class="notifysuccess">$currentfile</span>
-
+<div id="filepicker-wrapper-{$client_id}" style="display:none">
+    <div class="filemanager-toolbar">
+        <a href="###" onclick="return launch_filepicker('$id', '$client_id', '$draftitemid')">$straddfile</a>
+    </div>
+    <div id="file_info_{$client_id}" class="mdl-left">$currentfile</div>
+</div>
 <noscript>
-<a name="nonjsfp"></a>
-<object type="text/html" data="{$CFG->httpswwwroot}/repository/filepicker.php?action=embedded&itemid={$draftitemid}&ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
+<object type="text/html" id="nonjs-filepicker-{$client_id}" data="{$CFG->httpswwwroot}/repository/filepicker.php?env=filepicker&amp;action=embedded&amp;itemid={$draftitemid}&amp;ctx_id=$context->id" height="300" width="800" style="border:1px solid #000">Error</object>
 </noscript>
 EOD;
+        $str .= $PAGE->requires->js_function_call('destroy_item', array("nonjs-filepicker-{$client_id}"))->asap();
+        $str .= $PAGE->requires->js_function_call('show_item', array("filepicker-wrapper-{$client_id}"))->asap();
         return $str;
     }
 

@@ -72,7 +72,7 @@ class repository_local extends repository {
         try {
             $browser = get_file_browser();
 
-            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, '/', $filename)) {
+            if ($fileinfo = $browser->get_file_info($context, $filearea, $itemid, $filepath, $filename)) {
                 $level = $fileinfo->get_parent();
                 while ($level) {
                     $params = base64_encode(serialize($level->get_params()));
