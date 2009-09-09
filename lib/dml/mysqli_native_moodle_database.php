@@ -1028,15 +1028,30 @@ class mysqli_native_moodle_database extends moodle_database {
      * this is _very_ useful for massive updates
      */
     public function begin_sql() {
+        // Only will accept transactions if using InnoDB storage engine (more engines can be added easily BDB, Falcon...)
+        $sql = "SELECT @@storage_engine";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            if (!in_array($rec['@@storage_engine'], array('InnoDB'))) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        $result->close();
+
         if (!parent::begin_sql()) {
             return false;
         }
+
         $sql = "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
 
-        $sql = "BEGIN";
+        $sql = "START TRANSACTION";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
