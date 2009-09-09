@@ -16,10 +16,12 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=webservices";
 
-if (!empty($hide)) {
-    if (!confirm_sesskey()) {
+if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
+
+if (!empty($hide)) {
+    
     set_config("enable", !get_config($hide, "enable"), $hide);   
     $return = true;
 } else if (!empty($username)) {

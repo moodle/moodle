@@ -125,6 +125,8 @@ final class webservice_lib {
         $externalfiles = array();
         webservice_lib::setListApiFiles($externalfiles, $CFG->dirroot);
 
+        $wsnotification = array();
+
         //retrieve all saved services
         $services = $DB->get_records('external_services', array('custom' => 0)); //we only retrieve not custom service
         $dbservices = array();
@@ -136,7 +138,7 @@ final class webservice_lib {
         //retrieve all saved servicefunction association including their function name,
         //service name, function id and service id
 
-        $servicesfunctions = $DB->get_records_sql("SELECT fs.id as id, s.name as servicename, s.id as serviceid, f.name as functionname, f.id as functionid
+        $servicesfunctions = $DB->get_records_sql("SELECT fs.id as id, fs.enabled as enabled, s.name as servicename, s.id as serviceid, f.name as functionname, f.id as functionid
                                     FROM {external_services} s, {external_functions} f, {external_services_functions} fs
                                    WHERE fs.externalserviceid = s.id AND fs.externalfunctionid = f.id AND s.custom = 0");
         $dbservicesfunctions = array();
@@ -171,24 +173,24 @@ final class webservice_lib {
                 }
 
                 foreach ($descriptions as $functionname => $functiondescription) {
-
-
-
-                //only create the one not already saved into the database
-                    if (!array_key_exists($functionname, $dbfunctions)) {
-                        $newfunction = new object();
-                        $newfunction->component = $classpath;
-                        $newfunction->name = $functionname;
-                        $newfunction->enabled = 0;
-                        $DB->insert_record('external_functions', $newfunction);
-                    }
-
-                    //check if the service is into the database
                     if (array_key_exists('service', $functiondescription) && !empty($functiondescription['service'])) { //check that the service has been set in the description
+                    //only create the one not already saved into the database
+                        if (!array_key_exists($functionname, $dbfunctions)) {
+                            $newfunction = new object();
+                            $newfunction->component = $classpath;
+                            $newfunction->name = $functionname;
+                            $DB->insert_record('external_functions', $newfunction);
+                            $notifparams = new object();
+                            $notifparams->functionname = $functionname;
+                            $notifparams->servicename = $functiondescription['service'];
+                            $wsnotification[] = get_string('wsinsertfunction','webservice', $notifparams);
+                        }
+
+                        //check if the service is into the database
                         if (!array_key_exists($functiondescription['service'], $dbservices)) {
                             $newservice = new object();
                             $newservice->name = $functiondescription['service'];
-                            $newservice->enable = 0;
+                            $newservice->enabled = 0;
                             $newservice->custom = 0;
                             $DB->insert_record('external_services', $newservice);
                         }
@@ -200,21 +202,18 @@ final class webservice_lib {
                         $errors->classname = $classname;
                         $errors->functionname = $functionname;
                         throw new moodle_exception("wsdescriptionserviceisempty",'','', $errors);
-
                     }
-
 
                     //check if the couple service/function is into the database
                     if (!array_key_exists($functiondescription['service'], $dbservicesfunctions) || !array_key_exists($functionname, $dbservicesfunctions[$functiondescription['service']])) {
                         $newassociation = new object();
                         $newassociation->externalserviceid = $DB->get_field('external_services','id',array('name' => $functiondescription['service']));
                         $newassociation->externalfunctionid = $DB->get_field('external_functions','id',array('name' => $functionname, 'component' => $classpath));
+                        $newassociation->enabled = 0;
                         $DB->insert_record('external_services_functions', $newassociation);
                     }
                     $dbservicesfunctions[$functiondescription['service']][$functionname]['notobsolete'] = true;
                 }
-
-
             }
             else {
                 throw new moodle_exception("wsdoesntextendbaseclass",'','', $classname);
@@ -233,9 +232,15 @@ final class webservice_lib {
             foreach ($servicefunctions as $functioname => $servicefunction) {
                 if (!$servicefunction['notobsolete']) {
                     $DB->delete_records('external_services_functions', array('id' => $servicefunction['id']));
+                    $notifparams = new object();
+                    $notifparams->functionname = $functionname;
+                    $notifparams->servicename = $servicename;
+                    $wsnotification[] = get_string('wsdeletefunction','webservice', $notifparams);
                 }
             }
         }
+
+        return $wsnotification;
     }
 
     /**
@@ -421,5 +426,55 @@ final class wssettings_form extends moodleform {
         $this->add_action_buttons(true, get_string('savechanges','admin'));
     }
 }
+
+/**
+ * Form for web service server settings (administration)
+ */
+final class wsservicesettings_form extends moodleform {
+    protected $settings;
+
+    /**
+     * Definition of the moodleform
+     */
+    public function definition() {
+        global $DB,$CFG;
+        $serviceid = $this->_customdata['serviceid'];
+        $mform =& $this->_form;
+
+        $mform->addElement('hidden', 'serviceid', $serviceid);
+        $param = new stdClass();
+
+     //   require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');
+      //  $servername = $settings.'_server';
+      //  $server = new $servername();
+      //  $server->settings_form($mform);
+
+        // set the data if we have some.
+    //    $data = array();
+     //   $option_names = $server->get_setting_names();
+    //    foreach ($option_names as $config) {
+    //        $data[$config] = get_config($settings, $config);
+    //    }
+    //    $this->set_data($data);
+        $service = $DB->get_record('external_services',array('id' => $serviceid));
+
+        $mform->addElement('text', 'servicename', get_string('servicename', 'webservice'));
+        $mform->setDefault('servicename',get_string($service->name, 'webservice'));
+        if (!empty($serviceid)) {
+            $mform->disabledIf('servicename', 'serviceid', 'eq', $serviceid);
+        }
+
+        if (empty($serviceid)) {
+            //display list of functions to select
+        }
+
+        //display list of functions associated to the service
+        
+        
+
+        $this->add_action_buttons(true,  get_string('savechanges','admin'));
+    }
+}
+
 
 ?>
