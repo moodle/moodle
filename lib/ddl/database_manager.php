@@ -485,7 +485,7 @@ class database_manager {
      * This function will create the temporary table passed as argument with all its
      * fields/keys/indexes/sequences, everything based in the XMLDB object
      *
-     * If table already exists it will be dropped and recreated, please make sure
+     * If table already exists ddl_exception will be thrown, please make sure
      * the table name does not collide with existing normal table!
      *
      * @param xmldb_table table object (full specs are required)
@@ -493,9 +493,9 @@ class database_manager {
      */
     public function create_temp_table(xmldb_table $xmldb_table) {
 
-    /// Check table doesn't exist
+        // Check table doesn't exist
         if ($this->table_exists($xmldb_table)) {
-            $this->drop_temp_table($xmldb_table);
+            throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getCreateTempTableSQL($xmldb_table)) {

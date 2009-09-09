@@ -809,7 +809,7 @@ class ddl_test extends UnitTestCase {
         $record->intro  = 'third record';
         $record->userid = 123456;
         $DB->insert_record('test_table1', $record);
-        // change integer field from 6 to 2, contents are bigger. must drop exception
+        // change integer field from 6 to 2, contents are bigger. must throw exception
         $field = new xmldb_field('userid');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         try {
@@ -823,7 +823,7 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['userid']->meta_type, 'I');
         //TODO: chek the rest of attributes
 
-        // change integer field from 10 to 3, in field used by index. must drop exception.
+        // change integer field from 10 to 3, in field used by index. must throw exception.
         $field = new xmldb_field('course');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         try {
@@ -1256,6 +1256,24 @@ class ddl_test extends UnitTestCase {
         $dbman->create_temp_table($table0);
         $this->assertTrue($dbman->table_exists('test_table0'));
 
+        // Try to create temp table with same name, must throw exception
+        $dupetable = $this->tables['test_table0'];
+        try {
+            $dbman->create_temp_table($dupetable);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
+        // Try to create table with same name, must throw exception
+        $dupetable = $this->tables['test_table0'];
+        try {
+            $dbman->create_temp_table($dupetable);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_exception);
+        }
+
         // Create another temp table1
         $table1 = $this->tables['test_table1'];
         $dbman->create_temp_table($table1);
@@ -1280,6 +1298,15 @@ class ddl_test extends UnitTestCase {
         // Drop table1
         $dbman->drop_temp_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
+
+        // Try to drop non-existing temp table, must throw exception
+        $noetable = $this->tables['test_table1'];
+        try {
+            $dbman->drop_temp_table($noetable);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof ddl_table_missing_exception);
+        }
 
         // Fill/modify/delete a few table0 records
         // TODO: that's
