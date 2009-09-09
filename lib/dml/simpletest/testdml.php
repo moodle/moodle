@@ -1892,10 +1892,6 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        if (!$DB->sql_regex_supported()) {
-            return;
-        }
-
         $table = $this->get_test_table();
         $tablename = $table->getName();
 
@@ -1911,13 +1907,21 @@ class dml_test extends UnitTestCase {
 
         $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_regex()." ?";
         $params = array('a$');
-        $records = $DB->get_records_sql($sql, $params);
-        $this->assertEqual(count($records), 2);
+        if ($DB->sql_regex_supported()) {
+            $records = $DB->get_records_sql($sql, $params);
+            $this->assertEqual(count($records), 2);
+        } else {
+            $this->assertTrue(true, 'Regexp operations not supported. Test skipped');
+        }
 
         $sql = "SELECT * FROM {".$tablename."} WHERE name ".$DB->sql_regex(false)." ?";
         $params = array('.a');
-        $records = $DB->get_records_sql($sql, $params);
-        $this->assertEqual(count($records), 1);
+        if ($DB->sql_regex_supported()) {
+            $records = $DB->get_records_sql($sql, $params);
+            $this->assertEqual(count($records), 1);
+        } else {
+            $this->assertTrue(true, 'Regexp operations not supported. Test skipped');
+        }
 
     }
 
