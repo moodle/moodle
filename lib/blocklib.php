@@ -1180,21 +1180,51 @@ class block_manager {
         // Move this block. This may involve moving other nearby blocks.
         $blocks = $this->birecordsbyregion[$newregion];
 
-        // First we find the nearest gap in the list of weights.
+        $maxweight = self::MAX_WEIGHT;
+        $minweight = -self::MAX_WEIGHT;
+
+        // Initialise the used weights and spareweights array with the default values
         $spareweights = array();
         $usedweights = array();
-        for ($i = -self::MAX_WEIGHT; $i <= self::MAX_WEIGHT; $i++) {
+        for ($i = $minweight; $i <= $maxweight; $i++) {
             $spareweights[$i] = $i;
             $usedweights[$i] = array();
         }
+
+        // Check each block and sort out where we have used weights
         foreach ($blocks as $bi) {
-            if ($bi->id == $block->instance->id) {
-                continue;
+            if ($bi->weight > $maxweight) {
+                // If this statement is true then the blocks weight is more than the
+                // current maximum. To ensure that we can get the best block position
+                // we will initialise elements within the usedweights and spareweights
+                // arrays between the blocks weight (which will then be the new max) and
+                // the current max
+                $parseweight = $bi->weight;
+                while (!array_key_exists($parseweight, $usedweights)) {
+                    $usedweights[$parseweight] = array();
+                    $spareweights[$parseweight] = $parseweight;
+                    $parseweight--;
+                }
+                $maxweight = $bi->weight;
+            } else if ($bi->weight < $minweight) {
+                // As above except this time the blocks weight is LESS than the
+                // the current minimum, so we will initialise the array from the
+                // blocks weight (new minimum) to the current minimum
+                $parseweight = $bi->weight;
+                while (!array_key_exists($parseweight, $usedweights)) {
+                    $usedweights[$parseweight] = array();
+                    $spareweights[$parseweight] = $parseweight;
+                    $parseweight++;
+                }
+                $minweight = $bi->weight;
             }
-            unset($spareweights[$bi->weight]);
-            $usedweights[$bi->weight][] = $bi->id;
+            if ($bi->id != $block->instance->id) {
+                unset($spareweights[$bi->weight]);
+                $usedweights[$bi->weight][] = $bi->id;
+            }
         }
 
+        // First we find the nearest gap in the list of weights.
         $bestdistance = max(abs($newweight - self::MAX_WEIGHT), abs($newweight + self::MAX_WEIGHT)) + 1;
         $bestgap = null;
         foreach ($spareweights as $spareweight) {
@@ -1230,7 +1260,7 @@ class block_manager {
             }
             $this->reposition_block($block->instance->id, $newregion, $newweight);
         }
-
+        
         $this->page->ensure_param_not_in_url('bui_moveid');
         $this->page->ensure_param_not_in_url('bui_newregion');
         $this->page->ensure_param_not_in_url('bui_newweight');
