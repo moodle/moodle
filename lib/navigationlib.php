@@ -920,7 +920,7 @@ class global_navigation extends navigation_node {
             $course = $PAGE->course;
         }
 
-        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo, false)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
@@ -977,7 +977,7 @@ class global_navigation extends navigation_node {
             $course = $PAGE->course;
         }
 
-        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo, false)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};
@@ -1284,7 +1284,7 @@ class global_navigation extends navigation_node {
             $sections = $this->cache->$coursesecstr;
         }
         
-        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo)) {
+        if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo, false)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
         $modinfo =  $this->cache->{'modinfo'.$course->id};

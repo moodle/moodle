@@ -322,6 +322,8 @@ class global_navigation_test extends UnitTestCase {
      */
     public $node;
     protected $cache;
+    protected $modinfo5 = 'O:6:"object":6:{s:8:"courseid";s:1:"5";s:6:"userid";s:1:"2";s:8:"sections";a:1:{i:0;a:1:{i:0;s:3:"288";}}s:3:"cms";a:1:{i:288;O:6:"object":17:{s:2:"id";s:3:"288";s:8:"instance";s:2:"19";s:6:"course";s:1:"5";s:7:"modname";s:5:"forum";s:4:"name";s:10:"News forum";s:7:"visible";s:1:"1";s:10:"sectionnum";s:1:"0";s:9:"groupmode";s:1:"0";s:10:"groupingid";s:1:"0";s:16:"groupmembersonly";s:1:"0";s:6:"indent";s:1:"0";s:10:"completion";s:1:"0";s:5:"extra";s:0:"";s:4:"icon";s:0:"";s:11:"uservisible";b:1;s:9:"modplural";s:6:"Forums";s:9:"available";b:1;}}s:9:"instances";a:1:{s:5:"forum";a:1:{i:19;R:8;}}s:6:"groups";N;}';
+    protected $coursesections5 = 'a:5:{i:0;O:8:"stdClass":6:{s:7:"section";s:1:"0";s:2:"id";s:2:"14";s:6:"course";s:1:"5";s:7:"summary";N;s:8:"sequence";s:3:"288";s:7:"visible";s:1:"1";}i:1;O:8:"stdClass":6:{s:7:"section";s:1:"1";s:2:"id";s:2:"97";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:2;O:8:"stdClass":6:{s:7:"section";s:1:"2";s:2:"id";s:2:"98";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:3;O:8:"stdClass":6:{s:7:"section";s:1:"3";s:2:"id";s:2:"99";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:4;O:8:"stdClass":6:{s:7:"section";s:1:"4";s:2:"id";s:3:"100";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}}';
     public static $includecoverage = array('./lib/navigationlib.php');
     public static $excludecoverage = array();
     
@@ -349,8 +351,8 @@ class global_navigation_test extends UnitTestCase {
         $this->node->get('cat2')->get('sub2')->get('course2')->get('sec2')->add('resource 3', null, navigation_node::TYPE_RESOURCE, null, 'res3');
 
         $this->cache->clear();
-        $this->cache->modinfo5 = unserialize('O:6:"object":6:{s:8:"courseid";s:1:"5";s:6:"userid";s:1:"2";s:8:"sections";a:1:{i:0;a:1:{i:0;s:3:"288";}}s:3:"cms";a:1:{i:288;O:6:"object":17:{s:2:"id";s:3:"288";s:8:"instance";s:2:"19";s:6:"course";s:1:"5";s:7:"modname";s:5:"forum";s:4:"name";s:10:"News forum";s:7:"visible";s:1:"1";s:10:"sectionnum";s:1:"0";s:9:"groupmode";s:1:"0";s:10:"groupingid";s:1:"0";s:16:"groupmembersonly";s:1:"0";s:6:"indent";s:1:"0";s:10:"completion";s:1:"0";s:5:"extra";s:0:"";s:4:"icon";s:0:"";s:11:"uservisible";b:1;s:9:"modplural";s:6:"Forums";s:9:"available";b:1;}}s:9:"instances";a:1:{s:5:"forum";a:1:{i:19;R:8;}}s:6:"groups";N;}');
-        $this->cache->coursesections5 = unserialize('a:5:{i:0;O:8:"stdClass":6:{s:7:"section";s:1:"0";s:2:"id";s:2:"14";s:6:"course";s:1:"5";s:7:"summary";N;s:8:"sequence";s:3:"288";s:7:"visible";s:1:"1";}i:1;O:8:"stdClass":6:{s:7:"section";s:1:"1";s:2:"id";s:2:"97";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:2;O:8:"stdClass":6:{s:7:"section";s:1:"2";s:2:"id";s:2:"98";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:3;O:8:"stdClass":6:{s:7:"section";s:1:"3";s:2:"id";s:2:"99";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:4;O:8:"stdClass":6:{s:7:"section";s:1:"4";s:2:"id";s:3:"100";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}}');
+        $this->cache->modinfo5 = unserialize($this->modinfo5);
+        $this->cache->coursesections5 = unserialize($this->coursesections5);
         $this->cache->canviewhiddenactivities = true;
         $this->cache->canviewhiddensections = true;
         $this->cache->canviewhiddencourses = true;
@@ -372,6 +374,8 @@ class global_navigation_test extends UnitTestCase {
         $keys = array('cat2', 'sub2', '5');
         $course = new stdClass;
         $course->id = '5';
+        $course->numsections = 10;
+        $course->modinfo = $this->modinfo5;
         $this->node->add_course_section_generic($keys, $course, 'topic', 'topic');
         $this->assertEqual(count($this->node->get_by_path($keys)->children),4);
     }
@@ -392,6 +396,8 @@ class global_navigation_test extends UnitTestCase {
             $course->category = 'cat3';
             $course->fullname = "Test Course $i";
             $course->shortname = "tcourse$i";
+            $course->numsections = 10;
+            $course->modinfo = $this->modinfo5;
             $courses[$i] = $course;
         }
         
@@ -429,6 +435,8 @@ class global_navigation_test extends UnitTestCase {
         $course->fullname = 'Test Course 10';
         $course->shortname = 'tcourse10';
         $course->visible = true;
+        $course->numsections = 10;
+        $course->modinfo = $this->modinfo5;
         $this->node->exposed_load_course(array('cat2','sub3'), $course);
         $this->assertIsA($this->node->get('cat2')->get('sub3')->get('tcourse10'), 'navigation_node');
     }
@@ -436,6 +444,7 @@ class global_navigation_test extends UnitTestCase {
         $keys = array('cat2', 'sub2', '5');
         $course = new stdClass;
         $course->id = '5';
+        $course->numsections = 10;
         $modinfo = $this->cache->modinfo5;
         $modinfo->cms[290] = clone($modinfo->cms[288]);
         $modinfo->cms[290]->id = 290;
@@ -445,7 +454,9 @@ class global_navigation_test extends UnitTestCase {
         $modinfo->instances['resource'][21] = clone($modinfo->instances['forum'][19]);
         $modinfo->instances['resource'][21]->id = 21;
         $this->cache->modinfo5 = $modinfo;
+        $course->modinfo = serialize($modinfo);
         $this->node->exposed_load_course_activities($keys, $course);
+
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(288))), 'navigation_node');
         $this->assertEqual($this->node->get_by_path(array_merge($keys, array(288)))->type, navigation_node::TYPE_ACTIVITY);
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(290))), 'navigation_node');
@@ -456,6 +467,8 @@ class global_navigation_test extends UnitTestCase {
         $course = new stdClass;
         $course->id = '5';
         $course->format = 'topics';
+        $course->numsections = 10;
+        $course->modinfo = $this->modinfo5;
         $coursechildren = $this->node->get_by_path($keys)->children;
         
         $this->node->get_by_path(array('cat2', 'sub2', '5'))->children = array();
@@ -482,6 +495,7 @@ class global_navigation_test extends UnitTestCase {
         $keys = array('cat2', 'sub2', '5');
         $course = new stdClass;
         $course->id = '5';
+        $course->numsections = 10;
         $this->node->get_by_path($keys)->add('Test Section 1', null, navigation_node::TYPE_SECTION, null, $this->cache->coursesections5[1]->id);
         $modinfo = $this->cache->modinfo5;
         $modinfo->sections[1] = array(289, 290);
@@ -501,6 +515,7 @@ class global_navigation_test extends UnitTestCase {
         $modinfo->instances['resource'][21] = clone($modinfo->instances['forum'][19]);
         $modinfo->instances['resource'][21]->id = 21;
         $this->cache->modinfo5 = $modinfo;
+        $course->modinfo = serialize($modinfo);
         $this->node->exposed_load_section_activities($keys, 1, $course);
         $keys[] = 97;
         $this->assertIsA($this->node->get_by_path(array_merge($keys, array(289))),'navigation_node');
