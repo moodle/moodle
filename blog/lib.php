@@ -179,14 +179,29 @@ function blog_remove_associations_for_user($userid) {
  */
 function blog_get_blogs_url($filters) {
     global $CFG;
-    return $CFG->wwwroot.'/blog/index.php?'.
-        (empty($filters['course']) ? '' : 'courseid='.$filters['course'].'&amp;').
-        (empty($filters['mod']) ? '' : 'modid='.$filters['mod'].'&amp;').
-        (empty($filters['group']) ? '' : 'groupid='.$filters['group'].'&amp;').
-        (empty($filters['user']) ? '' : 'userid='.$filters['user'].'&amp;').
-        (empty($filters['entry']) ? '' : 'entryid='.$filters['entry'].'&amp;').
-        (empty($filters['tag']) ? '' : 'tagid='.$filters['tag'].'&amp;').
-        (empty($filters['tagtext']) ? '' : 'tag='.$filters['tagtext']);
+    $blogsurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+    if (!empty($filters['course'])) {
+        $blogsurl->param('courseid', $filters['course']);
+    }
+    if (!empty($filters['mod'])) {
+        $blogsurl->param('modid', $filters['mod']);
+    }
+    if (!empty($filters['group'])) {
+        $blogsurl->param('groupid', $filters['group']);
+    }
+    if (!empty($filters['user'])) {
+        $blogsurl->param('userid', $filters['user']);
+    }
+    if (!empty($filters['entry'])) {
+        $blogsurl->param('entryid', $filters['entry']);
+    }
+    if (!empty($filters['tag'])) {
+        $blogsurl->param('tagid', $filters['tag']);
+    }
+    if (!empty($filters['tagtext'])) {
+        $blogsurl->param('tag', $filters['tagtext']);
+    }
+    return $blogsurl;
 }
 
 /**
@@ -306,7 +321,7 @@ function blog_fetch_external_entries($external_blog) {
 function blog_get_context_url($context=null) {
     global $CFG;
 
-    $viewblogentries_url = $CFG->wwwroot . '/blog/index.php?';
+    $viewblogentriesurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
 
     if (empty($context)) {
         global $PAGE;
@@ -341,10 +356,10 @@ function blog_get_context_url($context=null) {
     }
 
     if (!empty($filterparam)) {
-        $viewblogentries_url .= "$filterparam=$context->instanceid";
+        $viewblogentriesurl->param($filterparam, $context->instanceid);
     }
 
-    return $viewblogentries_url;
+    return $viewblogentriesurl;
 }
 
 /**

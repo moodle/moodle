@@ -30,7 +30,12 @@ require_once($CFG->dirroot.'/blog/lib.php');
 require_once('preferences_form.php');
 
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
-$PAGE->set_url('blog/preferences.php', array('courseid' => $courseid));
+$modid    = optional_param('modid', null, PARAM_INT);
+$userid   = optional_param('userid', null, PARAM_INT);
+$tagid    = optional_param('tagid', null, PARAM_INT);
+$groupid      = optional_param('groupid', null, PARAM_INT);
+
+$PAGE->set_url('blog/preferences.php', array('courseid' => $courseid, 'modid' => $modid, 'userid' => $userid, 'tagid' => $tagid, 'groupid' => $groupid));
 
 if ($courseid == SITEID) {
     require_login();

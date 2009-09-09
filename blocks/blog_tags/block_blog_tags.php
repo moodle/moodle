@@ -39,7 +39,7 @@ class block_blog_tags extends block_base {
     }
 
     function get_content() {
-        global $CFG, $SITE, $USER, $DB;
+        global $CFG, $SITE, $USER, $DB, $OUTPUT;
 
         if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -139,11 +139,10 @@ class block_blog_tags extends block_base {
                     break;
                 }
 
-                $link = blog_get_blogs_url(array($filtertype => $filterselect, 'tag'=>$tag->id));
-                $this->content->text .= '<li><a href="'.$link.'" '.
-                                        'class="'.$tag->class.'" '.
-                                        'title="'.get_string('numberofentries','blog',$tag->ct).'">'.
-                                        tag_display_name($tag) .'</a></li> ';
+                $link = html_link::make(blog_get_blogs_url(array($filtertype => $filterselect, 'tag'=>$tag->id)), tag_display_name($tag));
+                $link->add_class($tag->class);
+                $link->title = get_string('numberofentries','blog',$tag->ct);
+                $this->content->text .= '<li>' . $OUTPUT->link($link) . '</li> ';
             }
             $this->content->text .= "\n</ul>\n";
 

@@ -37,6 +37,8 @@ $courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tab - d
 
 $PAGE->set_url('blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
 
+$blog_headers = blog_get_headers();
+
 require_login($courseid);
 
 if ($action == 'edit') {
@@ -228,8 +230,6 @@ $PAGE->requires->data_for_js('blog_edit_existing', $entry);
 if (!$user = $DB->get_record('user', array('id'=>$userid))) {
     print_error('invaliduserid');
 }
-
-$blog_headers = blog_get_headers();
 
 $PAGE->requires->js('blog/edit_form.js');
 

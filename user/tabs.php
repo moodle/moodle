@@ -43,7 +43,7 @@
                     get_string('participants'));
             }
 
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array()),
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array())->out(),
                 get_string('blogs','blog'));
         }
 
@@ -60,7 +60,7 @@
             get_string('participants'));
 
         if ($CFG->bloglevel >= 3) {
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('course'=>$filterselect)), get_string('blogs','blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('course'=>$filterselect))->out(), get_string('blogs','blog'));
         }
 
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
@@ -81,7 +81,7 @@
                 get_string('participants'));
 
 
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('group'=>$filterselect)), get_string('blogs','blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('group'=>$filterselect))->out(), get_string('blogs','blog'));
         }
 
     /**************************************
@@ -139,7 +139,7 @@
             ) // able to read blogs in site or course context
         ) { //end if
 
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('user'=>$user->id,'course'=>$course->id)), get_string('blog', 'blog'));
+            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('user'=>$user->id,'course'=>$course->id))->out(), get_string('blog', 'blog'));
         }
 
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {

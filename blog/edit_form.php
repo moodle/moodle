@@ -68,7 +68,7 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('format', 'format', get_string('format'));
 
-        $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
+        $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'), null, array('filetypes' => '*'));
 
         //disable publishstate options that are not allowed
         $publishstates = array();

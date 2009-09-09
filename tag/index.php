@@ -126,7 +126,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
         }
         echo '</ul>';
 
-        echo '<p class="moreblogs"><a href="'.blog_get_blogs_url(array('tag'=>$tag->id)).'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+        echo '<p class="moreblogs"><a href="'.blog_get_blogs_url(array('tag'=>$tag->id))->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
 
         echo $OUTPUT->box_end();
     }

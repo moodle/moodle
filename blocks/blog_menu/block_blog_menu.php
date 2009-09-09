@@ -52,7 +52,7 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $PAGE;
+        global $CFG, $USER, $PAGE, $OUTPUT;
 
         $context = $PAGE->get_context();
 
@@ -72,7 +72,7 @@ class block_blog_menu extends block_base {
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        $viewblogentries_url = blog_get_context_url();
+        $viewblogentriesurl = blog_get_context_url();
         $strlevel = '';
 
         switch ($context->contextlevel) {
@@ -92,63 +92,48 @@ class block_blog_menu extends block_base {
         /// Accessibility: markup as a list.
 
         $blogmodon = false;
+        $menulist = new html_list();
+        $menulist->add_class('list');
 
         if (!empty($strlevel)) {
-            $output = '<li><a href="'.$viewblogentries_url.'">'.get_string('viewblogentries', 'blog', $strlevel).'</a></li>';
-        }
-
-        $parts = array();
-        $query = parse_url($viewblogentries_url);
-
-        if (!empty($query['query'])) {
-            parse_str($query['query'], $parts);
+            $menulist->add_item($OUTPUT->link(html_link::make($viewblogentriesurl, get_string('viewblogentries', 'blog', $strlevel))));
         }
 
         // show View site entries link
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-            $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php">';
-            $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
+            $menulist->add_item($OUTPUT->link(html_link::make($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'))));
         }
 
         $output .= '';
 
         // show View my entries link
         if ($context->contextlevel != CONTEXT_USER) {
-            $output .= '<li><a href="'. $CFG->wwwroot .'/blog/index.php?userid='. $USER->id;
-
-            foreach ($parts as $var => $val) {
-                $output .= "&amp;$var=$val";
-            }
-            $output .= '">'.get_string('viewmyentries', 'blog').  "</a></li>\n";
+            $myentrieslink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
+            $myentrieslink->url->params($viewblogentriesurl->params());
+            $menulist->add_item($OUTPUT->link($myentrieslink));
         }
 
         // show link to manage blog prefs
-        $output .= '<li><a href="'. $CFG->wwwroot. '/blog/preferences.php?userid='.
-                         $USER->id .'">'.
-                         get_string('blogpreferences', 'blog')."</a></li>\n";
+        $blogpreflink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/preferences.php', array('userid' => $USER->id)), get_string('blogpreferences', 'blog'));
+
+        $menulist->add_item($OUTPUT->link($blogpreflink));
 
         // show Add entry link
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:create', $sitecontext)) {
-            $output .= '<li><a href="'. $CFG->wwwroot. '/blog/edit.php?action=add';
-            foreach ($parts as $var => $val) {
-                $output .= "&amp;$var=$val";
-            }
-            $output .= '">'.get_string('addnewentry', 'blog') ."</a></li>\n";
+            $addentrylink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/edit.php', array('action' => 'add')), get_string('addnewentry', 'blog'));
+            $addentrylink->url->params($viewblogentriesurl->params());
+            $menulist->add_item($OUTPUT->link($addentrylink));
         }
 
         // Full-text search field
+        $searchform = new html_form();
+        $searchform->method = 'get';
+        $searchform->url = new moodle_url($viewblogentriesurl);
+        $searchform->button->text = get_string('search');
+        $formcontents = $OUTPUT->field(html_field::make_text('search'));
 
-        $output .= '<li><form method="get" action="'.$viewblogentries_url.'">';
-        $output .= '<div><input type="text" name="search" /><input type="submit" value="'.get_string('search').'" />';
-
-        if (!empty($parts)) {
-            foreach ($parts as $var => $val) {
-                $output .= '<input type="hidden" name="'.$var.'" value="'.$val.'" />';
-            }
-        }
-
-        $output .= '</div></form></li>';
-        $this->content->text = '<ul class="list">'. $output ."</ul>\n";
+        $menulist->add_item($OUTPUT->form($searchform, $formcontents));
+        $this->content->text = $OUTPUT->htmllist($menulist);
     }
 }
