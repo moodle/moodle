@@ -127,6 +127,7 @@ function xmldb_main_install() {
     update_log_display_entry('message', 'block contact', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('message', 'unblock contact', 'user', 'CONCAT(firstname,\' \',lastname)');
     update_log_display_entry('group', 'view', 'groups', 'name');
+    update_log_display_entry('tag', 'update', 'tag', 'name');
 
 
 /// Create guest record

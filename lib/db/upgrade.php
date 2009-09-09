@@ -2540,6 +2540,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009090400);
     }
 
+    if ($result && $oldversion < 2009090800){
+        //insert new record for log_display table
+        //used to record tag update.
+        if (!$DB->record_exists('log_display', array('action'=>'update', 'module'=>'tag'))) {
+            $log_action = new object();
+            $log_action->module = 'tag';
+            $log_action->action = 'update';
+            $log_action->mtable = 'tag';
+            $log_action->field  = 'name';
+
+            $result  = $result && $DB->insert_record('log_display', $log_action);
+        }
+        upgrade_main_savepoint($result, 2009090800);
+    }
     return $result;
 }
 

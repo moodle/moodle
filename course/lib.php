@@ -61,6 +61,9 @@ function make_log_url($module, $url) {
         case 'notes':
             $url = "/notes/$url";
             break;
+        case 'tag':
+            $url = "/tag/$url";
+            break;
         default:
             $url = "/mod/$module/$url";
             break;
