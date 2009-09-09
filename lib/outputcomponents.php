@@ -193,7 +193,7 @@ class moodle_html_component {
      * Shortcut for adding a JS confirm dialog when the component is clicked.
      * The message must be a yes/no question.
      * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
-     * @param string $callback The name of a JS function whose scope will be set to the simpleDialog object and have this 
+     * @param string $callback The name of a JS function whose scope will be set to the simpleDialog object and have this
      *    function's arguments set as this.args.
      * @return void
      */
@@ -909,10 +909,10 @@ class html_field extends labelled_html_component {
      * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
      * @return html_field The field component
      */
-    public static function make_text($name='unnamed', $value, $alt='', $maxlength=0) {
+    public static function make_text($name='unnamed', $value='', $alt='', $maxlength=0) {
         $field = new html_field();
         if (empty($alt)) {
-            $alt = get_string('textfield');
+            $alt = $name;
         }
         $field->type = 'text';
         $field->name = $name;
@@ -939,7 +939,7 @@ class html_field extends labelled_html_component {
  */
 class html_table extends labelled_html_component {
     /**
-     * For more control over the rendering of the headers, an array of html_table_cell objects 
+     * For more control over the rendering of the headers, an array of html_table_cell objects
      * can be passed instead of an array of strings.
      * @var array of headings. The n-th array item is used as a heading of the n-th column.
      *
@@ -1072,7 +1072,7 @@ class html_table extends labelled_html_component {
      * @var array $footclasses Array of CSS classes to apply to the table's tfoot.
      */
     public $footclasses = array();
-    
+
 
     /**
      * @see moodle_html_component::prepare()
@@ -1169,7 +1169,7 @@ class html_table_row extends moodle_html_component {
     public function prepare() {
         parent::prepare();
     }
-    
+
     /**
      * Shortcut method for creating a row with an array of cells. Converts cells to html_table_cell objects.
      * @param array $cells
@@ -1255,15 +1255,28 @@ class html_link extends moodle_html_component {
     public $text;
 
     /**
-     * @see lib/moodle_html_component#prepare()
+     * @var boolean $disabled Whether or not this link is disabled (will be rendered as plain text)
+     */
+    public $disabled = false;
+
+    /**
+     * @see lib/moodle_html_component#prepare() Disables the link if it links to the current page.
      * @return void
      */
     public function prepare() {
+        global $PAGE;
         // We can't accept an empty text value
         if (empty($this->text)) {
             throw new coding_exception('A html_link must have a descriptive text value!');
         }
 
+        if (!($this->url instanceof moodle_url)) {
+            $this->url = new moodle_url($this->url);
+        }
+
+        if ($this->url->compare($PAGE->url, URL_MATCH_PARAMS)) {
+            $this->disabled = true;
+        }
         parent::prepare();
     }
 
@@ -1277,6 +1290,7 @@ class html_link extends moodle_html_component {
         $link = new html_link();
         $link->url = $url;
         $link->text = $text;
+
         return $link;
     }
 }
@@ -1595,7 +1609,7 @@ class html_list_item extends moodle_html_component {
 }
 
 /**
- * Component representing a span element. It has no special attributes, so 
+ * Component representing a span element. It has no special attributes, so
  * it is very low-level and can be used for styling and JS actions.
  *
  * @copyright 2009 Nicolas Connault

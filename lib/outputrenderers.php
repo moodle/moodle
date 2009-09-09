@@ -1068,6 +1068,12 @@ class moodle_core_renderer extends moodle_renderer_base {
 
             $link->prepare();
             $this->prepare_event_handlers($link);
+
+            // A disabled link is rendered as formatted text
+            if ($link->disabled) {
+                return $this->container($link->text, 'currentlink');
+            }
+
             $attributes['href'] = prepare_url($link->url);
             $attributes['class'] = $link->get_classes_string();
             $attributes['title'] = $link->title;
@@ -1542,6 +1548,8 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $listitem->prepare();
                 $this->prepare_event_handlers($listitem);
                 $output .= $this->output_tag('li', array('class' => $listitem->get_classes_string()), $listitem->value) . "\n";
+            } else {
+                $output .= $this->output_tag('li', array(), $listitem) . "\n";
             }
         }
 
