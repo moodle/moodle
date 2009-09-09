@@ -1945,6 +1945,8 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, $data);
             $this->assertEqual(1, $DB->count_records($tablename));
             $DB->commit_sql();
+        } else {
+            $this->assertTrue(true, 'DB Transactions not supported. Test skipped');
         }
     }
 
@@ -1968,6 +1970,8 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, $data);
             $DB->commit_sql();
             $this->assertEqual(1, $DB->count_records($tablename));
+        } else {
+            $this->assertTrue(true, 'BD Transactions not supported. Test skipped');
         }
     }
 
@@ -1991,6 +1995,8 @@ class dml_test extends UnitTestCase {
             $DB->insert_record($tablename, $data);
             $DB->rollback_sql();
             $this->assertEqual(0, $DB->count_records($tablename));
+        } else {
+            $this->assertTrue(true, 'DB transactions not supported. Test skipped');
         }
     }
 }
