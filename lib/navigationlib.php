@@ -2819,7 +2819,8 @@ class settings_navigation extends navigation_node {
     }
 
     /**
-     * 
+     * This function loads all of the front page settings into the settings navigation.
+     * This function is called when the user is on the front page, or $COURSE==$SITE
      */
     protected function load_front_page_settings() {
         global $CFG, $USER, $OUTPUT, $SITE;
@@ -2848,6 +2849,12 @@ class settings_navigation extends navigation_node {
             // Add the course settings link
             $url = new moodle_url($CFG->wwwroot.'/admin/settings.php', array('section'=>'frontpagesettings'));
             $this->get($frontpage)->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/settings'));
+        }
+
+        //Participants
+        if (has_capability('moodle/site:viewparticipants', $course->context)) {
+            $url = new moodle_url($CFG->wwwroot.'/user/index.php?contextid='.$course->context->id);
+            $this->get($frontpage)->add(get_string('participants'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/users'));
         }
     }
 
