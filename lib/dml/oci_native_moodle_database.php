@@ -1201,14 +1201,6 @@ class oci_native_moodle_database extends moodle_database {
         return ' ';
     }
 
-    public function sql_regex_supported() {
-        return false;
-    }
-
-    public function sql_regex($positivematch=true) {
-        return null;
-    }
-
 /// session locking
     // http://download.oracle.com/docs/cd/B10501_01/appdev.920/a96612/d_lock2.htm#999576
 
