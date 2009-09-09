@@ -1,8 +1,7 @@
-<?php // $id$
+<?php 
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/phpxml/xml.php');
 
 define('YOUTUBE_DEV_KEY', 'Dlp6qqRbI28');
 define('DEFAULT_NUMBER_OF_VIDEOS', 5);
@@ -36,6 +35,7 @@ class block_tag_youtube extends block_base {
             return $this->content;
         }
 
+        $text = '';
         if(!empty($this->config->playlist)){
             //videos from a playlist
             $text = $this->get_videos_by_playlist();
@@ -138,35 +138,29 @@ class block_tag_youtube extends block_base {
     }
 
     function fetch_request($request){
-        $c =  new curl(array('cache' => true, 'module_cache'=>'tag_youtube'));
+        $c = new curl(array('cache' => true, 'module_cache'=>'tag_youtube'));
+        $c->setopt(array('CURLOPT_TIMEOUT' => 3, 'CURLOPT_CONNECTTIMEOUT' => 3));
 
         $response = $c->get($request);
 
-        $xmlobj = XML_unserialize($response);
-        return $this->render_video_list($xmlobj);
+        $xml = new SimpleXMLElement($response);
+        return $this->render_video_list($xml);
     }
 
-    function render_video_list($xmlobj){
+    function render_video_list(SimpleXMLElement $xml){
 
         $text = '';
         $text .= '<ul class="yt-video-entry unlist img-text">';
-        $videos = $xmlobj['ut_response']['video_list']['video'];
 
-        if (is_array($videos) ) {
-            foreach($videos as $video){
-                $text .= '<li>';
-                $text .= '<div class="clearfix">';
-                $text .= '<a href="'. s($video['url']) . '">';
-                $text .= '<img alt="" class="youtube-thumb" src="'. $video['thumbnail_url'] .'" /></a>';
-                $text .= '</div><span><a href="'. s($video['url']) . '">'.s($video['title']).'</a></span>';
-                $text .= '<div>';
-                $text .= format_time($video['length_seconds']);
-                $text .= "</div></li>\n";
-            }
-        } else {
-            // if youtube is offline, or for whatever reason the previous
-            // call doesn't work...
-            //add_to_log(SITEID, 'blocks/tag_youtube', 'problem in getting videos off youtube');
+        foreach($xml->video_list->video as $video){
+            $text .= '<li>';
+            $text .= '<div class="clearfix">';
+            $text .= '<a href="'. s($video->url) . '">';
+            $text .= '<img alt="" class="youtube-thumb" src="'. $video->thumbnail_url .'" /></a>';
+            $text .= '</div><span><a href="'. s($video->url) . '">'.s($video->title).'</a></span>';
+            $text .= '<div>';
+            $text .= format_time($video->length_seconds);
+            $text .= "</div></li>\n";
         }
         $text .= "</ul><div class=\"clearer\"></div>\n";
         return $text;
