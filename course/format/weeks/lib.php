@@ -29,9 +29,9 @@
  * This is called automatically by {@link load_course()} if the current course
  * format = weeks.
  *
- * @param array $path An array of keys to the course node in the navigation
- * @param stdClass $modinfo The mod info object for the current course
- * @return bool Returns true
+ * @param navigation_node $navigation The course node
+ * @param array $path An array of keys to the course node
+ * @param stdClass $course The course we are loading the section for
  */
 function callback_weeks_load_content(&$navigation, $keys, $course) {
     $navigation->add_course_section_generic($keys, $course, get_string('week'), 'week');
@@ -43,9 +43,10 @@ function callback_weeks_load_content(&$navigation, $keys, $course) {
  * This is called automatically by {@link load_course()} if the current course
  * format = weeks and the navigation was requested via AJAX
  *
- * @param array $path An array of keys to the course node in the navigation
- * @param stdClass $modinfo The mod info object for the current course
- * @return bool Returns true
+ * @param navigation_node $navigation The course node
+ * @param array $path An array of keys to the course node
+ * @param stdClass $course The course we are loading the section for
+ * @param stdClass $section The section to load
  */
 function callback_weeks_load_limited_section(&$navigation, $keys, $course, $section) {
     $navigation->limited_load_section_generic($keys, $course, $section, get_string('week'), 'week');

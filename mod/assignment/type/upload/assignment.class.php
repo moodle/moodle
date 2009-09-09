@@ -1047,6 +1047,58 @@ class assignment_upload extends assignment_base {
         return true;
     }
 
+    function extend_settings_navigation($node) {
+        global $CFG, $USER, $OUTPUT;
+
+        // get users submission if there is one
+        $submission = $this->get_submission();
+        if (has_capability('mod/assignment:submit', $this->cm->context)) {
+            $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
+        } else {
+            $editable = false;
+        }
+
+        // If the user has submitted something add a bit more stuff
+        if ($submission) {
+            // Add a view link to the settings nav
+            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$this->cm->id));
+            $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
+            if (!empty($submission->timemodified)) {
+                $key = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
+                $node->get($key)->text = preg_replace('#([^,])\s#', '$1&nbsp;', $node->get($key)->text);
+                $node->get($key)->add_class('note');
+                if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
+                    $node->get($key)->add_class('early');
+                } else {
+                    $node->get($key)->add_class('late');
+                }
+            }
+        }
+
+        // Check if the user has uploaded any files, if so we can add some more stuff to the settings nav
+        if ($submission && has_capability('mod/assignment:submit', $this->context) && $this->count_user_files($USER->id)) {
+            $fs = get_file_storage();
+            if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $USER->id, "timemodified", false)) {
+                if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
+                    $filekey = $node->add(get_string('submission', 'assignment'));
+                } else {
+                    $filekey = $node->add(get_string('submissiondraft', 'assignment'));
+                }
+                foreach ($files as $file) {
+                    $filename = $file->get_filename();
+                    $mimetype = $file->get_mimetype();
+                    $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$USER->id.'/'.$filename);
+                    $node->get($filekey)->add($filename, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url(file_mimetype_icon($mimetype)));
+                }
+            }
+        }
+
+        // Show a notes link if they are enabled
+        if ($this->notes_allowed()) {
+            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/upload.php', array('id'=>$this->cm->id, 'action'=>'editnotes', 'sesskey'=>sesskey()));
+            $node->add(get_string('notes', 'assignment'), $link);
+        }
+    }
 }
 
 class mod_assignment_upload_notes_form extends moodleform {

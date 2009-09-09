@@ -1595,8 +1595,7 @@ class assignment_base {
         $submission = new Object;
         $submission->assignment   = $this->assignment->id;
         $submission->userid       = $userid;
-        //$submission->timecreated  = time();
-        $submission->timecreated = '';
+        $submission->timecreated = time();
         // teachers should not be modifying modified date, except offline assignments
         if ($teachermodified) {
             $submission->timemodified = 0;
@@ -3435,5 +3434,57 @@ function assignment_supports($feature) {
         case FEATURE_MOD_SUBPLUGINS:          return array('assignment'=>'mod/assignment/type'); // to be hopefully removed in 2.0
 
         default: return null;
+    }
+}
+
+function assignment_extend_settings_navigation($navnode, $module) {
+    global $PAGE, $DB, $USER, $CFG;
+
+    $allgroups = false;
+
+    $assignmentrow = $DB->get_record("assignment", array("id" => $PAGE->cm->instance));
+    require_once "$CFG->dirroot/mod/assignment/type/$assignmentrow->assignmenttype/assignment.class.php";
+    $assignmentclass = 'assignment_'.$assignmentrow->assignmenttype;
+    $assignmentinstance = new $assignmentclass($PAGE->cm->id, $assignmentrow, $PAGE->cm, $PAGE->course);
+
+    $assignmentnodekey = $navnode->add(get_string('assignmentadministration', 'assignment'));
+    $assignmentnode = $navnode->get($assignmentnodekey);
+    $assignmentnode->forceopen = true;
+
+    if (!empty($USER->id) && !has_capability('moodle/legacy:guest', $PAGE->cm->context, NULL, false)) {
+
+        $allgroups = false;
+
+        // Add assignment submission information
+        if (has_capability('mod/assignment:grade', $PAGE->cm->context)) {
+            if ($allgroups && has_capability('moodle/site:accessallgroups', $PAGE->cm->context)) {
+                $group = 0;
+            } else {
+                $group = groups_get_activity_group($PAGE->cm);
+            }
+            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
+            if ($count = $assignmentinstance->count_real_submissions($group)) {
+                $string = get_string('viewsubmissions', 'assignment', $count);
+            } else {
+                $string = get_string('noattempts', 'assignment');
+            }
+            $assignmentnode->add($string, $link, navigation_node::TYPE_SETTING);
+        }
+
+        if (is_object($assignmentinstance) && method_exists($assignmentinstance, 'extend_settings_navigation')) {
+            $assignmentinstance->extend_settings_navigation($assignmentnode);
+        }
+
+        // Add update this activity link
+        if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+            $modulename = get_string('modulename', 'assignment');
+            $string = get_string('updatethis', '', $modulename);
+            $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+            $assignmentnode->add($string, $url, navigation_node::TYPE_SETTING);
+        }
+
+        if (count($assignmentnode->children)<1) {
+            $navnode->remove_child($assignmentnodekey);
+        }
     }
 }

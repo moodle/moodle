@@ -187,7 +187,7 @@ class assignment_online extends assignment_base {
             return '';
         }
         
-        $link = html_link::make("/mod/assignment/type/online/file.php?id=$this->cm->id&userid=$submission->userid", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
+        $link = html_link::make("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
         $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
         $link->title = get_string('submission', 'assignment');
         $popup = $OUTPUT->link($link);                    
@@ -200,13 +200,13 @@ class assignment_online extends assignment_base {
     }
 
     function print_user_files($userid, $return=false) {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         if (!$submission = $this->get_submission($userid)) {
             return '';
         }
         
-        $link = html_link::make("/mod/assignment/type/online/file.php?id=$this->cm->id&userid=$submission->userid", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
+        $link = html_link::make("/mod/assignment/type/online/file.php?id={$this->cm->id}&userid={$submission->userid}", shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15));
         $link->add_action(new popup_action('click', $link->url, 'file'.$userid, array('height' => 450, 'width' => 580)));
         $link->title = get_string('submission', 'assignment');
         $popup = $OUTPUT->link($link);                    
@@ -285,6 +285,42 @@ class assignment_online extends assignment_base {
 
     function portfolio_supported_formats() {
         return array(PORTFOLIO_FORMAT_PLAINHTML);
+    }
+
+    function extend_settings_navigation($node) {
+        global $PAGE, $CFG, $USER;
+
+        // get users submission if there is one
+        $submission = $this->get_submission();
+        if (has_capability('mod/assignment:submit', $PAGE->cm->context)) {
+            $editable = $this->isopen() && (!$submission || $this->assignment->resubmit || !$submission->timemarked);
+        } else {
+            $editable = false;
+        }
+
+        // If the user has submitted something add a bit more stuff
+        if ($submission) {
+            // Add a view link to the settings nav
+            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$PAGE->cm->id));
+            $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
+
+            if (!empty($submission->timemodified)) {
+                $key = $node->add(get_string('submitted', 'assignment') . ' ' . userdate($submission->timemodified));
+                $node->get($key)->text = preg_replace('#([^,])\s#', '$1&nbsp;', $node->get($key)->text);
+                $node->get($key)->add_class('note');
+                if ($submission->timemodified <= $this->assignment->timedue || empty($this->assignment->timedue)) {
+                    $node->get($key)->add_class('early');
+                } else {
+                    $node->get($key)->add_class('late');
+                }
+            }
+        }
+
+        if (!$submission || $editable) {
+            // If this assignment is editable once submitted add an edit link to the settings nav
+            $link = new moodle_url($CFG->wwwroot.'/mod/assignment/view.php', array('id'=>$PAGE->cm->id, 'edit'=>1, 'sesskey'=>sesskey()));
+            $node->add(get_string('editmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
+        }
     }
 }
 

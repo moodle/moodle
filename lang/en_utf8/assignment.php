@@ -12,6 +12,7 @@ $string['assignment:exportsubmission'] = 'Export submission';
 $string['assignment:grade'] = 'Grade assignment';
 $string['assignment:submit'] = 'Submit assignment';
 $string['assignment:view'] = 'View assignment';
+$string['assignmentadministration'] = 'Assignment administration';
 $string['assignmentdetails'] = 'Assignment details';
 $string['assignmentmail'] = '$a->teacher has posted some feedback on your
 assignment submission for \'$a->assignment\'
@@ -146,6 +147,7 @@ $string['uploadnotregistered'] = '\'$a\' was uploaded OK but submission did not 
 $string['uploadsuccess'] = 'Uploaded \'$a\' successfully';
 $string['usermisconf'] = 'User is misconfigured';
 $string['viewfeedback'] = 'View assignment grades and feedback';
+$string['viewmysubmission'] = 'View my submission';
 $string['viewsubmissions'] = 'View $a submitted assignments';
 $string['yoursubmission'] = 'Your submission';
 $string['maxpublishstate'] = 'Maximum visibility for blog entry before duedate';
