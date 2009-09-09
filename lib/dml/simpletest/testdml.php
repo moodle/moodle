@@ -1996,7 +1996,7 @@ class dml_test extends UnitTestCase {
             $DB->rollback_sql();
             $this->assertEqual(0, $DB->count_records($tablename));
         } else {
-            $this->assertTrue(true, 'DB transactions not supported. Test skipped');
+            $this->assertTrue(true, 'DB Transactions not supported. Test skipped');
         }
     }
 }
