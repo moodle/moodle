@@ -8,7 +8,7 @@
  * @author Ferran Recio
  * @author Jerome Mouneyrac
  */
-
+require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/group/lib.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
 
@@ -17,7 +17,7 @@ require_once(dirname(dirname(__FILE__)) . '/lib/grouplib.php');
  * Group external api class
  *
  */
-final class group_external {
+final class group_external extends moodle_external {
 
     /**
      * Create some groups

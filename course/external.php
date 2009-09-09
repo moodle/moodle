@@ -22,6 +22,7 @@
  * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
  * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
+require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/course/lib.php');
 
 /**
@@ -29,7 +30,7 @@ require_once(dirname(dirname(__FILE__)) . '/course/lib.php');
  *
  * @author Jerome Mouneyrac
  */
-final class course_external {
+final class course_external extends moodle_external {
 
     /**
      * Retrieve courses
