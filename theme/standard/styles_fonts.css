@@ -187,6 +187,7 @@ a.useredit, a:hover.useredit, .blink {
 
 .currentlink {
   font-style: italic;
+  display: inline;
 }
 /***
  *** Header

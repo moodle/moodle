@@ -1260,6 +1260,11 @@ class html_link extends moodle_html_component {
     public $disabled = false;
 
     /**
+     * @var boolean $disableifcurrent Whether or not this link should be disabled if it the same as the current page
+     */
+    public $disableifcurrent = false;
+
+    /**
      * @see lib/moodle_html_component#prepare() Disables the link if it links to the current page.
      * @return void
      */
@@ -1274,7 +1279,7 @@ class html_link extends moodle_html_component {
             $this->url = new moodle_url($this->url);
         }
 
-        if ($this->url->compare($PAGE->url, URL_MATCH_PARAMS)) {
+        if ($this->url->compare($PAGE->url, URL_MATCH_PARAMS) && $this->disableifcurrent) {
             $this->disabled = true;
         }
         parent::prepare();
