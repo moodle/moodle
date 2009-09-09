@@ -371,26 +371,34 @@ class navigation_node {
             return '';
         }
         if ($shorttext && $this->shorttext!==null) {
-            $content = s($this->shorttext);
+            $content = clean_text($this->shorttext);
         } else {
-            $content = s($this->text);
+            $content = clean_text($this->text);
         }
+        $title = '';
+        if ($this->forcetitle || ($this->shorttext!==null && $this->title !== $this->shorttext) || $this->title !== $this->text) {
+             $title = $this->title;
+        }
+
         if ($content != '' && ((is_object($this->action) && $this->action instanceof moodle_url) || is_string($this->action))) {
             $link = new html_link();
-            if ($this->forcetitle || ($this->shorttext!==null && $this->title !== $this->shorttext) || $this->title !== $this->text) {
-                $link->title = $this->title;
+            if ($title !== '') {
+                $link->title = $title;
             }
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
             $link->url = $this->action;
-            $link->text = $content;
+            $link->text = clean_text($content);
             $content = $OUTPUT->link($link);
         } else {
+            if ($title !== '') {
+                $title = ' title="'.s($title).'"';
+            }
             if ($this->hidden) {
-                $content = sprintf('<span class="dimmed_text">%s</span>', $content);
+                $content = sprintf('<span class="dimmed_text"%s>%s</span>', $title, clean_text($content));
             } else {
-                $content = sprintf('<span>%s</span>', $content);
+                $content = sprintf('<span%s>%s</span>', $title, clean_text($content));
             }
         }
         if ($this->icon!==null) {
@@ -947,7 +955,7 @@ class global_navigation extends navigation_node {
             $this->add_to_path($keys, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
-                $child->title(get_string($module->modname, $module->modname));
+                $child->title(get_string('modulename', $module->modname));
                 if ($type==navigation_node::TYPE_ACTIVITY && $this->module_extends_navigation($module->modname)) {
                     $child->nodetype = self::NODETYPE_BRANCH;
                 }
@@ -1011,7 +1019,7 @@ class global_navigation extends navigation_node {
             $this->add_to_path($path, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
-                $child->title(get_string($module->modname, $module->modname));
+                $child->title(get_string('modulename', $module->modname));
                 if (!$module->visible) {
                     $child->hidden = true;
                 }
@@ -1721,7 +1729,7 @@ class limited_global_navigation extends global_navigation {
             $this->add_to_path($keys, $module->id, $module->name, $module->name, $type, $url, $icon);
             $child = $this->find_child($module->id, $type);
             if ($child != false) {
-                $child->title(get_string($module->modname, $module->modname));
+                $child->title(get_string('modulename', $module->modname));
                 if (!$module->visible) {
                     $child->hidden = true;
                 }
