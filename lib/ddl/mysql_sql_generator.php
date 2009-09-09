@@ -111,7 +111,7 @@ class mysql_sql_generator extends sql_generator {
     public function getCreateTempTableSQL($xmldb_table) {
         $this->temptables->add_temptable($xmldb_table->getName());
         $sqlarr = $this->getCreateTableSQL($xmldb_table);
-        $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1 TYPE=MyISAM', $sqlarr);
+        $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1', $sqlarr);
         return $sqlarr;
     }
 
