@@ -32,6 +32,12 @@ class navigation_node_test extends UnitTestCase {
     protected $tree;
     public static $includecoverage = array('./lib/navigationlib.php');
     public static $excludecoverage = array();
+    protected $fakeproperties = array(
+        'text' => 'text',
+        'shorttext' => 'A very silly extra long short text string, more than 25 characters',
+        'key' => 'key',
+        'type' => 'navigation_node::TYPE_COURSE',
+        'action' => 'http://www.moodle.org/');
 
     public function setUp() {
         global $CFG, $FULLME;
@@ -58,21 +64,20 @@ class navigation_node_test extends UnitTestCase {
     }
     public function test___construct() {
         global $CFG;
-        $properties = array();
-        $properties['text'] = 'text';
-        $properties['shorttext'] = 'shorttext';
-        $properties['key'] = 'key';
-        $properties['type'] = 'navigation_node::TYPE_COURSE';
-        $properties['action'] = 'http://www.moodle.org/';
-        $properties['icon'] = $CFG->httpswwwroot . '/pix/i/course.gif';
-        $node = new navigation_node($properties);
-        $this->assertEqual($node->text, $properties['text']);
-        $this->assertEqual($node->title, $properties['text']);
-        $this->assertEqual($node->shorttext, $properties['shorttext']);
-        $this->assertEqual($node->key, $properties['key']);
-        $this->assertEqual($node->type, $properties['type']);
-        $this->assertEqual($node->action, $properties['action']);
-        $this->assertEqual($node->icon, $properties['icon']);
+        $node = new navigation_node($this->fakeproperties);
+        $this->assertEqual($node->text, $this->fakeproperties['text']);
+        $this->assertEqual($node->title, $this->fakeproperties['text']);
+        $this->assertTrue(strpos($this->fakeproperties['shorttext'], substr($node->shorttext,0, -3))===0);
+        $this->assertEqual($node->key, $this->fakeproperties['key']);
+        $this->assertEqual($node->type, $this->fakeproperties['type']);
+        $this->assertEqual($node->action, $this->fakeproperties['action']);
+    }
+    public function test_override_active_url() {
+        $url = new moodle_url('http://moodle.org');
+        $this->fakeproperties['action'] = $url;
+        navigation_node::override_active_url($url);
+        $node = new navigation_node($this->fakeproperties);
+        $this->assertTrue($node->isactive);
     }
     public function test_add() {
         global $CFG;
@@ -148,6 +153,11 @@ class navigation_node_test extends UnitTestCase {
     }
 
     public function test_content() {
+        $this->node->get('demo3')->get('demo5')->action = null;
+        $this->node->get('demo3')->get('demo5')->title('This is a title');
+        $this->node->get('demo3')->get('demo5')->hidden = true;
+        $this->node->get('demo3')->get('demo5')->icon = null;
+        $this->node->get('demo3')->get('demo5')->helpbutton = 'A fake help button';
         $content1 = $this->node->get('demo1')->content();
         $content2 = $this->node->get('demo3')->content();
         $content3 = $this->node->get('demo3')->get('demo5')->content();
@@ -155,9 +165,16 @@ class navigation_node_test extends UnitTestCase {
         $content5 = $this->node->get('hiddendemo1')->get('hiddendemo3')->content();
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo1')->action), $content1);
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo3')->action), $content2);
-        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo3')->get('demo5')->action), $content3);
+        $this->assertEqual($content3, 'A fake help button<span class="clearhelpbutton"><span class="dimmed_text" title="This is a title">demo5</span></span>');
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('hiddendemo1')->get('hiddendemo2')->action->out()), $content4);
         $this->assertTrue(empty($content5));
+    }
+
+    public function test_get_active_node() {
+        $node1 = $this->node->get_active_node();
+        $node2 = $this->node->get('demo3')->get_active_node();
+        $this->assertFalse($node1);
+        $this->assertIsA($node2, 'navigation_node');
     }
 
     public function test_find_active_node() {
@@ -316,6 +333,35 @@ class exposed_global_navigation extends global_navigation {
     }
 }
 
+class mock_initialise_global_navigation extends global_navigation {
+
+    static $count = 1;
+
+    public function load_for_category() {
+        $this->add('load_for_category', null, null, null, 'initcall'.self::$count);
+        self::$count++;
+        return 0;
+    }
+
+    public function load_for_course() {
+        $this->add('load_for_course', null, null, null, 'initcall'.self::$count);
+        self::$count++;
+        return 0;
+    }
+
+    public function load_for_activity() {
+        $this->add('load_for_activity', null, null, null, 'initcall'.self::$count);
+        self::$count++;
+        return 0;
+    }
+
+    public function load_for_user() {
+        $this->add('load_for_user', null, null, null, 'initcall'.self::$count);
+        self::$count++;
+        return 0;
+    }
+}
+
 class global_navigation_test extends UnitTestCase {
     /**
      * @var global_navigation
@@ -328,6 +374,7 @@ class global_navigation_test extends UnitTestCase {
     public static $excludecoverage = array();
     
     public function setUp() {
+        navigation_node::override_active_url();
         $this->cache = new navigation_cache('simpletest_nav');
         $this->node = new exposed_global_navigation();
         // Create an initial tree structure to work with
@@ -387,6 +434,88 @@ class global_navigation_test extends UnitTestCase {
         $this->node->exposed_add_category_by_path($category);
         $this->assertIsA($this->node->get('cat2')->get('sub3'), 'navigation_node');
     }
+
+    public function test_load_course_categories() {
+        global $PAGE;
+        $originalcategories = $PAGE->categories;
+        $PAGE->categories = array();
+        $PAGE->categories[0] = new stdClass;
+        $PAGE->categories[0]->id = 130;
+        $PAGE->categories[0]->name = 'category1';
+        $PAGE->categories[1] = new stdClass;
+        $PAGE->categories[1]->id = 131;
+        $PAGE->categories[1]->name = 'category0';
+        $test = new exposed_global_navigation();
+        $keys = array();
+        $keys[] = $test->add('base level', null, null, null, 'base');
+        $catcount = $test->exposed_load_course_categories($keys);
+        $this->assertIsA($test->get('base'), 'navigation_node');
+        $this->assertIsA($test->get('base')->get(131), 'navigation_node');
+        $this->assertIsA($test->get('base')->get(131)->get(130), 'navigation_node');
+        $PAGE->categories = $originalcategories;
+    }
+
+    public function test_init() {
+        global $PAGE, $SITE;
+        $originalcontext = $PAGE->context;
+        $test = new mock_initialise_global_navigation();
+        // System
+        $PAGE->context->contextlevel = CONTEXT_SYSTEM;
+        $node1 = clone($test);
+        $node1->initialise();
+        $this->assertIsA($node1->get('initcall1'), 'navigation_node');
+        if ($node1->get('initcall1')) {
+            $this->assertEqual($node1->get('initcall1')->text, 'load_for_category');
+        }
+        // Course category
+        $PAGE->context->contextlevel = CONTEXT_COURSECAT;
+        $node2 = clone($test);
+        $node2->initialise();
+        $this->assertIsA($node2->get('initcall2'), 'navigation_node');
+        if ($node2->get('initcall2')) {
+            $this->assertEqual($node2->get('initcall2')->text, 'load_for_category');
+        }
+        $PAGE->context->contextlevel = CONTEXT_COURSE;
+        // For course (we need to adjust the site id so we look like a normal course
+        $SITE->id++;
+        $node3 = clone($test);
+        $node3->initialise();
+        $this->assertIsA($node3->get('initcall3'), 'navigation_node');
+        if ($node3->get('initcall3')) {
+            $this->assertEqual($node3->get('initcall3')->text, 'load_for_course');
+        }
+        $SITE->id--;
+        // Course is site
+        $node4 = clone($test);
+        $node4->initialise();
+        $this->assertIsA($node4->get('initcall4'), 'navigation_node');
+        if ($node4->get('initcall4')) {
+            $this->assertEqual($node4->get('initcall4')->text, 'load_for_category');
+        }
+        $PAGE->context->contextlevel = CONTEXT_MODULE;
+        $node5 = clone($test);
+        $node5->initialise();
+        $this->assertIsA($node5->get('initcall5'), 'navigation_node');
+        if ($node5->get('initcall5')) {
+            $this->assertEqual($node5->get('initcall5')->text, 'load_for_activity');
+        }
+        $PAGE->context->contextlevel = CONTEXT_BLOCK;
+        $node6 = clone($test);
+        $node6->initialise();
+        $this->assertIsA($node6->get('initcall6'), 'navigation_node');
+        if ($node6->get('initcall6')) {
+            $this->assertEqual($node6->get('initcall6')->text, 'load_for_course');
+        }
+        $PAGE->context->contextlevel = CONTEXT_USER;
+        $node7 = clone($test);
+        $node7->initialise();
+        $this->assertIsA($node7->get('initcall7'), 'navigation_node');
+        if ($node7->get('initcall7')) {
+            $this->assertEqual($node7->get('initcall7')->text, 'load_for_user');
+        }
+        $PAGE->context = $originalcontext;
+    }
+
     public function test_add_courses() {
         $courses = array();
         for ($i=0;$i<5;$i++) {
@@ -531,6 +660,104 @@ class global_navigation_test extends UnitTestCase {
         $this->assertFalse($this->node->exposed_module_extends_navigation('test2'));
         $this->assertFalse($this->node->exposed_module_extends_navigation('test3'));
     }
+}
+
+class mock_initialise_limited_global_navigation extends limited_global_navigation {
+
+    public function load_categories($id) {
+        $this->add('load_for_category_'.$id, null, null, null, 'initcall');
+        return 0;
+    }
+
+    public function load_course($id) {
+        $this->add('load_for_course_'.$id, null, null, null, 'initcall');
+        return 0;
+    }
+
+    public function load_activity($id) {
+        $this->add('load_for_activity_'.$id, null, null, null, 'initcall');
+        return 0;
+    }
+
+    public function load_section($id) {
+        $this->add('load_for_section_'.$id, null, null, null, 'initcall');
+        return 0;
+    }
+}
+
+/**
+ * This is a dummy object that allows us to call protected methods within the
+ * global navigation class by prefixing the methods with `exposed_`
+ */
+class exposed_limited_global_navigation extends limited_global_navigation {
+    protected $exposedkey = 'exposed_';
+    function __construct() {
+        parent::__construct();
+        $this->cache = new navigation_cache('simpletest_nav');
+    }
+    function __call($method, $arguments) {
+        if (strpos($method,$this->exposedkey) !== false) {
+            $method = substr($method, strlen($this->exposedkey));
+        }
+        if (method_exists($this, $method)) {
+            return call_user_func_array(array($this, $method), $arguments);
+        }
+        throw new coding_exception('You have attempted to access a method that does not exist for the given object '.$method, DEBUG_DEVELOPER);
+    }
+}
+
+class limited_global_navigation_test extends UnitTestCase {
+
+    public $mocknode;
+    public $exposednode;
+
+    public function setUp() {
+        $this->mocknode = new mock_initialise_limited_global_navigation();
+        $this->exposednode = new exposed_limited_global_navigation();
+    }
+
+    public function test_initialise() {
+        $node1 = clone($this->mocknode);
+        $node1->initialise(navigation_node::TYPE_ACTIVITY, 1);
+        $this->assertIsA($node1->get('initcall'), 'navigation_node');
+        if ($node1->get('initcall')) {
+            $this->assertEqual($node1->get('initcall')->text, 'load_for_activity_1');
+        }
+
+        $node2 = clone($this->mocknode);
+        $node2->initialise(navigation_node::TYPE_CATEGORY, 2);
+        $this->assertIsA($node2->get('initcall'), 'navigation_node');
+        if ($node2->get('initcall')) {
+            $this->assertEqual($node2->get('initcall')->text, 'load_for_category_2');
+        }
+
+        $node3 = clone($this->mocknode);
+        $node3->initialise(navigation_node::TYPE_COURSE, 3);
+        $this->assertIsA($node3->get('initcall'), 'navigation_node');
+        if ($node3->get('initcall')) {
+            $this->assertEqual($node3->get('initcall')->text, 'load_for_course_3');
+        }
+
+        $node4 = clone($this->mocknode);
+        $node4->initialise(navigation_node::TYPE_SECTION, 4);
+        $this->assertIsA($node4->get('initcall'), 'navigation_node');
+        if ($node4->get('initcall')) {
+            $this->assertEqual($node4->get('initcall')->text, 'load_for_section_4');
+        }
+        
+        $node5 = clone($this->mocknode);
+        $node5->initialise(navigation_node::TYPE_RESOURCE, 5);
+        $this->assertFalse($node5->get('initcall'));
+
+        $node6 = clone($this->mocknode);
+        $node6->initialise(navigation_node::TYPE_SETTING, 6);
+        $this->assertFalse($node5->get('initcall'));
+
+        $node7 = clone($this->mocknode);
+        $node7->initialise(navigation_node::TYPE_SYSTEM, 7);
+        $this->assertFalse($node5->get('initcall'));
+    }
+
 }
 
 /**

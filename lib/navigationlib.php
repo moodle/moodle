@@ -185,6 +185,16 @@ class navigation_node {
     }
 
     /**
+     * This function overrides the active URL that is used to compare new nodes
+     * to find out if they are active.
+     * If null is passed then $fullmeurl will be regenerated when the next node
+     * is created/added
+     */
+    public static function override_active_url(moodle_url $url=null) {
+        self::$fullmeurl = $url;
+    }
+
+    /**
      * This function checks if the node is the active child by comparing its action
      * to the current page URL obtained via $ME
      *
@@ -1510,7 +1520,7 @@ class limited_global_navigation extends global_navigation {
      */
     public function initialise($type, $instanceid) {
         if ($this->initialised || during_initial_install()) {
-            return true;
+            return $this->expandable;
         }
         $depth = 0;
         switch ($type) {
