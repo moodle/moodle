@@ -37,6 +37,23 @@
 
     $PAGE->set_generaltype('form');
 
+    $url = new moodle_url($CFG->wwwroot.'/course/modedit.php');
+    if (!empty($add)) {
+        $url->param('add', $add);
+    } else if (!empty($update)) {
+        $url->param('update', $update);
+    } else {
+        debugging('Neither add nor update arguments were provided, PAGE->set_url needs to be checked', DEBUG_DEVELOPER);
+    }
+    if (!empty($return)) {
+        $url->param('return', $return);
+    }
+    if (!empty($type)) {
+        $url->param('type', $type);
+    }
+    $PAGE->set_url($url);
+
+
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
         $course  = required_param('course', PARAM_INT);
@@ -582,10 +599,6 @@
         $streditinga = get_string('editinga', 'moodle', $fullmodulename);
         $strmodulenameplural = get_string('modulenameplural', $module->name);
 
-        $PAGE->navbar->add($strmodulenameplural, new moodle_url($CFG->wwwroot.'/mod/'.$module->name.'/index.php', array('id'=>$course->id)));
-        if ($navlinksinstancename) {
-            $PAGE->navbar->add($navlinksinstancename['name'], $navlinksinstancename['link']);
-        }
         $PAGE->navbar->add($streditinga);
         $PAGE->set_title($streditinga);
         $PAGE->set_focuscontrol($mform->focus());
@@ -599,9 +612,14 @@
             $currenttab = 'update';
             require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
-        $icon = '<img src="'.$OUTPUT->mod_icon_url('icon', $module->name) . '" alt=""/>';
-
-        print_heading_with_help($pageheading, 'mods', $module->name, $icon);
+        
+        $helpicon = new moodle_help_icon();
+        $helpicon->page = 'mods';
+        $helpicon->text = $pageheading;
+        $helpicon->module = $module->name;
+        echo $OUTPUT->heading_with_help($helpicon, $OUTPUT->mod_icon_url('icon', $module->name));
+        
         $mform->display();
+        
         echo $OUTPUT->footer();
     }

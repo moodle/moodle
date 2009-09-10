@@ -190,12 +190,10 @@
     // (i.e., no breadcrumbs other than the default one added inside this function)
     $buttons = switchroles_form($course->id);
     if ($PAGE->user_allowed_editing()) {
-        $buttons .= update_course_icon($course->id );
+        $buttons .= $OUTPUT->edit_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $course->id)));
     }
 
-    $title = get_string('course') . ': ' . $course->fullname;
-
-    $PAGE->set_title($title);
+    $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($buttons);
     $PAGE->set_headingmenu(user_login_string($course, $USER));
