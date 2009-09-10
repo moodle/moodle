@@ -6,6 +6,7 @@ $string['addmorechoices'] = 'Add more choices';
 $string['allowupdate'] = 'Allow choice to be updated';
 $string['answered'] = 'Answered';
 $string['choice'] = 'Choice';
+$string['choiceadministration'] = 'Choice administration';
 $string['choice:choose'] = 'Record a choice';
 $string['choice:deleteresponses'] = 'Delete responses';
 $string['choice:downloadresponses'] = 'Download responses';

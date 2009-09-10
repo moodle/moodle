@@ -923,3 +923,33 @@ function choice_supports($feature) {
         default: return null;
     }
 }
+
+function choice_extend_settings_navigation($settings, $module) {
+    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
+
+    $choice = $DB->get_record('choice', array('id'=>$PAGE->cm->instance));
+    $choicenavkey = $settings->add(get_string('choiceadministration', 'choice'));
+    $choicenav = $settings->get($choicenavkey);
+    $choicenav->forceopen = true;
+
+    if (has_capability('mod/choice:readresponses', $PAGE->cm->context)) {
+
+        $groupmode = groups_get_activity_groupmode($PAGE->cm);
+        if ($groupmode) {
+            groups_get_activity_group($PAGE->cm, true);
+        }
+        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+        $responsecount =0;
+        foreach($allresponses as $optionid => $userlist) {
+            if ($optionid) {
+                $responsecount += count($userlist);
+            }
+        }
+        $choicenav->add(get_string("viewallresponses", "choice", $responsecount), new moodle_url($CFG->wwwroot.'/mod/choice/report.php', array('id'=>$PAGE->cm->id)));
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $choicenav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+    }
+}
