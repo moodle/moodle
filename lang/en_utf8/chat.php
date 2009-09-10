@@ -5,6 +5,7 @@ $string['ajax'] = 'Version using Ajax';
 $string['autoscroll'] = 'Auto Scroll';
 $string['beep'] = 'beep';
 $string['cantlogin'] = 'Could not log in to chat room!!';
+$string['chatadministration'] = 'Chat Administration';
 $string['chat:chat'] = 'Access a chat room';
 $string['chat:deletelog'] = 'Delete chat logs';
 $string['chat:exportsession'] = 'Export chat session';

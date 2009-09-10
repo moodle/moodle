@@ -1214,3 +1214,79 @@ function chat_supports($feature) {
         default: return null;
     }
 }
+
+function chat_extend_navigation($navigation, $course, $module, $cm) {
+    global $CFG, $USER, $PAGE, $OUTPUT;
+    if (has_capability('mod/chat:chat',$cm->context)) {
+        $strenterchat    = get_string('enterchat', 'chat');
+        $currentgroup = groups_get_activity_group($cm, true);
+
+        $target = $CFG->wwwroot.'/mod/chat/';
+        $params = array('id'=>$cm->instance);
+
+        if ($currentgroup) {
+            $params['groupid'] = $currentgroup;
+        }
+
+        $links = array();
+        
+        if (!empty($USER->screenreader)) {
+            $links[] = html_link::make(new moodle_url($target.'gui_basic/index.php', $params), $strenterchat);
+        } else {
+            $links[] = html_link::make(new moodle_url($target.'gui_'.$CFG->chat_method.'/index.php', $params), $strenterchat);
+        }
+
+        if ($CFG->enableajax) {
+            $links[] = html_link::make(new moodle_url($target.'gui_ajax/index.php', $params), get_string('ajax_gui', 'message'));
+        }
+
+        if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
+            $links[] = html_link::make(new moodle_url($target.'gui_basic/index.php', $params), get_string('noframesjs', 'message'));
+        }
+
+        foreach ($links as $link) {
+            $link->add_action(new popup_action('click', $link->url, 'chat'.$course->id.$cm->instance.$currentgroup, array('height' => 500, 'width' => 700)));
+            $link->title = get_string('modulename', 'chat');
+            $navigation->add($link->title, $link, navigation_node::TYPE_ACTIVITY, null ,null, $OUTPUT->old_icon_url('c/group'));
+        }
+    }
+
+    $chatusers = chat_get_users($cm->instance, $currentgroup, $cm->groupingid);
+    if (is_array($chatusers) && count($chatusers)>0) {
+        $userskey = $navigation->add(get_string('currentusers', 'chat'));
+        $users = $navigation->get($userskey);
+        foreach ($chatusers as $chatuser) {
+            $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$chatuser->id,'course'=>$course->id));
+            $users->add(fullname($chatuser).' '.format_time(time() - $chatuser->lastmessageping), $userlink, navigation_node::TYPE_USER, null, null, $OUTPUT->old_icon_url('c/user'));
+        }
+    }
+}
+
+function chat_extend_settings_navigation($settingsnav, $module) {
+    global $DB, $PAGE, $USER, $CFG;
+    $chat = $DB->get_record("chat", array("id" => $PAGE->cm->instance));
+    $chatnavkey = $settingsnav->add(get_string('chatadministration', 'chat'));
+    $chatnav = $settingsnav->get($chatnavkey);
+    $chatnav->forceopen = true;
+    if ($chat->chattime && $chat->schedule) {
+        $key = $chatnav->add(get_string('nextsession', 'chat').': '.userdate($chat->chattime).' ('.usertimezone($USER->timezone));
+        $chatnav->get($key)->add_class('note');
+    }
+
+    $currentgroup = groups_get_activity_group($PAGE->cm, true);
+    if ($currentgroup) {
+        $groupselect = " AND groupid = '$currentgroup'";
+    } else {
+        $groupselect = '';
+    }
+
+    if ($chat->studentlogs || has_capability('mod/chat:readlog',$PAGE->cm->context)) {
+        if ($DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
+            $chatnav->add(get_string('viewreport', 'chat'), new moodle_url($CFG->wwwroot.'/mod/chat/report.php', array('id'=>$PAGE->cm->id)));
+        }
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $chatnav->add(get_string('updatethis', '', get_string('modulename', 'chat')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+    }
+}

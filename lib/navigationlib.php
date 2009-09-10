@@ -67,6 +67,8 @@ class navigation_node {
     const TYPE_CUSTOM =     60;
     /**  Setting node type, used only within settings nav */
     const TYPE_SETTING =    70;
+    /**  Setting node type, used only within settings nav */
+    const TYPE_USER =    80;
 
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
@@ -109,7 +111,7 @@ class navigation_node {
     /** @var bool If set to true a title will be added to the action no matter what */
     public $forcetitle = false;
     /** @var array */
-    protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting');
+    protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting', 80=>'user');
     /** @var moodle_url */
     protected static $fullmeurl = null;
 
@@ -390,16 +392,20 @@ class navigation_node {
              $title = $this->title;
         }
 
-        if ($content != '' && ((is_object($this->action) && $this->action instanceof moodle_url) || is_string($this->action))) {
-            $link = new html_link();
+        if ($content != '' && ((is_object($this->action) && ($this->action instanceof moodle_url || $this->action instanceof html_link)) || is_string($this->action))) {
+            if (!($this->action instanceof html_link)) {
+                $link = new html_link();
+                $link->url = $this->action;
+                $link->text = clean_text($content);
+            } else {
+                $link = $this->action;
+            }
             if ($title !== '') {
                 $link->title = $title;
             }
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
-            $link->url = $this->action;
-            $link->text = clean_text($content);
             $content = $OUTPUT->link($link);
         } else {
             if ($title !== '') {
