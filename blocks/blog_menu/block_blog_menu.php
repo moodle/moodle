@@ -96,12 +96,18 @@ class block_blog_menu extends block_base {
         $menulist->add_class('list');
 
         if (!empty($strlevel)) {
-            $menulist->add_item($OUTPUT->link(html_link::make($viewblogentriesurl, get_string('viewblogentries', 'blog', $strlevel))));
+            $url = html_link::make($viewblogentriesurl, get_string('viewblogentries', 'blog', $strlevel));
+            $url->disableifcurrent = true;
+            $menulist->add_item($OUTPUT->link($url));
         }
 
         // show View site entries link
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
-            $menulist->add_item($OUTPUT->link(html_link::make($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'))));
+            $viewsiteentriesurl = html_link::make($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
+            if (!$PAGE->url->param('search') && !$PAGE->url->param('tag') && !$PAGE->url->param('tagid')) {
+                $viewsiteentriesurl->disableifcurrent = true;
+            }
+            $menulist->add_item($OUTPUT->link($viewsiteentriesurl));
         }
 
         $output .= '';
@@ -110,12 +116,13 @@ class block_blog_menu extends block_base {
         if ($context->contextlevel != CONTEXT_USER) {
             $myentrieslink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
             $myentrieslink->url->params($viewblogentriesurl->params());
+            $myentrieslink->disableifcurrent = true;
             $menulist->add_item($OUTPUT->link($myentrieslink));
         }
 
         // show link to manage blog prefs
         $blogpreflink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/preferences.php', array('userid' => $USER->id)), get_string('blogpreferences', 'blog'));
-
+        $blogpreflink->disableifcurrent = true;
         $menulist->add_item($OUTPUT->link($blogpreflink));
 
         // show Add entry link
@@ -123,6 +130,7 @@ class block_blog_menu extends block_base {
         if (has_capability('moodle/blog:create', $sitecontext)) {
             $addentrylink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/edit.php', array('action' => 'add')), get_string('addnewentry', 'blog'));
             $addentrylink->url->params($viewblogentriesurl->params());
+            $addentrylink->disableifcurrent = true;
             $menulist->add_item($OUTPUT->link($addentrylink));
         }
 
@@ -131,7 +139,7 @@ class block_blog_menu extends block_base {
         $searchform->method = 'get';
         $searchform->url = new moodle_url($viewblogentriesurl);
         $searchform->button->text = get_string('search');
-        $formcontents = $OUTPUT->field(html_field::make_text('search'));
+        $formcontents = $OUTPUT->field(html_field::make_text('search', '', '', 99));
 
         $menulist->add_item($OUTPUT->form($searchform, $formcontents));
         $this->content->text = $OUTPUT->htmllist($menulist);

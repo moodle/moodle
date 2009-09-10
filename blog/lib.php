@@ -591,6 +591,12 @@ function blog_get_headers() {
         $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blog_url);
     }
 
+    // Append Search info
+    if (!empty($search)) {
+        $blog_url->param('search', $search);
+        $PAGE->navbar->add(get_string('searchterm', 'blog', $search), $blog_url->out());
+    }
+
     // Append edit mode info
     if (!empty($action) && $action == 'add') {
         if (empty($modid) && empty($courseid)) {
@@ -604,5 +610,6 @@ function blog_get_headers() {
     } else if (!empty($action) && $action == 'edit') {
         $PAGE->navbar->add(get_string('editentry', 'blog'));
     }
+
     return $headers;
 }
