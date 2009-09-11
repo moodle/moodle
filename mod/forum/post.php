@@ -14,6 +14,16 @@
     $confirm = optional_param('confirm', 0, PARAM_INT);
     $groupid = optional_param('groupid', null, PARAM_INT);
 
+    $PAGE->set_url('/mod/forum/post.php', array(
+            'reply' => $reply,
+            'forum' => $forum,
+            'edit'  => $edit,
+            'delete'=> $delete,
+            'prune' => $prune,
+            'name'  => $name,
+            'confirm'=>$confirm,
+            'groupid'=>$groupid,
+            ));
     //these page_params will be passed as hidden variables later in the form.
     $page_params = array('reply'=>$reply, 'forum'=>$forum, 'edit'=>$edit);
 
@@ -52,7 +62,7 @@
 
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
-        
+
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'), get_login_url(), get_referer(false));
         echo $OUTPUT->footer();
@@ -748,8 +758,10 @@
 
     $forcefocus = empty($reply) ? NULL : 'message';
 
+    if (!empty($discussion->id)) {
+        $PAGE->navbar->add(format_string($toppost->subject, true), "discuss.php?d=$discussion->id");
+    }
 
-    $PAGE->navbar->add(format_string($toppost->subject, true), "discuss.php?d=$discussion->id");
     if ($post->parent) {
         $PAGE->navbar->add(get_string('editing', 'forum'));
     }

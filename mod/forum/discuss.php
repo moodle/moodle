@@ -12,6 +12,14 @@
     $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
+    $PAGE->set_url('/mod/forum/post.php', array(
+            'd' => $d,
+            'parent' => $parent,
+            'mode'  => $mode,
+            'mark' => $mark,
+            'postid'  => $postid
+            ));
+
     if (!$discussion = $DB->get_record('forum_discussions', array('id' => $d))) {
         print_error('invaliddiscussionid', 'forum');
     }
