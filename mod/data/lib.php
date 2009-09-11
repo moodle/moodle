@@ -3192,3 +3192,84 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         return array($formats, $includedfiles);
     }
 }
+
+function data_extend_navigation($navigation, $course, $module, $cm) {
+    global $CFG, $OUTPUT, $USER, $DB;
+
+    $rid = optional_param('rid', 0, PARAM_INT);
+
+    $data = $DB->get_record('data', array('id'=>$cm->instance));
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
+
+     $numentries = data_numentries($data);
+    /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $cm->context)) {
+        $data->entriesleft = $data->requiredentries - $numentries;
+        $key = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
+        $navigation->get($key)->add_class('note');
+    }
+
+    $navigation->add(get_string('list', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance)));
+    if (!empty($rid)) {
+        $navigation->add(get_string('single', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'rid'=>$rid)));
+    } else {
+        $navigation->add(get_string('single', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'single')));
+    }
+    $navigation->add(get_string('search', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('d'=>$cm->instance, 'mode'=>'search')));
+}
+
+function data_extend_settings_navigation($settings, $module) {
+    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
+
+    $data = $DB->get_record('data', array('id'=>$PAGE->cm->instance));
+    $datanavkey = $settings->add(get_string('dataadministration', 'data'));
+    $datanav = $settings->get($datanavkey);
+    $datanav->forceopen = true;
+
+    $currentgroup = groups_get_activity_group($PAGE->cm);
+    $groupmode = groups_get_activity_groupmode($PAGE->cm);
+
+    if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
+        if (empty($editentry)) {
+            $addstring = get_string('add', 'data');
+        } else {
+            $addstring = get_string('editentry', 'data');
+        }
+        $datanav->add($addstring, new moodle_url($CFG->wwwroot.'/mod/data/edit.php', array('d'=>$PAGE->cm->instance)));
+    }
+
+    if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
+        // The capability required to Export database records is centrally defined in 'lib.php'
+        // and should be weaker than those required to edit Templates, Fields and Presets.
+        $datanav->add(get_string('export', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/export.php', array('d'=>$data->id)));
+    }
+
+    if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {
+        $currenttab = '';
+        if ($currenttab == 'list') {
+            $defaultemplate = 'listtemplate';
+        } else if ($currenttab == 'add') {
+            $defaultemplate = 'addtemplate';
+        } else if ($currenttab == 'asearch') {
+            $defaultemplate = 'asearchtemplate';
+        } else {
+            $defaultemplate = 'singletemplate';
+        }
+
+        $templatekey = $datanav->add(get_string('templates', 'data'));
+        $templates = $datanav->get($templatekey);
+
+        $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
+        foreach ($templatelist as $template) {
+            $templates->add(get_string($template, 'data'), new moodle_url($CFG->wwwroot.'/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
+        }
+
+        $datanav->add(get_string('fields', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/field.php', array('d'=>$data->id)));
+        $datanav->add(get_string('presets', 'data'), new moodle_url($CFG->wwwroot.'/mod/data/preset.php', array('d'=>$data->id)));
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $datanav->add(get_string('updatethis', '', get_string('modulename', 'choice')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+    }
+}

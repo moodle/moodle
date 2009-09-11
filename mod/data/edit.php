@@ -108,6 +108,12 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
 
+    if ($rid) {
+        $PAGE->navbar->add(get_string('editentry', 'data'));
+    } else {
+        $PAGE->navbar->add(get_string('add', 'data'));
+    }
+
     $PAGE->set_title($data->name);
     $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
     echo $OUTPUT->header();

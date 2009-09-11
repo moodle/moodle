@@ -78,6 +78,7 @@
     $bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
     $bodytag .= '" ';
 
+    $PAGE->navbar->add(get_string($mode,'data'));
     $PAGE->requires->js('mod/data/data.js');
     $PAGE->set_title($data->name);
     $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
@@ -155,7 +156,7 @@
     echo '<table cellpadding="4" cellspacing="0" border="0">';
 
 /// Add the HTML editor(s).
-    $usehtmleditor = $editor && can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
+    $usehtmleditor = can_use_html_editor() && ($mode != 'csstemplate') && ($mode != 'jstemplate');
     if ($mode == 'listtemplate'){
         // Print the list template header.
         echo '<tr>';
@@ -234,7 +235,7 @@
         echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
         if (can_use_html_editor()) {
             echo '<br /><br />';
-            if ($editor) {
+            if ($usehtmleditor) {
                 $switcheditor = get_string('editordisable', 'data');
             } else {
                 $switcheditor = get_string('editorenable', 'data');

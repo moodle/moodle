@@ -67,6 +67,8 @@ if ($userid && ($userid != $USER->id) && !has_capability('mod/data:viewalluserpr
 /* Need sesskey security check here for import instruction */
 $sesskey = sesskey();
 
+$PAGE->navbar->add(get_string('presets', 'data'));
+
 /********************************************************************/
 /* Output */
 if ($action !== 'export') {

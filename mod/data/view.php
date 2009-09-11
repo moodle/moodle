@@ -288,6 +288,10 @@
     }
     $buttons .= '</tr></table>';
 
+    if ($mode == 'asearch') {
+        $PAGE->navbar->add(get_string('search'));
+    }
+
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($buttons);
