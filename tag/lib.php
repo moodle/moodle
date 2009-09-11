@@ -92,6 +92,10 @@ function tag_set($record_type, $record_id, $tags) {
         }
     }
 
+    if (empty($tags)) {
+        return true;
+    }
+
     foreach($tags as $ordering => $tag) {
         $tag = trim($tag);
         if (!$tag) {
