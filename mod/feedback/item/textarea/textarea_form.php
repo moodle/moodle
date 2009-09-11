@@ -7,7 +7,7 @@ class feedback_textarea_form extends feedback_item_form {
     var $requiredcheck;
     var $itemname;
     var $itemlabel;
-    var $selectwith;
+    var $selectwidth;
     var $selectheight;
     
     function definition() {
@@ -19,7 +19,7 @@ class feedback_textarea_form extends feedback_item_form {
         $this->itemname = $mform->addElement('text', 'itemname', get_string('item_name', 'feedback'), array('size="'.FEEDBACK_ITEM_NAME_TEXTBOX_SIZE.'"','maxlength="255"'));
         $this->itemlabel = $mform->addElement('text', 'itemlabel', get_string('item_label', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));
         
-        $this->selectwith = $mform->addElement('select',
+        $this->selectwidth = $mform->addElement('select',
                                             'itemwidth', 
                                             get_string('textarea_width', 'feedback').'&nbsp;', 
                                             array_slice(range(0,80),5,80,true));

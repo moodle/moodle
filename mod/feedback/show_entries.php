@@ -42,6 +42,8 @@
         }
     }
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
+
     $capabilities = feedback_load_capabilities($cm->id);
 
     require_login($course->id, true, $cm);
@@ -68,9 +70,7 @@
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
-    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(format_string($feedback->name));
-
+    $PAGE->navbar->add(get_string('show_entries','feedback'));
     $PAGE->set_title(format_string($feedback->name));
     $PAGE->set_button($buttontext);
     echo $OUTPUT->header();

@@ -30,7 +30,7 @@ class feedback_item_textarea extends feedback_item_base {
         $widthAndHeight = explode('|',$item->presentation);
         $itemwidth = isset($widthAndHeight[0]) ? $widthAndHeight[0] : 30;
         $itemheight = isset($widthAndHeight[1]) ? $widthAndHeight[1] : 5;
-        $item_form->selectwith->setValue($itemwidth);
+        $item_form->selectwidth->setValue($itemwidth);
         $item_form->selectheight->setValue($itemheight);
 
         return $item_form;

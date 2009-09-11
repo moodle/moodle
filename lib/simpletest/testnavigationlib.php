@@ -725,6 +725,8 @@ class limited_global_navigation_test extends UnitTestCase {
         }
 
         $node2 = clone($this->mocknode);
+        $fakecontext = new stdClass;
+        $this->cache->coursecontext2 = $fakecontext;
         $node2->initialise(navigation_node::TYPE_CATEGORY, 2);
         $this->assertIsA($node2->get('initcall'), 'navigation_node');
         if ($node2->get('initcall')) {

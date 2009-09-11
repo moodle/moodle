@@ -1,12 +1,12 @@
-<?php // $Id$
+<?php
+
 /**
-* shows an analysed view of feedback
-*
-* @version $Id$
-* @author Andreas Grabs
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package feedback
-*/
+ * shows an analysed view of feedback
+ *
+ * @copyright Andreas Grabs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package feedback
+ */
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -58,9 +58,8 @@
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
-    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(format_string($feedback->name));
-
+    $PAGE->navbar->add(get_string('analysis','feedback'));
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'course'=>$courseid)));
     $PAGE->set_title(format_string($feedback->name));
     $PAGE->set_button($buttontext);
     echo $OUTPUT->header();
@@ -127,6 +126,7 @@
             //get the class of item-typ
             $itemclass = 'feedback_item_'.$item->typ;
             //get the instance of the item-class
+            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
             $itemobj = new $itemclass();
             $itemnr++;
             if($feedback->autonumbering) {

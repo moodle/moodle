@@ -997,8 +997,8 @@ function feedback_create_item($data) {
     $item->position = $data->position;
 
     $item->required=0;
-    if (isset($data->required)) {
-	    	$item->required=$data->required;
+    if (!empty($data->required)) {
+        $item->required = $data->required;
     }
 
     return $DB->insert_record('feedback_item', $item);
@@ -1212,11 +1212,15 @@ function feedback_move_item($moveitem, $pos){
  * @return void
  */
 function feedback_print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
+    global $CFG;
     if($item->typ == 'pagebreak') return;
     if($readonly)$ro = 'readonly="readonly" disabled="disabled"';
 
     //get the class of the given item-typ
     $itemclass = 'feedback_item_'.$item->typ;
+    if (!class_exists($itemclass)) {
+        require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+    }
     //get the instance of the item-class
     $itemobj = new $itemclass();
     $itemobj->print_item($item, $value, $readonly, $edit, $highlightrequire);
@@ -1538,7 +1542,7 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
  * @return boolean
  */
 function feedback_check_values($data, $firstitem, $lastitem) {
-    global $DB;
+    global $DB, $CFG;
 
     //get all items between the first- and lastitem
     $select = "feedback = ?
@@ -1567,6 +1571,11 @@ function feedback_check_values($data, $firstitem, $lastitem) {
 
         //get the class of the item-typ
         $itemclass = 'feedback_item_'.$item->typ;
+
+        if (!class_exists($itemclass)) {
+            require_once($CFG->dirroot.'/mod/feedback/item/'.$item->typ.'/lib.php');
+        }
+
         //get the instance of the item-class
         $itemobj = new $itemclass();
 
@@ -1623,6 +1632,9 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
             //get the class of item-typ
             $itemclass = 'feedback_item_'.$itemnr[0];
             //get the instance of item-class
+            if (!class_exists($itemclass)) {
+                require_once($CFG->dirroot.'/mod/feedback/item/'.$itemnr[0].'/lib.php');
+            }
             $itemobj = new $itemclass();
             //the kind of values can be absolutely different so we run create_value directly by the item-class
             $value->value = $itemobj->create_value($data[$key]);
@@ -1670,6 +1682,9 @@ function feedback_update_values($data, $completed, $tmp = false) {
             //get the class of item-typ
             $itemclass = 'feedback_item_'.$itemnr[0];
             //get the instace of the item-class
+            if (!class_exists($itemclass)) {
+                require_once($CFG->dirroot.'/mod/feedback/item/'.$itemnr[0].'/lib.php');
+            }
             $itemobj = new $itemclass();
             //the kind of values can be absolutely different so we run create_value directly by the item-class
             $newvalue->value = $itemobj->create_value($data[$key]);
@@ -2310,5 +2325,40 @@ function feedback_encode_target_url($url) {
         return $part1 . '?' . htmlentities($part2);
     } else {
         return $url;
+    }
+}
+
+function feedback_extend_settings_navigation($settings, $module) {
+    global $PAGE, $USER, $OUTPUT, $CFG, $DB;
+
+    $feedback = $DB->get_record('feedback', array('id'=>$PAGE->cm->instance));
+    $feedbacknavkey = $settings->add(get_string('feedbackadministration', 'feedback'));
+    $feedbacknav = $settings->get($feedbacknavkey);
+    $feedbacknav->forceopen = true;
+
+    $capabilities = feedback_load_capabilities($PAGE->cm->id);
+
+    if($capabilities->edititems) {
+        $qkey = $feedbacknav->add(get_string('questions', 'feedback'));
+        $feedbacknav->get($qkey)->add(get_string('edit_items', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'edit')));
+        $feedbacknav->get($qkey)->add(get_string('export_questions', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/export.php', array('id'=>$PAGE->cm->id, 'action'=>'exportfile')));
+        $feedbacknav->get($qkey)->add(get_string('import_questions', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/import.php', array('id'=>$PAGE->cm->id)));
+        $feedbacknav->get($qkey)->add(get_string('templates', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$PAGE->cm->id, 'do_show'=>'templates')));
+    }
+
+    if($capabilities->viewreports) {
+        if($feedback->course == SITEID){
+            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/analysis_course.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+        }else {
+            $feedbacknav->add(get_string('analysis', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/analysis.php', array('id'=>$PAGE->cm->id, 'course'=>$PAGE->course->id,'do_show'=>'analysis')));
+        }
+    }
+
+    if($capabilities->viewreports) {
+        $feedbacknav->add(get_string('show_entries', 'feedback'), new moodle_url($CFG->wwwroot.'/mod/feedback/show_entries.php', array('id'=>$PAGE->cm->id, 'do_show'=>'showentries')));
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $feedbacknav->add(get_string('updatethis', '', get_string('modulename', 'feedback')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
     }
 }

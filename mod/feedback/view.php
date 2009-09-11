@@ -80,10 +80,8 @@
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
     $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-    
-    $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(format_string($feedback->name));
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view')));
     $PAGE->set_title(format_string($feedback->name));
     $PAGE->set_button($buttontext);
     echo $OUTPUT->header();
