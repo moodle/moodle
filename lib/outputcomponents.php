@@ -61,11 +61,6 @@ class moodle_html_component {
      * @var array $actions
      */
     protected $actions = array();
-    /**
-     * This array of generated ids is kept static to avoid id collisions
-     * @var array $generated_ids
-     */
-    public static $generated_ids = array();
 
     /**
      * Ensure some class names are an array.
@@ -173,12 +168,7 @@ class moodle_html_component {
      * Internal method for generating a unique ID for the purpose of event handlers.
      */
     protected function generate_id() {
-        // Generate an id that is not already used.
-        do {
-            $newid = get_class($this) . '-' . substr(sha1(microtime() * rand(0, 500)), 0, 6);
-        } while (in_array($this->id, moodle_html_component::$generated_ids));
-        $this->id = $newid;
-        moodle_html_component::$generated_ids[] = $newid;
+        $this->id = uniqid(get_class($this));
     }
 
     /**
