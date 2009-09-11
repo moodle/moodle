@@ -877,6 +877,12 @@ class block_manager {
     public function edit_controls($block) {
         global $CFG;
 
+        if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
+            $CFG->undeletableblocktypes = array('global_navigation_tree','settings_navigation_tree');
+        } else if (is_string($CFG->undeletableblocktypes)) {
+            $CFG->undeletableblocktypes = explode(',', $CFG->undeletableblocktypes);
+        }
+
         $controls = array();
         $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()), false);
 
@@ -905,9 +911,11 @@ class block_manager {
         }
 
         if ($this->page->user_can_edit_blocks() && $block->user_can_edit() && $block->user_can_addto($this->page)) {
-            // Delete icon.
-            $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
-                    'icon' => 't/delete', 'caption' => get_string('delete'));
+            if (!in_array($block->instance->blockname, $CFG->undeletableblocktypes)) {
+                // Delete icon.
+                $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
+                        'icon' => 't/delete', 'caption' => get_string('delete'));
+            }
         }
 
         if ($this->page->user_can_edit_blocks()) {
