@@ -1236,7 +1236,11 @@ function open_filepicker(id, params) {
         r.target = params.target;
         r.show();
     }
-    r.savepath = params.savepath;
+    if (params.savepath) {
+        r.savepath = params.savepath;
+    } else {
+        r.savepath = params.savepath = '/';
+    }
     if(params.filetype) {
         if(params.filetype == 'image') {
             r.accepted_types = file_extensions.image;
