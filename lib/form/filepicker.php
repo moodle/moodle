@@ -82,6 +82,10 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
                 $currentfile = $file->get_filename();
                 $draftvalue = 'value="'.$draftitemid.'"';
             }
+        } else {
+            // no existing area info provided - let's use fresh new draft area
+            $this->setValue(file_get_unused_draft_itemid());
+            $draftitemid = $this->getValue();
         }
         if ($COURSE->id == SITEID) {
             $context = get_context_instance(CONTEXT_SYSTEM);
