@@ -423,11 +423,16 @@ function blog_get_headers() {
         $cm->context = get_context_instance(CONTEXT_MODULE, $modid);
         $PAGE->set_cm($cm, $course);
     }
+    
+    // Case 0: No entry, mod, course or user params: all site entries to be shown (filtered by search and tag/tagid)
+    if (empty($entryid) && empty($modid) && empty($courseid) && empty($userid)) {
+        $PAGE->navbar->add($strblogentries, $blog_url);
+        $PAGE->set_title("$site->shortname: " . get_string('blog', 'blog'));
+        $PAGE->set_heading("$site->shortname: " . get_string('blog', 'blog'));
+        $headers['heading'] = get_string('siteblog', 'blog');
+    }
 
     // Case 1: only entryid is requested, ignore all other filters. courseid is used to give more contextual information
-    // Breadcrumbs: [site shortname] -> [?course shortname] -> participants -> [user fullname] -> Blog entries -> [Entry subject]
-    // Title: [site shortname]: [user fullname]: Blog entry
-    // Heading: [Entry subject] by [user fullname]
     if (!empty($entryid)) {
         $sql = 'SELECT u.* FROM {user} u, {post} p WHERE p.id = ? AND p.userid = u.id';
         $user = $DB->get_record_sql($sql, array($entryid));
@@ -460,9 +465,6 @@ function blog_get_headers() {
     }
 
     // Case 2: A user's blog entries
-    // Breadcrumbs: [site shortname] -> participants -> [user fullname] -> Blog entries
-    // Title: [site shortname]: [user fullname]: Blog
-    // Heading: [user fullname]'s blog
     if (!empty($userid) && empty($modid) && empty($courseid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $PAGE->navbar->add($strparticipants, "$CFG->wwwroot/user/index.php?id=$site->id");
@@ -475,9 +477,6 @@ function blog_get_headers() {
     } else
 
     // Case 3: Blog entries associated with an activity by a specific user (courseid ignored)
-    // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> [user fullname] -> Blog entries
-    // Title: [site shortname]: [course shortname]: [activity name]: [user fullname]: blog entries
-    // Heading: Blog entries by [user fullname] about [activity name]
     if (!empty($userid) && !empty($modid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $blog_url->param('modid', $modid);
@@ -496,9 +495,6 @@ function blog_get_headers() {
     } else
 
     // Case 4: Blog entries associated with a course by a specific user
-    // Breadcrumbs: [site shortname] -> [course shortname] -> participants -> [user fullname] -> Blog entries
-    // Title: [site shortname]: [course shortname]: participants: [user fullname]: blog entries
-    // Heading: Blog entries by [user fullname] about [course fullname]
     if (!empty($userid) && !empty($courseid) && empty($modid) && empty($entryid)) {
         $blog_url->param('userid', $userid);
         $blog_url->param('courseid', $courseid);
@@ -516,9 +512,6 @@ function blog_get_headers() {
     } else
 
     // Case 5: Blog entries by members of a group, associated with that group's course
-    // Breadcrumbs: [site shortname] -> [course shortname] -> Blog entries -> [group name]
-    // Title: [site shortname]: [course shortname]: blog entries : [group name]
-    // Heading: Blog entries by [group name] about [course fullname]
     if (!empty($groupid) && empty($modid) && empty($entryid)) {
         $blog_url->param('courseid', $course->id);
 
@@ -536,9 +529,6 @@ function blog_get_headers() {
     } else
 
     // Case 6: Blog entries by members of a group, associated with an activity in that course
-    // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> Blog entries -> [group name]
-    // Title: [site shortname]: [course shortname]: [activity name] : blog entries : [group name]
-    // Heading: Blog entries by [group name] about [activity fullname]
     if (!empty($groupid) && !empty($modid) && empty($entryid)) {
         $headers['cm'] = $cm;
         $blog_url->param('modid', $modid);
@@ -557,9 +547,6 @@ function blog_get_headers() {
     } else
 
     // Case 7: All blog entries associated with an activity
-    // Breadcrumbs: [site shortname] -> [course shortname] -> [activity name] -> Blog entries
-    // Title: [site shortname]: [course shortname]: [activity name] : blog entries
-    // Heading: Blog entries about [activity fullname]
     if (!empty($modid) && empty($userid) && empty($groupid) && empty($entryid)) {
         $PAGE->set_cm($cm, $course);
         $blog_url->param('modid', $modid);
@@ -570,9 +557,6 @@ function blog_get_headers() {
     } else
 
     // Case 8: All blog entries associated with a course
-    // Breadcrumbs: [site shortname] -> [course shortname] -> Blog entries
-    // Title: [site shortname]: [course shortname]: blog entries
-    // Heading: Blog entries about [course fullname]
     if (!empty($courseid) && empty($userid) && empty($groupid) && empty($modid) && empty($entryid)) {
         $blog_url->param('courseid', $courseid);
         $PAGE->navbar->add($strblogentries, $blog_url);
