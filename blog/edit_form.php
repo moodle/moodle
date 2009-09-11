@@ -36,18 +36,18 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('text', 'subject', get_string('entrytitle', 'blog'), 'size="60"');
         $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
-        $mform->addElement('editor', 'summary_editor', get_string('entrybody', 'blog'), null, $summaryoptions);
+        $mform->addElement('editor', 'summary', get_string('entrybody', 'blog'), null, $summaryoptions);
 
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('emptytitle', 'blog'), 'required', null, 'client');
 
-        $mform->setType('summary_editor', PARAM_RAW);
-        $mform->addRule('summary_editor', get_string('emptybody', 'blog'), 'required', null, 'client');
-        $mform->setHelpButton('summary_editor', array('writing', 'richtext2'), false, 'editorhelpbutton');
+        $mform->setType('summary', PARAM_RAW);
+        $mform->addRule('summary', get_string('emptybody', 'blog'), 'required', null, 'client');
+        $mform->setHelpButton('summary', array('writing', 'richtext2'), false, 'editorhelpbutton');
 
-        $mform->addElement('format', 'format', get_string('format'));
+        $mform->addElement('format', 'summaryformat', get_string('format'));
 
-        $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
+        $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'));
 
         //disable publishstate options that are not allowed
         $publishstates = array();

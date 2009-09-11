@@ -139,8 +139,11 @@ if (!empty($existing)) {
 
 $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
 $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'textfieldoptions', 'id'));
+$draftitemid = file_get_submitted_draft_itemid('attachments');
+file_prepare_draft_area($draftitemid, $PAGE->context, 'blog_attachment', empty($id)?null:$id);
 
-$existing = file_prepare_standard_editor($existing, 'summary', $textfieldoptions, $PAGE->get_context());
+$draftid_editor = file_get_submitted_draft_itemid('summary');
+$currenttext = file_prepare_draft_area($draftid_editor, $PAGE->context, 'blog_post', empty($id) ? null : $id, array('subdirs'=>true), @$existing->summary);
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
@@ -218,7 +221,9 @@ switch ($action) {
 
 $entry->modid = $modid;
 $entry->courseid = $courseid;
-
+$entry->attachments = $draftitemid;
+$entry->summary = array('text' => @$existing->summary, 'format' => empty($existing->summaryformat) ? FORMAT_HTML : $existing->summaryformat, 'itemid' => $draftid_editor);
+$entry->summaryformat = (empty($existing->summaryformat)) ? FORMAT_HTML : $existing->summaryformat;
 $PAGE->requires->data_for_js('blog_edit_existing', $entry);
 
 // done here in order to allow deleting of entries with wrong user id above
