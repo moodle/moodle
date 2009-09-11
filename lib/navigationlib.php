@@ -881,7 +881,7 @@ class global_navigation extends navigation_node {
      * @return int The depth to the active(requested) node
      */
     protected function load_for_course() {
-        global $PAGE, $CFG;
+        global $PAGE, $CFG, $USER;
         $keys = array();
         $depth = $this->load_course_categories($keys);
         $depth += $this->load_course($keys);
@@ -892,8 +892,11 @@ class global_navigation extends navigation_node {
             }
             return $depth;
         }
-        $depth += $this->load_course_activities($keys);
-        $depth += $this->load_course_sections($keys);
+
+        if (isloggedin() && has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $PAGE->course->id))) {
+            $depth += $this->load_course_activities($keys);
+            $depth += $this->load_course_sections($keys);
+        }
         return $depth;
     }
 
@@ -1595,13 +1598,17 @@ class limited_global_navigation extends global_navigation {
 
         $keys = array();
         parent::load_course($keys, $course);
-        if (!$this->cache->cached('course'.$course->id.'section0')) {
-            $this->cache->{'course'.$course->id.'section0'} = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>'0'));
-        }
-        $section = $this->cache->{'course'.$course->id.'section0'};
-        $this->load_section_activities($course, $section);
-        if ($this->depthforward>0) {
-            $this->load_course_sections($keys, $course);
+
+        if (isloggedin() && has_capability('moodle/course:view', get_context_instance(CONTEXT_COURSE, $instanceid))) {
+
+            if (!$this->cache->cached('course'.$course->id.'section0')) {
+                $this->cache->{'course'.$course->id.'section0'} = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>'0'));
+            }
+            $section = $this->cache->{'course'.$course->id.'section0'};
+            $this->load_section_activities($course, $section);
+            if ($this->depthforward>0) {
+                $this->load_course_sections($keys, $course);
+            }
         }
     }
     /**
