@@ -33,9 +33,15 @@
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
 
+    $PAGE->set_url('course/info.php', array('id' => $course->id));
     $PAGE->set_title(get_string("summaryof", "", $course->fullname));
+    $PAGE->set_heading('Course info');
+    $PAGE->set_course($course);
+    $PAGE->navbar->add(get_string('summary'));
+    $PAGE->set_headingmenu(user_login_string());
+
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($course->fullname) . '<br />(' . format_string($course->shortname) . ')');
+    echo $OUTPUT->heading('<a href="view.php?id='.$course->id.'">'.format_string($course->fullname) . '</a><br />(' . format_string($course->shortname) . ')');
 
     if ($course->guest || $course->password) {
         echo $OUTPUT->box_start('generalbox icons');
@@ -84,8 +90,6 @@
     echo $OUTPUT->box_end();
 
     echo "<br />";
-
-    echo $OUTPUT->close_window_button();
 
     echo $OUTPUT->footer();
 
