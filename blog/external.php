@@ -38,6 +38,8 @@ $user = $USER;
 // TODO redirect if $CFG->useexternalblogs is off, $CFG->maxexternalblogsperuser == 0, or if user doesn't have caps to manage external blogs
 
 $id = optional_param('id', null, PARAM_INT);
+$PAGE->set_url('/blog/external.php', array('id' => $id));
+
 $returnurl = urldecode(optional_param('returnurl', $PAGE->url->out(), PARAM_RAW));
 $action = (empty($id)) ? 'add' : 'edit';
 
