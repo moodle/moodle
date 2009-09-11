@@ -762,7 +762,7 @@ class blog_listing {
 
         $sql = ($count) ? 'SELECT COUNT(*)' : 'SELECT ' . $requiredfields;
         $sql .= " FROM $tablessql WHERE " . implode(' AND ', $conditions);
-        $sql .= ($count) ? '' : " GROUP BY p.id ORDER BY $sort";
+        $sql .= ($count) ? '' : " ORDER BY $sort";
 
         return array('sql' => $sql, 'params' => $params);
     }
