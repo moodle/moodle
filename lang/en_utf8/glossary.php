@@ -122,6 +122,7 @@ $string['fillfields'] = 'Concept and definition are mandatory fields.';
 $string['filtername'] = 'Glossary Auto-linking';
 $string['fullmatch'] = 'Match whole words only';
 $string['globalglossary'] = 'Global glossary';
+$string['glossaryadministration'] = 'Glossary Administration';
 $string['glossary:approve'] = 'Approve unapproved entries';
 $string['glossary:comment'] = 'Create comments';
 $string['glossary:export'] = 'Export entries';

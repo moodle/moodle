@@ -27,6 +27,12 @@ if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
+$url = new moodle_url($CFG->wwwroot.'/mod/glossary/edit.php', array('cmid'=>$cm->id));
+if (!empty($id)) {
+    $url->param('id', $id);
+}
+$PAGE->set_url($url);
+
 if ($id) { // if entry is specified
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$id, 'glossaryid'=>$glossary->id))) {
         print_error('invalidentry');

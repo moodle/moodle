@@ -228,6 +228,11 @@
 /// If we are in approval mode, prit special header
     $PAGE->set_title(format_string($glossary->name));
     $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    $url = new moodle_url($CFG->wwwroot.'/mod/glossary/view.php', array('id'=>$cm->id));
+    if (isset($mode)) {
+        $url->param('mode', $mode);
+    }
+    $PAGE->set_url($url);
     if ($tab == GLOSSARY_APPROVAL_VIEW) {
         require_capability('mod/glossary:approve', $context);
         $PAGE->navbar->add($strwaitingapproval);

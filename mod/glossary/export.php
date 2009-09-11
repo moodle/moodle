@@ -37,6 +37,7 @@
     $strexportfile = get_string("exportfile", "glossary");
     $strexportentries = get_string('exportentriestoxml', 'glossary');
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/export.php', array('id'=>$cm->id)));
     $PAGE->navbar->add($strexportentries);
     $PAGE->set_title(format_string($glossary->name));
     $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
