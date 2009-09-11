@@ -1172,7 +1172,17 @@ class question_bank_view {
     /// Get all the existing categories now
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
-        $select = html_select::make_popup_form('edit.php?'.$pageurl->get_query_string(), 'category', $catmenu, 'catmenu', $current);
+
+        $editurl = new moodle_url($CFG->wwwroot.'/question/edit.php', $pageurl->params());
+        $select = html_select::make_popup_form($editurl, 'category', $catmenu, 'catmenu', $current);
+
+        // The js func submit_form_by_id ignores the first element by default when using
+        // the html_select component so we need to unset the selectid param to make it
+        // work in the way we want for this control
+        $actions = $select->get_actions();
+        unset($actions[0]->jsfunctionargs['selectid']);
+        $select->actions = $actions;
+
         $select->nothinglabel = false;
         $select->set_label(get_string('selectacategory', 'question'));
         echo $OUTPUT->select($select);
