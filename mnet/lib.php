@@ -357,9 +357,15 @@ function mnet_generate_keypair($dn = null, $days=28) {
     // ensure we remove trailing slashes
     $dn["commonName"] = preg_replace(':/$:', '', $dn["commonName"]);
 
-    $new_key = openssl_pkey_new();
-    $csr_rsc = openssl_csr_new($dn, $new_key, array('private_key_bits',2048));
-    $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, $days);
+    if (!empty($CFG->opensslcnf)) { //allow specification of openssl.cnf especially for Windows installs
+        $new_key = openssl_pkey_new(array("config" => $CFG->opensslcnf));
+        $csr_rsc = openssl_csr_new($dn, $new_key, array("config" => $CFG->opensslcnf));
+        $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, $days, array("config" => $CFG->opensslcnf));
+    } else {
+        $new_key = openssl_pkey_new();
+        $csr_rsc = openssl_csr_new($dn, $new_key, array('private_key_bits',2048));
+        $selfSignedCert = openssl_csr_sign($csr_rsc, null, $new_key, $days);
+    }
     unset($csr_rsc); // Free up the resource
 
     // We export our self-signed certificate to a string.
@@ -368,7 +374,11 @@ function mnet_generate_keypair($dn = null, $days=28) {
 
     // Export your public/private key pair as a PEM encoded string. You
     // can protect it with an optional passphrase if you wish.
-    $export = openssl_pkey_export($new_key, $keypair['keypair_PEM'] /* , $passphrase */);
+    if (!empty($CFG->opensslcnf)) { //allow specification of openssl.cnf especially for Windows installs
+        $export = openssl_pkey_export($new_key, $keypair['keypair_PEM'], null, array("config" => $CFG->opensslcnf));
+    } else {
+        $export = openssl_pkey_export($new_key, $keypair['keypair_PEM'] /* , $passphrase */);
+    }
     openssl_pkey_free($new_key);
     unset($new_key); // Free up the resource
 
