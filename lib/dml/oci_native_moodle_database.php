@@ -36,7 +36,7 @@ class oci_native_moodle_database extends moodle_database {
     protected $oci     = null;
     protected $bytea_oid = null;
 
-    protected $last_debug;
+    private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -196,8 +196,6 @@ class oci_native_moodle_database extends moodle_database {
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
         parent::query_start($sql, $params, $type, $extrainfo);
-        // oci driver tents to send debug to output, we do not need that ;-)
-        //$this->last_debug = error_reporting(0);
     }
 
     /**
@@ -206,9 +204,14 @@ class oci_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_end($result, $stmt=null) {
-        //reset original debug level
-        //error_reporting($this->last_debug);
         if ($stmt and $result === false) {
+            // Look for stmt error and store it
+            if (is_resource($stmt)) {
+                $e = oci_error($stmt);
+                if ($e !== false) {
+                    $this->last_stmt_error = $e['message'];
+                }
+            }
             oci_free_statement($stmt);
         }
         parent::query_end($result);
@@ -250,11 +253,18 @@ class oci_native_moodle_database extends moodle_database {
      * Returns last error reported by database engine.
      */
     public function get_last_error() {
-        $e = oci_error($this->oci);
-        if (isset($e['message'])) {
-            return $e['message'];
+        $error = false;
+        // First look for any previously saved stmt error
+        if (!empty($this->last_stmt_error)) {
+            $error = $this->last_stmt_error;
+            $this->last_stmt_error = null;
+        } else { // Now try connection error
+            $e = oci_error($this->oci);
+            if ($e !== false) {
+                $error = $e['message'];
+            }
         }
-        return false;
+        return $error;
     }
 
     protected function parse_query($sql) {
