@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20090719" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090911" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2264,36 +2264,36 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-     <TABLE NAME="external_functions" COMMENT="Each of these is a function" PREVIOUS="comments" NEXT="external_services">
+    <TABLE NAME="external_functions" COMMENT="external functions" PREVIOUS="comments" NEXT="external_services">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="component"/>
-        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false" PREVIOUS="component" NEXT="phpfile"/>
-        <FIELD NAME="phpfile" TYPE="char" LENGTH="255" NOTNULL="false" PREVIOUS="name" NEXT="contextrestriction"/>
-        <FIELD NAME="contextrestriction" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" PREVIOUS="phpfile"/>
+        <FIELD NAME="phpfile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="contextrestriction"/>
+        <FIELD NAME="contextrestriction" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="phpfile"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-     <TABLE NAME="external_services" COMMENT="Each of these is a service" PREVIOUS="external_functions" NEXT="external_services_functions">
+    <TABLE NAME="external_services" COMMENT="external services" PREVIOUS="external_functions" NEXT="external_services_functions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="enabled"/>
-        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="custom"/>
-        <FIELD NAME="custom" TYPE="int" LENGTH="1" NOTNULL="true" PREVIOUS="enabled" NEXT="customname"/>
-        <FIELD NAME="customname" TYPE="char" LENGTH="150" NOTNULL="false" PREVIOUS="custom"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="name" NEXT="custom"/>
+        <FIELD NAME="custom" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="enabled" NEXT="customname"/>
+        <FIELD NAME="customname" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" PREVIOUS="custom"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-     <TABLE NAME="external_services_functions" COMMENT="Each of these is a link service/function" PREVIOUS="external_services">
+    <TABLE NAME="external_services_functions" COMMENT="association between external functions and external services" PREVIOUS="external_services">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
-        <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" PREVIOUS="id" NEXT="externalfunctionid"/>
-        <FIELD NAME="externalfunctionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" PREVIOUS="externalserviceid" NEXT="enabled"/>
-        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" PREVIOUS="externalfunctionid"/>
+        <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="externalfunctionid"/>
+        <FIELD NAME="externalfunctionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="externalserviceid" NEXT="enabled"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="externalfunctionid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

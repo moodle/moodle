@@ -2554,6 +2554,96 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
         upgrade_main_savepoint($result, 2009090800);
     }
+
+    if ($result && $oldversion < 2009090803) {
+
+    /// Define table external_functions to be dropped
+        $table = new xmldb_table('external_functions');
+
+    /// Conditionally launch drop table for external_functions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    
+
+    /// Define table external_services to be dropped
+        $table = new xmldb_table('external_services');
+
+    /// Conditionally launch drop table for external_services
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+  
+
+    /// Define table external_services_functions to be dropped
+        $table = new xmldb_table('external_services_functions');
+
+    /// Conditionally launch drop table for external_services_functions
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+   
+
+    /// Define table external_functions to be created
+        $table = new xmldb_table('external_functions');
+
+    /// Adding fields to table external_functions
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('phpfile', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('contextrestriction', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null);
+
+    /// Adding keys to table external_functions
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for external_functions
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+    /// Define table external_services to be created
+        $table = new xmldb_table('external_services');
+
+    /// Adding fields to table external_services
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('custom', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('customname', XMLDB_TYPE_CHAR, '150', null, null, null, null);
+
+    /// Adding keys to table external_services
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for external_services
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+    /// Define table external_services_functions to be created
+        $table = new xmldb_table('external_services_functions');
+
+    /// Adding fields to table external_services_functions
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('externalserviceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('externalfunctionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('enabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table external_services_functions
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for external_services_functions
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009090803);
+    }
+
     return $result;
 }
 
