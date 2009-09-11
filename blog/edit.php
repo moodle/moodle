@@ -120,11 +120,6 @@ if ($action === 'delete'){
 require_once('edit_form.php');
 
 if (!empty($existing)) {
-    $assignmentdata = $DB->get_record_sql('SELECT a.timedue, a.preventlate, a.emailteachers, a.var2, asub.grade
-                                           FROM {assignment} a, {assignment_submissions} as asub WHERE
-                                           a.id = asub.assignment AND userid = '.$USER->id.' AND a.assignmenttype = \'blog\'
-                                           AND asub.data1 = \''.$existing->id.'\'');
-
     if ($blogassociations = $DB->get_records('blog_association', array('blogid' => $existing->id))) {
 
         foreach ($blogassociations as $assocrec) {
@@ -143,7 +138,7 @@ if (!empty($existing)) {
 }
 
 $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
-$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'assignmentdata', 'textfieldoptions', 'id'));
+$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'textfieldoptions', 'id'));
 
 $existing = file_prepare_standard_editor($existing, 'summary', $textfieldoptions, $PAGE->get_context());
 

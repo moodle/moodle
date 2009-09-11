@@ -91,7 +91,7 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
         global $CFG, $PAGE, $OUTPUT;
         
         $this->create_test_tables('post', 'tag', 'course', 'user', 'role', 'role_assignments', 'group', 'blog_associations', 
-                                  'course_modules', 'role_capabilities', 'assignment', 'tag_correlation', 'tag_instance');
+                                  'course_modules', 'role_capabilities', 'tag_correlation', 'tag_instance');
         
         $contexts = $this->load_test_data('context',
                 array('contextlevel', 'instanceid', 'path', 'depth'), array(

@@ -947,19 +947,6 @@
     }
 
 
-    function backup_course_blogs($bf, $preferences) {
-        global $DB;
-            fwrite ($bf, start_tag("BLOGS",2,true));
-
-        $sql = 'SELECT as.data1 FROM {assignment} a, {assignment_submissions} as WHERE 
-                as.assignment = a.id AND a.assignmenttype = \'blog\' AND a.course = ?';
-        $records = $DB->get_records_sql($sql, array($preferences->backup_course));
-        foreach ($records as $rec) {
-            backup_blog($bf, $rec->data1, 3); 
-        }
-        fwrite($bf, end_tag("BLOGS",2,true));
-    }
-    
     function backup_blog($bf, $blogid, $level) {
         global $DB;
         $blog = $DB->get_record('post', array('module'=>'blog', 'id'=>$blogid));
@@ -3371,23 +3358,6 @@
                     }
                 }
             }
-
-            //Backup course blog assignment data, if any.
-            if (!defined('BACKUP_SILENTLY')) {
-                echo '<li>'.get_string("courseblogdata").'</li>';
-            }
-            if($status) {
-                if (!$status = backup_course_blogs($backup_file,$preferences)) {
-                    if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up the course blog assignment data");
-                    }
-                    else {
-                        $errorstr = "An error occurred while backing up the course blog assignment data";
-                        return false;
-                    }
-                }
-            }
-
 
             //Prints course end
             if ($status) {

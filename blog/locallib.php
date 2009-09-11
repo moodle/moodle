@@ -169,7 +169,7 @@ class blog_entry {
         }
 
         //retrieve associations in case they're needed early
-        $blog_associations = $DB->get_records('blog_association', array('blogid' => $this->id));
+        $blogassociations = $DB->get_records('blog_association', array('blogid' => $this->id));
         //determine text for publish state
         switch ($template['publishstate']) {
             case 'draft':
@@ -211,25 +211,32 @@ class blog_entry {
         }
 
         //add associations
-        if (!empty($CFG->useblogassociations) && $blog_associations) {
+        if (!empty($CFG->useblogassociations) && $blogassociations) {
             $contentcell->text .= $OUTPUT->container_start('tags');
-            $assoc_str = '';
+            $assocstr = '';
+            $hascourseassocs = false;
 
-            foreach ($blog_associations as $assoc_rec) {  //first find and show the associated course
-                $context_rec = $DB->get_record('context', array('id' => $assoc_rec->contextid));
+            foreach ($blogassociations as $assocrec) {  //first find and show the associated course
+                $context_rec = $DB->get_record('context', array('id' => $assocrec->contextid));
                 if ($context_rec->contextlevel ==  CONTEXT_COURSE) {
                     $associcon = new moodle_action_icon();
                     $associcon->link->url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id' => $context_rec->instanceid));
                     $associcon->image->src = $OUTPUT->old_icon_url('i/course');
                     $associcon->linktext = $DB->get_field('course', 'shortname', array('id' => $context_rec->instanceid));
-                    $assoc_str .= $OUTPUT->action_icon($associcon);
+                    $assocstr .= $OUTPUT->action_icon($associcon);
+                    $hascourseassocs = true;
                 }
             }
 
-            foreach ($blog_associations as $assoc_rec) {  //now show each mod association
-                $context_rec = $DB->get_record('context', array('id' => $assoc_rec->contextid));
+            foreach ($blogassociations as $assocrec) {  //now show each mod association
+                $context_rec = $DB->get_record('context', array('id' => $assocrec->contextid));
 
                 if ($context_rec->contextlevel ==  CONTEXT_MODULE) {
+                    if ($hascourseassocs) {
+                        $assocstr .= ', ';
+                        $hascourseassocs = false;
+                    }
+
                     $modinfo = $DB->get_record('course_modules', array('id' => $context_rec->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
@@ -237,13 +244,13 @@ class blog_entry {
                     $associcon->link->url = new moodle_url($CFG->wwwroot.'/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
                     $associcon->image->src = $OUTPUT->mod_icon_url('icon', $modname);
                     $associcon->linktext = $DB->get_field($modname, 'name', array('id' => $modinfo->instance));
-                    $assoc_str .= $OUTPUT->action_icon($associcon);
+                    $assocstr .= $OUTPUT->action_icon($associcon);
+                    $assocstr .= ', ';
 
-                    $assoc_str .= ', ';
-                    $assoc_str .= $OUTPUT->action_icon($associcon);
                 }
             }
-            $contentcell->text .= get_string('associations', 'blog') . ': '. $assoc_str;
+            $assocstr = substr($assocstr, 0, -2);
+            $contentcell->text .= get_string('associations', 'blog') . ': '. $assocstr;
 
             $contentcell->text .= $OUTPUT->container_end();
         }
@@ -258,13 +265,7 @@ class blog_entry {
 
         if (blog_user_can_edit_entry($this)) {
             $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'edit', 'entryid' => $this->id)), $stredit)) . ' | ';
-            if (!$DB->record_exists_sql('SELECT a.timedue, a.preventlate, a.emailteachers, a.var2, asub.grade
-                                          FROM {assignment} a, {assignment_submissions} as asub WHERE
-                                          a.id = asub.assignment AND userid = '.$USER->id.' AND a.assignmenttype = \'blog\'
-                                          AND asub.data1 = \''.$this->id.'\'')) {
-
-                $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete)) . ' | ';
-            }
+            $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/edit.php', array('action' => 'delete', 'entryid' => $this->id)), $strdelete)) . ' | ';
         }
 
         $contentcell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/blog/index.php', array('entryid' => $this->id)), get_string('permalink', 'blog')));
@@ -348,21 +349,8 @@ class blog_entry {
             $this->$var = $val;
         }
 
-        //check to see if it's part of a submitted blog assignment
-        if ($blogassignment = $DB->get_record_sql("SELECT a.timedue, a.preventlate, a.emailteachers, a.var2, asi.grade, asi.id
-                                                  FROM {assignment} a, {assignment_submissions} as asi WHERE
-                                                  a.id = asi.assignment AND userid = ? AND a.assignmenttype = 'blog'
-                                                  AND asi.data1 = ?", array($USER->id, $this->id))) {
-            //email teachers if necessary
-            if ($blogassignment->emailteachers) {
-                email_teachers($DB->get_record('assignment_submissions', array('id'=>$blogassignment['id'])));
-            }
-
-        } else {
-            //only update the attachment and associations if it is not a submitted assignment
-            if (!empty($CFG->useblogassociations)) {
-                $this->add_associations();
-            }
+        if (!empty($CFG->useblogassociations)) {
+            $this->add_associations();
         }
 
         $this->lastmodified = time();
@@ -392,14 +380,6 @@ class blog_entry {
         global $DB, $USER;
 
         $returnurl = '';
-
-        //check to see if it's part of a submitted blog assignment
-        if ($blogassignment = $DB->get_record_sql("SELECT a.timedue, a.preventlate, a.emailteachers, asub.grade
-                                                  FROM {assignment} a, {assignment_submissions} as asub WHERE
-                                                  a.id = asub.assignment AND userid = ? AND a.assignmenttype = 'blog'
-                                                  AND asub.data1 = ?", array($USER->id, $this->id))) {
-            print_error('cantdeleteblogassignment', 'blog', $returnurl);
-        }
 
         $this->delete_attachments();
 
