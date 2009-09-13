@@ -629,7 +629,11 @@ class question_calculated_qtype extends default_questiontype {
             $options = new stdClass;
             $options->question = $question->id;
         }
-        $options->synchronize = $form->synchronize;
+        if($form->synchronize == 1 ){
+            $options->synchronize = $form->synchronize;
+        }else {
+            $options->synchronize = 0 ;
+        }
         if ($update) {
             if (!$DB->update_record("question_calculated_options", $options)) {
                 $result->error = "Could not update calculated question options! (id=$options->id)";
