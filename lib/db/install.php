@@ -182,6 +182,7 @@ function xmldb_main_install() {
     /// Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
     assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
     update_capabilities('moodle');
+    external_update_descriptions('moodle');
 
     /// assign default roles
     role_assign($guestrole, $guest->id, 0, $syscontext->id);

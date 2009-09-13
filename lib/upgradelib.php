@@ -332,6 +332,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     $recover_install_function();
                     unset_config('installrunning', 'block_'.$plugin->fullname);
                     update_capabilities($component);
+                    external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
                     $endcallback($component, true, $verbose);
@@ -362,6 +363,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         /// Install various components
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -388,6 +390,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         /// Upgrade various components
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -454,6 +457,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
                     unset_config('installrunning', $module->name);
                     // Install various components too
                     update_capabilities($component);
+                    external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
                     $endcallback($component, true, $verbose);
@@ -482,6 +486,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
         /// Install various components
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -507,6 +512,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
         /// Upgrade various components
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -593,6 +599,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                     unset_config('installrunning', 'block_'.$blockname);
                     // Install various components
                     update_capabilities($component);
+                    external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
                     $endcallback($component, true, $verbose);
@@ -629,6 +636,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
             // Install various components
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -659,6 +667,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
             // Upgrade various componebts
             update_capabilities($component);
+            external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
 
@@ -681,6 +690,150 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
         blocks_add_default_system_blocks();
     }
+}
+
+/**
+ * Web service discovery function used during install and upgrade.
+ * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @return void
+ */
+function external_update_descriptions($component) {
+    global $DB;
+
+    $defpath = get_component_directory($component).'/db/services.php';
+
+    if (!file_exists($defpath)) {
+        external_delete_descriptions($component);
+        return;
+    }
+
+    // load new info
+    $functions = array();
+    $services = array();
+    include($defpath);
+
+    // update all function fist
+    $dbfunctions = $DB->get_records('external_functions', array('component'=>$component));
+    foreach ($dbfunctions as $dbfunction) {
+        if (empty($functions[$dbfunction->name])) {
+            $DB->delete_records('external_functions', array('id'=>$dbfunction->id));
+            // do not delete functions from external_services_functions, beacuse
+            // we want to notify admins when functions used in custom services disappear
+            continue;
+        }
+
+        $function = $functions[$dbfunction->name];
+        unset($functions[$dbfunction->name]);
+        $function['classpath'] = empty($function['classpath']) ? null : $function['classpath'];
+
+        $update = false;
+        if ($dbfunction->classname != $function['classname']) {
+            $dbfunction->classname = $function['classname'];
+            $update = true;
+        }
+        if ($dbfunction->methodname != $function['methodname']) {
+            $dbfunction->methodname = $function['methodname'];
+            $update = true;
+        }
+        if ($dbfunction->classpath != $function['classpath']) {
+            $dbfunction->classpath = $function['classpath'];
+            $update = true;
+        }
+        if ($update) {
+            $DB->update_record('external_functions', $dbfunction);
+        }
+    }
+    foreach ($functions as $fname => $function) {
+        $dbfunction = new object();
+        $dbfunction->name       = $fname;
+        $dbfunction->classname  = $function['classname'];
+        $dbfunction->methodname = $function['methodname'];
+        $dbfunction->classpath  = empty($function['classpath']) ? null : $function['classpath'];
+        $dbfunction->component  = $component;
+        $dbfunction->id = $DB->insert_record('external_functions', $dbfunction);
+    }
+    unset($functions);
+
+    // now deal with services
+    $dbservices = $DB->get_records('external_services', array('component'=>$component));
+    foreach ($dbservices as $dbservice) {
+        if (empty($services[$dbservice->name])) {
+            $DB->delete_records('external_services_functions', array('externalserviceid'=>$dbservice->id));
+            $DB->delete_records('external_services_users', array('externalserviceid'=>$dbservice->id));
+            $DB->delete_records('external_services', array('id'=>$dbservice->id));
+            continue;
+        }
+        $service = $services[$dbservice->name];
+        unset($services[$dbservice->name]);
+        $service['enabled'] = empty($service['enabled']) ? 0 : $service['enabled'];
+        $service['requiredcapability'] = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
+        $service['restrictedusers'] = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
+
+        $update = false;
+        if ($dbservice->enabled != $service['enabled']) {
+            $dbservice->enabled = $service['enabled'];
+            $update = true;
+        }
+        if ($dbservice->requiredcapability != $service['requiredcapability']) {
+            $dbservice->requiredcapability = $service['requiredcapability'];
+            $update = true;
+        }
+        if ($dbservice->restrictedusers != $service['restrictedusers']) {
+            $dbservice->restrictedusers = $service['restrictedusers'];
+            $update = true;
+        }
+        if ($update) {
+            $DB->update_record('external_services', $dbservice);
+        }
+
+        $functions = $DB->get_records('external_services_functions', array('externalserviceid'=>$dbservice->id));
+        foreach ($functions as $function) {
+            $key = array_search($function->functionname, $service['functions']);
+            if ($key === false) {
+                $DB->delete_records('external_services_functions', array('id'=>$function->id));
+            } else {
+                unset($service['functions'][$key]);
+            }
+        }
+        foreach ($service['functions'] as $fname) {
+            $newf = new object();
+            $newf->externalserviceid = $dbservice->id;
+            $newf->functionname      = $fname;
+            $DB->insert_record('external_services_functions', $newf);
+        }
+        unset($functions);
+    }
+    foreach ($services as $name => $service) {
+        $dbservice = new object();
+        $dbservice->name               = $name;
+        $dbservice->enabled            = empty($service['enabled']) ? 0 : $service['enabled'];
+        $dbservice->requiredcapability = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
+        $dbservice->restrictedusers    = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
+        $dbservice->component          = $component;
+        $dbservice->id = $DB->insert_record('external_services', $dbservice);
+        foreach ($service['functions'] as $fname) {
+            $newf = new object();
+            $newf->externalserviceid = $dbservice->id;
+            $newf->functionname      = $fname;
+            $DB->insert_record('external_services_functions', $newf);
+        }
+    }
+}
+
+/**
+ * Delete all service and external functions information defined in the specified compoment.
+ * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @return void
+ */
+function external_delete_descriptions($component) {
+    global $DB;
+
+    $params = array($component);
+
+    $DB->delete_records_select('external_services_users', "externalserviceid IN (SELECT id FROM {external_services} WHERE component = ?)", $params);
+    $DB->delete_records_select('external_services_functions', "externalserviceid IN (SELECT id FROM {external_services} WHERE component = ?)", $params);
+    $DB->delete_records('external_services', array('component'=>$component));
+    $DB->delete_records('external_functions', array('component'=>$component));
 }
 
 /**
@@ -1055,6 +1208,7 @@ function upgrade_core($version, $verbose) {
 
         // perform all other component upgrade routines
         update_capabilities('moodle');
+        external_update_descriptions('moodle');
         events_update_definition('moodle');
         message_update_providers('moodle');
 
