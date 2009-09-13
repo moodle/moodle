@@ -2292,6 +2292,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="external_services" NEXT="external_services_users">
       <FIELDS>
