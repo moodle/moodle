@@ -92,6 +92,17 @@ class moodle_exception extends Exception {
 }
 
 /**
+ * Exceptions indicating user does not have permissions to do something
+ * and the execution can not continue.
+ */
+class required_capability_exception extends moodle_exception {
+    function __construct($context, $capability, $errormessage, $stringfile) {
+        $capabilityname = get_capability_string($capability);
+        parent::__construct($errormessage, $stringfile, get_context_url($context), $capabilityname);
+    }
+}
+
+/**
  * Exception indicating programming error, must be fixed by a programer. For example
  * a core API might throw this type of exception if a plugin calls it incorrectly.
  *

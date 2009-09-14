@@ -1074,8 +1074,7 @@ function aggregate_roles_from_accessdata($context, $accessdata) {
 function require_capability($capability, $context, $userid = NULL, $doanything = true,
                             $errormessage = 'nopermissions', $stringfile = '') {
     if (!has_capability($capability, $context, $userid, $doanything)) {
-        $capabilityname = get_capability_string($capability);
-        print_error($errormessage, $stringfile, get_context_url($context), $capabilityname);
+        throw new required_capability_exception($context, $capability, $errormessage, $stringfile);
     }
 }
 

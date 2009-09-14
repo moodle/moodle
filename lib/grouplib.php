@@ -111,32 +111,29 @@ function groups_get_grouping_by_name($courseid, $name) {
 /**
  * Get the group object
  *
- * @global object
  * @param int $groupid ID of the group.
  * @return object group object
  */
-function groups_get_group($groupid) {
+function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
-    return $DB->get_record('groups', array('id'=>$groupid));
+    return $DB->get_record('groups', array('id'=>$groupid), $fields, $strictness);
 }
 
 /**
  * Get the grouping object
  *
- * @global object
  * @param int $groupingid ID of the group.
+ * @param string $fields
  * @return object group object
  */
-function groups_get_grouping($groupingid) {
+function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
-    return $DB->get_record('groupings', array('id'=>$groupingid));
+    return $DB->get_record('groupings', array('id'=>$groupingid), $fields, $strictness);
 }
 
 /**
  * Gets array of all groups in a specified course.
  *
- * @global object
- * @global object
  * @param int $courseid The id of the course.
  * @param mixed $userid optional user id or array of ids, returns only groups of the user.
  * @param int $groupingid optional returns only groups in the specified grouping.

@@ -15,26 +15,33 @@
 
 /**
  * Adds a specified user to a group
- * @param int $userid   The user id
- * @param int $groupid  The group id
+ * @param mixed $groupid  The group id or group object
+ * @param mixed $userid   The user id or user object
  * @return boolean True if user added successfully or the user is already a
  * member of the group, false otherwise.
  */
-function groups_add_member($groupid, $userid) {
+function groups_add_member($grouporid, $userorid) {
     global $DB;
 
-    if (! $DB->record_exists('user', array('id'=>$userid))) {
-        throw new moodle_exception('useriddoesntexist');
+    if (is_object($userorid)) {
+        $userid = $userorid->id;
+        $user   = $userorid;
+    } else {
+        $userid = $userorid;
+        $user = $DB->get_record('users', array('id'=>$userid), '*', MUST_EXIST);
     }
 
-    $group = $DB->get_record('groups', array('id'=>$groupid));
-    if (empty($group)) {
-        throw new moodle_exception('cannotaddmembergroupiddoesntexist');
+    if (is_object($grouporid)) {
+        $groupid = $grouporid->id;
+        $group   = $grouporid;
+    } else {
+        $groupid = $grouporid;
+        $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
     }
 
     //check if the user a participant of the group course
     if (!is_course_participant ($userid, $group->courseid)) {
-        throw new moodle_exception('userisnotaparticipant');
+        return false;
     }
 
     if (groups_is_member($groupid, $userid)) {
@@ -62,19 +69,27 @@ function groups_add_member($groupid, $userid) {
 
 /**
  * Deletes the link between the specified user and group.
- * @param int $groupid The group to delete the user from
- * @param int $userid The user to delete
+ * @param mixed $groupid  The group id or group object
+ * @param mixed $userid   The user id or user object
  * @return boolean True if deletion was successful, false otherwise
  */
-function groups_remove_member($groupid, $userid) {
+function groups_remove_member($grouporid, $userorid) {
     global $DB;
 
-    if (! $DB->record_exists('user', array('id'=>$userid))) {
-        throw new moodle_exception('useriddoesntexist');
+    if (is_object($userorid)) {
+        $userid = $userorid->id;
+        $user   = $userorid;
+    } else {
+        $userid = $userorid;
+        $user = $DB->get_record('users', array('id'=>$userid), '*', MUST_EXIST);
     }
 
-    if (!groups_group_exists($groupid)) {
-        throw new moodle_exception('cannotaddmembergroupiddoesntexist');
+    if (is_object($grouporid)) {
+        $groupid = $grouporid->id;
+        $group   = $grouporid;
+    } else {
+        $groupid = $grouporid;
+        $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
     }
 
     if (!groups_is_member($groupid, $userid)) {
@@ -106,11 +121,7 @@ function groups_create_group($data, $editform=false) {
     require_once("$CFG->libdir/gdlib.php");
     
     //check that courseid exists
-    $course = $DB->get_record('course',array('id' => $data->courseid));
-    if (empty($course)) {
-       throw new moodle_exception('coursedoesntexistcannotcreategroup'); 
-    }
-
+    $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
@@ -203,8 +214,7 @@ function groups_update_grouping($data) {
  * @return boolean True if deletion was successful, false otherwise
  */
 function groups_delete_group($grouporid) {
-    global $CFG, $DB;
-    require_once($CFG->libdir.'/gdlib.php');
+    global $DB;
 
     if (is_object($grouporid)) {
         $groupid = $grouporid->id;
@@ -212,7 +222,8 @@ function groups_delete_group($grouporid) {
     } else {
         $groupid = $grouporid;
         if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
-            throw new moodle_exception('groupiddoesntexistcannotdelete');;
+            //silently ignore attempts to delete missing already deleted groups ;-)
+            return true;
         }
     }
 
@@ -246,7 +257,8 @@ function groups_delete_grouping($groupingorid) {
     } else {
         $groupingid = $groupingorid;
         if (!$grouping = $DB->get_record('groupings', array('id'=>$groupingorid))) {
-            return false;
+            //silently ignore attempts to delete missing already deleted groupings ;-)
+            return true;
         }
     }
 
