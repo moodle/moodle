@@ -74,7 +74,7 @@ function generate_functionlist () {
     //retrieve all external file
     $externalfiles = array();
     $externalfunctions = array();
-    setListApiFiles($externalfiles, $CFG->dirroot);
+    webservice_lib::setListApiFiles($externalfiles, $CFG->dirroot);
 
     foreach ($externalfiles as $file) {
         require($file);
@@ -240,36 +240,5 @@ function converterMoodleParamIntoWsParam($moodleparam) {
         default:
             return "object";
             break;
-    }
-}
-
-/**
- * Retrieve all external.php from Moodle
- * @param array $files
- * @param string $directorypath
- * @return boolean result true if n
- */
-function setListApiFiles( &$files, $directorypath ) {
-    if(is_dir($directorypath)) { //check that we are browsing a folder not a file
-
-        if( $dh = opendir($directorypath)) {
-            while( false !== ($file = readdir($dh))) {
-
-                if( $file == '.' || $file == '..') {   // Skip '.' and '..'
-                    continue;
-                }
-                $path = $directorypath . '/' . $file;
-                ///browse the subfolder
-                if( is_dir($path) ) {
-                    setListApiFiles($files, $path);
-                }
-                ///retrieve api.php file
-                else if ($file == "external.php") {
-                        $files[] = $path;
-                    }
-            }
-            closedir($dh);
-
-        }
     }
 }
