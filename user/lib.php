@@ -158,11 +158,10 @@ function update_user($user) {
     }
     
     if ($DB->update_record('user', $user)) {
-        $DB->commit_sql();
+        //TODO check the php warning that this line produce
         events_trigger('user_updated', $user);
         return true;
     } else {
-        $DB->rollback_sql();
         return false;
     }
 }
