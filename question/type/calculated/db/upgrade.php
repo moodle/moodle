@@ -51,7 +51,8 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
 
     /// Conditionally launch create table for question_calculated_options
         if (!$dbman->table_exists($table)) {
-            $result = $dbman->create_table($table);
+            // $dbman->create_table doesnt return a result, we just have to trust it
+            $dbman->create_table($table);
         }
 
 /// calculated savepoint reached
