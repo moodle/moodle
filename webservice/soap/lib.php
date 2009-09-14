@@ -49,7 +49,7 @@ final class soap_server extends webservice_server {
             die;
         }
         global $CFG;
-        include "Zend/Loader.php";
+        include_once "Zend/Loader.php";
         Zend_Loader::registerAutoload();
 
         // retrieve the token from the url
