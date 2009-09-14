@@ -1661,10 +1661,6 @@ class moodle_paging_bar extends moodle_html_component {
      */
     public $pagevar = 'page';
     /**
-     * @var bool $nocurr do not display the current page as a link
-     */
-    public $nocurr;
-    /**
      * @var html_link $previouslink A HTML link representing the "previous" page
      */
     public $previouslink = null;
@@ -1741,7 +1737,7 @@ class moodle_paging_bar extends moodle_html_component {
             while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
                 $displaypage = $currpage + 1;
 
-                if ($this->page == $currpage && empty($this->nocurr)) {
+                if ($this->page == $currpage) {
                     $this->pagelinks[] = $displaypage;
                 } else {
                     $pagelink = new html_link();

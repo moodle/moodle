@@ -2971,7 +2971,7 @@ function doc_link($path='', $text='', $iconpath='') {
  * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
  *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
- * @param bool $nocurr do not display the current page as a link
+ * @param bool $nocurr do not display the current page as a link (dropped, link is never displayed for the current page)
  * @param bool $return whether to return an output string or echo now
  * @return bool|string depending on $result
  */
@@ -2980,9 +2980,12 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
 
     debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->paging_bar($pagingbar).');
 
+    if (empty($nocurr)) {
+        debugging('the feature of parameter $nocurr has been removed from the moodle_paging_bar');
+    }
+
     $pagingbar = moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl);
     $pagingbar->pagevar = $pagevar;
-    $pagingbar->nocurr = $nocurr;
     $output = $OUTPUT->paging_bar($pagingbar);
 
     if ($return) {

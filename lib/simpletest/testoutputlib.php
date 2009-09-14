@@ -1163,26 +1163,18 @@ class moodle_core_renderer_test extends UnitTestCase {
         $pagingbar->perpage = $perpage;
         $pagingbar->baseurl = $baseurl;
         $pagingbar->pagevar = $pagevar;
-        $pagingbar->nocurr = true;
 
         $originalbar = clone($pagingbar);
 
         $html = $OUTPUT->paging_bar($pagingbar);
 
         $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
+        // the 'Previous' link
         $this->assert(new ContainsTagWithAttributes('a', array('class' => 'previous', 'href' => $baseurl->out().'?mypage=0')), $html);
-        // One of the links to the previous page must not have the 'previous' class
+        // the numeric link to the previous page '1' (does not have the 'previous' class)
         $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=0'), array('class' => 'previous')), $html);
-        // The link to the current page must not have the 'next' class: it's the last page
-        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array('class' => 'next')), $html);
-
-        $pagingbar = clone($originalbar); // clone the original bar before each output and set of assertions
-        $pagingbar->nocurr = false;
-        $html = $OUTPUT->paging_bar($pagingbar);
-        $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
-        $this->assert(new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=0'), array('class' => 'previous')), $html);
-        $this->assert(new ContainsTagWithAttributes('a', array('class' => 'previous', 'href' => $baseurl->out().'?mypage=0')), $html);
-        $expectation = new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array('class' => 'next'));
+        // no link to the current page, it's the last page
+        $expectation = new ContainsTagWithAttributes('a', array('href' => $baseurl->out().'?mypage=1'), array());
         $this->assertFalse($expectation->test($html));
 
         // TODO test with more different parameters
