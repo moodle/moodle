@@ -5,6 +5,6 @@
 //  This fragment is called by moodle_needs_upgrading() and /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$plugin->version  = 2009030500;   // The (date) version of this module
+$plugin->version  = 2009091400;   // The (date) version of this module
 
 ?>
