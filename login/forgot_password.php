@@ -156,7 +156,7 @@ $PAGE->set_heading($strforgotten);
 $PAGE->set_focuscontrol('id_email');
 
 echo $OUTPUT->header();
-echo $OUTPUT->box(get_string('passwordforgotteninstructions'), 'generalbox boxwidthnormal boxaligncenter');
+echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();
 
 echo $OUTPUT->footer();
