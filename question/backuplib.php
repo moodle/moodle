@@ -168,7 +168,7 @@
                                             WHERE q.category= ? AND
                                                   bk.old_id=q.id AND
                                                   bk.backup_code = ?
-                                         ORDER BY parent ASC, id", array($category, $preferences->backup_unique_code));
+                                         ORDER BY parent ASC, q.id", array($category, $preferences->backup_unique_code));
         //If there are questions
         if ($questions) {
             //Write start tag
@@ -444,11 +444,12 @@
         global $CFG,$DB;
         //put the ids of the questions from all these categories into the db.
         $status = $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
-                                SELECT '$backup_unique_code', 'question', q.id, ''
+                                SELECT ?, 'question', q.id, ?
                                   FROM {question} q, {backup_ids} bk
                                  WHERE q.category = bk.old_id AND bk.table_name = 'question_categories'
                                        AND " . $DB->sql_compare_text('bk.info') . " = ?
-                                       AND bk.backup_code = ?", array($info, $backup_unique_code));
+                                       AND bk.backup_code = ?",
+                array($backup_unique_code, $DB->sql_empty(), $info, $backup_unique_code));
         return $status;
     }
 
