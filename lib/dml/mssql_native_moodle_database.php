@@ -735,12 +735,12 @@ class mssql_native_moodle_database extends moodle_database {
         $results = array();
 
         foreach ($rs as $row) {
-            $id  = reset($row);
-            if (isset($return[$id])) {
+            $id = reset($row);
+            if (isset($results[$id])) {
                 $colname = key($row);
                 debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
             }
-            $results[$id] = (object)$row;
+            $results[$id] = $row;
         }
         $rs->close();
 
