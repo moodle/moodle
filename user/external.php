@@ -22,6 +22,10 @@
  * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
  * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
+
+
+die('this file is being migrated to exxternallib.php right now...');
+
 require_once(dirname(dirname(__FILE__)) . '/lib/moodleexternal.php');
 require_once(dirname(dirname(__FILE__)) . '/user/lib.php');
 
@@ -37,60 +41,6 @@ final class user_external extends moodle_external {
  */
     function __construct () {
         $this->descriptions = array();
-
-        $user = new object();
-        $user->password = PARAM_ALPHANUMEXT;
-        $user->auth = PARAM_ALPHANUMEXT;
-        $user->confirmed = PARAM_NUMBER;
-        $user->username = PARAM_ALPHANUMEXT;
-        $user->idnumber = PARAM_ALPHANUMEXT;
-        $user->firstname = PARAM_ALPHANUMEXT;
-        $user->lastname = PARAM_ALPHANUMEXT;
-        $user->email = PARAM_NOTAGS;
-        $user->emailstop = PARAM_NUMBER;
-        $user->lang = PARAM_ALPHA;
-        $user->theme = PARAM_ALPHANUM;
-        $user->timezone = PARAM_ALPHANUMEXT;
-        $user->mailformat = PARAM_ALPHA;
-        $user->description = PARAM_TEXT;
-        $user->city = PARAM_ALPHANUMEXT;
-        $user->country = PARAM_ALPHANUMEXT;
-        $params = new object();
-        $params->users = array($user);
-        $return = new object();
-        $return->userids = array(PARAM_NUMBER);
-        $this->descriptions['create_users']   = array( 'params' => $params,
-            'optionalinformation' => 'Username, password, firstname, and username are the only mandatory',
-            'return' => $return,
-            'service' => 'user',
-            'requiredlogin' => 0);
-
-        $user = new object();
-        $user->id = PARAM_NUMBER;
-        $user->auth = PARAM_ALPHANUMEXT;
-        $user->confirmed = PARAM_NUMBER;
-        $user->username = PARAM_ALPHANUMEXT;
-        $user->idnumber = PARAM_ALPHANUMEXT;
-        $user->firstname = PARAM_ALPHANUMEXT;
-        $user->lastname = PARAM_ALPHANUMEXT;
-        $user->email = PARAM_NOTAGS;
-        $user->emailstop = PARAM_NUMBER;
-        $user->lang = PARAM_ALPHA;
-        $user->theme = PARAM_ALPHANUM;
-        $user->timezone = PARAM_ALPHANUMEXT;
-        $user->mailformat = PARAM_ALPHA;
-        $user->description = PARAM_TEXT;
-        $user->city = PARAM_ALPHANUMEXT;
-        $user->country = PARAM_ALPHANUMEXT;
-        $params = new object();
-        $params->search = PARAM_ALPHANUM;
-        $return = new object();
-        $return->users = array($user);
-        $this->descriptions['get_users']     = array( 'params' => $params,
-            'optionalparams' => 'All params are not mandatory',
-            'return' => $return,
-            'service' => 'user',
-            'requiredlogin' => 0);
 
         $params = new object();
         $params->usernames = array(PARAM_ALPHANUMEXT);
@@ -110,49 +60,6 @@ final class user_external extends moodle_external {
             'return' => $return,
             'service' => 'user',
             'requiredlogin' => 0);
-    }
-
-    /**
-     * Retrieve all user
-     * @param object|struct $params - need to be define as struct for XMLRPC
-     * @return object $return
-     */
-    public function get_users($params) {
-        global $USER;
-
-        $this->clean_function_params('get_users', $params);
-
-        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_SYSTEM))) {
-            return get_users(true, $params->search, false, null, 'firstname ASC','', '', '', 1000, 'id, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
-        }
-        else {
-            throw new moodle_exception('wscouldnotvieweusernopermission');
-        }
-    }
-
-    /**
-     * Create multiple users
-     * @param object|struct $params - need to be define as struct for XMLRPC
-     * @return object $return
-     */
-    public function create_users($params) {
-        global $USER;
-        if (has_capability('moodle/user:create', get_context_instance(CONTEXT_SYSTEM))) {
-            $userids = array();
-            $this->clean_function_params('create_users', $params);
-            foreach ($params->users as $user) {
-                try {
-                    $userids[$user->username] = create_user($user);
-                }
-                catch (dml_write_exception $e) {
-                    throw new moodle_exception('wscouldnotcreateeuserindb');
-                }
-            }
-            return $userids;
-        }
-        else {
-            throw new moodle_exception('wscouldnotcreateeusernopermission');
-        }
     }
 
     /**
@@ -208,9 +115,7 @@ final class user_external extends moodle_external {
                 }
                 $user->username = $paramuser->newusername;
                 try {
-                    if( !update_user($user)) {
-                        $updatesuccessfull = false;
-                    }
+                    $DB->update_record('user', $user);
                 }
                 catch (dml_write_exception $e) {
                     throw new moodle_exception('wscouldnotupdateuserindb');

@@ -25,6 +25,9 @@
  */
 
 $functions = array(
+
+    // === group related functions ===
+
     'moodle_group_create_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'create_groups',
@@ -69,6 +72,40 @@ $functions = array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groupmembers',
         'classpath'   => 'group/externallib.php',
+        'params'      => null, //TODO
+        'returns'     => null, //TODO
+    ),
+
+    // === user related functions ===
+
+    'moodle_user_create_users' => array(
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'create_users',
+        'classpath'   => 'user/externallib.php',
+        'params'      => null, //TODO
+        'returns'     => null, //TODO
+    ),
+
+    'moodle_user_get_users' => array(
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'get_users',
+        'classpath'   => 'user/externallib.php',
+        'params'      => null, //TODO
+        'returns'     => null, //TODO
+    ),
+
+    'moodle_user_delete_users' => array(
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'delete_users',
+        'classpath'   => 'user/externallib.php',
+        'params'      => null, //TODO
+        'returns'     => null, //TODO
+    ),
+
+    'moodle_user_update_users' => array(
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'update_users',
+        'classpath'   => 'user/externallib.php',
         'params'      => null, //TODO
         'returns'     => null, //TODO
     ),
