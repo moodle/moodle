@@ -387,7 +387,7 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @param string $debuginfo optional debug information
  * @return mixed the $param value converted to PHP type or invalid_parameter_exception
  */
-function validate_param($param, $type, $allownull=true, $debuginfo='') {
+function validate_param($param, $type, $allownull=false, $debuginfo='') {
     if (is_null($param)) {
         if ($allownull) {
             return null;
