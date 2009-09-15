@@ -120,11 +120,6 @@ class block_blog_menu extends block_base {
             $menulist->add_item($OUTPUT->link($myentrieslink));
         }
 
-        // show link to manage blog prefs
-        $blogpreflink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/preferences.php', array('userid' => $USER->id)), get_string('blogpreferences', 'blog'));
-        $blogpreflink->disableifcurrent = true;
-        $menulist->add_item($OUTPUT->link($blogpreflink));
-
         // show Add entry link
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:create', $sitecontext)) {

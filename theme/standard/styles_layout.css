@@ -1993,15 +1993,6 @@ body.has_navigation_bar {
   width: auto;
 }
 
-.block_blog_externals a.delete {
-  margin-left: 6px;
-}
-
-.block_blog_externals div.newlink {
-  margin-top: 10px;
-  text-align: center;
-  width: 100%;
-}
 /***
  *** Calendar
  ***/

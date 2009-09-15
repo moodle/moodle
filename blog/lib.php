@@ -597,3 +597,17 @@ function blog_get_headers() {
 
     return $headers;
 }
+
+function blog_extend_settings_navigation($settingsnav) {
+    global $USER, $PAGE, $FULLME, $CFG, $DB, $OUTPUT;
+    $blogkey = $settingsnav->add(get_string('blogadministration', 'blog'));
+    $blog = $settingsnav->get($blogkey);
+    $blog->forceopen = true;
+    
+    $blog->add(get_string('preferences', 'blog'), new moodle_url('preferences.php'), navigation_node::TYPE_SETTING);
+    if ($CFG->useexternalblogs && $CFG->maxexternalblogsperuser > 0) {
+        $blog->add(get_string('externalblogs', 'blog'), new moodle_url('external.php'), navigation_node::TYPE_SETTING);
+    }
+
+    return $blogkey;
+}

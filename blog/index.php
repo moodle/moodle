@@ -208,6 +208,7 @@ if (!empty($entryid)) {
     $filters['entry'] = $entryid;
 }
 $blogheaders = blog_get_headers();
+blog_extend_settings_navigation($PAGE->settingsnav);
 
 // prints the tabs
 $showroles = !empty($userid);
