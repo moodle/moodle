@@ -41,14 +41,23 @@ class moodle_group_external extends external_api {
 
         foreach ($params as $groupparam) {
             $group = new object();
-            // clean params
-            $group->courseid  = clean_param($groupparam['courseid'], PARAM_INTEGER);
-            $group->name      = clean_param($groupparam['groupname'], PARAM_MULTILANG);
+
+            // validate params
+            $group->courseid    = validate_param($groupparam['courseid'], PARAM_INTEGER);
+            $group->name        = validate_param($groupparam['groupname'], PARAM_MULTILANG); // must be course unique!
+            $group->description = validate_param($groupparam['description'], PARAM_RAW);
             if (array_key_exists('enrolmentkey', $groupparam)) {
-                $group->enrolmentkey = $groupparam['enrolmentkey'];
+                $group->enrolmentkey = validate_param($groupparam['enrolmentkey'], PARAM_RAW);
             } else {
                 $group->enrolmentkey = '';
             }
+            if (empty($group->name)) {
+                throw new invalid_parameter_exception('Invalid group name');
+            }
+            if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
+                throw new invalid_parameter_exception('Group with the same name already exists in the course');
+            }
+            
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
             self::validate_context($context);
@@ -74,8 +83,10 @@ class moodle_group_external extends external_api {
         //      fetching by id is not enough!
 
         foreach ($params as $groupid) {
-            $groupid = clean_param($groupid, PARAM_INTEGER);
-            $group = groups_get_group($groupid, 'id, courseid, name, enrolmentkey', MUST_EXIST);
+            // validate params
+            $groupid = validate_param($groupid, PARAM_INTEGER);
+            $group = groups_get_group($groupid, 'id, courseid, name, description, enrolmentkey', MUST_EXIST);
+
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
             self::validate_context($context);
@@ -99,11 +110,13 @@ class moodle_group_external extends external_api {
         $groups = array();
 
         foreach ($params as $groupid) {
-            $groupid = clean_param($groupid, PARAM_INTEGER);
+            // validate params
+            $groupid = validate_param($groupid, PARAM_INTEGER);
             if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
                 // silently ignore attempts to delete nonexisting groups
                 continue;
             }
+
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
             self::validate_context($context);
@@ -123,7 +136,8 @@ class moodle_group_external extends external_api {
         $groups = array();
 
         foreach ($params as $groupid) {
-            $groupid = clean_param($groupid, PARAM_INTEGER);
+            // validate params
+            $groupid = validate_param($groupid, PARAM_INTEGER);
             $group = groups_get_group($groupid, 'id, courseid, name, enrolmentkey', MUST_EXIST);
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
@@ -151,10 +165,11 @@ class moodle_group_external extends external_api {
         $groups = array();
 
         foreach ($params as $member) {
-            $groupid = clean_param($member['groupid'], PARAM_INTEGER);
-            $userid = clean_param($member['userid'], PARAM_INTEGER);
+            // validate params
+            $groupid = validate_param($member['groupid'], PARAM_INTEGER);
+            $userid = validate_param($member['userid'], PARAM_INTEGER);
             $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
-            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id));
+            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
@@ -179,10 +194,11 @@ class moodle_group_external extends external_api {
         $groups = array();
 
         foreach ($params as $member) {
-            $groupid = clean_param($member['groupid'], PARAM_INTEGER);
-            $userid = clean_param($member['userid'], PARAM_INTEGER);
-            $group = groups_get_group($groupid, 'id, courseid');
-            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id));
+            // validate params
+            $groupid = validate_param($member['groupid'], PARAM_INTEGER);
+            $userid = validate_param($member['userid'], PARAM_INTEGER);
+            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);

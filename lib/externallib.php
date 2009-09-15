@@ -55,6 +55,9 @@ class external_api {
      * @return void
      */
     protected static function validate_context($context) {
+        if (empty($context)) {
+            throw new invalid_parameter_exception('Context does not exist');
+        }
         if (empty(self::$contextrestriction)) {
             self::$contextrestriction = get_context_instance(CONTEXT_SYSTEM);
         }
