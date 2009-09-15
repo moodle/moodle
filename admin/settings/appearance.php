@@ -52,7 +52,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // blog
     $temp = new admin_settingpage('blog', get_string('blog','blog'));
     $temp->add(new admin_setting_configcheckbox('useblogassociations', get_string('useblogassociations', 'blog'), get_string('configuseblogassociations','blog'), 1));
-    $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
+    $temp->add(new admin_setting_bloglevel('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
                                                                                                                                               4 => get_string('siteblogs','blog'),
                                                                                                                                               1 => get_string('personalblogs','blog'),
                                                                                                                                               0 => get_string('disableblogs','blog'))));

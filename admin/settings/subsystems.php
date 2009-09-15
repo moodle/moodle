@@ -21,11 +21,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablerssfeeds', get_string('enablerssfeeds', 'admin'), get_string('configenablerssfeeds', 'admin'), 0));
 
-    $optionalsubsystems->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'),
+    $optionalsubsystems->add(new admin_setting_bloglevel('bloglevel', get_string('bloglevel', 'admin'),
                                 get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
                                                                                  4 => get_string('siteblogs','blog'),
-                                                                                 3 => get_string('courseblogs','blog'),
-                                                                                 2 => get_string('groupblogs','blog'),
                                                                                  1 => get_string('personalblogs','blog'),
                                                                                  0 => get_string('disableblogs','blog'))));
 

@@ -2749,6 +2749,30 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
 }
 
 /**
+ * Select for blog's bloglevel setting: if set to 0, will set blog_menu
+ * block to hidden.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_bloglevel extends admin_setting_configselect {
+    /**
+     * Updates the database and save the setting
+     *
+     * @param string data
+     * @return string empty or error message
+     */
+    public function write_setting($data) {
+        global $DB;
+        if ($data['bloglevel'] == 0) {
+            $DB->set_field('block', 'visible', 0, array('name' => 'blog_menu'));
+        } else {
+            $DB->set_field('block', 'visible', 1, array('name' => 'blog_menu'));
+        }
+        return parent::write_setting($data);
+    }
+}
+
+/**
  * Special select - lists on the frontpage - hacky
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
