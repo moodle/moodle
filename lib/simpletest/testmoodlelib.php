@@ -228,8 +228,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(array('gecko', 'gecko19'), get_browser_version_classes());
     }
 
-    function test_optional_param()
-    {
+    function test_optional_param() {
         $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';
         $this->assertEqual(optional_param('username', 'default_user', PARAM_CLEAN), 'post_user');
@@ -271,8 +270,7 @@ class moodlelib_test extends UnitTestCase {
      * @param int $type expected format of param after cleaning.
      * @return mixed
      */
-    function test_clean_param()
-    {
+    function test_clean_param() {
         global $CFG;
         // Test unknown parameter type
 
@@ -297,6 +295,45 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param('/just/a/path', PARAM_LOCALURL), '/just/a/path');
         $this->assertEqual(clean_param('funny:thing', PARAM_LOCALURL), '');
         $this->assertEqual(clean_param('course/view.php?id=3', PARAM_LOCALURL), 'course/view.php?id=3');
+    }
+
+    function test_validate_param() {
+        try {
+            $param = validate_param('11a', PARAM_INT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('11', PARAM_INT);
+            $this->assertEqual($param, 11);
+        } catch (invalid_parameter_exception $ex) {
+            $this->fail('invalid_parameter_exception not expected');
+        }
+        try {
+            $param = validate_param(null, PARAM_INT, false);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param(null, PARAM_INT, true);
+            $this->assertTrue($param===null);
+        } catch (invalid_parameter_exception $ex) {
+            $this->fail('invalid_parameter_exception expected');
+        }
+        try {
+            $param = validate_param(array(), PARAM_INT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param(new stdClass, PARAM_INT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
     }
 
     function test_make_user_directory() {

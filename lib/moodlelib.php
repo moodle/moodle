@@ -375,6 +375,40 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
 }
 
 /**
+ * Strict validation of parameter values, the values are only converted
+ * to requested PHP type. Internally it is using clean_param, the values
+ * before and after cleaning must be equal - otherwise
+ * an invalid_parameter_exception is thrown.
+ * Onjects and classes are not accepted.
+ *
+ * @param mixed $param
+ * @param int $type PARAM_ constant
+ * @param bool $allownull are nulls valid value?
+ * @param string $debuginfo optional debug information
+ * @return mixed the $param value converted to PHP type or invalid_parameter_exception
+ */
+function validate_param($param, $type, $allownull=true, $debuginfo='') {
+    if (is_null($param)) {
+        if ($allownull) {
+            return null;
+        } else {
+            throw new invalid_parameter_exception($debuginfo);
+        }
+    }
+    if (is_array($param) or is_object($param)) {
+        throw new invalid_parameter_exception($debuginfo);
+    }
+
+    $cleaned = clean_param($param, $type);
+    if ((string)$param !== (string)$cleaned) {
+        // conversion to string is usually lossless
+        throw new invalid_parameter_exception($debuginfo);
+    }
+
+    return $cleaned;
+}
+
+/**
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
