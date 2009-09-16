@@ -565,6 +565,11 @@ function prepare_url($url, $stripformparams=false) {
         }
     }
 
+    // Add wwwroot only if the URL does not already start with http:// or https://
+    if (!preg_match('|https?://|', $output) ) {
+        $output = $CFG->wwwroot . $output;
+    }
+
     return $output;
 }
 
