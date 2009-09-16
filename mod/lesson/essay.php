@@ -18,7 +18,14 @@
     list($cm, $course, $lesson) = lesson_get_basics($id);
     
     require_login($course->id, false, $cm);
-    
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$id));
+    if ($mode !== 'display') {
+        $url->param('mode', $mode);
+    }
+    $PAGE->set_url($url);
+    $PAGE->navbar->add(get_string('manualgrading','lesson'));
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     require_capability('mod/lesson:edit', $context);

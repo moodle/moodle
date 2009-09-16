@@ -804,11 +804,86 @@ function lesson_supports($feature) {
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
         case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
+        case FEATURE_MOD_INTRO:               return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
 
         default: return null;
+    }
+}
+
+/**
+ * This fucntion extends the global navigaiton for the site.
+ * It is important to note that you should not rely on PAGE objects within this
+ * body of code as there is no guarantee that during an AJAX request they are
+ * available
+ *
+ * @param navigation_node $navigation The lesson node within the global navigation
+ * @param stdClass $course The course object returned from the DB
+ * @param stdClass $module The module object returned from the DB
+ * @param stdClass $cm The course module isntance returned from the DB
+ */
+function lesson_extend_navigation($navigation, $course, $module, $cm) {
+    /**
+     * This is currently just a stub so  that it can be easily expanded upon.
+     * When expanding just remove this comment and the line below and then add
+     * you content.
+     */
+    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param navigation_node $settings
+ * @param stdClass $module
+ */
+function lesson_extend_settings_navigation($settings, $module) {
+    global $PAGE, $CFG, $DB, $USER, $OUTPUT;
+
+    $lesson = $DB->get_record('lesson', array('id'=>$PAGE->cm->instance));
+    $lessonnavkey = $settings->add(get_string('lessonadministration', 'lesson'));
+    $lessonnav = $settings->get($lessonnavkey);
+    $lessonnav->forceopen = true;
+
+    $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
+    $key = $lessonnav->add(get_string('preview', 'lesson'), $url);
+
+    if ($canedit) {
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
+        $key = $lessonnav->add(get_string('edit', 'lesson'), $url);
+    }
+
+    if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
+        $key = $lessonnav->add(get_string('reports', 'lesson'));
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
+        $lessonnav->get($key)->add(get_string('overview', 'lesson'), $url);
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
+        $lessonnav->get($key)->add(get_string('detailedstats', 'lesson'), $url);
+    }
+
+    if ($canedit) {
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
+        $lessonnav->add(get_string('manualgrading', 'lesson'), $url);
+    }
+
+    if ($lesson->highscores) {
+        $url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id));
+        $lessonnav->add(get_string('highscores', 'lesson'), $url);
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $lessonnav->add(get_string('updatethis', '', get_string('modulename', 'lesson')), $url);
+    }
+
+    if (count($lessonnav->children)<1) {
+        $settings->remove_child($lessonnavkey);
     }
 }

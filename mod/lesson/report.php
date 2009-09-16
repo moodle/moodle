@@ -42,6 +42,17 @@
     
 // make sure people are where they should be
     require_login($course->id, false, $cm);
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$id));
+    if ($action !== 'reportoverview') {
+        $url->param('action', $action);
+    }
+    if ($pageid !== NULL) {
+        $url->param('pageid', $pageid);
+    }
+    $PAGE->set_url($url);
+    $PAGE->navbar->add(get_string('reports', 'lesson'), new moodle_url($CFG->wwwroot.'/mod/lesson/report.php', array('id'=>$id)));
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/lesson:manage', $context);
 

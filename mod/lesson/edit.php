@@ -35,6 +35,17 @@
     }
 
     require_login($course->id, false, $cm);
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/edit.php', array('id'=>$id,'mode'=>$mode));
+    if ($display !== 0) {
+        $url->param('display', $display);
+    }
+    if ($pageid !== 0) {
+        $url->param('pageid', $pageid);
+    }
+    $PAGE->set_url($url);
+    $PAGE->navbar->add(get_string('edit'));
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/lesson:manage', $context);
     
