@@ -41,12 +41,28 @@ class restricted_context_exception extends moodle_exception {
  * Base class for external api methods.
  */
 class external_api {
-
-
     private static $contextrestriction;
 
+    /**
+     * Set context restriction for all folowing subsequent function calls.
+     * @param stdClass $contex
+     * @return void
+     */
     public static function set_context_restriction($contex) {
         self::$contextrestriction = $context;
+    }
+
+    /**
+     * Validates submitted function barameters, if anything is incorrect
+     * invalid_parameter_exception is thrown.
+     * @param ? $description description of parameters
+     * @param array $params the actual parameters
+     * @return ? params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
+     */
+    public static function validate_params($description, $params) {
+        //TODO: we need to define the structure of param descriptions
+
+        return $params;
     }
 
     /**
@@ -91,18 +107,6 @@ class external_api {
     }
 
     /**
-     * Some automatic type validation of parameters
-     * @param string $functionname
-     * @param mixed $params
-     * @return mixed cleaned parameters
-     */
-    protected static function cleanparams($functionname, $params) {
-        //TODO: implement cleaning
-        //      do we need this? We need only basic data types for web services, right?
-        return $params;
-    }
-
-    /**
      * Returns detailed information about external function
      * @param string $functionname name of external function
      * @return aray
@@ -110,7 +114,6 @@ class external_api {
     public static function get_function_info($functionname) {
         global $CFG, $DB;
 
-        //TODO: this is very slow, we should add some caching here
         $function = $DB->get_record('external_functions', array('name'=>$functionname), '*', MUST_EXIST);
 
         $defpath = get_component_directory($function->component);
