@@ -2150,6 +2150,31 @@ class settings_navigation extends navigation_node {
         $this->get($key)->preceedwithhr = true;
         return $key;
     }
+
+    /**
+     * This function allows the user to add something to the start of the settings
+     * navigation, which means it will be at the top of the settings navigation block
+     *
+     * @param string $text
+     * @param sting|moodle_url $url
+     * @param string $shorttext
+     * @param string|int $key
+     * @param int $type
+     * @param string $icon
+     * @return sting|int A key that can be used to reference the newly added node
+     */
+    public function prepend($text, $url=null, $type=null, $shorttext=null, $key=null, $icon=null) {
+        $key = $this->add($text, $url, $type, $shorttext, $key, $icon);
+        $children = $this->children;
+        $this->children = array();
+        $this->children[$key] = array_pop($children);
+        foreach ($children as $k=>$child) {
+            $this->children[$k] = $child;
+            $this->get($k)->add_class('root_node');
+            $this->get($k)->preceedwithhr = true;
+        }
+        return $key;
+    }
     /**
      * Load the site administration tree
      *
