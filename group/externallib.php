@@ -47,7 +47,7 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_params(self::create_groups_parameters(), $params);
 
-        $groupids = array();
+        $groups = array();
 
         foreach ($params['groupids'] as $group) {
             $group = (object)$group;
@@ -64,12 +64,11 @@ class moodle_group_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/course:managegroups', $context);
 
-            $id = groups_create_group($group, false);
-            $group->id = $id;
-            $groupids[$id] = (array)$group;
+            $group->id = groups_create_group($group, false);
+            $groups[] = (array)$group;
         }
 
-        return $groupids;
+        return $groups;
     }
 
    /**
@@ -106,7 +105,7 @@ class moodle_group_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/course:managegroups', $context);
 
-            $groups[$group->id] = (array)$group;
+            $groups[] = (array)$group;
         }
 
         return $groups;
