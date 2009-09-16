@@ -1994,7 +1994,7 @@ class moodle_help_icon extends labelled_html_component {
      * @return void
      */
     public function prepare() {
-        global $COURSE, $OUTPUT;
+        global $COURSE, $OUTPUT, $CFG;
 
         if (empty($this->page)) {
             throw new coding_exception('A moodle_help_icon object requires a $page parameter');
@@ -2007,7 +2007,7 @@ class moodle_help_icon extends labelled_html_component {
         }
 
         // fix for MDL-7734
-        $this->link->url = new moodle_url('/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
+        $this->link->url = new moodle_url($CFG->wwwroot.'/help.php', array('module' => $this->module, 'file' => $this->page .'.html'));
 
         // fix for MDL-7734
         if (!empty($COURSE->lang)) {
