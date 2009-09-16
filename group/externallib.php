@@ -28,36 +28,37 @@ require_once("$CFG->libdir/externallib.php");
 
 class moodle_group_external extends external_api {
 
-   /**
+    /**
+     * Returns description of method parameters
+     * @return ?
+     */
+    public static function create_groups_parameters() {
+        //TODO
+    }
+
+    /**
      * Create groups
-     * @param array $params array of group description arrays (with keys groupname and courseid)
+     * @param ? $params array of group description arrays (with keys groupname and courseid)
      * @return array of newly created group ids
      */
     public static function create_groups($params) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
+        $params = self::validate_params(self::create_groups_parameters(), $params);
+
         $groupids = array();
 
-        foreach ($params as $groupparam) {
-            $group = new object();
+        foreach ($params['groupids'] as $group) {
+            $group = (object)$group;
 
-            // validate params
-            $group->courseid    = validate_param($groupparam['courseid'], PARAM_INTEGER);
-            $group->name        = validate_param($groupparam['groupname'], PARAM_MULTILANG); // must be course unique!
-            $group->description = validate_param($groupparam['description'], PARAM_RAW);
-            if (array_key_exists('enrolmentkey', $groupparam)) {
-                $group->enrolmentkey = validate_param($groupparam['enrolmentkey'], PARAM_RAW);
-            } else {
-                $group->enrolmentkey = '';
-            }
-            if (empty($group->name)) {
+            if (empty(trim($group->name))) {
                 throw new invalid_parameter_exception('Invalid group name');
             }
             if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
                 throw new invalid_parameter_exception('Group with the same name already exists in the course');
             }
-            
+
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
             self::validate_context($context);
@@ -65,26 +66,39 @@ class moodle_group_external extends external_api {
 
             $id = groups_create_group($group, false);
             $group->id = $id;
-            $groupids[$id] = $group;
+            $groupids[$id] = (array)$group;
         }
 
         return $groupids;
     }
 
+   /**
+     * Returns description of method result value
+     * @return ?
+     */
+    public static function create_groups_returns() {
+        //TODO
+    }
+
+    public static function get_groups_parameters() {
+        //TODO
+    }
+
     /**
      * Get groups definition
-     * @param array $params arrays of group ids
+     * @param ? $params arrays of group ids
      * @return array of group objects (id, courseid, name, enrolmentkey)
      */
     public static function get_groups($params) {
         $groups = array();
 
+        $params = self::validate_params(self::get_groups_parameters(), $params);
+
         //TODO: we do need to search for groups in courses too,
         //      fetching by id is not enough!
 
-        foreach ($params as $groupid) {
+        foreach ($params['groupids'] as $groupid) {
             // validate params
-            $groupid = validate_param($groupid, PARAM_INTEGER);
             $group = groups_get_group($groupid, 'id, courseid, name, description, enrolmentkey', MUST_EXIST);
 
             // now security checks
@@ -92,24 +106,34 @@ class moodle_group_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/course:managegroups', $context);
 
-            $groups[$group->id] = $group;
+            $groups[$group->id] = (array)$group;
         }
 
         return $groups;
     }
 
+    public static function get_groups_returns() {
+        //TODO
+    }
+
+    public static function delete_groups_parameters() {
+        //TODO
+    }
+
     /**
      * Delete groups
-     * @param array $params array of group ids
+     * @param ? $params array of group ids
      * @return void
      */
     public static function delete_groups($params) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
+        $params = self::validate_params(self::delete_groups_parameters(), $params);
+
         $groups = array();
 
-        foreach ($params as $groupid) {
+        foreach ($params['groupids'] as $groupid) {
             // validate params
             $groupid = validate_param($groupid, PARAM_INTEGER);
             if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
@@ -126,18 +150,27 @@ class moodle_group_external extends external_api {
         }
     }
 
+    public static function delete_groups_returns() {
+        //TODO
+    }
+
+
+    public static function get_groupmembers_parameters() {
+        //TODO
+    }
 
     /**
      * Return all members for a group
-     * @param array $params array of group ids
+     * @param ? $params array of group ids
      * @return array with  group id keys containing arrays of user ids
      */
     public static function get_groupmembers($params) {
         $groups = array();
 
-        foreach ($params as $groupid) {
+        $params = self::validate_params(self::get_groupmembers_parameters(), $params);
+
+        foreach ($params['groupids'] as $groupid) {
             // validate params
-            $groupid = validate_param($groupid, PARAM_INTEGER);
             $group = groups_get_group($groupid, 'id, courseid, name, enrolmentkey', MUST_EXIST);
             // now security checks
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
@@ -152,6 +185,14 @@ class moodle_group_external extends external_api {
         return $groups;
     }
 
+    public static function get_groupmembers_returns() {
+        //TODO
+    }
+
+
+    public static function add_groupmembers_parameters() {
+        //TODO
+    }
 
     /**
      * Add group members
@@ -162,12 +203,13 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $groups = array();
+        $params = self::validate_params(self::add_groupmembers_parameters(), $params);
 
-        foreach ($params as $member) {
+        foreach ($params['membership'] as $member) {
             // validate params
-            $groupid = validate_param($member['groupid'], PARAM_INTEGER);
-            $userid = validate_param($member['userid'], PARAM_INTEGER);
+            $groupid = $member['groupid'];
+            $userid = $member['userid'];
+
             $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
@@ -181,22 +223,31 @@ class moodle_group_external extends external_api {
         }
     }
 
+    public static function add_groupmembers_returns() {
+        //TODO
+    }
+
+
+    public static function delete_groupmembers_parameters() {
+        //TODO
+    }
 
     /**
      * Delete group members
-     * @param array of arrays with keys userid, groupid
+     * @param ? of arrays with keys userid, groupid
      * @return void
      */
-    public static function delete_groupmembers($params){
+    public static function delete_groupmembers($params) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $groups = array();
+        $params = self::validate_params(self::delete_groupmembers_parameters(), $params);
 
-        foreach ($params as $member) {
+        foreach ($params['members'] as $member) {
             // validate params
-            $groupid = validate_param($member['groupid'], PARAM_INTEGER);
-            $userid = validate_param($member['userid'], PARAM_INTEGER);
+            $groupid = $member['groupid'];
+            $userid = $member['userid'];
+
             $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
@@ -207,6 +258,10 @@ class moodle_group_external extends external_api {
 
             groups_remove_member($group, $user);
         }
+    }
+
+    public static function delete_groupmembers_returns() {
+        //TODO
     }
 
 }
