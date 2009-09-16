@@ -18,7 +18,7 @@ $string['admindirsettingsub'] = 'Muy pocos servidores web usan /admin como URL e
     en su instalación, y poniendo aquí ese nuevo nombre. Por ejemplo: <br /> <br /><b>moodleadmin</b><br /> <br />
     Así se corregirán los enlaces admin en Moodle.';
 $string['bypassed'] = 'Evitado';
-$string['cannotcreatelangdir'] = 'No se puede crear el directorio lang.';
+$string['cannotcreatelangdir'] = 'No se puede crear el directorio de idioma.';
 $string['cannotcreatetempdir'] = 'No se puede crear el directorio temp.';
 $string['cannotdownloadcomponents'] = 'No se puede descargar componentes.';
 $string['cannotdownloadzipfile'] = 'No se puede descargar el archivo ZIP.';
@@ -177,7 +177,7 @@ $string['help'] = 'Ayuda';
 $string['iconvrecommended'] = 'La instalación de la librería opcional ICONV es muy recomendable para mejorar el rendimiento del sitio, especialmente si su sitio está soportando idiomas no latinos.';
 $string['info'] = 'Información';
 $string['installation'] = 'Instalación';
-$string['invalidmd5'] = 'md5 no válido';
+$string['invalidmd5'] = 'La variable de verificación MD5 es incorrecta no es valida - trate nuevamente';
 $string['langdownloaderror'] = 'El idioma \"$a\" no pudo ser instalado. El proceso de instalación continuará en inglés.';
 $string['langdownloadok'] = 'El idioma \"$a\" ha sido instalado correctamente. El proceso de instalación continuará en este idioma.';
 $string['language'] = 'Idioma';
