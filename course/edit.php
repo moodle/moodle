@@ -38,6 +38,13 @@
         print_error('needcoursecategroyid');
     }
 
+    $PAGE->set_url($CFG->wwwroot.'/course/edit.php');
+    if ($id !== 0) {
+        $PAGE->url->param('id',$id);
+    } else {
+        $PAGE->url->param('category',$categoryid);
+    }
+
 /// prepare course
     if (!empty($course)) {
         $allowedmods = array();
