@@ -47,7 +47,7 @@ function message_print_contacts() {
                     WHERE mc.userid = ? AND mc.blocked = 0 
                  GROUP BY u.id, u.firstname, u.lastname, u.picture,
                           u.imagealt, u.lastaccess
-                 ORDER BY u.firstname ASC;";
+                 ORDER BY u.firstname ASC";
 
     if ($rs = $DB->get_recordset_sql($contactsql, array($USER->id, $USER->id))){
         foreach($rs as $rd){
@@ -74,7 +74,7 @@ function message_print_contacts() {
                      WHERE mc.id IS NULL AND m.useridto = ? 
                   GROUP BY u.id, u.firstname, u.lastname, u.picture,
                            u.imagealt, u.lastaccess
-                  ORDER BY u.firstname ASC;";
+                  ORDER BY u.firstname ASC";
 
     if($rs = $DB->get_recordset_sql($strangersql, array($USER->id))){
         foreach($rs as $rd){
