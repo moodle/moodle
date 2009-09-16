@@ -27,6 +27,12 @@
     $id     = optional_param('id', SITEID, PARAM_INT);   // course id
     $userid = required_param('user', PARAM_INT);         // login as this user
 
+    $url = new moodle_url($CFG->wwwroot.'/course/loginas.php', array('user'=>$userid, 'sesskey'=>sesskey()));
+    if ($id !== SITEID) {
+        $url->param('id', $id);
+    }
+    $PAGE->set_url($id);
+
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad');
     }
@@ -71,7 +77,6 @@
 
     $PAGE->set_title($strloggedinas);
     $PAGE->navbar->add($strloggedinas);
-    echo $OUTPUT->header();
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 
