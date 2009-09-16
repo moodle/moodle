@@ -63,7 +63,7 @@ class moodle_user_external extends external_api {
         return $createusersparams;
     }
 
-    public static function create_users_params() {
+    public static function create_users_return() {
         $createusersreturn = new object();
         $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
 
