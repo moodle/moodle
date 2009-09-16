@@ -28,16 +28,19 @@ require_once("$CFG->libdir/externallib.php");
 
 class moodle_user_external extends external_api {
 
-    public static function create_users_params() {
+    public static function create_users_parameters() {
+
+//TODO: the format of the description is not decided yet
+
         $userpreference = array();
         $userpreference->name =  array(PARAM_ALPHANUMEXT, 'The name of the preference to set');
         $userpreference->value =  array(PARAM_RAW, 'The value of the preference');
-    
+
         $usercustomfields = new object();
         $usercustomfields->name =  array(PARAM_ALPHANUMEXT, 'The name of the custom field (must exist)');
         $usercustomfields->value =  array(PARAM_RAW, 'The value of the custom field');
-    
-        $usertocreate = new object(); 
+
+        $usertocreate = new object();
         $usertocreate->username    = array(PARAM_USERNAME, 'Username policy is defined in Moodle security config', REQUIRED);
         $usertocreate->password    = array(PARAM_RAW, 'Moodle passwords can consist of any character', REQUIRED);
         $usertocreate->firstname   = array(PARAM_NOTAGS, 'The first name(s) of the user', REQUIRED);
@@ -56,25 +59,18 @@ class moodle_user_external extends external_api {
         $usertocreate->country     = array(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ');
         $usertocreate->preferences = array('multiple' => $userpreference);
         $usertocreate->custom      = array('multiple' => $usercustomfields);
-    
+
         $createusersparams = new object();
         $createusersparams->users  = array('multiple' => $usertocreate);
 
         return $createusersparams;
     }
 
-    public static function create_users_return() {
-        $createusersreturn = new object();
-        $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
-
-        return $createusersreturn;
-    }
-
-    /* 
+    /**
      * Create one or more users
      *
      * @param $params  An array of users to create.  Each user is defined by $usertocreate above.
-     * 
+     *
      * @return $return  An array of userids, one for each user that was created
      */
     public static function create_users($params) {
@@ -88,19 +84,19 @@ class moodle_user_external extends external_api {
         // Do basic automatic PARAM checks on incoming data, using params description
         // This checks to make sure that:
         //      1) No extra data was sent
-        //      2) All required items were sent 
+        //      2) All required items were sent
         //      3) All data passes clean_param without changes (yes this is strict)
         // If any problems are found then exceptions are thrown with helpful error messages
-        self::validate_params($params, self::create_users_params());
+        $params = self::validate_prameters(self::create_users_parameters(), $params);
 
 
         // Perform further checks and build up a clean array of user data
         // Nothing is actually performed until the whole dataset is checked
         $users = array();
-        foreach ($params as $user) {
+        foreach ($params['users'] as $user) {
 
             // Empty or no auth is assumed to be manual
-            if (empty($user['auth'])) {     
+            if (empty($user['auth'])) {
                 $user['auth'] = 'manual';
             }
 
@@ -138,6 +134,8 @@ class moodle_user_external extends external_api {
             }
             $DB->update_record('user', $record);
 
+            //TODO: preferences and custom fields
+
             $result[] = $record->id;
 
             // TODO: Save all the preferences and custom fields here
@@ -146,29 +144,61 @@ class moodle_user_external extends external_api {
 
         return $result;
     }
+    public static function create_users_returns() {
+
+//TODO: the format of the description is not decided yet
+
+        $createusersreturn = new object();
+        $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
+
+        return $createusersreturn;
+    }
 
 
+    public static function delete_users_parameters() {
+        //TODO
+    }
     public static function delete_users($params) {
         //TODO
     }
-
-
-    public static function update_users($params) {
+    public static function delete_users_returns() {
         //TODO
     }
 
+
+    public static function update_users_parameters() {
+        //TODO
+    }
+    public static function update_users($params) {
+        //TODO
+    }
+    public static function update_users_returns() {
+        //TODO
+    }
+
+    public static function get_users_parameters() {
+
+    }
     public static function get_users($params) {
         $context = get_context_instance(CONTEXT_SYSTEM);
         require_capability('moodle/user:viewdetails', $context);
         self::validate_context($context);
 
-        $search = validate_param($params['search'], PARAM_RAW);
+        $params = self::validate_prameters(self::get_users_parameters(), $params);
 
         //TODO: this search is probably useless for external systems because it is not exact
         //      1/ we should specify multiple search parameters including the mnet host id
-        //      2/ custom profile fileds not inlcuded
+        //      2/ custom profile fileds not included
 
-        return get_users(true, $search, false, null, 'firstname ASC','', '', '', 1000, 'id, mnethostid, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
+        $result = array();
+
+        $users = get_users(true, $params['search'], false, null, 'firstname ASC','', '', '', 1000, 'id, mnethostid, auth, confirmed, username, idnumber, firstname, lastname, email, emailstop, lang, theme, timezone, mailformat, city, description, country');
+        foreach ($users as $user) {
+            $result[] = (array)$user;
+        }
+    }
+    public static function get_users_returns() {
+
     }
 
 }

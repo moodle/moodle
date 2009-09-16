@@ -45,7 +45,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_params(self::create_groups_parameters(), $params);
+        $params = self::validate_prameters(self::create_groups_parameters(), $params);
 
         $groups = array();
 
@@ -91,7 +91,7 @@ class moodle_group_external extends external_api {
     public static function get_groups($params) {
         $groups = array();
 
-        $params = self::validate_params(self::get_groups_parameters(), $params);
+        $params = self::validate_prameters(self::get_groups_parameters(), $params);
 
         //TODO: we do need to search for groups in courses too,
         //      fetching by id is not enough!
@@ -128,7 +128,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_params(self::delete_groups_parameters(), $params);
+        $params = self::validate_prameters(self::delete_groups_parameters(), $params);
 
         $groups = array();
 
@@ -166,7 +166,7 @@ class moodle_group_external extends external_api {
     public static function get_groupmembers($params) {
         $groups = array();
 
-        $params = self::validate_params(self::get_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::get_groupmembers_parameters(), $params);
 
         foreach ($params['groupids'] as $groupid) {
             // validate params
@@ -202,7 +202,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_params(self::add_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::add_groupmembers_parameters(), $params);
 
         foreach ($params['membership'] as $member) {
             // validate params
@@ -240,7 +240,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_params(self::delete_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::delete_groupmembers_parameters(), $params);
 
         foreach ($params['members'] as $member) {
             // validate params

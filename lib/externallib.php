@@ -59,7 +59,7 @@ class external_api {
      * @param ? $params the actual parameters
      * @return ? params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
-    public static function validate_params($description, $params) {
+    public static function validate_prameters($description, $params) {
         //TODO: we need to define the structure of param descriptions
 
         return $params;
