@@ -214,7 +214,8 @@ function groups_update_grouping($data) {
  * @return boolean True if deletion was successful, false otherwise
  */
 function groups_delete_group($grouporid) {
-    global $DB;
+    global $CFG, $DB;
+    require_once("$CFG->libdir/gdlib.php");
 
     if (is_object($grouporid)) {
         $groupid = $grouporid->id;
