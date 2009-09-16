@@ -12,6 +12,8 @@
     require_once("lib.php");
     require_once($CFG->libdir . '/completionlib.php');
 
+    feedback_init_feedback_session();
+
     $id = required_param('id', PARAM_INT);
     $completedid = optional_param('completedid', false, PARAM_INT);
     $preservevalues  = optional_param('preservevalues', 0,  PARAM_INT);

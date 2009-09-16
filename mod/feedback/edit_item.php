@@ -11,6 +11,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
+    feedback_init_feedback_session();
+
     $id = optional_param('id', NULL, PARAM_INT);
     $typ = optional_param('typ', false, PARAM_ALPHA);
     $itemid = optional_param('itemid', false, PARAM_INT);

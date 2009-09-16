@@ -38,14 +38,6 @@ define('FEEDBACK_RESETFORM_RESET', 'feedback_reset_data_');
 define('FEEDBACK_RESETFORM_DROP', 'feedback_drop_feedback_');
 define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
 
-//initialize the feedback-Session - not nice at all!!
-global $SESSION;
-if (!empty($SESSION)) {
-    if (!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
-        $SESSION->feedback = new object();
-    }
-}
-
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
@@ -2299,6 +2291,8 @@ function feedback_print_errors() {
 
     global $SESSION, $OUTPUT;
 
+    feedback_init_feedback_session();
+
     if(empty($SESSION->feedback->errors)) {
 		return;
     }
@@ -2360,5 +2354,15 @@ function feedback_extend_settings_navigation($settings, $module) {
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
         $feedbacknav->add(get_string('updatethis', '', get_string('modulename', 'feedback')), new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey())));
+    }
+}
+
+function feedback_init_feedback_session() {
+    //initialize the feedback-Session - not nice at all!!
+    global $SESSION;
+    if (!empty($SESSION)) {
+        if (!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
+            $SESSION->feedback = new object();
+        }
     }
 }
