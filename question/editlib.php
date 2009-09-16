@@ -1300,13 +1300,7 @@ class question_bank_view {
             } else {
                 $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>DEFAULT_QUESTIONS_PER_PAGE)).'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
             }
-            if ($paging) {
-                $paging = substr($paging, 0, strrpos($paging, '</div>'));
-                $paging .= "<br />$showall</div>";
-            } else {
-                $paging = "<div class='paging'>$showall</div>";
-            }
-            echo $paging;
+            echo "<div class='paging'>$showall</div>";
         }
         echo '</div>';
 

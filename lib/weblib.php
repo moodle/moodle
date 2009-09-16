@@ -557,18 +557,12 @@ function prepare_url($url, $stripformparams=false) {
     // Handle relative URLs
     if (substr($output, 0, 4) != 'http' && substr($output, 0, 1) != '/') {
         if (preg_match('/(.*)\/([A-Za-z0-9-_]*\.php)$/', $PAGE->url->out(true), $matches)) {
-
             return $matches[1] . "/$output";
         } else if ($output == '') {
             return $PAGE->url->out(false, array(), false) . '#';
         } else {
-            throw new coding_exception('Your page uses bizarre relative URLs which Moodle cannot handle. Please use absolute URLs.');
+            throw new coding_exception('Unrecognied URL scheme. Please check the formatting of the URL passed to this function. Absolute URLs are the preferred scheme.');
         }
-    }
-
-    // Add wwwroot only if the URL does not already start with http:// or https://
-    if (!preg_match('|https?://|', $output) ) {
-        $output = $CFG->wwwroot . $output;
     }
 
     return $output;

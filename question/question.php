@@ -26,6 +26,39 @@ $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
+$url = new moodle_url($CFG->wwwroot.'/question/question.php');
+if ($id !== 0) {
+    $url->param('id', $id);
+}
+if ($qtype !== '') {
+    $url->param('qtype', $qtype);
+}
+if ($categoryid !== 0) {
+    $url->param('category', $categoryid);
+}
+if ($cmid !== 0) {
+    $url->param('cmid', $cmid);
+}
+if ($courseid !== 0) {
+    $url->param('courseid', $courseid);
+}
+if ($wizardnow !== '') {
+    $url->param('wizardnow', $wizardnow);
+}
+if ($movecontext !== 0) {
+    $url->param('movecontext', $movecontext);
+}
+if ($returnurl !== 0) {
+    $url->param('returnurl', $returnurl);
+}
+if ($appendqnumstring !== '') {
+    $url->param('appendqnumstring', $appendqnumstring);
+}
+if ($inpopup !== 0) {
+    $url->param('inpopup', $inpopup);
+}
+$PAGE->set_url($url);
+
 if ($movecontext && !$id){
     print_error('questiondoesnotexist', 'question', $returnurl);
 }
