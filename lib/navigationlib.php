@@ -2894,7 +2894,7 @@ class settings_navigation extends navigation_node {
         }
         if (has_capability('moodle/course:update', $course->context)) {
 
-            $frontpage = $this->add(get_string('frontpagesettings'));
+            $frontpage = $this->add(get_string('frontpagesettings'), null, self::TYPE_SETTING, null, 'frontpage');
             $this->get($frontpage)->id = 'frontpagesettings';
             $this->get($frontpage)->forceopen = true;
 
