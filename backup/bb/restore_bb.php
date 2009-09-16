@@ -77,6 +77,7 @@ function blackboard_convert($dir){
         mkdir("$dir/course_files", $CFG->directorypermissions);
         foreach ($subdirs as $subdir){
             rename($subdir, "course_files/$subdir");
+            rename_hexfiles($subdir);
         }
 
         chdir($startdir);
@@ -89,4 +90,34 @@ function blackboard_convert($dir){
 
 }
 
+/**
+ * grabs all files in the directory, checks if the filenames start with a ! or @
+ * then checks to see if the name is a hex - if so, it translates/renames correctly.
+ *
+ * @param string $subdir - the directory to parse.
+ * 
+ */
+function rename_hexfiles($subdir) {
+    //this bit of code grabs all files in the directory, and if they start with ! or @, performs the name conversion
+    if ($handle = opendir("course_files/$subdir")) {
+        while ($file = readdir($handle)) {
+            if ($file == '..' or $file == '.') { //don't bother processing these!
+                continue;
+            }
+            if(substr($file,0,1)=="!" || substr($file,0,1)=="@"){
+                $outputfilename = "";
+                $filebase = substr($file,1,strrpos($file,".")-1);
+                if (ctype_xdigit($filebase)) { //check if this name is a hex - if not, don't bother to rename
+                    $filenamesplit = str_split($filebase,2);
+                    foreach($filenamesplit as $hexvalue){
+                        $outputfilename .= chr(hexdec($hexvalue));
+                    }
+                    $outputfilename .= strrchr($file,".");
+                    rename("course_files/$subdir/$file","course_files/$subdir/$outputfilename");
+                }
+            }
+        }
+        closedir($handle);
+    }
+}
 ?>
