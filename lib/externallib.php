@@ -56,7 +56,7 @@ class external_api {
      * Validates submitted function barameters, if anything is incorrect
      * invalid_parameter_exception is thrown.
      * @param ? $description description of parameters
-     * @param array $params the actual parameters
+     * @param ? $params the actual parameters
      * @return ? params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
     public static function validate_params($description, $params) {
