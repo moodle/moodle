@@ -542,6 +542,7 @@ $string['questiontext'] = 'Question text';
 $string['questiontextisempty'] = '[Empty question text]';
 $string['questiontype'] = 'Question type $a';
 $string['questiontypesetupoptions'] = 'Setup options for question types:';
+$string['quizadministration'] = 'Quiz administration';
 $string['quiz:attempt'] = 'Attempt quizzes';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
 $string['quiz:emailconfirmsubmission'] = 'Get email confirmation when submitting';

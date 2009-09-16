@@ -36,6 +36,16 @@
         }
     }
 
+    $url = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php');
+    if ($id !== 0) {
+        $url->param('id', $id);
+    } else {
+        $url->param('q', $q);
+    }
+    if ($mode !== '') {
+        $url->param('mode', $mode);
+    }
+    $PAGE->set_url($url);
     
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
