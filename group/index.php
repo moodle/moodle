@@ -38,6 +38,15 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse'); //'The course ID is invalid'
 }
 
+$url = new moodle_url($CFG->wwwroot.'/group/index.php', array('id'=>$courseid));
+if ($userid) {
+    $url->param('user', $userid);
+}
+if ($groupid) {
+    $url->param('group', $groupid);
+}
+$PAGE->set_url($url);
+
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 

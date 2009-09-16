@@ -49,6 +49,12 @@ if ($id) {
     $group->courseid = $course->id;
 }
 
+if ($id !== 0) {
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/group.php', array('id'=>$id)));
+} else {
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/group/group.php', array('courseid'=>$courseid)));
+}
+
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);

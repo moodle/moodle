@@ -21,6 +21,15 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse');
 }
 
+$url = new moodle_url($CFG->wwwroot.'/group/overview.php', array('course'=>$courseid));
+if ($groupid !== 0) {
+    $url->param('group', $groupid);
+}
+if ($groupingid !== 0) {
+    $url->param('grouping', $groupingid);
+}
+$PAGE->set_url($url);
+
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 
