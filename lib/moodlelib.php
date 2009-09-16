@@ -74,174 +74,194 @@ define('HOURMINS', 60);
 /// Parameter constants - every call to optional_param(), required_param()  ///
 /// or clean_param() should have a specified type of parameter.  //////////////
 
-/**
- * PARAM_RAW specifies a parameter that is not cleaned/processed in any way;
- * originally was 0, but changed because we need to detect unknown
- * parameter types and swiched order in clean_param().
- */
-define('PARAM_RAW', 666);
 
-/**
- * PARAM_CLEAN - obsoleted, please try to use more specific type of parameter.
- * It was one of the first types, that is why it is abused so much ;-)
- */
-define('PARAM_CLEAN',    0x0001);
-
-/**
- * PARAM_INT - integers only, use when expecting only numbers.
- */
-define('PARAM_INT',      0x0002);
-
-/**
- * PARAM_INTEGER - an alias for PARAM_INT
- */
-define('PARAM_INTEGER',  0x0002);
-
-/**
- * PARAM_FLOAT - a real/floating point number.
- */
-define('PARAM_FLOAT',  0x000a);
-
-/**
- * PARAM_NUMBER - alias of PARAM_FLOAT, deprecated - do not use
- */
-define('PARAM_NUMBER',  0x000a);
 
 /**
  * PARAM_ALPHA - contains only english ascii letters a-zA-Z.
  */
-define('PARAM_ALPHA',    0x0004);
+define('PARAM_ALPHA',    'alpha');
 
 /**
  * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
-define('PARAM_ALPHAEXT', 0x2000);
+define('PARAM_ALPHAEXT', 'alphaext');
 
 /**
  * PARAM_ALPHANUM - expected numbers and letters only.
  */
-define('PARAM_ALPHANUM', 0x0400);
+define('PARAM_ALPHANUM', 'alphanum');
 
 /**
  * PARAM_ALPHANUMEXT - expected numbers, letters only and _-.
  */
-define('PARAM_ALPHANUMEXT', 0x4000);
+define('PARAM_ALPHANUMEXT', 'alphanumext');
 
 /**
- * PARAM_ACTION - an alias for PARAM_ALPHANUMEXT, use for various actions in formas and urls
- * NOTE: originally alias for PARAM_APLHA
+ * PARAM_AUTH - actually checks to make sure the string is a valid auth plugin
  */
-define('PARAM_ACTION',   0x4000);
-
-/**
- * PARAM_FORMAT - an alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
- * NOTE: originally alias for PARAM_APLHA
- */
-define('PARAM_FORMAT',   0x4000);
-
-/**
- * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
- */
-define('PARAM_NOTAGS',   0x0008);
-
-/**
- * PARAM_MULTILANG - alias of PARAM_TEXT.
- */
-define('PARAM_MULTILANG',  0x0009);
-
-/**
- * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags.
- */
-define('PARAM_TEXT',  0x0009);
-
-/**
- * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
- */
-define('PARAM_FILE',     0x0010);
-
-/**
- * PARAM_CLEANFILE - alias of PARAM_FILE; originally was removing regional chars too
- * NOTE: obsoleted do not use anymore
- */
-define('PARAM_CLEANFILE',0x0010);
-
-/**
- * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
- */
-define('PARAM_TAG',   0x0011);
-
-/**
- * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
- */
-define('PARAM_TAGLIST',   0x0012);
-
-/**
- * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
- * note: the leading slash is not removed, window drive letter is not allowed
- */
-define('PARAM_PATH',     0x0020);
-
-/**
- * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
- */
-define('PARAM_HOST',     0x0040);
-
-/**
- * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not acceppted but http://localhost.localdomain/ is ok.
- */
-define('PARAM_URL',      0x0080);
-
-/**
- * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
- */
-define('PARAM_LOCALURL', 0x0180);
-
-/**
- * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
- */
-define('PARAM_BOOL',     0x0800);
-
-/**
- * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes
- */
-define('PARAM_CLEANHTML',0x1000);
-
-/**
- * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
- */
-define('PARAM_SAFEDIR',  0x4000);
-
-/**
- * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths, etc.
- */
-define('PARAM_SAFEPATH',  0x4001);
-
-/**
- * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
- */
-define('PARAM_SEQUENCE',  0x8000);
-
-/**
- * PARAM_PEM - Privacy Enhanced Mail format
- */
-define('PARAM_PEM',      0x10000);
+define('PARAM_AUTH',  'auth');
 
 /**
  * PARAM_BASE64 - Base 64 encoded format
  */
-define('PARAM_BASE64',   0x20000);
+define('PARAM_BASE64',   'base64');
+
+/**
+ * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
+ */
+define('PARAM_BOOL',     'bool');
 
 /**
  * PARAM_CAPABILITY - A capability name, like 'moodle/role:manage'. Actually
  * checked against the list of capabilties in the database.
  */
-define('PARAM_CAPABILITY',   0x40000);
+define('PARAM_CAPABILITY',   'capability');
+
+/**
+ * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes. It stays as HTML.
+ */
+define('PARAM_CLEANHTML', 'cleanhtml');
+
+/**
+ * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
+ */
+define('PARAM_FILE',   'file');
+
+/**
+ * PARAM_FLOAT - a real/floating point number.
+ */
+define('PARAM_FLOAT',  'float');
+
+/**
+ * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
+ */
+define('PARAM_HOST',     'host');
+
+/**
+ * PARAM_INT - integers only, use when expecting only numbers.
+ */
+define('PARAM_INT',      'int');
+
+/**
+ * PARAM_LANG - checks to see if the string is a valid installed language in the current site.
+ */
+define('PARAM_LANG',  'lang');
+
+/**
+ * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
+ */
+define('PARAM_LOCALURL', 'localurl');
+
+/**
+ * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
+ */
+define('PARAM_NOTAGS',   'notags');
+
+/**
+ * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
+ * note: the leading slash is not removed, window drive letter is not allowed
+ */
+define('PARAM_PATH',     'path');
+
+/**
+ * PARAM_PEM - Privacy Enhanced Mail format
+ */
+define('PARAM_PEM',      'pem');
 
 /**
  * PARAM_PERMISSION - A permission, one of CAP_INHERIT, CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT.
  */
-define('PARAM_PERMISSION',   0x80000);
+define('PARAM_PERMISSION',   'permission');
+
+/**
+ * PARAM_RAW specifies a parameter that is not cleaned/processed in any way
+ */
+define('PARAM_RAW', 'raw');
+
+/**
+ * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
+ */
+define('PARAM_SAFEDIR',  'safedir');
+
+/**
+ * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths, etc.
+ */
+define('PARAM_SAFEPATH',  'safepath');
+
+/**
+ * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
+ */
+define('PARAM_SEQUENCE',  'sequence');
+
+/**
+ * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
+ */
+define('PARAM_TAG',   'tag');
+
+/**
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
+ */
+define('PARAM_TAGLIST',   'taglist');
+
+/**
+ * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags.
+ */
+define('PARAM_TEXT',  'text');
+
+/**
+ * PARAM_THEME - Checks to see if the string is a valid theme name in the current site
+ */
+define('PARAM_THEME',  'theme');
+
+/**
+ * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not acceppted but http://localhost.localdomain/ is ok.
+ */
+define('PARAM_URL',      'url');
+
+
+
+///// DEPRECATED PARAM TYPES OR ALIASES - DO NOT USE FOR NEW CODE  /////
+/**
+ * PARAM_CLEAN - obsoleted, please use a more specific type of parameter.
+ * It was one of the first types, that is why it is abused so much ;-)
+ */
+define('PARAM_CLEAN',    'clean');
+
+/**
+ * PARAM_INTEGER - deprecated alias for PARAM_INT
+ */
+define('PARAM_INTEGER',  'int');
+
+/**
+ * PARAM_NUMBER - deprecated alias of PARAM_FLOAT
+ */
+define('PARAM_NUMBER',  'float');
+
+/**
+ * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in formas and urls
+ * NOTE: originally alias for PARAM_APLHA
+ */
+define('PARAM_ACTION',   'alphanumext');
+
+/**
+ * PARAM_FORMAT - deprecated alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
+ * NOTE: originally alias for PARAM_APLHA
+ */
+define('PARAM_FORMAT',   'alphanumext');
+
+/**
+ * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
+ */
+define('PARAM_MULTILANG',  'text');
+
+/**
+ * PARAM_CLEANFILE - deprecated alias of PARAM_FILE; originally was removing regional chars too
+ */
+define('PARAM_CLEANFILE', 'file');
+
+
+
 
 /// Page types ///
 /**
@@ -675,8 +695,33 @@ function clean_param($param, $type) {
                 return CAP_INHERIT;
             }
 
+        case PARAM_AUTH:
+            $param = clean_param($param, PARAM_SAFEDIR);
+            if (exists_auth_plugin($param)) {
+                return $param;
+            } else {
+                return '';
+            }
+
+        case PARAM_LANG:
+            $param = clean_param($param, PARAM_SAFEDIR);
+            $langs = get_list_of_languages(false, true);
+            if (in_array($param, $langs)) {
+                return $param;
+            } else {
+                return '';  // Specified language is not installed
+            }
+
+        case PARAM_THEME:
+            $param = clean_param($param, PARAM_SAFEDIR);
+            if (file_exists($CFG->dirroot.'/theme/'.$param)) {
+                return $param;
+            } else {
+                return '';  // Specified theme is not installed
+            }
+
         default:                 // throw error, switched parameters in optional_param or another serious problem
-            print_error("unknowparamtype", '', '', $type);
+            print_error("unknownparamtype", '', '', $type);
     }
 }
 
