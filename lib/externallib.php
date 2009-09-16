@@ -105,39 +105,5 @@ class external_api {
             require_capability('moodle/course:view', $context);
         }
     }
-
-    /**
-     * Returns detailed information about external function
-     * @param string $functionname name of external function
-     * @return aray
-     */
-    public static function get_function_info($functionname) {
-        global $CFG, $DB;
-
-        $function = $DB->get_record('external_functions', array('name'=>$functionname), '*', MUST_EXIST);
-
-        $defpath = get_component_directory($function->component);
-        if (!file_exists("$defpath/db/services.php")) {
-            //TODO: maybe better throw invalid parameter exception
-            return null;
-        }
-
-        $functions = array();
-        include("$defpath/db/services.php");
-
-        if (empty($functions[$functionname])) {
-            return null;
-        }
-
-        $desc = $functions[$functionname];
-        if (empty($desc['classpath'])) {
-            $desc['classpath'] = "$defpath/externallib.php";
-        } else {
-            $desc['classpath'] = "$CFG->dirroot/".$desc['classpath'];
-        }
-        $desc['component'] = $function->component;
-
-        return $desc;
-    }
 }
 
