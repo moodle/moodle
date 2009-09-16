@@ -10,7 +10,7 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['availablelangs'] = 'Paquetes de idioma disponibles';
-$string['cannotcreatelangdir'] = 'No se puede crear el directorio lang.';
+$string['cannotcreatelangdir'] = 'No se puede crear el directorio de idioma.';
 $string['cannotdownloadcomponents'] = 'No se puede descargar componentes.';
 $string['cannotdownloadzipfile'] = 'No se puede descargar el archivo ZIP.';
 $string['cannotfindcomponent'] = 'No se puede encontrar el componente.';
