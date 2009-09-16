@@ -1242,6 +1242,51 @@ class global_navigation extends navigation_node {
                 if (!$course->visible) {
                     $currentcourse->hidden = true;
                 }
+
+                //Participants
+                if (has_capability('moodle/course:viewparticipants', $this->context)) {
+                    $participantskey = $currentcourse->add(get_string('participants'));
+                    $participants = $currentcourse->get($participantskey);
+                    if ($participants) {
+                        $url = new moodle_url($CFG->wwwroot.'/user/index.php?contextid='.$this->context->id);
+                        $participants->add(get_string('participantslist'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/users'));
+
+                        require_once($CFG->dirroot.'/blog/lib.php');
+
+                        $currentgroup = groups_get_course_group($course, true);
+                        if ($course->id == SITEID) {
+                            $filterselect = '';
+                        } else if ($course->id && !$currentgroup) {
+                            $filterselect = $course->id;
+                        } else {
+                            $filterselect = $currentgroup;
+                        }
+                        $filterselect = clean_param($filterselect, PARAM_INT);
+
+                        if ($CFG->bloglevel >= 3) {
+                            $participants->add(get_string('blogs','blog'), blog_get_blogs_url(array('course'=>$filterselect))->out());
+                        }
+                        
+                        if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->context) || has_capability('moodle/notes:view', $this->context))) {
+                            $participants->add(get_string('notes','notes'), new moodle_url($CFG->wwwroot.'/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$filterselect)));
+                        }
+                    }
+                }
+
+                // View course reports
+                if (has_capability('moodle/site:viewreports', $this->context)) { // basic capability for listing of reports
+                    $reportkey = $currentcourse->add(get_string('reports'), self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/stats'));
+                    $reportnav = $currentcourse->get($reportkey);
+                    if ($reportnav) {
+                        $coursereports = get_plugin_list('coursereport');
+                        foreach ($coursereports as $report=>$dir) {
+                            if (has_capability('coursereport/'.$report.':view', $this->context)) {
+                                $url = new moodle_url($CFG->wwwroot.'/course/report/'.$report.'/view/index.php', array('id'=>$course->id));
+                                $reportnav->add(get_string($report.':view', 'coursereport_'.$report), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+                            }
+                        }
+                    }
+                }
             }
 
             if (!$this->can_display_type(self::TYPE_SECTION)) {
@@ -2330,7 +2375,7 @@ class settings_navigation extends navigation_node {
 
         $coursenode = $this->page->navigation->find_child($course->id, global_navigation::TYPE_COURSE);
         
-        $coursenodekey = $this->add(get_string('courseadministration'), null, $coursenode->type);
+        $coursenodekey = $this->add(get_string('courseadministration'), null, $coursenode->type, null, 'courseadmin');
         $coursenode = $this->get($coursenodekey);
         
         if (has_capability('moodle/course:update', $course->context)) {
@@ -2344,7 +2389,6 @@ class settings_navigation extends navigation_node {
                 $editstring = get_string('turneditingon');
             }
             $coursenode->add($editstring, $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/edit'));
-
 
             if ($this->page->user_is_editing()) {
                 // Add `add` resources|activities branches
@@ -2484,12 +2528,6 @@ class settings_navigation extends navigation_node {
             $coursenode->add(get_string('groups'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/group'));
         }
 
-        //Participants
-        if (has_capability('moodle/course:viewparticipants', $course->context)) {
-            $url = new moodle_url($CFG->wwwroot.'/user/index.php?contextid='.$course->context->id);
-            $coursenode->add(get_string('participants'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/users'));
-        }
-
         // Backup this course
         if (has_capability('moodle/site:backup', $course->context)) {
             $url = new moodle_url($CFG->wwwroot.'/backup/backup.php', array('id'=>$course->id));
@@ -2512,12 +2550,6 @@ class settings_navigation extends navigation_node {
         if (has_capability('moodle/course:reset', $course->context)) {
             $url = new moodle_url($CFG->wwwroot.'/course/reset.php', array('id'=>$course->id));
             $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/return'));
-        }
-        
-        // View course reports
-        if (has_capability('moodle/site:viewreports', $course->context)) { // basic capability for listing of reports
-            $url = new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id));
-            $coursenode->add(get_string('reports'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/stats'));
         }
 
         // Manage questions
