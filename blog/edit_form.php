@@ -25,18 +25,14 @@ class blog_edit_form extends moodleform {
 
         $mform    =& $this->_form;
 
-        $existing       = $this->_customdata['existing'];
-        $entryid        = $this->_customdata['id'];
-        $summaryoptions = $this->_customdata['textfieldoptions'];
-
+        $entryid  = $this->_customdata['id'];
         $existing = $this->_customdata['existing'];
         $sitecontext = $this->_customdata['sitecontext'];
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'subject', get_string('entrytitle', 'blog'), 'size="60"');
-        $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
-        $mform->addElement('editor', 'summary', get_string('entrybody', 'blog'), null, $summaryoptions);
+        $mform->addElement('editor', 'summary', get_string('entrybody', 'blog'), null, array('trusttext'=>true, 'subdirs'=>true, 'maxfiles' => -1));
 
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('emptytitle', 'blog'), 'required', null, 'client');
@@ -47,7 +43,7 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('format', 'summaryformat', get_string('format'));
 
-        $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'));
+        $mform->addElement('filemanager', 'attachment', get_string('attachment', 'forum'));
 
         //disable publishstate options that are not allowed
         $publishstates = array();
@@ -71,7 +67,7 @@ class blog_edit_form extends moodleform {
 
         if (!empty($CFG->useblogassociations)) {
             $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
-
+            $mform->addElement('static', 'assocdescription', '', get_string('assocdescription', 'blog'));
             if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_USER, $USER->id))) {
                 $courses = get_courses('all', 'visible DESC, fullname ASC');
             } else {
@@ -103,14 +99,15 @@ class blog_edit_form extends moodleform {
                 }
             }
             $mform->addElement('select', 'courseassoc', get_string('course'), $coursenames, 'onchange="addCourseAssociations()"');
+            $mform->setAdvanced('courseassoc');
             $selectassoc = &$mform->addElement('select', 'modassoc', get_string('managemodules'), $allmodnames);
+            $mform->setAdvanced('modassoc');
             $selectassoc->setMultiple(true);
             $PAGE->requires->data_for_js('blog_edit_form_modnames', $this->modnames);
 
         }
 
         $this->add_action_buttons();
-
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_ACTION);
         $mform->setDefault('action', '');
@@ -130,7 +127,7 @@ class blog_edit_form extends moodleform {
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
 
-        $this->set_data($existing);
+        // $this->set_data($existing);
     }
 
     function validation($data, $files) {

@@ -4,6 +4,7 @@
 
 $string['addnewentry'] = 'Add a new entry';
 $string['addnewexternalblog'] = 'New external blog...';
+$string['assocdescription'] = 'If you are writing about a course and/or activity modules, select them here.';
 $string['associations'] = 'Associations';
 $string['associationunviewable'] = 'This entry cannot be viewed by others until a course is associated with it or the \'Publish To\' field is changed';
 $string['backupblogshelp'] = 'If enabled then blogs will be included in SITE automated backups';
@@ -60,6 +61,7 @@ $string['groupblogentries'] = 'Blog entries associated with $a->coursename by gr
 $string['groupblogs'] = 'Users can only see blogs for people who share a group';
 $string['incorrectblogfilter'] = 'Incorrect blog filter type specified';
 $string['intro'] = 'This RSS feed was automatically generated from one or more blogs.';
+$string['invalidgroupid'] = 'Invalid group ID';
 $string['invalidurl'] = 'This URL is unreachable';
 $string['linktooriginalentry'] = 'Link to original blog entry';
 $string['maxexternalblogsperuser'] = 'Maximum number of external blogs per user';
@@ -85,6 +87,7 @@ $string['publishtogroupassocparam'] = 'Your group members in $a';
 $string['publishtonoone'] = 'Yourself (draft)';
 $string['publishtosite'] = 'Anyone on this site';
 $string['publishtoworld'] = 'Anyone in the world';
+$string['readfirst'] = 'Read this first';
 $string['settingsupdatederror'] = 'An error has occurred, blog preference setting could not be updated';
 $string['searchterm'] = 'Search: $a';
 $string['siteblog'] = 'Site blog: $a';

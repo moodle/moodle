@@ -423,7 +423,7 @@ function blog_get_headers() {
         $cm->context = get_context_instance(CONTEXT_MODULE, $modid);
         $PAGE->set_cm($cm, $course);
     }
-    
+
     // Case 0: No entry, mod, course or user params: all site entries to be shown (filtered by search and tag/tagid)
     if (empty($entryid) && empty($modid) && empty($courseid) && empty($userid)) {
         $PAGE->navbar->add($strblogentries, $blog_url);
@@ -433,6 +433,7 @@ function blog_get_headers() {
     }
 
     // Case 1: only entryid is requested, ignore all other filters. courseid is used to give more contextual information
+    // TODO Blog entries link has entryid instead of userid
     if (!empty($entryid)) {
         $sql = 'SELECT u.* FROM {user} u, {post} p WHERE p.id = ? AND p.userid = u.id';
         $user = $DB->get_record_sql($sql, array($entryid));
@@ -603,7 +604,7 @@ function blog_extend_settings_navigation($settingsnav) {
     $blogkey = $settingsnav->add(get_string('blogadministration', 'blog'));
     $blog = $settingsnav->get($blogkey);
     $blog->forceopen = true;
-    
+
     $blog->add(get_string('preferences', 'blog'), new moodle_url('preferences.php'), navigation_node::TYPE_SETTING);
     if ($CFG->useexternalblogs && $CFG->maxexternalblogsperuser > 0) {
         $blog->add(get_string('externalblogs', 'blog'), new moodle_url('external.php'), navigation_node::TYPE_SETTING);

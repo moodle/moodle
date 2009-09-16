@@ -68,18 +68,18 @@ class blog_entry {
     /**
      * Constructor. If given an id, will fetch the corresponding record from the DB.
      *
-     * @param mixed $id_or_params A blog entry id if INT, or data for a new entry if array
+     * @param mixed $idorparams A blog entry id if INT, or data for a new entry if array
      */
-    public function __construct($id_or_params=null, $form=null) {
-        global $DB;
+    public function __construct($idorparams=null, $form=null) {
+        global $DB, $PAGE;
 
-        if (!empty($id_or_params) && !is_array($id_or_params) && !is_object($id_or_params)) {
-            $object = $DB->get_record('post', array('id' => $id_or_params));
+        if (!empty($idorparams) && !is_array($idorparams) && !is_object($idorparams)) {
+            $object = $DB->get_record('post', array('id' => $idorparams));
             foreach ($object as $var => $val) {
                 $this->$var = $val;
             }
-        } else if (!empty($id_or_params) && (is_array($id_or_params) || is_object($id_or_params))) {
-            foreach ($id_or_params as $var => $val) {
+        } else if (!empty($idorparams) && (is_array($idorparams) || is_object($idorparams))) {
+            foreach ($idorparams as $var => $val) {
                 $this->$var = $val;
             }
         }
@@ -95,12 +95,18 @@ class blog_entry {
      */
     public function print_html($return=false) {
 
-        global $USER, $CFG, $COURSE, $DB, $OUTPUT;
+        global $USER, $CFG, $COURSE, $DB, $OUTPUT, $PAGE;
 
-        // Comments
+
         $user = $DB->get_record('user', array('id'=>$this->userid));
+        // Comments
+        $cmt = new stdClass();
+        $cmt->contextid = get_context_instance(CONTEXT_USER, $user->id)->id;
+        $cmt->area = 'format_blog';
+        $cmt->itemid = $this->id;
+        $options->comments = $cmt;
 
-        $template['body'] = format_text($this->summary, $this->format);
+        $template['body'] = format_text($this->summary, $this->format, $options);
         $template['title'] = '<a id="b'. s($this->id) .'" />';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
         $template['title'] .= '<span class="nolink">'. format_string($this->subject) .'</span>';
@@ -342,12 +348,14 @@ class blog_entry {
      * @return void
      */
     public function edit($params=array(), $form=null) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $PAGE;
 
         $this->form = $form;
         foreach ($params as $var => $val) {
             $this->$var = $val;
         }
+
+        $this->summary = file_save_draft_area_files($params->summary['itemid'], $PAGE->context->id, 'blog_post', $this->id, array('subdirs'=>true), $params->summary['text']);
 
         if (!empty($CFG->useblogassociations)) {
             $this->add_associations();
@@ -1032,6 +1040,7 @@ class blog_filter_user extends blog_filter {
      * @param int    $id
      */
     public function __construct($id=null, $type='user') {
+        global $CFG, $DB;
         $this->available_types = array('user' => get_string('user'), 'group' => get_string('group'));
 
         if (empty($id)) {
@@ -1065,6 +1074,7 @@ class blog_filter_user extends blog_filter {
                 $this->params[]     = $course_context->id;
             }
         }
+
     }
 }
 

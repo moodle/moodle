@@ -140,21 +140,24 @@ if (!empty($existing)) {
 $textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
 $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'textfieldoptions', 'id'));
 $draftitemid = file_get_submitted_draft_itemid('attachments');
-file_prepare_draft_area($draftitemid, $PAGE->context, 'blog_attachment', empty($id)?null:$id);
+file_prepare_draft_area($draftitemid, $PAGE->context->id, 'blog_attachment', empty($id)?null:$id);
 
-$draftid_editor = file_get_submitted_draft_itemid('summary');
-$currenttext = file_prepare_draft_area($draftid_editor, $PAGE->context, 'blog_post', empty($id) ? null : $id, array('subdirs'=>true), @$existing->summary);
+$editordraftid = file_get_submitted_draft_itemid('summary');
+$currenttext = file_prepare_draft_area($editordraftid, $PAGE->context->id, 'blog_post', empty($id) ? null : $id, array('subdirs'=>true), @$existing->summary);
+
+$data = array('id'=>$id, 'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid' => $editordraftid));
+$blogeditform->set_data($data); // set defaults
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
 } else if ($fromform = $blogeditform->get_data()){
-    $fromform = file_postupdate_standard_editor($fromform, 'summary', $textfieldoptions, $PAGE->get_context());
 
     //save stuff in db
     switch ($action) {
         case 'add':
-            $blog_entry = new blog_entry($fromform, $blogeditform);
-            $blog_entry->add();
+            $blogentry = new blog_entry($fromform, $blogeditform);
+            $blogentry->summary = file_save_draft_area_files($fromform->summary['itemid'], $PAGE->context->id, 'blog_post', $blogentry->id, array('subdirs'=>true), $fromform->summary['text']);
+            $blogentry->add();
         break;
 
         case 'edit':
@@ -222,7 +225,7 @@ switch ($action) {
 $entry->modid = $modid;
 $entry->courseid = $courseid;
 $entry->attachments = $draftitemid;
-$entry->summary = array('text' => @$existing->summary, 'format' => empty($existing->summaryformat) ? FORMAT_HTML : $existing->summaryformat, 'itemid' => $draftid_editor);
+$entry->summary = array('text' => @$existing->summary, 'format' => empty($existing->summaryformat) ? FORMAT_HTML : $existing->summaryformat, 'itemid' => $editordraftid);
 $entry->summaryformat = (empty($existing->summaryformat)) ? FORMAT_HTML : $existing->summaryformat;
 $PAGE->requires->data_for_js('blog_edit_existing', $entry);
 

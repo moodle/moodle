@@ -11,6 +11,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->dirroot .'/tag/lib.php');
+require_once($CFG->libdir .'/commentlib.php');
 
 $id           = optional_param('id', null, PARAM_INT);
 $start        = optional_param('formstart', 0, PARAM_INT);
@@ -22,6 +23,8 @@ $entryid      = optional_param('entryid', null, PARAM_INT);
 $groupid      = optional_param('groupid', null, PARAM_INT);
 $courseid     = optional_param('courseid', null, PARAM_INT); // needed for user tabs and course tracking
 $search       = optional_param('search', null, PARAM_RAW);
+
+comment::js();
 
 $url_params = compact('id', 'start', 'tag', 'userid', 'tagid', 'modid', 'entryid', 'groupid', 'courseid', 'search');
 foreach ($url_params as $var => $val) {

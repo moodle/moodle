@@ -26,12 +26,22 @@
  */
 
 require_once($CFG->libdir.'/formslib.php');
-
+// TODO remove "Blogging is disabled" text from blog_menu when editing not on
+// DONE put Associations in Advanced items
+// TODO add descriptive text to Associations fieldset
+// TODO forceopen on preferences page
+// TODO Add Blog link under course navigation tree
+// DONE add string for invalidgroupid
+// DONE Restrict groupid entries to entries associated with the course
 class blog_edit_external_form extends moodleform {
     public function definition() {
         global $CFG;
 
         $mform =& $this->_form;
+
+        $mform->addElement('text', 'url', get_string('url'));
+        $mform->addRule('url', get_string('emptyurl', 'blog'), 'required', null, 'client');
+        $mform->setHelpButton('url', array('url', get_string('url', 'blog'), 'blog'));
 
         $mform->addElement('text', 'name', get_string('name'));
         // No need to require the name, it gets prefilled with the external blog's site name if empty
@@ -40,10 +50,6 @@ class blog_edit_external_form extends moodleform {
 
         $mform->addElement('textarea', 'description', get_string('description'), array('cols' => 50, 'rows' => 7));
         $mform->setHelpButton('description', array('description', get_string('description', 'blog'), 'blog'));
-
-        $mform->addElement('text', 'url', get_string('url'));
-        $mform->addRule('url', get_string('emptyurl', 'blog'), 'required', null, 'client');
-        $mform->setHelpButton('url', array('url', get_string('url', 'blog'), 'blog'));
 
         if (!empty($CFG->usetags)) {
             $mform->addElement('text', 'tags', get_string('tags'));
