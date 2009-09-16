@@ -82,8 +82,8 @@ $functions = array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'create_users',
         'classpath'   => 'user/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
+        'params'      => 'create_users_params',
+        'returns'     => 'create_users_returns'
     ),
 
     'moodle_user_get_users' => array(
