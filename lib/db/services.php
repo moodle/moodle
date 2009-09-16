@@ -32,48 +32,36 @@ $functions = array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'create_groups',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_group_get_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'get_groups',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_group_delete_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groups',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_group_get_groupmembers' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'get_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_group_add_groupmembers' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'add_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_group_delete_groupmembers' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     // === user related functions ===
@@ -82,32 +70,24 @@ $functions = array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'create_users',
         'classpath'   => 'user/externallib.php',
-        'params'      => 'create_users_params',
-        'returns'     => 'create_users_returns'
     ),
 
     'moodle_user_get_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'get_users',
         'classpath'   => 'user/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_user_delete_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'delete_users',
         'classpath'   => 'user/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
     'moodle_user_update_users' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'update_users',
         'classpath'   => 'user/externallib.php',
-        'params'      => null, //TODO
-        'returns'     => null, //TODO
     ),
 
 );
