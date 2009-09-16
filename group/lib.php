@@ -28,7 +28,7 @@ function groups_add_member($grouporid, $userorid) {
         $user   = $userorid;
     } else {
         $userid = $userorid;
-        $user = $DB->get_record('users', array('id'=>$userid), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
     }
 
     if (is_object($grouporid)) {
@@ -81,7 +81,7 @@ function groups_remove_member($grouporid, $userorid) {
         $user   = $userorid;
     } else {
         $userid = $userorid;
-        $user = $DB->get_record('users', array('id'=>$userid), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
     }
 
     if (is_object($grouporid)) {
