@@ -28,42 +28,47 @@ require_once("$CFG->libdir/externallib.php");
 
 class moodle_user_external extends external_api {
 
-/// Public descriptions of parameters and returned variables for validation and documentation
+    public static function create_users_params() {
+        $userpreference = array();
+        $userpreference->name =  array(PARAM_ALPHANUMEXT, 'The name of the preference to set');
+        $userpreference->value =  array(PARAM_RAW, 'The value of the preference');
+    
+        $usercustomfields = new object();
+        $usercustomfields->name =  array(PARAM_ALPHANUMEXT, 'The name of the custom field (must exist)');
+        $usercustomfields->value =  array(PARAM_RAW, 'The value of the custom field');
+    
+        $usertocreate = new object(); 
+        $usertocreate->username    = array(PARAM_USERNAME, 'Username policy is defined in Moodle security config', REQUIRED);
+        $usertocreate->password    = array(PARAM_RAW, 'Moodle passwords can consist of any character', REQUIRED);
+        $usertocreate->firstname   = array(PARAM_NOTAGS, 'The first name(s) of the user', REQUIRED);
+        $usertocreate->lastname    = array(PARAM_NOTAGS, 'The family name of the user', REQUIRED);
+        $usertocreate->email       = array(PARAM_EMAIL, 'A valid and unique email address', REQUIRED);
+        $usertocreate->auth        = array(PARAM_AUTH, 'Auth plugins include manual, ldap, imap, etc');
+        $usertocreate->confirmed   = array(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise');
+        $usertocreate->idnumber    = array(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution');
+        $usertocreate->emailstop   = array(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise');
+        $usertocreate->lang        = array(PARAM_LANG, 'Language code such as "en_utf8", must exist on server');
+        $usertocreate->theme       = array(PARAM_THEME, 'Theme name such as "standard", must exist on server');
+        $usertocreate->timezone    = array(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default');
+        $usertocreate->mailformat  = array(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc');
+        $usertocreate->description = array(PARAM_TEXT, 'User profile description, as HTML');
+        $usertocreate->city        = array(PARAM_NOTAGS, 'Home city of the user');
+        $usertocreate->country     = array(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ');
+        $usertocreate->preferences = array('multiple' => $userpreference);
+        $usertocreate->custom      = array('multiple' => $usercustomfields);
+    
+        $createusersparams = new object();
+        $createusersparams->users  = array('multiple' => $usertocreate);
 
-/// Create_users
-    $userpreference = new object();
-    $userpreference->name =  array(PARAM_ALPHANUMEXT, 'The name of the preference to set');
-    $userpreference->value =  array(PARAM_RAW, 'The value of the preference');
+        return $createusersparams;
+    }
 
-    $usercustomfields = new object();
-    $usercustomfields->name =  array(PARAM_ALPHANUMEXT, 'The name of the custom field (must exist)');
-    $usercustomfields->value =  array(PARAM_RAW, 'The value of the custom field');
+    public static function create_users_params() {
+        $createusersreturn = new object();
+        $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
 
-    $usertocreate = new object(); 
-    $usertocreate->username    = array(PARAM_USERNAME, 'Username policy is defined in Moodle security config', REQUIRED);
-    $usertocreate->password    = array(PARAM_RAW, 'Moodle passwords can consist of any character', REQUIRED);
-    $usertocreate->firstname   = array(PARAM_NOTAGS, 'The first name(s) of the user', REQUIRED);
-    $usertocreate->lastname    = array(PARAM_NOTAGS, 'The family name of the user', REQUIRED);
-    $usertocreate->email       = array(PARAM_EMAIL, 'A valid and unique email address', REQUIRED);
-    $usertocreate->auth        = array(PARAM_AUTH, 'Auth plugins include manual, ldap, imap, etc');
-    $usertocreate->confirmed   = array(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise');
-    $usertocreate->idnumber    = array(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution');
-    $usertocreate->emailstop   = array(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise');
-    $usertocreate->lang        = array(PARAM_LANG, 'Language code such as "en_utf8", must exist on server');
-    $usertocreate->theme       = array(PARAM_THEME, 'Theme name such as "standard", must exist on server');
-    $usertocreate->timezone    = array(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default');
-    $usertocreate->mailformat  = array(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc');
-    $usertocreate->description = array(PARAM_TEXT, 'User profile description, as HTML');
-    $usertocreate->city        = array(PARAM_NOTAGS, 'Home city of the user');
-    $usertocreate->country     = array(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ');
-    $usertocreate->preferences = array('multiple' => $userpreference);
-    $usertocreate->custom      = array('multiple' -> $usercustomfields);
-
-    $createusersparams = new object();
-    $createusersparams->users  = array('multiple' => $usertocreate);
-
-    $createusersreturn = new object();
-    $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
+        return $createusersreturn;
+    }
 
     /* 
      * Create one or more users
@@ -86,7 +91,7 @@ class moodle_user_external extends external_api {
         //      2) All required items were sent 
         //      3) All data passes clean_param without changes (yes this is strict)
         // If any problems are found then exceptions are thrown with helpful error messages
-        self::validate_params($params, $this->createuserparams);
+        self::validate_params($params, self::create_users_params());
 
 
         // Perform further checks and build up a clean array of user data
