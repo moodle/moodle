@@ -803,7 +803,7 @@ class question_bank_view {
 
         // Create the url of the new question page to forward to.
         $this->editquestionurl = new moodle_url("$CFG->wwwroot/question/question.php",
-                array('returnurl' => $pageurl->out()));
+                array('returnurl' => urlencode($pageurl->out(false, array(), false))));
         if ($cm !== null){
             $this->editquestionurl->param('cmid', $cm->id);
         } else {
