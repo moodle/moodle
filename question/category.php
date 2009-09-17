@@ -34,6 +34,8 @@
     $param->moveto = optional_param('moveto', 0, PARAM_INT);
     $param->edit = optional_param('edit', 0, PARAM_INT);
 
+    $PAGE->set_url(new moodle_url($FULLME));
+
     $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                                 $contexts->having_cap('moodle/question:add'));
 
