@@ -44,3 +44,7 @@ function update() {
     }
     timer = setTimeout("update()", f*1000);
 }
+
+function insert_redirect() {
+    parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;
+}

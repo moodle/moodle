@@ -62,20 +62,11 @@
 
     if ($chatuser->version == 'header_js') {
         /// force msg referesh ASAP
-        if ($CFG->chat_normal_updatemode == 'jsupdated') {  // See bug MDL-6791
-            echo '<script type="text/javascript">'.
-                 "//<![CDATA[ \n".
-                 '  parent.input.enableForm();'.
-                 "//]]> \n".
-                 '</script>';
-        } else {
-            echo '<script type="text/javascript">'.
-                 "//<![CDATA[ \n".
-                 '  parent.jsupdate.location.href = parent.jsupdate.document.anchors[0].href;'.
-                 '  parent.input.enableForm();'.
-                 "//]]> \n".
-                 '</script>';
+        echo $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->asap();
+        if ($CFG->chat_normal_updatemode != 'jsupdated') {  // See bug MDL-6791
+            echo $PAGE->requires->js_function_call('insert_redirect')->asap();;
         }
+        echo $PAGE->requires->js_function_call('parent.input.enableForm')->asap();
     }
 
     redirect('../empty.php');
