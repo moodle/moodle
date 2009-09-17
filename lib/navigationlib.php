@@ -1248,7 +1248,8 @@ class global_navigation extends navigation_node {
                     $participantskey = $currentcourse->add(get_string('participants'));
                     $participants = $currentcourse->get($participantskey);
                     if ($participants) {
-                        $url = new moodle_url($CFG->wwwroot.'/user/index.php?contextid='.$this->context->id);
+                        $participants->mainnavonly = true;
+                        $url = new moodle_url($CFG->wwwroot.'/user/index.php?id='.$course->id);
                         $participants->add(get_string('participantslist'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/users'));
 
                         require_once($CFG->dirroot.'/blog/lib.php');
