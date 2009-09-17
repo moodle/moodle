@@ -19,6 +19,7 @@ if (!empty($THEME->chameleonenabled)) {
 
 <style type="text/css"> @import '<?php echo "$CFG->themewww/$chameleon_theme" ?>/ui/chameleon_ui.css'; </style>
 
+<script type="text/javascript" src="<?php echo "$CFG->wwwroot/lib/cookies.js" ?>"> </script>
 <script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/css_query.js" ?>"> </script>
 <script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/sarissa.js" ?>"> </script>
 <script type="text/javascript" src="<?php echo "$CFG->themewww/$chameleon_theme/ui/chameleon_js.php$chameleon_courseparam" ?>"> </script>

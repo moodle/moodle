@@ -320,6 +320,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $PAGE->requires->data_for_js('scormdata', array(
                 'plusicon' => $OUTPUT->mod_icon_url('pix/plus', 'scorm'),
                 'minusicon' => $OUTPUT->mod_icon_url('pix/minus', 'scorm')));
+        $PAGE->requires->js('lib/cookies.js');
         $PAGE->requires->js('mod/scorm/datamodels/scorm_datamodels.js');
     }
 
