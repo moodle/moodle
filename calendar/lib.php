@@ -347,6 +347,11 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
  * @return $popup string, contains onmousover and onmouseout events.
  */
 function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
+    global $PAGE;
+    static $popupcount;
+    if ($popupcount === null) {
+        $popupcount = 1;
+    }
     $popupcaption = '';
     if($is_today) {
         $popupcaption = get_string('today', 'calendar').' ';
@@ -358,10 +363,11 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     } else {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
-    $popupcontent = addslashes_js(s($popupcontent));
-    $popupcaption = addslashes_js(s($popupcaption));
-    $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
-    return $popup;
+    $id = 'calendar_tooltip_'.$popupcount;
+    $PAGE->requires->yui_lib('container');
+    $PAGE->requires->js_function_call('attach_calendar_panel', Array(Array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
+    $popupcount++;
+    return 'id="'.$id.'"';
 }
 
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
@@ -1178,14 +1184,6 @@ function calendar_session_vars($course=null) {
         // Follow the white rabbit, for example if a teacher logs in as a student
         $SESSION->cal_users_shown = $USER->id;
     }
-}
-
-function calendar_overlib_html() {
-    global $PAGE;
-    $output = '';
-    $output .= $PAGE->requires->js('calendar/overlib.cfg.php')->asap();
-    $output .= '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
-    return $output;
 }
 
 function calendar_set_referring_course($courseid) {

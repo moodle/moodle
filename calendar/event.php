@@ -283,8 +283,6 @@
 
     echo $OUTPUT->header();
 
-    echo calendar_overlib_html();
-
     echo '<table id="calendar">';
     echo '<tr><td class="maincalendar">';
 

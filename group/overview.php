@@ -115,6 +115,9 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
     $rs->close();
 }
 
+$PAGE->requires->js('lib/overlib/overlib.js')->in_head();
+$PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
+
 $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strgroups);
 

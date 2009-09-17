@@ -75,8 +75,6 @@ $PAGE->set_focuscontrol('eventform.name');
 
 echo $OUTPUT->header();
 
-echo calendar_overlib_html();
-
 // Layout the whole page as three big columns.
 echo '<table id="calendar">';
 echo '<tr>';

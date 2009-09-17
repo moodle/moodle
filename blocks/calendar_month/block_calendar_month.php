@@ -56,20 +56,19 @@ class block_calendar_month extends block_base {
             $courseset = true;
             $SESSION->cal_courses_shown[$this->page->course->id] = $this->page->course;
         }
-    
+
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
         calendar_set_filters($courses, $group, $user, $filtercourse, $groupeventsfrom, false);
+        $this->page->requires->js('calendar/calendar.js');
         if ($courseshown == SITEID) {
             // For the front page
-            $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             // No filters for now
 
         } else {
             // For any other course
-            $this->content->text .= calendar_overlib_html();
             $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';

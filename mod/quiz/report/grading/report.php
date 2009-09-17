@@ -28,7 +28,7 @@ class quiz_grading_report extends quiz_default_report {
      * Displays the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $QTYPES, $DB, $OUTPUT;
+        global $CFG, $QTYPES, $DB, $OUTPUT, $PAGE;
 
         $viewoptions = array('mode'=>'grading', 'q'=>$quiz->id);
 
@@ -55,6 +55,9 @@ class quiz_grading_report extends quiz_default_report {
 
 
         $this->cm = $cm;
+
+        echo $PAGE->requires->js('lib/overlib/overlib.js')->asap();
+        echo $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->asap();
 
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 

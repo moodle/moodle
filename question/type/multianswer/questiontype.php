@@ -277,7 +277,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $QTYPES, $CFG, $USER, $OUTPUT;
+        global $QTYPES, $CFG, $USER, $OUTPUT, $PAGE;
 
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
@@ -306,6 +306,9 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // The regex will recognize text snippets of type {#X}
         // where the X can be any text not containg } or white-space characters.
+
+        echo $PAGE->requires->js('lib/overlib/overlib.js')->asap();
+        echo $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->asap();
 
         while (preg_match('~\{#([^[:space:]}]*)}~', $qtextremaining, $regs)) {
             $qtextsplits = explode($regs[0], $qtextremaining, 2);
@@ -360,6 +363,7 @@ class embedded_cloze_qtype extends default_questiontype {
                         $feedback .= '</div>';
                     }
                 }
+
             if ($options->feedback) {
                 $chosenanswer = null;
                 switch ($wrapped->qtype) {

@@ -133,6 +133,8 @@
     $strcalendar = get_string('calendar', 'calendar');
     $prefsbutton = calendar_preferences_button();
 
+    $PAGE->requires->js('calendar/calendar.js');
+
     // Print title and header
     $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
     $PAGE->set_heading($strcalendar);
@@ -140,8 +142,6 @@
     $PAGE->set_button($prefsbutton);
 
     echo $OUTPUT->header();
-
-    echo calendar_overlib_html();
 
     // Layout the whole page as three big columns.
     echo '<table id="calendar" style="height:100%;">';
