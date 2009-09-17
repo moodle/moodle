@@ -791,3 +791,85 @@ function survey_supports($feature) {
         default: return null;
     }
 }
+
+/**
+ * This fucntion extends the global navigaiton for the site.
+ * It is important to note that you should not rely on PAGE objects within this
+ * body of code as there is no guarantee that during an AJAX request they are
+ * available
+ *
+ * @param navigation_node $navigation The quiz node within the global navigation
+ * @param stdClass $course The course object returned from the DB
+ * @param stdClass $module The module object returned from the DB
+ * @param stdClass $cm The course module isntance returned from the DB
+ */
+function survey_extend_navigation($navigation, $course, $module, $cm) {
+    /**
+     * This is currently just a stub so  that it can be easily expanded upon.
+     * When expanding just remove this comment and the line below and then add
+     * you content.
+     */
+    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param navigation_node $settings
+ * @param stdClass $module
+ */
+function survey_extend_settings_navigation($settings, $module) {
+    global $PAGE, $CFG, $DB, $USER, $OUTPUT;
+
+    $survey = $DB->get_record('quiz', array('id'=>$PAGE->cm->instance));
+    $surveynavkey = $settings->add(get_string('surveyadministration', 'survey'));
+    $surveynav = $settings->get($surveynavkey);
+    $surveynav->forceopen = true;
+
+    $strreport = get_string("report", "survey");
+    $strsurvey = get_string("modulename", "survey");
+    $strsurveys = get_string("modulenameplural", "survey");
+    $strsummary = get_string("summary", "survey");
+    $strscales = get_string("scales", "survey");
+    $strquestion = get_string("question", "survey");
+    $strquestions = get_string("questions", "survey");
+    $strdownload = get_string("download", "survey");
+    $strallscales = get_string("allscales", "survey");
+    $strallquestions = get_string("allquestions", "survey");
+    $strselectedquestions = get_string("selectedquestions", "survey");
+    $strseemoredetail = get_string("seemoredetail", "survey");
+    $strnotes = get_string("notes", "survey");
+
+    if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
+        $key = $surveynav->add(get_string("responsereports", "survey"));
+
+        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'summary'));
+        $surveynav->get($key)->add(get_string("summary", "survey"), $url);
+
+        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'scales'));
+        $surveynav->get($key)->add(get_string("scales", "survey"), $url);
+
+        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'questions'));
+        $surveynav->get($key)->add(get_string("question", "survey"), $url);
+
+        $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'students'));
+        $surveynav->get($key)->add(get_string('participants'), $url);
+
+        if (has_capability('mod/survey:download', $PAGE->cm->context)) {
+            $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'download'));
+            $surveynav->add(get_string('downloadresults', 'survey'), $url);
+        }
+    }
+
+    if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
+        $url = new moodle_url($CFG->wwwroot.'/course/mod.php', array('update' => $PAGE->cm->id, 'return' => true, 'sesskey' => sesskey()));
+        $surveynav->add(get_string('updatethis', '', get_string('modulename', 'quiz')), $url);
+    }
+
+    if (count($surveynav->children)<1) {
+        $settings->remove_child($surveynavkey);
+    }
+}

@@ -1,308 +1,317 @@
-<?php // $Id$
+<?php
 
-    require_once ("../../config.php");
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is responsible for producing the downloadable versions of a survey
+ * module.
+ *
+ * @package   mod-survey
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once ("../../config.php");
 
 // Check that all the parameters have been provided.
 
-    $id    = required_param('id', PARAM_INT);    // Course Module ID
-    $type  = optional_param('type', 'xls', PARAM_ALPHA);
-    $group = optional_param('group', 0, PARAM_INT);
+$id    = required_param('id', PARAM_INT);    // Course Module ID
+$type  = optional_param('type', 'xls', PARAM_ALPHA);
+$group = optional_param('group', 0, PARAM_INT);
 
-    if (! $cm = $DB->get_record("course_modules", array("id"=>$id))) {
-        print_error('invalidcoursemodule');
-    }
+if (! $cm = get_coursemodule_from_id('survey', $id)) {
+    print_error('invalidcoursemodule');
+}
 
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
-    }
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+    print_error('coursemisconf');
+}
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    require_login($course->id, false, $cm);
-    require_capability('mod/survey:download', $context) ;
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/survey/download.php', array('id'=>$id, 'type'=>$type, 'group'=>$group)));
 
-    if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
-        print_error('invalidsurveyid', 'survey');
-    }
+require_login($course->id, false, $cm);
+require_capability('mod/survey:download', $context) ;
 
-    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&amp;type=$type", "$survey->id", $cm->id);
+if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
+    print_error('invalidsurveyid', 'survey');
+}
+
+add_to_log($course->id, "survey", "download", $PAGE->url->out(), "$survey->id", $cm->id);
 
 /// Check to see if groups are being used in this survey
 
-    $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
+$groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
 
-    if ($groupmode and $group) {
-        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $group, null, false);
-    } else {
-        $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', '', null, false);
-        $group = false;
+if ($groupmode and $group) {
+    $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $group, null, false);
+} else {
+    $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', '', null, false);
+    $group = false;
+}
+
+// The order of the questions
+$order = explode(",", $survey->questions);
+
+// Get the actual questions from the database
+$questions = $DB->get_records_list("survey_questions", "id", $order);
+
+// Get an ordered array of questions
+$orderedquestions = array();
+
+$virtualscales = false;
+foreach ($order as $qid) {
+    $orderedquestions[$qid] = $questions[$qid];
+    // Check if this question is using virtual scales
+    if (!$virtualscales && $questions[$qid]->type < 0) {
+        $virtualscales = true;
     }
-
-// Get all the questions and their proper order
-
-    $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
-    $order = explode(",", $survey->questions);
-
-    $virtualscales = false;
-    foreach ($order as $key => $qid) {  // Do we have virtual scales?
-        $question = $questions[$qid];
-        if ($question->type < 0) {
-            $virtualscales = true;
-            break;
-        }
-    }
-
-    $fullorderlist = array();
-    foreach ($order as $key => $qid) {    // build up list of actual questions
-        $question = $questions[$qid];
-
-        if ($question->multi) {
-            $addlist = $question->multi;
-        } else {
-            $addlist = $qid;
-        }
-
-        if ($virtualscales && ($question->type < 0)) {        // only use them
-            $fullorderlist[] = $addlist;
-
-        } else if (!$virtualscales && ($question->type >= 0)){   // ignore them
-            $fullorderlist[] = $addlist;
-        }
-    }
-
-    $fullquestions = $DB->get_records_list("survey_questions", "id", $fullorderlist);
-
-//  Question type of multi-questions overrides the type of single questions
-    foreach ($order as $key => $qid) {
-        $question = $questions[$qid];
-
-        if ($question->multi) {
-            $subs = explode(",", $question->multi);
-            while (list ($skey, $sqid) = each ($subs)) {
-                $fullquestions["$sqid"]->type = $question->type;
+}
+$nestedorder = array();
+$preparray = array();
+foreach ($orderedquestions as $qid=>$question) {
+    $orderedquestions[$qid]->text = get_string($question->text, "survey");
+    if (!empty($question->multi)) {
+        $actualqid = explode(",", $questions[$qid]->multi);
+        foreach ($actualqid as $subqid) {
+            if (!empty($orderedquestions[$subqid]->type)) {
+                $orderedquestions[$subqid]->type = $questions[$qid]->type;
             }
         }
+    } else {
+        $actualqid = array($qid);
     }
-
-    $questions = $fullquestions;
-
-//  Translate all the question texts
-
-    foreach ($questions as $key => $question) {
-        $questions[$key]->text = get_string($question->text, "survey");
+    if ($virtualscales && $questions[$qid]->type < 0) {
+        $nestedorder[$qid] = $actualqid;
+    } else if (!$virtualscales && $question->type >= 0) {
+        $nestedorder[$qid] = $actualqid;
     }
-
+}
+$reversednestedorder = array();
+foreach ($nestedorder as $qid=>$subqidarray) {
+    foreach ($subqidarray as $subqui) {
+        $reversednestedorder[$subqui] = $qid;
+    }
+}
 
 // Get and collate all the results in one big array
+if (! $surveyanswers = $DB->get_records("survey_answers", array("survey"=>$survey->id), "time ASC")) {
+    print_error('cannotfindanswer', 'survey');
+}
 
-    if (! $aaa = $DB->get_records("survey_answers", array("survey"=>$survey->id), "time ASC")) {
-        print_error('cannotfindanswer', 'survey');
-    }
+$results = array();
 
-    foreach ($aaa as $a) {
-        if (!$group or isset($users[$a->userid])) {
-            if (empty($results[$a->userid])) { // init new array
-                $results[$a->userid]["time"] = $a->time;
-                foreach ($fullorderlist as $qid) {
-                    $results[$a->userid][$qid]["answer1"] = "";
-                    $results[$a->userid][$qid]["answer2"] = "";
-                }
-            }
-            $results[$a->userid][$a->question]["answer1"] = $a->answer1;
-            $results[$a->userid][$a->question]["answer2"] = $a->answer2;
+foreach ($surveyanswers as $surveyanswer) {
+    if (!$group || isset($users[$surveyanswer->userid])) {
+        $questionid = $reversednestedorder[$surveyanswer->question];
+        if (!array_key_exists($surveyanswer->userid, $results)) {
+            $results[$surveyanswer->userid] = array('time'=>$surveyanswer->time);
         }
+        $results[$surveyanswer->userid][$questionid]['answer1'] = $surveyanswer->answer1;
+        $results[$surveyanswer->userid][$questionid]['answer2'] = $surveyanswer->answer2;
     }
+}
 
 // Output the file as a valid ODS spreadsheet if required
 
-    if ($type == "ods") {
-        require_once("$CFG->libdir/odslib.class.php");
+if ($type == "ods") {
+    require_once("$CFG->libdir/odslib.class.php");
 
-    /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.ods';
-    /// Creating a workbook
-        $workbook = new MoodleODSWorkbook("-");
-    /// Sending HTTP headers
-        $workbook->send($downloadfilename);
-    /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+/// Calculate file name
+    $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.ods';
+/// Creating a workbook
+    $workbook = new MoodleODSWorkbook("-");
+/// Sending HTTP headers
+    $workbook->send($downloadfilename);
+/// Creating the first worksheet
+    $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
-        $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
-        $col=0;
-        foreach ($header as $item) {
-            $myxls->write_string(0,$col++,$item);
+    $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
+    $col=0;
+    foreach ($header as $item) {
+        $myxls->write_string(0,$col++,$item);
+    }
+    foreach ($order as $key => $qid) {
+        $question = $orderedquestions[$qid];
+        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+            $myxls->write_string(0,$col++,"$question->text");
         }
-        foreach ($order as $key => $qid) {
-            $question = $questions[$qid];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                $myxls->write_string(0,$col++,"$question->text");
-            }
-            if ($question->type == "2" || $question->type == "3")  {
-                $myxls->write_string(0,$col++,"$question->text (preferred)");
-            }
+        if ($question->type == "2" || $question->type == "3")  {
+            $myxls->write_string(0,$col++,"$question->text (preferred)");
         }
+    }
 
 //      $date = $workbook->addformat();
 //      $date->set_num_format('mmmm-d-yyyy h:mm:ss AM/PM'); // ?? adjust the settings to reflect the PHP format below
 
-        $row = 0;
-        foreach ($results as $user => $rest) {
-            $col = 0;
-            $row++;
-            if (! $u = $DB->get_record("user", array("id"=>$user))) {
-                print_error('invaliduserid');
-            }
-            if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
-                $notes = $n->notes;
-            } else {
-                $notes = "No notes made";
-            }
-            $myxls->write_string($row,$col++,$survey->id);
-            $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
-            $myxls->write_string($row,$col++,$user);
-            $myxls->write_string($row,$col++,$u->firstname);
-            $myxls->write_string($row,$col++,$u->lastname);
-            $myxls->write_string($row,$col++,$u->email);
-            $myxls->write_string($row,$col++,$u->idnumber);
-            $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
+    $row = 0;
+    foreach ($results as $user => $rest) {
+        $col = 0;
+        $row++;
+        if (! $u = $DB->get_record("user", array("id"=>$user))) {
+            print_error('invaliduserid');
+        }
+        if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
+            $notes = $n->notes;
+        } else {
+            $notes = "No notes made";
+        }
+        $myxls->write_string($row,$col++,$survey->id);
+        $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
+        $myxls->write_string($row,$col++,$user);
+        $myxls->write_string($row,$col++,$u->firstname);
+        $myxls->write_string($row,$col++,$u->lastname);
+        $myxls->write_string($row,$col++,$u->email);
+        $myxls->write_string($row,$col++,$u->idnumber);
+        $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
 //          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
-            $myxls->write_string($row,$col++,$notes);
+        $myxls->write_string($row,$col++,$notes);
 
-            foreach ($order as $key => $qid) {
-                $question = $questions[$qid];
-                if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                    $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
-                }
-                if ($question->type == "2" || $question->type == "3")  {
-                    $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
-                }
+        foreach ($order as $key => $qid) {
+            $question = $orderedquestions[$qid];
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
             }
         }
-        $workbook->close();
-
-        exit;
     }
+    $workbook->close();
+
+    exit;
+}
 
 // Output the file as a valid Excel spreadsheet if required
 
-    if ($type == "xls") {
-        require_once("$CFG->libdir/excellib.class.php");
+if ($type == "xls") {
+    require_once("$CFG->libdir/excellib.class.php");
 
-    /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.xls';
-    /// Creating a workbook
-        $workbook = new MoodleExcelWorkbook("-");
-    /// Sending HTTP headers
-        $workbook->send($downloadfilename);
-    /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+/// Calculate file name
+    $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.xls';
+/// Creating a workbook
+    $workbook = new MoodleExcelWorkbook("-");
+/// Sending HTTP headers
+    $workbook->send($downloadfilename);
+/// Creating the first worksheet
+    $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
-        $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
-        $col=0;
-        foreach ($header as $item) {
-            $myxls->write_string(0,$col++,$item);
+    $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
+    $col=0;
+    foreach ($header as $item) {
+        $myxls->write_string(0,$col++,$item);
+    }
+    foreach ($order as $key => $qid) {
+        $question = $orderedquestions[$qid];
+        if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+            $myxls->write_string(0,$col++,"$question->text");
         }
-        foreach ($order as $key => $qid) {
-            $question = $questions[$qid];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                $myxls->write_string(0,$col++,"$question->text");
-            }
-            if ($question->type == "2" || $question->type == "3")  {
-                $myxls->write_string(0,$col++,"$question->text (preferred)");
-            }
+        if ($question->type == "2" || $question->type == "3")  {
+            $myxls->write_string(0,$col++,"$question->text (preferred)");
         }
+    }
 
 //      $date = $workbook->addformat();
 //      $date->set_num_format('mmmm-d-yyyy h:mm:ss AM/PM'); // ?? adjust the settings to reflect the PHP format below
 
-        $row = 0;
-        foreach ($results as $user => $rest) {
-            $col = 0;
-            $row++;
-            if (! $u = $DB->get_record("user", array("id"=>$user))) {
-                print_error('invaliduserid');
-            }
-            if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
-                $notes = $n->notes;
-            } else {
-                $notes = "No notes made";
-            }
-            $myxls->write_string($row,$col++,$survey->id);
-            $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
-            $myxls->write_string($row,$col++,$user);
-            $myxls->write_string($row,$col++,$u->firstname);
-            $myxls->write_string($row,$col++,$u->lastname);
-            $myxls->write_string($row,$col++,$u->email);
-            $myxls->write_string($row,$col++,$u->idnumber);
-            $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
+    $row = 0;
+    foreach ($results as $user => $rest) {
+        $col = 0;
+        $row++;
+        if (! $u = $DB->get_record("user", array("id"=>$user))) {
+            print_error('invaliduserid');
+        }
+        if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
+            $notes = $n->notes;
+        } else {
+            $notes = "No notes made";
+        }
+        $myxls->write_string($row,$col++,$survey->id);
+        $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
+        $myxls->write_string($row,$col++,$user);
+        $myxls->write_string($row,$col++,$u->firstname);
+        $myxls->write_string($row,$col++,$u->lastname);
+        $myxls->write_string($row,$col++,$u->email);
+        $myxls->write_string($row,$col++,$u->idnumber);
+        $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
 //          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
-            $myxls->write_string($row,$col++,$notes);
+        $myxls->write_string($row,$col++,$notes);
 
-            foreach ($order as $key => $qid) {
-                $question = $questions[$qid];
-                if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                    $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
-                }
-                if ($question->type == "2" || $question->type == "3")  {
-                    $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
-                }
+        foreach ($order as $key => $qid) {
+            $question = $orderedquestions[$qid];
+            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+                $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
+            }
+            if ($question->type == "2" || $question->type == "3")  {
+                $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
             }
         }
-        $workbook->close();
-
-        exit;
     }
+    $workbook->close();
+
+    exit;
+}
 
 // Otherwise, return the text file.
 
 // Print header to force download
 
-    header("Content-Type: application/download\n");
+header("Content-Type: application/download\n");
 
-    $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
-    header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
+$downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
+header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 // Print names of all the fields
 
-    echo "surveyid    surveyname    userid    firstname    lastname    email    idnumber    time    ";
+echo "surveyid    surveyname    userid    firstname    lastname    email    idnumber    time    ";
+foreach ($orderedquestions as $key => $question) {
+    if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
+        echo "$question->text    ";
+    }
+    if ($question->type == "2" || $question->type == "3")  {
+         echo "$question->text (preferred)    ";
+    }
+}
+echo "\n";
+
+// Print all the lines of data.
+foreach ($results as $user => $rest) {
+    if (! $u = $DB->get_record("user", array("id"=>$user))) {
+        print_error('invaliduserid');
+    }
+    echo $survey->id."\t";
+    echo strip_tags(format_string($survey->name,true))."\t";
+    echo $user."\t";
+    echo $u->firstname."\t";
+    echo $u->lastname."\t";
+    echo $u->email."\t";
+    echo $u->idnumber."\t";
+    echo userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
+
     foreach ($order as $key => $qid) {
-        $question = $questions[$qid];
+        $question = $orderedquestions[$qid];
         if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-            echo "$question->text    ";
+            echo $results[$user][$qid]["answer1"]."    ";
         }
         if ($question->type == "2" || $question->type == "3")  {
-             echo "$question->text (preferred)    ";
+            echo $results[$user][$qid]["answer2"]."    ";
         }
     }
     echo "\n";
+}
 
-// Print all the lines of data.
-
-    foreach ($results as $user => $rest) {
-        if (! $u = $DB->get_record("user", array("id"=>$user))) {
-            print_error('invaliduserid');
-        }
-        echo $survey->id."\t";
-        echo strip_tags(format_string($survey->name,true))."\t";
-        echo $user."\t";
-        echo $u->firstname."\t";
-        echo $u->lastname."\t";
-        echo $u->email."\t";
-        echo $u->idnumber."\t";
-        echo userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
-
-        foreach ($order as $key => $qid) {
-            $question = $questions[$qid];
-            if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                echo $results[$user][$qid]["answer1"]."    ";
-            }
-            if ($question->type == "2" || $question->type == "3")  {
-                echo $results[$user][$qid]["answer2"]."    ";
-            }
-        }
-        echo "\n";
-    }
-    exit;
-
-
-?>
+exit;

@@ -1,6 +1,27 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.7 beta + (2006101003)
+<?PHP
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Language strings for the survey module as introduced in Moodle 1.7 beta
+ *
+ * @package   mod-survey
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['actual'] = 'Actual';
 $string['actualclass'] = 'Class actual';
@@ -171,6 +192,7 @@ $string['done'] = 'Done';
 $string['download'] = 'Download';
 $string['downloadexcel'] = 'Download data as Excel spreadsheet';
 $string['downloadinfo'] = 'You can download the complete raw data for this survey in a form suitable for analysis in Excel, SPSS or other package.';
+$string['downloadresults'] = 'Download results';
 $string['downloadtext'] = 'Download data as a plain text file';
 $string['editingasurvey'] = 'Editing a survey';
 $string['guestsnotallowed'] = 'Guests are not allowed to submit surveys';
@@ -200,6 +222,7 @@ $string['questionsnotanswered'] = 'Some of the multiple choice questions have no
 $string['deleteallanswers'] = 'Delete all survey responses';
 $string['deleteanalysis'] = 'Delete response analysis';
 $string['report'] = 'Survey report';
+$string['responsereports'] = 'Response reports';
 $string['responses'] = 'Responses';
 $string['savednotes'] = 'Your notes were saved';
 $string['scaleagree5'] = 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree';
@@ -211,6 +234,7 @@ $string['summary'] = 'Summary';
 $string['survey:download'] = 'Download responses';
 $string['survey:participate'] = 'Respond to survey';
 $string['survey:readresponses'] = 'View responses';
+$string['surveyadministration'] = 'Survey Administration';
 $string['surveycompleted'] = 'You\'ve completed this survey.  The graph below shows a summary of your results compared to the class averages.';
 $string['surveygraph'] = 'Survey graph';
 $string['surveyname'] = 'Survey name';

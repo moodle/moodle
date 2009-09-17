@@ -1,4 +1,27 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is responsible for producing the survey reports
+ *
+ * @package   mod-survey
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -22,6 +45,21 @@
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/survey/report.php', array('id'=>$id));
+    if ($action !== '') {
+        $url->param('action', $action);
+    }
+    if ($qid !== 0) {
+        $url->param('qid', $qid);
+    }
+    if ($student !== 0) {
+        $url->param('student', $student);
+    }
+    if ($notes !== '') {
+        $url->param('notes', $notes);
+    }
+    $PAGE->set_url($url);
 
     require_login($course->id, false, $cm);
     
@@ -56,7 +94,28 @@
 
     add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id", $cm->id);
 
-    $PAGE->navbar->add($strreport);
+    switch ($action) {
+        case 'download':
+            $PAGE->navbar->add(get_string('downloadresults', 'survey'));
+            break;
+        case 'summary':
+        case 'scales':
+        case 'questions':
+            $PAGE->navbar->add($strreport);
+            $PAGE->navbar->add(${'str'.$action});
+            break;
+        case 'students':
+            $PAGE->navbar->add($strreport);
+            $PAGE->navbar->add(get_string('participants'));
+            break;
+        case '':
+            $PAGE->navbar->add($strreport);
+            $PAGE->navbar->add($strsummary);
+            break;
+        default:
+            $PAGE->navbar->add($strreport);
+            break;
+    }
 
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
