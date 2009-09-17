@@ -1208,6 +1208,13 @@ class grade_item extends grade_object {
             return false;
         }
 
+        // MDL-19407 If moving from a non-SWM category to a SWM category, convert aggregationcoef to 0
+        $currentparent = $this->load_parent_category();
+
+        if ($currentparent->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN2 && $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
+            $this->aggregationcoef = 0;
+        }
+
         $this->force_regrading();
 
         // set new parent
