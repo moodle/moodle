@@ -5697,7 +5697,6 @@ function print_plugin_tables() {
         'admin',
         'admin_bookmarks',
         'admin_tree',
-        'blog_externals',
         'blog_menu',
         'blog_recent',
         'blog_tags',
