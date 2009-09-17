@@ -603,7 +603,12 @@ function file_get_submitted_draft_itemid($elname) {
         confirm_sesskey();
     }
     if (is_array($param)) {
-        $param = $param['itemid'];
+        if (!empty($param['itemid'])) {
+            $param = $param['itemid'];
+        } else {
+            debugging('Missing itemid, maybe caused by unset maxfiles option', DEBUG_DEVELOPER);
+            return false;
+        }
     }
     return $param;
 }

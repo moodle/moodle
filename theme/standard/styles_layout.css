@@ -5843,3 +5843,51 @@ wikiadminactions {
   left:-10px;
   background-position:0px 100%;
 }
+.filemanager-toolbar{
+    margin: 5px 0;
+}
+.filemanager-toolbar a{
+    border: 1px solid grey;
+    padding: 3px;
+}
+.filemanager-toolbar a:hover {
+    background: #CCC;
+}
+.fm-breadcrumb {
+    margin: 6px 0;
+}
+.filemanager-container {
+    padding: 5px;
+    margin: 6px 0;
+}
+.filemanager-container ul{
+    margin:0;
+    padding:0;
+    list-style-type:none;
+}
+.filemanager-container li{
+    clear:both;
+}
+#fm-move-div {
+    margin: 6px;
+}
+#fm-move-div strong{
+    color:red;
+}
+.fm-file-menu {
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+.fm-file-menu img {
+    width: 16px;
+}
+.fm-file-name {
+    float:left;
+}
+.fm-file-entry{
+    border: 1px solid red;
+}
+.fm-operation {
+    font-weight: bold;
+}
