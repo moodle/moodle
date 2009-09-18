@@ -169,7 +169,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $PAGE->requires->string_for_js('cannotdeletefile', 'error');
         $PAGE->requires->string_for_js('confirmdeletefile', 'repository');
         $PAGE->requires->string_for_js('nopathselected', 'repository');
-        $PAGE->requires->string_for_js('popupblockdownload', 'repository');
+        $PAGE->requires->string_for_js('popupblockeddownload', 'repository');
 
         if (empty($draftitemid)) {
             // no existing area info provided - let's use fresh new draft area
