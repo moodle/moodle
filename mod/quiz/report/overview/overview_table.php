@@ -50,7 +50,7 @@ class quiz_report_overview_table extends table_sql {
                 $groupaveragerow = array($namekey => get_string('groupavg', 'grades'),
                         'sumgrades' => quiz_format_grade($this->quiz, $groupaverage->grade),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($groupaverage->grade, $this->quiz->id)));
-                if($this->detailedmarks && $this->qmsubselect) {
+                if($this->detailedmarks && ($this->qmsubselect || $this->quiz->attempts == 1)) {
                     $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $this->groupstudents);
                     $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $this->questions, $this->quiz, $this->is_downloading());
                 }
@@ -62,7 +62,7 @@ class quiz_report_overview_table extends table_sql {
             $overallaveragerow = array($namekey => get_string('overallaverage', 'grades'),
                         'sumgrades' => quiz_format_grade($this->quiz, $overallaverage->grade),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($overallaverage->grade, $this->quiz->id)));
-            if($this->detailedmarks && $this->qmsubselect) {
+            if($this->detailedmarks && ($this->qmsubselect || $this->quiz->attempts == 1)) {
                 $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $this->students);
                 $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $this->questions, $this->quiz, $this->is_downloading());
             }

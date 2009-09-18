@@ -123,7 +123,7 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
                         LEFT JOIN {question_sessions} qns ON (qns.attemptid = qa.uniqueid)
                         LEFT JOIN {question_states} qs ON (qns.newgraded = qs.id AND qs.event IN (".QUESTION_EVENTS_GRADED."))
                         WHERE " .
-                        "($qmfilter) AND " .
+                        ($qmfilter?$qmfilter.' AND ':'') .
                         "qa.userid $usql AND " .
                         "qa.quiz = ? ".
                         "GROUP BY qns.questionid";
