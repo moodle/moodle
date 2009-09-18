@@ -54,6 +54,24 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
+    $url = new moodle_url($CFG->wwwroot.'/calendar/view.php');
+    if ($courseid !== 0) {
+        $url->param('course', $courseid);
+    }
+    if ($view !== 'upcoming') {
+        $url->param('view', $view);
+    }
+    if ($day !== 0) {
+        $url->param('cal_d', $day);
+    }
+    if ($mon !== 0) {
+        $url->param('cal_m', $mon);
+    }
+    if ($yr !== 0) {
+        $url->param('cal_y', $yr);
+    }
+    $PAGE->set_url($url);
+
     if ($courseid) {
         require_login($courseid);
     } else if ($CFG->forcelogin) {
@@ -133,13 +151,14 @@
     $strcalendar = get_string('calendar', 'calendar');
     $prefsbutton = calendar_preferences_button();
 
-    $PAGE->requires->js('calendar/calendar.js');
-
     // Print title and header
     $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
     $PAGE->set_heading($strcalendar);
     $PAGE->set_headingmenu(user_login_string($site));
     $PAGE->set_button($prefsbutton);
+
+    $PAGE->requires->yui_lib('animation');
+    $PAGE->requires->js('calendar/calendar.js');
 
     echo $OUTPUT->header();
 

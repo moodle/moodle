@@ -53,6 +53,15 @@
     $cal_m = optional_param('cal_m', 0, PARAM_INT);
     $cal_d = optional_param('cal_d', 0, PARAM_INT);
 
+    $url = new moodle_url($CFG->wwwroot.'/calendar/event.php', array('action'=>$action));
+    if ($eventid !== 0) $url->param('id', $eventid);
+    if ($eventtype !== 'select') $url->param('type', $eventtype);
+    if ($urlcourse !== 0) $url->param('course', $urlcourse);
+    if ($cal_y !== 0) $url->param('cal_y', $cal_y);
+    if ($cal_m !== 0) $url->param('cal_m', $cal_m);
+    if ($cal_d !== 0) $url->param('cal_d', $cal_d);
+    $PAGE->set_url($url);
+
     if(isguest()) {
         // Guests cannot do anything with events
         redirect(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse);
@@ -273,9 +282,12 @@
 
     $link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;',
                                    $now['mday'], $now['mon'], $now['year']);
+
+    $PAGE->requires->yui_lib('animation');
+    $PAGE->requires->js('calendar/calendar.js');
+
     $PAGE->navbar->add($strcalendar, new moodle_url($link));
     $PAGE->navbar->add($title);
-
     $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
     $PAGE->set_heading($strcalendar);
     $PAGE->set_headingmenu(user_login_string($site));

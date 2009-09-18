@@ -365,7 +365,7 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     }
     $id = 'calendar_tooltip_'.$popupcount;
     $PAGE->requires->yui_lib('container');
-    $PAGE->requires->js_function_call('attach_calendar_panel', Array(Array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
+    $PAGE->requires->js_function_call('YAHOO.moodle.calendar.attach_calendar_panel', Array(Array('id'=>$id,'title'=>$popupcaption, 'content'=>$popupcontent)));
     $popupcount++;
     return 'id="'.$id.'"';
 }
