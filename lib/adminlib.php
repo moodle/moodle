@@ -1508,7 +1508,8 @@ class admin_setting_configtext extends admin_setting {
      * @return mixed true if ok string if error found
      */
     public function validate($data) {
-        if (is_string($this->paramtype)) {
+        // allow paramtype to be a custom regex if it is the form of /pattern/
+        if (preg_match('#^/.*/$#', $this->paramtype)) {
             if (preg_match($this->paramtype, $data)) {
                 return true;
             } else {
