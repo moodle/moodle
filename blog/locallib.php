@@ -30,7 +30,7 @@
  * Blog_entry class. Represents an entry in a user's blog. Contains all methods for managing this entry.
  * This class does not contain any HTML-generating code. See blog_listing sub-classes for such code.
  * This class follows the Object Relational Mapping technique, its member variables being mapped to
- * the fields of the posts table.
+ * the fields of the blog_entries table.
  *
  * @package    moodlecore
  * @subpackage blog
@@ -43,19 +43,13 @@ class blog_entry {
     public $userid;
     public $subject;
     public $summary;
-    public $rating = 0;
-    public $attachment;
     public $publishstate;
 
     // Locked Database fields (Don't touch these)
-    public $courseid = 0;
-    public $groupid = 0;
-    public $module = 'blog';
-    public $moduleid = 0;
-    public $coursemoduleid = 0;
     public $content;
     public $format = 1;
-    public $uniquehash = '';
+    public $summaryformat = 1;
+    public $permalink = '';
     public $lastmodified;
     public $created;
     public $usermodified;
@@ -74,7 +68,7 @@ class blog_entry {
         global $DB, $PAGE;
 
         if (!empty($idorparams) && !is_array($idorparams) && !is_object($idorparams)) {
-            $object = $DB->get_record('post', array('id' => $idorparams));
+            $object = $DB->get_record('blog_entries', array('id' => $idorparams));
             foreach ($object as $var => $val) {
                 $this->$var = $val;
             }
@@ -178,13 +172,13 @@ class blog_entry {
         $blogassociations = $DB->get_records('blog_association', array('blogid' => $this->id));
         //determine text for publish state
         switch ($template['publishstate']) {
-            case 'draft':
+            case BLOG_PUBLISHSTATE_DRAFT:
                 $blogtype = get_string('publishtonoone', 'blog');
             break;
-            case 'site':
+            case BLOG_PUBLISHSTATE_SITE:
                 $blogtype = get_string('publishtosite', 'blog');
             break;
-            case 'public':
+            case BLOG_PUBLISHSTATE_PUBLIC:
                 $blogtype = get_string('publishtoworld', 'blog');
             break;
             default:
@@ -198,16 +192,16 @@ class blog_entry {
         $contentcell->text .= $template['body'];
         $contentcell->text .= $attachedimages;
 
-        // Uniquehash is used as a link to an external blog
-        if (!empty($this->uniquehash) && blog_is_valid_url($this->uniquehash)) {
+        // permalink is used as a link to an external blog
+        if (!empty($this->permalink) && blog_is_valid_url($this->permalink)) {
             $contentcell->text .= $OUTPUT->container_start('externalblog');
-            $contentcell->text .= $OUTPUT->link(html_link::make($this->uniquehash, get_string('linktooriginalentry', 'blog')));
+            $contentcell->text .= $OUTPUT->link(html_link::make($this->permalink, get_string('linktooriginalentry', 'blog')));
             $contentcell->text .= $OUTPUT->container_end();
         }
 
         // Links to tags
 
-        if (!empty($CFG->usetags) && ($blogtags = tag_get_tags_csv('post', $this->id)) ) {
+        if (!empty($CFG->usetags) && ($blogtags = tag_get_tags_csv('blog_entries', $this->id)) ) {
             $contentcell->text .= $OUTPUT->container_start('tags');
 
             if ($blogtags) {
@@ -320,14 +314,9 @@ class blog_entry {
         $this->created      = time();
 
         // Insert the new blog entry.
-        $this->id = $DB->insert_record('post', $this);
+        $this->id = $DB->insert_record('blog_entries', $this);
 
-        // Add blog attachment
-        if (!empty($this->form) && $this->form->get_new_filename('attachment')) {
-            if ($this->form->save_stored_file('attachment', SYSCONTEXTID, 'blog', $this->id, '/', $this->form->get_new_filename('attachment'), $USER->id)) {
-                $DB->set_field("post", "attachment", 1, array("id"=>$this->id));
-            }
-        }
+        // TODO File handling
 
         // Update tags.
         $this->add_tags_info();
@@ -338,7 +327,7 @@ class blog_entry {
 
         }
 
-        tag_set('post', $this->id, $this->tags);
+        tag_set('blog_entries', $this->id, $this->tags);
     }
 
     /**
@@ -362,19 +351,11 @@ class blog_entry {
         }
 
         $this->lastmodified = time();
-
-        if (!empty($this->form) && $this->form->get_new_filename('attachment')) {
-            $this->delete_attachments();
-            if ($this->form->save_stored_file('attachment', SYSCONTEXTID, 'blog', $this->id, '/', false, $USER->id)) {
-                $this->attachment = 1;
-            } else {
-                $this->attachment = 1;
-            }
-        }
-
+        
+        // TODO Handle attachments
         // Update record
-        $DB->update_record('post', $this);
-        tag_set('post', $this->id, $this->tags);
+        $DB->update_record('blog_entries', $this);
+        tag_set('blog_entries', $this->id, $this->tags);
 
         add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&entryid='.$this->id, $this->subject);
     }
@@ -391,8 +372,8 @@ class blog_entry {
 
         $this->delete_attachments();
 
-        $DB->delete_records('post', array('id' => $this->id));
-        tag_set('post', $this->id, array());
+        $DB->delete_records('blog_entries', array('id' => $this->id));
+        tag_set('blog_entries', $this->id, array());
 
         add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $this->userid, 'deleted blog entry with entry id# '. $this->id);
     }
@@ -457,6 +438,7 @@ class blog_entry {
      * if return=html, then return a html string.
      * if return=text, then return a text-only string.
      * otherwise, print HTML for non-images, and return image HTML
+     * TODO Fix this so that it displays attachments correctly
      *
      * @param bool $return Whether to return or print the generated code
      * @return void
@@ -531,7 +513,7 @@ class blog_entry {
             }
         }
 
-        tag_set('post', $this->id, $tags);
+        tag_set('blog_entries', $this->id, $tags);
     }
 
     /**
@@ -589,12 +571,12 @@ class blog_entry {
         }
 
         // coming for 1 entry, make sure it's not a draft
-        if ($this->publishstate == 'draft') {
+        if ($this->publishstate == BLOG_PUBLISHSTATE_DRAFT) {
             return false;  // can not view draft of others
         }
 
         // coming for 1 entry, make sure user is logged in, if not a public blog
-        if ($this->publishstate != 'public' && !isloggedin()) {
+        if ($this->publishstate != BLOG_PUBLISHSTATE_PUBLIC && !isloggedin()) {
             return false;
         }
 
@@ -632,15 +614,15 @@ class blog_entry {
 
         // everyone gets draft access
         if ($CFG->bloglevel >= BLOG_USER_LEVEL) {
-            $options['draft'] = get_string('publishtonoone', 'blog');
+            $options[BLOG_PUBLISHSTATE_DRAFT] = get_string('publishtonoone', 'blog');
         }
 
         if ($CFG->bloglevel > BLOG_USER_LEVEL) {
-            $options['site'] = get_string('publishtosite', 'blog');
+            $options[BLOG_PUBLISHSTATE_SITE] = get_string('publishtosite', 'blog');
         }
 
         if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) {
-            $options['public'] = get_string('publishtoworld', 'blog');
+            $options[BLOG_PUBLISHSTATE_PUBLIC] = get_string('publishtoworld', 'blog');
         }
 
         return $options;
@@ -717,9 +699,9 @@ class blog_listing {
         }
 
         // The query used to locate blog entries is complicated.  It will be built from the following components:
-        $requiredfields = "p.*, u.firstname, u.lastname, u.email";  // the SELECT clause
-        $tables = array('p' => 'post', 'u' => 'user');   // components of the FROM clause (table_id => table_name)
-        $conditions = array('u.deleted = 0', 'p.userid = u.id', 'p.module = \'blog\'');  // components of the WHERE clause (conjunction)
+        $requiredfields = "b.*, u.firstname, u.lastname, u.email";  // the SELECT clause
+        $tables = array('b' => 'blog_entries', 'u' => 'user');   // components of the FROM clause (table_id => table_name)
+        $conditions = array('u.deleted = 0', 'b.userid = u.id');  // components of the WHERE clause (conjunction)
 
         // build up a clause for permission constraints
 
@@ -739,20 +721,20 @@ class blog_listing {
                 $assocexists = $DB->record_exists('blog_association', array());  //dont check association records if there aren't any
 
                 //begin permission sql clause
-                $permissionsql =  '(p.userid = ? ';
+                $permissionsql =  '(b.userid = ? ';
                 $params[] = $userid;
 
                 if ($CFG->bloglevel >= BLOG_SITE_LEVEL) { // add permission to view site-level entries
-                    $permissionsql .= " OR p.publishstate = 'site' ";
+                    $permissionsql .= " OR b.publishstate = " . BLOG_PUBLISHSTATE_SITE;
                 }
 
                 if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) { // add permission to view global entries
-                    $permissionsql .= " OR p.publishstate = 'public' ";
+                    $permissionsql .= " OR b.publishstate = " . BLOG_PUBLISHSTATE_DRAFT;
                 }
 
                 $permissionsql .= ') ';   //close permissions sql clause
             } else {  // default is access to public entries
-                $permissionsql = "p.publishstate = 'public'";
+                $permissionsql = "b.publishstate = " . BLOG_PUBLISHSTATE_PUBLIC;
             }
             $conditions[] = $permissionsql;  //add permission constraints
         }
@@ -1001,7 +983,7 @@ class blog_filter_context extends blog_filter {
                     $this->overrides = array('site');
                     $context = get_context_instance(CONTEXT_COURSE, $this->id);
                     $this->tables['ba'] = 'blog_association';
-                    $this->conditions[] = 'p.id = ba.blogid';
+                    $this->conditions[] = 'b.id = ba.blogid';
                     $this->conditions[] = 'ba.contextid = '.$context->id;
                     break;
                 } else {
@@ -1017,8 +999,8 @@ class blog_filter_context extends blog_filter {
 
                     $context = get_context_instance(CONTEXT_MODULE, $this->id);
                     $this->tables['ba'] = 'blog_association';
-                    $this->tables['p']  = 'post';
-                    $this->conditions = array('p.id = ba.blogid', 'ba.contextid = ?');
+                    $this->tables['b']  = 'blog_entries';
+                    $this->conditions = array('b.id = ba.blogid', 'ba.contextid = ?');
                     $this->params = array($context->id);
                 }
                 break;
@@ -1060,7 +1042,7 @@ class blog_filter_user extends blog_filter {
             $this->overrides = array('course', 'site');
 
             $this->tables['gm'] = 'groups_members';
-            $this->conditions[] = 'p.userid = gm.userid';
+            $this->conditions[] = 'b.userid = gm.userid';
             $this->conditions[] = 'gm.groupid = ?';
             $this->params[]     = $this->id;
 
@@ -1069,7 +1051,7 @@ class blog_filter_user extends blog_filter {
                 $this->tables['ba'] = 'blog_association';
                 $this->conditions[] = 'gm.groupid = ?';
                 $this->conditions[] = 'ba.contextid = ?';
-                $this->conditions[] = 'ba.blogid = p.id';
+                $this->conditions[] = 'ba.blogid = b.id';
                 $this->params[]     = $this->id;
                 $this->params[]     = $course_context->id;
             }
@@ -1082,7 +1064,7 @@ class blog_filter_user extends blog_filter {
  * This filter defines a tag by which blog entries should be searched.
  */
 class blog_filter_tag extends blog_filter {
-    public $tables = array('t' => 'tag', 'ti' => 'tag_instance', 'p' => 'post');
+    public $tables = array('t' => 'tag', 'ti' => 'tag_instance', 'b' => 'blog_entries');
 
     /**
      * Constructor
@@ -1094,8 +1076,8 @@ class blog_filter_tag extends blog_filter {
         $this->id = $id;
 
         $this->conditions = array('ti.tagid = t.id',
-                                  "ti.itemtype = 'post'",
-                                  'ti.itemid = p.id',
+                                  "ti.itemtype = 'blog_entries'",
+                                  'ti.itemid = b.id',
                                   't.id = ?');
         $this->params = array($this->id);
     }
@@ -1122,8 +1104,8 @@ class blog_filter_search extends blog_filter {
     public function __construct($search_term) {
         global $DB;
         $ilike = $DB->sql_ilike();
-        $this->conditions = array("(p.summary $ilike '%$search_term%' OR
-                                    p.content $ilike '%$search_term%' OR
-                                    p.subject $ilike '%$search_term%')");
+        $this->conditions = array("(b.summary $ilike '%$search_term%' OR
+                                    b.content $ilike '%$search_term%' OR
+                                    b.subject $ilike '%$search_term%')");
     }
 }

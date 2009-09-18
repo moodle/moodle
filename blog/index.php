@@ -61,7 +61,7 @@ $tabsfile = null;
 
 if (!$userid && has_capability('moodle/blog:view', $sitecontext) && $CFG->bloglevel > BLOG_USER_LEVEL) {
     if ($entryid) {
-        if (!$entryobject = $DB->get_record('post', array('module'=>'blog', 'id'=>$entryid))) {
+        if (!$entryobject = $DB->get_record('blog_entries', array('id'=>$entryid))) {
             print_error('nosuchentry', 'blog');
         }
         $userid = $entryobject->userid;

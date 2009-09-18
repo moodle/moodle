@@ -204,7 +204,7 @@ switch ($action) {
         $entry->fakesummary  = $existing->summary;
         $entry->publishstate = $existing->publishstate;
         $entry->format       = $existing->format;
-        $entry->tags         = tag_get_tags_array('post', $entry->id);
+        $entry->tags         = tag_get_tags_array('blog_entries', $entry->id);
         $entry->action       = $action;
 
         if (!empty($existing->courseassoc)) {

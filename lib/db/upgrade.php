@@ -2658,6 +2658,68 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009091310);
     }
 
+    if ($result && $oldversion < 2009091700) {
+
+    /// Define table blog_entries to be created
+        $table = new xmldb_table('blog_entries');
+
+    /// Adding fields to table blog_entries
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'blog entry');
+        $table->add_field('summary', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('permalink', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('format', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('summaryformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('attachment', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('publishstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('lastmodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('created', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+
+    /// Adding keys to table blog_entries
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+
+    /// Conditionally launch create table for blog_entries
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Now convert all entries in post table
+        if ($blogentries = $DB->get_records('post')) {
+            foreach ($blogentries as $blogentry) {
+                $newentry = new stdClass();
+                $newentry->userid = $blogentry->userid;
+                $newentry->subject = $blogentry->subject;
+                $newentry->summary = $blogentry->summary;
+                $newentry->summaryformat = $blogentry->summaryformat;
+                $newentry->content = $blogentry->content;
+                $newentry->format = $blogentry->format;
+                $newentry->permalink = $blogentry->uniquehash;
+                $newentry->lastmodified = $blogentry->lastmodified;
+                $newentry->created = $blogentry->created;
+                $newentry->usermodified = $blogentry->usermodified;
+
+                if ($blogentry->publishstate == 'draft') {
+                    $newentry->publishstate = 0;
+                } else {
+                    $newentry->publishstate = 1;
+                }
+                $newentry->id = $DB->insert_record('blog_entries', $newentry);
+
+                // Convert records in the tag_instance table to the new ids
+                $DB->set_field('tag_instance', 'itemid', $newentry->id, array('itemtype' => 'post', 'itemid' => $blogentry->id));
+            }
+            // Convert records in the tag_instance table to the new table name
+            $DB->set_field('tag_instance', 'itemtype', 'blog_entries', array('itemtype' => 'post'));
+        }
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009091700);
+    }
+
     return $result;
 }
 

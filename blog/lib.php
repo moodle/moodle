@@ -36,7 +36,9 @@ require_once($CFG->dirroot.'/tag/lib.php');
  */
 //not used at the moment, and may not need to be
 define('PAGE_BLOG_COURSE_VIEW', 'blog_course-view');
-
+define('BLOG_PUBLISHSTATE_DRAFT', 0);
+define('BLOG_PUBLISHSTATE_SITE', 1);
+define('BLOG_PUBLISHSTATE_PUBLIC', 2);
 
 /**
  * Checks to see if user has visited blogpages before, if not, install 2
@@ -293,17 +295,17 @@ function blog_fetch_external_entries($external_blog) {
                         'publishstate' => 'site',
                         'format' => FORMAT_HTML);
 
-        if (!$DB->record_exists('post', $params)) {
+        if (!$DB->record_exists('blog_entries', $params)) {
             $params['subject']      = $entry->get_title();
             $params['summary']      = $entry->get_description();
             $params['created']      = $entry->get_date('U');
             $params['lastmodified'] = $entry->get_date('U');
 
-            $id = $DB->insert_record('post', $params);
+            $id = $DB->insert_record('blog_entries', $params);
 
             // Set tags
             if ($tags = tag_get_tags_array('blog_external', $external_blog->id)) {
-                tag_set('post', $id, $tags);
+                tag_set('blog_entries', $id, $tags);
             }
         }
     }
@@ -435,9 +437,9 @@ function blog_get_headers() {
     // Case 1: only entryid is requested, ignore all other filters. courseid is used to give more contextual information
     // TODO Blog entries link has entryid instead of userid
     if (!empty($entryid)) {
-        $sql = 'SELECT u.* FROM {user} u, {post} p WHERE p.id = ? AND p.userid = u.id';
+        $sql = 'SELECT u.* FROM {user} u, {blog_entries} p WHERE p.id = ? AND p.userid = u.id';
         $user = $DB->get_record_sql($sql, array($entryid));
-        $entry = $DB->get_record('post', array('id' => $entryid));
+        $entry = $DB->get_record('blog_entries', array('id' => $entryid));
 
         $blog_url->param('userid', $user->id);
 

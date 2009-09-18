@@ -76,7 +76,7 @@
                 $item->pubdate = $blog_entry->lastmodified;
                 $item->link = $CFG->wwwroot.'/blog/index.php?entryid='.$blog_entry->id;
                 $item->description = format_text($blog_entry->summary, $blog_entry->format);
-                if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blog_entry->id)) ) {
+                if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('blog_entries', $blog_entry->id)) ) {
                     if ($blogtags) {
                         $item->tags = $blogtags;
                     }
