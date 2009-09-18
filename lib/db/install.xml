@@ -2232,7 +2232,7 @@
         <INDEX NAME="blogid" UNIQUE="false" FIELDS="blogid" PREVIOUS="contextid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="blog_entries" COMMENT="Blog entries" PREVIOUS="blog_association">
+    <TABLE NAME="blog_entries" COMMENT="Blog entries" PREVIOUS="blog_association" NEXT="external_services_functions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The author of the entry" PREVIOUS="id" NEXT="subject"/>
@@ -2256,5 +2256,28 @@
         <INDEX NAME="usermodified" UNIQUE="false" FIELDS="usermodified" PREVIOUS="userid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="blog_entries" NEXT="external_services_users">
+       <FIELDS>
+         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
+         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="functionname"/>
+         <FIELD NAME="functionname" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
+       </FIELDS>
+       <KEYS>
+         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
+         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary"/>
+       </KEYS>
+     </TABLE>
+     <TABLE NAME="external_services_users" COMMENT="users allowed to use services with restrictedusers flag" PREVIOUS="external_services_functions">
+       <FIELDS>
+         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
+         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
+       </FIELDS>
+       <KEYS>
+         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
+         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="externalserviceid"/>
+       </KEYS>
+     </TABLE>
   </TABLES>
 </XMLDB>
