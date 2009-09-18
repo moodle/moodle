@@ -62,7 +62,7 @@ class edit_table_save extends XMLDBAction {
         //$this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB;
+        global $CFG, $XMLDB, $PAGE, $OUTPUT;
 
     /// Do the job, setting result as needed
 

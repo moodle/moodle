@@ -61,6 +61,8 @@
 /// Body of the script, based on action, we delegate the work
     $action = optional_param ('action', 'main_view', PARAM_ALPHAEXT);
 
+    $PAGE->set_url('/admin/xmldb/index.php', array('action' => $action));
+
 /// Get the action path and invoke it
     $actionsroot = "$CFG->dirroot/$CFG->admin/xmldb/actions";
     $actionclass = $action . '.class.php';
