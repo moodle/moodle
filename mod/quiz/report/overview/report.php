@@ -584,7 +584,7 @@ class quiz_report extends quiz_default_report {
                         $groupaveragerow = array('fullname' => get_string('groupavg', 'grades'),
                                 'sumgrades' => round($groupaverage->grade, $quiz->decimalpoints),
                                 'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $quiz->id));
-                        if($detailedmarks && $qmsubselect) {
+                        if($detailedmarks && ($qmsubselect || $quiz->attempts == 1)) {
                             $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudentslist);
                             $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                         }
@@ -594,7 +594,7 @@ class quiz_report extends quiz_default_report {
                     $overallaveragerow = array('fullname' => get_string('overallaverage', 'grades'),
                                 'sumgrades' => round($overallaverage->grade, $quiz->decimalpoints),
                                 'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $quiz->id));
-                    if($detailedmarks && $qmsubselect) {
+                    if($detailedmarks && ($qmsubselect || $quiz->attempts == 1)) {
                         $avggradebyq = quiz_get_average_grade_for_questions($quiz, $studentslist);
                         $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                     }
