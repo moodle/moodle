@@ -3254,23 +3254,15 @@ function is_in_popup() {
  * @package moodlecore
  */
 class progress_bar {
-    /**
-     * @var str
-     */
+    /** @var string html id */
     private $html_id;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $percent;
+    /** @var int */
     private $width;
-    /**
-     * @var object
-     */
-    private $clr;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $lastcall;
+    /** @var int */
     private $time_start;
     private $minimum_time = 2; //min time between updates.
     /**
@@ -3280,11 +3272,12 @@ class progress_bar {
      * @param int $width
      * @param bool $autostart Default to false
      */
-    function __construct($html_id = 'pid', $width = 500, $autostart = false){
-        $this->html_id  = $html_id;
-        $this->clr      = new stdClass;
-        $this->clr->done    = 'green';
-        $this->clr->process = '#FFCC66';
+    public function __construct($html_id = '', $width = 500, $autostart = false){
+        if (!empty($html_id)) {
+            $this->html_id  = $html_id;
+        } else {
+            $this->html_id  = uniqid();
+        }
         $this->width = $width;
         $this->restart();
         if($autostart){
@@ -3292,28 +3285,11 @@ class progress_bar {
         }
     }
     /**
-      * set progress bar color, call before $this->create
-      *
-      * Usage:
-      *     $clr->done = 'red';
-      *     $clr->process = 'blue';
-      *     $pb->setclr($clr);
-      *     $pb->create();
-      *     ......
-      *
-      * @param object $clr
-      */
-    function setclr($clr){
-        foreach($clr as $n=>$v) {
-            $this->clr->$n = $v;
-        }
-    }
-    /**
       * Create a new progress bar, this function will output html.
       *
       * @return void Echo's output
       */
-    function create(){
+    public function create(){
             flush();
             $this->lastcall->pt = 0;
             $this->lastcall->time = microtime(true);
@@ -3321,46 +3297,12 @@ class progress_bar {
                 return; // temporary solution for cli scripts
             }
             $htmlcode = <<<EOT
-            <script type="text/javascript">
-            Number.prototype.fixed=function(n){
-                with(Math)
-                    return round(Number(this)*pow(10,n))/pow(10,n);
-            }
-            function up_{$this->html_id} (id, width, pt, msg, es){
-                percent = pt*100;
-                document.getElementById("status_"+id).innerHTML = msg;
-                document.getElementById("pt_"+id).innerHTML =
-                    percent.fixed(2) + '%';
-                if(percent == 100) {
-                    document.getElementById("progress_"+id).style.background
-                        = "{$this->clr->done}";
-                    document.getElementById("time_"+id).style.display
-                            = "none";
-                } else {
-                    document.getElementById("progress_"+id).style.background
-                        = "{$this->clr->process}";
-                    if (es == Infinity){
-                        document.getElementById("time_"+id).innerHTML =
-                            "Initializing...";
-                    }else {
-                        document.getElementById("time_"+id).innerHTML =
-                            es.fixed(2)+" sec";
-                        document.getElementById("time_"+id).style.display
-                            = "block";
-                    }
-                }
-                document.getElementById("progress_"+id).style.width
-                    = width + "px";
-
-            }
-
-            </script>
             <div style="text-align:center;width:{$this->width}px;clear:both;padding:0;margin:0 auto;">
                 <h2 id="status_{$this->html_id}" style="text-align: center;margin:0 auto"></h2>
                 <p id="time_{$this->html_id}"></p>
                 <div id="bar_{$this->html_id}" style="border-style:solid;border-width:1px;width:500px;height:50px;">
                     <div id="progress_{$this->html_id}"
-                    style="text-align:center;background:{$this->clr->process};width:4px;border:1px
+                    style="text-align:center;background:#FFCC66;width:4px;border:1px
                     solid gray;height:38px; padding-top:10px;">&nbsp;<span id="pt_{$this->html_id}"></span>
                     </div>
                 </div>
@@ -3377,7 +3319,7 @@ EOT;
      * @param mixed $es
      * @return void Echo's output
      */
-    function _update($percent, $msg, $es){
+    private function _update($percent, $msg, $es){
         global $PAGE;
         if(empty($this->time_start)){
             $this->time_start = microtime(true);
@@ -3392,7 +3334,7 @@ EOT;
         if ($es === null){
             $es = "Infinity";
         }
-        echo $PAGE->requires->js_function_call("up_".$this->html_id, Array($this->html_id, $w, $this->percent, $msg, $es))->asap();
+        echo $PAGE->requires->js_function_call('update_progress_bar', Array($this->html_id, $w, $this->percent, $msg, $es))->asap();
         flush();
     }
     /**
@@ -3402,7 +3344,7 @@ EOT;
       * @param int $percent from 1-100
       * @return mixed Null, or int
       */
-    function estimate($curtime, $pt){
+    private function estimate($curtime, $pt){
         $consume = $curtime - $this->time_start;
         $one = $curtime - $this->lastcall->time;
         $this->percent = $pt;
@@ -3424,7 +3366,7 @@ EOT;
       * @param int $percent from 1-100
       * @param string $msg the message needed to be shown
       */
-    function update_full($percent, $msg){
+    public function update_full($percent, $msg){
         $percent = max(min($percent, 100), 0);
         if ($percent != 100 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
             return;
@@ -3438,7 +3380,7 @@ EOT;
       * @param int $total total task number
       * @param string $msg message
       */
-    function update($cur, $total, $msg){
+    public function update($cur, $total, $msg){
         $cur = max($cur, 0);
         if ($cur >= $total){
             $percent = 1;
@@ -3456,7 +3398,7 @@ EOT;
     /**
      * Restart the progress bar.
      */
-    function restart(){
+    public function restart(){
         $this->percent  = 0;
         $this->lastcall = new stdClass;
         $this->lastcall->pt = 0;
