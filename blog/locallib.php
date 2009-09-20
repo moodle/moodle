@@ -682,7 +682,7 @@ class blog_listing {
 
         if (empty($this->entries)) {
             if ($sql_array = $this->get_entry_fetch_sql()) {
-                $this->entries = $DB->get_records_sql($sql_array['sql'] . " LIMIT $start, $limit", $sql_array['params']);
+                $this->entries = $DB->get_records_sql($sql_array['sql'], $sql_array['params'], $start, $limit);
             } else {
                 return false;
             }
