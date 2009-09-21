@@ -1276,14 +1276,18 @@ class global_navigation extends navigation_node {
 
                 // View course reports
                 if (has_capability('moodle/site:viewreports', $this->context)) { // basic capability for listing of reports
-                    $reportkey = $currentcourse->add(get_string('reports'), self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/stats'));
+                    $reportkey = $currentcourse->add(get_string('reports'), new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)), self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/stats'));
                     $reportnav = $currentcourse->get($reportkey);
                     if ($reportnav) {
                         $coursereports = get_plugin_list('coursereport');
                         foreach ($coursereports as $report=>$dir) {
-                            if (has_capability('coursereport/'.$report.':view', $this->context)) {
-                                $url = new moodle_url($CFG->wwwroot.'/course/report/'.$report.'/view/index.php', array('id'=>$course->id));
-                                $reportnav->add(get_string($report.':view', 'coursereport_'.$report), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+                            $libfile = $CFG->dirroot.'/course/report/'.$report.'/lib.php';
+                            if (file_exists($libfile)) {
+                                require_once($libfile);
+                                $reportfunction = $report.'_report_extend_navigation';
+                                if (function_exists($report.'_report_extend_navigation')) {
+                                    $reportfunction($reportnav, $course, $this->context);
+                                }
                             }
                         }
                     }

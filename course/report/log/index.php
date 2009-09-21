@@ -33,6 +33,8 @@
     $chooselog   = optional_param('chooselog', 0, PARAM_INT);
     $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
+    $PAGE->set_url(new moodle_url($FULLME));
+
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = $DB->get_record('course', array('id'=>$id))) {
             print_error('That\'s an invalid course id'.$id);
@@ -131,8 +133,6 @@
         } else {
             $PAGE->set_title($course->shortname .': '. $strlogs);
             $PAGE->set_heading($course->fullname);
-            $PAGE->navbar->add($strreports, new moodle_url($CFG->wwwroot.'/course/report.php', array('id'=>$course->id)));
-            $PAGE->navbar->add($strlogs);
             echo $OUTPUT->header();
         }
 

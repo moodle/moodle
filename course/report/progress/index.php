@@ -5,7 +5,8 @@ require_once($CFG->libdir . '/completionlib.php');
 define('COMPLETION_REPORT_PAGE',50);
 
 // Get course
-$course=$DB->get_record('course',array('id'=>required_param('course',PARAM_INT)));
+$id = required_param('course',PARAM_INT);
+$course=$DB->get_record('course',array('id'=>$id));
 if(!$course) {
     print_error('invalidcourseid');
 }
@@ -37,6 +38,18 @@ function csv_quote($value) {
         return '"'.str_replace('"',"'",$value).'"';
     }
 }
+
+$url = new moodle_url($CFG->wwwroot.'/course/report/progress/index.php', array('course'=>$id));
+if ($sort !== '') {
+    $url->param('sort', $sort);
+}
+if ($format !== '') {
+    $url->param('format', $format);
+}
+if ($start !== '') {
+    $url->param('start', $start);
+}
+$PAGE->set_url($url);
 
 require_login($course);
 

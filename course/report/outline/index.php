@@ -11,6 +11,8 @@
         print_error('invalidcourseid');
     }
 
+    $PAGE->set_url(new moodle_url($FULLME));
+
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('coursereport/outline:view', $context);

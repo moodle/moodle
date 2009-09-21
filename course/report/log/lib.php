@@ -1,4 +1,27 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains functions used by the log reports
+ *
+ * @package course-report
+ * @copyright  1999 onwards  Martin Dougiamas  http://moodle.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
@@ -504,4 +527,23 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo '</form>';
 }
 
-?>
+/**
+ * This function extends the navigation with the report items
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course to object for the report
+ * @param stdClass $context The context of the course
+ */
+function log_report_extend_navigation($navigation, $course, $context) {
+    global $CFG, $OUTPUT;
+    if (has_capability('coursereport/log:view', $context)) {
+        $url = new moodle_url($CFG->wwwroot.'/course/report/log/index.php', array('id'=>$course->id));
+        $navigation->add(get_string('log:view', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+    }
+    if (has_capability('coursereport/log:viewlive', $context)) {
+        $livelogs = get_string('livelogs');
+        $link = html_link::make('/course/report/log/live.php?id='. $course->id, $livelogs);
+        $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
+        $navigation->add($livelogs, $link, navigation_node::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/report'));
+    }
+}
