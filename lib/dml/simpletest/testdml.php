@@ -47,15 +47,16 @@ class dml_test extends UnitTestCase {
      * @return xmldb_table the table object.
      */
     private function get_test_table($tablename="") {
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        if ($tablename === "") {
-            if (defined('OCI_HACKERY')) {
-                static $i = 0;
-                $tablename = "unit_table".$i++;
-            } else {
-                $tablename = "unit_table";
-            }
+        if ($tablename == '') {
+            if ($DB->get_dbfamily() == 'oracle') { // To avoid one strange (OCI internal schema cache?) bug causing ORA-01007 errors
+                static $i = 0;                     // if the same table is created multiple times and SELECT * are
+                $tablename = "unit_table".$i++;    // executed against it. Curiously error doesn't happen if the query
+            } else {                               // specify the list of columns instead of *. Haven't found any logic cause
+                $tablename = "unit_table";         // for the problem in our code, just this workaround. Luckily this isn't a
+            }                                      // problem in normal usage (same table being recreated once and again)
         }
 
         $table = new xmldb_table($tablename);
@@ -608,6 +609,7 @@ class dml_test extends UnitTestCase {
         foreach ($rs as $record) {
             $counter++;
         }
+        $rs->close();
         $this->assertEqual(4, $counter);
 
         $this->assertTrue($rs = $DB->get_recordset_select($tablename, 'course = 3'));
@@ -615,6 +617,7 @@ class dml_test extends UnitTestCase {
         foreach ($rs as $record) {
             $counter++;
         }
+        $rs->close();
         $this->assertEqual(2, $counter);
     }
 
@@ -641,6 +644,7 @@ class dml_test extends UnitTestCase {
         foreach ($rs as $record) {
             $counter++;
         }
+        $rs->close();
         $this->assertEqual(2, $counter);
     }
 
