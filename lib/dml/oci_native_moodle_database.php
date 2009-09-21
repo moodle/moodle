@@ -30,13 +30,17 @@ require_once($CFG->libdir.'/dml/oci_native_moodle_recordset.php');
 
 /**
  * Native oci class representing moodle database interface.
+ *
+ * One complete reference for PHP + OCI:
+ * http://www.oracle.com/technology/tech/php/underground-php-oracle-manual.html
  */
 class oci_native_moodle_database extends moodle_database {
 
     protected $oci     = null;
-    protected $bytea_oid = null;
 
     private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
+    private $commit_status = OCI_COMMIT_ON_SUCCESS; // Autocommit ON by default. Switching to OFF (OCI_DEFAULT)
+                                                    // when playing with transactions
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -149,9 +153,9 @@ class oci_native_moodle_database extends moodle_database {
 
         ob_start();
         if (empty($this->dboptions['dbpersit'])) {
-            $this->oci = oci_connect($this->dbuser, $this->dbpass, $this->dbname, 'UTF-8');
+            $this->oci = oci_connect($this->dbuser, $this->dbpass, $this->dbname, 'AL32UTF8');
         } else {
-            $this->oci = oci_pconnect($this->dbuser, $this->dbpass, $this->dbname, 'UTF-8');
+            $this->oci = oci_pconnect($this->dbuser, $this->dbpass, $this->dbname, 'AL32UTF8');
         }
         $dberr = ob_get_contents();
         ob_end_clean();
@@ -269,7 +273,7 @@ class oci_native_moodle_database extends moodle_database {
 
     protected function parse_query($sql) {
         $stmt = oci_parse($this->oci, $sql);
-        if ($stmt === false) {
+        if ($stmt == false) {
             throw new dml_connection_exception('Can not parse sql query'); //TODO: maybe add better info
         }
         return $stmt;
@@ -289,7 +293,8 @@ class oci_native_moodle_database extends moodle_database {
                        AND TABLE_NAME LIKE '$prefix%' ESCAPE '\\'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        oci_num_fields($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_ASSOC);
@@ -322,7 +327,7 @@ class oci_native_moodle_database extends moodle_database {
               ORDER BY i.INDEX_NAME, c.COLUMN_POSITION";
 
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
@@ -367,7 +372,7 @@ class oci_native_moodle_database extends moodle_database {
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
@@ -535,6 +540,84 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * This function will handle all the records before being inserted/updated to DB for Oracle
+     * installations. This is because the "special feature" of Oracle where the empty string is
+     * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
+     *
+     * Once Moodle DB will be free of this sort of false NOT NULLS, this hack could be removed safely
+     *
+     * Note that this function is 100% private and should be used, exclusively by DML functions
+     * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
+     *
+     * This function is private and must not be used outside this driver at all
+     *
+     * @param $table string the table where the record is going to be inserted/updated (without prefix)
+     * @param $field string the field where the record is going to be inserted/updated
+     * @param $value mixed the value to be inserted/updated
+     */
+    private function oracle_dirty_hack ($table, $field, $value) {
+
+    /// Get metadata
+        $columns = $this->get_columns($table);
+        if (!isset($columns[$field])) {
+            return $value;
+        }
+        $column = $columns[$field];
+
+    /// For Oracle DB, empty strings are converted to NULLs in DB
+    /// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
+    /// planned to move some of them to NULL, if they must accept empty values and this
+    /// piece of code will become less and less used. But, for now, we need it.
+    /// What we are going to do is to examine all the data being inserted and if it's
+    /// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
+    /// such data in the best form possible ("0" for booleans and numbers and " " for the
+    /// rest of strings. It isn't optimal, but the only way to do so.
+    /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
+    /// empty strings to allow everything to work properly. DIRTY HACK.
+
+    /// If the field ins't VARCHAR or CLOB, skip
+        if ($column->meta_type != 'C' and $column->meta_type != 'X') {
+            return $value;
+        }
+
+    /// If the field isn't NOT NULL, skip (it's nullable, so accept empty-null values)
+        if (!$column->not_null) {
+            return $value;
+        }
+
+    /// If the value isn't empty, skip
+        if (!empty($value)) {
+            return $value;
+        }
+
+    /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
+    /// Try to get the best value to be inserted
+
+    /// The '0' string doesn't need any transformation, skip
+        if ($value === '0') {
+            return $value;
+        }
+
+    /// Transformations start
+        if (gettype($value) == 'boolean') {
+            return '0'; /// Transform false to '0' that evaluates the same for PHP
+
+        } else if (gettype($value) == 'integer') {
+            return '0'; /// Transform 0 to '0' that evaluates the same for PHP
+
+        } else if (gettype($value) == 'NULL') {
+            return '0'; /// Transform NULL to '0' that evaluates the same for PHP
+
+        } else if ($value === '') {
+            return ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
+                        /// (we'll transform back again on get_records_XXX functions and others)!!
+        }
+
+    /// Fail safe to original value
+        return $value;
+    }
+
+    /**
      * Is db in unicode mode?
      * @return bool
      */
@@ -544,7 +627,7 @@ class oci_native_moodle_database extends moodle_database {
                  WHERE PARAMETER = 'NLS_CHARACTERSET'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $records = null;
         oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_COLUMN);
@@ -564,14 +647,14 @@ class oci_native_moodle_database extends moodle_database {
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
 
         return true;
     }
 
-    protected function bind_params($stmt, array $params=null, $tablename=null) {
+    protected function bind_params(&$stmt, array $params=null, $tablename=null) {
         $descriptors = array();
         if ($params) {
             $columns = array();
@@ -656,7 +739,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
 
@@ -719,33 +802,36 @@ class oci_native_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if ($limitfrom and $limitnum) {
-            $sql = "SELECT oracle_o.*
-                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
-                              FROM ($sql) oracle_i
-                            ) oracle_o
-                     WHERE rownum <= :oracle_max AND oracle_rownum > :oracle_min";
+            $rawsql = "SELECT oracle_o.*
+                         FROM (SELECT oracle_i.*, rownum AS oracle_rownum
+                                 FROM ($sql) oracle_i
+                               ) oracle_o
+                        WHERE rownum <= :oracle_max AND oracle_rownum > :oracle_min";
             $params['oracle_max'] = $limitfrom + $limitnum;
             $params['oracle_min'] = $limitfrom;
 
         } else if ($limitfrom and !$limitnum) {
-            $sql = "SELECT oracle_o.*
-                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
-                              FROM ($sql) oracle_i
-                            ) oracle_o
-                     WHERE oracle_rownum > :oracle_min";
+            $rawsql = "SELECT oracle_o.*
+                         FROM (SELECT oracle_i.*, rownum AS oracle_rownum
+                                 FROM ($sql) oracle_i
+                               ) oracle_o
+                        WHERE oracle_rownum > :oracle_min";
             $params['oracle_min'] = $limitfrom;
 
         } else if (!$limitfrom and $limitnum) {
-            $sql = "SELECT *
-                      FROM ($sql)
-                     WHERE rownum <= :oracle_max";
+            $rawsql = "SELECT *
+                         FROM ($sql)
+                        WHERE rownum <= :oracle_max";
             $params['oracle_max'] = $limitnum;
+
+        } else { // No limitfrom nor limitnum
+            $rawsql = $sql;
         }
 
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
-        $stmt = $this->parse_query($sql);
+        $stmt = $this->parse_query($rawsql);
         $this->bind_params($stmt, $params);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
 
         return $this->create_recordset($stmt);
@@ -804,7 +890,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
 
         $records = null;
@@ -842,7 +928,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
 
         $records = null;
@@ -904,7 +990,7 @@ class oci_native_moodle_database extends moodle_database {
         if ($returning) {
             oci_bind_by_name($stmt, ":oracle_id", $id, -1, SQLT_LNG);
         }
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->free_descriptors($descriptors);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
@@ -937,10 +1023,12 @@ class oci_native_moodle_database extends moodle_database {
             $dataobject = (object)$dataobject;
         }
 
-        $columns = $this->get_columns($table);
-
         unset($dataobject->id);
+
+        $columns = $this->get_columns($table);
         $cleaned = array();
+        $blobs = array();
+        $clobs = array();
 
         foreach ($dataobject as $field=>$value) {
             if (!isset($columns[$field])) {
@@ -1014,7 +1102,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $this->free_descriptors($descriptors);
         oci_free_statement($stmt);
@@ -1088,7 +1176,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $this->free_descriptors($descriptors);
         oci_free_statement($stmt);
@@ -1116,7 +1204,7 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
 
@@ -1207,7 +1295,7 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
-    function sql_empty() {
+    public function sql_empty() {
         return ' ';
     }
 
@@ -1230,7 +1318,7 @@ class oci_native_moodle_database extends moodle_database {
         $sql = "BEGIN";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
         return true;
@@ -1248,7 +1336,7 @@ class oci_native_moodle_database extends moodle_database {
         $sql = "COMMIT";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
         return true;
@@ -1266,7 +1354,7 @@ class oci_native_moodle_database extends moodle_database {
         $sql = "ROLLBACK";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt);
+        $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
         return true;
