@@ -3210,6 +3210,7 @@ body.notes .notesgroup {
 
 #qtypechoicecontainer {
   display: none;
+  background: white;
 }
 body.jsenabled #qtypechoicecontainer {
   display: block;
