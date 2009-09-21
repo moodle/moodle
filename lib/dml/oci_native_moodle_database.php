@@ -293,7 +293,6 @@ class oci_native_moodle_database extends moodle_database {
                        AND TABLE_NAME LIKE '$prefix%' ESCAPE '\\'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
-        oci_num_fields($stmt);
         $result = oci_execute($stmt, $this->commit_status);
         $this->query_end($result, $stmt);
         $records = null;
@@ -654,7 +653,7 @@ class oci_native_moodle_database extends moodle_database {
         return true;
     }
 
-    protected function bind_params(&$stmt, array $params=null, $tablename=null) {
+    protected function bind_params($stmt, array $params=null, $tablename=null) {
         $descriptors = array();
         if ($params) {
             $columns = array();
