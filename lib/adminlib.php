@@ -1517,16 +1517,16 @@ class admin_setting_configtext extends admin_setting {
             }
 
         } else if ($this->paramtype === PARAM_RAW) {
-                return true;
+            return true;
 
+        } else {
+            $cleaned = clean_param($data, $this->paramtype);
+            if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
+                return true;
             } else {
-                $cleaned = clean_param($data, $this->paramtype);
-                if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
-                    return true;
-                } else {
-                    return get_string('validateerror', 'admin');
-                }
+                return get_string('validateerror', 'admin');
             }
+        }
     }
 
     /**
