@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20090917" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20090921" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2198,7 +2198,7 @@
         <INDEX NAME="parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="parentcontextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances" NEXT="blog_association">
+    <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added." PREVIOUS="block_instances" NEXT="external_services_functions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="blockinstanceid"/>
         <FIELD NAME="blockinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The block_instance this position relates to." PREVIOUS="id" NEXT="contextid"/>
@@ -2218,66 +2218,28 @@
         <INDEX NAME="blockinstanceid-contextid-pagetype-subpage" UNIQUE="true" FIELDS="blockinstanceid, contextid, pagetype, subpage"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="blog_association" COMMENT="Associations of blog entries with courses and module instances." PREVIOUS="block_positions" NEXT="blog_entries">
+    <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="block_positions" NEXT="external_services_users">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
-        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="blogid"/>
-        <FIELD NAME="blogid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="contextid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
+        <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="functionname"/>
+        <FIELD NAME="functionname" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="id" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
+        <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="contextid" UNIQUE="false" FIELDS="contextid" NEXT="blogid"/>
-        <INDEX NAME="blogid" UNIQUE="false" FIELDS="blogid" PREVIOUS="contextid"/>
-      </INDEXES>
     </TABLE>
-    <TABLE NAME="blog_entries" COMMENT="Blog entries" PREVIOUS="blog_association" NEXT="external_services_functions">
+    <TABLE NAME="external_services_users" COMMENT="users allowed to use services with restrictedusers flag" PREVIOUS="external_services_functions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The author of the entry" PREVIOUS="id" NEXT="subject"/>
-        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="blog entry" SEQUENCE="false" COMMENT="A short description for the entry" PREVIOUS="userid" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="If the content field is used, this will be used as the teaser. Otherwise it is the full text of the blog entry" PREVIOUS="subject" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The full text of the blog entry" PREVIOUS="summary" NEXT="permalink"/>
-        <FIELD NAME="permalink" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A permanent URL to the blog entry" PREVIOUS="content" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the content field" PREVIOUS="permalink" NEXT="summaryformat"/>
-        <FIELD NAME="summaryformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the summary field" PREVIOUS="format" NEXT="attachment"/>
-        <FIELD NAME="attachment" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this blog entry has attachments" PREVIOUS="summaryformat" NEXT="publishstate"/>
-        <FIELD NAME="publishstate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether this is published as a draft or to everyone" PREVIOUS="attachment" NEXT="lastmodified"/>
-        <FIELD NAME="lastmodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp of the last time this blog entry was modified" PREVIOUS="publishstate" NEXT="created"/>
-        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp at which this blog entry was created" PREVIOUS="lastmodified" NEXT="usermodified"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who last modified this blog entry" PREVIOUS="created"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
+        <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
+        <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="externalserviceid"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="usermodified"/>
-        <INDEX NAME="usermodified" UNIQUE="false" FIELDS="usermodified" PREVIOUS="userid"/>
-      </INDEXES>
     </TABLE>
-    <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="blog_entries" NEXT="external_services_users">
-       <FIELDS>
-         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
-         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="functionname"/>
-         <FIELD NAME="functionname" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
-       </FIELDS>
-       <KEYS>
-         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
-         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary"/>
-       </KEYS>
-     </TABLE>
-     <TABLE NAME="external_services_users" COMMENT="users allowed to use services with restrictedusers flag" PREVIOUS="external_services_functions">
-       <FIELDS>
-         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
-         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="externalserviceid"/>
-       </FIELDS>
-       <KEYS>
-         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
-         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
-         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="externalserviceid"/>
-       </KEYS>
-     </TABLE>
   </TABLES>
 </XMLDB>
