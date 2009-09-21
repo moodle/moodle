@@ -2477,69 +2477,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // The end of the navigation upgrade
     }
 
-/// BLOG UPGRADE
-    if ($result && $oldversion < 2009090400) {
-        // MDL-19677 Change $CFG->bloglevel to BLOG_SITE_LEVEL if BLOG_COURSE_LEVEL or BLOG_GROUP_LEVEL
-        $current_bloglevel = get_config(null, 'bloglevel');
-
-        if ($current_bloglevel == BLOG_GROUP_LEVEL || $current_bloglevel == BLOG_COURSE_LEVEL) {
-            set_config('bloglevel', BLOG_SITE_LEVEL);
-        }
-
-    /// Define table blog_association to be created
-        $table = new xmldb_table('blog_association');
-
-    /// Adding fields to table blog_association
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('blogid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-    /// Adding keys to table blog_association
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
-        $table->add_key('blogid', XMLDB_KEY_FOREIGN, array('blogid'), 'post', array('id'));
-
-        if (!$dbman->table_exists($table)) {
-        /// Launch create table for blog_association
-            $dbman->create_table($table);
-        }
-
-    /// Define table blog_external to be created
-        $table = new xmldb_table('blog_external');
-
-    /// Adding fields to table blog_external
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('url', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-
-    /// Adding keys to table blog_external
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Conditionally launch create table for blog_external
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-    /// Define field timefetched to be added to blog_external
-        $table = new xmldb_table('blog_external');
-        $field = new xmldb_field('timefetched', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
-        $index = new xmldb_index('userid_idx', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-
-    /// Conditionally launch add field timefetched
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Conditionally launch add index userid_idx
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009090400);
-    }
-
     if ($result && $oldversion < 2009090800){
         //insert new record for log_display table
         //used to record tag update.
@@ -2656,68 +2593,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009091310);
-    }
-
-    if ($result && $oldversion < 2009091700) {
-
-    /// Define table blog_entries to be created
-        $table = new xmldb_table('blog_entries');
-
-    /// Adding fields to table blog_entries
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'blog entry');
-        $table->add_field('summary', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('permalink', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('format', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('summaryformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('attachment', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('publishstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('lastmodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('created', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-
-    /// Adding keys to table blog_entries
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-    /// Conditionally launch create table for blog_entries
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Now convert all entries in post table
-        if ($blogentries = $DB->get_records('post')) {
-            foreach ($blogentries as $blogentry) {
-                $newentry = new stdClass();
-                $newentry->userid = $blogentry->userid;
-                $newentry->subject = $blogentry->subject;
-                $newentry->summary = $blogentry->summary;
-                $newentry->summaryformat = $blogentry->summaryformat;
-                $newentry->content = $blogentry->content;
-                $newentry->format = $blogentry->format;
-                $newentry->permalink = $blogentry->uniquehash;
-                $newentry->lastmodified = $blogentry->lastmodified;
-                $newentry->created = $blogentry->created;
-                $newentry->usermodified = $blogentry->usermodified;
-
-                if ($blogentry->publishstate == 'draft') {
-                    $newentry->publishstate = 0;
-                } else {
-                    $newentry->publishstate = 1;
-                }
-                $newentry->id = $DB->insert_record('blog_entries', $newentry);
-
-                // Convert records in the tag_instance table to the new ids
-                $DB->set_field('tag_instance', 'itemid', $newentry->id, array('itemtype' => 'post', 'itemid' => $blogentry->id));
-            }
-            // Convert records in the tag_instance table to the new table name
-            $DB->set_field('tag_instance', 'itemtype', 'blog_entries', array('itemtype' => 'post'));
-        }
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009091700);
     }
 
     return $result;
