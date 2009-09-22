@@ -520,7 +520,11 @@ abstract class sql_generator {
         if ($xmldb_field->getDefault() !== NULL) {
             if ($xmldb_field->getType() == XMLDB_TYPE_CHAR ||
                 $xmldb_field->getType() == XMLDB_TYPE_TEXT) {
-                    $default = "'" . $this->addslashes($xmldb_field->getDefault()) . "'";
+                    if ($xmldb_field->getDefault() === '') { // If passing empty default, use the $default_for_char one instead
+                        $default = "'" . $this->default_for_char . "'";
+                    } else {
+                        $default = "'" . $this->addslashes($xmldb_field->getDefault()) . "'";
+                    }
             } else {
                 $default = $xmldb_field->getDefault();
             }
