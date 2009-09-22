@@ -522,7 +522,7 @@ abstract class moodle_database {
      * @return array - $sql and $params
      */
     public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000', $equal=true) {
-        if (empty($items) and is_array($items)) {
+        if (is_array($items) and empty($items)) {
             throw new coding_exception('moodle_database::get_in_or_equal() does not accept empty arrays');
         }
         if ($type == SQL_PARAMS_QM) {
