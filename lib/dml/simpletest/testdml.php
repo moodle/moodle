@@ -1831,19 +1831,31 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('namenotnull', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'default value');
+        $table->add_field('namenotnullnodeflt', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('name'=>''));
+        $DB->insert_record($tablename, array('name'=>'', 'namenotnull'=>''));
         $DB->insert_record($tablename, array('name'=>null));
-        $DB->insert_record($tablename, array('name'=>'lalalal'));
+        $DB->insert_record($tablename, array('name'=>'lalala'));
         $DB->insert_record($tablename, array('name'=>0));
 
         $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE name = '".$DB->sql_empty()."'");
         $this->assertEqual(count($records), 1);
         $record = reset($records);
         $this->assertEqual($record->name, '');
+
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE namenotnull = '".$DB->sql_empty()."'");
+        $this->assertEqual(count($records), 1);
+        $record = reset($records);
+        $this->assertEqual($record->namenotnull, '');
+
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE namenotnullnodeflt = '".$DB->sql_empty()."'");
+        $this->assertEqual(count($records), 4);
+        $record = reset($records);
+        $this->assertEqual($record->namenotnullnodeflt, '');
     }
 
     function test_sql_isempty() {
