@@ -600,6 +600,7 @@
         $strmodulenameplural = get_string('modulenameplural', $module->name);
 
         $PAGE->navbar->add($streditinga);
+        $PAGE->set_heading($course->fullname);
         $PAGE->set_title($streditinga);
         $PAGE->set_focuscontrol($mform->focus());
         $PAGE->set_cacheable(false);
