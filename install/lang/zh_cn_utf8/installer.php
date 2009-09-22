@@ -17,12 +17,12 @@ $string['admindirsettingsub'] = '有一些服务器的/admin用在了如控制�
 $string['bypassed'] = '忽视';
 $string['cannotcreatelangdir'] = '无法创建 lang 目录。';
 $string['cannotcreatetempdir'] = '无法创建 temp 目录。';
-$string['cannotdownloadcomponents'] = '无法下载组件。';
+$string['cannotdownloadcomponents'] = '无法下载组件';
 $string['cannotdownloadzipfile'] = '无法下载 ZIP 文件。';
 $string['cannotfindcomponent'] = '找不到组件。';
-$string['cannotsavemd5file'] = '无法保存 md5 文件。';
-$string['cannotsavezipfile'] = '无法保存 ZIP 文件。';
-$string['cannotunzipfile'] = '无法解压文件。';
+$string['cannotsavemd5file'] = '无法保存 md5 文件';
+$string['cannotsavezipfile'] = '无法保存 ZIP 文件';
+$string['cannotunzipfile'] = '无法解压文件';
 $string['caution'] = '原因';
 $string['check'] = '检查';
 $string['chooselanguagehead'] = '选择一种语言';
@@ -30,7 +30,7 @@ $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。稍
 $string['closewindow'] = '关闭窗口';
 $string['compatibilitysettingshead'] = '检查您的PHP设置...';
 $string['compatibilitysettingssub'] = '要正确地安装Moodle，您的服务器需要通过以下测试';
-$string['componentisuptodate'] = '组件已经是最新的了。';
+$string['componentisuptodate'] = '组件已经是最新的了';
 $string['configfilenotwritten'] = '安装脚本无法自动创建一个包含您设置的config.php文件，极可能是由于Moodle目录是不能写的。您可以复制如下的代码到Moodle根目录下的config.php文件中。';
 $string['configfilewritten'] = '已经成功创建了config.php文件';
 $string['configurationcompletehead'] = '配置完毕';
@@ -122,7 +122,7 @@ Moodle需要一个位置存放上传的文件。这个目录对于Web服务器�
 $string['dirroot'] = 'Moodle目录';
 $string['dirrooterror'] = '“Moodle目录”的设置看上去不对——在那里找不到安装好的Moodle。下面的值已经重置了。';
 $string['download'] = '下载';
-$string['downloadedfilecheckfailed'] = '下载文件检查失败。';
+$string['downloadedfilecheckfailed'] = '下载文件检查失败';
 $string['downloadlanguagebutton'] = '下载“{$a}”语言包';
 $string['downloadlanguagehead'] = '下载语言包';
 $string['downloadlanguagenotneeded'] = '您可以使用缺省的语言包“{$a}”继续安装过程。';
@@ -232,8 +232,8 @@ host=\'postgresql_host\' port=\'5432\' dbname=\'postgresql_database_name\' user=
 $string['previous'] = '向前';
 $string['qtyperqpwillberemoved'] = '在更新期间，RQP问题类型将被移除。您不能再使用这种问题类型，这样就不会遇到任何问题。';
 $string['qtyperqpwillberemovedanyway'] = '在更新期间，RQP问题类型将被移除。在数据库中有一些RQP问题，这些数据会停止工作，除非在更新前您从http://moodle.org/mod/data/view.php?d=13&amp;rid=797 重新安装代码。';
-$string['remotedownloaderror'] = '下载组件至服务器失败，请校验代理设置，推荐安装 PHP cURL 扩展。<br /><br />您必须手动下载下载<a href=\"$a->url\">$a->url</a> ，拷贝至服务器上的“$a->dest”并解压至此。';
-$string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen 失败)。<br /><br />您应该 <a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}” 您的服务器上然后解压。';
+$string['remotedownloaderror'] = '下载组件至服务器失败，请校验代理设置，推荐安装 PHP cURL 扩展。<br /><br />您必须手动下载下载<a href=\"{$a->url}\">{$a->url}</a> ，拷贝至服务器上的“{$a->dest}”并解压至此。';
+$string['remotedownloadnotallowed'] = '不允许为您的服务器下载组件(allow_url_fopen 被禁用)。<br /><br />您应该 <a href=\"{$a->url}\">{$a->url}</a> 先手动的把它复制到“{$a->dest}” 您的服务器上然后解压。';
 $string['report'] = '报表';
 $string['restricted'] = '受限的';
 $string['safemode'] = '安全模式';
