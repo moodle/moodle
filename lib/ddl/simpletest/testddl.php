@@ -79,6 +79,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, 'Moodle');
         $table->add_field('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('thirdname', XMLDB_TYPE_CHAR, '30', null, null, null, ''); // NULL + empty default
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
         $table->add_field('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null);
         $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null);
@@ -236,10 +237,20 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['course']->meta_type, 'I');
         $this->assertEqual($columns['name']->meta_type, 'C');
         $this->assertEqual($columns['secondname']->meta_type, 'C');
+        $this->assertEqual($columns['thirdname']->meta_type, 'C');
         $this->assertEqual($columns['intro']->meta_type, 'X');
         $this->assertEqual($columns['avatar']->meta_type, 'B');
         $this->assertEqual($columns['grade']->meta_type, 'N');
         $this->assertEqual($columns['percentfloat']->meta_type, 'N');
+        // some defaults
+        $this->assertTrue($columns['course']->has_default);
+        $this->assertEqual($columns['course']->default_value, 0);
+        $this->assertTrue($columns['name']->has_default);
+        $this->assertEqual($columns['name']->default_value, 'Moodle');
+        $this->assertTrue($columns['secondname']->has_default);
+        $this->assertEqual($columns['secondname']->default_value, $DB->sql_empty()); // NOT NULL cols have empty default applied
+        $this->assertTrue($columns['thirdname']->has_default);
+        $this->assertEqual($columns['thirdname']->default_value, $DB->sql_empty()); // empty defaults have proper empties applied
 
         // basic get_indexes() test
         $indexes = $DB->get_indexes('test_table1');
@@ -253,6 +264,11 @@ class ddl_test extends UnitTestCase {
                 'secondname' => 'not important',
                 'intro'      => 'not important');
         $this->assertIdentical($DB->insert_record('test_table1', $rec), 1);
+
+        // check defined defaults are working ok
+        $dbrec = $DB->get_record('test_table1', array('id' => 1));
+        $this->assertEqual($dbrec->name, 'Moodle');
+        $this->assertEqual($dbrec->thirdname, '');
 
     }
 
@@ -1289,7 +1305,7 @@ class ddl_test extends UnitTestCase {
 
         // Get columns and perform some basic tests
         $columns = $DB->get_columns('test_table1');
-        $this->assertEqual(count($columns), 10);
+        $this->assertEqual(count($columns), 11);
         $this->assertTrue($columns['name'] instanceof database_column_info);
         $this->assertEqual($columns['name']->max_length, 30);
         $this->assertTrue($columns['name']->has_default);
