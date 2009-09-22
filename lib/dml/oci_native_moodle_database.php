@@ -546,7 +546,7 @@ class oci_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     private function normalise_value($column, $value) {
-        if (is_bool($value)) { /// Always, convert boolean to int
+        if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
         } else if ($column->meta_type == 'B') { // CLOB detected, we return 'blob' array instead of raw value to allow
@@ -568,14 +568,13 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
-     * This function will handle all the records before being inserted/updated to DB for Oracle
+     * This function will handle all the column values before being inserted/updated to DB for Oracle
      * installations. This is because the "special feature" of Oracle where the empty string is
      * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.
-     *
-     * Once Moodle DB will be free of this sort of false NOT NULLS, this hack could be removed safely
+     * (and with empties handling in general)
      *
      * Note that this function is 100% private and should be used, exclusively by DML functions
-     * in this file. Also, this is considered a DIRTY HACK to be removed when possible. (stronk7)
+     * in this file. Also, this is considered a DIRTY HACK to be removed when possible.
      *
      * This function is private and must not be used outside this driver at all
      *
@@ -585,63 +584,84 @@ class oci_native_moodle_database extends moodle_database {
      */
     private function oracle_dirty_hack ($table, $field, $value) {
 
-    /// Get metadata
+        // Get metadata
         $columns = $this->get_columns($table);
         if (!isset($columns[$field])) {
             return $value;
         }
         $column = $columns[$field];
 
-    /// For Oracle DB, empty strings are converted to NULLs in DB
-    /// and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
-    /// planned to move some of them to NULL, if they must accept empty values and this
-    /// piece of code will become less and less used. But, for now, we need it.
-    /// What we are going to do is to examine all the data being inserted and if it's
-    /// an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
-    /// such data in the best form possible ("0" for booleans and numbers and " " for the
-    /// rest of strings. It isn't optimal, but the only way to do so.
-    /// In the oppsite, when retrieving records from Oracle, we'll decode " " back to
-    /// empty strings to allow everything to work properly. DIRTY HACK.
+        // !! This paragraph explains behaviour before Moodle 2.0:
+        //
+        // For Oracle DB, empty strings are converted to NULLs in DB
+        // and this breaks a lot of NOT NULL columns currenty Moodle. In the future it's
+        // planned to move some of them to NULL, if they must accept empty values and this
+        // piece of code will become less and less used. But, for now, we need it.
+        // What we are going to do is to examine all the data being inserted and if it's
+        // an empty string (NULL for Oracle) and the field is defined as NOT NULL, we'll modify
+        // such data in the best form possible ("0" for booleans and numbers and " " for the
+        // rest of strings. It isn't optimal, but the only way to do so.
+        // In the oppsite, when retrieving records from Oracle, we'll decode " " back to
+        // empty strings to allow everything to work properly. DIRTY HACK.
 
-    /// If the field ins't VARCHAR or CLOB, skip
+        // !! These paragraphs explain the rationale about the change for Moodle 2.0:
+        //
+        // Before Moodle 2.0, we only used to apply this DIRTY HACK to NOT NULL columns, as
+        // stated above, but it causes one problem in NULL columns where both empty strings
+        // and real NULLs are stored as NULLs, being impossible to diferentiate them when
+        // being retrieved from DB.
+        //
+        // So, starting with Moodle 2.0, we are going to apply the DIRTY HACK to all the
+        // CHAR/CLOB columns no matter of their nullability. That way, when retrieving
+        // NULLABLE fields we'll get proper empties and NULLs diferentiated, so we'll be able
+        // to rely in NULL/empty/content contents without problems, until now that wasn't
+        // possible at all.
+        //
+        // No breackage with old data is expected as long as at the time of writing this
+        // (20090922) all the current uses of both sql_empty() and sql_isempty() has been
+        // revised in 2.0 and all them were being performed against NOT NULL columns,
+        // where nothing has changed (the DIRTY HACK was already being applied).
+        //
+        // !! Conclusions:
+        //
+        // From Moodle 2.0 onwards, ALL empty strings in Oracle DBs will be stored as
+        // 1-whitespace char, ALL NULLs as NULLs and, obviously, content as content. And
+        // those 1-whitespace chars will be converted back to empty strings by all the
+        // get_field/record/set() functions transparently and any SQL needing direct handling
+        // of empties will need to use the sql_empty() and sql_isempty() helper functions.
+        // MDL-17491.
+
+        // If the field ins't VARCHAR or CLOB, skip
         if ($column->meta_type != 'C' and $column->meta_type != 'X') {
             return $value;
         }
 
-    /// If the field isn't NOT NULL, skip (it's nullable, so accept empty-null values)
-        if (!$column->not_null) {
-            return $value;
-        }
-
-    /// If the value isn't empty, skip
+        // If the value isn't empty, skip
         if (!empty($value)) {
             return $value;
         }
 
-    /// Now, we have one empty value, going to be inserted to one NOT NULL, VARCHAR2 or CLOB field
-    /// Try to get the best value to be inserted
+        // Now, we have one empty value, going to be inserted to one VARCHAR2 or CLOB field
+        // Try to get the best value to be inserted
 
-    /// The '0' string doesn't need any transformation, skip
+        // The '0' string doesn't need any transformation, skip
         if ($value === '0') {
             return $value;
         }
 
-    /// Transformations start
+        // Transformations start
         if (gettype($value) == 'boolean') {
-            return '0'; /// Transform false to '0' that evaluates the same for PHP
+            return '0'; // Transform false to '0' that evaluates the same for PHP
 
         } else if (gettype($value) == 'integer') {
-            return '0'; /// Transform 0 to '0' that evaluates the same for PHP
-
-        } else if (gettype($value) == 'NULL') {
-            return '0'; /// Transform NULL to '0' that evaluates the same for PHP
+            return '0'; // Transform 0 to '0' that evaluates the same for PHP
 
         } else if ($value === '') {
-            return ' '; /// Transform '' to ' ' that DONT'T EVALUATE THE SAME
-                        /// (we'll transform back again on get_records_XXX functions and others)!!
+            return ' '; // Transform '' to ' ' that DONT'T EVALUATE THE SAME
+                        // (we'll transform back again on get_records_XXX functions and others)!!
         }
 
-    /// Fail safe to original value
+        // Fail safe to original value
         return $value;
     }
 
@@ -695,7 +715,7 @@ class oci_native_moodle_database extends moodle_database {
                     if (isset($value['clob'])) {
                         $lob = oci_new_descriptor($this->oci, OCI_DTYPE_LOB);
                         oci_bind_by_name($stmt, $key, $lob, -1, SQLT_CLOB);
-                        $lob->writeTemporary($params[$key]['clob'], OCI_TEMP_CLOB);
+                        $lob->writeTemporary($this->oracle_dirty_hack($tablename, $key, $params[$key]['clob']), OCI_TEMP_CLOB);
                         $descriptors[] = $lob;
                         continue; // Column binding finished, go to next one
                     } else if (isset($value['blob'])) {
@@ -735,8 +755,8 @@ class oci_native_moodle_database extends moodle_database {
                         if (strlen($value) > 4000) {
                             // TODO: Shouldn't arrive here ever! BIG Clobs already bound above. Exception!
                         }
-                    default: // Bind as CHAR
-                        oci_bind_by_name($stmt, $key, $params[$key]);
+                    default: // Bind as CHAR (applying dirty hack)
+                        oci_bind_by_name($stmt, $key, $this->oracle_dirty_hack($tablename, $key, $params[$key]));
                 }
             }
         }
@@ -1344,19 +1364,19 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
-        if ($nullablefield) {
-            return " $fieldname IS NULL ";                    /// empties in nullable fields are stored as
-        } else {                                              /// NULLs
-            if ($textfield) {
-                return " ".$this->sql_compare_text($fieldname)." = ' ' "; /// oracle_dirty_hack inserts 1-whitespace
-            } else {                                          /// in NOT NULL varchar and text columns so
-                return " $fieldname = ' ' ";                  /// we need to look for that in any situation
-            }
+        if ($textfield) {
+            return " ".$this->sql_compare_text($fieldname)." = '".$this->sql_empty()."' ";
+        } else {
+            return " $fieldname = '".$this->sql_empty()."' ";
         }
     }
 
     public function sql_empty() {
         return ' ';
+    }
+
+    public function sql_order_by_text($fieldname, $numchars=32) {
+        return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
     }
 
 /// session locking
@@ -1373,14 +1393,7 @@ class oci_native_moodle_database extends moodle_database {
         if (!parent::begin_sql()) {
             return false;
         }
-        return true;
-
-        $sql = "BEGIN";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
-        $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt, $this->commit_status);
-        $this->query_end($result, $stmt);
-        oci_free_statement($stmt);
+        $this->commit_status = OCI_DEFAULT; //Done! ;-)
         return true;
     }
 
@@ -1391,14 +1404,11 @@ class oci_native_moodle_database extends moodle_database {
         if (!parent::commit_sql()) {
             return false;
         }
-        return true;
 
-        $sql = "COMMIT";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
-        $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt, $this->commit_status);
-        $this->query_end($result, $stmt);
-        oci_free_statement($stmt);
+        $this->query_start('--oracle_commit', NULL, SQL_QUERY_AUX);
+        $result = oci_commit($this->oci);
+        $this->commit_status = OCI_COMMIT_ON_SUCCESS;
+        $this->query_end($result);
         return true;
     }
 
@@ -1409,14 +1419,11 @@ class oci_native_moodle_database extends moodle_database {
         if (!parent::rollback_sql()) {
             return false;
         }
-        return true;
 
-        $sql = "ROLLBACK";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
-        $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt, $this->commit_status);
-        $this->query_end($result, $stmt);
-        oci_free_statement($stmt);
+        $this->query_start('--oracle_rollback', NULL, SQL_QUERY_AUX);
+        $result = oci_rollback($this->oci);
+        $this->commit_status = OCI_COMMIT_ON_SUCCESS;
+        $this->query_end($result);
         return true;
     }
 }
