@@ -110,8 +110,7 @@ class oracle_sql_generator extends sql_generator {
      */
     public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = $this->getDropTableSQL($xmldb_table);
-        $tablename = $xmldb_table->getName();
-        array_unshift($sqlarr, "TRUNCATE TABLE {".$tablename."}"); // oracle requires truncate before being able to drop a temp table
+        array_unshift($sqlarr, "TRUNCATE TABLE ". $this->getTableName($xmldb_table)); // oracle requires truncate before being able to drop a temp table
         return $sqlarr;
     }
 
