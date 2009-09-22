@@ -98,6 +98,13 @@
                 die;
             }
 
+            // If currency is incorrectly set then someone maybe trying to cheat the system 
+
+            if ($data->mc_currency != $course->currency) {
+                email_paypal_error_to_admin("Currency does not match course settings, received: ".addslashes($data->mc_currency), $data);
+                die;
+            }
+
             // If status is pending and reason is other than echeck then we are on hold until further notice
             // Email user to let them know. Email admin.
 
