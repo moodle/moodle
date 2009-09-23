@@ -37,6 +37,8 @@ class mssql_native_moodle_database extends moodle_database {
     protected $mssql     = null;
     private $temptables; // Control existing temptables (mssql_moodle_temptables object)
 
+    protected $last_error_reporting; // To handle mssql driver default verbosity
+
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -251,6 +253,8 @@ class mssql_native_moodle_database extends moodle_database {
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
         parent::query_start($sql, $params, $type, $extrainfo);
+        // mssql driver tends to send debug to output, we do not need that ;-)
+        $this->last_error_reporting = error_reporting(0);
     }
 
     /**
@@ -259,6 +263,8 @@ class mssql_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_end($result) {
+        // reset original debug level
+        error_reporting($this->last_error_reporting);
         parent::query_end($result);
     }
 
@@ -596,7 +602,7 @@ class mssql_native_moodle_database extends moodle_database {
         $this->reset_caches();
 
         $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
-        $result = @mssql_query($sql, $this->mssql);
+        $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
         return true;
@@ -659,7 +665,7 @@ class mssql_native_moodle_database extends moodle_database {
         }
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
         $this->free_result($result);
 
@@ -700,11 +706,11 @@ class mssql_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
         if ($limitfrom) {
-            @mssql_data_seek($result, $limitfrom);
+            mssql_data_seek($result, $limitfrom);
         }
 
         return $this->create_recordset($result);
@@ -812,7 +818,7 @@ class mssql_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
         if ($returning !== "") {
@@ -949,7 +955,7 @@ class mssql_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
@@ -1026,7 +1032,7 @@ class mssql_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
@@ -1055,7 +1061,7 @@ class mssql_native_moodle_database extends moodle_database {
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
-        $result = @mssql_query($rawsql, $this->mssql);
+        $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
