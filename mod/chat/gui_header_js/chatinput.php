@@ -1,42 +1,42 @@
-<?php  // $Id$
+<?php
 
-    define('NO_MOODLE_COOKIES', true); // session not used here
+define('NO_MOODLE_COOKIES', true); // session not used here
 
-    require('../../../config.php');
-    require('../lib.php');
+require('../../../config.php');
+require('../lib.php');
 
-    $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
-    $chatid   = required_param('chat_id', PARAM_INT);
+$chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
+$chatid   = required_param('chat_id', PARAM_INT);
 
-    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-        print_error('notlogged', 'chat');
-    }
-    if (!$chat = $DB->get_record('chat', array('id'=>$chatid))) {
-        error('Could not find that chat room!');
-    }
+if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
+    print_error('notlogged', 'chat');
+}
+if (!$chat = $DB->get_record('chat', array('id'=>$chatid))) {
+    print_error('invalidid', 'chat');
+}
 
-    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
-        error('Could not find the course this belongs to!');
-    }
+if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
+    print_error('invalidcourseid');
+}
 
-    if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        error('Course Module ID was incorrect');
-    }
+if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+    print_error('invalidcoursemodule');
+}
 
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/chatinput.php', array('chat_sid'=>$chat_sid, 'chat_id'=>$chatid)));
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/chatinput.php', array('chat_sid'=>$chat_sid, 'chat_id'=>$chatid)));
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    //Get the user theme
-    $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
+//Get the user theme
+$USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
-    //Setup course, lang and theme
-    $PAGE->set_course($course);
-    $PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
-    $PAGE->set_generaltype('embedded');
-    $PAGE->set_focuscontrol('input_chat_message');
-    $PAGE->set_cacheable(false);
-    echo $OUTPUT->header();
+//Setup course, lang and theme
+$PAGE->set_course($course);
+$PAGE->requires->js('mod/chat/gui_header_js/chat_gui_header.js')->in_head();
+$PAGE->set_generaltype('embedded');
+$PAGE->set_focuscontrol('input_chat_message');
+$PAGE->set_cacheable(false);
+echo $OUTPUT->header();
 
 ?>
     <form action="../empty.php" method="post" target="empty" id="inputForm"

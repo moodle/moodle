@@ -1,86 +1,96 @@
-<?php  // $Id$
+<?php
 
-    define('NO_MOODLE_COOKIES', true); // session not used here
+define('NO_MOODLE_COOKIES', true); // session not used here
 
-    require('../../../config.php');
-    require('../lib.php');
+require('../../../config.php');
+require('../lib.php');
 
-    $chat_sid      = required_param('chat_sid', PARAM_ALPHANUM);
-    $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
-    $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
+$chat_sid      = required_param('chat_sid', PARAM_ALPHANUM);
+$chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
+$chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 
-    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-        print_error('notlogged', 'chat');
-    }
+$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/jsupdate.php', array('chat_sid'=>$chat_sid));
+if ($chat_lasttime !== 0) {
+    $url->param('chat_lasttime', $chat_lasttime);
+}
+if ($chat_lastrow !== 1) {
+    $url->param('chat_lastrow', $chat_lastrow);
+}
+$PAGE->set_url($url);
 
-    //Get the minimal course
-    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
-        print_error('invalidcourseid');
-    }
 
-    //Get the user theme and enough info to be used in chat_format_message() which passes it along to
-    if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
-        print_error('invaliduser');
-    }
-    $USER->description = '';
+if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
+    print_error('notlogged', 'chat');
+}
 
-    //Setup course, lang and theme
-    $PAGE->set_course($course);
+//Get the minimal course
+if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
+    print_error('invalidcourseid');
+}
 
-    // force deleting of timed out users if there is a silence in room or just entering
-    if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
-        // must be done before chat_get_latest_message!!!
-        chat_delete_old_users();
-    }
+//Get the user theme and enough info to be used in chat_format_message() which passes it along to
+if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
+    print_error('invaliduser');
+}
+$USER->description = '';
 
-    if ($message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
-        $chat_newlasttime = $message->timestamp;
-    } else {
-        $chat_newlasttime = 0;
-    }
+//Setup course, lang and theme
+$PAGE->set_course($course);
 
-    if ($chat_lasttime == 0) { //display some previous messages
-        $chat_lasttime = time() - $CFG->chat_old_ping; //TO DO - any better value??
-    }
+// force deleting of timed out users if there is a silence in room or just entering
+if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
+    // must be done before chat_get_latest_message!!!
+    chat_delete_old_users();
+}
 
-    $timenow    = time();
+if ($message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+    $chat_newlasttime = $message->timestamp;
+} else {
+    $chat_newlasttime = 0;
+}
 
-    $params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'lasttime'=>$chat_lasttime); 
+if ($chat_lasttime == 0) { //display some previous messages
+    $chat_lasttime = time() - $CFG->chat_old_ping; //TO DO - any better value??
+}
 
-    $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
+$timenow    = time();
 
-    $messages = $DB->get_records_select("chat_messages_current",
-                        "chatid = :chatid AND timestamp > :lasttime $groupselect", $params,
-                        "timestamp ASC");
+$params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'lasttime'=>$chat_lasttime); 
 
-    if ($messages) {
-        $num = count($messages);
-    } else {
-        $num = 0;
-    }
+$groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 
-    $chat_newrow = ($chat_lastrow + $num) % 2;
+$messages = $DB->get_records_select("chat_messages_current",
+                    "chatid = :chatid AND timestamp > :lasttime $groupselect", $params,
+                    "timestamp ASC");
 
-    // no &amp; in url, does not work in header!
-    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow";
-    $refreshurlamp = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&amp;chat_lasttime=$chat_newlasttime&amp;chat_lastrow=$chat_newrow";
+if ($messages) {
+    $num = count($messages);
+} else {
+    $num = 0;
+}
 
-    header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
-    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Content-Type: text/html; charset=utf-8');
-    header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
+$chat_newrow = ($chat_lastrow + $num) % 2;
 
-    /// required stylesheets
-    $stylesheetshtml = '';
-    foreach ($CFG->stylesheets as $stylesheet) {
-        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-    }
+// no &amp; in url, does not work in header!
+$refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow";
+$refreshurlamp = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&amp;chat_lasttime=$chat_newlasttime&amp;chat_lastrow=$chat_newrow";
 
-    // use ob to be able to send Content-Length headers
-    // needed for Keep-Alive to work
-    ob_start();
+header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Content-Type: text/html; charset=utf-8');
+header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
+
+/// required stylesheets
+$stylesheetshtml = '';
+foreach ($CFG->stylesheets as $stylesheet) {
+    $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
+}
+
+// use ob to be able to send Content-Length headers
+// needed for Keep-Alive to work
+ob_start();
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

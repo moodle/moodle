@@ -3,6 +3,13 @@ require_once('../../../config.php');
 require_once('../lib.php');
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
+
+$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_ajax/index.php', array('id'=>$id));
+if ($groupid !== 0) {
+    $url->param('groupid', $groupid);
+}
+$PAGE->set_url($url);
+
 if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
     print_error('invalidid', 'chat');
 }

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /** jsupdated.php - notes by Martin Langhoff <martin@catalyst.net.nz>
  ** 
@@ -16,60 +16,72 @@
  **/
 
 
-    define('CHAT_MAX_CLIENT_UPDATES', 1000);
-    define('NO_MOODLE_COOKIES', true); // session not used here
+define('CHAT_MAX_CLIENT_UPDATES', 1000);
+define('NO_MOODLE_COOKIES', true); // session not used here
 
-    require('../../../config.php');
-    require('../lib.php');
+require('../../../config.php');
+require('../lib.php');
 
-    // we are going to run for a long time
-    // avoid being terminated by php
-    @set_time_limit(0);
+// we are going to run for a long time
+// avoid being terminated by php
+@set_time_limit(0);
 
-    $chat_sid      = required_param('chat_sid',          PARAM_ALPHANUM);
-    $chat_lasttime = optional_param('chat_lasttime',  0, PARAM_INT);
-    $chat_lastrow  = optional_param('chat_lastrow',   1, PARAM_INT);
-    $chat_lastid   = optional_param('chat_lastid',    0, PARAM_INT);
+$chat_sid      = required_param('chat_sid',          PARAM_ALPHANUM);
+$chat_lasttime = optional_param('chat_lasttime',  0, PARAM_INT);
+$chat_lastrow  = optional_param('chat_lastrow',   1, PARAM_INT);
+$chat_lastid   = optional_param('chat_lastid',    0, PARAM_INT);
 
-    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-        print_error('notlogged', 'chat');
-    }
+$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/jsupdated.php', array('chat_sid'=>$chat_sid));
+if ($chat_lasttime !== 0) {
+    $url->param('chat_lasttime', $chat_lasttime);
+}
+if ($chat_lastrow !== 1) {
+    $url->param('chat_lastrow', $chat_lastrow);
+}
+if ($chat_lastid !== 1) {
+    $url->param('chat_lastid', $chat_lastid);
+}
+$PAGE->set_url($url);
 
-    //Get the minimal course
-    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
-        print_error('invalidcourseid');
-    }
+if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
+    print_error('notlogged', 'chat');
+}
 
-    //Get the user theme and enough info to be used in chat_format_message() which passes it along to
-    // chat_format_message_manually() -- and only id and timezone are used.
-    if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
-        print_error('invaliduser');
-    }
-    $USER->description = '';
+//Get the minimal course
+if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
+    print_error('invalidcourseid');
+}
 
-    //Setup course, lang and theme
-    $PAGE->set_course($course);
+//Get the user theme and enough info to be used in chat_format_message() which passes it along to
+// chat_format_message_manually() -- and only id and timezone are used.
+if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
+    print_error('invaliduser');
+}
+$USER->description = '';
 
-    // force deleting of timed out users if there is a silence in room or just entering
-    if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
-        // must be done before chat_get_latest_message!!!
-        chat_delete_old_users();
-    }
+//Setup course, lang and theme
+$PAGE->set_course($course);
 
-    //
-    // Time to send headers, and lay out the basic JS updater page
-    //
-    header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
-    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Content-Type: text/html; charset=utf-8');
+// force deleting of timed out users if there is a silence in room or just entering
+if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
+    // must be done before chat_get_latest_message!!!
+    chat_delete_old_users();
+}
 
-    /// required stylesheets
-    $stylesheetshtml = '';
-    foreach ($CFG->stylesheets as $stylesheet) {
-        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-    }
+//
+// Time to send headers, and lay out the basic JS updater page
+//
+header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Content-Type: text/html; charset=utf-8');
+
+/// required stylesheets
+$stylesheetshtml = '';
+foreach ($CFG->stylesheets as $stylesheet) {
+    $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

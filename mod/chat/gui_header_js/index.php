@@ -1,62 +1,69 @@
-<?php  // $Id$
+<?php
 
-    require_once('../../../config.php');
-    require_once('../lib.php');
+require_once('../../../config.php');
+require_once('../lib.php');
 
-    $id      = required_param('id', PARAM_INT);
-    $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
+$id      = required_param('id', PARAM_INT);
+$groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
-    if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
-        print_error('invalidid', 'chat');
-    }
+$url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_header_js/index.php', array('id'=>$id));
+if ($groupid !== 0) {
+    $url->param('groupid', $groupid);
+}
+$PAGE->set_url($url);
 
-    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
-        print_error('invalidcourseid');
-    }
+if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
+    print_error('invalidid', 'chat');
+}
 
-    if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
+if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
+    print_error('invalidcourseid');
+}
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+    print_error('invalidcoursemodule');
+}
 
-    require_login($course->id, false, $cm);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    require_capability('mod/chat:chat',$context);
+require_login($course->id, false, $cm);
 
-    if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-        echo $OUTPUT->header();
-        notice(get_string("activityiscurrentlyhidden"));
-    }
+require_capability('mod/chat:chat',$context);
+
+if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    echo $OUTPUT->header();
+    notice(get_string("activityiscurrentlyhidden"));
+}
 
 /// Check to see if groups are being used here
-     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
-        if ($groupid = groups_get_activity_group($cm)) {
-            if (!$group = groups_get_group($groupid, false)) {
-                print_error('invalidgroupid');
-            }
-            $groupname = ': '.$group->name;
-        } else {
-            $groupname = ': '.get_string('allparticipants');
+ if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+    if ($groupid = groups_get_activity_group($cm)) {
+        if (!$group = groups_get_group($groupid, false)) {
+            print_error('invalidgroupid');
         }
+        $groupname = ': '.$group->name;
     } else {
-        $groupid = 0;
-        $groupname = '';
+        $groupname = ': '.get_string('allparticipants');
     }
+} else {
+    $groupid = 0;
+    $groupname = '';
+}
 
-    $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
+$strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
-    if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
-        print_error('cantlogin', 'chat');
-    }
+if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
+    print_error('cantlogin', 'chat');
+}
 
-    $params = "chat_id=$id&chat_sid={$chat_sid}";
+$params = "chat_id=$id&chat_sid={$chat_sid}";
 
-    // fallback to the old jsupdate, but allow other update modes
-    $updatemode = 'jsupdate';
-    if (!empty($CFG->chat_normal_updatemode)) {
-        $updatemode = $CFG->chat_normal_updatemode;
-    }
+// fallback to the old jsupdate, but allow other update modes
+$updatemode = 'jsupdate';
+if (!empty($CFG->chat_normal_updatemode)) {
+    $updatemode = $CFG->chat_normal_updatemode;
+}
+
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /// This page prints reports and info about chats
 
@@ -10,6 +10,21 @@
     $end           = optional_param('end', 0, PARAM_INT);     // End of period
     $deletesession = optional_param('deletesession', 0, PARAM_BOOL);
     $confirmdelete = optional_param('confirmdelete', 0, PARAM_BOOL);
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/chat/report.php', array('id'=>$id));
+    if ($start !== 0) {
+        $url->param('start', $start);
+    }
+    if ($end !== 0) {
+        $url->param('end', $end);
+    }
+    if ($deletesession !== 0) {
+        $url->param('deletesession', $deletesession);
+    }
+    if ($confirmdelete !== 0) {
+        $url->param('confirmdelete', $confirmdelete);
+    }
+    $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('chat', $id)) {
         print_error('invalidcoursemodule');

@@ -1,26 +1,28 @@
-<?php  // $Id$
+<?php
 
-    define('NO_MOODLE_COOKIES', true); // session not used here
+define('NO_MOODLE_COOKIES', true); // session not used here
 
-    require('../../../config.php');
-    require('../lib.php');
+require('../../../config.php');
+require('../lib.php');
 
-    $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
+$chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
 
-    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-        print_error('notlogged', 'chat');
-    }
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/gui_sockets/chatinput.php', array('chat_sid'=>$chat_sid)));
 
-    //Get the user theme
-    $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
+if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
+    print_error('notlogged', 'chat');
+}
 
-    //Setup course, lang and theme
-    $PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
-    $PAGE->requires->js('mod/chat/gui_sockets/chat_gui_sockets.js')->in_head();
-    $PAGE->requires->js_function_call('setfocus');
-    $PAGE->set_focuscontrol('chat_message');
-    $PAGE->set_cacheable(false);
-    echo $OUTPUT->header();
+//Get the user theme
+$USER = $DB->get_record('user', array('id'=>$chatuser->userid));
+
+//Setup course, lang and theme
+$PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
+$PAGE->requires->js('mod/chat/gui_sockets/chat_gui_sockets.js')->in_head();
+$PAGE->requires->js_function_call('setfocus');
+$PAGE->set_focuscontrol('chat_message');
+$PAGE->set_cacheable(false);
+echo $OUTPUT->header();
 
 ?>
 

@@ -37,12 +37,13 @@ if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
 if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
     chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
 }
-if (isguest()) {
+if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
     chat_print_error('ERROR', get_string('notlogged','chat'));
 }
 
 // setup $PAGE so that format_text will work properly
 $PAGE->set_cm($cm, $course, $chat);
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/chat/chat_ajax.php', array('chat_sid'=>$chat_sid)));
 
 ob_start();
 header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
