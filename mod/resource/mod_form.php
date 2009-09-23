@@ -56,9 +56,14 @@ class mod_resource_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
-        $options = array('mainfile'=>'id_mainfile', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
+        $mainfile = 'mainfile';
+
+        $options = array('mainfile'=>$mainfile, 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
+
+        $mform->addElement('hidden', $mainfile, '', array('id'=>$mainfile.'-id'));
+        $mform->addElement('static', '', 'Main file', '<div id="'.$mainfile.'-label"></div>');
         $mform->addElement('filemanager', 'files', get_string('file'), null, $options);
-        $mform->addElement('text', 'mainfile', 'Main file');
+
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'resource'));
 
