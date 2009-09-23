@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -7,6 +7,12 @@
     $id         = required_param('id', PARAM_INT);                 // Course Module ID
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/choice/view.php', array('id'=>$id));
+    if ($action !== '') {
+        $url->param('action', $action);
+    }
+    $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
         print_error('invalidcoursemodule');
@@ -37,7 +43,7 @@
     }
 
     $PAGE->set_title(format_string($choice->name));
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strchoice));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'choice'));
     echo $OUTPUT->header();
 
 /// Submit any new data if there is any

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -8,6 +8,18 @@
     $download   = optional_param('download', '', PARAM_ALPHA);
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); //get array of responses to delete.
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/choice/report.php', array('id'=>$id));
+    if ($format !== CHOICE_PUBLISH_NAMES) {
+        $url->param('format', $format);
+    }
+    if ($download !== '') {
+        $url->param('download', $download);
+    }
+    if ($action !== '') {
+        $url->param('action', $action);
+    }
+    $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
         print_error("invalidcoursemodule");
@@ -41,7 +53,7 @@
     if (!$download) {
         $PAGE->navbar->add($strresponses);
         $PAGE->set_title(format_string($choice->name).": $strresponses");
-        $PAGE->set_button(update_module_button($cm->id, $course->id, $strchoice));
+        $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'choice'));
         echo $OUTPUT->header();
         /// Check to see if groups are being used in this choice
         $groupmode = groups_get_activity_groupmode($cm);
