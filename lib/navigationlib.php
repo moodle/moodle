@@ -380,7 +380,7 @@ class navigation_node {
      * @return string The HTML content
      */
     public function content($shorttext=false) {
-        global $OUTPUT, $CFG;
+        global $OUTPUT, $CFG, $PAGE;
         if (!$this->display) {
             return '';
         }
@@ -409,7 +409,7 @@ class navigation_node {
                 $link->add_class('dimmed');
             }
 
-            if (!empty($CFG->framename)) {
+            if (!empty($CFG->framename) && $PAGE->generaltype=='topframe') {
                 $breakoutaction = new breakout_of_frame_action();
                 $link->add_action($breakoutaction);
             }
