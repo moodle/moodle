@@ -42,6 +42,8 @@ class oci_native_moodle_database extends moodle_database {
     private $commit_status = OCI_COMMIT_ON_SUCCESS; // Autocommit ON by default. Switching to OFF (OCI_DEFAULT)
                                                     // when playing with transactions
 
+    protected $last_error_reporting; // To handle oci driver default verbosity
+
     /**
      * Detects if all needed PHP stuff installed.
      * Note: can be used before connect()
@@ -200,6 +202,8 @@ class oci_native_moodle_database extends moodle_database {
      */
     protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
         parent::query_start($sql, $params, $type, $extrainfo);
+        // oci driver tents to send debug to output, we do not need that ;-)
+        $this->last_error_reporting = error_reporting(0);
     }
 
     /**
@@ -208,6 +212,8 @@ class oci_native_moodle_database extends moodle_database {
      * @return void
      */
     protected function query_end($result, $stmt=null) {
+        // reset original debug level
+        error_reporting($this->last_error_reporting);
         if ($stmt and $result === false) {
             // Look for stmt error and store it
             if (is_resource($stmt)) {
