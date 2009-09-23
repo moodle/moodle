@@ -158,6 +158,9 @@ class navigation_node {
             }
             if (array_key_exists('action', $properties)) {
                 $this->action = $properties['action'];
+                if (is_string($this->action)) {
+                    $this->action = new moodle_url($this->action);
+                }
                 $this->check_if_active();
             }
             if (array_key_exists('icon', $properties)) {
@@ -201,27 +204,26 @@ class navigation_node {
      * to the current page URL obtained via $ME
      *
      * @staticvar moodle_url $fullmeurl
+     * @param int $strength When using the moodle_url compare function how strictly
+     *                       to check for a match. Defaults to URL_MATCH_EXACT
+     *                       Can be URL_MATCH_EXACT or URL_MATCH_BASE
      * @return bool True is active, false otherwise
      */
-    public function check_if_active() {
-        global $FULLME;
+    public function check_if_active($strength=URL_MATCH_EXACT) {
+        global $FULLME, $PAGE;
         if (self::$fullmeurl == null) {
-            $pos = strpos($FULLME, '?');
-            if ($pos===false) {
-                $pos = strlen($FULLME);
+            if ($PAGE->has_set_url()) {
+                $url = new moodle_url($PAGE->url);
+            } else {
+                $url = new moodle_url($FULLME);
             }
-            $url = substr($FULLME, 0, $pos);
-            $args = substr($FULLME, strpos($FULLME, '?')+1);
-            preg_match_all('#\&([^\=]*?)\=([^\&]*)#si', '&'.$args, $matches, PREG_SET_ORDER);
-            self::$fullmeurl = new moodle_url($url);
-            foreach ($matches as $pair) {
-                self::$fullmeurl->param($pair[1],$pair[2]);
-            }
+            self::$fullmeurl = $url;
         }
-        if ($this->action instanceof moodle_url && $this->action->compare(self::$fullmeurl)) {
+
+        if ($this->action instanceof moodle_url && $this->action->compare(self::$fullmeurl, $strength)) {
             $this->make_active();
             return true;
-        } else if (is_string($this->action) && $this->action==$FULLME) {
+        } else if (is_string($this->action) && $this->action==self::$fullmeurl->out()) {
             $this->make_active();
             return true;
         }
@@ -406,6 +408,10 @@ class navigation_node {
             if ($this->hidden) {
                 $link->add_class('dimmed');
             }
+
+            $breakoutaction = new breakout_of_frame_action();
+            $link->add_action($breakoutaction);
+
             $content = $OUTPUT->link($link);
         } else {
             if ($title !== '') {
@@ -671,16 +677,18 @@ class navigation_node {
      * a node as active, or gets to the end of the tree.
      * This can be used on a cached branch to mark the active child.
      *
+     * @param int $strength When using the moodle_url compare function how strictly
+     *                       to check for a match. Defaults to URL_MATCH_EXACTLY
      * @return bool True is a node was marked active false otherwise
      */
-    public function reiterate_active_nodes() {
+    public function reiterate_active_nodes($strength=URL_MATCH_EXACT) {
         if ($this->nodetype !== self::NODETYPE_BRANCH) {
             return false;
         }
         foreach ($this->children as $child) {
-            $outcome = $child->check_if_active();
+            $outcome = $child->check_if_active($strength);
             if (!$outcome && $child->nodetype === self::NODETYPE_BRANCH) {
-                $outcome = $child->reiterate_active_nodes();
+                $outcome = $child->reiterate_active_nodes($strength);
             }
             if ($outcome) {
                 return true;
@@ -1912,10 +1920,18 @@ class navbar extends navigation_node {
             return false;
         }
         $this->page->navigation->initialise();
-        return (count($this->page->navbar->children)>0 || (!$this->ignoreactive && (
+
+        if (!$this->page->navigation->contains_active_node() && !$this->page->settingsnav->contains_active_node()) {
+            if (!$this->page->navigation->reiterate_active_nodes(URL_MATCH_BASE)) {
+                $this->page->settingsnav->reiterate_active_nodes(URL_MATCH_BASE);
+            }
+        }
+
+        $outcome = (count($this->page->navbar->children)>0 || (!$this->ignoreactive && (
                         $this->page->navigation->contains_active_node() ||
                         $this->page->settingsnav->contains_active_node())
                 ));
+        return $outcome;
     }
 
     public function ignore_active($setting=true) {
@@ -1954,12 +1970,23 @@ class navbar extends navigation_node {
         
         $customchildren = (count($this->children) > 0);
         // Check if navigation contains the active node
-        if (!$this->ignoreactive && $this->page->navigation->contains_active_node()) {
-            // Parse the navigation tree to get the active node
-            $output .= $this->parse_branch_to_html($this->page->navigation->children, true, $customchildren);
-        } else if (!$this->ignoreactive && $this->page->settingsnav->contains_active_node()) {
-            // Parse the settings navigation to get the active node
-            $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
+        if (!$this->ignoreactive) {
+            if ($this->page->navigation->contains_active_node()) {
+                // Parse the navigation tree to get the active node
+                $output .= $this->parse_branch_to_html($this->page->navigation->children, true, $customchildren);
+            } else if ($this->page->settingsnav->contains_active_node()) {
+                // Parse the settings navigation to get the active node
+                $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
+            } else if ($this->page->navigation->reiterate_active_nodes(URL_MATCH_BASE)) {
+                // Parse the navigation tree to get the active node
+                $output .= $this->parse_branch_to_html($this->page->navigation->children, true, $customchildren);
+            } else if ($this->page->settingsnav->reiterate_active_nodes(URL_MATCH_BASE)) {
+                // Parse the settings navigation to get the active node
+                $output .= $this->parse_branch_to_html($this->page->settingsnav->children, true, $customchildren);
+            } else {
+                $output .= $this->parse_branch_to_html($this, true, $customchildren);
+            }
+
         } else {
             $output .= $this->parse_branch_to_html($this, true, $customchildren);
         }
@@ -2247,7 +2274,7 @@ class settings_navigation extends navigation_node {
                     require_once($CFG->dirroot.'/lib/adminlib.php');
                 }
                 $adminroot = admin_get_root();
-                $branchkey = $this->add(get_string('administrationsite'),null, self::TYPE_SETTING);
+                $branchkey = $this->add(get_string('administrationsite'),new moodle_url($CFG->wwwroot.'/admin/'), self::TYPE_SETTING);
                 $referencebranch = $this->get($branchkey);
                 foreach ($adminroot->children as $adminbranch) {
                     $this->load_administration_settings($referencebranch, $adminbranch);

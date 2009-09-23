@@ -1435,6 +1435,10 @@ class moodle_page {
     function get_modulerecord() {
         return $this->cm;
     }
+
+    public function has_set_url() {
+        return ($this->_url!==null);
+    }
 }
 
 /**

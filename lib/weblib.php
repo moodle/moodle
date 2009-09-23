@@ -502,7 +502,19 @@ class moodle_url {
      * @return boolean
      */
     public function compare(moodle_url $url, $matchtype = URL_MATCH_EXACT) {
-        if ($this->out(true) != $url->out(true)) {
+        $baseself = $this->out(true);
+        $baseother = $url->out(true);
+
+        // Append index.php if there is no specific file
+        if (substr($baseself,-1)=='/') {
+            $baseself .= 'index.php';
+        }
+        if (substr($baseother,-1)=='/') {
+            $baseother .= 'index.php';
+        }
+
+        // Compare the two base URLs
+        if ($baseself != $baseother) {
             return false;
         }
 
