@@ -409,8 +409,10 @@ class navigation_node {
                 $link->add_class('dimmed');
             }
 
-            $breakoutaction = new breakout_of_frame_action();
-            $link->add_action($breakoutaction);
+            if (!empty($CFG->framename)) {
+                $breakoutaction = new breakout_of_frame_action();
+                $link->add_action($breakoutaction);
+            }
 
             $content = $OUTPUT->link($link);
         } else {
