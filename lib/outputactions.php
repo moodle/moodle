@@ -172,6 +172,6 @@ class breakout_of_frame_action extends component_action {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('click', 'frame_breakout', array('topframe'=>$CFG->framename));
+        parent::__construct('click', 'frame_breakout', array('framename'=>$CFG->framename));
     }
 }
