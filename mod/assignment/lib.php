@@ -186,7 +186,7 @@ class assignment_base {
 
         $PAGE->set_title($this->pagetitle);
         $PAGE->set_heading($this->course->fullname);
-        $PAGE->set_button(update_module_button($this->cm->id, $this->course->id, $this->strassignment));
+        $PAGE->set_button($OUTPUT->update_module_button($this->cm->id, 'assignment'));
 
         echo $OUTPUT->header();
 
