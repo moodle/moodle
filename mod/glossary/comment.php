@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -6,7 +6,9 @@ require_once('comment_form.php');
 
 $action = optional_param('action','add', PARAM_ACTION);
 
-if (isguest()) {
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/comment.php', array('action'=>$action)));
+
+if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
     print_error('guestnocomment');
 }
 
@@ -226,7 +228,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $PAGE->navbar->add($strcomments, new moodle_url($CFG->wwwroot.'/mod/glossary/comments.php', array('id'=>$cm->id,'eid'=>$entry->id)));
     $PAGE->navbar->add($straction);
     $PAGE->set_title(format_string($glossary->name));
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strglossary));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
     echo $OUTPUT->header();
     
 /// print original glossary entry for any comment action (add, update, delete)

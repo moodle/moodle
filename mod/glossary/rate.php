@@ -8,6 +8,8 @@
 
     $glossaryid = required_param('glossaryid', PARAM_INT); // The forum the rated posts are from
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/glossary/rate.php', array('glossaryid'=>$glossaryid)));
+
     if (!$glossary = $DB->get_record('glossary', array('id'=>$glossaryid))) {
         print_error('invalidid', 'glossary');
     }
