@@ -769,7 +769,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
                 $url = substr($url, strlen($CFG->wwwroot));
             }
             $element = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
-                       "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
+                       "$CFG->frametarget onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
             break;
         default :
             error('Undefined element - can\'t create popup window.');
@@ -3874,7 +3874,7 @@ function build_navigation($extranavlinks, $cm = null) {
             $navigation .= get_separator();
         }
         if ((!empty($navlink['link'])) && !$last) {
-            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
+            $navigation .= "<a $CFG->frametarget onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
         }
         $navigation .= "{$navlink['name']}";
         if ((!empty($navlink['link'])) && !$last) {
@@ -5382,7 +5382,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     if ($selectmod and has_capability('coursereport/log:view', $context)) {
         $logstext = get_string('alllogs');
         $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.
-                    $CFG->frametarget.'onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
+                    $CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->id.'">'.
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
@@ -5390,7 +5390,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->modname.'/view.php" '.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->modname.'/view.php" '.$CFG->frametarget.' '.
                    'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$backmod->id.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true).
@@ -5398,7 +5398,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->modname.'/view.php"  '.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->modname.'/view.php"  '.$CFG->frametarget.' '.
                    'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$nextmod->id.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true).
