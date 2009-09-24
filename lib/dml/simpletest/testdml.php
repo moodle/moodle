@@ -51,12 +51,7 @@ class dml_test extends UnitTestCase {
         $dbman = $this->tdb->get_manager();
 
         if ($tablename == '') {
-            if ($DB->get_dbfamily() == 'oracle') { // To avoid one strange (OCI internal schema cache?) bug causing ORA-01007 errors
-                static $i = 0;                     // if the same table is created multiple times and SELECT * are
-                $tablename = "unit_table".$i++;    // executed against it. Curiously error doesn't happen if the query
-            } else {                               // specify the list of columns instead of *. Haven't found any logic cause
-                $tablename = "unit_table";         // for the problem in our code, just this workaround. Luckily this isn't a
-            }                                      // problem in normal usage (same table being recreated once and again)
+            $tablename = "unit_table";
         }
 
         $table = new xmldb_table($tablename);
