@@ -322,7 +322,7 @@ class quiz {
     public function update_module_button() {
         if (has_capability('moodle/course:manageactivities',
                 get_context_instance(CONTEXT_COURSE, $this->course->id))) {
-            return update_module_button($this->cm->id, $this->course->id, get_string('modulename', 'quiz'));
+            return $OUTPUT->update_module_button($cm->id, 'quiz');
         } else {
             return '';
         }

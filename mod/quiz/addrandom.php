@@ -69,7 +69,7 @@ require_capability('mod/quiz:manage', $contexts->lowest());
 // Print basic page layout.
 $strupdatemodule = '';
 if (has_capability('moodle/course:manageactivities', $contexts->lowest())) {
-    $strupdatemodule = update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'));
+    $strupdatemodule = $OUTPUT->update_module_button($cm->id, 'quiz');
 }
 $PAGE->navbar->add($streditingquiz);
 $PAGE->set_title($streditingquiz);

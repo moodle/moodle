@@ -440,8 +440,7 @@ $questionbankmanagement = '<a href="'.$CFG->wwwroot.
         get_string('questionbankmanagement', 'quiz').'</a> ';
 $strupdatemodule = has_capability('moodle/course:manageactivities',
         $contexts->lowest()) ?
-        update_module_button($cm->id, $course->id,
-        get_string('modulename', 'quiz')) :
+        $OUTPUT->update_module_button($cm->id, 'quiz') :
         "";
         
 $PAGE->navbar->add($pagetitle);
