@@ -126,6 +126,7 @@ class oracle_sql_generator extends sql_generator {
                 }
                 $dbtype = 'NUMBER(' .  $xmldb_length . ')';
                 break;
+            case XMLDB_TYPE_FLOAT:
             case XMLDB_TYPE_NUMBER:
                 $dbtype = $this->number_type;
             /// 38 is the max allowed
@@ -139,9 +140,6 @@ class oracle_sql_generator extends sql_generator {
                     }
                     $dbtype .= ')';
                 }
-                break;
-            case XMLDB_TYPE_FLOAT:
-                $dbtype = 'NUMBER';
                 break;
             case XMLDB_TYPE_CHAR:
                 $dbtype = 'VARCHAR2';
