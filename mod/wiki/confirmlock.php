@@ -13,6 +13,8 @@
 
 require_once("../../config.php");
 
+$PAGE->set_url($CFG->wwwroot.'/mod/wiki/confirmlock.php');
+
 header('Content-Type: text/plain');    
 
 $lockid = optional_param('lockid', 0, PARAM_INT);

@@ -557,7 +557,11 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     $groupmode = groups_get_activity_groupmode($wiki);
     // if groups mode is in use and no group supplied, use the first one found
     if ($groupmode && !$groupid) {
-        if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
+        $mygroupids = groups_get_all_groups($course->id, $USER->id);
+        if ($mygroupids) {
+            $mygroupids = array_keys($mygroupids);
+        }
+        if($mygroupids && count($mygroupids)>0) {
             // Use first group. They ought to be able to change later
             $groupid=$mygroupids[0];
         } else {
@@ -622,7 +626,11 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         $groupmode = groups_get_activity_groupmode($wiki);
         if($groupmode) {
             if(!$groupid) {
-                if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
+                $mygroupids = groups_get_all_groups($course->id, $USER->id);
+                if ($mygroupids) {
+                    $mygroupids = array_keys($mygroupids);
+                }
+                if($mygroupids && count($mygroupids)>0) {
                     // Use first group. They ought to be able to change later
                     $groupid=$mygroupids[0];
                 } else {
@@ -652,8 +660,18 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
 
     case 'teacher':
         /// If there is a groupmode, get the user's group id.
-        if (groupmode($course, $wiki)) {
-            $mygroupids = mygroupid($course->id);//same here, default to the first one
+
+        if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+            $groupmode =  $cm->groupmode;
+        } else {
+            $groupmode = $course->groupmode;
+        }
+
+        if ($groupmode) {
+            $mygroupids = groups_get_all_groups($course->id, $USER->id);
+            if ($mygroupids) {
+                $mygroupids = array_keys($mygroupids);
+            }
             $groupid = $groupid ? $groupid : $mygroupids[0]/*mygroupid($course->id)*/;
         }
 
@@ -724,12 +742,15 @@ function wiki_get_student_entry(&$wiki, $userid=null) {
  * @return array
  */
 function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
-    global $CFG, $id, $DB;
+    global $CFG, $id, $DB, $USER;
 
     $wikis = false;
 
     $groupmode = groups_get_activity_groupmode($wiki);
-    $mygroupid = mygroupid($course->id);
+    $mygroupid = groups_get_all_groups($course->id, $USER->id);
+    if ($mygroupid) {
+        $mygroupid = array_keys($mygroupid);
+    }
     $isteacher = wiki_is_teacher($wiki, $user->id);
     $isteacheredit = wiki_is_teacheredit($wiki, $user->id);
 
@@ -860,7 +881,10 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $viewall = true;
             }
             else if ($groupmode == SEPARATEGROUPS) {
-                $viewall = mygroupid($course->id);
+                $viewall = groups_get_all_groups($course->id, $USER->id);
+                if ($viewall) {
+                    $viewall = array_keys($viewall);
+                }
             }
             else {
                 $viewall = false;
@@ -1114,7 +1138,10 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         $groupmode = groups_get_activity_groupmode($wiki);
 
         ///give the first groupid by default and try
-        $mygroups = mygroupid($course->id);
+        $mygroups = groups_get_all_groups($course->id, $USER->id);
+        if ($mygroups) {
+            $mygroups = array_keys($mygroups);
+        }
 
         /// If there is a groupmode, get the group id.
         if ($groupmode) {
@@ -1137,7 +1164,10 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
 
         /// If there is a groupmode, get the user's group id.
         if ($groupmode and $groupid == 0) {
-            $mygroupid = mygroupid($course->id);
+            $mygroupid = groups_get_all_groups($course->id, $USER->id);
+            if ($mygroupid) {
+                $mygroupid = array_keys($mygroupid);
+            }
             $groupid = $mygroupid[0]/*mygroupid($course->id)*/;
         }
 
@@ -1164,9 +1194,13 @@ function wiki_add_entry(&$wiki, &$course, $userid=0, $groupid=0) {
  * @return bool
  */
 function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
+    global $USER;
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groups_get_activity_groupmode($wiki);
-    $mygroupid = mygroupid($course->id);
+    $mygroupid = groups_get_all_groups($course->id, $USER->id);
+    if ($mygroupid) {
+        $mygroupid = array_keys($mygroupid);
+    }
 
     switch ($wiki->wtype) {
 
@@ -1242,7 +1276,10 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
 
     $can_edit = false;
     $groupmode = groups_get_activity_groupmode($wiki);
-    $mygroupid = mygroupid($course->id);
+    $mygroupid = groups_get_all_groups($course->id, $USER->id);
+    if ($mygroupid) {
+        $mygroupid = array_keys($mygroupid);
+    }
 
     /// Editing teacher's and admins can edit all wikis, non-editing teachers can edit wikis in their groups,
     /// or all wikis if group mode is 'no groups' or they don't belong to a group.
@@ -1299,7 +1336,10 @@ function wiki_user_can_access_student_wiki(&$wiki, $userid, &$course) {
 
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groups_get_activity_groupmode($wiki);
-    $usersgroup = mygroupid($course->id);
+    $usersgroup = groups_get_all_groups($course->id, $USER->id);
+    if ($usersgroup) {
+        $usersgroup = array_keys($usersgroup);
+    }
     $isteacher = wiki_is_teacher($wiki, $USER->id);
 
     /// If this user is allowed to access this wiki then return TRUE.
@@ -1336,7 +1376,10 @@ function wiki_user_can_access_group_wiki(&$wiki, $groupid, &$course) {
 
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groups_get_activity_groupmode($wiki);
-    $usersgroup = mygroupid($course->id);
+    $usersgroup = groups_get_all_groups($course->id, $USER->id);
+    if ($usersgroup) {
+        $usersgroup = array_keys($usersgroup);
+    }
     $isteacher = wiki_is_teacher($wiki, $USER->id);
 
     /// A user can access a group wiki, if:
@@ -1375,8 +1418,14 @@ function wiki_user_can_access_teacher_wiki(&$wiki, $groupid, &$course) {
     ///     - group mode is VISIBLEGROUPS,
     ///     - group mode is SEPARATEGROUPS, and they are a member of the requested group,
     ///     - they are a teacher or administrator,
+
+    $mygroupids = groups_get_all_groups($course->id, $USER->id);
+    if ($mygroupids) {
+        $mygroupids = array_keys($mygroupids);
+    }
+
     if (($groupmode == NOGROUPS) or ($groupmode == VISIBLEGROUPS) or
-        (($groupmode == SEPARATEGROUPS) and (@in_array($groupid, mygroupid($course->id))/*mygroupid($course->id) == $groupid*/)) or
+        (($groupmode == SEPARATEGROUPS) and (@in_array($groupid, $mygroupids)/*mygroupid($course->id) == $groupid*/)) or
         (wiki_is_teacher($wiki, $USER->id))){
         $can_access = true;
     }

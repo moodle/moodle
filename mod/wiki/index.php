@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP
 
 /// This page lists all the instances of wiki in a particular course
 /// Replace wiki with the name of your module
@@ -7,6 +7,8 @@
     require_once("lib.php");
 
     $id = required_param('id', PARAM_INT);   // course
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/wiki/index.php', array('id'=>$id)));
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?PHP
 /// Extended by Michael Schneider
 
     require_once("../../config.php");
@@ -36,6 +36,24 @@
             print_error('invalidcoursemodule');
         }
     }
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/wiki/admin.php', array('id'=>$cm->id));
+    if ($page !== false) {
+        $url->param('page', $page);
+    }
+    if ($confirm !== '') {
+        $url->param('confirm', $confirm);
+    }
+    if ($action !== '') {
+        $url->param('action', $action);
+    }
+    if ($userid !== 0) {
+        $url->param('userid', $userid);
+    }
+    if ($groupid !== 0) {
+        $url->param('groupid', $groupid);
+    }
+    $PAGE->set_url($url);
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -118,7 +136,7 @@
     $PAGE->navbar->add(get_string("administration","wiki"));
     $PAGE->set_title($wiki_entry->pagename);
     $PAGE->set_focuscontrol($focus);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strwiki));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'wiki'));
     echo $OUTPUT->header();
 
     ////////////////////////////////////////////////////////////
@@ -302,10 +320,10 @@
         /// Page Actions
         echo '<table border="0" width="100%">';
         echo '<tr>';
-#        echo '<tr><td align="center">';
-#        $specialpages=array("SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
-#        wiki_print_page_actions($cm->id, $specialpages, $ewiki_id, $ewiki_action, $wiki->ewikiacceptbinary, $canedit);
-#        echo '</td>';
+/*        echo '<tr><td align="center">';
+*        $specialpages=array("SearchPages", "PageIndex","NewestPages","MostVisitedPages","MostOftenChangedPages","UpdatedPages","FileDownload","FileUpload","OrphanedPages","WantedPages");
+*        wiki_print_page_actions($cm->id, $specialpages, $ewiki_id, $ewiki_action, $wiki->ewikiacceptbinary, $canedit);
+*        echo '</td>';*/
 
         /// Searchform
         echo '<td align="center">';
@@ -324,12 +342,12 @@
         wiki_print_administration_actions($wiki, $cm->id, $userid, $groupid, $page, $wiki->htmlmode!=2, $course);
         echo '</td>';
 
-#        if($wiki->htmlmode!=2) {
-#          echo '<td align="center">';
-#          helpbutton('formattingrules', get_string('formattingrules', 'wiki'), 'wiki');
-#          echo get_string("formattingrules","wiki");
-#          echo '</td>';
-#        }
+/**        if($wiki->htmlmode!=2) {
+*          echo '<td align="center">';
+*          helpbutton('formattingrules', get_string('formattingrules', 'wiki'), 'wiki');
+*          echo get_string("formattingrules","wiki");
+*          echo '</td>';
+*        }*/
 
         echo '</tr></table>';
     }
@@ -338,7 +356,13 @@
     echo $OUTPUT->box_start();
     // Do the Action
     # "setpageflags", "removepages", "strippages", "checklinks", "revertpages"
-    print_heading_with_help(get_string($action,"wiki"), $action, "wiki");
+
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = get_string($action,"wiki");
+    $helpicon->page = $action;
+    $helpicon->module = "wiki";
+    echo $OUTPUT->heading_with_help($helpicon);
+
     include $action.".html";
     echo $OUTPUT->box_end();
 

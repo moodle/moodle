@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// Extended by Michael Schneider
 /// This page prints a particular instance of wiki
 
@@ -22,6 +22,8 @@
 
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '', PARAM_RAW);
+
+    $PAGE->set_url(new moodle_url($FULLME));
 
     if($page) {
         // Split page command into action and page
@@ -271,7 +273,7 @@
     }
     $PAGE->set_title($ewiki_title?$ewiki_title:format_string($wiki->name));
     $PAGE->set_cacheable($cacheme);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strwiki));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'wiki'));
     echo $OUTPUT->header();
     /// Print Page
     echo '    <div id="wikiPageActions">
