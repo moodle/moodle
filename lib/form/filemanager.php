@@ -196,6 +196,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->maxfiles  = $this->getMaxfiles();
         $options->client_id = $client_id;
         $options->itemid    = $draftitemid;
+        $options->subdirs   = $this->_options['subdirs'];
         $options->target    = $id;
 
         $html = $this->_getTabs();
