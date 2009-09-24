@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP
 
 // This page lists all the instances of hotpot in a particular course
 
@@ -6,7 +6,10 @@
     require_once("../../course/lib.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);   // course    
+    $id = required_param('id', PARAM_INT);   // course
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/index.php', array('id'=>$id)));
+
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');
     }

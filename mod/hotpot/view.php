@@ -1,4 +1,5 @@
-<?PHP // $Id$
+<?PHP
+
     /// This page prints a hotpot quiz
     if (defined('HOTPOT_FIRST_ATTEMPT') && HOTPOT_FIRST_ATTEMPT==false) {
         // this script is being included (by attempt.php)
@@ -12,6 +13,7 @@
         $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
 
         if ($id) {
+            $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('id'=>$id)));
             if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
                 print_error('invalidcoursemodule');
             }
@@ -23,6 +25,7 @@
             }
 
         } else {
+            $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('hp'=>$hp)));
             if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
                 print_error('invalidhotpotid', 'hotpot');
             }
@@ -43,7 +46,7 @@
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
 
-    $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
+    $button = $OUTPUT->update_module_button($cm->id, 'hotpot');
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';
     $loggedinas = '<span class="logininfo">'.user_login_string($course, $USER).'</span>';
 
@@ -370,8 +373,11 @@
     $footer = '</div></div>'.$footer;
     switch ($hotpot->navigation) {
         case HOTPOT_NAVIGATION_BAR:
-            //update_module_button($cm->id, $course->id, $strmodulename.'" style="font-size:0.8em')
-            print_header($title, $heading, '', "", $head.$styles.$scripts, true, $button, $loggedinas, false, $body_tags);
+            $PAGE->set_title($title);
+            $PAGE->set_heading($heading);
+            $PAGE->set_button($button);
+            $PAGE->set_headingmenu($loggedinas);
+            echo $OUTPUT->header();
             if (!empty($available_msg)) {
                 echo $OUTPUT->notification($available_msg);
             }

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -7,6 +7,8 @@
     $params->action = required_param('action', PARAM_ALPHA);
     $params->course = required_param('course', PARAM_INT);
     $params->reference = required_param('reference', PARAM_PATH);
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/show.php', array('action'=>$params->action, 'course'=>$params->course, 'reference'=>$params->reference)));
 
     require_login($params->course);
 

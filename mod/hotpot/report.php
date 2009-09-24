@@ -9,6 +9,7 @@
     $hp = optional_param('hp', 0, PARAM_INT); // hotpot ID
 
     if ($id) {
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('id'=>$id)));
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             print_error('invalidcoursemodule');
         }
@@ -20,6 +21,7 @@
         }
 
     } else {
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/report.php', array('hp'=>$hp)));
         if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
             print_error('invalidhotpotid', 'hotpot');
         }
@@ -442,7 +444,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 
     $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strmodulename));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'hotpot'));
     echo $OUTPUT->header();
     
     $course_context = get_context_instance(CONTEXT_COURSE, $course->id);

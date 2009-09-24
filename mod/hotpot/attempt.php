@@ -1,8 +1,11 @@
-<?php // $Id$
+<?php
+
     require_once("../../config.php");
     require_once("lib.php");
 
     $attemptid = required_param('attemptid', PARAM_INT);
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/attempt.php', array('attemptid'=>$attemptid)));
 
     // get attempt, hotpot, course and course_module records
     if (! $attempt = $DB->get_record("hotpot_attempts", array("id"=>$attemptid))) {

@@ -1,8 +1,10 @@
-<?php  // $Id$
+<?php
 
     require_once("../../config.php");
 
     $id   = required_param('id', PARAM_INT);          // Course module ID
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/grade.php', array('id'=>$id)));
 
     if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
         print_error('invalidcoursemodule');

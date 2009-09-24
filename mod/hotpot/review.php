@@ -1,4 +1,5 @@
-<?PHP // $Id$
+<?PHP
+
 // This page prints a review of a particular quiz attempt
     require_once("../../config.php");
     require_once("lib.php");
@@ -8,6 +9,7 @@
     $attempt = required_param('attempt', PARAM_INT); // A particular attempt ID for review
 
     if ($id) {
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/review.php', array('id'=>$id,'attempt'=>$attempt)));
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             print_error('invalidcoursemodule');
         }
@@ -18,6 +20,7 @@
             print_error('invalidcoursemodule');
         }
     } else {
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/hotpot/review.php', array('hp'=>$hp,'attempt'=>$attempt)));
         if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
             print_error('invalidcoursemodule');
         }
@@ -56,7 +59,7 @@
     $PAGE->requires->js('lib/overlib/overlib_cssstyle.js')->in_head();
     $PAGE->set_title(format_string($course->shortname) . ": $hotpot->name");
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strmodulename));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'hotpot'));
     echo $OUTPUT->header();
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
     echo $OUTPUT->heading($hotpot->name);
