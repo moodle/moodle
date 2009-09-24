@@ -1,11 +1,36 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is part of the Database module for Moodle
+ *
+ * @copyright 2005 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod-data
+ */
 
 require_once('../../config.php');
 require_once('lib.php');
 require_once('export_form.php');
 
-$d = required_param('d', PARAM_INT);
 // database ID
+$d = required_param('d', PARAM_INT);
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/data/export.php', array('d'=>$d)));
 
 if (! $data = $DB->get_record('data', array('id'=>$d))) {
     print_error('wrongdataid', 'data');
@@ -58,7 +83,7 @@ if($mform->is_cancelled()) {
 } elseif (!$formdata = (array) $mform->get_data()) {
     // build header to match the rest of the UI
     $PAGE->set_title($data->name);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 

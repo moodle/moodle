@@ -1,8 +1,31 @@
-<?php // $Id$
-/* Preset Menu
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Preset Menu
  *
  * This is the page that is the menu item in the config database
  * pages.
+ *
+ * This file is part of the Database module for Moodle
+ *
+ * @copyright 2005 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod-data
  */
 
 require_once('../../config.php');
@@ -16,6 +39,17 @@ $action   = optional_param('action', 'base', PARAM_ALPHANUM); // current action
 $fullname = optional_param('fullname', '', PARAM_PATH); // directory the preset is in
 $file     = optional_param('file', '', PARAM_PATH); // uploaded file
 
+$url = new moodle_url($CFG->wwwroot.'/mod/data/preset.php');
+if ($action !== 'base') {
+    $url->param('action', $action);
+}
+if ($fullname !== '') {
+    $url->param('fullname', $fullname);
+}
+if ($file !== '') {
+    $url->param('file', $file);
+}
+
 // find out preset owner userid and shortname
 $parts = explode('/', $fullname);
 $userid = empty($parts[0]) ? 0 : (int)$parts[0];
@@ -24,6 +58,8 @@ unset($parts);
 unset($fullname);
 
 if ($id) {
+    $url->param('id', $id);
+    $PAGE->set_url($url);
     if (! $cm = get_coursemodule_from_id('data', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -34,6 +70,8 @@ if ($id) {
         print_error('invalidid', 'data');
     }
 } else if ($d) {
+    $url->param('d', $d);
+    $PAGE->set_url($url);
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
         print_error('invalidid', 'data');
     }

@@ -1667,7 +1667,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
         echo '<br />';
     }
 
-    if (!isloggedin() or isguest() or !$cancomment) {
+    if (!isloggedin() or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) or !$cancomment) {
         return;
     }
 
@@ -2054,7 +2054,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT, $PAGE;
 
     $PAGE->set_title($data->name);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, get_string('modulename', 'data')));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'data'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading(format_string($data->name));
 

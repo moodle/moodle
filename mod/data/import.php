@@ -1,184 +1,200 @@
-<?php  // $Id$
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+<?php
 
-    require_once('../../config.php');
-    require_once('lib.php');
-    require_once($CFG->libdir.'/uploadlib.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    require_login();
+/**
+ * This file is part of the Database module for Moodle
+ *
+ * @copyright 2005 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod-data
+ */
 
-    $id              = optional_param('id', 0, PARAM_INT);  // course module id
-    $d               = optional_param('d', 0, PARAM_INT);   // database id
-    $rid             = optional_param('rid', 0, PARAM_INT); // record id
-    $fielddelimiter  = optional_param('fielddelimiter', ',', PARAM_CLEANHTML); // characters used as field delimiters for csv file import
-    $fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
+require_once('../../config.php');
+require_once('lib.php');
+require_once($CFG->libdir.'/uploadlib.php');
 
-    if ($id) {
-        if (! $cm = get_coursemodule_from_id('data', $id)) {
-            print_error('invalidcoursemodule');
-        }
-        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            print_error('coursemisconf');
-        }
-        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-            print_error('invalidcoursemodule');
-        }
+require_login();
 
-    } else {
-        if (! $data = $DB->get_record('data', array('id'=>$d))) {
-            print_error('invalidid', 'data');
-        }
-        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            print_error('coursemisconf');
-        }
-        if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            print_error('coursemisconf');
-        }
+$id              = optional_param('id', 0, PARAM_INT);  // course module id
+$d               = optional_param('d', 0, PARAM_INT);   // database id
+$rid             = optional_param('rid', 0, PARAM_INT); // record id
+$fielddelimiter  = optional_param('fielddelimiter', ',', PARAM_CLEANHTML); // characters used as field delimiters for csv file import
+$fieldenclosure = optional_param('fieldenclosure', '', PARAM_CLEANHTML);   // characters used as record delimiters for csv file import
+
+$url = new moodle_url($CFG->wwwroot.'/mod/data/import.php');
+if ($rid !== 0) {
+    $url->param('rid', $rid);
+}
+if ($fielddelimiter !== '') {
+    $url->param('fielddelimiter', $fielddelimiter);
+}
+if ($fieldenclosure !== '') {
+    $url->param('fieldenclosure', $fieldenclosure);
+}
+
+if ($id) {
+    $url->param('id', $id);
+    $PAGE->set_url($url);
+    if (! $cm = get_coursemodule_from_id('data', $id)) {
+        print_error('invalidcoursemodule');
+    }
+    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
+        print_error('invalidcoursemodule');
     }
 
-    require_login($course, false, $cm);
+} else {
+    $url->param('d', $d);
+    $PAGE->set_url($url);
+    if (! $data = $DB->get_record('data', array('id'=>$d))) {
+        print_error('invalidid', 'data');
+    }
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        print_error('coursemisconf');
+    }
+}
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/data:manageentries', $context);
+require_login($course, false, $cm);
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/data:manageentries', $context);
 
 /// Print the page header
-    $strdata = get_string('modulenameplural','data');
-    
-    $PAGE->set_title($data->name);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($data->name));
+$strdata = get_string('modulenameplural','data');
+
+$PAGE->set_title($data->name);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    $currentgroup = groups_get_activity_group($cm);
-    $groupmode = groups_get_activity_groupmode($cm);
+$currentgroup = groups_get_activity_group($cm);
+$groupmode = groups_get_activity_groupmode($cm);
 
 /// Print the tabs
-    $currenttab = 'add';
-    include('tabs.php');
+$currenttab = 'add';
+include('tabs.php');
 
 
-    $um = new upload_manager('recordsfile', false, false, null, false, 0);
+$um = new upload_manager('recordsfile', false, false, null, false, 0);
 
-    if ($um->preprocess_files() && confirm_sesskey()) {
-        $filename = $um->files['recordsfile']['tmp_name'];
+if ($um->preprocess_files() && confirm_sesskey()) {
+    $filename = $um->files['recordsfile']['tmp_name'];
 
-        // Large files are likely to take their time and memory. Let PHP know
-        // that we'll take longer, and that the process should be recycled soon
-        // to free up memory.
-        @set_time_limit(0);
-        @raise_memory_limit("96M");
-        if (function_exists('apache_child_terminate')) {
-            @apache_child_terminate();
-        }
-
-        //Fix mac/dos newlines
-        $text = my_file_get_contents($filename);
-        $text = preg_replace('!\r\n?!',"\n",$text);
-        $fp = fopen($filename, "w");
-        fwrite($fp, $text);
-        fclose($fp);
-
-        $recordsadded = 0;
-
-        if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
-            print_error('csvfailed','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
-        } else {
-            $fieldnames = array_shift($records);
-
-            // check the fieldnames are valid
-            $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
-            $errorfield = '';
-            foreach ($fieldnames as $name) {
-                if (!isset($fields[$name])) {
-                    $errorfield .= "'$name' ";
-                }
-            }
-
-            if (!empty($errorfield)) {
-                print_error('fieldnotmatched','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}",$errorfield);
-            }
-
-            foreach ($records as $record) {
-                if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
-                    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
-
-                    // Insert new data_content fields with NULL contents:
-                    foreach ($fields as $field) {
-                        $content = new object();
-                        $content->recordid = $recordid;
-                        $content->fieldid = $field->id;
-                        $DB->insert_record('data_content', $content);
-                    }
-                    // Fill data_content with the values imported from the CSV file:
-                    foreach ($record as $key => $value) {
-                        $name = $fieldnames[$key];
-                        $field = $fields[$name];
-                        $content = new object();
-                        $content->fieldid = $field->id;
-                        $content->recordid = $recordid;
-                        if ($field->type == 'textarea') {
-                            // the only field type where HTML is possible
-                            $value = clean_param($value, PARAM_CLEANHTML);
-                        } else {
-                            // remove potential HTML:
-                            $patterns[] = '/</';
-                            $replacements[] = '&lt;';
-                            $patterns[] = '/>/';
-                            $replacements[] = '&gt;';
-                            $value = preg_replace($patterns, $replacements, $value);
-                        }
-                        // for now, only for "latlong" and "url" fields, but that should better be looked up from
-                        // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
-                        // once there is stored how many contents the field can have. 
-                        if (preg_match("/^(latlong|url)$/", $field->type)) {
-                            $values = explode(" ", $value, 2);
-                            $content->content  = $values[0];
-                            $content->content1 = $values[1];
-                        } else {
-                            $content->content = $value;
-                        }
-                        $oldcontent = $DB->get_record('data_content', array('fieldid'=>$field->id, 'recordid'=>$recordid));
-                        $content->id = $oldcontent->id;
-                        $DB->update_record('data_content', $content);
-                    }
-                    $recordsadded++;
-                    print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
-                }
-            }
-        }
+    // Large files are likely to take their time and memory. Let PHP know
+    // that we'll take longer, and that the process should be recycled soon
+    // to free up memory.
+    @set_time_limit(0);
+    @raise_memory_limit("96M");
+    if (function_exists('apache_child_terminate')) {
+        @apache_child_terminate();
     }
 
-    if ($recordsadded > 0) {
-        echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'));
+    //Fix mac/dos newlines
+    $text = my_file_get_contents($filename);
+    $text = preg_replace('!\r\n?!',"\n",$text);
+    $fp = fopen($filename, "w");
+    fwrite($fp, $text);
+    fclose($fp);
+
+    $recordsadded = 0;
+
+    if (!$records = data_get_records_csv($filename, $fielddelimiter, $fieldenclosure)) {
+        print_error('csvfailed','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
     } else {
-        echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'));
+        $fieldnames = array_shift($records);
+
+        // check the fieldnames are valid
+        $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
+        $errorfield = '';
+        foreach ($fieldnames as $name) {
+            if (!isset($fields[$name])) {
+                $errorfield .= "'$name' ";
+            }
+        }
+
+        if (!empty($errorfield)) {
+            print_error('fieldnotmatched','data',"{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}",$errorfield);
+        }
+
+        foreach ($records as $record) {
+            if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
+                $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
+
+                // Insert new data_content fields with NULL contents:
+                foreach ($fields as $field) {
+                    $content = new object();
+                    $content->recordid = $recordid;
+                    $content->fieldid = $field->id;
+                    $DB->insert_record('data_content', $content);
+                }
+                // Fill data_content with the values imported from the CSV file:
+                foreach ($record as $key => $value) {
+                    $name = $fieldnames[$key];
+                    $field = $fields[$name];
+                    $content = new object();
+                    $content->fieldid = $field->id;
+                    $content->recordid = $recordid;
+                    if ($field->type == 'textarea') {
+                        // the only field type where HTML is possible
+                        $value = clean_param($value, PARAM_CLEANHTML);
+                    } else {
+                        // remove potential HTML:
+                        $patterns[] = '/</';
+                        $replacements[] = '&lt;';
+                        $patterns[] = '/>/';
+                        $replacements[] = '&gt;';
+                        $value = preg_replace($patterns, $replacements, $value);
+                    }
+                    // for now, only for "latlong" and "url" fields, but that should better be looked up from
+                    // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
+                    // once there is stored how many contents the field can have.
+                    if (preg_match("/^(latlong|url)$/", $field->type)) {
+                        $values = explode(" ", $value, 2);
+                        $content->content  = $values[0];
+                        $content->content1 = $values[1];
+                    } else {
+                        $content->content = $value;
+                    }
+                    $oldcontent = $DB->get_record('data_content', array('fieldid'=>$field->id, 'recordid'=>$recordid));
+                    $content->id = $oldcontent->id;
+                    $DB->update_record('data_content', $content);
+                }
+                $recordsadded++;
+                print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
+            }
+        }
     }
-    echo '<p />';
+}
+
+if ($recordsadded > 0) {
+    echo $OUTPUT->notification($recordsadded. ' '. get_string('recordssaved', 'data'));
+} else {
+    echo $OUTPUT->notification(get_string('recordsnotsaved', 'data'));
+}
+echo '<p />';
 
 
 /// Finish the page
-    echo $OUTPUT->footer();
+echo $OUTPUT->footer();
 
 
 
