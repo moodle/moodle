@@ -482,6 +482,10 @@ class resource_file extends resource_base {
         /// If we are in a frameset, just print the top of it
 
         if (!empty( $frameset ) and ($frameset == "top") ) {
+
+            // Force target atttributes on links.  Not Strict but we are already using frames anyway! MDL-20327
+            $CFG->frametarget = ' target="'.$CFG->framename.'" ';
+
             $navigation = build_navigation($this->navlinks, $cm);
             print_header($pagetitle, $course->fullname, $navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
