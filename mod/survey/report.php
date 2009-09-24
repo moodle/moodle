@@ -119,7 +119,7 @@
 
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strsurvey));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'survey'));
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey
@@ -307,7 +307,11 @@
                     $table->data[] = array($contents);
 
                     echo $OUTPUT->table($table);
-                    print_spacer(30);
+                    
+                    $spacer = new html_image();
+                    $spacer->height = 30;
+                    $spacer->width = 1;
+                    echo $OUTPUT->spacer($spacer);
                 }
             }
         }

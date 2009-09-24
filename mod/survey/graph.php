@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
     require_once("../../config.php");
     require_once("$CFG->libdir/graphlib.php");
@@ -9,6 +9,18 @@
     $group = optional_param('group', 0, PARAM_INT);  // Group ID
     $sid   = optional_param('sid', false, PARAM_INT);  // Student ID
     $qid   = optional_param('qid', 0, PARAM_INT);  // Group ID
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/survey/graph.php', array('id'=>$id, 'type'=>$type));
+    if ($group !== 0) {
+        $url->param('group', $group);
+    }
+    if ($sid !== false) {
+        $url->param('sid', $sid);
+    }
+    if ($qid !== 0) {
+        $url->param('qid', $qid);
+    }
+    $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
         print_error('invalidcoursemodule');

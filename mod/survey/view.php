@@ -59,7 +59,7 @@
 
     $strsurvey = get_string("modulename", "survey");
     $PAGE->set_title(format_string($survey->name));
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strsurvey));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'survey'));
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used in this survey
@@ -82,7 +82,7 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    if (isguest()) {
+    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
         echo $OUTPUT->notification(get_string("guestsnotallowed", "survey"));
     }
 
@@ -177,7 +177,7 @@
         }
     }
 
-    if (isguest()) {
+    if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
         echo '</div>';
         echo "</form>";
         echo $OUTPUT->footer();
