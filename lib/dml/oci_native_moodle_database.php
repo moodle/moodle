@@ -290,7 +290,10 @@ class oci_native_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables($usecache=true) {
-        $tables = array();
+        if ($usecache and $this->tables !== null) {
+            return $this->tables;
+        }
+        $this->tables = array();
         $prefix = str_replace('_', "\\_", strtoupper($this->prefix));
         $sql = "SELECT TABLE_NAME
                   FROM CAT
@@ -310,10 +313,10 @@ class oci_native_moodle_database extends moodle_database {
                 continue;
             }
             $tablename = substr($tablename, strlen($this->prefix));
-            $tables[$tablename] = $tablename;
+            $this->tables[$tablename] = $tablename;
         }
 
-        return $tables;
+        return $this->tables;
     }
 
     /**
@@ -407,10 +410,13 @@ class oci_native_moodle_database extends moodle_database {
                 $info->not_null      = ($rawcolumn->NULLS === 'NOT NULL');
                 $info->has_default   = !is_null($rawcolumn->DEFAULTVAL);
                 if ($info->has_default) {
+
                     // this is hacky :-(
                     if ($rawcolumn->DEFAULTVAL === 'NULL') {
                         $info->default_value = null;
-                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") {
+                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") { // Sometimes it's stored with trailing space
+                        $info->default_value = "";
+                    } else if ($rawcolumn->DEFAULTVAL === "' '") { // Sometimes it's stored without trailing space
                         $info->default_value = "";
                     } else {
                         $info->default_value = trim($rawcolumn->DEFAULTVAL); // remove trailing space
@@ -429,7 +435,7 @@ class oci_native_moodle_database extends moodle_database {
                 $info->type       = $rawcolumn->COLTYPE;
                 $info->max_length = $rawcolumn->PRECISION;
                 $info->binary     = false;
-                if ($rawcolumn->SCALE == 0) {
+                if (!is_null($rawcolumn->SCALE) && $rawcolumn->SCALE == 0) { // null in oracle scale allows decimals => not integer
                     // integer
                     if ($info->name === 'id') {
                         $info->primary_key   = true;
@@ -490,7 +496,9 @@ class oci_native_moodle_database extends moodle_database {
                     // this is hacky :-(
                     if ($rawcolumn->DEFAULTVAL === 'NULL') {
                         $info->default_value = null;
-                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") {
+                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") { // Sometimes it's stored with trailing space
+                        $info->default_value = "";
+                    } else if ($rawcolumn->DEFAULTVAL === "' '") { // Other times it's stored without trailing space
                         $info->default_value = "";
                     } else {
                         $info->default_value = trim($rawcolumn->DEFAULTVAL); // remove trailing space
@@ -517,7 +525,9 @@ class oci_native_moodle_database extends moodle_database {
                     // this is hacky :-(
                     if ($rawcolumn->DEFAULTVAL === 'NULL') {
                         $info->default_value = null;
-                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") {
+                    } else if ($rawcolumn->DEFAULTVAL === "' ' ") { // Sometimes it's stored with trailing space
+                        $info->default_value = "";
+                    } else if ($rawcolumn->DEFAULTVAL === "' '") { // Sometimes it's stored without trailing space
                         $info->default_value = "";
                     } else {
                         $info->default_value = trim($rawcolumn->DEFAULTVAL); // remove trailing space
