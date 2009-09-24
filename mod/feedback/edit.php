@@ -1,424 +1,423 @@
-<?php // $Id$
+<?php
+
 /**
 * prints the form to edit the feedback items such moving, deleting and so on
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback
 */
 
-    require_once("../../config.php");
-    require_once("lib.php");
-    require_once('edit_form.php');
+require_once("../../config.php");
+require_once("lib.php");
+require_once('edit_form.php');
 
-    feedback_init_feedback_session();
+feedback_init_feedback_session();
 
-    $id = required_param('id', PARAM_INT);
+$id = required_param('id', PARAM_INT);
 
-    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        print_error('invalidsesskey');
+if(($formdata = data_submitted()) AND !confirm_sesskey()) {
+    print_error('invalidsesskey');
+}
+
+$do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
+$moveupitem = optional_param('moveupitem', false, PARAM_INT);
+$movedownitem = optional_param('movedownitem', false, PARAM_INT);
+$moveitem = optional_param('moveitem', false, PARAM_INT);
+$movehere = optional_param('movehere', false, PARAM_INT);
+$switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
+
+$ME = strip_querystring($FULLME);//sometimes it is not correct set
+
+// $SESSION->feedback->current_tab = $do_show;
+$current_tab = $do_show;
+
+if ($id) {
+    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+        print_error('invalidcoursemodule');
     }
 
-    $do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
-    $moveupitem = optional_param('moveupitem', false, PARAM_INT);
-    $movedownitem = optional_param('movedownitem', false, PARAM_INT);
-    $moveitem = optional_param('moveitem', false, PARAM_INT);
-    $movehere = optional_param('movehere', false, PARAM_INT);
-    $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+        print_error('coursemisconf');
+    }
 
-    $ME = strip_querystring($FULLME);//sometimes it is not correct set
+    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+        print_error('invalidcoursemodule');
+    }
+}
+$capabilities = feedback_load_capabilities($cm->id);
 
-    // $SESSION->feedback->current_tab = $do_show;
-    $current_tab = $do_show;
+require_login($course->id, true, $cm);
 
-    if ($id) {
-        if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            print_error('invalidcoursemodule');
+if(!$capabilities->edititems){
+    print_error('error');
+}
+
+//move up/down items
+if($moveupitem){
+    $item = $DB->get_record('feedback_item', array('id'=>$moveupitem));
+    feedback_moveup_item($item);
+}
+if($movedownitem){
+    $item = $DB->get_record('feedback_item', array('id'=>$movedownitem));
+    feedback_movedown_item($item);
+}
+
+//moving of items
+if($movehere && isset($SESSION->feedback->moving->movingitem)){
+    $item = $DB->get_record('feedback_item', array('id'=>$SESSION->feedback->moving->movingitem));
+    feedback_move_item($item, intval($movehere));
+    $moveitem = false;
+}
+if($moveitem){
+    $item = $DB->get_record('feedback_item', array('id'=>$moveitem));
+    $SESSION->feedback->moving->shouldmoving = 1;
+    $SESSION->feedback->moving->movingitem = $moveitem;
+} else {
+    unset($SESSION->feedback->moving);
+}
+
+if($switchitemrequired) {
+    $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
+    @feedback_switch_item_required($item);
+    redirect($ME.'?'.feedback_edit_get_default_query($id, $do_show));
+    exit;
+}
+
+//the create_template-form
+$create_template_form = new feedback_edit_create_template_form();
+$create_template_form->set_feedbackdata(array('capabilities' => $capabilities));
+$create_template_form->set_form_elements();
+$create_template_form->set_data(array('id'=>$id, 'do_show'=>'templates'));
+$create_template_formdata = $create_template_form->get_data();
+if(isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
+    //check the capabilities to create templates
+    if(!$capabilities->createprivatetemplate AND !$capabilities->createpublictemplate) {
+        print_error('cannotsavetempl', 'feedback');
+    }
+    if(trim($create_template_formdata->templatename) == '')
+    {
+        $savereturn = 'notsaved_name';
+    }else {
+        if($capabilities->createpublictemplate) {
+            $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
+        }else {
+            $create_template_formdata->ispublic = 0;
         }
-
-        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error('coursemisconf');
-        }
-
-        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            print_error('invalidcoursemodule');
-        }
-    }
-    $capabilities = feedback_load_capabilities($cm->id);
-
-    require_login($course->id, true, $cm);
-
-    if(!$capabilities->edititems){
-        print_error('error');
-    }
-
-    //move up/down items
-    if($moveupitem){
-        $item = $DB->get_record('feedback_item', array('id'=>$moveupitem));
-        feedback_moveup_item($item);
-    }
-    if($movedownitem){
-        $item = $DB->get_record('feedback_item', array('id'=>$movedownitem));
-        feedback_movedown_item($item);
-    }
-
-    //moving of items
-    if($movehere && isset($SESSION->feedback->moving->movingitem)){
-        $item = $DB->get_record('feedback_item', array('id'=>$SESSION->feedback->moving->movingitem));
-        feedback_move_item($item, intval($movehere));
-        $moveitem = false;
-    }
-    if($moveitem){
-        $item = $DB->get_record('feedback_item', array('id'=>$moveitem));
-        $SESSION->feedback->moving->shouldmoving = 1;
-        $SESSION->feedback->moving->movingitem = $moveitem;
-    } else {
-        unset($SESSION->feedback->moving);
-    }
-
-    if($switchitemrequired) {
-        $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
-        @feedback_switch_item_required($item);
-        redirect($ME.'?'.feedback_edit_get_default_query($id, $do_show));
-        exit;
-    }
-
-    //the create_template-form
-    $create_template_form = new feedback_edit_create_template_form();
-    $create_template_form->set_feedbackdata(array('capabilities' => $capabilities));
-    $create_template_form->set_form_elements();
-    $create_template_form->set_data(array('id'=>$id, 'do_show'=>'templates'));
-    $create_template_formdata = $create_template_form->get_data();
-    if(isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
-        //check the capabilities to create templates
-        if(!$capabilities->createprivatetemplate AND !$capabilities->createpublictemplate) {
-            print_error('cannotsavetempl', 'feedback');
-        }
-        if(trim($create_template_formdata->templatename) == '')
+        if(!feedback_save_as_template($feedback, $create_template_formdata->templatename, $create_template_formdata->ispublic))
         {
-            $savereturn = 'notsaved_name';
+            $savereturn = 'failed';
         }else {
-            if($capabilities->createpublictemplate) {
-                $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
-            }else {
-                $create_template_formdata->ispublic = 0;
-            }
-            if(!feedback_save_as_template($feedback, $create_template_formdata->templatename, $create_template_formdata->ispublic))
-            {
-                $savereturn = 'failed';
-            }else {
-                $savereturn = 'saved';
-            }
+            $savereturn = 'saved';
         }
     }
+}
 
-    //get the feedbackitems
-    $lastposition = 0;
-    $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
+//get the feedbackitems
+$lastposition = 0;
+$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
+if(is_array($feedbackitems)){
+    $feedbackitems = array_values($feedbackitems);
+    if(count($feedbackitems) > 0) {
+        $lastitem = $feedbackitems[count($feedbackitems)-1];
+        $lastposition = $lastitem->position;
+    }else {
+        $lastposition = 0;
+    }
+}
+$lastposition++;
+
+
+//the add_item-form
+$add_item_form = new feedback_edit_add_question_form('edit_item.php');
+$add_item_form->set_data(array('id'=>$id, 'position'=>$lastposition));
+
+//the use_template-form
+$use_template_form = new feedback_edit_use_template_form('use_templ.php');
+$use_template_form->set_feedbackdata(array('course' => $course));
+$use_template_form->set_form_elements();
+$use_template_form->set_data(array('id'=>$id));
+
+//the create_template-form
+//$create_template_form = new feedback_edit_create_template_form('use_templ.php');
+
+/// Print the page header
+$strfeedbacks = get_string("modulenameplural", "feedback");
+$strfeedback  = get_string("modulename", "feedback");
+
+if ($do_show == 'edit') {
+    $PAGE->navbar->add(get_string('edit_items', 'feedback'));
+} else {
+    $PAGE->navbar->add(get_string($do_show, 'feedback'));
+}
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
+$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
+echo $OUTPUT->header();
+
+/// print the tabs
+include('tabs.php');
+
+/// Print the main part of the page
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+$savereturn=isset($savereturn)?$savereturn:'';
+
+//print the messages
+if($savereturn == 'notsaved_name') {
+    echo '<p align="center"><b><font color="red">'.get_string('name_required','feedback').'</font></b></p>';
+}
+
+if($savereturn == 'saved') {
+    echo '<p align="center"><b><font color="green">'.get_string('template_saved','feedback').'</font></b></p>';
+}
+
+if($savereturn == 'failed') {
+    echo '<p align="center"><b><font color="red">'.get_string('saving_failed','feedback').'</font></b></p>';
+}
+
+feedback_print_errors();
+
+///////////////////////////////////////////////////////////////////////////
+///print the template-section
+///////////////////////////////////////////////////////////////////////////
+if($do_show == 'templates') {
+    echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+    $use_template_form->display();
+
+    if($capabilities->createprivatetemplate OR $capabilities->createpublictemplate) {
+        $create_template_form->display();
+        echo '<p><a href="'.htmlspecialchars('delete_template.php?id='.$id).'">'.get_string('delete_templates', 'feedback').'</a></p>';
+    }else {
+        echo '&nbsp;';
+    }
+
+    if($capabilities->edititems) {
+        echo '<p>
+            <a href="'.htmlspecialchars('export.php?action=exportfile&id='.$id).'">'.get_string('export_questions', 'feedback').'</a>/
+            <a href="'.htmlspecialchars('import.php?id='.$id).'">'.get_string('import_questions', 'feedback').'</a>
+        </p>';
+    }
+    echo $OUTPUT->box_end();
+}
+///////////////////////////////////////////////////////////////////////////
+///print the Item-Edit-section
+///////////////////////////////////////////////////////////////////////////
+if($do_show == 'edit') {
+
+    $add_item_form->display();
+
     if(is_array($feedbackitems)){
-        $feedbackitems = array_values($feedbackitems);
-        if(count($feedbackitems) > 0) {
-            $lastitem = $feedbackitems[count($feedbackitems)-1];
-            $lastposition = $lastitem->position;
-        }else {
-            $lastposition = 0;
+        $itemnr = 0;
+
+        $helpbutton = $OUTPUT->help_icon(moodle_help_icon::make('preview', get_string('preview','feedback'), 'feedback',true));
+
+        echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
+        if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
+            echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
         }
-    }
-    $lastposition++;
-
-
-    //the add_item-form
-    $add_item_form = new feedback_edit_add_question_form('edit_item.php');
-    $add_item_form->set_data(array('id'=>$id, 'position'=>$lastposition));
-
-    //the use_template-form
-    $use_template_form = new feedback_edit_use_template_form('use_templ.php');
-    $use_template_form->set_feedbackdata(array('course' => $course));
-    $use_template_form->set_form_elements();
-    $use_template_form->set_data(array('id'=>$id));
-
-    //the create_template-form
-    //$create_template_form = new feedback_edit_create_template_form('use_templ.php');
-
-    /// Print the page header
-    $strfeedbacks = get_string("modulenameplural", "feedback");
-    $strfeedback  = get_string("modulename", "feedback");
-    $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
-
-    if ($do_show == 'edit') {
-        $PAGE->navbar->add(get_string('edit_items', 'feedback'));
-    } else {
-        $PAGE->navbar->add(get_string($do_show, 'feedback'));
-    }
-    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/edit.php', array('id'=>$cm->id, 'do_show'=>$do_show)));
-    $PAGE->set_title(format_string($feedback->name));
-    $PAGE->set_button($buttontext);
-    echo $OUTPUT->header();
-
-    /// print the tabs
-    include('tabs.php');
-
-    /// Print the main part of the page
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-
-    $savereturn=isset($savereturn)?$savereturn:'';
-
-    //print the messages
-    if($savereturn == 'notsaved_name') {
-        echo '<p align="center"><b><font color="red">'.get_string('name_required','feedback').'</font></b></p>';
-    }
-
-    if($savereturn == 'saved') {
-        echo '<p align="center"><b><font color="green">'.get_string('template_saved','feedback').'</font></b></p>';
-    }
-
-    if($savereturn == 'failed') {
-        echo '<p align="center"><b><font color="red">'.get_string('saving_failed','feedback').'</font></b></p>';
-    }
-
-    feedback_print_errors();
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///print the template-section
-    ///////////////////////////////////////////////////////////////////////////
-    if($do_show == 'templates') {
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-        $use_template_form->display();
 
-        if($capabilities->createprivatetemplate OR $capabilities->createpublictemplate) {
-            $create_template_form->display();
-            echo '<p><a href="'.htmlspecialchars('delete_template.php?id='.$id).'">'.get_string('delete_templates', 'feedback').'</a></p>';
-        }else {
-            echo '&nbsp;';
+        //check, if there exists required-elements
+        $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=> 1));
+        if($countreq > 0) {
+            // echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
+            echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
         }
 
-        if($capabilities->edititems) {
-            echo '<p>
-                <a href="'.htmlspecialchars('export.php?action=exportfile&id='.$id).'">'.get_string('export_questions', 'feedback').'</a>/
-                <a href="'.htmlspecialchars('import.php?id='.$id).'">'.get_string('import_questions', 'feedback').'</a>
-            </p>';
+        echo '<table>';
+        if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
+            $moveposition = 1;
+            echo '<tr>'; //only shown if shouldmoving = 1
+                echo '<td>';
+                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
+                echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
+                        <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
+                      </a>';
+
+                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                    // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" hspace="1" height="16" width="80" border="0" />';
+                    // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
+                    // feedback_edit_print_default_form_values($id, $do_show);
+                    // echo '</fieldset></form>';
+                echo '</td>';
+            echo '</tr>';
         }
-        echo $OUTPUT->box_end();
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    ///print the Item-Edit-section
-    ///////////////////////////////////////////////////////////////////////////
-    if($do_show == 'edit') {
-
-        $add_item_form->display();
-
-        if(is_array($feedbackitems)){
-            $itemnr = 0;
-
-            $helpbutton = $OUTPUT->help_icon(moodle_help_icon::make('preview', get_string('preview','feedback'), 'feedback',true));
-
-            echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
-            if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-                echo $OUTPUT->heading('<a href="'.htmlspecialchars($ME.'?id='.$id).'">'.get_string('cancel_moving', 'feedback').'</a>');
+        //print the inserted items
+        $itempos = 0;
+        foreach($feedbackitems as $feedbackitem){
+            $itempos++;
+            if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
+                continue;
             }
-            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-
-            //check, if there exists required-elements
-            $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=> 1));
-            if($countreq > 0) {
-                // echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
-                echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
+            echo '<tr>';
+            //items without value only are labels
+            if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
+                $itemnr++;
+                echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
+            } else {
+                echo '<td>&nbsp;</td>';
             }
+            if($feedbackitem->typ != 'pagebreak') {
+                feedback_print_item($feedbackitem, false, false, true);
+            }else {
+                echo '<td class="feedback_pagebreak"><b>'.get_string('pagebreak', 'feedback').'</b></td><td><hr width="100%" size="8px" noshade="noshade" /></td>';
+            }
+            echo '<td>('.get_string('position', 'feedback').':'.$itempos .')</td>';
+            echo '<td>';
+            if($feedbackitem->position > 1){
+                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveupitem='.$feedbackitem->id);
+                echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
+                        <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/up') . '" />
+                      </a>';
+                //print the button to move-up the item
+                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" hspace="1" height="11" width="11" border="0" />';
+                // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" />';
+                // echo '<input type="hidden" name="moveupitem" value="'.$feedbackitem->id.'" />';
+                // feedback_edit_print_default_form_values($id, $do_show);
+                // echo '</fieldset></form>';
+            }else{
+                echo '&nbsp;';
+            }
+            echo '</td>';
+            echo '<td>';
+            if($feedbackitem->position < $lastposition - 1){
+                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movedownitem='.$feedbackitem->id);
+                echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
+                        <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/down') . '" />
+                      </a>';
+                //print the button to move-down the item
+                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" hspace="1" height="11" width="11" border="0" />';
+                // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" />';
+                // echo '<input type="hidden" name="movedownitem" value="'.$feedbackitem->id.'" />';
+                // feedback_edit_print_default_form_values($id, $do_show);
+                // echo '</fieldset></form>';
+            }else{
+                echo '&nbsp;';
+            }
+            echo '</td>';
+            echo '<td>';
+                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveitem='.$feedbackitem->id);
+                echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
+                        <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/move') . '" />
+                      </a>';
+                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" hspace="1" height="11" width="11" border="0" />';
+                // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" />';
+                // echo '<input type="hidden" name="moveitem" value="'.$feedbackitem->id.'" />';
+                // feedback_edit_print_default_form_values($id, $do_show);
+                // echo '</fieldset></form>';
+            echo '</td>';
+            echo '<td>';
+            //print the button to edit the item
+            if($feedbackitem->typ != 'pagebreak') {
+                $buttonlink = 'edit_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&itemid='.$feedbackitem->id.'&typ='.$feedbackitem->typ);
+                echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
+                        <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/edit') . '" />
+                      </a>';
+                // echo '<form action="edit_item.php" method="post"><fieldset>';
+                // echo '<input title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" hspace="1" height="11" width="11" border="0" />';
+                // echo '<input class="feedback_edit_button" title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" />';
+                // echo '<input type="hidden" name="itemid" value="'.$feedbackitem->id.'" />';
+                // echo '<input type="hidden" name="typ" value="'.$feedbackitem->typ.'" />';
+                // feedback_edit_print_default_form_values($id, $do_show);
+                // echo '</fieldset></form>';
+            }else {
+                echo '&nbsp;';
+            }
+            echo '</td>';
+            echo '<td>';
 
-            echo '<table>';
+            //print the toggle-button to switch required yes/no
+            if($feedbackitem->hasvalue == 1) {
+                // echo '<form action="'.$ME.'" method="post"><fieldset>';
+                if($feedbackitem->required == 1) {
+                    // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
+                    $buttontitle = get_string('switch_item_to_not_required','feedback');
+                    $buttonimg = 'pics/required.gif';
+                } else {
+                    // echo '<input title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" hspace="1" height="11" width="11" border="0" />';
+                    // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" />';
+                    $buttontitle = get_string('switch_item_to_required','feedback');
+                    $buttonimg = 'pics/notrequired.gif';
+                }
+                $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&switchitemrequired='.$feedbackitem->id);
+                echo '<a class="icon feedback_switchrequired" title="'.$buttontitle.'" href="'.$buttonlink.'">
+                        <img alt="'.$buttontitle.'" src="'.$buttonimg.'" />
+                      </a>';
+                // echo '<input type="hidden" name="switchitemrequired" value="'.$feedbackitem->id.'" />';
+                // feedback_edit_print_default_form_values($id, $do_show);
+                // echo '</fieldset></form>';
+            }else {
+                echo '&nbsp;';
+            }
+            echo '</td>';
+            echo '<td>';
+                $buttonlink = 'delete_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&deleteitem='.$feedbackitem->id);
+                echo '<a class="icon delete" title="'.get_string('delete_item','feedback').'" href="'.$buttonlink.'">
+                        <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/delete') . '" />
+                      </a>';
+            //print the button to drop the item
+            // echo '<form action="delete_item.php" method="post"><fieldset>';
+            // echo '<input class="feedback_delete_button" title="'.get_string('delete_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/delete') . '" />';
+            // echo '<input type="hidden" name="deleteitem" value="'.$feedbackitem->id.'" />';
+            // feedback_edit_print_default_form_values($id, $do_show);
+            // echo '</fieldset></form>';
+            echo '</td>';
+            echo '</tr>';
             if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-                $moveposition = 1;
+                $moveposition++;
                 echo '<tr>'; //only shown if shouldmoving = 1
                     echo '<td>';
-                    $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
-                    echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                            <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
-                          </a>';
-
+                        $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
+                        echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
+                                <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
+                              </a>';
                         // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                        // echo '<input title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" hspace="1" height="16" width="80" border="0" />';
+                        // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" />';
                         // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
                         // feedback_edit_print_default_form_values($id, $do_show);
                         // echo '</fieldset></form>';
                     echo '</td>';
                 echo '</tr>';
+            }else {
+                echo '<tr><td>&nbsp;</td></tr>';
             }
-            //print the inserted items
-            $itempos = 0;
-            foreach($feedbackitems as $feedbackitem){
-                $itempos++;
-                if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->movingitem == $feedbackitem->id){ //hiding the item to move
-                    continue;
-                }
-                echo '<tr>';
-                //items without value only are labels
-                if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
-                    $itemnr++;
-                    echo '<td valign="top">' . $itemnr . '.&nbsp;</td>';
-                } else {
-                    echo '<td>&nbsp;</td>';
-                }
-                if($feedbackitem->typ != 'pagebreak') {
-                    feedback_print_item($feedbackitem, false, false, true);
-                }else {
-                    echo '<td class="feedback_pagebreak"><b>'.get_string('pagebreak', 'feedback').'</b></td><td><hr width="100%" size="8px" noshade="noshade" /></td>';
-                }
-                echo '<td>('.get_string('position', 'feedback').':'.$itempos .')</td>';
-                echo '<td>';
-                if($feedbackitem->position > 1){
-                    $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveupitem='.$feedbackitem->id);
-                    echo '<a class="icon up" title="'.get_string('moveup_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('moveup_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/up') . '" />
-                          </a>';
-                    //print the button to move-up the item
-                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // ///////echo '<input title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_moveup_button" title="'.get_string('moveup_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/up') . '" />';
-                    // echo '<input type="hidden" name="moveupitem" value="'.$feedbackitem->id.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                }else{
-                    echo '&nbsp;';
-                }
-                echo '</td>';
-                echo '<td>';
-                if($feedbackitem->position < $lastposition - 1){
-                    $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movedownitem='.$feedbackitem->id);
-                    echo '<a class="icon down" title="'.get_string('movedown_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('movedown_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/down') . '" />
-                          </a>';
-                    //print the button to move-down the item
-                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_movedown_button" title="'.get_string('movedown_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/down') . '" />';
-                    // echo '<input type="hidden" name="movedownitem" value="'.$feedbackitem->id.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                }else{
-                    echo '&nbsp;';
-                }
-                echo '</td>';
-                echo '<td>';
-                    $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&moveitem='.$feedbackitem->id);
-                    echo '<a class="editing_move" title="'.get_string('move_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('move_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/move') . '" />
-                          </a>';
-                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_move_button" title="'.get_string('move_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/move') . '" />';
-                    // echo '<input type="hidden" name="moveitem" value="'.$feedbackitem->id.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                echo '</td>';
-                echo '<td>';
-                //print the button to edit the item
-                if($feedbackitem->typ != 'pagebreak') {
-                    $buttonlink = 'edit_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&itemid='.$feedbackitem->id.'&typ='.$feedbackitem->typ);
-                    echo '<a class="editing_update" title="'.get_string('edit_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('edit_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/edit') . '" />
-                          </a>';
-                    // echo '<form action="edit_item.php" method="post"><fieldset>';
-                    // echo '<input title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" hspace="1" height="11" width="11" border="0" />';
-                    // echo '<input class="feedback_edit_button" title="'.get_string('edit_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/edit') . '" />';
-                    // echo '<input type="hidden" name="itemid" value="'.$feedbackitem->id.'" />';
-                    // echo '<input type="hidden" name="typ" value="'.$feedbackitem->typ.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                }else {
-                    echo '&nbsp;';
-                }
-                echo '</td>';
-                echo '<td>';
 
-                //print the toggle-button to switch required yes/no
-                if($feedbackitem->hasvalue == 1) {
-                    // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                    if($feedbackitem->required == 1) {
-                        // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
-                        // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
-                        $buttontitle = get_string('switch_item_to_not_required','feedback');
-                        $buttonimg = 'pics/required.gif';
-                    } else {
-                        // echo '<input title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" hspace="1" height="11" width="11" border="0" />';
-                        // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" />';
-                        $buttontitle = get_string('switch_item_to_required','feedback');
-                        $buttonimg = 'pics/notrequired.gif';
-                    }
-                    $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&switchitemrequired='.$feedbackitem->id);
-                    echo '<a class="icon feedback_switchrequired" title="'.$buttontitle.'" href="'.$buttonlink.'">
-                            <img alt="'.$buttontitle.'" src="'.$buttonimg.'" />
-                          </a>';
-                    // echo '<input type="hidden" name="switchitemrequired" value="'.$feedbackitem->id.'" />';
-                    // feedback_edit_print_default_form_values($id, $do_show);
-                    // echo '</fieldset></form>';
-                }else {
-                    echo '&nbsp;';
-                }
-                echo '</td>';
-                echo '<td>';
-                    $buttonlink = 'delete_item.php?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&deleteitem='.$feedbackitem->id);
-                    echo '<a class="icon delete" title="'.get_string('delete_item','feedback').'" href="'.$buttonlink.'">
-                            <img alt="'.get_string('delete_item','feedback').'" src="'.$OUTPUT->old_icon_url('t/delete') . '" />
-                          </a>';
-                //print the button to drop the item
-                // echo '<form action="delete_item.php" method="post"><fieldset>';
-                // echo '<input class="feedback_delete_button" title="'.get_string('delete_item','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('t/delete') . '" />';
-                // echo '<input type="hidden" name="deleteitem" value="'.$feedbackitem->id.'" />';
-                // feedback_edit_print_default_form_values($id, $do_show);
-                // echo '</fieldset></form>';
-                echo '</td>';
-                echo '</tr>';
-                if(isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
-                    $moveposition++;
-                    echo '<tr>'; //only shown if shouldmoving = 1
-                        echo '<td>';
-                            $buttonlink = $ME.'?'.htmlspecialchars(feedback_edit_get_default_query($id, $do_show).'&movehere='.$moveposition);
-                            echo '<a title="'.get_string('move_here','feedback').'" href="'.$buttonlink.'">
-                                    <img class="movetarget" alt="'.get_string('move_here','feedback').'" src="'.$OUTPUT->old_icon_url('movehere') . '" />
-                                  </a>';
-                            // echo '<form action="'.$ME.'" method="post"><fieldset>';
-                            // echo '<input class="feedback_movehere_button" title="'.get_string('move_here','feedback').'" type="image" src="'.$OUTPUT->old_icon_url('movehere') . '" />';
-                            // echo '<input type="hidden" name="movehere" value="'.$moveposition.'" />';
-                            // feedback_edit_print_default_form_values($id, $do_show);
-                            // echo '</fieldset></form>';
-                        echo '</td>';
-                    echo '</tr>';
-                }else {
-                    echo '<tr><td>&nbsp;</td></tr>';
-                }
-
-            }
-            echo '</table>';
-            echo $OUTPUT->box_end();
-        }else{
-            echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
         }
+        echo '</table>';
+        echo $OUTPUT->box_end();
+    }else{
+        echo $OUTPUT->box(get_string('no_items_available_yet','feedback'),'generalbox boxaligncenter');
     }
-    /// Finish the page
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
+}
+/// Finish the page
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
-    echo $OUTPUT->footer();
+echo $OUTPUT->footer();
 
-    function feedback_edit_get_default_query($id, $tab) {
-        global $USER;
+function feedback_edit_get_default_query($id, $tab) {
+    global $USER;
 
-        $query = 'id='.$id;
-        $query .= '&do_show='.$tab;
-        //$query .= '&sesskey='.sesskey();
+    $query = 'id='.$id;
+    $query .= '&do_show='.$tab;
+    //$query .= '&sesskey='.sesskey();
 
-        return $query;
-    }
+    return $query;
+}
 
-    function feedback_edit_print_default_form_values($id, $tab) {
-        global $USER;
+function feedback_edit_print_default_form_values($id, $tab) {
+    global $USER;
 
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
-        echo '<input type="hidden" name="do_show" value="'.$tab.'" />';
-    }
+    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo '<input type="hidden" name="id" value="'.$id.'" />';
+    echo '<input type="hidden" name="do_show" value="'.$tab.'" />';
+}
 ?>

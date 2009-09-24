@@ -2133,7 +2133,13 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
 
     $user = $DB->get_record('user', array('id'=>$userid));
 
-    if (groupmode($course, $cm) == SEPARATEGROUPS) {    // Separate groups are being used
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
+
+    if ($groupmode == SEPARATEGROUPS) {
         $groups = $DB->get_records_sql_menu("SELECT g.name, g.id
                                                FROM {groups} g, {groups_members} m
                                               WHERE g.courseid = ?

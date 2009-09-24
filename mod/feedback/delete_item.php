@@ -15,6 +15,8 @@
     $id = required_param('id', PARAM_INT);
     $deleteitem = required_param('deleteitem', PARAM_INT);
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/feedback/delete_item.php', array('id'=>$id, 'deleteitem'=>$deleteitem)));
+
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
             print_error('invalidcoursemodule');
@@ -56,13 +58,12 @@
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
-    $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
     $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
     $PAGE->navbar->add(format_string($feedback->name));
 
     $PAGE->set_title(format_string($feedback->name));
-    $PAGE->set_button($buttontext);
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
     echo $OUTPUT->header();
 
     /// Print the main part of the page

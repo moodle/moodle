@@ -1,12 +1,12 @@
-<?php // $Id$
+<?php
+
 /**
-* prints the form to import items from xml-file
-*
-* @version $Id$
-* @author Andreas Grabs
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package feedback
-*/
+ * prints the form to import items from xml-file
+ *
+ * @author Andreas Grabs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package feedback
+ */
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -19,6 +19,15 @@
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         print_error('invalidsesskey');
     }
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/feedback/import.php', array('id'=>$id));
+    if ($choosefile !== false) {
+        $url->param('choosefile', $choosefile);
+    }
+    if ($action !== false) {
+        $url->param('action', $action);
+    }
+    $PAGE->set_url($url);
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -74,13 +83,12 @@
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
-    $buttontext = update_module_button($cm->id, $course->id, $strfeedback);
 
     $PAGE->navbar->add($strfeedbacks, new moodle_url($CFG->wwwroot.'/mod/feedback/index.php', array('id'=>$course->id)));
     $PAGE->navbar->add(format_string($feedback->name));
 
     $PAGE->set_title(format_string($feedback->name));
-    $PAGE->set_button($buttontext);
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'feedback'));
     echo $OUTPUT->header();
 
     /// Print the main part of the page

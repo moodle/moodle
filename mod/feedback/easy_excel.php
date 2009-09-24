@@ -1,8 +1,8 @@
-<?php // $Id$
+<?php
+
 /**
 * makes it easier to use the spreadsheet-functions from pear
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback
@@ -101,22 +101,22 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
      *  <f> = Fett
      *  <k> = kursiv
      *  <z> = zentriert
-     *  <l> = linksbündig
-     *  <r> = rechtsbündig
+     *  <l> = linksbï¿½ndig
+     *  <r> = rechtsbï¿½ndig
      *  <vo> = vertikal oben
      *  <vz> = vertikal zentriert
      *  <vu> = vertikal unten
      *  <uX> = unterstrichen X=1-einfach, X=2-doppelt
-     *  <w> = währungsformat
+     *  <w> = wï¿½hrungsformat
      *  <pr> = prozentformat
-     *  <ruX> = Rahmen unten X=Stärke
-     *  <roX> = rahmen oben X=Stärke
-     *  <rrX> = rahmen rechts X=Stärke
-     *  <rlX> = rahmen links X=Stärke
+     *  <ruX> = Rahmen unten X=Stï¿½rke
+     *  <roX> = rahmen oben X=Stï¿½rke
+     *  <rrX> = rahmen rechts X=Stï¿½rke
+     *  <rlX> = rahmen links X=Stï¿½rke
      *  <c:XXX> = Schriftfarbe, XXX kann einen der folgenden Farbwerte enthalten:
      *      aqua,cyan,black,blue,brown,magenta,fuchsia,gray,
      *      grey,green,lime,navy,orange,purple,red,silver,white,yellow
-     *      Wichtig: alle Werte müssen klein geschrieben werden.
+     *      Wichtig: alle Werte mï¿½ssen klein geschrieben werden.
      *  @param string $formatString
      *  @param int $size the size of font in pt
      *  @param boolean $textWrap
@@ -184,7 +184,7 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
 
             if(preg_match("/<w>/i",$formatString) > 0)
             {
-                $this->m_format->setNumFormat("#,##0.00_)€;[Red]-#,##0.00_)€");
+                $this->m_format->setNumFormat("#,##0.00_)ï¿½;[Red]-#,##0.00_)ï¿½");
             }
 
             if(preg_match("/<pr>/i",$formatString) > 0)
