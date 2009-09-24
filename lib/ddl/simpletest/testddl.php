@@ -79,7 +79,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, 'Moodle');
         $table->add_field('secondname', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('thirdname', XMLDB_TYPE_CHAR, '30', null, null, null, ''); // NULL + empty default
+        $table->add_field('thirdname', XMLDB_TYPE_CHAR, '30', null, null, null, ''); // nullable column with empty default
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null);
         $table->add_field('avatar', XMLDB_TYPE_BINARY, 'medium', null, null, null, null);
         $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,10', null, null, null);
@@ -242,15 +242,20 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['avatar']->meta_type, 'B');
         $this->assertEqual($columns['grade']->meta_type, 'N');
         $this->assertEqual($columns['percentfloat']->meta_type, 'N');
+        $this->assertEqual($columns['userid']->meta_type, 'I');
         // some defaults
         $this->assertTrue($columns['course']->has_default);
         $this->assertEqual($columns['course']->default_value, 0);
         $this->assertTrue($columns['name']->has_default);
         $this->assertEqual($columns['name']->default_value, 'Moodle');
         $this->assertTrue($columns['secondname']->has_default);
-        $this->assertEqual($columns['secondname']->default_value, $DB->sql_empty()); // NOT NULL cols have empty default applied
+        $this->assertEqual($columns['secondname']->default_value, '');
         $this->assertTrue($columns['thirdname']->has_default);
-        $this->assertEqual($columns['thirdname']->default_value, $DB->sql_empty()); // empty defaults have proper empties applied
+        $this->assertEqual($columns['thirdname']->default_value, '');
+        $this->assertTrue($columns['percentfloat']->has_default);
+        $this->assertEqual($columns['percentfloat']->default_value, 99.9);
+        $this->assertTrue($columns['userid']->has_default);
+        $this->assertEqual($columns['userid']->default_value, 0);
 
         // basic get_indexes() test
         $indexes = $DB->get_indexes('test_table1');
@@ -921,7 +926,7 @@ class ddl_test extends UnitTestCase {
 
         $table = new xmldb_table('test_table_cust0');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
@@ -931,14 +936,14 @@ class ddl_test extends UnitTestCase {
         $dbman->change_field_default($table, $field);
 
         $record = new object();
-        $record->number = 666;
+        $record->onenumber = 666;
         $id = $DB->insert_record('test_table_cust0', $record);
 
         $record = $DB->get_record('test_table_cust0', array('id'=>$id));
         $this->assertEqual($record->name, 'Moodle2');
 
 
-        $field = new xmldb_field('number');
+        $field = new xmldb_field('onenumber');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 666);
         $dbman->change_field_default($table, $field);
 
@@ -947,7 +952,7 @@ class ddl_test extends UnitTestCase {
         $id = $DB->insert_record('test_table_cust0', $record);
 
         $record = $DB->get_record('test_table_cust0', array('id'=>$id));
-        $this->assertEqual($record->number, '666');
+        $this->assertEqual($record->onenumber, '666');
 
         $dbman->drop_table($table);
     }
@@ -958,18 +963,18 @@ class ddl_test extends UnitTestCase {
 
         $table = new xmldb_table('test_table_cust0');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onenumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
         $record = new object();
-        $record->number = 666;
+        $record->onenumber = 666;
         $record->name = 'something';
         $DB->insert_record('test_table_cust0', $record, false);
 
-        $index = new xmldb_index('number-name');
-        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('number', 'name'));
+        $index = new xmldb_index('onenumber-name');
+        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('onenumber', 'name'));
         $dbman->add_index($table, $index);
 
         ob_start(); // hide debug warning
