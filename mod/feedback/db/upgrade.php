@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the feedback module
 //
 // Sometimes, changes between versions involve
@@ -34,11 +34,11 @@ function xmldb_feedback_upgrade($oldversion) {
         $field = new xmldb_field('id');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, true, null, null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('feedback');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('userid');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
@@ -50,11 +50,11 @@ function xmldb_feedback_upgrade($oldversion) {
         $field = new xmldb_field('timemodified');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
-        
+
         $key = new xmldb_key('PRIMARY');
         $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
         $table->addKey($key);
-        
+
         $key = new xmldb_key('feedback');
         $key->set_attributes(XMLDB_KEY_FOREIGN, array('feedback'), 'feedback', 'id');
         $table->addKey($key);
@@ -68,19 +68,19 @@ function xmldb_feedback_upgrade($oldversion) {
         $field = new xmldb_field('id');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, true, null, null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('course_id');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('item');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('completed');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
-        
+
         $field = new xmldb_field('tmp_completed');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0', null);
         $table->addField($field);
@@ -88,11 +88,11 @@ function xmldb_feedback_upgrade($oldversion) {
         $field = new xmldb_field('value');
         $field->set_attributes(XMLDB_TYPE_TEXT, null, null, null, false, '', null);
         $table->addField($field);
-        
+
         $key = new xmldb_key('PRIMARY');
         $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
         $table->addKey($key);
-        
+
         $key = new xmldb_key('feedback');
         $key->set_attributes(XMLDB_KEY_FOREIGN, array('item'), 'feedback_item', 'id');
         $table->addKey($key);
@@ -158,11 +158,11 @@ function xmldb_feedback_upgrade($oldversion) {
             $concat_radio    = $DB->sql_concat("'r>>>>>'",'presentation');
             $concat_check    = $DB->sql_concat("'c>>>>>'",'presentation');
             $concat_dropdown = $DB->sql_concat("'d>>>>>'",'presentation');
-            
+
             $update_sql1 = "UPDATE {feedback_item} SET presentation = ".$concat_radio." WHERE typ IN('radio','radiorated')";
             $update_sql2 = "UPDATE {feedback_item} SET presentation = ".$concat_dropdown." WHERE typ IN('dropdown','dropdownrated')";
             $update_sql3 = "UPDATE {feedback_item} SET presentation = ".$concat_check." WHERE typ = 'check'";
-            
+
             $result = $result && $DB->execute($update_sql1);
             $result = $result && $DB->execute($update_sql2);
             $result = $result && $DB->execute($update_sql3);
@@ -170,8 +170,8 @@ function xmldb_feedback_upgrade($oldversion) {
         if ($result) {
             $update_sql1 = "UPDATE {feedback_item} SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
             $update_sql2 = "UPDATE {feedback_item} SET typ = 'multichoicerated' WHERE typ IN('radiorated','dropdownrated')";
-            $result = $result && $DB->execute($update_sql1);            
-            $result = $result && $DB->execute($update_sql2);            
+            $result = $result && $DB->execute($update_sql1);
+            $result = $result && $DB->execute($update_sql2);
         }
         upgrade_mod_savepoint($result, 2008042401, 'feedback');
     }
@@ -183,19 +183,19 @@ function xmldb_feedback_upgrade($oldversion) {
         $new_log_display->mtable = 'feedback';
         $new_log_display->field = 'name';
         $result = $result && $DB->insert_record('log_display', $new_log_display);
-        
+
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'submit';
         $result = $result && $DB->insert_record('log_display', $new_log_display);
-        
+
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'delete';
         $result = $result && $DB->insert_record('log_display', $new_log_display);
-        
+
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view';
         $result = $result && $DB->insert_record('log_display', $new_log_display);
-        
+
         $new_log_display = clone($new_log_display);
         $new_log_display->action = 'view all';
         $new_log_display->mtable = 'course';
