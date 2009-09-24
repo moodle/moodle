@@ -128,7 +128,7 @@ class question_dataset_dependent_items_form extends moodleform {
             $key1++;
         }    
 
-        $addremoveoptions = Array();
+        $addremoveoptions = array();
         $addremoveoptions['1']='1';
         for ($i=10; $i<=100 ; $i+=10){
              $addremoveoptions["$i"]="$i";
@@ -262,10 +262,14 @@ class question_dataset_dependent_items_form extends moodleform {
                 }
                 $j--;
             }
+            if($question->options->multichoice == 1 ){
+                $comment = $this->qtypeobj->multichoice_comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
+            }else {
             $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
              if ($comment->outsidelimit) {
                  $this->outsidelimit=$comment->outsidelimit ;
             }
+        }
             $totalcomment='';
             foreach ($question->options->answers as $key => $answer) {
                 $totalcomment .= $comment->stranswers[$key].'<br/>';
@@ -313,10 +317,15 @@ class question_dataset_dependent_items_form extends moodleform {
 
         }
         //default answercomment will get ignored if answer element is not in the form.
+                    if($question->options->multichoice == 1 ){
+                $comment = $this->qtypeobj->multichoice_comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
+            }else {
+
             $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, ($this->noofitems+1));
             if ($comment->outsidelimit) {
                  $this->outsidelimit=$comment->outsidelimit ;
             }
+        }
             $key1 = 1;
             foreach ($question->options->answers as $key => $answer) {
                 $formdata['answercomment['.($this->noofitems+$key1).']'] = $comment->stranswers[$key];

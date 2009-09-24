@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/calculated/db" VERSION="20090819" COMMENT="XMLDB file for Moodle question/type/calculated. This question type also relies on the question_numerical_units table created by the numerical question type, and the tables created by the datasetdependent question type base class.">
+<XMLDB PATH="question/type/calculated/db" VERSION="20090921" COMMENT="XMLDB file for Moodle question/type/calculated. This question type also relies on the question_numerical_units table created by the numerical question type, and the tables created by the datasetdependent question type base class."
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="question_calculated" COMMENT="Options for questions of type calculated" NEXT="question_calculated_options">
       <FIELDS>
@@ -23,11 +26,18 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="synchronize"/>
-        <FIELD NAME="synchronize" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question"/>
+        <FIELD NAME="synchronize" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question" NEXT="multiplechoice"/>
+        <FIELD NAME="multiplechoice" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="set for multiple choice calculated question" PREVIOUS="synchronize" NEXT="single"/>
+        <FIELD NAME="single" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 it multiple response (checkboxes). Otherwise it is radio buttons." PREVIOUS="multiplechoice" NEXT="shuffleanswers"/>
+        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the choices can be randomly shuffled." PREVIOUS="single" NEXT="correctfeedback"/>
+        <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback shown for any correct response." PREVIOUS="shuffleanswers" NEXT="partiallycorrectfeedback"/>
+        <FIELD NAME="partiallycorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback shown for any partially correct response." PREVIOUS="correctfeedback" NEXT="incorrectfeedback"/>
+        <FIELD NAME="incorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback shown for any incorrect response." PREVIOUS="partiallycorrectfeedback" NEXT="answernumbering"/>
+        <FIELD NAME="answernumbering" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="abc" SEQUENCE="false" COMMENT="Indicates how and whether the choices should be numbered." PREVIOUS="incorrectfeedback"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
-        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>      
+        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="question_dataset_definitions" COMMENT="Organises and stores properties for dataset items" PREVIOUS="question_calculated_options" NEXT="question_dataset_items">

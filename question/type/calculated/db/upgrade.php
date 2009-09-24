@@ -33,7 +33,9 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint($result, 2008091700, 'qtype', 'calculated');
     }
+    if ($result && $oldversion < 2009082000 ) { //New version in version.php
 
+// this should be changed if merged to 1.9
 //    let if ($dbman->table_exists()) replace the normal $oldversion test
 //    as in any case the question question_calculated_options should be created
 
@@ -44,6 +46,14 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('question', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('synchronize', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('multichoice', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0','synchronize');
+        $table->add_field('single', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0','multichoice');
+        $table->add_field('shuffleanswers', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0','single');
+        $table->add_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null,'shuffleanswers');
+        $table->add_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'correctfeedback');
+        $table->add_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'partiallycorrectfeedback');
+        $table->add_field('answernumbering', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'abc', 'incorrectfeedback');
+
 
     /// Adding keys to table question_calculated_options
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -54,7 +64,73 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
         }
+        upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
+    }
+    if ($result && $oldversion >= 2009082000 && $oldversion < 2009092000 ) { //New version in version.php
 
+    /// Define field multichoice to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('multichoice', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'synchronize');
+
+    /// Conditionally launch add field multichoice
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    /// Define field single to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('single', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'multichoice');
+
+    /// Conditionally launch add field single
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field shuffleanswers to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('shuffleanswers', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'single');
+
+    /// Conditionally launch add field shuffleanswers
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    /// Define field correctfeedback to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'shuffleanswers');
+
+    /// Conditionally launch add field correctfeedback
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field partiallycorrectfeedback to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'correctfeedback');
+
+    /// Conditionally launch add field partiallycorrectfeedback
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    /// Define field incorrectfeedback to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'partiallycorrectfeedback');
+
+    /// Conditionally launch add field incorrectfeedback
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    /// Define field answernumbering to be added to question_calculated_options
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('answernumbering', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'abc', 'incorrectfeedback');
+
+    /// Conditionally launch add field answernumbering
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
+
+        
+    }
+    
 /// calculated savepoint reached
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of database_manager methods
