@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once("../../config.php");
     require_once('locallib.php');
@@ -31,6 +31,12 @@
         print_error('missingparameter');
     }
 
+    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/view.php', array('id'=>$cm->id));
+    if ($organization !== '') {
+        $url->param('organization', $organization);
+    }
+    $PAGE->set_url($url);
+    
     require_login($course->id, false, $cm);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -55,7 +61,7 @@
     //
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strscorm));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'scorm'));
     echo $OUTPUT->header();
 
     if (has_capability('mod/scorm:viewreport', $context)) {

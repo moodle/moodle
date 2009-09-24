@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?PHP
 
 /// This page prints a particular instance of aicc/scorm package
 
@@ -38,6 +38,18 @@
         print_error('missingparameter');
     }
 
+    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/player.php', array('scoid'=>$scoid, 'id'=>$cm->id));
+    if ($mode !== 'normal') {
+        $url->param('mode', $mode);
+    }
+    if ($currentorg !== '') {
+        $url->param('currentorg', $currentorg);
+    }
+    if ($newattempt !== 'off') {
+        $url->param('newattempt', $newattempt);
+    }
+    $PAGE->set_url($url);
+
     require_login($course->id, false, $cm);
 
     $strscorms = get_string('modulenameplural', 'scorm');
@@ -59,7 +71,7 @@
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add(format_string($scorm->name,true), new moodle_url($CFG->wwwroot.'/mode/scorm/view.php', array('id'=>$cm->id)));
-    $PAGE->set_button(update_module_button($cm->id, $course->id, $strscorm));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'scorm'));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
         echo $OUTPUT->header();
@@ -145,7 +157,7 @@
 
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
 
-    $PAGE->set_button($exitlink.update_module_button($cm->id, $course->id, $strscorm));
+    $PAGE->set_button($exitlink.$OUTPUT->update_module_button($cm->id, 'scorm'));
 
     echo $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height))->in_head();
     echo $PAGE->requires->js('mod/scorm/request.js')->in_head();
@@ -307,10 +319,10 @@
 <?php
             //Added incase javascript popups are blocked
             $link = '<a href="'.$CFG->wwwroot.'/mod/scorm/loadSCO.php?id='.$cm->id.$scoidstr.$modestr.'" target="new">'.get_string('popupblockedlinkname','scorm').'</a>';
-            print_simple_box(get_string('popupblocked','scorm',$link),'center');
+            echo $OUTPUT->box(get_string('popupblocked','scorm',$link));
         }
     } else {
-        print_simple_box(get_string('noprerequisites','scorm'),'center');
+        echo $OUTPUT->box(get_string('noprerequisites','scorm'));
     }
 ?>
             </div> <!-- SCORM object -->

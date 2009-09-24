@@ -33,6 +33,8 @@
         print_error('missingparameter');
     }
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/scorm/datamodel.php', array('scoid'=>$scoid,'attempt'=>$attempt, 'id'=>$cm->id)));
+
     require_login($course->id, false, $cm);
 
     if (confirm_sesskey() && (!empty($scoid))) {

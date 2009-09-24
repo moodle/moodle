@@ -33,6 +33,12 @@
         print_error('missingparameter');
     }
 
+    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/loaddatamodel.php', array('scoid'=>$scoid, 'id'=>$cm->id,'attempt'=>$attempt));
+    if ($mode !== '') {
+        $url->param('mode', $mode);
+    }
+    $PAGE->set_url($url);
+
     require_login($course, false, $cm);
 
     if ($usertrack = scorm_get_tracks($scoid,$USER->id,$attempt)) {

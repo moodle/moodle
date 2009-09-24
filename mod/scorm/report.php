@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 // This script uses installed report plugins to print quiz reports
 
@@ -13,7 +13,19 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_RAW); //get array of responses to delete.
 
+    $url = new moodle_url($CFG->wwwroot.'/mod/scorm/report.php');
+    if ($user !== '') {
+        $url->param('user', $user);
+    }
+    if ($attempt !== '1') {
+        $url->param('attempt', $attempt);
+    }
+    if ($action !== '') {
+        $url->param('action', $action);
+    }
+    
     if (!empty($id)) {
+        $url->param('id', $id);
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error('invalidcoursemodule');
         }
@@ -25,12 +37,14 @@
         }
     } else {
         if (!empty($b)) {
+            $url->param('b', $b);
             if (! $sco = $DB->get_record('scorm_scoes', array('id'=>$b))) {
                 print_error('invalidactivity', 'scorm');
             }
             $a = $sco->scorm;
         }
         if (!empty($a)) {
+            $url->param('a', $a);
             if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
                 print_error('invalidcoursemodule');
             }
@@ -42,6 +56,7 @@
             }
         }
     }
+    $PAGE->set_url($url);
 
     require_login($course->id, false, $cm);
 
