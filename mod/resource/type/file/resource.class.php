@@ -480,6 +480,9 @@ function display() {
 
     if (!empty( $frameset ) and ($frameset == "top") ) {
         
+        // Force target atttributes on links.  Not Strict but we are already using frames anyway! MDL-20327
+        $CFG->frametarget = ' target="'.$CFG->framename.'" ';
+
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         $options = new object();
