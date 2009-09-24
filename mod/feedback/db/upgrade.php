@@ -224,7 +224,7 @@ function xmldb_feedback_upgrade($oldversion) {
 
         upgrade_mod_savepoint($result, 2008050104, 'feedback');
     }
-    
+
     if ($result && $oldversion < 2008050105) {
         //field count is not more needed
         $table = new xmldb_table('feedback_tracking');
@@ -233,14 +233,14 @@ function xmldb_feedback_upgrade($oldversion) {
 
         upgrade_mod_savepoint($result, 2008050105, 'feedback');
     }
-    
+
     if ($result && $oldversion < 2008073002) {
-        $update_sql = "UPDATE {feedback_item} SET presentation = '-|-' WHERE presentation = '0|0' AND typ = 'numeric'";
+        $update_sql = "UPDATE {feedback_item} SET presentation = '-|-' WHERE " . $DB->sql_compare_text('presentation') . " = '0|0' AND typ = 'numeric'";
         $result = $result && $DB->execute($update_sql);
-        
+
         upgrade_mod_savepoint($result, 2008073002, 'feedback');
     }
-    
+
     if ($result && $oldversion < 2009031301) {
         /// Define field label to be added to feedback_item
         $table = new xmldb_table('feedback_item');
