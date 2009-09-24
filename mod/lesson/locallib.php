@@ -1,9 +1,9 @@
-<?php // $Id$
+<?php
+
 /**
  * Local library file for Lesson.  These are non-standard functions that are used
  * only by Lesson.
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -239,7 +239,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
 /// Build the buttons
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/lesson:edit', $context)) {
-        $buttons = update_module_button($cm->id, $course->id, get_string('modulename', 'lesson'));
+        $buttons = $OUTPUT->update_module_button($cm->id, 'lesson');
         if ($extraeditbuttons) {
             if ($lessonpageid === NULL) {
                 print_error('invalidpageid', 'lesson');
@@ -266,7 +266,13 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
     echo $OUTPUT->header();
 
     if (has_capability('mod/lesson:manage', $context)) {
-        print_heading_with_help($activityname, 'overview', 'lesson');
+
+        $helpicon = new moodle_help_icon();
+        $helpicon->text = $activityname;
+        $helpicon->page = "overview";
+        $helpicon->module = "lesson";
+
+        echo $OUTPUT->heading_with_help($helpicon);
 
         if (!empty($currenttab)) {
             include($CFG->dirroot.'/mod/lesson/tabs.php');

@@ -1,8 +1,8 @@
-<?php  // $Id$
+<?php
+
 /**
  * Provides the interface for viewing and adding high scores
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -14,6 +14,15 @@
     $id      = required_param('id', PARAM_INT);             // Course Module ID
     $mode    = optional_param('mode', '', PARAM_ALPHA);
     $link = optional_param('link', 0, PARAM_INT);
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/highscores.php', array('id'=>$id));
+    if ($mode !== '') {
+        $url->param('mode', $mode);
+    }
+    if ($link !== 0) {
+        $url->param('link', $link);
+    }
+    $PAGE->set_url($url);
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
     

@@ -1,4 +1,5 @@
-<?php  // $Id$
+<?php
+
 /**
  * This file plays the mediafile set in lesson settings.
  *
@@ -7,7 +8,6 @@
  *  If there is a way to use the resource class instead of this code, please change to do so
  *
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -17,7 +17,13 @@
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
     $printclose = optional_param('printclose', 0, PARAM_INT);
-    
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/mediafile.php', array('id'=>$id));
+    if ($printclose !== '') {
+        $url->param('printclose', $printclose);
+    }
+    $PAGE->set_url($url);
+
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         print_error('invalidcoursemodule');
     }

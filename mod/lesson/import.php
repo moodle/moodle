@@ -1,8 +1,8 @@
-<?php // $Id$
+<?php
+
 /**
  * Imports lesson pages
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -14,6 +14,12 @@
 
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/import.php', array('id'=>$id));
+    if ($pageid !== '') {
+        $url->param('pageid', $pageid);
+    }
+    $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         print_error('invalidcoursemodule');
@@ -86,7 +92,12 @@
 
     $fileformatnames = get_import_export_formats('import');
 
-    print_heading_with_help($strimportquestions, "import", "lesson");
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = $strimportquestions;
+    $helpicon->page = "import";
+    $helpicon->module = "lesson";
+
+    echo $OUTPUT->heading_with_help($helpicon);
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">";

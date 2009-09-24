@@ -1,4 +1,5 @@
-<?php // $Id$
+<?php
+
 /**
  * This is a very rough importer for powerpoint slides
  * Export a powerpoint presentation with powerpoint as html pages
@@ -8,7 +9,6 @@
  * 
  * The script supports book and lesson.
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -19,6 +19,12 @@
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
     global $matches;
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/lesson/importppt.php', array('id'=>$id));
+    if ($pageid !== '') {
+        $url->param('pageid', $pageid);
+    }
+    $PAGE->set_url($url);
     
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         print_error('invalidcoursemodule');
@@ -84,8 +90,12 @@
     }
 
     /// Print upload form
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = $strimportppt;
+    $helpicon->page = "importppt";
+    $helpicon->module = "lesson";
 
-    print_heading_with_help($strimportppt, "importppt", "lesson");
+    echo $OUTPUT->heading_with_help($helpicon);
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo "<form id=\"theform\" enctype=\"multipart/form-data\" method=\"post\">";

@@ -1,8 +1,8 @@
-<?php // $Id$
+<?php
+
 /**
  * This page lists all the instances of lesson in a particular course
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
@@ -12,6 +12,8 @@
     require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 
     $id = required_param('id', PARAM_INT);   // course
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/lesson/index.php', array('id'=>$id)));
 
     if (!$course = $DB->get_record("course", array("id" => $id))) {
         print_error('invalidcourseid');
