@@ -253,8 +253,11 @@ class oracle_sql_generator extends sql_generator {
         $oldseqname = $this->getSequenceFromDB($xmldb_table);
         $newseqname = $this->getNameForObject($newname, $xmldb_field->getName(), 'seq');
 
-    /// Rename de sequence
+    /// Rename de sequence, disablig CACHE before and enablig it later
+    /// to avoid consuming on rename
+        $results[] = 'ALTER SEQUENCE ' . $oldseqname . ' NOCACHE';
         $results[] = 'RENAME ' . $oldseqname . ' TO ' . $newseqname;
+        $results[] = 'ALTER SEQUENCE ' . $newseqname . ' CACHE';
 
         $oldtriggername = $this->getTriggerFromDB($xmldb_table);
         $newtriggername = $this->getNameForObject($newname, $xmldb_field->getName(), 'trg');
