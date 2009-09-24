@@ -32,7 +32,12 @@
         }
      }
     // give teacher a blank proforma
-    print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = get_string("addabranchtable", "lesson");
+    $helpicon->page = "overview";
+    $helpicon->module = "lesson";
+    echo $OUTPUT->heading_with_help($helpicon);
+
     ?>
     <form id="form" method="post" action="lesson.php" class="addform">
     <fieldset class="invisiblefieldset fieldsetfix">
