@@ -178,6 +178,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $draftitemid = $this->getValue();
         }
 
+        $draftareainfo = file_get_draft_area_info($draftitemid);
+        $filecount = $draftareainfo['filecount'];
+
         if ($COURSE->id == SITEID) {
             $context = get_context_instance(CONTEXT_SYSTEM);
         } else {
@@ -195,6 +198,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->maxbytes  = $this->getMaxbytes();
         $options->maxfiles  = $this->getMaxfiles();
         $options->client_id = $client_id;
+        $options->filecount = $filecount;
         $options->itemid    = $draftitemid;
         $options->subdirs   = $this->_options['subdirs'];
         $options->target    = $id;
