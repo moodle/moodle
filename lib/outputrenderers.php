@@ -1054,6 +1054,8 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function link($link, $text=null) {
+        global $CFG;
+        
         $attributes = array();
 
         if (is_a($link, 'html_link')) {
@@ -1083,6 +1085,10 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         } else {
             $attributes['href'] = prepare_url($link);
+        }
+
+        if (!empty($CFG->frametarget)) {
+            $attributes['target'] = $CFG->framename;
         }
 
         return $this->output_tag('a', $attributes, $text);
