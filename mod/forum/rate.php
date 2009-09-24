@@ -1,108 +1,110 @@
-<?php // $Id$
+<?php
 
 //  Collect ratings, store them, then return to where we came from
 
 /// TODO: Centralise duplicate code in rate.php and rate_ajax.php
 
-    require_once('../../config.php');
-    require_once('lib.php');
+require_once('../../config.php');
+require_once('lib.php');
 
-    $forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
+$forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
 
-    if (!$forum = $DB->get_record('forum', array('id' => $forumid))) {
-        print_error('invalidforumid', 'forum');
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/forum/rate.php', array('forumid'=>$forumid)));
+
+if (!$forum = $DB->get_record('forum', array('id' => $forumid))) {
+    print_error('invalidforumid', 'forum');
+}
+
+if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
+    print_error('invalidcourseid');
+}
+
+if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+    print_error('invalidcoursemodule');
+} else {
+    $forum->cmidnumber = $cm->id; //MDL-12961
     }
 
-    if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
-        print_error('invalidcourseid');
-    }
+require_login($course, false, $cm);
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-        print_error('invalidcoursemodule');
-    } else {
-        $forum->cmidnumber = $cm->id; //MDL-12961
+if (isguestuser()) {
+    print_error('noguestrate', 'forum');
+}
+
+if (!$forum->assessed) {
+    print_error('norate', 'forum');
+}
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/forum:rate', $context);
+
+if ($data = data_submitted()) {
+
+    $discussionid = false;
+
+/// Calculate scale values
+    $scale_values = make_grades_menu($forum->scale);
+
+    foreach ((array)$data as $postid => $rating) {
+        if (!is_numeric($postid)) {
+            continue;
         }
 
-    require_login($course, false, $cm);
+        // following query validates the submitted postid too
+        $sql = "SELECT fp.*
+                  FROM {forum_posts} fp, {forum_discussions} fd
+                 WHERE fp.id = ? AND fp.discussion = fd.id AND fd.forum = ?";
 
-    if (isguestuser()) {
-        print_error('noguestrate', 'forum');
-    }
+        if (!$post = $DB->get_record_sql($sql, array($postid, $forum->id))) {
+            print_error('invalidpostid', 'forum', '', $postid);
+        }
 
-    if (!$forum->assessed) {
-        print_error('norate', 'forum');
-    }
+        $discussionid = $post->discussion;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_capability('mod/forum:rate', $context);
-
-    if ($data = data_submitted()) {
-
-        $discussionid = false;
-
-    /// Calculate scale values
-        $scale_values = make_grades_menu($forum->scale);
-
-        foreach ((array)$data as $postid => $rating) {
-            if (!is_numeric($postid)) {
+        if ($forum->assesstimestart and $forum->assesstimefinish) {
+            if ($post->created < $forum->assesstimestart or $post->created > $forum->assesstimefinish) {
+                // we can not rate this, ignore it - this should not happen anyway unless teacher changes setting
                 continue;
             }
-
-            // following query validates the submitted postid too
-            $sql = "SELECT fp.*
-                      FROM {forum_posts} fp, {forum_discussions} fd
-                     WHERE fp.id = ? AND fp.discussion = fd.id AND fd.forum = ?";
-
-            if (!$post = $DB->get_record_sql($sql, array($postid, $forum->id))) {
-                print_error('invalidpostid', 'forum', '', $postid);
-            }
-
-            $discussionid = $post->discussion;
-
-            if ($forum->assesstimestart and $forum->assesstimefinish) {
-                if ($post->created < $forum->assesstimestart or $post->created > $forum->assesstimefinish) {
-                    // we can not rate this, ignore it - this should not happen anyway unless teacher changes setting
-                    continue;
-                }
-            }
-
-        /// Check rate is valid for for that forum scale values
-            if (!array_key_exists($rating, $scale_values) && $rating != FORUM_UNSET_POST_RATING) {
-                print_error('invalidrate', 'forum', '', $rating);
-            }
-
-            if ($rating == FORUM_UNSET_POST_RATING) {
-                $DB->delete_records('forum_ratings', array('post' => $postid, 'userid' => $USER->id));
-                forum_update_grades($forum, $post->userid);
-
-            } else if ($oldrating = $DB->get_record('forum_ratings', array('userid' => $USER->id, 'post' => $post->id))) {
-                if ($rating != $oldrating->rating) {
-                    $oldrating->rating = $rating;
-                    $oldrating->time   = time();
-                    $DB->update_record('forum_ratings', $oldrating);
-                    forum_update_grades($forum, $post->userid);
-                }
-
-            } else {
-                $newrating = new object();
-                $newrating->userid = $USER->id;
-                $newrating->time   = time();
-                $newrating->post   = $post->id;
-                $newrating->rating = $rating;
-
-                $DB->insert_record('forum_ratings', $newrating);
-                forum_update_grades($forum, $post->userid);
-            }
         }
 
-        if ($forum->type == 'single' or !$discussionid) {
-            redirect("$CFG->wwwroot/mod/forum/view.php?id=$cm->id", get_string('ratingssaved', 'forum'));
+    /// Check rate is valid for for that forum scale values
+        if (!array_key_exists($rating, $scale_values) && $rating != FORUM_UNSET_POST_RATING) {
+            print_error('invalidrate', 'forum', '', $rating);
+        }
+
+        if ($rating == FORUM_UNSET_POST_RATING) {
+            $DB->delete_records('forum_ratings', array('post' => $postid, 'userid' => $USER->id));
+            forum_update_grades($forum, $post->userid);
+
+        } else if ($oldrating = $DB->get_record('forum_ratings', array('userid' => $USER->id, 'post' => $post->id))) {
+            if ($rating != $oldrating->rating) {
+                $oldrating->rating = $rating;
+                $oldrating->time   = time();
+                $DB->update_record('forum_ratings', $oldrating);
+                forum_update_grades($forum, $post->userid);
+            }
+
         } else {
-            redirect("$CFG->wwwroot/mod/forum/discuss.php?d=$discussionid", get_string('ratingssaved', 'forum'));
-        }
+            $newrating = new object();
+            $newrating->userid = $USER->id;
+            $newrating->time   = time();
+            $newrating->post   = $post->id;
+            $newrating->rating = $rating;
 
-    } else {
-        print_error('invalidaccess', 'forum');
+            $DB->insert_record('forum_ratings', $newrating);
+            forum_update_grades($forum, $post->userid);
+        }
     }
+
+    if ($forum->type == 'single' or !$discussionid) {
+        redirect("$CFG->wwwroot/mod/forum/view.php?id=$cm->id", get_string('ratingssaved', 'forum'));
+    } else {
+        redirect("$CFG->wwwroot/mod/forum/discuss.php?d=$discussionid", get_string('ratingssaved', 'forum'));
+    }
+
+} else {
+    print_error('invalidaccess', 'forum');
+}
 
 ?>

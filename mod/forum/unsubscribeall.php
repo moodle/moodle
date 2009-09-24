@@ -1,9 +1,11 @@
-<?php  //$Id$
+<?php
 
 require_once("../../config.php");
 require_once("lib.php");
 
 $confirm = optional_param('confirm', false, PARAM_BOOL);
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/forum/unsubscribeall.php'));
 
 require_login();
 

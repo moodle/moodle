@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // Display user activity reports for a course
 
@@ -12,6 +12,21 @@ $id      = optional_param('id', 0, PARAM_INT);
 $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 5, PARAM_INT);
+
+$url = new moodle_url($CFG->wwwroot.'/mod/forum/user.php', array('course'=>$course));
+if ($id !== 0) {
+    $url->param('id', $id);
+}
+if ($mode !== 'posts') {
+    $url->param('mode', $mode);
+}
+if ($page !== 0) {
+    $url->param('page', $page);
+}
+if ($perpage !== 5) {
+    $url->param('perpage', $perpage);
+}
+$PAGE->set_url($url);
 
 if (empty($id)) {         // See your own profile by default
     require_login();
