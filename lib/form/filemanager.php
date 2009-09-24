@@ -50,8 +50,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
-        // XXX: hide element lable
-        $elementLabel = '';
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
 
         repository_head_setup();
@@ -170,6 +168,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $PAGE->requires->string_for_js('confirmdeletefile', 'repository');
         $PAGE->requires->string_for_js('nopathselected', 'repository');
         $PAGE->requires->string_for_js('popupblockeddownload', 'repository');
+        $PAGE->requires->string_for_js('path', 'moodle');
 
         if (empty($draftitemid)) {
             // no existing area info provided - let's use fresh new draft area

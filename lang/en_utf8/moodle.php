@@ -1235,6 +1235,7 @@ $string['passwordsenttext'] = '<p>An email has been sent to your address at $a->
    <p><b>Please check your email for your new password</b></p>
    <p>The new password was automatically generated, so you might like to
    <a href=\"$a->link\">change it to something easier to remember</a>.</p>';
+$string['path'] = 'Path';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
 $string['paymentinstant'] = 'Use the button below to pay and be enrolled within minutes!';
@@ -1424,6 +1425,8 @@ $string['selectall'] = 'Select all';
 $string['selectdefault'] = 'Select default';
 $string['selectamodule'] = 'Please select an activity module';
 $string['selectednowmove'] = '$a files selected for moving. Now go into the destination folder and press \'Move files to here\'';
+$string['selectedfile'] = 'Selected file';
+$string['selectfiles'] = 'Select files';
 $string['selectnos'] = 'Select all \'no\'';
 $string['selectperiod'] = 'Select period';
 $string['senddetails'] = 'Send my details via email';
