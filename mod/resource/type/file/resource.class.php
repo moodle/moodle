@@ -230,47 +230,48 @@ class resource_file extends resource_base {
         if ($resource->options != "forcedownload") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
             if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
                 $resourcetype = "image";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
                 $resourcetype = "mp3";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "video/x-flv") {    // It's a Flash video file
                 $resourcetype = "flv";
-                $embedded = true;
+                    $embedded = true;
 
             } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
                 $resourcetype = "mediaplayer";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
                 $resourcetype = "quicktime";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "application/x-shockwave-flash") {   // It's a Flash file
                 $resourcetype = "flash";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "video/mpeg") {   // It's a Mpeg file
                 $resourcetype = "mpeg";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == "text/html") {    // It's a web page
                 $resourcetype = "html";
 
             } else if ($mimetype == "application/zip") {    // It's a zip archive
                 $resourcetype = "zip";
-                $embedded = true;
+                    $embedded = true;
 
             } else if ($mimetype == 'application/pdf' || $mimetype == 'application/x-pdf') {
                 $resourcetype = "pdf";
-                $embedded = true;
+                //no need embedded, html file types behave like unknown file type
+                
             } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
                 $resourcetype = "rm";
-                $embedded = true;
+                    $embedded = true;
+                }
             } 
-        }
 
         $isteamspeak = (stripos($resource->reference, 'teamspeak://') === 0);
 
@@ -506,12 +507,12 @@ class resource_file extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle);
             } else {
-                $navigation = build_navigation($this->navlinks, $cm);
-                print_header_simple($pagetitle, '', $navigation, "", "", true,
-                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            $navigation = build_navigation($this->navlinks, $cm);
+            print_header_simple($pagetitle, '', $navigation, "", "", true,
+            update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
             }
-
+            
             if ($resourcetype == "image") {
                 echo '<div class="resourcecontent resourceimg">';
                 echo "<img title=\"".strip_tags(format_string($resource->name,true))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
@@ -690,14 +691,6 @@ class resource_file extends resource_base {
                 echo '<div class="resourcepdf">';
                 echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . format_string($resource->name) . '</a>';
                 echo '</div>';
-
-            } elseif ($resourcetype == 'pdf') {
-                echo '<div class="resourcepdf">';
-                echo '<object data="' . $fullurl . '" type="application/pdf">';
-                echo '<param name="src" value="' . $fullurl . '" />';
-                echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . format_string($resource->name) . '</a>';
-                echo '</object>';
-                echo '</div>';
             }
 
             if (trim($resource->summary)) {
@@ -831,6 +824,8 @@ class resource_file extends resource_base {
         $mform->disabledIf('framepage', 'windowpopup', 'eq', 1);
         $mform->disabledIf('framepage', 'forcedownload', 'checked');
         $mform->setAdvanced('framepage');
+
+        $mform->addElement('static','shownavigationwarning','','<i>'.get_string('keepnavigationvisiblewarning', 'resource').'</i>');
 
         foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
             if ($option == 'height' or $option == 'width') {
