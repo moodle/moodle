@@ -53,7 +53,7 @@ $PAGE->requires->js('mod/folder/functions.js');
 $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
-$PAGE->set_button(update_module_button($cm->id, '', get_string('modulename', 'folder')));
+$PAGE->set_button($OUTPUT->update_module_button($cm->id, 'folder'));
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(format_string($folder->name), 2);
