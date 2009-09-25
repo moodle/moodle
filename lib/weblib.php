@@ -2164,11 +2164,11 @@ function open_containers() {
  * @return mixed string or void
  */
 function print_container_end_all($return=false, $keep=0) {
+    global $OUTPUT;
     $output = '';
     while (open_containers() > $keep) {
-        $output .= print_container_end($return);
+        $output .= $OUTPUT->container_end();
     }
-
     if ($return) {
         return $output;
     } else {

@@ -32,8 +32,12 @@
 /** Include config {@see config.php} */
 require '../config.php';
 
-error('session test not reimplemented yet');
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/session-test.php'));
+$PAGE->set_generaltype('form');
 
+list($message, $moreinfourl, $link) = prepare_error_message('notlocalisederrormessage', 'error', '', 'session test not reimplemented yet');
+echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
+//
 //TODO: add code that actually tests moodle sessions, the old one only tested PHP sessions used from installer, not the real moodle sessions 
 
 ?>

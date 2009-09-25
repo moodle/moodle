@@ -5010,7 +5010,12 @@ function email_welcome_message_to_user($course, $user=NULL) {
     if (!empty($message)) {
         $subject = get_string('welcometocourse', '', format_string($course->fullname));
 
-        if (! $teacher = get_teacher($course->id)) {
+         $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        // Pass $view=true to filter hidden caps if the user cannot see them
+        if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC','', '', '', '', false, true)) {
+            $users = sort_by_roleassignment_authority($users, $context);
+            $teacher = array_shift($users);
+        } else {
             $teacher = get_admin();
         }
         email_to_user($user, $teacher, $subject, $message);

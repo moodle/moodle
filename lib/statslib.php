@@ -145,7 +145,7 @@ function stats_cron_daily($maxdays=1) {
     $viewactions = implode(',', stats_get_action_names('view'));
     $postactions = implode(',', stats_get_action_names('post'));
 
-    $guest     = get_guest();
+    $guest     = get_complete_user_data('username', 'guest');
     $guestrole = get_guest_role();
 
     list($enroljoin, $enrolwhere, $enrolparams)          = stats_get_enrolled_sql($CFG->statscatdepth, true);
