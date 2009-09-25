@@ -193,7 +193,7 @@ class page_requirements_manager {
             throw new coding_exception('Cannot require a CSS file after &lt;head> has been printed.', $stylesheet);
         }
         if (!$fullurl) {
-            if (!file_exists($CFG->dirroot . '/' . $stylesheet)) {
+            if (!file_exists($CFG->dirroot . '/' . strtok($stylesheet, '?'))) {
                 throw new coding_exception('Attempt to require a CSS file that does not exist.', $stylesheet);
             }
             $url = $CFG->httpswwwroot . '/' . $stylesheet;
