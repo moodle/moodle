@@ -52,6 +52,7 @@ class oracle_sql_generator extends sql_generator {
 
     public $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     public $sequence_name = ''; //Particular name for inline sequences in this generator
+    public $sequence_cache_size = 20; //Size of the sequences values cache (20 = Oracle Default)
 
     public $enum_inline_code = false; //Does the generator need to add inline code in the column definition
 
@@ -90,7 +91,7 @@ class oracle_sql_generator extends sql_generator {
         }
 
         return array ("DROP SEQUENCE $seqname",
-                      "CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
+                      "CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE CACHE $this->sequence_cache_size");
     }
 
 
@@ -170,10 +171,7 @@ class oracle_sql_generator extends sql_generator {
 
         $sequence_name = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'seq');
 
-        $sequence = "CREATE SEQUENCE " . $sequence_name;
-        $sequence.= "\n    START WITH 1";
-        $sequence.= "\n    INCREMENT BY 1";
-        $sequence.= "\n    NOMAXVALUE";
+        $sequence = "CREATE SEQUENCE $sequence_name START WITH 1 INCREMENT BY 1 NOMAXVALUE CACHE $this->sequence_cache_size";
 
         $results[] = $sequence;
 
@@ -263,7 +261,7 @@ class oracle_sql_generator extends sql_generator {
     /// to avoid consuming of values on rename
         $results[] = 'ALTER SEQUENCE ' . $oldseqname . ' NOCACHE';
         $results[] = 'RENAME ' . $oldseqname . ' TO ' . $newseqname;
-        $results[] = 'ALTER SEQUENCE ' . $newseqname . ' CACHE';
+        $results[] = 'ALTER SEQUENCE ' . $newseqname . ' CACHE ' . $this->sequence_cache_size;
 
     /// Create new trigger
         $newt = new xmldb_table($newname); /// Temp table for trigger code generation
