@@ -56,7 +56,7 @@
 
     if ($cm!==null) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
-            ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
+            ? $OUTPUT->update_module_button($cm->id, $cm->modname)
             : "";
         $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
         $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));
@@ -155,7 +155,11 @@
         }
     }
 
-    print_heading_with_help($txt->importquestions, "import", "quiz");
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = $txt->importquestions;
+    $helpicon->page = 'import';
+    $helpicon->module = 'quiz';
+    echo $OUTPUT->heading_with_help($helpicon);
 
     /// Print upload form
     $import_form->display();

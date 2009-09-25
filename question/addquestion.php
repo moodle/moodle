@@ -84,7 +84,7 @@ if ($cm !== null) {
     }
     $PAGE->navbar->add($chooseqtype);
     $PAGE->set_title($chooseqtype);
-    $PAGE->set_button(update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname)));
+    $PAGE->set_button($OUTPUT->update_module_button($cm->id, $cm->modname));
     echo $OUTPUT->header();
 } else {
     $PAGE->navbar->add(get_string('editquestions', 'question'),$returnurl);

@@ -227,7 +227,13 @@ class default_questiontype {
     function display_question_editing_page(&$mform, $question, $wizardnow){
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
-        print_heading_with_help($heading, $this->name(), $this->plugin_name());
+
+        $helpicon = new moodle_help_icon();
+        $helpicon->text = $heading;
+        $helpicon->page = $this->name();
+        $helpicon->module = $this->plugin_name();
+        echo $OUTPUT->heading_with_help($helpicon);
+
         $permissionstrs = array();
         if (!empty($question->id)){
             if ($question->formoptions->canedit){

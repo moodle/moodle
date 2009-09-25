@@ -278,7 +278,7 @@ if ($mform->is_cancelled()){
     if ($cm !== null) {
         $strmodule = get_string('modulename', $cm->modname);
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
-            ? update_module_button($cm->id, $cm->course, $strmodule)
+            ? $OUTPUT->update_module_button($cm->id, $strmodule)
             : "";
 
         $streditingmodule = get_string('editinga', 'moodle', $strmodule);

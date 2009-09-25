@@ -66,7 +66,7 @@
     $streditingquestions = get_string('editquestions', "quiz");
     if ($cm!==null) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
-            ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
+            ? $OUTPUT->update_module_button($cm->id, $cm->modname)
             : "";
         $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
         $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));

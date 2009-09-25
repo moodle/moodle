@@ -173,7 +173,7 @@ if ($cmid) {
     // Page header
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
-        ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
+        ? $OUTPUT->update_module_button($cm->id, $cm->modname)
         : "";
     $PAGE->navbar->add(get_string('modulenameplural', $cm->modname), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/index.php', array('id'=>$COURSE->id)));
     $PAGE->navbar->add(format_string($module->name), new moodle_url($CFG->wwwroot.'/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id)));

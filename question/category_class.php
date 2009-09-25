@@ -256,7 +256,13 @@ class question_category_object {
      */
     public function output_edit_lists() {
         global $OUTPUT;
-        print_heading_with_help(get_string('editcategories', 'quiz'), 'categories', 'question');
+
+        $helpicon = new moodle_help_icon();
+        $helpicon->text = get_string('editcategories', 'quiz');
+        $helpicon->page = 'categories';
+        $helpicon->module = 'question';
+        echo $OUTPUT->heading_with_help($helpicon);
+
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
