@@ -92,7 +92,7 @@ class question_edit_calculated_form extends question_edit_form {
         global $QTYPES;
         $this->qtypeobj =& $QTYPES[$this->qtype()];
       // echo code left for testing period 
-        echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
+      //  echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
         $mform->addElement('hidden', 'initialcategory', 1);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
@@ -360,120 +360,150 @@ class question_edit_calculated_form extends question_edit_form {
         if ($data['multichoice']== 1 ){
             foreach ($answers as $key => $answer){
                 $trimmedanswer = trim($answer);
-            if (($trimmedanswer!='')||$answercount==0){    
-                //verifying for errors in {=...} in answer text;
-                $qanswer = "";
-                $qanswerremaining =  $trimmedanswer ;
-                $possibledatasets = $this->qtypeobj->find_dataset_names($trimmedanswer);
-                    foreach ($possibledatasets as $name => $value) {
-                    $qanswerremaining = str_replace('{'.$name.'}', '1', $qanswerremaining);
-                }
-            //     echo "numericalquestion qanswerremaining <pre>";print_r($possibledatasets);
-                while  (preg_match('~\{=([^[:space:]}]*)}~', $qanswerremaining, $regs1)) {
-                    $qanswersplits = explode($regs1[0], $qanswerremaining, 2);
-                    $qanswer =$qanswer.$qanswersplits[0];
-                    $qanswerremaining = $qanswersplits[1];
-                    if (!empty($regs1[1]) && $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
-                        if(!isset($errors['answer['.$key.']'])){
-                            $errors['answer['.$key.']'] = $formulaerrors.':'.$regs1[1] ;
-                        }else {
-                            $errors['answer['.$key.']'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
+                if (($trimmedanswer!='')||$answercount==0){    
+                    //verifying for errors in {=...} in answer text;
+                    $qanswer = "";
+                    $qanswerremaining =  $trimmedanswer ;
+                    $possibledatasets = $this->qtypeobj->find_dataset_names($trimmedanswer);
+                        foreach ($possibledatasets as $name => $value) {
+                        $qanswerremaining = str_replace('{'.$name.'}', '1', $qanswerremaining);
+                    }
+                //     echo "numericalquestion qanswerremaining <pre>";print_r($possibledatasets);
+                    while  (preg_match('~\{=([^[:space:]}]*)}~', $qanswerremaining, $regs1)) {
+                        $qanswersplits = explode($regs1[0], $qanswerremaining, 2);
+                        $qanswer =$qanswer.$qanswersplits[0];
+                        $qanswerremaining = $qanswersplits[1];
+                        if (!empty($regs1[1]) && $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
+                            if(!isset($errors['answer['.$key.']'])){
+                                $errors['answer['.$key.']'] = $formulaerrors.':'.$regs1[1] ;
+                            }else {
+                                $errors['answer['.$key.']'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
+                            }
                         }
                     }
                 }
+                if ($trimmedanswer!=''){
+                    if ('2' == $data['correctanswerformat'][$key]
+                            && '0' == $data['correctanswerlength'][$key]) {
+                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                    }
+                    if (!is_numeric($data['tolerance'][$key])){
+                        $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                    }
+                    if ($data['fraction'][$key] == 1) {
+                       $maxgrade = true;
+                    }
+    
+                    $answercount++;
+                }
+                //check grades
+                if ($answer != '') {
+                    if ($data['fraction'][$key] > 0) {
+                        $totalfraction += $data['fraction'][$key];
+                    }
+                    if ($data['fraction'][$key] > $maxfraction) {
+                        $maxfraction = $data['fraction'][$key];
+                    }
+                }        
             }
-            if ($trimmedanswer!=''){
-                if ('2' == $data['correctanswerformat'][$key]
-                        && '0' == $data['correctanswerlength'][$key]) {
-                    $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
-                }
-                if (!is_numeric($data['tolerance'][$key])){
-                    $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
-                }
-                if ($data['fraction'][$key] == 1) {
-                   $maxgrade = true;
-                }
+            if ($answercount==0){
+                $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+                $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+            } elseif ($answercount==1){
+                $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+    
+            }
 
-                $answercount++;
-            }
-
-            }
-        }else{
-        foreach ($answers as $key => $answer){
-            //check no of choices
-            // the * for everykind of answer not actually implemented
-            $trimmedanswer = trim($answer);
-            if (($trimmedanswer!='')||$answercount==0){
-                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
-                if (FALSE !== $eqerror){
-                    $errors['answer['.$key.']'] = $eqerror;
+            /// Perform sanity checks on fractional grades
+            if ($data['single']) {
+                if ($maxfraction != 1) {
+                    $maxfraction = $maxfraction * 100;
+                    $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
+                }
+            } else {
+                $totalfraction = round($totalfraction,2);
+                if ($totalfraction != 1) {
+                    $totalfraction = $totalfraction * 100;
+                    $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
                 }
             }
-            if ($trimmedanswer!=''){
-                if ('2' == $data['correctanswerformat'][$key]
-                        && '0' == $data['correctanswerlength'][$key]) {
-                    $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+        }else{ // regular calculated
+            foreach ($answers as $key => $answer){
+                //check no of choices
+                // the * for everykind of answer not actually implemented
+                $trimmedanswer = trim($answer);
+                if (($trimmedanswer!='')||$answercount==0){
+                    $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
+                    if (FALSE !== $eqerror){
+                        $errors['answer['.$key.']'] = $eqerror;
+                    }
                 }
-                if (!is_numeric($data['tolerance'][$key])){
-                    $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                if ($trimmedanswer!=''){
+                    if ('2' == $data['correctanswerformat'][$key]
+                            && '0' == $data['correctanswerlength'][$key]) {
+                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                    }
+                    if (!is_numeric($data['tolerance'][$key])){
+                        $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                    }
+                    if ($data['fraction'][$key] == 1) {
+                       $maxgrade = true;
+                    }
+    
+                    $answercount++;
                 }
-                if ($data['fraction'][$key] == 1) {
-                   $maxgrade = true;
-                }
-
-                $answercount++;
+                //check grades
+    
+                //TODO how should grade checking work here??
+                /*if ($answer != '') {
+                    if ($data['fraction'][$key] > 0) {
+                        $totalfraction += $data['fraction'][$key];
+                    }
+                    if ($data['fraction'][$key] > $maxfraction) {
+                        $maxfraction = $data['fraction'][$key];
+                    }
+                }*/
             }
-            //check grades
-
-            //TODO how should grade checking work here??
-            /*if ($answer != '') {
-                if ($data['fraction'][$key] > 0) {
-                    $totalfraction += $data['fraction'][$key];
+        
+            //grade checking :
+            /// Perform sanity checks on fractional grades
+            /*if ( ) {
+                if ($maxfraction != 1) {
+                    $maxfraction = $maxfraction * 100;
+                    $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
                 }
-                if ($data['fraction'][$key] > $maxfraction) {
-                    $maxfraction = $data['fraction'][$key];
+            } else {
+                $totalfraction = round($totalfraction,2);
+                if ($totalfraction != 1) {
+                    $totalfraction = $totalfraction * 100;
+                    $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
                 }
             }*/
-        }
-    }
-        //grade checking :
-        /// Perform sanity checks on fractional grades
-        /*if ( ) {
-            if ($maxfraction != 1) {
-                $maxfraction = $maxfraction * 100;
-                $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
-            }
-        } else {
-            $totalfraction = round($totalfraction,2);
-            if ($totalfraction != 1) {
-                $totalfraction = $totalfraction * 100;
-                $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
-            }
-        }*/
-        $units  = $data['unit'];
-        if (count($units)) {
-            foreach ($units as $key => $unit){
-                if (is_numeric($unit)){
-                    $errors['unit['.$key.']'] = get_string('mustnotbenumeric', 'qtype_calculated');
-                }
-                $trimmedunit = trim($unit);
-                $trimmedmultiplier = trim($data['multiplier'][$key]);
-                if (!empty($trimmedunit)){
-                    if (empty($trimmedmultiplier)){
-                        $errors['multiplier['.$key.']'] = get_string('youmustenteramultiplierhere', 'qtype_calculated');
+            $units  = $data['unit'];
+            if (count($units)) {
+                foreach ($units as $key => $unit){
+                    if (is_numeric($unit)){
+                        $errors['unit['.$key.']'] = get_string('mustnotbenumeric', 'qtype_calculated');
                     }
-                    if (!is_numeric($trimmedmultiplier)){
-                        $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                    $trimmedunit = trim($unit);
+                    $trimmedmultiplier = trim($data['multiplier'][$key]);
+                    if (!empty($trimmedunit)){
+                        if (empty($trimmedmultiplier)){
+                            $errors['multiplier['.$key.']'] = get_string('youmustenteramultiplierhere', 'qtype_calculated');
+                        }
+                        if (!is_numeric($trimmedmultiplier)){
+                            $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                        }
+    
                     }
-
                 }
             }
-        }
-        if ($answercount==0){
-            $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
-        }
-        if ($maxgrade == false) {
-            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
+            if ($answercount==0){
+                $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
+            }
+            if ($maxgrade == false) {
+                $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
+            }
         }
 
         return $errors;
