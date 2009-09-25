@@ -1,12 +1,31 @@
-<?php  // $Id$
-/*
-resetcourse.php  - Mark Flach and moodle.com
-The purpose of this feature is to quickly remove all user related data from a course
-in order to make it available for a new semester.  This feature can handle the removal
-of general course data like students, teachers, logs, events and groups as well as module
-specific data.  Each module must be modified to take advantage of this new feature.
-The feature will also reset the start date of the course if necessary.
-*/
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The purpose of this feature is to quickly remove all user related data from a course
+ * in order to make it available for a new semester.  This feature can handle the removal
+ * of general course data like students, teachers, logs, events and groups as well as module
+ * specific data.  Each module must be modified to take advantage of this new feature.
+ * The feature will also reset the start date of the course if necessary.
+ *
+ * @copyright Mark Flach and moodle.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package course
+ */
 
 require('../config.php');
 require_once('reset_form.php');
@@ -16,6 +35,8 @@ $id = required_param('id', PARAM_INT);
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("invalidcourseid");
 }
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/reset.php', array('id'=>$id)));
 
 require_login($course);
 require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));

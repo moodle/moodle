@@ -1,6 +1,28 @@
-<?php //  $Id$
-// script to assign students to a meta course by selecting which courses the meta course comprises.
-// this is basically a hack of student.php that uses courses instead.
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Script to assign students to a meta course by selecting which courses the meta
+ * course comprises. This is basically a hack of student.php that uses courses instead.
+ *
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package course
+ */
 
     require_once("../config.php");
     require_once("lib.php");
@@ -14,6 +36,24 @@
     $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
+
+    $url = new moodle_url($CFG->wwwroot.'/course/importstudents.php', array('id'=>$id));
+    if ($add !== 0) {
+        $url->param('add', $add);
+    }
+    if ($remove !== 0) {
+        $url->param('remove', $remove);
+    }
+    if ($showall !== 0) {
+        $url->param('showall', $showall);
+    }
+    if ($searchtext !== '') {
+        $url->param('searchtext', $searchtext);
+    }
+    if ($previoussearch !== 0) {
+        $url->param('previoussearch', $previoussearch);
+    }
+    $PAGE->set_url($url);
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");

@@ -18,7 +18,7 @@
 /**
  * This file contains functions used by the log reports
  *
- * @package course-report
+ * @package course
  * @copyright  1999 onwards  Martin Dougiamas  http://moodle.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -93,7 +93,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));
             }
         }
-        if ($guest = get_guest()) {
+        if ($guest = get_complete_user_data('username', 'guest')) {
             $users[$guest->id] = fullname($guest);
         }
     }
@@ -356,7 +356,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
                 $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));
             }
         }
-        if ($guest = get_guest()) {
+        if ($guest = get_complete_user_data('username', 'guest')) {
             $users[$guest->id] = fullname($guest);
         }
     }
