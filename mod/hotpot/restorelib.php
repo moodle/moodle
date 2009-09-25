@@ -366,17 +366,14 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     foreach ($table_columns[$table] as $column) {
         if ($column->not_null) {
             $name = $column->name;
-            if ($name<>'id' && empty($record->$name)) {
-                if (isset($column->default_value)) {
-                    $default = $column->default_value;
-                } else {
-                    if (preg_match('/[INTD]/', $column->meta_type)) {
-                        $default = 0;
-                    } else {
-                        $default = '';
-                    }
-                }
-                $record->$name = $default;
+            if ($name=='id' || (isset($record->$name) && ! is_null($record->$name))) {
+                // do nothing
+            } else if (isset($column->default_value)) {
+                $record->$name = $column->default_value;
+            } else if (preg_match('/[INTD]/', $column->meta_type)) {
+                $record->$name = 0;
+            } else {
+                $record->$name = '';
             }
         }
     }
