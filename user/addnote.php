@@ -1,4 +1,28 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file allows you to add a note for a user
+ *
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package user
+ */
+
 require_once("../config.php");
 require_once($CFG->dirroot .'/notes/lib.php');
 
@@ -6,6 +30,19 @@ $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
+
+$url = new moodle_url($CFG->wwwroot.'/user/addnote.php', array('id'=>$id));
+if ($users !== 0) {
+    $url->param('userid', $users);
+}
+if ($contents !== 0) {
+    $url->param('contents', $contents);
+}
+if ($states !== 0) {
+    $url->param('states', $states);
+}
+$PAGE->set_url($url);
+
 if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
