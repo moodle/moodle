@@ -59,7 +59,7 @@ class question_edit_calculated_form extends question_edit_form {
         $addrepeated = array();
         if ($this->editasmultichoice == 1){
             $addrepeated[] =& $mform->createElement('hidden', 'tolerance');
-            $addrepeated[] =& $mform->createElement('hidden', 'tolerancetype');
+            $addrepeated[] =& $mform->createElement('hidden', 'tolerancetype',1);
         }else {
             $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
             $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
@@ -92,7 +92,7 @@ class question_edit_calculated_form extends question_edit_form {
         global $QTYPES;
         $this->qtypeobj =& $QTYPES[$this->qtype()];
       // echo code left for testing period 
-     //   echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
+        echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
         $mform->addElement('hidden', 'initialcategory', 1);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
@@ -104,6 +104,11 @@ class question_edit_calculated_form extends question_edit_form {
         if ( isset($this->question->options->multichoice) && $this->question->options->multichoice == '1'){
             $this->editasmultichoice = 1 ;   
         }else {
+            if ( !isset($this->question->id ) && 1 ==  optional_param('multichoice', '', PARAM_RAW )){
+                $this->editasmultichoice = 1 ;
+            }else {
+                $this->editasmultichoice = 0 ;
+            }
             if ( !isset($this->question->id ) && '' != optional_param('createoptionbutton', '', PARAM_RAW) && 1 ==  optional_param('multichoice', '', PARAM_RAW)){
                 $this->editasmultichoice = 1 ;
             }
