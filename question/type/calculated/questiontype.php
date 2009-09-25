@@ -539,6 +539,7 @@ class question_calculated_qtype extends default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
+        global $OUTPUT ;
         switch ($wizardnow){
             case '':
                 //on first page default display is fine
