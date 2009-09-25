@@ -253,21 +253,20 @@ class oracle_sql_generator extends sql_generator {
         $oldseqname = $this->getSequenceFromDB($xmldb_table);
         $newseqname = $this->getNameForObject($newname, $xmldb_field->getName(), 'seq');
 
-    /// Rename de sequence, disablig CACHE before and enablig it later
-    /// to avoid consuming on rename
+        $oldtriggername = $this->getTriggerFromDB($xmldb_table);
+        $newtriggername = $this->getNameForObject($newname, $xmldb_field->getName(), 'trg');
+
+    /// Drop old trigger (first of all)
+        $results[] = "DROP TRIGGER " . $oldtriggername;
+
+    /// Rename the sequence, disablig CACHE before and enablig it later
+    /// to avoid consuming of values on rename
         $results[] = 'ALTER SEQUENCE ' . $oldseqname . ' NOCACHE';
         $results[] = 'RENAME ' . $oldseqname . ' TO ' . $newseqname;
         $results[] = 'ALTER SEQUENCE ' . $newseqname . ' CACHE';
 
-        $oldtriggername = $this->getTriggerFromDB($xmldb_table);
-        $newtriggername = $this->getNameForObject($newname, $xmldb_field->getName(), 'trg');
-
-    /// Drop old trigger
-        $results[] = "DROP TRIGGER " . $oldtriggername;
-
-        $newt = new xmldb_table($newname); /// Temp table for trigger code generation
-
     /// Create new trigger
+        $newt = new xmldb_table($newname); /// Temp table for trigger code generation
         $results = array_merge($results, $this->getCreateTriggerSQL($newt, $xmldb_field));
 
     /// Rename all the check constraints in the table
