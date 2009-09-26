@@ -495,7 +495,7 @@
         if ($tagid) {
             $tag = $tagid;
         } else if ($tag) {
-            if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tag WHERE name LIKE "'.$tag.'"')) {
+            if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tag WHERE name LIKE "'.addslashes($tag).'"')) {
                 $tag = $tagrec->id;
             } else {
                 $tag = -1;    //no records found

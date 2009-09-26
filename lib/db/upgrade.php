@@ -1780,7 +1780,7 @@ function xmldb_main_upgrade($oldversion=0) {
                 $raw_normalized = clean_param($oldtag->text, PARAM_TAG);
                 $normalized     = moodle_strtolower($raw_normalized);
                 // if this tag does not exist in tag table yet
-                if (!$newtag = get_record('tag', 'name', $normalized, '', '', '', '', 'id')) {
+                if (!$newtag = get_record('tag', 'name', addslashes($normalized), '', '', '', '', 'id')) {
                     $itag = new object();
                     $itag->name         = $normalized;
                     $itag->rawname      = $raw_normalized;
@@ -1793,7 +1793,7 @@ function xmldb_main_upgrade($oldversion=0) {
                         $itag->tagtype  = 'default';
                     }
 
-                    if ($idx = insert_record('tag', $itag)) {
+                    if ($idx = insert_record('tag', addslashes_recursive($itag))) {
                         $tagrefs[$oldtag->id] = $idx;
                     }
                 // if this tag is already used by tag table

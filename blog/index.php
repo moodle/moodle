@@ -165,7 +165,7 @@ if (empty($courseid)) {
 
 include($CFG->dirroot .'/blog/header.php');
 
-blog_print_html_formatted_entries($postid, $filtertype, $filterselect, $tagid, $tag);
+blog_print_html_formatted_entries($postid, $filtertype, $filterselect, $tagid, stripslashes($tag));
 
 add_to_log($courseid, 'blog', 'view', 'index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;postid='.$postid.'&amp;tagid='.$tagid.'&amp;tag='.$tag, 'view blog entry');
 
