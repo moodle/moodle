@@ -116,12 +116,14 @@
 
         if ($CFG->emailchangeconfirmation) {
             // Handle change of email carefully for non-trusted users
-            if (isset($usernew->email) and $user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
+            if (isset($usernew->email) and $user->email != stripslashes($usernew->email) && !has_capability('moodle/user:update', $systemcontext)) {
                 $a = new stdClass();
-                $a->newemail = $usernew->preference_newemail = $usernew->email;
+                $a->newemail = s(stripslashes($usernew->email));
+                $usernew->preference_newemail = stripslashes($usernew->email);
                 $usernew->preference_newemailkey = random_string(20);
                 $usernew->preference_newemailattemptsleft = 3;
-                $a->oldemail = $usernew->email = $user->email;
+                $a->oldemail = s($user->email);
+                $usernew->email = addslashes($user->email);
 
                 $email_changed_html = print_box(get_string('auth_changingemailaddress', 'auth', $a), 'generalbox', 'notice', true);
                 $email_changed_html .= print_continue("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", true);
