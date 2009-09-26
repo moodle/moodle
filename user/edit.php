@@ -167,7 +167,7 @@ if ($usernew = $userform->get_data()) {
     $DB->update_record('user', $usernew);
 
     // pass a true $userold here
-    if (! $authplugin->user_update($user, $userform->get_data())) {
+    if (! $authplugin->user_update($user, $usernew)) {
         // auth update failed, rollback for moodle
         $DB->update_record('user', $user);
         print_error('cannotupdateprofile');
