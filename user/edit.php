@@ -140,7 +140,7 @@
         }
 
         // pass a true $userold here
-        if (! $authplugin->user_update($user, $userform->get_data(false))) {
+        if (! $authplugin->user_update($user, stripslashes_recursive($usernew))) {
             // auth update failed, rollback for moodle
             update_record('user', addslashes_object($user));
             error('Failed to update user data on external auth: '.$user->auth.
