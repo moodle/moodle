@@ -1477,9 +1477,11 @@ function update_record($table, $dataobject) {
 
     global $db, $CFG, $record_cache;
 
-    if (! isset($dataobject->id) ) {
+    // integer value in id propery required
+    if (empty($dataobject->id)) {
         return false;
     }
+    $dataobject->id = (int)$dataobject->id;
 
     // Remove this record from record cache since it will change
     if (!empty($CFG->enablerecordcache) && isset($record_cache[$table][$dataobject->id])) {
