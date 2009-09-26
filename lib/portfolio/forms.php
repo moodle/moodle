@@ -45,7 +45,9 @@ final class portfolio_export_form extends moodleform {
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'stage', PORTFOLIO_STAGE_CONFIG);
+        $mform->setType('stage', PARAM_INT);
         $mform->addElement('hidden', 'instance', $this->_customdata['instance']->get('id'));
+        $mform->setType('instance', PARAM_INT);
 
         if (array_key_exists('formats', $this->_customdata) && is_array($this->_customdata['formats'])) {
             if (count($this->_customdata['formats']) > 1) {
@@ -57,6 +59,7 @@ final class portfolio_export_form extends moodleform {
             } else {
                 $f = array_shift($this->_customdata['formats']);
                 $mform->addElement('hidden', 'format', $f);
+                $mform->setType('format', PARAM_RAW);
             }
         }
 
@@ -75,6 +78,7 @@ final class portfolio_export_form extends moodleform {
             } else {
                 $mform->addElement('hidden', 'wait', 0);
             }
+            $mform->setType('wait', PARAM_INT);
         }
 
         if (array_key_exists('plugin', $this->_customdata) && is_object($this->_customdata['plugin'])) {
@@ -131,8 +135,11 @@ final class portfolio_admin_form extends moodleform {
         $strrequired = get_string('required');
 
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get('id') : 0);
+        $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'new',   $this->plugin);
+        $mform->setType('new', PARAM_INT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
+        $mform->setType('plugin', PARAM_SAFEDIR);
 
         if (!$this->instance) {
             $insane = portfolio_instance_sanity_check($this->instance);
@@ -213,6 +220,7 @@ final class portfolio_user_form extends moodleform {
         $this->userid = $this->_customdata['userid'];
 
         $this->_form->addElement('hidden', 'config', $this->instance->get('id'));
+        $mform->setType('config', PARAM_INT);
 
         $this->instance->user_config_form($this->_form, $this->userid);
 

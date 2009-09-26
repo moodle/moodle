@@ -284,7 +284,9 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $strquestionlabel = $this->qtypeobj->comment_header($this->nonemptyanswer);
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
         $mform->addElement('hidden', 'initialcategory', 1);
+        $mform->setType('initialcategory', PARAM_INT);
         $mform->addElement('hidden', 'reload', 1);
+        $mform->setType('reload', PARAM_INT);
         $addfieldsname='updatequestion value';
         $addstring=get_string("updatecategory", "qtype_calculated");
         $mform->registerNoSubmitButton($addfieldsname);

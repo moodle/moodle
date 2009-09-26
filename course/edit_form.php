@@ -65,6 +65,7 @@ class course_edit_form extends moodleform {
             $mform->addElement('select', 'category', get_string('category'), $displaylist);
         } else {
             $mform->addElement('hidden', 'category', null);
+            $mform->setType('category', PARAM_INT);
         }
         $mform->setHelpButton('category', array('coursecategory', get_string('category')));
         $mform->setDefault('category', $category->id);
@@ -369,6 +370,7 @@ class course_edit_form extends moodleform {
             $mform->setDefault('enablecompletion', $courseconfig->enablecompletion);
         } else {
             $mform->addElement('hidden', 'enablecompletion');
+            $mform->setType('enablecompletion', PARAM_INT);
             $mform->setDefault('enablecompletion',0);
         }
 
@@ -389,6 +391,7 @@ class course_edit_form extends moodleform {
             $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
         } else {
             $mform->addElement('hidden', 'restrictmodules', null);
+            $mform->setType('restrictmodules', PARAM_INT);
         }
         if ($CFG->restrictmodulesfor == 'all') {
             $mform->setDefault('allowedmods', explode(',',$CFG->defaultallowedmodules));

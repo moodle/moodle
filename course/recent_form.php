@@ -122,6 +122,7 @@ class recent_form extends moodleform {
             }
         } else {
             $mform->addElement('hidden','group');
+            $mform->setType('group', PARAM_INT);
             $mform->setConstants(array('group'=>0));
         }
 
@@ -134,6 +135,7 @@ class recent_form extends moodleform {
         $mform->addElement('date_time_selector', 'date', get_string('since'), array('optional'=>true));
 
         $mform->addElement('hidden','id');
+        $mform->setType('id', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons(false, get_string('showrecent'));

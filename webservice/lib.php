@@ -415,6 +415,7 @@ final class wsuser_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'username', $this->username);
+        $mform->setType('username', PARAM_RAW);
         $param = new stdClass();
         $param->username = $this->username;
         $wsuser = $DB->get_record("user", array("username" => $this->username));
@@ -441,6 +442,7 @@ final class wssettings_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'settings', $settings);
+        $mform->setType('settings', PARAM_RAW);
         $param = new stdClass();
 
         require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');
@@ -476,6 +478,7 @@ final class wsservicesettings_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'serviceid', $serviceid);
+        $mform->setType('serviceid', PARAM_INT);
         $param = new stdClass();
 
      //   require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');

@@ -475,6 +475,7 @@ abstract class moodleform_mod extends moodleform {
             $mform->addElement('submit', 'unlockcompletion', get_string('unlockcompletion', 'completion'));
             $mform->registerNoSubmitButton('unlockcompletion');
             $mform->addElement('hidden', 'completionunlocked', 0);
+            $mform->setType('completionunlocked', PARAM_INT);
 
             $mform->addElement('select', 'completion', get_string('completion', 'completion'), 
                 array(COMPLETION_TRACKING_NONE=>get_string('completion_none', 'completion'), 

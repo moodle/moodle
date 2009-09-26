@@ -1283,6 +1283,7 @@ class generator_form extends moodleform {
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'do_generation', 1);
+        $mform->setType('do_generation', PARAM_INT);
 
         foreach ($generator->settings as $setting) {
             $type = 'advcheckbox';

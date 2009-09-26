@@ -30,7 +30,9 @@ class feedback_edit_add_question_form extends moodleform {
 
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'position');
+        $mform->setType('position', PARAM_INT);
 //-------------------------------------------------------------------------------
         // buttons
         $mform->addElement('submit', 'add_item', get_string('add_item', 'feedback'));
@@ -68,6 +70,7 @@ class feedback_edit_use_template_form extends moodleform {
         $mform->addElement('header', '', get_string('using_templates', 'feedback'));
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         
         // visible elements
         $templates_options = array();
@@ -113,8 +116,11 @@ class feedback_edit_create_template_form extends moodleform {
 
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'do_show');
+        $mform->setType('do_show', PARAM_INT);
         $mform->addElement('hidden', 'savetemplate', 1);
+        $mform->setType('savetemplate', PARAM_INT);
 
         //headline
         $mform->addElement('header', '', get_string('creating_templates', 'feedback'));

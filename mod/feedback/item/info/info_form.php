@@ -14,6 +14,7 @@ class feedback_info_form extends feedback_item_form {
         
         $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
         $this->requiredcheck = &$mform->addElement('hidden', 'required');
+        $mform->setType('required', PARAM_INT);
         
         $this->itemname = &$mform->addElement('text', 'itemname', get_string('item_name', 'feedback'), array('size="'.FEEDBACK_ITEM_NAME_TEXTBOX_SIZE.'"','maxlength="255"'));
         $this->itemlabel = $mform->addElement('text', 'itemlabel', get_string('item_label', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));

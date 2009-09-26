@@ -237,6 +237,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
         $distriboptions = array('uniform' => get_string('uniform', 'qtype_datasetdependent'), 'loguniform' => get_string('loguniform', 'qtype_datasetdependent'));
         $mform->addElement('hidden', "calcdistribution[$idx]", 'uniform');
+        $mform->setType("calcdistribution[$idx]", PARAM_INT);
 
 
     }

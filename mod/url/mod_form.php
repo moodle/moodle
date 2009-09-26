@@ -59,6 +59,7 @@ class mod_url_mod_form extends moodleform_mod {
         }
         if (count($options) == 1) {
             $mform->addElement('hidden', 'display');
+            $mform->setType('display', PARAM_INT);
             reset($options);
             $mform->setDefault('display', key($options));
         } else {

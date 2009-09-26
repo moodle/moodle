@@ -86,8 +86,11 @@ class question_dataset_dependent_items_form extends moodleform {
             $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
+            $mform->setType("definition[$j]", PARAM_RAW);
             $mform->addElement('hidden', "itemid[$j]");
+            $mform->setType("itemid[$j]", PARAM_RAW);
             $mform->addElement('static', "divider[$j]", '', '<hr />');
+            $mform->setType("divider[$j]", PARAM_RAW);
             $j++;
         }
         $mform->addElement('header', 'updateanswershdr', get_string('answerstoleranceparam', 'qtype_datasetdependent'));
@@ -102,12 +105,16 @@ class question_dataset_dependent_items_form extends moodleform {
             }else if ('*' === $answer->answer){
                 $mform->addElement('static', 'answercomment['.($this->noofitems+$key1).']', $answer->answer);
                 $mform->addElement('hidden', 'tolerance['.$key.']', '');
+                $mform->setType('tolerance['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerance['.$key.']',true);
                 $mform->addElement('hidden', 'tolerancetype['.$key.']', '');
+                $mform->setType('tolerancetype['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerancetype['.$key.']',true);
                 $mform->addElement('hidden', 'correctanswerlength['.$key.']', '');
+                $mform->setType('correctanswerlength['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('correctanswerlength['.$key.']',true);
                 $mform->addElement('hidden', 'correctanswerformat['.$key.']', '');
+                $mform->setType('correctanswerformat['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('correctanswerformat['.$key.']',true);
             }else {
                 $mform->addElement('static', 'answercomment['.($this->noofitems+$key1).']', $answer->answer);

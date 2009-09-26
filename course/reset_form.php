@@ -80,6 +80,7 @@ class course_reset_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'id', $COURSE->id);
+        $mform->setType('id', PARAM_INT);
 
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('resetcourse'));

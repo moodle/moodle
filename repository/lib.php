@@ -1592,10 +1592,15 @@ final class repository_instance_form extends moodleform {
         $strrequired = get_string('required');
 
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->id : 0);
+        $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'new',   $this->plugin);
+        $mform->setType('new', PARAM_FORMAT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
+        $mform->setType('plugin', PARAM_SAFEDIR);
         $mform->addElement('hidden', 'typeid', $this->typeid);
+        $mform->setType('typeid', PARAM_INT);
         $mform->addElement('hidden', 'contextid', $this->contextid);
+        $mform->setType('contextid', PARAM_INT);
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
@@ -1668,8 +1673,11 @@ final class repository_type_form extends moodleform {
         $strrequired = get_string('required');
 
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
+        $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'new',   $this->plugin);
+        $mform->setType('new', PARAM_FORMAT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
+        $mform->setType('plugin', PARAM_SAFEDIR);
 
         // let the plugin add its specific fields
         if (!$this->instance) {

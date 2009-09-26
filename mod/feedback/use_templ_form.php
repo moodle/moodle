@@ -24,9 +24,13 @@ class mod_feedback_use_templ_form extends moodleform {
 
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'templateid');
+        $mform->setType('templateid', PARAM_INT);
         $mform->addElement('hidden', 'do_show');
+        $mform->setType('do_show', PARAM_INT);
         $mform->addElement('hidden', 'confirmadd');
+        $mform->setType('confirmadd', PARAM_INT);
 
         //-------------------------------------------------------------------------------
         // buttons

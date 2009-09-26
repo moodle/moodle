@@ -19,8 +19,11 @@ class mod_feedback_delete_template_form extends moodleform {
         
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'deletetempl');
+        $mform->setType('deletetempl', PARAM_INT);
         $mform->addElement('hidden', 'confirmdelete');
+        $mform->setType('confirmdelete', PARAM_INT);
 
         //-------------------------------------------------------------------------------
         // buttons

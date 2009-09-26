@@ -106,7 +106,9 @@ class edit_grade_form extends moodleform {
 
         // hidden params
         $mform->addElement('hidden', 'oldgrade');
+        $mform->setType('oldgrade', PARAM_RAW);
         $mform->addElement('hidden', 'oldfeedback');
+        $mform->setType('oldfeedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);

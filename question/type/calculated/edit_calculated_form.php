@@ -95,6 +95,7 @@ class question_edit_calculated_form extends question_edit_form {
       //  echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
         $mform->addElement('hidden', 'initialcategory', 1);
+        $mform->setType('initialcategory', PARAM_INT);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
         $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
         $addfieldsname='updatecategory';
@@ -139,6 +140,7 @@ class question_edit_calculated_form extends question_edit_form {
             $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         }else {
             $mform->addElement('hidden', 'multichoice',$this->editasmultichoice);
+            $mform->setType('multichoice', PARAM_INT);
         }
 
         if ($this->editasmultichoice == 1){
@@ -161,8 +163,12 @@ class question_edit_calculated_form extends question_edit_form {
         }else { //editing as regular
             $mform->addElement('header', 'choicehdr', get_string('regularcalculatedquestion', 'qtype_calculated'));
             $mform->addElement('hidden','single', '1');
+            $mform->setType('single', PARAM_INT);
+            
             $mform->addElement('hidden','shuffleanswers', '1');
-            $mform->addElement('hidden','answernumbering', 'abc');            
+            $mform->setType('shuffleanswers', PARAM_INT);
+            $mform->addElement('hidden','answernumbering', 'abc');
+            $mform->setType('answernumbering', PARAM_SAFEDIR);
         }
 
         $creategrades = get_grade_options();
@@ -179,10 +185,13 @@ class question_edit_calculated_form extends question_edit_form {
         if ($this->editasmultichoice == 1){
             $nounits = optional_param('nounits', 1, PARAM_INT);
             $mform->addElement('hidden', 'nounits', $nounits);
+            $mform->setType('nounits', PARAM_INT);
             $mform->setConstants(array('nounits'=>$nounits));
             for ($i=0; $i< $nounits; $i++) {
-                $mform->addElement('hidden','unit'."[$i]", optional_param('unit'."[$i]", '', PARAM_NOTAGS));  
-                $mform->addElement('hidden', 'multiplier'."[$i]", optional_param('multiplier'."[$i]", '', PARAM_NUMBER)); 
+                $mform->addElement('hidden','unit'."[$i]", optional_param('unit'."[$i]", '', PARAM_NOTAGS));
+                $mform->setType('unit'."[$i]", PARAM_NOTAGS); 
+                $mform->addElement('hidden', 'multiplier'."[$i]", optional_param('multiplier'."[$i]", '', PARAM_NUMBER));
+                $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
             }  
 
         }else {
@@ -230,6 +239,7 @@ class question_edit_calculated_form extends question_edit_form {
         }
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
+        $mform->setType('synchronize', PARAM_INT);
         if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
             $mform->setDefault("synchronize", $this->question->options->synchronize);
         } else {

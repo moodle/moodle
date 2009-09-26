@@ -19,6 +19,7 @@ class user_add_filter_form extends moodleform {
         if ($extraparams) {
             foreach ($extraparams as $key=>$value) {
                 $mform->addElement('hidden', $key, $value);
+                $mform->setType($key, PARAM_RAW);
             }
         }
 
@@ -57,6 +58,7 @@ class user_active_filter_form extends moodleform {
             if ($extraparams) {
                 foreach ($extraparams as $key=>$value) {
                     $mform->addElement('hidden', $key, $value);
+                    $mform->setType($key, PARAM_RAW);
                 }
             }
 

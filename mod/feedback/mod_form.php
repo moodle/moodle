@@ -66,6 +66,7 @@ class mod_feedback_mod_form extends moodleform_mod {
             $multiple_submit_value = $feedback->multiple_submit ? get_string('yes') : get_string('no');
             $mform->addElement('text', 'multiple_submit_static', get_string('multiple_submit', 'feedback'), array('size'=>'4','disabled'=>'disabled', 'value'=>$multiple_submit_value));
             $mform->addElement('hidden', 'multiple_submit', '');
+            $mform->setType('', PARAM_INT);
             $mform->setHelpButton('multiple_submit_static', array('multiplesubmit', get_string('multiple_submit', 'feedback'), 'feedback'));
         }else {
             $mform->addElement('selectyesno', 'multiple_submit', get_string('multiple_submit', 'feedback'));

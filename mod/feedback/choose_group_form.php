@@ -41,7 +41,9 @@ class feedback_choose_group_form extends moodleform {
         // $mform->addElement('header', 'general', get_string('choose_group', 'feedback'));
         // hidden elements
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'do_show');
+        $mform->setType('do-show', PARAM_INT);
         
         // visible elements
         $groups_options = array();
