@@ -119,7 +119,7 @@
             if (isset($usernew->email) and $user->email != stripslashes($usernew->email) && !has_capability('moodle/user:update', $systemcontext)) {
                 $a = new stdClass();
                 $a->newemail = s(stripslashes($usernew->email));
-                $usernew->preference_newemail = stripslashes($usernew->email);
+                $usernew->preference_newemail = $usernew->email;
                 $usernew->preference_newemailkey = random_string(20);
                 $usernew->preference_newemailattemptsleft = 3;
                 $a->oldemail = s($user->email);

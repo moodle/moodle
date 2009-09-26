@@ -28,7 +28,7 @@ function useredit_update_user_preference($usernew) {
     foreach($ua as $key=>$value) {
         if (strpos($key, 'preference_') === 0) {
             $name = substr($key, strlen('preference_'));
-            set_user_preference($name, $value, $usernew->id);
+            set_user_preference($name, stripslashes_recursive($value), $usernew->id);
         }
     }
 }
