@@ -31,7 +31,7 @@ $reports = get_plugin_list('gradereport');     // Get all installed reports
 
 foreach ($reports as $plugin => $plugindir) {                      // Remove ones we can't see
     if (!has_capability('gradereport/'.$plugin.':view', $context)) {
-        unset($reports[$key]);
+        unset($reports[$plugin]);
     }
 }
 

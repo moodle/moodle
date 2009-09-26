@@ -498,7 +498,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         // Remove ones we can't see
         foreach ($reports as $plugin => $unused) {
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
-                unset($reports[$key]);
+                unset($reports[$plugin]);
             }
         }
     }
@@ -633,7 +633,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     if ($imports = get_plugin_list('gradeimport')) { // Get all installed import plugins
         foreach ($imports as $plugin => $plugindir) { // Remove ones we can't see
             if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
-                unset($imports[$key]);
+                unset($imports[$plugin]);
             }
         }
     }
