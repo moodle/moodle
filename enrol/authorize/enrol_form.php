@@ -131,9 +131,13 @@ class enrol_authorize_form extends moodleform
             }
             else {
                 $mform->addElement('hidden', 'ccstate', '');
+                $mform->setType('ccstate', PARAM_ALPHANUM);
                 $mform->addElement('hidden', 'ccaddress', $USER->address);
+                $mform->setType('ccaddress', PARAM_ALPHANUM);
                 $mform->addElement('hidden', 'cccity', $USER->city);
+                $mform->setType('cccity', PARAM_ALPHANUM);
                 $mform->addElement('hidden', 'cccountry', $USER->country);
+                $mform->setDefault('cccountry', $USER->country);
             }
         }
         elseif (AN_METHOD_ECHECK == $paymentmethod)
