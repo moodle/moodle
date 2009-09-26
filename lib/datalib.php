@@ -1216,9 +1216,11 @@ function update_record($table, $dataobject) {
 
     global $db, $CFG;
 
-    if (! isset($dataobject->id) ) {
+    // integer value in id propery required
+    if (empty($dataobject->id)) {
         return false;
     }
+    $dataobject->id = (int)$dataobject->id;
 
     // Determine all the fields in the table
     if (!$columns = $db->MetaColumns($CFG->prefix . $table)) {
