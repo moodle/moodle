@@ -3493,14 +3493,15 @@ function authenticate_user_login($username, $password) {
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
-        if (!empty($user->deleted)) {
-            add_to_log(0, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
-            return false;
-        }
         $auths = array($auth);
 
     } else {
+        // check if there's a deleted record (cheaply)
+        if ($DB->get_field('user', 'id', array('username'=>$username, 'deleted'=>1))) {
+            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+
         $auths = $authsenabled;
         $user = new object();
         $user->id = 0;     // User does not exist
