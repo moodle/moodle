@@ -24,6 +24,7 @@ class question_edit_description_form extends question_edit_form {
         $mform->removeElement('penalty');
 
         $mform->addElement('hidden', 'defaultgrade', 0);
+        $mform->setType('defaultgrade', PARAM_RAW);
     }
 
     function qtype() {

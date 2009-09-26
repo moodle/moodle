@@ -28,6 +28,7 @@ class grade_import_form extends moodleform {
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
         $mform->setType('id', PARAM_INT);
+
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
         $mform->disabledIf('url', 'userfile', 'noteq', '');
 

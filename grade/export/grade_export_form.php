@@ -126,6 +126,7 @@ class grade_export_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'id', $COURSE->id);
+        $mform->setType('id', PARAM_INT);
         $this->add_action_buttons(false, get_string('submit'));
 
     }

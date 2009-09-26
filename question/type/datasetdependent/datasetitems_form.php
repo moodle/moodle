@@ -84,7 +84,9 @@ class question_dataset_dependent_items_form extends moodleform {
             $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
+            $mform->setType("definition[$j]", PARAM_RAW);
             $mform->addElement('hidden', "itemid[$j]");
+            $mform->setType("itemid[$j]", PARAM_RAW);
             $mform->addElement('static', "divider[$j]", '', '<hr />');
             $j++;
         }

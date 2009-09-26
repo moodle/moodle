@@ -24,10 +24,12 @@ class question_edit_essay_form extends question_edit_form {
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
+        $mform->setType('fraction', PARAM_RAW);
 
         //don't need this default element.
         $mform->removeElement('penalty');
         $mform->addElement('hidden', 'penalty', 0);
+        $mform->setType('penalty', PARAM_RAW);
     }
 
     function set_data($question) {

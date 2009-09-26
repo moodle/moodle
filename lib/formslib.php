@@ -116,8 +116,10 @@ class moodleform {
         $this->definition();
 
         $this->_form->addElement('hidden', 'sesskey', null); // automatic sesskey protection
+        $this->_form->setType('sesskey', PARAM_RAW);
         $this->_form->setDefault('sesskey', sesskey());
         $this->_form->addElement('hidden', '_qf__'.$this->_formname, null);   // form submission marker
+        $this->_form->setType('_qf__'.$this->_formname, PARAM_RAW);
         $this->_form->setDefault('_qf__'.$this->_formname, 1);
         $this->_form->_setDefaultRuleMessages();
 
@@ -572,6 +574,7 @@ class moodleform {
         $mform =& $this->_form;
         $mform->registerNoSubmitButton($addfieldsname);
         $mform->addElement('hidden', $repeathiddenname, $repeats);
+        $mform->setType($repeathiddenname, PARAM_INT);
         //value not to be overridden by submitted value
         $mform->setConstants(array($repeathiddenname=>$repeats));
         $namecloned = array();
@@ -668,6 +671,7 @@ class moodleform {
         }
 
         $mform->addElement('hidden', "checkbox_controller$groupid");
+        $mform->setType("checkbox_controller$groupid", PARAM_INT);
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
 
         // Locate all checkboxes for this group and set their value, IF the optional param was given
@@ -863,6 +867,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $this->registerNoSubmitButton('mform_showadvanced');
 
             $this->addElement('hidden', 'mform_showadvanced_last');
+            $this->setType('mform_showadvanced_last', PARAM_INT);
         }
     }
     /**

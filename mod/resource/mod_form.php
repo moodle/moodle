@@ -19,6 +19,7 @@ class mod_resource_mod_form extends moodleform_mod {
             $type = required_param('type', PARAM_ALPHA);
         }
         $mform->addElement('hidden', 'type', $type);
+        $mform->setType('type', PARAM_ALPHA);
         $mform->setDefault('type', $type);
 
         require($CFG->dirroot.'/mod/resource/type/'.$type.'/resource.class.php');

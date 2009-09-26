@@ -64,8 +64,11 @@ class mod_glossary_entry_form extends moodleform {
         }
         if ( !$glossary->usedynalink ) {
             $mform->addElement('hidden', 'usedynalink', $usedynalink);
+            $mform->setType('usedynalink', PARAM_INT);
             $mform->addElement('hidden', 'casesensitive', $casesensitive);
+            $mform->setType('casesensitive', PARAM_INT);
             $mform->addElement('hidden', 'fullmatch', $fullmatch);
+            $mform->setType('fullmatch', PARAM_INT);
         } else {
 //-------------------------------------------------------------------------------
             $mform->addElement('header', 'linkinghdr', get_string('linking', 'glossary'));
@@ -86,9 +89,13 @@ class mod_glossary_entry_form extends moodleform {
         }
 
         $mform->addElement('hidden', 'e', $e);
+        $mform->setType('e', PARAM_INT);
         $mform->addElement('hidden', 'id', $cm->id);
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'mode', $mode);
+        $mform->setType('mode', PARAM_ALPHA);
         $mform->addElement('hidden', 'hook', $hook);
+        $mform->setType('hook', PARAM_ALPHANUM);
 
 //-------------------------------------------------------------------------------
         $this->add_action_buttons();

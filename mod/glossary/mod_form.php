@@ -35,6 +35,7 @@ class mod_glossary_mod_form extends moodleform_mod {
 
         }else{
             $mform->addElement('hidden', 'globalglossary');
+            $mform->setType('globalglossary', PARAM_INT);
         }
 
         $options = array(1=>get_string('mainglossary', 'glossary'), 0=>get_string('secondaryglossary', 'glossary'));

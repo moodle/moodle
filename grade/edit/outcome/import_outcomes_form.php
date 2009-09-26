@@ -27,7 +27,9 @@ class import_outcomes_form extends moodleform {
         //$this->set_upload_manager(new upload_manager('importfile', false, false, null, false, 0, true, true, false));
 
         $mform->addElement('hidden', 'action', 'upload');
+        $mform->setType('action', PARAM_ACTION);
         $mform->addElement('hidden', 'id', $COURSE->id);
+        $mform->setType('id', PARAM_INT);
 
         $scope = array();
         if (($COURSE->id > 1) && has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {

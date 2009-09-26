@@ -30,6 +30,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
+        $mform->setType('fraction', PARAM_RAW);
     }
 
     function set_data($question) {

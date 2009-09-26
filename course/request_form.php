@@ -128,6 +128,7 @@ class reject_request_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'reject', 0);
+        $mform->setType('reject', PARAM_INT);
 
         $mform->addElement('header','coursedetails', get_string('coursereasonforrejecting'));
 

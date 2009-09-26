@@ -39,6 +39,7 @@ class mod_forum_post_form extends moodleform {
 
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('everyoneissubscribed', 'forum'));
             $mform->addElement('hidden', 'subscribe');
+            $mform->setType('subscribe', PARAM_INT);
             $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
 
         } else if (isset($forum->forcesubscribe)&& $forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE ||
@@ -53,6 +54,7 @@ class mod_forum_post_form extends moodleform {
         } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
             $mform->addElement('static', 'subscribemessage', get_string('subscription', 'forum'), get_string('disallowsubscribe', 'forum'));
             $mform->addElement('hidden', 'subscribe');
+            $mform->setType('subscribe', PARAM_INT);
             $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
         }
 

@@ -155,10 +155,15 @@ class mod_scorm_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
 // Hidden Settings
         $mform->addElement('hidden', 'datadir', null);
+        $mform->setType('datadir', PARAM_RAW);
         $mform->addElement('hidden', 'pkgtype', null);
+        $mform->setType('pkgtype', PARAM_RAW);
         $mform->addElement('hidden', 'launch', null);
+        $mform->setType('launch', PARAM_RAW);
         $mform->addElement('hidden', 'redirect', null);
+        $mform->setType('redirect', PARAM_RAW);
         $mform->addElement('hidden', 'redirecturl', null);
+        $mform->setType('redirecturl', PARAM_RAW);
 
 
 //-------------------------------------------------------------------------------

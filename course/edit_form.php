@@ -65,6 +65,7 @@ class course_edit_form extends moodleform {
             $mform->addElement('select', 'category', get_string('category'), $displaylist);
         } else {
             $mform->addElement('hidden', 'category', null);
+            $mform->setType('category', PARAM_INT);
         }
         $mform->setHelpButton('category', array('coursecategory', get_string('category')));
         $mform->setDefault('category', $category->id);
@@ -378,6 +379,7 @@ class course_edit_form extends moodleform {
             $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
         } else {
             $mform->addElement('hidden', 'restrictmodules', null);
+            $mform->setType('restrictmodules', PARAM_INT);
         }
         if ($CFG->restrictmodulesfor == 'all') {
             $mform->setDefault('allowedmods', explode(',',$CFG->defaultallowedmodules));
@@ -412,9 +414,13 @@ class course_edit_form extends moodleform {
 
         // fill in default teacher and student names to keep backwards compatibility for a while
         $mform->addElement('hidden', 'teacher', get_string('defaultcourseteacher'));
+        $mform->setType('teacher', PARAM_RAW);
         $mform->addElement('hidden', 'teachers', get_string('defaultcourseteachers'));
+        $mform->setType('teachers', PARAM_RAW);
         $mform->addElement('hidden', 'student', get_string('defaultcoursestudent'));
+        $mform->setType('student', PARAM_RAW);
         $mform->addElement('hidden', 'students', get_string('defaultcoursestudents'));
+        $mform->setType('students', PARAM_RAW);
     }
 
     function definition_after_data() {

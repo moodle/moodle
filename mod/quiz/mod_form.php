@@ -222,6 +222,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setHelpButton('overallfeedbackhdr', array('overallfeedback', get_string('overallfeedback', 'quiz'), 'quiz'));
 
         $mform->addElement('hidden', 'grade', $CFG->quiz_maximumgrade);
+        $mform->setType('grade', PARAM_RAW);
         if (empty($this->_cm)) {
             $needwarning = $CFG->quiz_maximumgrade == 0;
         } else {
