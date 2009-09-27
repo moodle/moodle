@@ -82,6 +82,16 @@
             $course->restrictmodules = 1;
         }
 
+    /// Apply course default settings
+        $courseconfig = get_config('moodlecourse');
+        $course->format = $courseconfig->format;
+        $course->numsections = $courseconfig->numsections;
+        $course->hiddensections = $courseconfig->hiddensections;
+        $course->newsitems = $courseconfig->newsitems;
+        $course->showgrades =  $courseconfig->showgrades;
+        $course->showreports = $courseconfig->showreports;
+        $course->maxbytes = $courseconfig->maxbytes;
+
     /// Insert the record.
         if ($courseid = insert_record('course', $course)) {
             $page = page_create_object(PAGE_COURSE_VIEW, $courseid);
