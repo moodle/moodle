@@ -200,6 +200,7 @@ $string['nomaximum'] = 'No maximum';
 $string['norecords'] = 'No entries in database';
 $string['norating'] = 'This activity does not use ratings';
 $string['nosingletemplate'] = 'Single template is not yet defined';
+$string['notapproved'] = 'Entry is not approved yet.';
 $string['notinjectivemap'] = 'Not an injective map';
 $string['number'] = 'Number';
 $string['numberrssarticles'] = 'RSS articles';
