@@ -3716,7 +3716,9 @@ function forum_file_area_name($post) {
 function forum_file_area($post) {
     $path = forum_file_area_name($post);
     if ($path) {
-      return make_upload_directory($path);
+        return make_upload_directory($path);
+    } else {
+        return false;
     }
 }
 
