@@ -118,18 +118,18 @@ class user_edit_form extends moodleform {
         // validate email
         if (!isset($usernew->email)) {
             // mail not confirmed yet
-        } else if (!validate_email($usernew->email)) {
+        } else if (!validate_email(stripslashes($usernew->email))) {
             $errors['email'] = get_string('invalidemail');
         } else if ((stripslashes($usernew->email) !== $user->email) and record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
             $errors['email'] = get_string('emailexists');
         }
 
-        if (isset($usernew->email) and $usernew->email === $user->email and over_bounce_threshold($user)) {
+        if (isset($usernew->email) and stripslashes($usernew->email) === $user->email and over_bounce_threshold($user)) {
             $errors['email'] = get_string('toomanybounces');
         }
 
         if (isset($usernew->email) and !empty($CFG->verifychangedemail) and !isset($errors['email']) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
-            $errorstr = email_is_not_allowed($usernew->email);
+            $errorstr = email_is_not_allowed(stripslashes($usernew->email));
             if ($errorstr !== false) {
                 $errors['email'] = $errorstr;
             }

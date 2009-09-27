@@ -132,13 +132,14 @@ class user_editadvanced_form extends moodleform {
         if (empty($usernew->username)) {
             //might be only whitespace
             $err['username'] = get_string('required');
-        } else if (!$user or $user->username !== $usernew->username) {
+        } else if (!$user or $user->username !== stripslashes($usernew->username)) {
             //check new username does not exist
             if (record_exists('user', 'username', $usernew->username, 'mnethostid', $CFG->mnet_localhost_id)) {
                 $err['username'] = get_string('usernameexists');
             }
             //check allowed characters
             if ($usernew->username !== moodle_strtolower($usernew->username)) {
+                echo 'grrrr';
                 $err['username'] = get_string('usernamelowercase');
             } else {
                 if (empty($CFG->extendedusernamechars)) {
@@ -151,7 +152,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         if (!$user or $user->email !== stripslashes($usernew->email)) {
-            if (!validate_email($usernew->email)) {
+            if (!validate_email(stripslashes($usernew->email))) {
                 $err['email'] = get_string('invalidemail');
             } else if (record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
                 $err['email'] = get_string('emailexists');
