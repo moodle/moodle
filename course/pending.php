@@ -66,6 +66,28 @@
             $course->restrictmodules = 1;
         }
 
+    /// Apply course default settings
+        $courseconfig = get_config('moodlecourse');
+        $course->format             = $courseconfig->format;
+        $course->numsections        = $courseconfig->numsections;
+        $course->hiddensections     = $courseconfig->hiddensections;
+        $course->newsitems          = $courseconfig->newsitems;
+        $course->showgrades         = $courseconfig->showgrades;
+        $course->showreports        = $courseconfig->showreports;
+        $course->maxbytes           = $courseconfig->maxbytes;
+        $course->enrol              = $courseconfig->enrol;
+        $course->enrollable         = $courseconfig->enrollable;
+        $course->enrolperiod        = $courseconfig->enrolperiod;
+        $course->expirynotify       = $courseconfig->expirynotify;
+        $course->notifystudents     = $courseconfig->notifystudents;
+        $course->expirythreshold    = $courseconfig->expirythreshold;
+        $course->groupmode          = $courseconfig->groupmode;
+        $course->groupmodeforce     = $courseconfig->groupmodeforce;
+        $course->visible            = $courseconfig->visible;
+        $course->enrolpassword      = $courseconfig->enrolpassword;
+        $course->guest              = $courseconfig->guest;
+        $course->lang               = $courseconfig->lang;
+
     /// Insert the record.
         if ($courseid = $DB->insert_record('course', $course)) {
             $course = $DB->get_record('course', array('id' => $courseid));
