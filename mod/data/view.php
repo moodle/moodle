@@ -301,6 +301,13 @@
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
+    // deletect entries not approved yet and show hint instead of not found error
+    if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !has_capability('mod/data:manageentries', $context)) {
+        if (!$currentgroup or $record->groupid == $currentgroup or $record->groupid == 0) {
+            print_error('notapproved', 'data');
+        }
+    }
+
     print_heading(format_string($data->name));
 
     // Do we need to show a link to the RSS feed for the records?

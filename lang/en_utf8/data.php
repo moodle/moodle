@@ -178,6 +178,7 @@ $string['nomatch'] = 'No matching entries found!';
 $string['nomaximum'] = 'No maximum';
 $string['norecords'] = 'No entries in database';
 $string['nosingletemplate'] = 'Single template is not yet defined';
+$string['notapproved'] = 'Entry is not approved yet.';
 $string['notinjectivemap'] = 'Not an injective map';
 $string['number'] = 'Number';
 $string['numberrssarticles'] = 'RSS articles';
