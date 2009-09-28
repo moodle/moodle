@@ -27,6 +27,7 @@
 
 require_once($CFG->libdir.'/dml/moodle_database.php');
 require_once($CFG->libdir.'/dml/oci_native_moodle_recordset.php');
+require_once($CFG->libdir.'/dml/oci_native_moodle_temptables.php');
 
 /**
  * Native oci class representing moodle database interface.
@@ -37,12 +38,15 @@ require_once($CFG->libdir.'/dml/oci_native_moodle_recordset.php');
 class oci_native_moodle_database extends moodle_database {
 
     protected $oci     = null;
+    private $temptables; // Control existing temptables (oci_native_moodle_temptables object)
 
     private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
     private $commit_status = OCI_COMMIT_ON_SUCCESS; // Autocommit ON by default. Switching to OFF (OCI_DEFAULT)
                                                     // when playing with transactions
 
-    protected $last_error_reporting; // To handle oci driver default verbosity
+    private $last_error_reporting; // To handle oci driver default verbosity
+    private $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming
+
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -91,6 +95,30 @@ class oci_native_moodle_database extends moodle_database {
     public function get_name() {
         return get_string('nativeoci', 'install'); // TODO: localise
     }
+
+    /**
+     * Returns sql generator used for db manipulation.
+     * Used mostly in upgrade.php scripts. oci overrides it
+     * in order to share the oci_native_moodle_temptables
+     * between the driver and the generator
+     *
+     * @return object database_manager instance
+     */
+    public function get_manager() {
+        global $CFG;
+
+        if (!$this->database_manager) {
+            require_once($CFG->libdir.'/ddllib.php');
+
+            $classname = $this->get_dbfamily().'_sql_generator';
+            require_once("$CFG->libdir/ddl/$classname.php");
+            $generator = new $classname($this, $this->temptables);
+
+            $this->database_manager = new database_manager($this, $generator);
+        }
+        return $this->database_manager;
+    }
+
 
     /**
      * Returns localised database configuration help.
@@ -172,8 +200,22 @@ class oci_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // get unique session id, to be used later for temp tables stuff
+        $sql = 'SELECT DBMS_SESSION.UNIQUE_SESSION_ID() FROM DUAL';
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $stmt = $this->parse_query($sql);
+        $result = oci_execute($stmt, $this->commit_status);
+        $this->query_end($result, $stmt);
+        $records = null;
+        oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
+        oci_free_statement($stmt);
+        $this->unique_session_id = reset($records[0]);
+
         //note: do not send "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'" !
         //      instead fix our PHP code to convert "," to "." properly!
+
+        // Connection stabilished and configured, going to instantiate the temptables controller
+        $this->temptables = new oci_native_moodle_temptables($this, $this->unique_session_id);
 
         return true;
     }
@@ -252,6 +294,27 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Converts short table name {tablename} to real table name
+     * supporting temp tables ($this->unique_session_id based) if detected
+     *
+     * @param string sql
+     * @return string sql
+     */
+    protected function fix_table_names($sql) {
+        if (preg_match_all('/\{([a-z][a-z0-9_]*)\}/', $sql, $matches)) {
+            foreach($matches[0] as $key=>$match) {
+                $name = $matches[1][$key];
+                if ($this->temptables->is_temptable($name)) {
+                    $sql = str_replace($match, $this->temptables->get_correct_name($name), $sql);
+                } else {
+                    $sql = str_replace($match, $this->prefix.$name, $sql);
+                }
+            }
+        }
+        return $sql;
+    }
+
+    /**
      * Returns supported query parameter types
      * @return bitmask
      */
@@ -316,6 +379,9 @@ class oci_native_moodle_database extends moodle_database {
             $this->tables[$tablename] = $tablename;
         }
 
+        // Add the currently available temptables
+        $this->tables = array_merge($this->tables, $this->temptables->get_temptables());
+
         return $this->tables;
     }
 
@@ -375,12 +441,12 @@ class oci_native_moodle_database extends moodle_database {
 
         $this->columns[$table] = array();
 
-        $tablename = strtoupper($this->prefix.$table);
-
         $sql = "SELECT CNAME, COLTYPE, WIDTH, SCALE, PRECISION, NULLS, DEFAULTVAL
                   FROM COL
-                 WHERE TNAME='$tablename'
+                 WHERE TNAME = UPPER('{" . $table . "}')
               ORDER BY COLNO";
+
+        list($sql, $params, $type) = $this->fix_sql_params($sql, null);
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
@@ -1063,7 +1129,10 @@ class oci_native_moodle_database extends moodle_database {
         }
         $values = implode(',', $values);
 
-        $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES ($values) $returning";
+        $sql = "INSERT INTO {" . $table . "} ($fields) VALUES ($values)";
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+        $sql .= $returning;
+
         $id = null;
 
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
@@ -1178,7 +1247,8 @@ class oci_native_moodle_database extends moodle_database {
         }
 
         $sets = implode(',', $sets);
-        $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=:id";
+        $sql = "UPDATE {" . $table . "} SET $sets WHERE id=:id";
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
@@ -1262,7 +1332,8 @@ class oci_native_moodle_database extends moodle_database {
             $params[$newfield] = $newvalue;
             $newsql = "$newfield = :$newfield";
         }
-        $sql = "UPDATE {$this->prefix}$table SET $newsql $select";
+        $sql = "UPDATE {" . $table . "} SET $newsql $select";
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
