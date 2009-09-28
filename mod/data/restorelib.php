@@ -119,8 +119,13 @@ function data_restore_mods($mod,$restore) {
                 $restore_userdata_selected = $restore->mods['data']->userinfo;
             }
 
+            global $fieldids;
             //Restore data_fields first!!! need to hold an array of [oldid]=>newid due to double dependencies
             $status = $status and data_fields_restore_mods ($mod->id, $newid, $info, $restore);
+
+            // now use the new field in the defaultsort
+            $newdefaultsort = empty($fieldids[$database->defaultsort]) ? 0 : $fieldids[$database->defaultsort];
+            set_field('data', 'defaultsort', $newdefaultsort, 'id', $newid);
 
             if ($restore_userdata_selected) {
                 $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
