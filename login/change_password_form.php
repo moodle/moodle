@@ -47,7 +47,7 @@ class login_change_password_form extends moodleform {
         update_login_count();
 
         // ignore submitted username
-        if (!$user = authenticate_user_login($USER->username, $data['password'])) {
+        if (!$user = authenticate_user_login(addslashes($USER->username), $data['password'])) {
             $errors['password'] = get_string('invalidlogin');
             return $errors;
         }
