@@ -46,7 +46,7 @@ class moodle_temptables {
 
     protected $mdb;        // circular reference, to be able to use DB facilities here if needed
     protected $prefix;     // prefix to be used for all the DB objects
-    protected $temptables; // simple array of 'tablename' => 'tablename'
+    protected $temptables; // simple array of moodle, not prefixed 'tablename' => DB, final (prefixed) 'tablename'
 
     /**
      * Creates new moodle_temptables instance
@@ -60,6 +60,12 @@ class moodle_temptables {
 
     /**
      * Add one temptable to the store
+     *
+     * Given one moodle temptable name (without prefix), add it to the store, with the
+     * key being the original moodle name and the value being the real db temptable name
+     * already prefixed
+     *
+     * Override and use this *only* if the database requires modification in the table name.
      *
      * @param string $tablename name without prefix of the table created as temptable
      */
@@ -84,7 +90,7 @@ class moodle_temptables {
      * @return array containing all the tablenames in the store (tablename both key and value)
      */
     public function get_temptables() {
-        return $this->temptables;
+        return array_keys($this->temptables);
     }
 
     /**
@@ -93,19 +99,21 @@ class moodle_temptables {
      * @param string $tablename name without prefix of the table we are asking about
      * @return bool true if the table is a temp table (based in the store info), false if not
      */
-    function is_temptable ($tablename) {
+    public function is_temptable($tablename) {
         return !empty($this->temptables[$tablename]);
     }
 
     /**
      * Given one tablename (no prefix), return the name of the corresponding temporary table,
-     * usually the same name but some databases could require changes (like '#' prefix in mssql)
+     * If the table isn't a "registered" temp table, returns null
      *
-     * Override and use this *only* if the database requires modification in the table name.
-     *
-     * @param string $tablename name without prefix which corresponding temp tablename nees to calculate
+     * @param string $tablename name without prefix which corresponding temp tablename needs to know
+     * @return mixed DB name of the temp table or null if it isn't a temp table
      */
     public function get_correct_name($tablename) {
-        return $this->prefix . $tablename; // No change in name is the usual behaviour
+        if ($this->is_temptable($tablename)) {
+            return $this->temptables[$tablename];
+        }
+        return null;
     }
 }

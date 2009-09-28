@@ -31,18 +31,22 @@ require_once($CFG->libdir.'/dml/moodle_temptables.php');
 class mssql_native_moodle_temptables extends moodle_temptables {
 
     /**
-     * Override the method to return the correct real name (prefix = '#') of
-     * temporary mssql databases. Widely used in the corresponding mssql sql
-     * generator and database driver
+     * Add one temptable to the store.
      *
-     * @param string $tablename name without prefix which corresponding temp tablename nees to calculate
+     * Overriden because MSSQL requires to add # for local (session) temporary
+     * tables before the prefix.
+     *
+     * Given one moodle temptable name (without prefix), add it to the store, with the
+     * key being the original moodle name and the value being the real db temptable name
+     * already prefixed
+     *
+     * Override and use this *only* if the database requires modification in the table name.
+     *
+     * @param string $tablename name without prefix of the table created as temptable
      */
-    public function get_correct_name($tablename) {
-        // TODO: throw exception if not exists
-        if (!empty($this->temptables[$tablename])) {
-            return '#' . $this->prefix . $tablename;
-        } else {
-            return $this->prefix . $tablename;
-        }
+    public function add_temptable($tablename) {
+        // TODO: throw exception if exists: if ($this->is_temptable...
+        $this->temptables[$tablename] = '#' . $this->prefix . $tablename;
     }
+
 }

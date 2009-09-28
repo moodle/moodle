@@ -312,7 +312,11 @@ class mssql_native_moodle_database extends moodle_database {
         if (preg_match_all('/\{([a-z][a-z0-9_]*)\}/', $sql, $matches)) {
             foreach($matches[0] as $key=>$match) {
                 $name = $matches[1][$key];
-                $sql = str_replace($match, $this->temptables->get_correct_name($name), $sql);
+                if ($this->temptables->is_temptable($name)) {
+                    $sql = str_replace($match, $this->temptables->get_correct_name($name), $sql);
+                } else {
+                    $sql = str_replace($match, $this->prefix.$name, $sql);
+                }
             }
         }
         return $sql;
