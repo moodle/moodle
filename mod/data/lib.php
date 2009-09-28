@@ -482,7 +482,7 @@ function data_append_new_field_to_templates($data, $newfieldname) {
  * this function creates an instance of the particular subfield class   *
  ************************************************************************/
 function data_get_field_from_name($name, $data){
-    $field = get_record('data_fields','name',$name);
+    $field = get_record('data_fields', 'name', $name, 'dataid', $data->id);
     if ($field) {
         return data_get_field($field, $data);
     } else {
@@ -495,7 +495,7 @@ function data_get_field_from_name($name, $data){
  * this function creates an instance of the particular subfield class   *
  ************************************************************************/
 function data_get_field_from_id($fieldid, $data) {
-    $field = get_record('data_fields','id',$fieldid);
+    $field = get_record('data_fields', 'id', $fieldid, 'dataid', $data->id);
     if ($field) {
         return data_get_field($field, $data);
     } else {
