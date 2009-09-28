@@ -658,7 +658,7 @@ function authorize_get_status_color($status)
 
 function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=false, $unenrol=false, $nobutton=false, $extrahtml='')
 {
-    global $CFG;
+    global $CFG, $OUTPUT;
     global $authstrs;
 
     $ret =  '<form action="'.$CFG->wwwroot.'/enrol/authorize/index.php'.'" method="post"><div>' .
