@@ -369,6 +369,10 @@ class oci_native_moodle_database extends moodle_database {
             return $this->columns[$table];
         }
 
+        if (!$table) { // table not specified, return empty array directly
+            return array();
+        }
+
         $this->columns[$table] = array();
 
         $tablename = strtoupper($this->prefix.$table);
@@ -1066,7 +1070,7 @@ class oci_native_moodle_database extends moodle_database {
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
         if ($returning) {
-            oci_bind_by_name($stmt, ":oracle_id", $id, -1, SQLT_LNG);
+            oci_bind_by_name($stmt, ":oracle_id", $id, -1, SQLT_INT);
         }
         $result = oci_execute($stmt, $this->commit_status);
         $this->free_descriptors($descriptors);
