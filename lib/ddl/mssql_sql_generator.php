@@ -111,7 +111,11 @@ class mssql_sql_generator extends sql_generator {
      */
     public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
     /// Get the name, supporting special mssql names for temp tables
-        $tablename = $this->temptables->get_correct_name($xmldb_table->getName());
+        if ($this->temptables->is_temptable($xmldb_table->getName())) {
+            $tablename = $this->temptables->get_correct_name($xmldb_table->getName());
+        } else {
+            $tablename = $this->prefix . $xmldb_table->getName();
+        }
 
     /// Apply quotes optionally
         if ($quoted) {

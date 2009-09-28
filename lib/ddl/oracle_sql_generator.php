@@ -58,10 +58,13 @@ class oracle_sql_generator extends sql_generator {
 
     public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY (COLUMNSPECS)'; //The SQL template to alter columns
 
+    private $temptables; // Control existing temptables (oci_native_moodle_temptables object)
+
     /**
      * Creates one new XMLDBoci8po
      */
-    public function __construct($mdb) {
+    public function __construct($mdb, $temptables = null) {
+        $this->temptables = $temptables;
         parent::__construct($mdb);
     }
 
@@ -94,12 +97,36 @@ class oracle_sql_generator extends sql_generator {
                       "CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE CACHE $this->sequence_cache_size");
     }
 
+    /**
+     * Given one xmldb_table, returns it's correct name, depending of all the parametrization
+     * Overriden to allow change of names in temp tables
+     *
+     * @param xmldb_table table whose name we want
+     * @param boolean to specify if the name must be quoted (if reserved word, only!)
+     * @return string the correct name of the table
+     */
+    public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
+    /// Get the name, supporting special oci names for temp tables
+        if ($this->temptables->is_temptable($xmldb_table->getName())) {
+            $tablename = $this->temptables->get_correct_name($xmldb_table->getName());
+        } else {
+            $tablename = $this->prefix . $xmldb_table->getName();
+        }
+
+    /// Apply quotes optionally
+        if ($quoted) {
+            $tablename = $this->getEncQuoted($tablename);
+        }
+
+        return $tablename;
+    }
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array)
      */
     public function getCreateTempTableSQL($xmldb_table) {
+        $this->temptables->add_temptable($xmldb_table->getName());
         $sqlarr = $this->getCreateTableSQL($xmldb_table);
         $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE GLOBAL TEMPORARY TABLE $1 ON COMMIT PRESERVE ROWS', $sqlarr);
         return $sqlarr;
@@ -112,6 +139,7 @@ class oracle_sql_generator extends sql_generator {
     public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = $this->getDropTableSQL($xmldb_table);
         array_unshift($sqlarr, "TRUNCATE TABLE ". $this->getTableName($xmldb_table)); // oracle requires truncate before being able to drop a temp table
+        $this->temptables->delete_temptable($xmldb_table->getName());
         return $sqlarr;
     }
 
