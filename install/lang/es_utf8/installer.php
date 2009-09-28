@@ -19,7 +19,14 @@ $string['cannotsavezipfile'] = 'No se puede guardar el archivo ZIP.';
 $string['cannotunzipfile'] = 'No se puede descomprimir el archivo.';
 $string['chooselanguagehead'] = 'Seleccionar idioma';
 $string['chooselanguagesub'] = 'Por favor, seleccione un idioma para el proceso de instalación.';
+$string['cliincorrectvalueerror'] = 'Error, valor incorrecto  \"$a->value\" para \"$a->option\"';
+$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor, inténtelo de nuevo';
 $string['cliinstallheader'] = 'Programa de instalación Moodle de línea de comando $a';
+$string['clitypevalue'] = 'valor del tipo';
+$string['clitypevaluedefault'] = 'valor del tipo, pulse Enter para utilizar el valor por defecto ($a)';
+$string['cliunknowoption'] = 'Opciones no reconocidas:
+$a
+. Por favor, utilice la opción Ayuda.';
 $string['dataroot'] = 'Directorio de Datos';
 $string['dirroot'] = 'Directorio Moodle';
 $string['environment'] = 'Entorno';
