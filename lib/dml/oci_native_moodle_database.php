@@ -557,7 +557,7 @@ class oci_native_moodle_database extends moodle_database {
                     or $rawcolumn->COLTYPE === 'NCLOB') {
                 $info->type          = $rawcolumn->COLTYPE;
                 $info->meta_type     = 'X';
-                $info->max_length    = $rawcolumn->WIDTH;
+                $info->max_length    = -1;
                 $info->scale         = null;
                 $info->scale         = null;
                 $info->not_null      = ($rawcolumn->NULLS === 'NOT NULL');
@@ -586,7 +586,7 @@ class oci_native_moodle_database extends moodle_database {
             } else if ($rawcolumn->COLTYPE === 'BLOB') {
                 $info->type          = $rawcolumn->COLTYPE;
                 $info->meta_type     = 'B';
-                $info->max_length    = $rawcolumn->WIDTH;
+                $info->max_length    = -1;
                 $info->scale         = null;
                 $info->scale         = null;
                 $info->not_null      = ($rawcolumn->NULLS === 'NOT NULL');
@@ -1114,7 +1114,7 @@ class oci_native_moodle_database extends moodle_database {
         } else {
             unset($params['id']);
             if ($returnid) {
-                $returning = "RETURNING id INTO :oracle_id"; // crazy name nobody is ever going to use or parameter ;-)
+                $returning = " RETURNING id INTO :oracle_id"; // crazy name nobody is ever going to use or parameter ;-)
             }
         }
 
