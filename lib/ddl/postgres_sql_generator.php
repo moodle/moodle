@@ -198,7 +198,7 @@ class postgres_sql_generator extends sql_generator {
         $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
-        $meta = $this->mdb->get_columns($tablename, false);
+        $meta = $this->mdb->get_columns($tablename);
         $metac = $meta[$xmldb_field->getName()];
         $oldmetatype = $metac->meta_type;
         $oldlength = $metac->max_length;

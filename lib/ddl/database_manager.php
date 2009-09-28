@@ -152,7 +152,7 @@ class database_manager {
         }
 
     /// Get list of fields in table
-        $columns = $this->mdb->get_columns($tablename, false);
+        $columns = $this->mdb->get_columns($tablename);
 
         $exists = array_key_exists($fieldname,  $columns);
 
@@ -1010,7 +1010,7 @@ class database_manager {
             }
 
             // a) check for required fields
-            $dbfields = $this->mdb->get_columns($tablename, false);
+            $dbfields = $this->mdb->get_columns($tablename);
             $fields   = $table->getFields();
             foreach ($fields as $field) {
                 $fieldname = $field->getName();

@@ -308,7 +308,7 @@ class mysql_sql_generator extends sql_generator {
         $tablename = $xmldb_table->getName($xmldb_table);
 
     /// Fetch all the columns in the table
-        if (!$columns = $this->mdb->get_columns($tablename, false)) {
+        if (!$columns = $this->mdb->get_columns($tablename)) {
             return array();
         }
 
