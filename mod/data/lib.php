@@ -644,7 +644,7 @@ function data_append_new_field_to_templates($data, $newfieldname) {
 function data_get_field_from_name($name, $data){
     global $DB;
 
-    $field = $DB->get_record('data_fields', array('name'=>$name));
+    $field = $DB->get_record('data_fields', array('name'=>$name, 'dataid'=>$data->id));
 
     if ($field) {
         return data_get_field($field, $data);
@@ -665,7 +665,7 @@ function data_get_field_from_name($name, $data){
 function data_get_field_from_id($fieldid, $data){
     global $DB;
 
-    $field = $DB->get_record('data_fields', array('id'=>$fieldid));
+    $field = $DB->get_record('data_fields', array('id'=>$fieldid, 'dataid'=>$data->id));
 
     if ($field) {
         return data_get_field($field, $data);
