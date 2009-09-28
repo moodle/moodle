@@ -332,7 +332,7 @@ class oracle_sql_generator extends sql_generator {
         $fieldname = $xmldb_field->getName();
 
     /// Take a look to field metadata
-        $meta = $this->mdb->get_columns($xmldb_table->getName(), false);
+        $meta = $this->mdb->get_columns($xmldb_table->getName());
         $metac = $meta[$fieldname];
         $oldmetatype = $metac->meta_type;
 
@@ -410,10 +410,25 @@ class oracle_sql_generator extends sql_generator {
             $skip_notnull_clause = true;
             $skip_default_clause = true;
             $xmldb_field->setName($tempcolname);
+            // Drop the temp column, in case it exists (due to one previous failure in conversion)
+            // really ugly but we cannot enclose DDL into transaction :-(
+            if (isset($meta[$tempcolname])) {
+                $results = array_merge($results, $this->getDropFieldSQL($xmldb_table, $xmldb_field));
+            }
         /// Create the temporal column
             $results = array_merge($results, $this->getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause, $skip_type_clause, $skip_notnull_clause));
         /// Copy contents from original col to the temporal one
-            $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $fieldname;
+
+            // From TEXT to integer/number we need explicit conversion
+            if ($oldmetatype == 'X' && $xmldb_field->GetType() == XMLDB_TYPE_INTEGER) {
+                $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = CAST(' . $this->mdb->sql_compare_text($fieldname) . ' AS INT)';
+            } else if ($oldmetatype == 'X' && $xmldb_field->GetType() == XMLDB_TYPE_NUMBER) {
+                $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = CAST(' . $this->mdb->sql_compare_text($fieldname) . ' AS NUMBER)';
+
+            // Normal cases, implicit conversion
+            } else {
+                $results[] = 'UPDATE ' . $tablename . ' SET ' . $tempcolname . ' = ' . $fieldname;
+            }
         /// Drop the old column
             $xmldb_field->setName($fieldname); //Set back the original field name
             $results = array_merge($results, $this->getDropFieldSQL($xmldb_table, $xmldb_field));
