@@ -108,7 +108,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
 
             if ($item->itemtype == 'mod') {
                 $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
-                $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.$grade_item->get_name().'</a>';
+                $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.format_string($cm->name, true, $cm->course).'</a>';
             } else {
                 $itemname = $grade_item->get_name();
             }
