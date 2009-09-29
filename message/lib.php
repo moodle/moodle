@@ -658,7 +658,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     $link = html_link::make("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", $fulllink);
     $link->add_action(new popup_action('click', $link->url, "message_history_$userid1", $popupoptions));
     $link->title = $strmessagehistory;
-    echo $OUTPUT->link($link);
+    $str = $OUTPUT->link($link);
 
     $str = '<span class="history">'.$str.'</span>';
 
