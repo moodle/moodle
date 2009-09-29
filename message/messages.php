@@ -1,13 +1,35 @@
 <?php
 
-    require('../config.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    @header('Content-Type: text/html; charset=utf-8');
+/**
+ * @copyright Luis Rodrigues
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package message
+ */
 
-    $PAGE->set_generaltype('popup');
-    $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
-    echo $OUTPUT->header();
-    echo "<div id='messages'></div>";
-    echo $OUTPUT->footer();
+require('../config.php');
+
+@header('Content-Type: text/html; charset=utf-8');
+
+$PAGE->set_generaltype('popup');
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/messages.php'));
+$PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
+echo $OUTPUT->header();
+echo "<div id='messages'></div>";
+echo $OUTPUT->footer();
     
 ?>

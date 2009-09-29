@@ -1,4 +1,25 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @author Luis Rodrigues and Martin Dougiamas
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package message
+ */
 
 require('../config.php');
 require('lib.php');
@@ -25,6 +46,15 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     $userid   = required_param('id', PARAM_INT);
     $message  = optional_param('message', '', PARAM_CLEANHTML);
     $format   = optional_param('format', FORMAT_MOODLE, PARAM_INT);
+
+    $url = new moodle_url($CFG->wwwroot.'/message/send.php', array('id'=>$userid));
+    if ($message !== 0) {
+        $url->param('message', $message);
+    }
+    if ($format !== 0) {
+        $url->param('format', $format);
+    }
+    $PAGE->set_url($url);
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
@@ -99,4 +129,3 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 
     echo $OUTPUT->footer();
 }
-?>
