@@ -571,7 +571,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
 
 /// linktype can be: add, remove, block, unblock
 function message_contact_link($userid, $linktype='add', $return=false, $script="index.php?tab=contacts", $text=false) {
-    global $USER, $CFG;
+    global $USER, $CFG, $OUTPUT;
 
     static $str;
 
