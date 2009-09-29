@@ -320,9 +320,12 @@ class quiz {
      * as the $button parameter.
      */
     public function update_module_button() {
+        global $OUTPUT ;
         if (has_capability('moodle/course:manageactivities',
                 get_context_instance(CONTEXT_COURSE, $this->course->id))) {
-            return $OUTPUT->update_module_button($cm->id, 'quiz');
+
+
+            return $OUTPUT->update_module_button($this->cm->id, 'quiz');
         } else {
             return '';
         }
