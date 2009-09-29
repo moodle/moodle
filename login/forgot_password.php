@@ -1,5 +1,5 @@
 <?php
-// $Id$
+
 // forgot password routine.
 // find the user and call the appropriate routine for their authentication
 // type.
@@ -18,6 +18,7 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/forgot_password.php'));
 $PAGE->navbar->add($strlogin, get_login_url());
 $PAGE->navbar->add($strforgotten);
 

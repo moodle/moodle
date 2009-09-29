@@ -11,6 +11,8 @@ if (isloggedin() and !isguestuser()) {
     redirect( $CFG->wwwroot.'/', get_string('loginalready'), 5);
 }
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/login/mnet_email.php', array('u'=>$username)));
+
 $PAGE->navbar->add('MNET ID Provider');
 $PAGE->set_title('MNET ID Provider');
 $PAGE->set_heading('MNET ID Provider');
@@ -40,5 +42,3 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
-
-?>
