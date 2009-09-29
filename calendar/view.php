@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /////////////////////////////////////////////////////////////////////////////
 //                                                                         //
@@ -40,202 +40,210 @@
 
 //  Display the calendar page.
 
-    require_once('../config.php');
-    require_once($CFG->dirroot.'/course/lib.php');
-    require_once($CFG->dirroot.'/calendar/lib.php');
+require_once('../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/calendar/lib.php');
 
-    $courseid = optional_param('course', 0, PARAM_INT);
-    $view = optional_param('view', 'upcoming', PARAM_ALPHA);
-    $day  = optional_param('cal_d', 0, PARAM_INT);
-    $mon  = optional_param('cal_m', 0, PARAM_INT);
-    $yr   = optional_param('cal_y', 0, PARAM_INT);
+$courseid = optional_param('course', 0, PARAM_INT);
+$view = optional_param('view', 'upcoming', PARAM_ALPHA);
+$day  = optional_param('cal_d', 0, PARAM_INT);
+$mon  = optional_param('cal_m', 0, PARAM_INT);
+$yr   = optional_param('cal_y', 0, PARAM_INT);
 
-    if(!$site = get_site()) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
-    }
+if(!$site = get_site()) {
+    redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
+}
 
-    $url = new moodle_url($CFG->wwwroot.'/calendar/view.php');
-    if ($courseid !== 0) {
-        $url->param('course', $courseid);
-    }
-    if ($view !== 'upcoming') {
-        $url->param('view', $view);
-    }
-    if ($day !== 0) {
-        $url->param('cal_d', $day);
-    }
-    if ($mon !== 0) {
-        $url->param('cal_m', $mon);
-    }
-    if ($yr !== 0) {
-        $url->param('cal_y', $yr);
-    }
-    $PAGE->set_url($url);
+$url = new moodle_url($CFG->wwwroot.'/calendar/view.php');
+if ($courseid !== 0) {
+    $url->param('course', $courseid);
+}
+if ($view !== 'upcoming') {
+    $url->param('view', $view);
+}
+if ($day !== 0) {
+    $url->param('cal_d', $day);
+}
+if ($mon !== 0) {
+    $url->param('cal_m', $mon);
+}
+if ($yr !== 0) {
+    $url->param('cal_y', $yr);
+}
+$PAGE->set_url($url);
 
-    if ($courseid) {
-        require_login($courseid);
-    } else if ($CFG->forcelogin) {
-        require_login();
-    }
+if ($courseid) {
+    require_login($courseid);
+} else if ($CFG->forcelogin) {
+    require_login();
+}
 
-    // Initialize the session variables
-    calendar_session_vars();
+// Initialize the session variables
+calendar_session_vars();
 
-    //add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
-    $now = usergetdate(time());
-    $pagetitle = '';
+//add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
+$now = usergetdate(time());
+$pagetitle = '';
 
-    $strcalendar = get_string('calendar', 'calendar');
-    
-    $link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
-                                   $now['mday'], $now['mon'], $now['year']);
-    $PAGE->navbar->add($strcalendar, new moodle_url($link));
+$strcalendar = get_string('calendar', 'calendar');
 
-    if(!checkdate($mon, $day, $yr)) {
-        $day = intval($now['mday']);
-        $mon = intval($now['mon']);
-        $yr = intval($now['year']);
-    }
-    $time = make_timestamp($yr, $mon, $day);
+$link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
+                               $now['mday'], $now['mon'], $now['year']);
+$PAGE->navbar->add($strcalendar, new moodle_url($link));
 
-    switch($view) {
-        case 'day':
-            $PAGE->navbar->add(userdate($time, get_string('strftimedate')));
-            $pagetitle = get_string('dayview', 'calendar');
-        break;
-        case 'month':
-            $PAGE->navbar->add(userdate($time, get_string('strftimemonthyear')));
-            $pagetitle = get_string('detailedmonthview', 'calendar');
-        break;
-        case 'upcoming':
-            $pagetitle = get_string('upcomingevents', 'calendar');
-        break;
-    }
+if(!checkdate($mon, $day, $yr)) {
+    $day = intval($now['mday']);
+    $mon = intval($now['mon']);
+    $yr = intval($now['year']);
+}
+$time = make_timestamp($yr, $mon, $day);
 
-    // If a course has been supplied in the URL, change the filters to show that one
-    if (!empty($courseid)) {
-        if ($course = $DB->get_record('course', array('id'=>$courseid))) {
-            if ($course->id == SITEID) {
-                // If coming from the home page, show all courses
-                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-                calendar_set_referring_course(0);
+switch($view) {
+    case 'day':
+        $PAGE->navbar->add(userdate($time, get_string('strftimedate')));
+        $pagetitle = get_string('dayview', 'calendar');
+    break;
+    case 'month':
+        $PAGE->navbar->add(userdate($time, get_string('strftimemonthyear')));
+        $pagetitle = get_string('detailedmonthview', 'calendar');
+    break;
+    case 'upcoming':
+        $pagetitle = get_string('upcomingevents', 'calendar');
+    break;
+}
 
-            } else {
-                // Otherwise show just this one
-                $SESSION->cal_courses_shown = $course->id;
-                calendar_set_referring_course($SESSION->cal_courses_shown);
-            }
-        }
-    } else {
-        $course = null;
-    }
+// If a course has been supplied in the URL, change the filters to show that one
+if (!empty($courseid)) {
+    if ($course = $DB->get_record('course', array('id'=>$courseid))) {
+        if ($course->id == SITEID) {
+            // If coming from the home page, show all courses
+            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+            calendar_set_referring_course(0);
 
-    if (empty($USER->id) or isguest()) {
-        $defaultcourses = calendar_get_default_courses();
-        calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
-    } else {
-        calendar_set_filters($courses, $groups, $users);
-    }
-
-    // Let's see if we are supposed to provide a referring course link
-    // but NOT for the "main page" course
-    if ($SESSION->cal_course_referer != SITEID &&
-       ($shortname = $DB->get_field('course', 'shortname', array('id'=>$SESSION->cal_course_referer))) !== false) {
-        require_login();
-        if (empty($course)) {
-            $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer)); // Useful to have around
+        } else {
+            // Otherwise show just this one
+            $SESSION->cal_courses_shown = $course->id;
+            calendar_set_referring_course($SESSION->cal_courses_shown);
         }
     }
+} else {
+    $course = null;
+}
 
-    $strcalendar = get_string('calendar', 'calendar');
-    $prefsbutton = calendar_preferences_button();
+if (empty($USER->id) or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+    $defaultcourses = calendar_get_default_courses();
+    calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 
-    // Print title and header
-    $PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
-    $PAGE->set_heading($strcalendar);
-    $PAGE->set_headingmenu(user_login_string($site));
-    $PAGE->set_button($prefsbutton);
+} else {
+    calendar_set_filters($courses, $groups, $users);
+}
 
-    $PAGE->requires->yui_lib('animation');
-    $PAGE->requires->js('calendar/calendar.js');
-
-    echo $OUTPUT->header();
-
-    // Layout the whole page as three big columns.
-    echo '<table id="calendar" style="height:100%;">';
-    echo '<tr>';
-
-    // START: Main column
-
-    echo '<td class="maincalendar">';
-    echo '<div class="heightcontainer">';
-
-    switch($view) {
-        case 'day':
-            calendar_show_day($day, $mon, $yr, $courses, $groups, $users, $courseid);
-        break;
-        case 'month':
-            calendar_show_month_detailed($mon, $yr, $courses, $groups, $users, $courseid);
-        break;
-        case 'upcoming':
-            calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS), $courseid);
-        break;
+// Let's see if we are supposed to provide a referring course link
+// but NOT for the "main page" course
+if ($SESSION->cal_course_referer != SITEID &&
+   ($shortname = $DB->get_field('course', 'shortname', array('id'=>$SESSION->cal_course_referer))) !== false) {
+    require_login();
+    if (empty($course)) {
+        $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer)); // Useful to have around
     }
+}
 
-    //Link to calendar export page
-    echo $OUTPUT->container_start('bottom');
-    if (!empty($CFG->enablecalendarexport)) {
-        echo $OUTPUT->button(html_form::make_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar')));
+$strcalendar = get_string('calendar', 'calendar');
+$prefsbutton = calendar_preferences_button();
 
-        if (!empty($USER->id)) {
-            $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
-            $usernameencoded = urlencode($USER->username);
+// Print title and header
+$PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
+$PAGE->set_heading($strcalendar);
+$PAGE->set_headingmenu(user_login_string($site));
+$PAGE->set_button($prefsbutton);
 
-            echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
-                 .'<img src="'.$OUTPUT->old_icon_url('i/ical') . '" height="14" width="36" '
-                 .'alt="'.get_string('ical', 'calendar').'" '
-                 .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
-                 .'</a>';
-        }
+$PAGE->requires->yui_lib('animation');
+$PAGE->requires->js('calendar/calendar.js');
+
+echo $OUTPUT->header();
+
+// Layout the whole page as three big columns.
+echo '<table id="calendar" style="height:100%;">';
+echo '<tr>';
+
+// START: Main column
+
+echo '<td class="maincalendar">';
+echo '<div class="heightcontainer">';
+
+switch($view) {
+    case 'day':
+        calendar_show_day($day, $mon, $yr, $courses, $groups, $users, $courseid);
+    break;
+    case 'month':
+        calendar_show_month_detailed($mon, $yr, $courses, $groups, $users, $courseid);
+    break;
+    case 'upcoming':
+        calendar_show_upcoming_events($courses, $groups, $users, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS), $courseid);
+    break;
+}
+
+//Link to calendar export page
+echo $OUTPUT->container_start('bottom');
+if (!empty($CFG->enablecalendarexport)) {
+    echo $OUTPUT->button(html_form::make_button('export.php', array('course'=>$courseid), get_string('exportcalendar', 'calendar')));
+
+    if (!empty($USER->id)) {
+        $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
+        $usernameencoded = urlencode($USER->username);
+
+        echo "<a href=\"export_execute.php?preset_what=all&amp;preset_time=recentupcoming&amp;username=$usernameencoded&amp;authtoken=$authtoken\">"
+             .'<img src="'.$OUTPUT->old_icon_url('i/ical') . '" height="14" width="36" '
+             .'alt="'.get_string('ical', 'calendar').'" '
+             .'title="'.get_string('quickdownloadcalendar', 'calendar').'" />'
+             .'</a>';
     }
+}
 
-    echo $OUTPUT->container_end();
-    echo '</div>';
-    echo '</td>';
+echo $OUTPUT->container_end();
+echo '</div>';
+echo '</td>';
 
-    // END: Main column
+// END: Main column
 
-    // START: Last column (3-month display)
-    echo '<td class="sidecalendar">';
-    list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
-    list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    $getvars = 'id='.$courseid.'&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
+// START: Last column (3-month display)
+echo '<td class="sidecalendar">';
+list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
+list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
+$getvars = 'id='.$courseid.'&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
-    $content='<div class="filters">';
-    $content.=calendar_filter_controls($view, $getvars, NULL, $courses);
-    $content.='</div>';
-    
-    print_side_block(get_string('eventskey', 'calendar'),$content);
-        
-    $content='<div class="minicalendarblock minicalendartop">';
-    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
-    $content.=calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    $content.='</div><div class="minicalendarblock">';
-    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
-    $content.=calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    $content.='</div><div class="minicalendarblock">';
-    $content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
-    $content.=calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-    $content.='</div>';
-    
-    print_side_block(get_string('monthlyview', 'calendar'),$content);
+$content='<div class="filters">';
+$content.=calendar_filter_controls($view, $getvars, NULL, $courses);
+$content.='</div>';
 
-    echo '</td>';
+$bc = new block_contents();
+$bc->content = $content;
+$bc->footer = '';
+$bc->title = strip_tags(get_string('eventskey', 'calendar'));
+echo $OUTPUT->block($bc, BLOCK_POS_LEFT);
 
-    echo '</tr></table>';
+$content='<div class="minicalendarblock minicalendartop">';
+$content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
+$content.=calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
+$content.='</div><div class="minicalendarblock">';
+$content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $mon, 'y' => $yr));
+$content.=calendar_get_mini($courses, $groups, $users, $mon, $yr);
+$content.='</div><div class="minicalendarblock">';
+$content.=calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
+$content.=calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+$content.='</div>';
 
-    echo $OUTPUT->footer();
+$bc = new block_contents();
+$bc->content = $content;
+$bc->footer = '';
+$bc->title = strip_tags(get_string('monthlyview', 'calendar'));
+echo $OUTPUT->block($bc, BLOCK_POS_LEFT);
+
+echo '</td>';
+
+echo '</tr></table>';
+
+echo $OUTPUT->footer();
 
 
 
@@ -255,7 +263,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     $text = '';
-    if (!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
+    if (!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
@@ -396,7 +404,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $courses);
 
     $text = '';
-    if(!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
+    if(!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
@@ -556,7 +564,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 	  	 
 	     echo "</tr>\n"; 	 
 	  	 
-	     if(!empty($USER->id) && !isguest()) { 	 
+	     if(!empty($USER->id) && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
 	         echo '<tr>'; 	 
 	         // Group events 	 
 	         if($SESSION->cal_show_groups) { 	 
@@ -589,7 +597,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
     $text = '';
 
-    if(!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
+    if(!has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
@@ -623,7 +631,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 function calendar_course_filter_selector($getvars = '') {
     global $USER, $SESSION, $OUTPUT;
 
-    if (empty($USER->id) or isguest()) {
+    if (empty($USER->id) or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
         return '';
     }
 

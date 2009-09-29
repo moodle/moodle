@@ -1,4 +1,50 @@
-<?php // $Id$
+<?php
+
+/////////////////////////////////////////////////////////////////////////////
+//                                                                         //
+// NOTICE OF COPYRIGHT                                                     //
+//                                                                         //
+// Moodle - Calendar extension                                             //
+//                                                                         //
+// Copyright (C) 2003-2004  Greek School Network            www.sch.gr     //
+//                                                                         //
+// Designed by:                                                            //
+//     Avgoustos Tsinakos (tsinakos@teikav.edu.gr)                         //
+//     Jon Papaioannou (pj@moodle.org)                                     //
+//                                                                         //
+// Programming and development:                                            //
+//     Jon Papaioannou (pj@moodle.org)                                     //
+//                                                                         //
+// For bugs, suggestions, etc contact:                                     //
+//     Jon Papaioannou (pj@moodle.org)                                     //
+//                                                                         //
+// The current module was developed at the University of Macedonia         //
+// (www.uom.gr) under the funding of the Greek School Network (www.sch.gr) //
+// The aim of this project is to provide additional and improved           //
+// functionality to the Asynchronous Distance Education service that the   //
+// Greek School Network deploys.                                           //
+//                                                                         //
+// This program is free software; you can redistribute it and/or modify    //
+// it under the terms of the GNU General Public License as published by    //
+// the Free Software Foundation; either version 2 of the License, or       //
+// (at your option) any later version.                                     //
+//                                                                         //
+// This program is distributed in the hope that it will be useful,         //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           //
+// GNU General Public License for more details:                            //
+//                                                                         //
+//          http://www.gnu.org/copyleft/gpl.html                           //
+//                                                                         //
+/////////////////////////////////////////////////////////////////////////////
+
+/**
+ * This file is part of the User section Moodle
+ *
+ * @copyright 2003-2004 Jon Papaioannou (pj@moodle.org)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
+ * @package calendar
+ */
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
@@ -14,6 +60,24 @@ if ($courseid = optional_param('course', 0, PARAM_INT)) {
 } else {
     $course = NULL;
 }
+
+$url = new moodle_url($CFG->wwwroot.'/calendar/export.php');
+if ($action !== '') {
+    $url->param('action', $action);
+}
+if ($cal_d !== 0) {
+    $url->param('cal_d', $cal_d);
+}
+if ($cal_m !== 0) {
+    $url->param('cal_m', $cal_m);
+}
+if ($cal_y !== 0) {
+    $url->param('cal_y', $cal_y);
+}
+if ($course !== 0) {
+    $url->param('course', $course);
+}
+$PAGE->set_url($url);
 
 require_login();
 
@@ -43,14 +107,16 @@ if(!checkdate($mon, $day, $yr)) {
 }
 $time = make_timestamp($yr, $mon, $day);
 
-if (empty($USER->id) or isguest()) {
+$isguest = has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false);
+
+if (empty($USER->id) or $isguest) {
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 } else {
     calendar_set_filters($courses, $groups, $users);
 }
 
-if (empty($USER->id) or isguest()) {
+if (empty($USER->id) or $isguest) {
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
 

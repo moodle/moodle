@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /////////////////////////////////////////////////////////////////////////////
 //                                                                         //
@@ -845,7 +845,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
     }
 
 
-    if(!empty($USER->id) && !isguest()) {
+    if(!empty($USER->id) && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
         $content .= "</tr>\n<tr>";
 
         if($groupevents) {
@@ -1426,7 +1426,7 @@ function calendar_preferences_button() {
     global $CFG, $USER;
 
     // Guests have no preferences
-    if (empty($USER->id) || isguest()) {
+    if (empty($USER->id) || has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
         return '';
     }
 
