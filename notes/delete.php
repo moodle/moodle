@@ -1,10 +1,12 @@
-<?php // $Id$
+<?php
 
 require_once('../config.php');
 require_once('lib.php');
 
 // retrieve parameters
 $noteid = required_param('id', PARAM_INT);
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/notes/delete.php', array('id'=>$noteid)));
 
 // locate note information
 if (!$note = note_load($noteid)) {
