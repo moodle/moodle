@@ -214,6 +214,10 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
         echo $OUTPUT->fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
     }
 
+    $errmsg = "Default exception handler: " . $ex->getMessage() . "\n" .  format_backtrace($backtrace);
+    if (debugging($errmsg, DEBUG_MINIMAL)) {
+        error_log($errmsg, 0);
+    }
     exit(1); // General error code
 }
 
