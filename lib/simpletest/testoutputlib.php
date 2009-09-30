@@ -1065,16 +1065,18 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('continue'), 'class' => 'singlebutton')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('cancel'), 'class' => 'singlebutton')), $html);
 
         // Use html_forms with default values, should produce exactly the same output as above
         $formcontinue = new html_form();
         $formcancel = new html_form();
         $formcontinue->url = new moodle_url($continueurl);
         $formcancel->url = new moodle_url($cancelurl);
+        $formcontinue->button->text = get_string('continue');
+        $formcancel->button->text = get_string('cancel');
         $html = $this->renderer->confirm($message, $formcontinue, $formcancel);
         $this->assert(new ContainsTagWithAttributes('div', array('id' => 'notice', 'class' => 'box generalbox')), $html);
         $this->assert(new ContainsTagWithContents('p', $message), $html);
@@ -1083,10 +1085,10 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttributes('form', array('method' => 'post', 'action' => 'http://www.test.com/index.php')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'continue', 'value' => 1)), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('continue'), 'class' => 'singlebutton')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('cancel'), 'class' => 'singlebutton')), $html);
 
         // Give the buttons some different labels
         $formcontinue = new html_form();
@@ -1107,6 +1109,8 @@ class moodle_core_renderer_test extends UnitTestCase {
         // Change the method and add extra variables
         $formcontinue = new html_form();
         $formcancel = new html_form();
+        $formcontinue->button->text = get_string('continue');
+        $formcancel->button->text = get_string('cancel');
         $formcontinue->url = new moodle_url($continueurl, array('var1' => 'val1', 'var2' => 'val2'));
         $formcancel->url = new moodle_url($cancelurl, array('var3' => 'val3', 'var4' => 'val4'));
         $html = $this->renderer->confirm($message, $formcontinue, $formcancel);
@@ -1115,10 +1119,10 @@ class moodle_core_renderer_test extends UnitTestCase {
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var1', 'value' => 'val1')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var2', 'value' => 'val2')), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('yes'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('continue'), 'class' => 'singlebutton')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'cancel', 'value' => 1)), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())), $html);
-        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('no'), 'class' => 'singlebutton')), $html);
+        $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => get_string('cancel'), 'class' => 'singlebutton')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var3', 'value' => 'val3')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'var4', 'value' => 'val4')), $html);
 
@@ -1149,7 +1153,7 @@ class moodle_core_renderer_test extends UnitTestCase {
     }
 
     public function test_paging_bar() {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
         $totalcount = 5;
         $perpage = 4;
@@ -1166,7 +1170,7 @@ class moodle_core_renderer_test extends UnitTestCase {
 
         $originalbar = clone($pagingbar);
 
-        $html = $OUTPUT->paging_bar($pagingbar);
+        $html = $this->renderer->paging_bar($pagingbar);
 
         $this->assert(new ContainsTagWithAttribute('div', 'class', 'paging'), $html);
         // the 'Previous' link

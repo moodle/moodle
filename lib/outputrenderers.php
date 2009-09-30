@@ -1356,7 +1356,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $link->text = $this->image($image);
 
             if (!empty($link->linktext)) {
-                $link->text = "$link->title &nbsp; $link->text";
+                $link->text = "$link->title &#160; $link->text";
             }
         }
 
@@ -2005,27 +2005,27 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= get_string('page') . ':';
 
             if (!empty($pagingbar->previouslink)) {
-                $output .= '&nbsp;(' . $this->link($pagingbar->previouslink) . ')&nbsp;';
+                $output .= '&#160;(' . $this->link($pagingbar->previouslink) . ')&#160;';
             }
 
             if (!empty($pagingbar->firstlink)) {
-                $output .= '&nbsp;' . $this->link($pagingbar->firstlink) . '&nbsp;...';
+                $output .= '&#160;' . $this->link($pagingbar->firstlink) . '&#160;...';
             }
 
             foreach ($pagingbar->pagelinks as $link) {
                 if ($link instanceof html_link) {
-                    $output .= '&nbsp;&nbsp;' . $this->link($link);
+                    $output .= '&#160;&#160;' . $this->link($link);
                 } else {
-                    $output .= "&nbsp;&nbsp;$link";
+                    $output .= "&#160;&#160;$link";
                 }
             }
 
             if (!empty($pagingbar->lastlink)) {
-                $output .= '&nbsp;...' . $this->link($pagingbar->lastlink) . '&nbsp;';
+                $output .= '&#160;...' . $this->link($pagingbar->lastlink) . '&#160;';
             }
 
             if (!empty($pagingbar->nextlink)) {
-                $output .= '&nbsp;&nbsp;(' . $this->link($pagingbar->nextlink) . ')';
+                $output .= '&#160;&#160;(' . $this->link($pagingbar->nextlink) . ')';
             }
         }
 
