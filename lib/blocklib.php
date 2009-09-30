@@ -368,7 +368,9 @@ class block_manager {
      */
     public function set_default_region($defaultregion) {
         $this->check_not_yet_loaded();
-        $this->check_region_is_known($defaultregion);
+        if ($defaultregion) {
+            $this->check_region_is_known($defaultregion);
+        }
         $this->defaultregion = $defaultregion;
     }
 
