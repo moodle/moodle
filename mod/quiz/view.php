@@ -57,7 +57,7 @@
 
     //only check pop ups if the user is not a teacher, and popup is set
 
-    $bodytags = (has_capability('mod/quiz:attempt', $context) && $quiz->popup)?'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"':'';
+    $bodytags = (has_capability('mod/quiz:attempt', $context) && $quiz->popup == 1)?'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"':'';
     $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
 
     echo '<table id="layout-table"><tr>';
@@ -405,7 +405,7 @@
             $attempturl = "attempt.php?id=$cm->id";
 
             // Prepare options depending on whether the quiz should be a popup.
-            if (!empty($quiz->popup)) {
+            if ($quiz->popup == 1) {
                 $window = 'quizpopup';
                 $windowoptions = "left=0, top=0, height='+window.screen.height+', " .
                         "width='+window.screen.width+', channelmode=yes, fullscreen=yes, " .
@@ -421,7 +421,9 @@
                     echo "if (confirm('".addslashes_js($strconfirmstartattempt)."')) ";
                 }
                 echo "window.open('$attempturl','$window','$windowoptions');", '" />';
-            } else {
+            } else if ($quiz->popup == 2 && !quiz_check_safe_browser()) {
+                notify(get_string('safebrowsererror', 'quiz'));
+            }else {
                 print_single_button("attempt.php", array('id'=>$cm->id), $buttontext, 'get', '', false, '', false, $strconfirmstartattempt);
             }
 
@@ -483,7 +485,7 @@ function make_review_link($linktext, $quiz, $attempt, $context) {
     }
 
     $url = "review.php?q=$quiz->id&amp;attempt=$attempt->id";
-    if ($quiz->popup) {
+    if ($quiz->popup == 1) {
         $windowoptions = "left=0, top=0, channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";
         return link_to_popup_window('/mod/quiz/' . $url, 'quizpopup', $linktext, '+window.screen.height+', '+window.screen.width+', '', $windowoptions, true);
     } else {

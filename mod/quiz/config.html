@@ -291,11 +291,17 @@
 </tr>
 
 <tr valign="top">
-  <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
+  <td align="right"><b><?php print_string('browsersecurity', 'quiz') ?>:</b></td>
   <td>
     <?php
-       choose_from_menu ($yesnooptions, "popup", $form->popup, "", "", "");
-       helpbutton("popup", get_string("popup","quiz"), "quiz");
+        $browseroptions = array(
+                0 => get_string('none', 'quiz'),
+                1 => get_string('popupwithjavascriptsupport', 'quiz'));
+        if ($CFG->enablesafebrowserintegration) { 
+            $browseroptions[2] = get_string('requiresafeexambrowser', 'quiz');
+        }
+        choose_from_menu ($browseroptions, 'popup', $form->popup, '', '', '');
+        helpbutton('browsersecurity', get_string('browsersecurity', 'quiz'), 'quiz');
     ?>
   </td>
   <td align="center">

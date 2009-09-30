@@ -77,7 +77,7 @@
 
     $strattemptnum = get_string('attempt', 'quiz', $attemptnumber);
     $strquizzes = get_string("modulenameplural", "quiz");
-    $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
+    $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window or with a safe browser.
 
 /// We intentionally do not check open and close times here. Instead we do it lower down.
 /// This is to deal with what happens when someone submits close to the exact moment when the quiz closes.
@@ -87,6 +87,11 @@
         "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
     if (!empty($quiz->attempts) and $numberofpreviousattempts >= $quiz->attempts) {
         print_error('nomoreattempts', 'quiz', "view.php?id={$cm->id}");
+    }
+
+/// Check safe browser
+    if (!$ispreviewing && $quiz->popup == 2 && !quiz_check_safe_browser()) {
+        print_error('safebrowsererror', 'quiz', "view.php?id={$cm->id}");
     }
 
 /// Check subnet access
@@ -412,10 +417,12 @@
     require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
     $pagequestions = explode(',', $pagelist);
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
-    if (!empty($popup)) {
+    if (!$ispreviewing && $quiz->popup) {
         define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
         print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, ' class="securewindow"');
-        include('protect_js.php');
+        if ($quiz->popup == 1) {
+            include('protect_js.php');
+        }
     } else {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
@@ -439,8 +446,10 @@
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
         echo '</div>';
     /// Notices about restrictions that would affect students.
-        if ($quiz->popup) {
+        if ($quiz->popup == 1) {
             notify(get_string('popupnotice', 'quiz'));
+        } else if ($quiz->popup == 2) {
+            notify(get_string('safebrowsernotice', 'quiz'));
         }
         if ($timestamp < $quiz->timeopen || ($quiz->timeclose && $timestamp > $quiz->timeclose)) {
             notify(get_string('notavailabletostudents', 'quiz'));
