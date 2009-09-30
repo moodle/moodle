@@ -54,6 +54,9 @@ class moodlesimplepie_test extends UnitTestCase {
         $this->assertEqual(count($items), 15);
 
         $this->assertTrue($itemone = $feed->get_item(0));
+        if (!$itemone) {
+        	return;
+        }
 
         $this->assertEqual($itemone->get_title(), 'Google HOP contest encourages pre-University students to work on Moodle');
         $this->assertEqual($itemone->get_link(), 'http://moodle.org/mod/forum/discuss.php?d=85629');
