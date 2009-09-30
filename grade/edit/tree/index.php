@@ -98,7 +98,7 @@ if (has_capability('moodle/grade:manage', $context)) {
 // Change category aggregation if requested
 if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
     if (!$grade_category = grade_category::fetch(array('id'=>$category, 'courseid'=>$courseid))) {
-        error('Incorrect category id!');
+        print_error('invalidcategoryid');
     }
     $data->aggregation = $aggregationtype;
     grade_category::set_properties($grade_category, $data);

@@ -355,6 +355,7 @@ $string['nopermissiontolock'] = 'No permission to lock!';
 $string['nopermissiontomkdir'] = 'Cannot create folder. The site administrator needs to fix the file permissions';
 $string['nopermissiontoshow'] = 'No permission to see this!';
 $string['nopermissiontounlock'] = 'No permission to unlock!';
+$string['nopermissiontoviewgrades'] = 'Can not view grades.';
 $string['nopermissiontoviewpage'] = 'You are not allowed to look at this page';
 $string['nopermissiontoviewletergrade'] = 'Missing permission to view letter grades';
 $string['nopermissiontomanagegroup'] = 'You do not have the required permissions to manage groups';

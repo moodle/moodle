@@ -57,7 +57,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 
 if (!$access) {
     // no access to grades!
-    error("Can not view grades.", $CFG->wwwroot.'/course/view.php?id='.$courseid); //TODO: localize
+    print_error('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
 }
 
 /// return tracking object

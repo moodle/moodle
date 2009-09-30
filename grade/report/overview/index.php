@@ -38,7 +38,7 @@ if (empty($userid)) {
 
 } else {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
-        error("Incorrect userid");
+        print_error('invaliduserid');
     }
 }
 
@@ -62,7 +62,7 @@ if (has_capability('moodle/grade:viewall', $systemcontext)) {
 
 if (!$access) {
     // no access to grades!
-    error("Can not view grades.", $CFG->wwwroot.'/course/view.php?id='.$courseid); //TODO: localize
+    print_error('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
 }
 
 /// return tracking object
