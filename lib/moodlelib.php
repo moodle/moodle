@@ -5731,6 +5731,49 @@ function get_list_of_charsets() {
 }
 
 /**
+ * For internal use only.
+ * @return array with two elements, the path to use and the name of the lang.
+ */
+function get_list_of_countries_language() {
+	global $CFG;
+
+	$lang = current_language();
+    if (is_readable($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
+        return array($CFG->dataroot, $lang);
+    }
+    if (is_readable($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
+        return array($CFG->dirroot , $lang);
+    }
+
+    if ($lang == 'en_utf8') {
+    	return;
+    } 
+
+    $parentlang = get_string('parentlanguage');
+    if (substr($parentlang, 0, 1) != '[') {
+	    if (is_readable($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
+	        return array($CFG->dataroot, $parentlang);
+	    }
+	    if (is_readable($CFG->dirroot .'/lang/'. $parentlang .'/countries.php')) {
+	        return array($CFG->dirroot , $parentlang);
+	    }
+
+	    if ($parentlang == 'en_utf8') {
+	        return;
+	    } 
+    }
+
+    if (is_readable($CFG->dataroot.'/lang/en_utf8/countries.php')) {
+        return array($CFG->dataroot, 'en_utf8');
+    }
+    if (is_readable($CFG->dirroot .'/lang/en_utf8/countries.php')) {
+        return array($CFG->dirroot , 'en_utf8');
+    }
+
+    return array(null, null);
+}
+
+/**
  * Returns a list of country names in the current language
  *
  * @uses $CFG
@@ -5738,36 +5781,31 @@ function get_list_of_charsets() {
  * @return array
  */
 function get_list_of_countries() {
-    global $CFG, $USER;
+    global $CFG;
 
-    $lang = current_language();
+    list($path, $lang) = get_list_of_countries_language();
 
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
-        !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php') ||
-                file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en_utf8';  // countries.php must exist in this pack
-            }
-        } else {
-            $lang = 'en_utf8';  // countries.php must exist in this pack
-        }
+    if (empty($path)) {
+    	print_error('countriesphpempty', '', '', $lang);
     }
 
-    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
-    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
-    }
+    // Load all the strings into $string.
+    include($path . '/lang/' . $lang . '/countries.php');
 
-    if (!empty($string)) {
-        uasort($string, 'strcoll');
-    } else {
+    // See if there are local overrides to countries.php.
+    // If so, override those elements of $string.
+    if (is_readable($CFG->dirroot .'/lang/' . $lang . '_local/countries.php')) {
+        include($CFG->dirroot .'/lang/' . $lang . '_local/countries.php');
+    }
+    if (is_readable($CFG->dataroot.'/lang/' . $lang . '_local/countries.php')) {
+        include($CFG->dataroot.'/lang/' . $lang . '_local/countries.php');
+    }
+        
+    if (empty($string)) {
         print_error('countriesphpempty', '', '', $lang);
     }
 
+    uasort($string, 'strcoll');
     return $string;
 }
 
