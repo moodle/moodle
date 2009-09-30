@@ -46,9 +46,9 @@ class qformat_default {
      * @param object category the category object
      */
     function setCategory( $category ) {
-    	if (count($this->questions)){
-    		debugging('You shouldn\'t call setCategory after setQuestions');
-    	}
+        if (count($this->questions)){
+            debugging('You shouldn\'t call setCategory after setQuestions');
+        }
         $this->category = $category;
     }
 
@@ -59,9 +59,9 @@ class qformat_default {
      * @param array of question objects
      */
     function setQuestions( $questions ) {
-    	if ($this->category !== null){
-    		debugging('You shouldn\'t call setQuestions after setCategory');
-    	}
+        if ($this->category !== null){
+            debugging('You shouldn\'t call setQuestions after setCategory');
+        }
         $this->questions = $questions;
     }
 
@@ -88,15 +88,15 @@ class qformat_default {
     function setFilename( $filename ) {
         $this->filename = $filename;
     }
-    
-    /** 
+
+    /**
      * set the "real" filename
      * (this is what the user typed, regardless of wha happened next)
      * @param string realfilename name of file as typed by user
      */
     function setRealfilename( $realfilename ) {
-    	$this->realfilename = $realfilename;
-    }	 
+        $this->realfilename = $realfilename;
+    }
 
     /**
      * set matchgrades
@@ -181,14 +181,26 @@ class qformat_default {
      * @param data mixed The segment of data containing the question
      * @param question object processed (so far) by standard import code if appropriate
      * @param extra mixed any additional format specific data that may be passed by the format
+     * @param qtypehint hint about a question type from format
      * @return object question object suitable for save_options() or false if cannot handle
      */
-    function try_importing_using_qtypes( $data, $question=null, $extra=null ) {
+    function try_importing_using_qtypes( $data, $question=null, $extra=null, $qtypehint='') {
         global $QTYPES;
 
         // work out what format we are using
-        $formatname = substr( get_class( $this ), strlen('qformat_'));
+        $formatname = substr(get_class($this), strlen('qformat_'));
         $methodname = "import_from_$formatname";
+
+        //first try importing using a hint from format
+        if (!empty($qtypehint)) {
+            $qtype = $QTYPES[$qtypehint];
+            if (is_object($qtype) && method_exists($qtype, $methodname)) {
+                $question = $qtype->$methodname($data, $question, $this, $extra);
+                if ($question) {
+                    return $question;
+                }
+            }
+        }
 
         // loop through installed questiontypes checking for
         // function to handle this question
@@ -342,10 +354,10 @@ class qformat_default {
     }
     /**
      * Count all non-category questions in the questions array.
-     * 
+     *
      * @param array questions An array of question objects.
      * @return int The count.
-     * 
+     *
      */
     function count_questions($questions) {
         $count = 0;
@@ -378,7 +390,7 @@ class qformat_default {
         $catnames = explode($delimiter, $catpath);
         $parent = 0;
         $category = null;
-        
+
         // check for context id in path, it might not be there in pre 1.9 exports
         $matchcount = preg_match('/^\$([a-z]+)\$$/', $catnames[0], $matches);
         if ($matchcount==1) {
