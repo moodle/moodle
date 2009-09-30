@@ -3151,7 +3151,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             $backtrace = debug_backtrace();
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
-        if ($CFG->debugdisplay || empty($UNITTEST->running)) {
+        if ($CFG->debugdisplay || isset($UNITTEST->running)) {
         	// When the unit tests are running, any call to trigger_error
         	// is intercepted by the test framework and reported as an exception.
         	// Therefore, we cannot use trigger_error during unit tests.
