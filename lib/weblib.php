@@ -3136,7 +3136,7 @@ function get_docs_url($path) {
  * @return bool
  */
 function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
-    global $CFG;
+    global $CFG, $UNITTEST;
 
     if (empty($CFG->debug) || $CFG->debug < $level) {
         return false;
@@ -3151,7 +3151,12 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             $backtrace = debug_backtrace();
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
-        if ($CFG->debugdisplay) {
+        if ($CFG->debugdisplay || empty($UNITTEST->running)) {
+        	// When the unit tests are running, any call to trigger_error
+        	// is intercepted by the test framework and reported as an exception.
+        	// Therefore, we cannot use trigger_error during unit tests.
+        	// At the same time I do not think we should just discard those messages,
+        	// so displaying them on-screen seems like the only option. (MDL-20398)
             if (!defined('DEBUGGING_PRINTED')) {
                 define('DEBUGGING_PRINTED', 1); // indicates we have printed something
             }
