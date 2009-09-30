@@ -9,7 +9,7 @@ if (!defined('MAX_BULK_USERS')) {
 function add_selection_all($ufiltering) {
     global $SESSION, $DB;
 
-    $guest = get_guest();
+    $guest = get_complete_user_data('username', 'guest');
     list($sqlwhere, $params) = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));
 
     if ($rs = $DB->get_recordset_select('user', $sqlwhere, $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname')) {
@@ -26,7 +26,7 @@ function get_selection_data($ufiltering) {
     global $SESSION, $DB;
 
     // get the SQL filter
-    $guest = get_guest();
+    $guest = get_complete_user_data('username', 'guest');
     list($sqlwhere, $params) = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));
 
     $total  = $DB->count_records_select('user', "id<>:exguest AND deleted <> 1", array('exguest'=>$guest->id));

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -59,7 +59,11 @@ $overwritepicture = optional_param('overwritepicture', 0, PARAM_BOOL);
 
 /// Print the header
 admin_externalpage_print_header();
-print_heading_with_help($struploadpictures, 'uploadpictures');
+
+$helpicon = new moodle_help_icon();
+$helpicon->text = $struploadpictures;
+$helpicon->page = 'uploadpictures';
+echo $OUTPUT->heading_with_help($helpicon);
 
 $mform = new admin_uploadpicture_form(null, $userfields);
 if ($formdata = $mform->get_data()) {

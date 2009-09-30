@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -296,7 +296,10 @@
     }
 
     /// Print heading.
-        print_heading_with_help($title, 'assignroles');
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = $title;
+    $helpicon->page = 'assignroles';
+    echo $OUTPUT->heading_with_help($helpicon);
 
     if ($roleid) {
     /// Show UI for assigning a particular role to users.
