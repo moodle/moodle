@@ -611,6 +611,8 @@ class theme_config {
         if (!empty($layoutinfo['regions'])) {
             $blockmanager->add_regions($layoutinfo['regions']);
             $blockmanager->set_default_region($layoutinfo['defaultregion']);
+        } else {
+        	$blockmanager->set_default_region('');
         }
     }
 

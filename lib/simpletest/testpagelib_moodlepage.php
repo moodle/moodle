@@ -56,20 +56,21 @@ class testable_moodle_page extends moodle_page {
 class moodle_page_test extends UnitTestCase {
     protected $testpage;
     protected $originalcourse;
+    protected $originalpage;
     public static $includecoverage = array('lib/pagelib.php', 'lib/blocklib.php');
 
     public function setUp() {
-        global $COURSE;
+        global $COURSE, $PAGE;
         $this->originalcourse = $COURSE;
+        $this->originalpage = $PAGE;
         $this->testpage = new testable_moodle_page();
-        $this->testpage->blocks->add_regions(array('side-pre', 'side-post'));
-        $this->testpage->blocks->set_default_region('side-post');
     }
 
     public function tearDown() {
         global $COURSE;
         $this->testpage = NULL;
         $COURSE = $this->originalcourse;
+        $PAGE = $this->originalpage;
     }
 
     /** Creates an object with all the fields you would expect a $course object to have. */
@@ -110,20 +111,33 @@ class moodle_page_test extends UnitTestCase {
         $this->assert(new CheckSpecifiedFieldsExpectation($course), $this->testpage->course);
     }
 
-    public function test_global_course_and_page_course_are_same() {
-        global $COURSE;
+    public function test_global_course_and_page_course_are_same_with_global_page() {
+        global $COURSE, $PAGE;
         // Setup fixture
         $course = $this->create_a_course();
         $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $PAGE = $this->testpage;
         // Exercise SUT
         $this->testpage->set_course($course);
         // Validate
         $this->assertIdentical($this->testpage->course, $COURSE);
     }
 
-    public function test_cannot_set_course_once_output_started() {
+    public function test_global_course_not_changed_with_non_global_page() {
+        global $COURSE;
+        $originalcourse = $COURSE;
         // Setup fixture
-        $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $course = $this->create_a_course();
+        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        // Exercise SUT
+        $this->testpage->set_course($course);
+        // Validate
+        $this->assertIdentical($originalcourse, $COURSE);
+    }
+
+    public function test_cannot_set_course_once_theme_set() {
+        // Setup fixture
+        $this->testpage->force_theme('standard');
         $course = $this->create_a_course();
         // Set expectation.
         $this->expectException();
@@ -131,9 +145,9 @@ class moodle_page_test extends UnitTestCase {
         $this->testpage->set_course($course);
     }
 
-    public function test_cannot_set_category_once_output_started() {
+    public function test_cannot_set_category_once_theme_set() {
         // Setup fixture
-        $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $this->testpage->force_theme('standard');
         // Set expectation.
         $this->expectException();
         // Exercise SUT
@@ -162,7 +176,10 @@ class moodle_page_test extends UnitTestCase {
     }
 
     public function test_set_state_normal_path() {
-        $this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
+    	$this->testpage->set_course($this->create_a_course());
+
+    	$this->assertEqual(moodle_page::STATE_BEFORE_HEADER, $this->testpage->state);
 
         $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
         $this->assertEqual(moodle_page::STATE_PRINTING_HEADER, $this->testpage->state);
@@ -187,6 +204,9 @@ class moodle_page_test extends UnitTestCase {
     }
 
     public function test_header_printed_becomes_true() {
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
+        $this->testpage->set_course($this->create_a_course());
+
         // Exercise SUT
         $this->testpage->set_state(moodle_page::STATE_PRINTING_HEADER);
         $this->testpage->set_state(moodle_page::STATE_IN_BODY);

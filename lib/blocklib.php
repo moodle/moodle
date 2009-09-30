@@ -167,7 +167,9 @@ class block_manager {
      * @return array the internal names of the regions on this page where block may appear.
      */
     public function get_regions() {
-        $this->page->initialise_theme_and_output();
+    	if (is_null($this->defaultregion)) {
+            $this->page->initialise_theme_and_output();
+    	}
         return array_keys($this->regions);
     }
 
@@ -399,6 +401,7 @@ class block_manager {
      */
     public function load_blocks($includeinvisible = null) {
         global $DB, $CFG;
+
         if (!is_null($this->birecordsbyregion)) {
             // Already done.
             return;
@@ -411,7 +414,7 @@ class block_manager {
         }
 
         // Ensure we have been initialised.
-        if (!isset($this->defaultregion)) {
+        if (is_null($this->defaultregion)) {
             $this->page->initialise_theme_and_output();
             // If there are still no block regions, then there are no blocks on this page.
             if (empty($this->regions)) {
