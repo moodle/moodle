@@ -227,7 +227,7 @@ class block_global_navigation_tree extends block_tree {
         $cache = new navigation_cache('navigationhistory', 60*60);
 
         // If the user isn't logged in or is a guest we don't want to display anything
-        if (!isloggedin() || isguest()) {
+        if (!isloggedin() || isguestuser()) {
             return false;
         }
 
@@ -340,7 +340,7 @@ class block_global_navigation_tree extends block_tree {
         $cache = new navigation_cache('navigation');
 
         // If the user isn't logged in or is a guest we don't want to display anything
-        if (!isloggedin() || isguest()) {
+        if (!isloggedin() || isguestuser()) {
             return false;
         }
 

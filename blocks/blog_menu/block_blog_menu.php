@@ -62,7 +62,7 @@ class block_blog_menu extends block_base {
         }
 
         // don't display menu block if block is set at site level, and user is not logged in
-        if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguest())) {
+        if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguestuser())) {
             $this->content->text = get_string('blogdisable', 'blog');
             return $this->content;
         }

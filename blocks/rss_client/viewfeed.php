@@ -27,7 +27,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir .'/simplepie/moodle_simplepie.php');
 
 require_login();
-if (isguest()) {
+if (isguestuser()) {
     echo_error('guestsarenotallowed');
 }
 

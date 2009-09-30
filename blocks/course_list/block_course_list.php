@@ -37,7 +37,7 @@ class block_course_list extends block_list {
         if (empty($CFG->disablemycourses) and 
             !empty($USER->id) and 
             !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) and $adminseesall) and
-            !isguest()) {    // Just print My Courses
+            !isguestuser()) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id, 'visible DESC, fullname ASC')) {
                 foreach ($courses as $course) {
                     if ($course->id == SITEID) {
@@ -119,7 +119,7 @@ class block_course_list extends block_list {
         $icon  = '<img src="'.$OUTPUT->old_icon_url('i/mnethost') . '" class="icon" alt="'.get_string('course').'" />';
 
         // only for logged in users!
-        if (!isloggedin() || isguest()) {
+        if (!isloggedin() || isguestuser()) {
             return false;
         }
 

@@ -22,7 +22,7 @@ class block_mnet_hosts extends block_list {
         global $CFG, $USER, $DB, $OUTPUT;
 
         // only for logged in users!
-        if (!isloggedin() || isguest()) {
+        if (!isloggedin() || isguestuser()) {
             return false;
         }
 

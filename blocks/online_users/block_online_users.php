@@ -132,7 +132,7 @@ class block_online_users extends block_base {
             //Accessibility: Converted <div> to <ul>, inherit existing classes & styles.
             $this->content->text .= "<ul class='list'>\n";
             if (!empty($USER->id) && has_capability('moodle/site:sendmessage', $this->page->context)
-                           && !empty($CFG->messaging) && !isguest()) {
+                           && !empty($CFG->messaging) && !isguestuser()) {
                 $canshowicon = true;
             } else {
                 $canshowicon = false;
