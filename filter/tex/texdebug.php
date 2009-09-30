@@ -6,7 +6,7 @@
     require_once("../../config.php");
 
     if (!filter_is_enabled('filter/tex')) {
-        error ('Filter not enabled!');
+        print_error('filternotenabled');
     }
 
     require_once($CFG->libdir.'/filelib.php');

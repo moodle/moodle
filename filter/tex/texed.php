@@ -9,7 +9,7 @@
     require_once($CFG->dirroot.'/filter/tex/lib.php');
 
     if (!filter_is_enabled('filter/tex')) {
-        error ('Filter not enabled!');
+        print_error('filternotenabled');
     }
 
     $texexp = urldecode($_SERVER['QUERY_STRING']);

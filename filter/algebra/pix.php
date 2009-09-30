@@ -8,7 +8,7 @@
     require_once('../../config.php');
 
     if (!filter_is_enabled('filter/algebra')) {
-        error ('Filter not enabled!');
+        print_error('filternotenabled');
     }
 
     // disable moodle specific debug messages

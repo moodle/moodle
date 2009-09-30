@@ -208,6 +208,7 @@ $string['filemismatch'] = 'Non-core file name mismatch. The file \"$a->current\"
 $string['filterdoesnothavelocalconfig'] = 'The filter $a does not allow local configuration.';
 $string['filternotinstalled'] = 'Filter $a is not currently installed';
 $string['filternotactive'] = 'Filter $a is not currently active';
+$string['filternotenabled'] = 'Filter not enabled!';
 $string['forumblockingtoomanyposts'] = 'You have exceeded the posting threshold set for this forum';
 $string['hackdetected'] = 'Hack attack detected!';
 $string['headersent'] = 'Headers already sent';

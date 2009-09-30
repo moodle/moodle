@@ -8,7 +8,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     require_once('../../config.php');
 
     if (!filter_is_enabled('filter/tex')) {
-        error ('Filter not enabled!');
+        print_error('filternotenabled');
     }
 
     // disable moodle specific debug messages
