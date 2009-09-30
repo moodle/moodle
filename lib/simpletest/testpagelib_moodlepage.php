@@ -104,7 +104,7 @@ class moodle_page_test extends UnitTestCase {
     public function test_setting_course_works() {
         // Setup fixture
         $course = $this->create_a_course();
-        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
         // Exercise SUT
         $this->testpage->set_course($course);
         // Validate
@@ -115,7 +115,7 @@ class moodle_page_test extends UnitTestCase {
         global $COURSE, $PAGE;
         // Setup fixture
         $course = $this->create_a_course();
-        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
         $PAGE = $this->testpage;
         // Exercise SUT
         $this->testpage->set_course($course);
@@ -128,7 +128,7 @@ class moodle_page_test extends UnitTestCase {
         $originalcourse = $COURSE;
         // Setup fixture
         $course = $this->create_a_course();
-        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
         // Exercise SUT
         $this->testpage->set_course($course);
         // Validate
@@ -157,7 +157,7 @@ class moodle_page_test extends UnitTestCase {
     public function test_cannot_set_category_once_course_set() {
         // Setup fixture
         $course = $this->create_a_course();
-        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
         $this->testpage->set_course($course);
         // Set expectation.
         $this->expectException();
@@ -169,7 +169,7 @@ class moodle_page_test extends UnitTestCase {
         // Setup fixture
         $course = $this->create_a_course();
         $course->category = 0;
-        $this->testpage->set_context(new stdClass); // Avoid trying to set the context.
+        $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM)); // Avoid trying to set the context.
         $this->testpage->set_course($course);
         // Exercise SUT and validate.
         $this->assertEqual(array(), $this->testpage->categories);
