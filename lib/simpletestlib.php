@@ -196,7 +196,7 @@ abstract class XMLStructureExpectation extends SimpleExpectation {
     protected function load_xml($html) {
     	$prevsetting = libxml_use_internal_errors(true);
     	$parser = new DOMDocument();
-    	if (!$parser->loadXML($html)) {
+    	if (!$parser->loadXML('<html>' . $html . '</html>')) {
     		$parser = new DOMDocument();
     	}
         libxml_use_internal_errors($prevsetting);

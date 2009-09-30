@@ -70,6 +70,12 @@ class ContainsTagWithAttribute_test extends UnitTestCase {
         $html = '<a title="Popup window" href="http://otheraddress.com" class="link" onclick="this.target=\'my_popup\';">Click here</a>';
         $this->assert(new ContainsTagWithAttribute('a', 'href', 'http://otheraddress.com'), $html);
     }
+
+    function test_real_regression1() {
+    	$expectation = new ContainsTagWithAttribute('label', 'for', 'html_select4ac387224bf9d');
+        $html = '<label for="html_select4ac387224bf9d">Cool menu</label><select name="mymenu" id="html_select4ac387224bf9d" class="menumymenu select"> <option value="0">Choose...</option><option value="10">ten</option><option value="c2">two</option></select>';
+        $this->assert($expectation, $html);
+    }
 }
 
 /**
