@@ -1065,7 +1065,7 @@ class default_questiontype {
             $link = html_link::make($linkurl . '&inpopup=1', $linktext);
             $link->add_action(new popup_action('click', $link->url, 'editquestion'));
             $link->title = $stredit;
-            return $OUTPUT->link($link);                    
+            return $OUTPUT->link($link);
         }
     }
 
@@ -1121,7 +1121,7 @@ class default_questiontype {
                             $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
                             $link->title = $strreviewquestion;
                             $link = $OUTPUT->link($link);
-                            
+
                         } else {
                             $link = $st->seq_number;
                         }
@@ -1708,6 +1708,88 @@ class default_questiontype {
     function restore_recode_answer($state, $restore) {
         // There is nothing to decode
         return $state->answer;
+    }
+
+/// IMPORT/EXPORT FUNCTIONS /////////////////
+
+    /*
+     * Imports question from the Moodle XML format
+     *
+     * Imports question using information from extra_question_fields function
+     * If some of you fields contains id's you'll need to reimplement this
+     */
+    function import_from_xml($data, $question, $format, $extra=null) {
+        $question_type = $data['@']['type'];
+        if ($question_type != $this->name()) {
+            return false;
+        }
+
+        $extraquestionfields = $this->extra_question_fields();
+        if (!is_array($extraquestionfields)) {
+            return false;
+        }
+
+        //omit table name
+        array_shift($extraquestionfields);
+        $qo = $format->import_headers($data);
+        $qo->qtype = $question_type;
+
+        foreach ($extraquestionfields as $field) {
+            $qo->$field = $format->getpath($data, array('#',$field,0,'#'), $qo->$field);
+        }
+
+        // run through the answers
+        $answers = $data['#']['answer'];
+        $a_count = 0;
+        $extraasnwersfields = $this->extra_answer_fields();
+        if (is_array($extraasnwersfields)) {
+            //TODO import the answers, with any extra data.
+        } else {
+            foreach ($answers as $answer) {
+                $ans = $format->import_answer($answer);
+                $qo->answer[$a_count] = $ans->answer;
+                $qo->fraction[$a_count] = $ans->fraction;
+                $qo->feedback[$a_count] = $ans->feedback;
+                ++$a_count;
+            }
+        }
+        return $qo;
+    }
+
+    /*
+     * Export question to the Moodle XML format
+     *
+     * Export question using information from extra_question_fields function
+     * If some of you fields contains id's you'll need to reimplement this
+     */
+    function export_to_xml($question, $format, $extra=null) {
+        $extraquestionfields = $this->extra_question_fields();
+        if (!is_array($extraquestionfields)) {
+            return false;
+        }
+
+        //omit table name
+        array_shift($extraquestionfields);
+        $expout='';
+        foreach ($extraquestionfields as $field) {
+            $expout .= "    <$field>{$question->options->$field}</$field>\n";
+        }
+
+        $extraasnwersfields = $this->extra_answer_fields();
+        if (is_array($extraasnwersfields)) {
+            //TODO export answers with any extra data
+        } else {
+            foreach ($question->options->answers as $answer) {
+                $percent = 100 * $answer->fraction;
+                $expout .= "    <answer fraction=\"$percent\">\n";
+                $expout .= $format->writetext($answer->answer, 3, false);
+                $expout .= "      <feedback>\n";
+                $expout .= $format->writetext($answer->feedback, 4, false);
+                $expout .= "      </feedback>\n";
+                $expout .= "    </answer>\n";
+            }
+        }
+        return $expout;
     }
 
     /**
