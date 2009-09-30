@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /// Load libraries
     require_once('../../config.php');
@@ -21,7 +21,12 @@
     $PAGE->set_cacheable(false);
     $PAGE->set_button($managebutton);
     echo $OUTPUT->header();
-    print_heading_with_help($struploadcsv, 'authorize/uploadcsv', 'enrol');
+
+    $helpicon = new moodle_help_icon();
+    $helpicon->text = $struploadcsv;
+    $helpicon->page = 'authorize/uploadcsv';
+    $helpicon->module = 'enrol';
+    echo $OUTPUT->heading_with_help($helpicon);
 
 /// Handle CSV file
     if (($form = data_submitted()) && confirm_sesskey()) {
