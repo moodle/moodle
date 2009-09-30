@@ -113,8 +113,10 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
 /**
  * Determines if the specified user is logged in as guest.
  *
+ * See {@link isguestuser()} as an alternative
+ *
+ * @deprecated
  * @global object
- * @uses CONTEXT_SYSTEM
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
  * @return bool
  */

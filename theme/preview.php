@@ -27,6 +27,8 @@ if (!file_exists($CFG->themedir .'/'. $preview)) {
     $preview = 'standard';
 }
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/theme/preview.php', array('preview'=>$preview)));
+
 require_login();
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));

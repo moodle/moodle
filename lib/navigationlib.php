@@ -1467,15 +1467,17 @@ class global_navigation extends navigation_node {
     protected function load_categories($categoryid=0) {
         global $PAGE, $CFG, $DB, $USER;
 
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
         // Cache capability moodle/site:config we use this in the next bit of code
         if (!$this->cache->cached('hassiteconfig')) {
-            $this->cache->hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+            $this->cache->hassiteconfig = has_capability('moodle/site:config', $systemcontext);
         }
 
         // If the user is logged in (but not as a guest), doesnt have the site config capability,
         // and my courses havn't been disabled then we will show the user's courses in the
         // global navigation, otherwise we will show up to FRONTPAGECOURSELIMIT available courses
-        if (isloggedin() && !$this->cache->hassiteconfig && !isguest() && empty($CFG->disablemycourses)) {
+        if (isloggedin() && !$this->cache->hassiteconfig && !isguestuser() && empty($CFG->disablemycourses)) {
             if (!$this->cache->cached('mycourses')) {
                 $this->cache->mycourses = get_my_courses($USER->id);
             }
