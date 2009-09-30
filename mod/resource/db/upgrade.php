@@ -63,8 +63,21 @@ function xmldb_resource_upgrade($oldversion=0) {
         }
     }
 
-//===== 1.9.0 upgrade line ======//
+    //Set 'Show navigation' setting to "Yes, without frame" for PDF file resources
+    //Explanation: due to MDL-20320 bug, PDF can now be displayed as 'No', 'Yes, with frame' and 'Yes, without frame'.
+    //The default being 'no', PDF resources on previous installations need to be set back to 'Yes, without frame'
+    if ($result && $oldversion < 2007101510) {
+       $sql = "UPDATE mdl_resource SET options = 'objectframe' WHERE (UPPER(reference) LIKE '%.PDF'
+        OR UPPER(reference) LIKE '%.FDF'
+        OR UPPER(reference) LIKE '%.XDP'
+        OR UPPER(reference) LIKE '%.XFD'
+        OR UPPER(reference) LIKE '%.XFDF')
+        AND type='file' AND ".sql_isempty('resource', 'popup', false, true)."
+        AND (".sql_isempty('resource', 'options', false, false)." OR options = 'frame')";
+        execute_sql($sql);
+    }
 
+//===== 1.9.0 upgrade line ======//
     return $result;
 }
 
