@@ -187,29 +187,42 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
     }
 }
 
-
+abstract class XMLStructureExpectation extends SimpleExpectation {
+	/**
+	 * Parse a string as XML and return a DOMDocument;
+	 * @param $html
+	 * @return unknown_type
+	 */
+    protected function load_xml($html) {
+    	$prevsetting = libxml_use_internal_errors(true);
+    	$parser = new DOMDocument();
+    	if (!$parser->loadXML($html)) {
+    		$parser = new DOMDocument();
+    	}
+        libxml_use_internal_errors($prevsetting);
+    	return $parser;
+    }
+}
 /**
  * An Expectation that looks to see whether some HMTL contains a tag with a certain attribute.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ContainsTagWithAttribute extends SimpleExpectation {
+class ContainsTagWithAttribute extends XMLStructureExpectation {
     protected $tag;
     protected $attribute;
     protected $value;
 
     function __construct($tag, $attribute, $value, $message = '%s') {
-        $this->SimpleExpectation($message);
+        parent::__construct($message);
         $this->tag = $tag;
         $this->attribute = $attribute;
         $this->value = $value;
     }
 
     function test($html) {
-        $parser = new DOMDocument();
-        $parser->validateOnParse = true;
-        $parser->loadHTML($html); 
+        $parser = $this->load_xml($html);
         $list = $parser->getElementsByTagName($this->tag);
         
         foreach ($list as $node) {
@@ -234,7 +247,7 @@ class ContainsTagWithAttribute extends SimpleExpectation {
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ContainsTagWithAttributes extends SimpleExpectation {
+class ContainsTagWithAttributes extends XMLStructureExpectation {
     /**
      * @var string $tag The name of the Tag to search
      */
@@ -253,16 +266,14 @@ class ContainsTagWithAttributes extends SimpleExpectation {
     protected $failurereason = 'nomatch';
 
     function __construct($tag, $expectedvalues, $forbiddenvalues=array(), $message = '%s') {
-        $this->SimpleExpectation($message);
+        parent::__construct($message);
         $this->tag = $tag;
         $this->expectedvalues = $expectedvalues;
         $this->forbiddenvalues = $forbiddenvalues;
     }
 
     function test($html) {
-        $parser = new DOMDocument();
-        $parser->validateOnParse = true;
-        $parser->loadHTML($html); 
+        $parser = $this->load_xml($html);
         $list = $parser->getElementsByTagName($this->tag);
 
         $foundamatch = false;
@@ -329,19 +340,18 @@ class ContainsTagWithAttributes extends SimpleExpectation {
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ContainsTagWithContents extends SimpleExpectation {
+class ContainsTagWithContents extends XMLStructureExpectation {
     protected $tag;
     protected $content;
 
     function __construct($tag, $content, $message = '%s') {
-        $this->SimpleExpectation($message);
+        parent::__construct($message);
         $this->tag = $tag;
         $this->content = $content;
     }
 
     function test($html) {
-        $parser = new DOMDocument();
-        $parser->loadHTML($html); 
+        $parser = $this->load_xml($html);
         $list = $parser->getElementsByTagName($this->tag);
 
         foreach ($list as $node) {
@@ -365,17 +375,16 @@ class ContainsTagWithContents extends SimpleExpectation {
  * @copyright 2009 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ContainsEmptyTag extends SimpleExpectation {
+class ContainsEmptyTag extends XMLStructureExpectation {
     protected $tag;
 
     function __construct($tag, $message = '%s') {
-        $this->SimpleExpectation($message);
+        parent::__construct($message);
         $this->tag = $tag;
     }
 
     function test($html) {
-        $parser = new DOMDocument();
-        $parser->loadHTML($html); 
+        $parser = $this->load_xml($html);
         $list = $parser->getElementsByTagName($this->tag);
 
         foreach ($list as $node) {
