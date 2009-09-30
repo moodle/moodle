@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/file/file_browser.php');
 require_once($CFG->libdir.'/file/file_info_course.php');
 
-//require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 
 /**
