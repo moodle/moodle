@@ -36,7 +36,10 @@ class moodlesimplepie_test extends UnitTestCase {
 
         $this->assertIsA($feed, 'moodle_simplepie');
 
-        $this->assertFalse($feed->error());
+        $this->assertFalse($feed->error(), "Failed to load the sample RSS file. Please check your proxy settings in Moodle. %s");
+        if ($feed->error()) {
+        	return;
+        }
 
         $this->assertEqual($feed->get_title(), 'Moodle News');
 
