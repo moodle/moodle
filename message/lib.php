@@ -202,7 +202,7 @@ function message_count_messages($messagearray, $field='', $value='') {
 
 
 function message_print_search() {
-    global $USER;
+    global $USER, $OUTPUT;
 
     if ($frm = data_submitted()) {
 
