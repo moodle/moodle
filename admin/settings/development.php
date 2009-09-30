@@ -14,6 +14,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);
     $temp->add(new admin_setting_configcheckbox('experimentalsplitrestore', get_string('experimentalsplitrestore', 'admin'), get_string('configexperimentalsplitrestore', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('enablesafebrowserintegration', get_string('enablesafebrowserintegration', 'admin'), get_string('configenablesafebrowserintegration', 'admin'), 0));
 
     $ADMIN->add('experimental', $temp);
 

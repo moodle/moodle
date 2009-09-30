@@ -261,8 +261,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('delay2', 'attempts', 'eq', 2);
 
     /// 'Secure' window.
-        $mform->addElement('selectyesno', 'popup', get_string('showinsecurepopup', 'quiz'));
-        $mform->setHelpButton('popup', array('popup', get_string('showinsecurepopup', 'quiz'), 'quiz'));
+        $options = array(
+                    0 => get_string('none', 'quiz'),
+                    1 => get_string('popupwithjavascriptsupport', 'quiz'));
+        if ($CFG->enablesafebrowserintegration) { 
+            $options[2] = get_string('requiresafeexambrowser', 'quiz');
+        }
+        $mform->addElement('select', 'popup', get_string('browsersecurity', 'quiz'), $options);
+        $mform->setHelpButton('popup', array('browsersecurity', get_string('browsersecurity', 'quiz'), 'quiz'));
         $mform->setAdvanced('popup', $quizconfig->popup_adv);
         $mform->setDefault('popup', $quizconfig->popup);
 

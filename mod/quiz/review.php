@@ -92,6 +92,8 @@
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);
+    } elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
+        print_header($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()), '', '', '', $headtags, false, '', '', false, '');
     } else {
         $attemptobj->navigation($strreviewtitle);
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));

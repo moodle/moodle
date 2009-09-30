@@ -1243,3 +1243,12 @@ function quiz_error($quiz, $errorcode, $a = null) {
     }
     print_error($errorcode, 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz, $a);
 }
+
+/**
+ * Checks if browser is safe browser
+ * 
+ * @return true, if browser is safe browser else false
+*/
+function quiz_check_safe_browser() {
+    return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
+}
