@@ -2368,9 +2368,18 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
 
     } else if ((is_object($courseorid) and $courseorid->id == SITEID)
           or (!is_object($courseorid) and $courseorid == SITEID)) {
-        //login for SITE not required
-        user_accesstime_log(SITEID);
-        return;
+              //login for SITE not required
+        if ($cm and empty($cm->visible)) {
+            // hidden activities are not accessible without login
+            require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+        } else if ($cm and !empty($CFG->enablegroupings) and $cm->groupmembersonly) {
+            // not-logged-in users do not have any group membership
+            require_login($courseorid, $autologinguest, $cm, $setwantsurltome);
+        } else {
+            //TODO: verify conditional activities here
+            user_accesstime_log(SITEID);
+            return;
+        }
 
     } else {
         // course login always required
