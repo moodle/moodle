@@ -508,3 +508,29 @@ class qformat_hotpot extends qformat_default {
         return $str;
     }
 } // end class
+
+function hotpot_convert_relative_urls($str, $baseurl, $filename) {
+    $tagopen = '(?:(<)|(&lt;)|(&amp;#x003C;))'; // left angle bracket
+    $tagclose = '(?(2)>|(?(3)&gt;|(?(4)&amp;#x003E;)))'; //  right angle bracket (to match left angle bracket)
+
+    $space = '\s+'; // at least one space
+    $anychar = '(?:[^>]*?)'; // any character
+
+    $quoteopen = '("|&quot;|&amp;quot;)'; // open quote
+    $quoteclose = '\\5'; //  close quote (to match open quote)
+
+    $replace = "hotpot_convert_relative_url('".$baseurl."', '".$filename."', '\\1', '\\6', '\\7')";
+
+    $tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
+    foreach ($tags as $tag=>$attribute) {
+        if ($tag=='param') {
+            $url = '\S+?\.\S+?'; // must include a filename and have no spaces
+        } else {
+            $url = '.*?';
+        }
+        $search = "%($tagopen$tag$space$anychar$attribute=$quoteopen)($url)($quoteclose$anychar$tagclose)%ise";
+        $str = preg_replace($search, $replace, $str);
+    }
+
+    return $str;
+}
