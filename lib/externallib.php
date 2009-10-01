@@ -191,3 +191,11 @@ class external_multiple_structure extends external_description {
         $this->content = $content;
     }
 }
+
+/**
+ * Description of top level - PHP function parameters.
+ * @author skodak
+ *
+ */
+class external_function_parameters extends external_single_structure {
+}
