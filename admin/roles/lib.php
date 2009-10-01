@@ -423,7 +423,7 @@ abstract class capability_table_with_risks extends capability_table_base {
         if (!isset($this->riskicons[$type])) {
             $iconurl = $OUTPUT->old_icon_url('i/' . str_replace('risk', 'risk_', $type));
             
-            $link = html_link::make($this->risksurl, 'docspopup', '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />');
+            $link = html_link::make($this->risksurl, '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />');
             $link->add_action(new popup_action('click', $link->url, 'docspopup'));
             $link->title = get_string($type, 'admin');
             
