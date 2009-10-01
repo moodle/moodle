@@ -33,6 +33,7 @@ $string['info'] = 'Информация';
 $string['installation'] = 'Установка';
 $string['invalidmd5'] = 'Неверный хеш md5';
 $string['language'] = 'Язык';
+$string['language'] = 'Перевод';
 $string['memorylimit'] = 'Предел памяти';
 $string['moodledocslink'] = 'Документация Moodle для этой страницы';
 $string['name'] = 'Название';
