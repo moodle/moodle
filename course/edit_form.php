@@ -71,6 +71,11 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
+        if ($course and !has_capability('moodle/course:changecategory', $coursecontext)) {
+            $mform->hardFreeze('category');
+            $mform->setConstant('category', $category->id);
+        }
+
         $mform->addElement('text','fullname', get_string('fullname'),'maxlength="254" size="50"');
         $mform->setHelpButton('fullname', array('coursefullname', get_string('fullname')), true);
         $mform->setDefault('fullname', get_string('defaultcoursefullname'));
@@ -102,6 +107,10 @@ class course_edit_form extends moodleform {
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
         $mform->setHelpButton('summary', array('text', get_string('helptext')), true);
         $mform->setType('summary', PARAM_RAW);
+
+        if ($course and !has_capability('moodle/course:changesummary', $coursecontext)) {
+            $mform->hardFreeze('summary');
+        }
 
         $courseformats = get_list_of_plugins('course/format');
         $formcourseformats = array();
