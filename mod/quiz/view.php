@@ -181,7 +181,7 @@
 
         // Prepare table header
         $table = new html_table();
-        $table->class = 'generaltable quizattemptsummary';
+        $table->set_classes('generaltable quizattemptsummary');
         $table->head = array();
         $table->align = array();
         $table->size = array();
