@@ -15,6 +15,7 @@ $string['dirroot'] = 'Каталог Moodle';
 $string['environment'] = 'Среда (версии ПО)';
 $string['installation'] = 'Установка';
 $string['language'] = 'Язык';
+$string['language'] = 'Перевод';
 $string['parentlanguage'] = 'ru';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Русский';
