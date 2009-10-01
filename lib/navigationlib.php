@@ -693,6 +693,7 @@ class navigation_node {
                 $outcome = $child->reiterate_active_nodes($strength);
             }
             if ($outcome) {
+                $this->forceopen = true;
                 return true;
             }
         }

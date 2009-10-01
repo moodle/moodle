@@ -502,6 +502,15 @@ class moodle_url {
      * @return boolean
      */
     public function compare(moodle_url $url, $matchtype = URL_MATCH_EXACT) {
+
+        // Set path to / if it is not set
+        if ($this->path == '') {
+            $this->path = '/';
+        }
+        if ($url->path == '') {
+            $url->path = '/';
+        }
+
         $baseself = $this->out(true);
         $baseother = $url->out(true);
 

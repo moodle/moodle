@@ -38,30 +38,35 @@ class navigation_node_test extends UnitTestCase {
         'key' => 'key',
         'type' => 'navigation_node::TYPE_COURSE',
         'action' => 'http://www.moodle.org/');
+    protected $activeurl = null;
+    protected $inactivenode = null;
 
     public function setUp() {
-        global $CFG, $FULLME;
+        global $CFG, $PAGE;
         parent::setUp();
-        $oldfullme = $FULLME;
-        $FULLME = 'http://www.moodle.org/test.php';
+
+        $this->activeurl = $PAGE->url;
+        $this->inactiveurl = new moodle_url('http://www.moodle.com/');
+        $this->fakeproperties['action'] = $this->inactiveurl;
+
         $this->node = new navigation_node('Test Node');
         $this->node->type = navigation_node::TYPE_SYSTEM;
-        $this->node->add('demo1', 'http://www.moodle.org/', navigation_node::TYPE_COURSE, null, 'demo1', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo2', 'http://www.moodle.com/', navigation_node::TYPE_COURSE, null, 'demo2', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->add('demo3', 'http://www.moodle.org/', navigation_node::TYPE_CATEGORY, null, 'demo3',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo4', new moodle_url('http://www.moodle.org/'),navigation_node::TYPE_COURSE,  null, 'demo4', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->add('demo5', 'http://www.moodle.org/test.php', navigation_node::TYPE_COURSE, null, 'demo5',$CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('demo3')->get('demo5')->make_active();
+        $this->node->add('demo1', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo1', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('demo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'demo2', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('demo3', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'demo3',$CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('demo3')->add('demo4', $this->inactiveurl,navigation_node::TYPE_COURSE,  null, 'demo4', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('demo3')->add('demo5', $this->activeurl, navigation_node::TYPE_COURSE, null, 'demo5',$CFG->httpswwwroot . '/pix/i/course.gif');
+        #$this->node->get('demo3')->get('demo5')->make_active();
         $this->node->get('demo3')->get('demo5')->add('activity1', null, navigation_node::TYPE_ACTIVITY, null, 'activity1');
         $this->node->get('demo3')->get('demo5')->get('activity1')->make_active();
-        $this->node->add('hiddendemo1', 'http://www.moodle.org/', navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->add('hiddendemo1', $this->inactiveurl, navigation_node::TYPE_CATEGORY, null, 'hiddendemo1', $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('hiddendemo1')->hidden = true;
-        $this->node->get('hiddendemo1')->add('hiddendemo2', new moodle_url('http://www.moodle.org/'), navigation_node::TYPE_COURSE, null, 'hiddendemo2', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->node->get('hiddendemo1')->add('hiddendemo3', new moodle_url('http://www.moodle.org/'), navigation_node::TYPE_COURSE,null, 'hiddendemo3', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('hiddendemo1')->add('hiddendemo2', $this->inactiveurl, navigation_node::TYPE_COURSE, null, 'hiddendemo2', $CFG->httpswwwroot . '/pix/i/course.gif');
+        $this->node->get('hiddendemo1')->add('hiddendemo3', $this->inactiveurl, navigation_node::TYPE_COURSE,null, 'hiddendemo3', $CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get('hiddendemo1')->get('hiddendemo2')->helpbutton = 'Here is a help button';
         $this->node->get('hiddendemo1')->get('hiddendemo3')->display = false;
-        $FULLME = $oldfullme;
     }
+    
     public function test___construct() {
         global $CFG;
         $node = new navigation_node($this->fakeproperties);
@@ -71,13 +76,6 @@ class navigation_node_test extends UnitTestCase {
         $this->assertEqual($node->key, $this->fakeproperties['key']);
         $this->assertEqual($node->type, $this->fakeproperties['type']);
         $this->assertEqual($node->action, $this->fakeproperties['action']);
-    }
-    public function test_override_active_url() {
-        $url = new moodle_url('http://moodle.org');
-        $this->fakeproperties['action'] = $url;
-        navigation_node::override_active_url($url);
-        $node = new navigation_node($this->fakeproperties);
-        $this->assertTrue($node->isactive);
     }
     public function test_add() {
         global $CFG;
@@ -123,17 +121,11 @@ class navigation_node_test extends UnitTestCase {
     }
 
     public function test_check_if_active() {
-        global $FULLME;
-        $oldfullme = $FULLME;
-
         // First test the string urls
-        $FULLME = 'http://www.moodle.org/';
         // demo1 -> action is http://www.moodle.org/, thus should be true
-        $this->assertTrue($this->node->get('demo1')->check_if_active());
+        $this->assertTrue($this->node->get('demo3')->get('demo5')->check_if_active());
         // demo2 -> action is http://www.moodle.com/, thus should be false
         $this->assertFalse($this->node->get('demo2')->check_if_active());
-
-        $FULLME = $oldfullme;
     }
 
     public function test_contains_active_node() {
@@ -163,8 +155,8 @@ class navigation_node_test extends UnitTestCase {
         $content3 = $this->node->get('demo3')->get('demo5')->content();
         $content4 = $this->node->get('hiddendemo1')->get('hiddendemo2')->content();
         $content5 = $this->node->get('hiddendemo1')->get('hiddendemo3')->content();
-        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo1')->action), $content1);
-        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo3')->action), $content2);
+        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo1')->action->out()), $content1);
+        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo3')->action->out()), $content2);
         $this->assertEqual($content3, 'A fake help button<span class="clearhelpbutton"><span class="dimmed_text" title="This is a title">demo5</span></span>');
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('hiddendemo1')->get('hiddendemo2')->action->out()), $content4);
         $this->assertTrue(empty($content5));
@@ -272,18 +264,6 @@ class navigation_node_test extends UnitTestCase {
         $this->assertTrue($this->node->get($key1)->isactive);
         $this->assertTrue($this->node->get($key2)->isactive);
     }
-
-    public function test_reiterate_active_nodes() {
-        global $FULLME;
-        $oldfullme = $FULLME;
-        $FULLME = 'http://www.moodle.org/test.php';
-        $cachenode = serialize($this->node);
-        $cachenode = unserialize($cachenode);
-        $this->assertFalse($cachenode->get('demo3')->get('demo5')->isactive);
-        $this->assertTrue($cachenode->reiterate_active_nodes());
-        $this->assertTrue($cachenode->get('demo3')->get('demo5')->isactive);
-        $FULLME = $oldfullme;
-    }
     public function test_remove_child() {
         $this->node->add('child to remove 1', null, navigation_node::TYPE_CUSTOM, null, 'remove1');
         $this->node->add('child to remove 2', null, navigation_node::TYPE_CUSTOM, null, 'remove2');
@@ -374,7 +354,6 @@ class global_navigation_test extends UnitTestCase {
     public static $excludecoverage = array();
     
     public function setUp() {
-        navigation_node::override_active_url();
         $this->cache = new navigation_cache('simpletest_nav');
         $this->node = new exposed_global_navigation();
         // Create an initial tree structure to work with
@@ -557,17 +536,6 @@ class global_navigation_test extends UnitTestCase {
         $this->assertTrue($this->node->exposed_format_display_course_content('topic'));
         $this->assertFalse($this->node->exposed_format_display_course_content('scorm'));
         $this->assertTrue($this->node->exposed_format_display_course_content('dummy'));
-    }
-    public function test_load_course() {
-        $course = new stdClass;
-        $course->id = 'tcourse10';
-        $course->fullname = 'Test Course 10';
-        $course->shortname = 'tcourse10';
-        $course->visible = true;
-        $course->numsections = 10;
-        $course->modinfo = $this->modinfo5;
-        $this->node->exposed_load_course(array('cat2','sub3'), $course);
-        $this->assertIsA($this->node->get('cat2')->get('sub3')->get('tcourse10'), 'navigation_node');
     }
     public function test_load_course_activities() {
         $keys = array('cat2', 'sub2', '5');
@@ -815,23 +783,18 @@ class navbar_test extends UnitTestCase {
         $this->assertIsA($this->node->get('testadd1')->get($key2), 'navigation_node');
     }
     public function test_content() {
-        $html = $this->node->content();
-        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->action->out()), $html);
+        $this->assertTrue( (strpos($this->node->content(), $this->node->action->out()) !== false) );
     }
     public function test_has_items() {
         global $PAGE;
         $this->assertTrue($this->node->has_items());
-        $PAGE->navigation->get_by_path(array('cat2','sub2', 'course2'))->remove_class('active_tree_node');
-        $PAGE->navigation->get_by_path(array('cat2','sub2', 'course2'))->isactive = false;
-        $this->assertFalse($this->node->has_items());
-        $PAGE->navigation->get_by_path(array('cat2','sub2', 'course2'))->make_active();
     }
     public function test_parse_branch_to_html() {
         global $CFG;
         $key = $this->node->add('test_add_1','http://www.moodle.org/',navigation_node::TYPE_COURSE,'testadd1','testadd1',$CFG->httpswwwroot . '/pix/i/course.gif');
         $this->node->get($key)->make_active();
         $html = $this->node->exposed_parse_branch_to_html($this->node->children, true, true);
-        $this->assert(new ContainsTagWithAttribute('a','href',$this->node->action->out()), $html);
+        $this->assertTrue( (strpos($html, $this->node->action->out()) !== false) );
     }
 }
 

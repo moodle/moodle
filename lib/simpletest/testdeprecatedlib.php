@@ -65,10 +65,15 @@ class outputlib_methods_test extends UnitTestCase {
 
         // relative URL with & params
         $newlink = 'index.php?param1=value1&param2=value2';
+
+        $oldurl = $PAGE->url;
+
         $PAGE->set_url('index.php');
         $html = print_single_button($newlink, $options, $label, $method, '', $return, $tooltip, $disabled, $jsconfirmmessage, $formid);
         $this->assert(new ContainsTagWithAttributes('form', array('method' => $method, 'action' => $CFG->wwwroot . '/index.php')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'hidden', 'name' => 'param1', 'value' => 'value1')), $html);
         $this->assert(new ContainsTagWithAttributes('input', array('type' => 'submit', 'value' => 'OK')), $html);
+
+        $PAGE->set_url($oldurl);
     }
 }
