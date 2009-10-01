@@ -51,7 +51,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         global $CFG, $PAGE;
         require_once $CFG->libdir . '/recaptchalib.php';
 
-        $recaptureoptions = Array('theme'=>'custom', 'tabindex'=>2, 'custom_theme_widget'=>'recaptcha_widget');
+        $recaptureoptions = Array('theme'=>'custom', 'custom_theme_widget'=>'recaptcha_widget');
         $html = $PAGE->requires->data_for_js('RecaptchaOptions', $recaptureoptions)->asap();
 
         $attributes = $this->getAttributes();
