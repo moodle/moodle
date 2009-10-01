@@ -138,7 +138,6 @@ function mediaplugin_filter_mp3_callback($link) {
              'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
              'waitForPlay=yes';
     }
-    $c = htmlentities($c);
 
     static $count = 0;
     $count++;
