@@ -54,7 +54,7 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
-    if ($courseid) {
+    if ($courseid && $courseid != SITEID) {
         require_login($courseid);
     } else if ($CFG->forcelogin) {
         require_login();
@@ -390,7 +390,10 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
         $text.= '</div></form></div>';
     }
 
-    $text .= get_string('detailedmonthview', 'calendar').': '.calendar_course_filter_selector($getvars);
+    $text .= '<label for="cal_course_flt_jump">'.
+               get_string('detailedmonthview', 'calendar').
+             ':</label>'.
+             calendar_course_filter_selector($getvars);
 
     echo '<div class="header">'.$text.'</div>';
 
