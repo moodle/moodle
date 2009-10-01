@@ -72,7 +72,7 @@ if ($yr !== 0) {
 }
 $PAGE->set_url($url);
 
-if ($courseid) {
+if ($courseid && $courseid != SITEID) {
     require_login($courseid);
 } else if ($CFG->forcelogin) {
     require_login();
