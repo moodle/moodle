@@ -38,18 +38,18 @@ class moodle_group_external extends external_api {
 
     /**
      * Create groups
-     * @param ? $params array of group description arrays (with keys groupname and courseid)
+     * @param array $groups array of group description arrays (with keys groupname and courseid)
      * @return array of newly created group ids
      */
-    public static function create_groups($params) {
+    public static function create_groups($groups) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::create_groups_parameters(), $params);
+        $params = self::validate_prameters(self::create_groups_parameters(), array('groups'=>$groups));
 
         $groups = array();
 
-        foreach ($params['groupids'] as $group) {
+        foreach ($params['groups'] as $group) {
             $group = (object)$group;
 
             if (empty(trim($group->name))) {
@@ -85,13 +85,13 @@ class moodle_group_external extends external_api {
 
     /**
      * Get groups definition
-     * @param ? $params arrays of group ids
+     * @param array $groupids arrays of group ids
      * @return array of group objects (id, courseid, name, enrolmentkey)
      */
-    public static function get_groups($params) {
+    public static function get_groups($groupids) {
         $groups = array();
 
-        $params = self::validate_prameters(self::get_groups_parameters(), $params);
+        $params = self::validate_prameters(self::get_groups_parameters(), array('groupids'=>$groupids));
 
         //TODO: we do need to search for groups in courses too,
         //      fetching by id is not enough!
@@ -121,14 +121,14 @@ class moodle_group_external extends external_api {
 
     /**
      * Delete groups
-     * @param ? $params array of group ids
+     * @param array $groupids array of group ids
      * @return void
      */
-    public static function delete_groups($params) {
+    public static function delete_groups($groupids) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::delete_groups_parameters(), $params);
+        $params = self::validate_prameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
 
         $groups = array();
 
@@ -160,13 +160,13 @@ class moodle_group_external extends external_api {
 
     /**
      * Return all members for a group
-     * @param ? $params array of group ids
+     * @param array $groupids array of group ids
      * @return array with  group id keys containing arrays of user ids
      */
-    public static function get_groupmembers($params) {
+    public static function get_groupmembers($groupids) {
         $groups = array();
 
-        $params = self::validate_prameters(self::get_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::get_groupmembers_parameters(), array('groupids'=>$groupids));
 
         foreach ($params['groupids'] as $groupid) {
             // validate params
@@ -195,16 +195,16 @@ class moodle_group_external extends external_api {
 
     /**
      * Add group members
-     * @param array of arrays with keys userid, groupid
+     * @param array $members of arrays with keys userid, groupid
      * @return void
      */
-    public static function add_groupmembers($params) {
+    public static function add_groupmembers($members) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::add_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::add_groupmembers_parameters(), array('members'=>$members));
 
-        foreach ($params['membership'] as $member) {
+        foreach ($params['members'] as $member) {
             // validate params
             $groupid = $member['groupid'];
             $userid = $member['userid'];
@@ -233,14 +233,14 @@ class moodle_group_external extends external_api {
 
     /**
      * Delete group members
-     * @param ? of arrays with keys userid, groupid
+     * @param array $members of arrays with keys userid, groupid
      * @return void
      */
-    public static function delete_groupmembers($params) {
+    public static function delete_groupmembers($members) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::delete_groupmembers_parameters(), $params);
+        $params = self::validate_prameters(self::delete_groupmembers_parameters(), array($members=>'members'));
 
         foreach ($params['members'] as $member) {
             // validate params
