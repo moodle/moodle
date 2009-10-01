@@ -51,10 +51,10 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         global $CFG;
         require_once $CFG->libdir . '/recaptchalib.php';
 
+        //Accessibility: don't specify a tabindex  MDL-20144
         $html = '<script type="text/javascript">
             var RecaptchaOptions = {
                 theme : \'custom\',
-                tabindex : 2,
                 custom_theme_widget : \'recaptcha_widget\'
             };
               </script>' . "\n";
