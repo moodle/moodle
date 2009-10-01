@@ -23,9 +23,16 @@
     // if no quiz id is specified then a dummy quiz with default options is used
     $quizid = optional_param('quizid', 0, PARAM_INT);
     // if no quiz id is specified then tell us the course
+
+    $pageurl = new moodle_url($CFG->wwwroot . '/question/preview.php', array('id' => $id, 'continue' => 1));
     if (empty($quizid)) {
         $courseid = required_param('courseid', PARAM_INT);
+        $pageurl->param('courseid', $courseid);
+    } else {
+        $pageurl->param('quizid', $quizid);
     }
+    $PAGE->set_url($pageurl);
+    $PAGE->set_generaltype('popup');
 
     // Test if we are continuing an attempt at a question
     $continue = optional_param('continue', 0, PARAM_BOOL);
