@@ -2571,8 +2571,7 @@ function delete_course_module($id) {
     }
 
     delete_context(CONTEXT_MODULE, $cm->id);
-    return $DB->delete_records('course_modules', array('id'=>$cm->id)) &&
-           $DB->delete_records('blog_association', array('contextid'=>$context->id));
+    return $DB->delete_records('course_modules', array('id'=>$cm->id));
 }
 
 function delete_mod_from_section($mod, $section) {
