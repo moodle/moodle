@@ -107,3 +107,87 @@ class external_api {
     }
 }
 
+/**
+ * Common ancestor of all parameter description classes
+ */
+abstract class external_description {
+    /** @property string $description description of element */
+    public $desc;
+    /** @property bool $required element value required, null not alowed */
+    public $required;
+
+    /**
+     * Contructor
+     * @param string $desc
+     * @param bool $required
+     */
+    public function __contruct($desc, $required) {
+        $this->desc = $desc;
+        $this->required = $required;
+    }
+}
+
+/**
+ * Scalar parameter description class
+ */
+class external_param extends external_description {
+    /** @property mixed $type parameter type PARAM_XX */
+    public $type;
+    /** @property mixed $default default value */
+    public $default;
+    /** @property bool $allownull allow null values */
+    public $allownull;
+
+    /**
+     * Constructor
+     * @param mixed $type
+     * @param string $desc
+     * @param bool $required
+     * @param mixed $default
+     * @param bool $allownull
+     */
+    public function __contruct($type, $desc='', $required=true, $default=null, $allownull=true) {
+        parent::_construct($desc, $required);
+        $this->type      = $type;
+        $this->default   = $default;
+        $this->allownull = $allownull;
+    }
+}
+
+/**
+ * Associative array description class
+ */
+class external_single_structure extends external_description {
+     /** @property array $keys description of array keys key=>external_description */
+    public $keys;
+
+    /**
+     * Constructor
+     * @param array $keys
+     * @param string $desc
+     * @param bool $required
+     */
+    public function __construct(array $keys, $desc='', $required=true) {
+        parent::_construct($desc, $required);
+        $this->keys = $keys;
+    }
+}
+
+/**
+ * Bulk array description class.
+ */
+class external_multiple_structure extends external_description {
+     /** @property external_description $content */
+    public $content;
+
+    /**
+     * Constructor
+     * @param external_description $content
+     * @param string $desc
+     * @param bool $required
+     */
+    public function __construct(external_description $content, $desc='', $required=true) {
+        parent::_construct($desc, $required);
+        $this->content = $content;
+    }
+}
