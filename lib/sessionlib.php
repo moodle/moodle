@@ -412,7 +412,7 @@ class database_session extends session_stub {
         global $CFG;
 
         if ($this->record and $this->record->sid != $sid) {
-            error_log('Weird error reading session - mismatched sid');
+            error_log('Weird error reading database session - mismatched sid');
             return '';
         }
 
@@ -516,9 +516,9 @@ class database_session extends session_stub {
                     } catch (Exception $ignored) {
 
                     }
-                    error_log('Can not write session - please verify max_allowed_packet is at least 4M!');
+                    error_log('Can not write database session - please verify max_allowed_packet is at least 4M!');
                 } else {
-                    error_log('Can not write session');
+                    error_log('Can not write database session');
                 }
             }
 
@@ -537,7 +537,7 @@ class database_session extends session_stub {
             try {
                 $this->database->get_session_lock($this->record->id);
             } catch (dml_exception $ex) {
-                error_log('Can not write new session');
+                error_log('Can not write new database session');
             }
         }
 
