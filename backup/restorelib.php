@@ -7716,7 +7716,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
         //We compare Moodle's versions
-        if ($CFG->version < $info->backup_moodle_version && $status) {
+        if ($status && $CFG->version < $info->backup_moodle_version) {
             $message = new object();
             $message->serverversion = $CFG->version;
             $message->serverrelease = $CFG->release;
@@ -7786,8 +7786,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         global $SESSION;
         $restore->backup_unique_code=$backup_unique_code;
         $restore->users = 2; // yuk
-        $restore->course_files = $SESSION->restore->restore_course_files;
-        $restore->site_files = $SESSION->restore->restore_site_files;
+        // we set these from restore object on silent restore and from info (backup) object on import
+        $restore->course_files = isset($SESSION->restore->restore_course_files) ? $SESSION->restore->restore_course_files : $SESSION->info->backup_course_files;
+        $restore->site_files = isset($SESSION->restore->restore_site_files) ? $SESSION->restore->restore_site_files : $SESSION->info->backup_site_files;
         if ($allmods = get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
@@ -7803,12 +7804,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     function backup_to_restore_array($backup,$k=0) {
         if (is_array($backup) ) {
+            $restore = array();
             foreach ($backup as $key => $value) {
                 $newkey = str_replace('backup','restore',$key);
                 $restore[$newkey] = backup_to_restore_array($value,$key);
             }
         }
         else if (is_object($backup)) {
+            $restore = new stdClass();
             $tmp = get_object_vars($backup);
             foreach ($tmp as $key => $value) {
                 $newkey = str_replace('backup','restore',$key);
