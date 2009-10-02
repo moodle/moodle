@@ -787,7 +787,7 @@
 
     }
 
-    if ($bulkoperations && $totalcount > ($perpage*3)) {
+    if (has_capability('moodle/site:viewparticipants', $context) && $totalcount > ($perpage*3)) {
         echo '<form action="index.php" class="searchform"><div><input type="hidden" name="id" value="'.$course->id.'" />'.get_string('search').':&nbsp;'."\n";
         echo '<input type="text" name="search" value="'.s($search).'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
