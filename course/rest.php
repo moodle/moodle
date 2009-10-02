@@ -39,6 +39,7 @@ $id         = optional_param('id', 0, PARAM_INT);
 $summary    = optional_param('summary', '', PARAM_RAW);
 $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
+$pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command
 
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/rest.php', array('courseId'=>$courseId,'class'=>$class)));
 
@@ -53,7 +54,13 @@ require_login($course);
 require_capability('moodle/course:update', $context);
 
 // OK, now let's process the parameters and do stuff
-switch($_SERVER['REQUEST_METHOD']) {
+// MDL-10221 the DELETE method is not allowed on some web servers, so we simulate it with the action URL param
+$requestmethod = $_SERVER['REQUEST_METHOD'];
+if ($pageaction == 'DELETE') {
+    $requestmethod = 'DELETE';
+}
+
+switch($requestmethod) {
     case 'POST':
 
         switch ($class) {
