@@ -332,7 +332,7 @@
 
 
     if (!isset($hiddenfields['mycourses'])) {
-        if ($mycourses = get_my_courses($user->id, null, null, false, 21)) {
+        if ($mycourses = get_my_courses($user->id, 'visible DESC,sortorder ASC', null, false, 21)) {
             $shown=0;
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
