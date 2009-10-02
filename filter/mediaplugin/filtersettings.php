@@ -20,4 +20,5 @@ $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_rpm',
 
 $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_rm', get_string('mediapluginrm','admin'), '', 1));
 
+$settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_youtube', get_string('mediapluginyoutube','admin'), '', 0));
 ?>

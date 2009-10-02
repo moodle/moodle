@@ -95,6 +95,14 @@ function mediaplugin_filter($courseid, $text) {
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
     }
 
+    if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
+        $search = '/<a[^>]*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
+
+        $search = '/<a[^>]*?href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_youtube_callback', $newtext);
+    }
+
     if (is_null($newtext) or $newtext === $text) {
         // error or not filtered
         return $text;
@@ -209,6 +217,25 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
   </object>\');
 //]]>
 </script></span>';
+}
+
+/**
+ * Change links to Youtube into embedded Youtube videos
+ */
+function mediaplugin_filter_youtube_callback($link, $autostart=false) {
+
+    $site = addslashes_js($link[1]);
+    $url = addslashes_js($link[2]);
+    $info = addslashes_js($link[3]);
+
+    return '<object title="'.$info.'" 
+                    class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash" 
+                    data="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" width="425" height="344">'.
+           '<param name="movie" value="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" />'.
+           '<param name="FlashVars" value="playerMode=embedded" />'.
+           '<param name="wmode" value="transparent" />'.
+           '<param name="allowFullScreen" value="true" />'.
+           '</object>';
 }
 
 /**
