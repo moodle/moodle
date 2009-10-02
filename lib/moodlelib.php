@@ -5720,6 +5720,7 @@ class string_manager {
     private $parentlangfile = 'langconfig.php';
     private $logtofile = false;
     private $showstringsource = false;
+    private $allcountrycodes = NULL;
     private static $singletoninstance = NULL;
 
     /**
@@ -6088,7 +6089,11 @@ class string_manager {
             }
         }
 
-        return '[[' . $identifier . ']]'; // Last resort.
+        return $this->missing_string($identifier); // Last resort.
+    }
+
+    protected function missing_string($identifier) {
+        return '[[' . $identifier . ']]';
     }
 
     /**
@@ -6101,6 +6106,54 @@ class string_manager {
         // is put inside another (For example, Default: No on the admin strings.
         // The bracketing makes that clear.
         return '{' . $string . ' ' . $module . '/' . $identifier . '}';
+    }
+
+    protected function get_list_of_country_codes() {
+        if (!is_null($this->allcountrycodes)) {
+            return $this->allcountrycodes;
+        }
+
+        global $CFG;
+        if (!empty($CFG->allcountrycodes)) {
+            $this->allcountrycodes = explode(',', $CFG->allcountrycodes);
+        } else {
+            $this->allcountrycodes = array_keys(
+                    $this->load_lang_file($this->dirroot . '/lang/en_utf8/countries.php'));
+        }
+        return $this->allcountrycodes;
+    }
+
+    /**
+     * Returns a list of country names in the current language
+     * @return array two-letter country code => translated name.
+     */
+    public function get_list_of_countries() {
+        $locations = $this->locations_to_search('countries');
+
+        // Now load all the translated country names. We load the files in
+        // the order most specific to lease specific.
+        $rawcountries = array();
+        for ($lang = current_language(); $lang; $lang = $this->get_parent_language($lang)) {
+            foreach ($locations as $location => $ignored) {
+                foreach (array('_local', '') as $suffix) {
+                    $file = $location . $lang . $suffix . '/countries.php';
+                    $rawcountries = array_merge($this->load_lang_file($file), $rawcountries);
+                }
+            }
+        }
+
+        // Now trim the array to just contain the codes $codes.
+        $codes = $this->get_list_of_country_codes();
+        $countries = array();
+        foreach ($codes as $code) {
+            if (array_key_exists($code, $rawcountries)) {
+                $countries[$code] = $rawcountries[$code];
+            } else {
+                $countries[$code] = $this->missing_string($code);
+            }
+        }
+
+        return $countries;
     }
 }
 
@@ -6336,43 +6389,10 @@ function get_list_of_charsets() {
 
 /**
  * Returns a list of country names in the current language
- *
- * @global object
- * @global object
- * @return array
+ * @return array two-letter country code => translated name.
  */
 function get_list_of_countries() {
-    global $CFG, $USER;
-
-    $lang = current_language();
-
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
-        !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
-        if ($parentlang = get_parent_language()) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php') ||
-                file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en_utf8';  // countries.php must exist in this pack
-            }
-        } else {
-            $lang = 'en_utf8';  // countries.php must exist in this pack
-        }
-    }
-
-    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
-    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
-    }
-
-    if (!empty($string)) {
-        uasort($string, 'strcoll');
-    } else {
-        print_error('countriesphpempty', '', '', $lang);
-    }
-
-    return $string;
+    return string_manager::instance()->get_list_of_countries();
 }
 
 /**

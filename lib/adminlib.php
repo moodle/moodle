@@ -3484,6 +3484,32 @@ class admin_setting_langlist extends admin_setting_configtext {
 }
 
 /**
+ * Selection of one of the recognised countries using the list
+ * returned by {@link get_list_of_countries()}.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_settings_country_select extends admin_setting_configselect {
+    public function __construct($name, $visiblename, $description, $defaultsetting) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
+    }
+
+    /**
+     * Lazy-load the available choices for the select box
+     */
+    public function load_choices() {
+        global $CFG;
+        if (is_array($this->choices)) {
+            return true;
+        }
+        $this->choices = array_merge(
+                array('0' => get_string('choosedots')),
+                get_list_of_countries());
+        return true;
+    }
+}
+
+/**
  * Course category selection
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

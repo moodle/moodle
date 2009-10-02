@@ -337,6 +337,140 @@ class string_manager_test extends UnitTestCase {
         $this->assertEqual($this->stringmanager->get_string('stringnotdefinedanywhere'), '[[stringnotdefinedanywhere]]');
     }
 
+    public function test_get_list_of_countries_en_utf8() {
+        global $CFG, $SESSION;
+        // Setup fixture.
+        $countriesen = array(
+            'AU' => 'Australia',
+            'GB' => 'United Kingdom',
+        );
+        $this->write_lang_file('moodle/lang/en_utf8/countries.php', $countriesen);
+
+        $oldlist = $CFG->allcountrycodes;
+        $CFG->allcountrycodes = '';
+        $SESSION->lang = 'en_utf8';
+
+        // Exercise SUT.
+        $this->assertEqual($this->stringmanager->get_list_of_countries(),
+                $countriesen);
+
+        // Tear down.
+        $CFG->allcountrycodes = $oldlist;
+    }
+
+    public function test_get_list_of_countries_specific_list() {
+        global $CFG, $SESSION;
+        // Setup fixture.
+        $countriesen = array(
+            'AU' => 'Australia',
+            'GB' => 'United Kingdom',
+        );
+        $this->write_lang_file('moodle/lang/en_utf8/countries.php', $countriesen);
+
+        $oldlist = $CFG->allcountrycodes;
+        $CFG->allcountrycodes = 'AU';
+        $SESSION->lang = 'en_utf8';
+
+        // Exercise SUT.
+        $this->assertEqual($this->stringmanager->get_list_of_countries(),
+                array('AU' => $this->stringmanager->get_string('AU', 'countries')));
+
+        // Tear down.
+        $CFG->allcountrycodes = $oldlist;
+    }
+
+    public function test_get_list_of_countries_fr_utf8() {
+        global $CFG, $SESSION;
+        // Setup fixture.
+        $countriesen = array(
+            'AU' => 'Australia',
+            'GB' => 'United Kingdom',
+        );
+        $this->write_lang_file('moodle/lang/en_utf8/countries.php', $countriesen);
+
+        $countriesfr = array(
+            'AU' => 'Australie',
+            'FR' => 'France',
+            'GB' => 'Royaume-Uni',
+        );
+        $this->write_lang_file('moodledata/lang/fr_utf8/countries.php', $countriesfr);
+
+        $oldlist = $CFG->allcountrycodes;
+        $CFG->allcountrycodes = '';
+        $SESSION->lang = 'fr_utf8';
+
+        // Exercise SUT.
+        unset($countriesfr['FR']);
+        $this->assertEqual($this->stringmanager->get_list_of_countries(),
+                $countriesfr);
+
+        // Tear down.
+        $CFG->allcountrycodes = $oldlist;
+    }
+
+    public function test_get_list_of_countries_specific_list_fr() {
+        global $CFG, $SESSION;
+        // Setup fixture.
+        $countriesen = array(
+            'AU' => 'Australia',
+            'GB' => 'United Kingdom',
+        );
+        $this->write_lang_file('moodle/lang/en_utf8/countries.php', $countriesen);
+
+        $countriesfr = array(
+            'AU' => 'Australie',
+            'FR' => 'France',
+            'GB' => 'Royaume-Uni',
+        );
+        $this->write_lang_file('moodledata/lang/fr_utf8/countries.php', $countriesfr);
+
+        $oldlist = $CFG->allcountrycodes;
+        $CFG->allcountrycodes = 'FR';
+        $SESSION->lang = 'fr_utf8';
+
+        // Exercise SUT.
+        unset($countriesfr['FR']);
+        $this->assertEqual($this->stringmanager->get_list_of_countries(),
+                array('FR' => 'France'));
+        // Tear down.
+        $CFG->allcountrycodes = $oldlist;
+    }
+
+    public function test_get_list_of_countries_lang_with_parent_local_override() {
+        global $CFG, $SESSION;
+
+        // Setup fixture.
+        $this->write_lang_file('moodledata/lang/fr_ca_utf8/langconfig.php', array(
+            'parentlanguage' => 'fr_utf8',
+        ));
+
+        $countriesen = array(
+            'AU' => 'Australia',
+            'GB' => 'United Kingdom',
+        );
+        $this->write_lang_file('moodle/lang/en_utf8/countries.php', $countriesen);
+
+        $countriesfr = array(
+            'AU' => 'Australie',
+            'GB' => 'Royaume-Uni',
+        );
+        $this->write_lang_file('moodledata/lang/fr_utf8/countries.php', $countriesfr);
+
+        $this->write_lang_file('moodle/lang/fr_ca_utf8_local/countries.php', array(
+            'AU' => 'Aussie',
+        ));
+
+        $oldlist = $CFG->allcountrycodes;
+        $CFG->allcountrycodes = '';
+        $SESSION->lang = 'fr_ca_utf8';
+
+        // Exercise SUT.
+        $this->assertEqual($this->stringmanager->get_list_of_countries(),
+                array('AU' => 'Aussie', 'GB' => 'Royaume-Uni'));
+        
+        // Tear down.
+        $CFG->allcountrycodes = $oldlist;
+    }
 }
 
 ?>
