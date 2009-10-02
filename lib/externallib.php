@@ -53,16 +53,55 @@ class external_api {
     }
 
     /**
-     * Validates submitted function barameters, if anything is incorrect
+     * Validates submitted function parameters, if anything is incorrect
      * invalid_parameter_exception is thrown.
-     * @param ? $description description of parameters
-     * @param ? $params the actual parameters
-     * @return ? params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
+     * @param external_description $description description of parameters
+     * @param mixed $params the actual parameters
+     * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
-    public static function validate_prameters($description, $params) {
-        //TODO: we need to define the structure of param descriptions
+    public static function validate_parameters(external_description $description, $params) {
+        if ($description instanceof external_param) {
+            if (is_array($params) or is_object($params)) {
+                throw new invalid_parameter_exception('Scalar type expected, array or object received.');
+            }
+            return validate_param($params, $description->type, $description->allownull, 'Invalid external api parameter');
 
-        return $params;
+        } else if ($description instanceof external_single_structure) {
+            if (!is_array($params)) {
+                throw new invalid_parameter_exception('Only arrays accepted.');
+            }
+            $result = array();
+            foreach ($description->keys as $key=>$subdesc) {
+                if (!array_key_exists($key, $params)) {
+                    if ($subdesc->required) {
+                        throw new invalid_parameter_exception('Missing required key in single structure.');
+                    }
+                    if ($subdesc instanceof external_param) {
+                        $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                    }
+                } else {
+                    $result[$key] = self::validate_parameters($subdesc, $params[$key]);
+                }
+                unset($params[$key]);
+            }
+            if (!empty($params)) {
+                throw new invalid_parameter_exception('Unexpected keys detected in parameter array.');
+            }
+            return $result;
+
+        } else if ($description instanceof external_multiple_structure) {
+            if (!is_array($params)) {
+                throw new invalid_parameter_exception('Only arrays accepted.');
+            }
+            $result = array();
+            foreach ($params as $param) {
+                $result[] = self::validate_parameters($description->content, $param);
+            }
+            return $result;
+
+        } else {
+            throw new invalid_parameter_exception('Invalid external api description.');
+        }
     }
 
     /**
@@ -97,7 +136,7 @@ class external_api {
             //      proper enrolment and course visibility check
             //      similar to require_login() (which can not be used
             //      because it can be used only once and redirects)
-            //      oh - did I tell we need to rewrite enrolments in 2.0
+            //      oh - did I say we need to rewrite enrolments in 2.0
             //      to solve this bloody mess?
             //
             //      missing: hidden courses and categories, groupmembersonly,
@@ -121,7 +160,7 @@ abstract class external_description {
      * @param string $desc
      * @param bool $required
      */
-    public function __contruct($desc, $required) {
+    public function __construct($desc, $required) {
         $this->desc = $desc;
         $this->required = $required;
     }
@@ -146,8 +185,8 @@ class external_param extends external_description {
      * @param mixed $default
      * @param bool $allownull
      */
-    public function __contruct($type, $desc='', $required=true, $default=null, $allownull=true) {
-        parent::_construct($desc, $required);
+    public function __construct($type, $desc='', $required=true, $default=null, $allownull=true) {
+        parent::__construct($desc, $required);
         $this->type      = $type;
         $this->default   = $default;
         $this->allownull = $allownull;
@@ -168,7 +207,7 @@ class external_single_structure extends external_description {
      * @param bool $required
      */
     public function __construct(array $keys, $desc='', $required=true) {
-        parent::_construct($desc, $required);
+        parent::__construct($desc, $required);
         $this->keys = $keys;
     }
 }
@@ -187,7 +226,7 @@ class external_multiple_structure extends external_description {
      * @param bool $required
      */
     public function __construct(external_description $content, $desc='', $required=true) {
-        parent::_construct($desc, $required);
+        parent::__construct($desc, $required);
         $this->content = $content;
     }
 }

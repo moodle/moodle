@@ -45,7 +45,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::create_groups_parameters(), array('groups'=>$groups));
+        $params = self::validate_parameters(self::create_groups_parameters(), array('groups'=>$groups));
 
         $groups = array();
 
@@ -82,13 +82,7 @@ class moodle_group_external extends external_api {
     public static function get_groups_parameters() {
         return new external_function_parameters(
             array(
-                'groups' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'groupid' => new external_param(PARAM_INT, 'Group ID')
-                        )
-                    )
-                )
+                'groups' => new external_multiple_structure(new external_param(PARAM_INT, 'Group ID'))
             )
         );
     }
@@ -101,7 +95,7 @@ class moodle_group_external extends external_api {
     public static function get_groups($groupids) {
         $groups = array();
 
-        $params = self::validate_prameters(self::get_groups_parameters(), array('groupids'=>$groupids));
+        $params = self::validate_parameters(self::get_groups_parameters(), array('groupids'=>$groupids));
 
         //TODO: we do need to search for groups in courses too,
         //      fetching by id is not enough!
@@ -147,7 +141,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
+        $params = self::validate_parameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
 
         $groups = array();
 
@@ -185,7 +179,7 @@ class moodle_group_external extends external_api {
     public static function get_groupmembers($groupids) {
         $groups = array();
 
-        $params = self::validate_prameters(self::get_groupmembers_parameters(), array('groupids'=>$groupids));
+        $params = self::validate_parameters(self::get_groupmembers_parameters(), array('groupids'=>$groupids));
 
         foreach ($params['groupids'] as $groupid) {
             // validate params
@@ -221,7 +215,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::add_groupmembers_parameters(), array('members'=>$members));
+        $params = self::validate_parameters(self::add_groupmembers_parameters(), array('members'=>$members));
 
         foreach ($params['members'] as $member) {
             // validate params
@@ -259,7 +253,7 @@ class moodle_group_external extends external_api {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_prameters(self::delete_groupmembers_parameters(), array($members=>'members'));
+        $params = self::validate_parameters(self::delete_groupmembers_parameters(), array($members=>'members'));
 
         foreach ($params['members'] as $member) {
             // validate params

@@ -87,7 +87,7 @@ class moodle_user_external extends external_api {
         //      2) All required items were sent
         //      3) All data passes clean_param without changes (yes this is strict)
         // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_prameters(self::create_users_parameters(), $params);
+        $params = self::validate_parameters(self::create_users_parameters(), $params);
 
 
         // Perform further checks and build up a clean array of user data
@@ -184,7 +184,7 @@ class moodle_user_external extends external_api {
         require_capability('moodle/user:viewdetails', $context);
         self::validate_context($context);
 
-        $params = self::validate_prameters(self::get_users_parameters(), $params);
+        $params = self::validate_parameters(self::get_users_parameters(), $params);
 
         //TODO: this search is probably useless for external systems because it is not exact
         //      1/ we should specify multiple search parameters including the mnet host id
