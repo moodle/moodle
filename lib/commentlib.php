@@ -89,7 +89,7 @@ class comment {
      * @param object $options
      */
     public function __construct($options) {
-        global $CFG;
+        global $CFG, $DB;
         $this->viewcap = false;
         $this->postcap = false;
         if (!empty($options->client_id)) {
@@ -156,6 +156,16 @@ EOD;
             $courseid = SITEID;
             $this->_setup_course($courseid);
         }
+        if (!empty($options->showcount)) {
+            $count = $this->count();
+            if (empty($count)) {
+                $this->count = '';
+            } else {
+                $this->count = '('.$count.')';
+            }
+        } else {
+            $this->count = '';
+        }
 
         unset($options);
     }
@@ -181,6 +191,7 @@ EOD;
         $PAGE->requires->js('comment/comment.js')->in_head();
         $PAGE->requires->string_for_js('addcomment', 'moodle');
         $PAGE->requires->string_for_js('deletecomment', 'moodle');
+        $PAGE->requires->string_for_js('comments', 'moodle');
     }
 
     private function _setup_course($courseid) {
@@ -290,15 +301,14 @@ EOD;
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
             $html = <<<EOD
+<div style="text-align:left">
 <a id="comment-link-{$this->cid}" onclick="return view_comments('{$this->cid}', '{$this->commentarea}', '{$this->itemid}', 0)" href="{$this->link}">
 <img id="comment-img-{$this->cid}" src="{$CFG->wwwroot}/pix/t/collapsed.png" alt="{$this->linktext}" title="{$this->linktext}" />
-<span>{$this->linktext}</span>
+<span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
 <div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
-    <div class="comment-list-wrapper">
-            <ul id="comment-list-{$this->cid}" class="comment-list">
-            </ul>
-    </div>
+    <ul id="comment-list-{$this->cid}" class="comment-list">
+    </ul>
     <div id="comment-pagination-{$this->cid}" class="comment-pagination"></div>
 EOD;
 
@@ -336,6 +346,7 @@ EOD;
             }
 
             $html .= <<<EOD
+</div>
 </div>
 EOD;
         } else {
@@ -408,10 +419,18 @@ EOD;
         return $comments;
     }
 
+    public function count() {
+        global $DB;
+        if ($count = $DB->count_records('comments', array('itemid'=>$this->itemid, 'commentarea'=>$this->commentarea, 'contextid'=>$this->context->id))) {
+            return $count;
+        } else {
+            return 0;
+        }
+    }
+
     public function get_pagination($page = 0) {
         global $DB, $CFG, $OUTPUT;
-        if (!$count = $DB->count_records_sql("SELECT COUNT(*) from {comments} c, {user} u WHERE u.id=c.userid AND c.contextid=? AND c.commentarea=? AND c.itemid=?", array($this->contextid, $this->commentarea, $this->itemid))) {
-        }
+        $count = $this->count();
         $pages = (int)ceil($count/$CFG->commentsperpage);
         if ($pages == 1 || $pages == 0) {
             return '';
@@ -440,7 +459,7 @@ EOD;
      * @param string $content
      * @return mixed
      */
-    public function add($content) {
+    public function add($content, $format = FORMAT_MOODLE) {
         global $CFG, $DB, $USER, $OUTPUT;
         if (empty($this->postcap)) {
             return COMMENT_ERROR_INSUFFICIENT_CAPS;
@@ -451,7 +470,7 @@ EOD;
         $newcmt->commentarea  = $this->commentarea;
         $newcmt->itemid       = $this->itemid;
         $newcmt->content      = $content;
-        $newcmt->format       = FORMAT_MOODLE;
+        $newcmt->format       = $format;
         $newcmt->userid       = $USER->id;
         $newcmt->timecreated  = $now;
 
@@ -476,6 +495,19 @@ EOD;
         } else {
             return COMMENT_ERROR_DB;
         }
+    }
+
+    /**
+     * delete by context, commentarea and itemid
+     *
+     */
+    public function delete_comments() {
+        global $DB;
+        return $DB->delete_records('comments', array(
+            'contextid'=>$this->context->id,
+            'commentarea'=>$this->commentarea,
+            'itemid'=>$this->itemid)
+        );
     }
 
     /**

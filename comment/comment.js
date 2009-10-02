@@ -45,6 +45,8 @@ function get_comments(client_id, area, itemid, page) {
             if (!comment_check_response(ret)) {
                 return;
             }
+            var linktext = document.getElementById('comment-link-text-'+ret.client_id);
+            linktext.innerHTML = mstr.moodle.comments + ' ('+ret.count+')';
             var container = document.getElementById('comment-list-'+ret.client_id);
             var pagination = document.getElementById('comment-pagination-'+ret.client_id);
             if (ret.pagination) {
@@ -76,6 +78,8 @@ function post_comment(cid) {
                 var result = cmt_replace(cid,[resp], true);
                 container.innerHTML += result.html;
                 var ids = result.ids;
+                var linktext = document.getElementById('comment-link-text-'+resp.client_id);
+                linktext.innerHTML = mstr.moodle.comments + ' ('+resp.count+')';
                 for(var i in ids) {
                     var attributes = {
                         color: { to: '#06e' },

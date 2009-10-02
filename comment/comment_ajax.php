@@ -69,6 +69,7 @@ if (!empty($client_id)) {
 switch ($action) {
 case 'add':
     $cmt = $comment->add($content);
+    $cmt->count = $comment->count();
     if (!empty($cmt) && is_object($cmt)) {
         $cmt->client_id = $client_id;
         echo json_encode($cmt);
@@ -100,6 +101,7 @@ default:
     $ret = array();
     $comments = $comment->get_comments($page);
     $ret['list'] = $comments;
+    $ret['count'] = $comment->count();
     $ret['pagination'] = $comment->get_pagination($page);
     $ret['client_id']  = $client_id;
     echo json_encode($ret);
