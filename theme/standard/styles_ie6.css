@@ -97,3 +97,6 @@ form.mform textarea {
 #help_icon_tooltip .yui-tt-shadow-visible {
   background-color: transparent;
 }
+.drag select {
+    visibility: visible;
+}
