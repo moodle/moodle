@@ -63,4 +63,6 @@ form.mform textarea {
   display:inline-block; padding-left:2px;
 }
 
-
+.drag select {
+    visibility: visible;
+}
