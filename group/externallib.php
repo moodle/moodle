@@ -52,7 +52,7 @@ class moodle_group_external extends external_api {
         foreach ($params['groups'] as $group) {
             $group = (object)$group;
 
-            if (empty(trim($group->name))) {
+            if (trim($group->name) == '') {
                 throw new invalid_parameter_exception('Invalid group name');
             }
             if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
