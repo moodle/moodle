@@ -692,6 +692,7 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         // Find the appropriate page template, based on $this->page->generaltype.
         $templatefile = $this->page->theme->template_for_page($this->page->generaltype);
+
         if ($templatefile) {
             // Render the template.
             $template = $this->render_page_template($templatefile);
@@ -711,12 +712,15 @@ class moodle_core_renderer extends moodle_renderer_base {
 
         if (empty($this->contenttype)) {
             debugging('The layout template did not call $OUTPUT->doctype()');
-            $this->doctype();
+            $header = $this->doctype() . $header;
         }
 
+        
         send_headers($this->contenttype, $this->page->cacheable);
+
         $this->opencontainers->push('header/footer', $footer);
         $this->page->set_state(moodle_page::STATE_IN_BODY);
+
         return $header . $this->skip_link_target();
     }
 
