@@ -159,6 +159,7 @@
             if (ajaxenabled($CFG->ajaxtestedbrowsers)) {     // Browser, user and site-based switches
                 $PAGE->requires->yui_lib('dragdrop');
                 $PAGE->requires->yui_lib('connection');
+                $PAGE->requires->yui_lib('selector');
                 $PAGE->requires->js('lib/ajax/block_classes.js');
                 $PAGE->requires->js('lib/ajax/section_classes.js');
 
