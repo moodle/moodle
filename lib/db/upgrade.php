@@ -1993,7 +1993,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($result && $oldversion < 2009050614) {
     /// fill in any missing contextids with a dummy value, so we can add the not-null constraint.
-        $DB->execute("UPDATE {block_instances} SET contextid = -1 WHERE contextid IS NULL");
+        $DB->execute("UPDATE {block_instances} SET contextid = 0 WHERE contextid IS NULL");
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009050614);
