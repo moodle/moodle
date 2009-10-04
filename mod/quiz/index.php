@@ -76,7 +76,7 @@
         array_push($align, 'left');
         $showing = 'stats';
     } else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $coursecontext)) {
-        array_push($headings, get_string('bestgrade', 'quiz'));
+        array_push($headings, get_string('grade', 'quiz'));
         array_push($align, 'left');
         if ($showfeedback) {
             array_push($headings, get_string('feedback', 'quiz'));
