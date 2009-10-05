@@ -85,7 +85,17 @@
             $courses = array();
             foreach ($data as $key => $value) {
                 if (preg_match('/^c\d+$/', $key)) {
-                    array_push($courses, substr($key, 1));
+                    $courseid = substr($key, 1);
+                    array_push($courses, $courseid);
+
+                    // check this course's category
+                    if ($movingcourse = $DB->get_record('course', array('id'=>$courseid))) {
+                        if ($movingcourse->category != $id ) {
+                            print_error('coursedoesnotbelongtocategory');
+                        }
+                    } else {
+                        print_error('cannotfindcourse');
+                    }
                 }
             }
             move_courses($courses, $data->moveto);
@@ -93,7 +103,6 @@
 
     /// Hide or show a course
         if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
-            require_capability('moodle/course:visibility', $context);
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
                 $visible = 0;
@@ -101,7 +110,10 @@
                 $course = $DB->get_record('course', array('id' => $show));
                 $visible = 1;
             }
+
             if ($course) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                require_capability('moodle/course:visibility', $coursecontext);
                 if (!$DB->set_field('course', 'visible', $visible, array('id' => $course->id))) {
                     print_error('errorupdatingcoursevisibility');
                 }
@@ -127,6 +139,10 @@
                 }
             }
             if ($swapcourse and $movecourse) {
+                // check course's category
+                if ($movecourse->category != $id) {
+                    print_error('coursedoesnotbelongtocategory');
+                }
                 $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id' => $movecourse->id));
                 $DB->set_field('course', 'sortorder', $movecourse->sortorder, array('id' => $swapcourse->id));
             }
