@@ -197,7 +197,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $options = array(
                     0 => get_string('none', 'quiz'),
                     1 => get_string('popupwithjavascriptsupport', 'quiz'));
-        if ($CFG->enablesafebrowserintegration) { 
+        if (!empty($CFG->enablesafebrowserintegration)) {
             $options[2] = get_string('requiresafeexambrowser', 'quiz');
         }
         $mform->addElement('select', 'popup', get_string('browsersecurity', 'quiz'), $options);
