@@ -7872,6 +7872,19 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Location of the xml file
         $xml_file = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/moodle.xml";
 
+        // Re-assure xml file is in place before any further process
+        if (! $status = restore_check_moodle_file($xml_file)) {
+            if (!is_file($xml_file)) {
+                $errorstr = 'Error checking backup file. moodle.xml not found. Session problem?';
+            } else {
+                $errorstr = 'Error checking backup file. moodle.xml is incorrect or corrupted. Session problem?';
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                notify($errorstr);
+            }
+            return false;
+        }
+
         //Preprocess the moodle.xml file spliting into smaller chucks (modules, users, logs...)
         //for optimal parsing later in the restore process.
         if (!empty($CFG->experimentalsplitrestore)) {
@@ -7880,10 +7893,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             //First of all, split moodle.xml into handy files
             if (!restore_split_xml ($xml_file, $restore)) {
+                $errorstr = "Error proccessing moodle.xml file. Process ended.";
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error proccessing moodle.xml file. Process ended.");
-                } else {
-                    $errorstr = "Error proccessing moodle.xml file. Process ended.";
+                    notify($errorstr);
                 }
                 return false;
             }
