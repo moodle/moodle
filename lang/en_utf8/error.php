@@ -101,6 +101,7 @@ $string['pluginrequirementsnotmet'] = 'Plugin \"$a->pluginname\" ($a->pluginvers
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
+$string['restorechecksumfailed'] = 'Some problem happened with the restore information stored in your session. Please check your PHP memory/DB package size limits. Restore stopped.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['sendmessage'] = 'Send Message';
