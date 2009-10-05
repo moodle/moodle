@@ -322,6 +322,11 @@
         //Save the restore session object
         $SESSION->restore = $restore;
 
+        // Calculate all session objects checksum and store them in session too
+        // so restore_execute.html (used by manual restore and import) will be
+        // able to detect any problem in session info.
+        restore_save_session_object_checksums($restore, $info, $course_header);
+
         echo "<div style='text-align:center'>";
 
     /// Printout messages
