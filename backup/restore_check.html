@@ -29,6 +29,13 @@
             $currentcoursestartdate = $course_header->course_startdate;
             $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
             $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
+            // Only apply rolling of dates if differences are bigger than one day
+            // that should solve current problems with daylight changes between
+            // backup and restore
+            if ($restore->course_startdateoffset < 24 * 60 * 60) {
+                $coursestartdatedateoffset = 0;
+                $restore->course_startdateoffset = 0;
+            }
         } else { // don't roll if the course hasn't start date
             $coursestartdatedateoffset = 0;
             $restore->course_startdateoffset = 0;
