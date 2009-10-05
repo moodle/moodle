@@ -4466,6 +4466,20 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         $defaultroleinteresting = false;
     }
 
+    // is the default role interesting? does it have
+    // a relevant rolecap? (we use this a lot later)
+    if (($isfrontpage or is_inside_frontpage($context)) and !empty($CFG->defaultfrontpageroleid) and in_array((int)$CFG->defaultfrontpageroleid, $roleids, true)) {
+        if (!empty($CFG->fullusersbycapabilityonfrontpage)) {
+            // new in 1.9.6 - full support for defaultfrontpagerole MDL-19039
+            $frontpageroleinteresting = true;
+        } else {
+            // old style 1.9.0-1.9.5 - much faster + fewer negative override problems on frontpage
+            $frontpageroleinteresting = ($context->contextlevel == CONTEXT_COURSE);
+        }
+    } else {
+        $frontpageroleinteresting = false;
+    }
+
     //
     // Prepare query clauses
     //
@@ -4552,9 +4566,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     if (!$negperm) { 
 
         // at the frontpage, and all site users have it - easy!
-        if ($isfrontpage && !empty($CFG->defaultfrontpageroleid)
-            && in_array((int)$CFG->defaultfrontpageroleid, $roleids, true)) {
-            
+        if ($frontpageroleinteresting) {
             return get_records_sql("SELECT $fields
                                     FROM {$CFG->prefix}user u
                                     WHERE u.deleted = 0
@@ -4631,7 +4643,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     }
 
     if ($context->contextlevel == CONTEXT_SYSTEM
-        || $isfrontpage
+        || $frontpageroleinteresting
         || $defaultroleinteresting) {
 
         // Handle system / sitecourse / defaultrole-with-perhaps-neg-overrides
@@ -4733,6 +4745,11 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
             // Did the last user end up with a positive permission?
             if ($lastuserid !=0) {
+                if ($frontpageroleinteresting) {
+                    // add frontpage role if interesting
+                    $ras[] = array('roleid' => $CFG->defaultfrontpageroleid,
+                                   'depth'  => $context->depth);
+                }
                 if ($defaultroleinteresting) {
                     // add the role at the end of $ras
                     $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
@@ -4777,6 +4794,11 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
     // Prune last entry if necessary
     if ($lastuserid !=0) {
+        if ($frontpageroleinteresting) {
+            // add frontpage role if interesting
+            $ras[] = array('roleid' => $CFG->defaultfrontpageroleid,
+                           'depth'  => $context->depth);
+        }
         if ($defaultroleinteresting) {
             // add the role at the end of $ras
             $ras[] = array( 'roleid' => $CFG->defaultuserroleid,
