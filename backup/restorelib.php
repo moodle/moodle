@@ -7799,7 +7799,27 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             }
         }
+        // Calculate all session objects checksum and store them in session too
+        // so restore_execute.html (used by manual restore and import) will be
+        // able to detect any problem in session info.
+        restore_save_session_object_checksums($restore, $SESSION->info, $SESSION->course_header);
+
         return true;
+    }
+
+    /**
+     * Save the checksum of the 3 main in-session restore objects (restore, info, course_header)
+     * so restore_execute.html will be able to check that all them have arrived correctly, without
+     * losing data for any type of session size limit/error. MDL-18469. Used both by manual restore
+     * and import
+     */
+    function restore_save_session_object_checksums($restore, $info, $course_header) {
+        global $SESSION;
+        $restore_checksums = array();
+        $restore_checksums['info']          = md5(serialize($info));
+        $restore_checksums['course_header'] = md5(serialize($course_header));
+        $restore_checksums['restore']       = md5(serialize($restore));
+        $SESSION->restore_checksums = $restore_checksums;
     }
 
     function backup_to_restore_array($backup,$k=0) {

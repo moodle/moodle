@@ -8,6 +8,21 @@
         $info = $SESSION->info;
         $course_header = $SESSION->course_header;
         $restore = $SESSION->restore;
+
+        // Validate objects from session by checking their checksums
+        $status = false;
+        if (isset($SESSION->restore_checksums)) {
+            $checksums = $SESSION->restore_checksums;
+            if (isset($checksums['info']) && $checksums['info'] == md5(serialize($info)) &&
+                isset($checksums['course_header']) && $checksums['course_header'] == md5(serialize($course_header)) &&
+                isset($checksums['restore']) && $checksums['restore'] == md5(serialize($restore))) {
+
+                $status = true; // All session checksums were or, we can rely on that to continue restoring
+            }
+        }
+        if(!$status) { // Something was wrong checking objects from session, abort with error
+            print_error('restorechecksumfailed');
+        }
     }
 
     //Add info->original_wwwroot to $restore to be able to use it in all the restore process
