@@ -1271,7 +1271,7 @@ function ewiki_page_info($id, &$data, $action) {
          }
          elseif ($i == "userid") {
              $i = 'author';
-             if ($user = get_record('user', 'id', $value)) {
+             if ($user = get_record('user', 'id', (int)$value)) {
                  if (!isset($course->id)) {
                      $course->id = 1;
                  }

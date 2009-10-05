@@ -345,7 +345,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $info->comment = format_text($p_comment);
 
    if ($fullinfo) {
-        if ($user = get_record('user', 'id', $row['userid'])) {
+        if ($user = get_record('user', 'id', (int)$row['userid'])) {
             if (!isset($course->id)) {
                 $course->id = 1;
             }
