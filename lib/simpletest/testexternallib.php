@@ -30,7 +30,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/externallib.php');
 
 class externallib_test extends UnitTestCase {
-    public function test_validate_params1() {
+    public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6',);
         $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value'),
                                                               'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
@@ -51,7 +51,27 @@ class externallib_test extends UnitTestCase {
         $this->assertTrue(key($result) === 'someids');
         $this->assertTrue($result['someids'] == array(0=>1, 1=>2, 2=>3));
         $this->assertTrue($result['scalar'] === '666');
-    }
 
-    //TODO: add unittests for all description options and validation failures
+
+        $params = array('text'=>'aaa');
+        $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value', false),
+                                                              'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
+        $result = external_api::validate_parameters($description, $params);
+        $this->assertEqual(count($result), 2);
+        reset($result);
+        $this->assertTrue(key($result) === 'someid');
+        $this->assertTrue($result['someid'] === null);
+        $this->assertTrue($result['text'] === 'aaa');
+
+
+        $params = array('text'=>'aaa');
+        $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value', false, 6),
+                                                              'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
+        $result = external_api::validate_parameters($description, $params);
+        $this->assertEqual(count($result), 2);
+        reset($result);
+        $this->assertTrue(key($result) === 'someid');
+        $this->assertTrue($result['someid'] === 6);
+        $this->assertTrue($result['text'] === 'aaa');
+    }
 }

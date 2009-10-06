@@ -55,6 +55,8 @@ class external_api {
     /**
      * Validates submitted function parameters, if anything is incorrect
      * invalid_parameter_exception is thrown.
+     * This is a simple recursive method which is intended to be called from
+     * each implementation method of external API.
      * @param external_description $description description of parameters
      * @param mixed $params the actual parameters
      * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
