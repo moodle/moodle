@@ -9047,6 +9047,29 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             assign_capability($override->capability, $override->permission, $override->roleid, $override->contextid);
         }
     }
+
+    /**
+     * true or false function to see if user can roll dates on restore (any course is enough)
+     * @return bool
+     */
+    function restore_user_can_roll_dates() {
+        global $USER;
+        // if user has moodle/restore:rolldates capability at system or any course cat return true
+
+        if (has_capability('moodle/restore:rolldates', get_context_instance(CONTEXT_SYSTEM))) {
+            return true;
+        }
+
+        // Non-cached - get accessinfo
+        if (isset($USER->access)) {
+            $accessinfo = $USER->access;
+        } else {
+            $accessinfo = get_user_access_sitewide($USER->id);
+        }
+        $courses = get_user_courses_bycap($USER->id, 'moodle/restore:rolldates', $accessinfo, true);
+        return !empty($courses);
+    }
+
     //write activity date changes to the html log file, and update date values in the the xml array
     function restore_log_date_changes($recordtype, &$restore, &$xml, $TAGS, $NAMETAG='NAME') {
 
