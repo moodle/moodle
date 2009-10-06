@@ -1159,7 +1159,9 @@ class graph {
         if ($max < 0) $factor = - pow(10, (floor(log10(abs($max))) + $resolution) );
         else $factor = pow(10, (floor(log10(abs($max))) - $resolution) );
       }
-      $factor = round($factor * 1000.0) / 1000.0; // To avoid some wierd rounding errors (Moodle)
+      if ($factor > 0.1) { // To avoid some wierd rounding errors (Moodle)
+        $factor = round($factor * 1000.0) / 1000.0; // To avoid some wierd rounding errors (Moodle)
+      } // To avoid some wierd rounding errors (Moodle)
 
       $max = $factor * @ceil($max / $factor);
       $min = $factor * @floor($min / $factor);
