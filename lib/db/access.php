@@ -180,6 +180,16 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/restore:rolldates' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:manageblocks' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_XSS,
