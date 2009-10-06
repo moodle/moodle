@@ -50,7 +50,7 @@ function useredit_update_bounces($user, $usernew) {
         //locked field
         return;
     }
-    if (!isset($user->email) || $user->email !== $usernew->email) {
+    if (!isset($user->email) || $user->email !== stripslashes($usernew->email)) {
         set_bounce_count($usernew,true);
         set_send_count($usernew,true);
     }
