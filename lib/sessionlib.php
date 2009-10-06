@@ -505,7 +505,8 @@ class database_session extends session_stub {
             $this->record->timemodified = time();
             $this->record->lastip       = getremoteaddr();
 
-            // TODO: verify session changed before doing update
+            // TODO: verify session changed before doing update,
+            //       also make sure the timemodified field is changed only overy 10s if nothing else changes  MDL-20462
 
             try {
                 $this->database->update_record_raw('sessions', $this->record);
