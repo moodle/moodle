@@ -22,8 +22,8 @@ $string['chooselanguagesub'] = 'インストールのみに使用する言語を
 $string['cliincorrectvalueerror'] = 'エラー、「 $a->option 」の値「 $a->value 」が正しくありません。';
 $string['cliincorrectvalueretry'] = '値が正しくありません、再度お試しください。';
 $string['cliinstallheader'] = 'Moodle $a コマンドライン・インストールプログラム';
-$string['clitypevalue'] = 'タイプ値';
-$string['clitypevaluedefault'] = 'タイプ値です。デフォルト値 ($a) を使用するには、Enterキーを押してください。';
+$string['clitypevalue'] = '値を入力してください。';
+$string['clitypevaluedefault'] = '値を入力してください。デフォルト値 ($a) を使用するには、Enterキーを押してください。';
 $string['cliunknowoption'] = '不明なオプション:
 $a
 「--help」オプションを使用してください。';
