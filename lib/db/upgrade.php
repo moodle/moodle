@@ -2492,7 +2492,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009090800);
     }
 
-    if ($result && $oldversion < 2009091306) {
+    if ($result && $oldversion < 2009100601) {
         // drop all previous tables defined during the dev phase
         $dropold = array('external_services_users', 'external_services_functions', 'external_services', 'external_functions');
         foreach ($dropold as $tablename) {
@@ -2501,10 +2501,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 $dbman->drop_table($table);
             }
         }
-        upgrade_main_savepoint($result, 2009091306);
+        upgrade_main_savepoint($result, 2009100601);
     }
 
-    if ($result && $oldversion < 2009091307) {
+    if ($result && $oldversion < 2009100602) {
     /// Define table external_functions to be created
         $table = new xmldb_table('external_functions');
 
@@ -2526,10 +2526,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->create_table($table);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009091307);
+        upgrade_main_savepoint($result, 2009100602);
     }
 
-    if ($result && $oldversion < 2009091308) {
+    if ($result && $oldversion < 2009100603) {
     /// Define table external_services to be created
         $table = new xmldb_table('external_services');
 
@@ -2551,10 +2551,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->create_table($table);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009091308);
+        upgrade_main_savepoint($result, 2009100603);
     }
 
-    if ($result && $oldversion < 2009091309) {
+    if ($result && $oldversion < 2009100604) {
     /// Define table external_services_functions to be created
         $table = new xmldb_table('external_services_functions');
 
@@ -2571,10 +2571,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->create_table($table);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009091309);
+        upgrade_main_savepoint($result, 2009100604);
     }
 
-    if ($result && $oldversion < 2009091310) {
+    if ($result && $oldversion < 2009100605) {
     /// Define table external_services_users to be created
         $table = new xmldb_table('external_services_users');
 
@@ -2582,6 +2582,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('externalserviceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('iprestriction', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('validuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
 
     /// Adding keys to table external_services_users
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -2592,7 +2595,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->create_table($table);
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2009091310);
+        upgrade_main_savepoint($result, 2009100605);
     }
 
     return $result;
