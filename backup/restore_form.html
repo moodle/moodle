@@ -276,6 +276,15 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo $OUTPUT->help_icon(moodle_help_icon::make("coursefullname", get_string("fullname"))) ;
         if (isset($err["fullname"])) echo $OUTPUT->error_text($err["fullname"]);
         echo"</td></tr>";
+    } else {
+        // nothing to show here if the user cannot create users
+    }
+
+    // If user can roll dates (in any course is enough for now) show the roll dates option.
+    // Important: The final restore check step will validate, once we know the final category/course
+    // where the restore is happening, if the user is really capable of rolling dates there, noticing
+    // and disabling roll if not allowed.
+    if (restore_user_can_roll_dates()) {
         echo "<tr valign=\"top\"> ";
         echo "<td align=\"right\"> ";
         print_string("startdate");
@@ -298,7 +307,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
         echo "</td></tr>";
     } else {
-    /// If user cannot create course, prevent any change in startyear/month/day (so restore wont calculate any roll. MDL-12922
+    /// If user lacks the moodle/restore:rolldates completely, prevent any change in startyear/month/day (so restore won't perform any roll)
         echo '<input type="hidden" name="startyear" value="0" />';
         echo '<input type="hidden" name="startmonth" value="0" />';
         echo '<input type="hidden" name="startday" value="0" />';
