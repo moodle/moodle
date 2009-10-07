@@ -1043,6 +1043,8 @@ repository_client.end = function(client_id, obj) {
             fp.target.value = obj['url'];
         }
         fp.target.onchange();
+    }else if(fp.env=='texturl') {
+        fp.target.value = obj['url'];
     }
     obj.filepath = fp.savepath;
     obj.maxfileslimit = (fp.maxfiles!=-1 && repository_client.files[client_id]>=fp.maxfiles);
