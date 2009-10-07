@@ -672,6 +672,47 @@
         return $status;
     }
 
+    function question_restore_numerical_options($old_question_id,$new_question_id,$info,$restore) {
+        global $CFG, $DB;
+
+        $status = true;
+        //Get the numerical_options array
+        // need to check as old questions don't have calculated_options record
+        if(isset($info['#']['NUMERICAL_OPTIONS'])){
+            $numerical_options = $info['#']['numerical_OPTIONS'];
+    
+            //Iterate over numerical_options
+            for($i = 0; $i < sizeof($numerical_options); $i++){
+                $num_info = $numerical_options[$i];
+                //traverse_xmlize($cal_info);                                                                 //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+    
+                //Now, build the question_numerical_options record structure
+                $numerical_options->questionid = $new_question_id;
+                $numerical_options->instructions = backup_todb($num_info['#']['INSTRUCTIONS']['0']['#']);
+                $numerical_options->showunits = backup_todb($num_info['#']['SHOWUNITS']['0']['#']);
+                $numerical_options->unitsleft = backup_todb($num_info['#']['UNITSLEFT']['0']['#']);
+                $numerical_options->unitgradingtype = backup_todb($num_info['#']['UNITGRADINGTYPE']['0']['#']);
+                $numerical_options->unitpenalty = backup_todb($num_info['#']['UNITPENALTY']['0']['#']);
+    
+                //The structure is equal to the db, so insert the question_numerical__options
+                $newid = $DB->insert_record ("question_numerical__options",$numerical__options);
+    
+                //Do some output
+                if (($i+1) % 50 == 0) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        echo ".";
+                        if (($i+1) % 1000 == 0) {
+                            echo "<br />";
+                        }
+                    }
+                    backup_flush(300);
+                }
+            }
+    }
+
+
     function question_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
         global $CFG, $DB;
 

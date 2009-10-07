@@ -275,6 +275,30 @@
 
     }
 
+    //This function backups question_numerical_options from different question types
+    function question_backup_numerical_options($bf,$preferences,$question,$level=7) {
+        global $CFG, $DB;
+
+        $status = true;
+        $numerical_options = $DB->get_records("question_numerical_options",array("questionid" => $question),"id");
+        if ($numerical_options) {
+            //Iterate over each numerical_option
+            foreach ($numerical_options as $numerical_option) {
+                $status = $status && fwrite ($bf,start_tag("NUMERICAL_OPTIONS",$level,true));
+                //Print numerical_option contents
+                fwrite ($bf,full_tag("INSTRUCTIONS",$level+1,false,$numerical_option->instructions));
+                fwrite ($bf,full_tag("SHOWUNITS",$level+1,false,$numerical_option->showunits));
+                fwrite ($bf,full_tag("UNITSLEFT",$level+1,false,$numerical_option->unitsleft));
+                fwrite ($bf,full_tag("UNITGRADINGTYPE",$level+1,false,$numerical_option->unitgradingtype));
+                fwrite ($bf,full_tag("UNITPENALTY",$level+1,false,$numerical_option->unitpenalty));
+                $status = $status && fwrite ($bf,end_tag("NUMERICAL_OPTIONS",$level,true));
+            }
+        }
+
+        return $status;
+
+    }
+
     //This function backups dataset_definitions (via question_datasets) from different question types
     function question_backup_datasets($bf,$preferences,$question,$level=7) {
         global $CFG, $DB;
