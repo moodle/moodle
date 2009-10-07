@@ -64,12 +64,25 @@
 
 /// The main overview in the middle of the page
     $courses_limit = 21;
-    if (!empty($CFG->mycoursesperpage)) {
+    if (isset($CFG->mycoursesperpage)) {
         $courses_limit = $CFG->mycoursesperpage;
     }
+
+    $morecourses = false;
+    if ($courses_limit > 0) {
+    print "a";
+        $courses_limit = $courses_limit + 1;
+    }
+
     $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', '*', false, $courses_limit);
     $site = get_site();
     $course = $site; //just in case we need the old global $course hack
+
+    if (($courses_limit > 0) && (count($courses) >= $courses_limit)) {
+        //remove the 'marker' course that we retrieve just to see if we have more than $courses_limit
+        array_pop($courses);
+        $morecourses = true;
+    }
 
     if (array_key_exists($site->id,$courses)) {
         unset($courses[$site->id]);
@@ -90,7 +103,7 @@
     }
     
     // if more than 20 courses
-    if (count($courses) > 20) {
+    if ($morecourses) {
         echo '<br />...';  
     }
     
