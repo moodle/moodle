@@ -82,7 +82,7 @@ class moodle_group_external extends external_api {
     public static function get_groups_parameters() {
         return new external_function_parameters(
             array(
-                'groups' => new external_multiple_structure(new external_param(PARAM_INT, 'Group ID'))
+                'groupids' => new external_multiple_structure(new external_param(PARAM_INT, 'Group ID'))
             )
         );
     }
