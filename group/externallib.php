@@ -20,7 +20,7 @@
  *
  * @package    moodlecore
  * @subpackage webservice
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

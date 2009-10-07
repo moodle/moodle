@@ -19,7 +19,7 @@
  *
  * @category  Moodle
  * @package   webservice
- * @copyright Copyright (c) 1999 onwards Martin Dougiamas     http://dougiamas.com
+ * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
  */
 
