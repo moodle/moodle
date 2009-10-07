@@ -437,23 +437,25 @@ abstract class webservice_base_server {
                       JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND sf.functionname = :name)
                       JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
                      WHERE su.validuntil IS NULL OR su.validuntil < :now";
-            $services = $DB->get_records_sql($sql, array('userid'=>$USER->id, 'name'=>$function->name, 'now'=>time()));
+            $rs = $DB->get_recordset_sql($sql, array('userid'=>$USER->id, 'name'=>$function->name, 'now'=>time()));
             // now make sure user may access at least one service
             $syscontext = get_context_instance(CONTEXT_SYSTEM);
             $remoteaddr = getremoteaddr();
-            foreach ($services as $key=>$service) {
+            $allowed = false;
+            foreach ($rs as $service) {
                 if ($service->requiredcapability and !has_capability($service->requiredcapability, $syscontext)) {
-                    unset($services[$key]); // cap required, sorry
+                    continue; // cap required, sorry
                 }
                 if ($service->iprestriction and !address_in_subnet($remoteaddr, $service->iprestriction)) {
-                    unset($services[$key]); // wrong request source ip, sorry
+                    continue; // wrong request source ip, sorry
                 }
+                $allowed = true;
                 break; // one service is enough, no need to continue
             }
-            if (!$services) {
+            $rs->close();
+            if (!$allowed) {
                 throw new invalid_parameter_exception('Access to external function not allowed');
             }
-            unset($services);
             // now we finally know the user may execute this function,
             // the last step is to set context restriction - in this simple case
             // we use system context because each external system has different user account
