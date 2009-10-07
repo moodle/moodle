@@ -48,8 +48,20 @@ class external_api {
      * @param stdClass $contex
      * @return void
      */
-    public static function set_context_restriction($contex) {
+    public static function set_context_restriction($context) {
         self::$contextrestriction = $context;
+    }
+
+    /**
+     * This method has to be called before every operation
+     * that takes a longer time to finish!
+     *
+     * @param int $seconds max expected time the next operation needs
+     * @return void
+     */
+    public static function set_timeout($seconds=360) {
+        $seconds = ($seconds < 300) ? 300 : $seconds;
+        set_time_limit($seconds);
     }
 
     /**
