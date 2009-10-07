@@ -1,3 +1,4 @@
+
 <?php  // $Id$
 
 /////////////////
@@ -28,7 +29,7 @@ class question_calculated_qtype extends default_questiontype {
 
     function get_question_options(&$question) {
         // First get the datasets and default options
-         global $CFG, $DB, $OUTPUT,$QTYPES;
+         global $CFG, $DB, $OUTPUT, $QTYPES;
         if (!$question->options = $DB->get_record('question_calculated_options', array('question' => $question->id))) {
           //  echo $OUTPUT->notification('Error: Missing question options for calculated question'.$question->id.'!');
           //  return false;
@@ -36,6 +37,14 @@ class question_calculated_qtype extends default_questiontype {
           $question->options->multichoice = 0;
           
         }
+    //    echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
+        $QTYPES['numerical']->get_numerical_options($question);
+         /* $question->options->unitgradingtype = 0;
+          $question->options->unitpenalty = 0;
+          $question->options->showunits = 0 ;
+          $question->options->unitsleft = 0 ;
+          $question->options->instructions = '' ;*/
+   //     echo "<p> questionoptions <pre>";print_r($question);echo "</pre></p>";
 
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
@@ -318,12 +327,14 @@ class question_calculated_qtype extends default_questiontype {
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
         $state->responses = array('' => $regs[2]);
-        if ( isset($question->options->multichoice) && $question->options->multichoice == '1'){
-                   $virtualqtype = $this->get_virtual_qtype( $question);
+        $virtualqtype = $this->get_virtual_qtype( $question);
+   //     if ( isset($question->options->multichoice) && $question->options->multichoice == '1'){
+                   
 
             return $virtualqtype->restore_session_and_responses($question, $state);
-        }
-        return true;
+      //  }else { // numerical
+            
+      //  return true;
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
@@ -364,7 +375,7 @@ class question_calculated_qtype extends default_questiontype {
         };  
         $state->options->dataset =
          $this->pick_question_dataset($question,$state->options->datasetitem);
-        $state->responses = array('' => '');
+      //  $state->responses = array('' => '');
         if ($question->options->multichoice == 1 ) {
                     // create an array of answerids ??? why so complicated ???
             $answerids = array_values(array_map(create_function('$val',
@@ -380,8 +391,12 @@ class question_calculated_qtype extends default_questiontype {
             } else {
                 $state->responses = array();
             }
-        }                
-        return true;
+            return true;
+        } else { // numerical   
+                    $virtualqtype = $this->get_virtual_qtype( $question);
+            return $virtualqtype->create_session_and_responses($question, $state, $cmoptions, $attempt); 
+        }
+        
     }
     
     function save_session_and_responses(&$question, &$state) {
@@ -402,7 +417,15 @@ class question_calculated_qtype extends default_questiontype {
             $responses .= implode(',', $state->responses);
         }else {
         // regular numeric type 
-        $responses .=  $state->responses[''];
+         if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
+            $responses .= $state->responses['answer'].'|||||'.$question->options->units[$state->responses['unit']]->unit;
+        }else if(isset($state->responses['unit'])){
+            $responses .= $state->responses['answer'].'|||||'.$state->responses['unit'] ;
+        }else {
+            $responses .= $state->responses['answer'].'|||||';
+        }
+
+        
         }
          
         // Set the legacy answer field        
@@ -731,6 +754,15 @@ class question_calculated_qtype extends default_questiontype {
         }
         $DB->delete_records("question_datasets", array("question" => $questionid));
         return true;
+    }
+    function test_response(&$question, &$state, $answer) {
+          $virtualqtype = $this->get_virtual_qtype( $question);
+        return $virtualqtype->test_response($question, $state, $answer);       
+            
+    }
+    function compare_responses(&$question, $state, $teststate) {
+                 $virtualqtype = $this->get_virtual_qtype( $question);
+        return $virtualqtype->compare_responses($question, $state, $teststate);
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
@@ -1897,9 +1929,9 @@ class question_calculated_qtype extends default_questiontype {
                     fwrite ($bf,full_tag("ANSWERNUMBERING",$level+1,false,$calculated_option->answernumbering));
                     $status = fwrite ($bf,end_tag("CALCULATED_OPTIONS",$level,true));
                 }
-                //Now print question_answers
-                $status = question_backup_answers($bf,$preferences,$question);
             }
+            $status = question_backup_numerical_options($bf,$preferences,$question,$level);
+
         }
         return $status;
     }
@@ -1993,7 +2025,7 @@ class question_calculated_qtype extends default_questiontype {
             }
             //Now restore numerical_units
             $status = question_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
-
+            $status = question_restore_numerical_options($old_question_id,$new_question_id,$info,$restore);
             //Now restore dataset_definitions
             if ($status && $newid) {
                 $status = question_restore_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
@@ -2201,21 +2233,21 @@ function qtype_calculated_find_formula_errors($formula) {
             case 'is_infinite': case 'is_nan': case 'log10': case 'log1p':
             case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
             case 'tan': case 'tanh':
-                if ($regs[4] || empty($regs[3])) {
+                if (!empty($regs[4]) || empty($regs[3])) {
                     return get_string('functiontakesonearg','quiz',$regs[2]);
                 }
                 break;
 
             // Functions that take one or two arguments
             case 'log': case 'round':
-                if ($regs[5] || empty($regs[3])) {
+                if (!empty($regs[5]) || empty($regs[3])) {
                     return get_string('functiontakesoneortwoargs','quiz',$regs[2]);
                 }
                 break;
 
             // Functions that must have two arguments
             case 'atan2': case 'fmod': case 'pow':
-                if ($regs[5] || empty($regs[4])) {
+                if (!empty($regs[5]) || empty($regs[4])) {
                     return get_string('functiontakestwoargs', 'quiz', $regs[2]);
                 }
                 break;
