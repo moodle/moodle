@@ -22,6 +22,7 @@ $string['cannotdelete'] = 'Cannot delete this file.';
 $string['cannotdownload'] = 'Cannot download this file';
 $string['cannotdownloaddir'] = 'Cannot download this folder';
 $string['cannotinitplugin'] = 'Call plugin_init failed';
+$string['choosealink'] = 'Choose a link...';
 $string['clicktohide'] = 'Click here to hide';
 $string['clicktoshow'] = 'Click here to show';
 $string['close'] = 'Close';
