@@ -82,7 +82,7 @@ class moodle_group_external extends external_api {
     public static function get_groups_parameters() {
         return new external_function_parameters(
             array(
-                'groupids' => new external_multiple_structure(new external_param(PARAM_INT, 'Group ID'))
+                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID'))
             )
         );
     }
@@ -119,10 +119,10 @@ class moodle_group_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id' => new external_param(PARAM_INT, 'some group id'),
-                    'name' => new external_param(PARAM_TEXT, 'multilang compatible name, course unique'),
-                    'description' => new external_param(PARAM_RAW, 'just some text'),
-                    'enrolmentkey' => new external_param(PARAM_RAW, 'group enrol secret phrase')
+                    'id' => new external_value(PARAM_INT, 'some group id'),
+                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'description' => new external_value(PARAM_RAW, 'just some text'),
+                    'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase')
                 )
             )
         );

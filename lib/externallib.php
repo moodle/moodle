@@ -74,7 +74,7 @@ class external_api {
      * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
      */
     public static function validate_parameters(external_description $description, $params) {
-        if ($description instanceof external_param) {
+        if ($description instanceof external_value) {
             if (is_array($params) or is_object($params)) {
                 throw new invalid_parameter_exception('Scalar type expected, array or object received.');
             }
@@ -90,7 +90,7 @@ class external_api {
                     if ($subdesc->required) {
                         throw new invalid_parameter_exception('Missing required key in single structure.');
                     }
-                    if ($subdesc instanceof external_param) {
+                    if ($subdesc instanceof external_value) {
                         $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
                     }
                 } else {
@@ -181,10 +181,10 @@ abstract class external_description {
 }
 
 /**
- * Scalar parameter description class
+ * Scalar alue description class
  */
-class external_param extends external_description {
-    /** @property mixed $type parameter type PARAM_XX */
+class external_value extends external_description {
+    /** @property mixed $type value type PARAM_XX */
     public $type;
     /** @property mixed $default default value */
     public $default;

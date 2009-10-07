@@ -32,8 +32,8 @@ require_once($CFG->libdir . '/externallib.php');
 class externallib_test extends UnitTestCase {
     public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6',);
-        $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value'),
-                                                              'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
+        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value'),
+                                                              'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
         $result = external_api::validate_parameters($description, $params);
         $this->assertEqual(count($result), 2);
         reset($result);
@@ -43,8 +43,8 @@ class externallib_test extends UnitTestCase {
 
 
         $params = array('someids'=>array('1', 2, 'a'=>'3'), 'scalar'=>666);
-        $description = new external_function_parameters(array('someids' => new external_multiple_structure(new external_param(PARAM_INT, 'Some ID')),
-                                                              'scalar'  => new external_param(PARAM_ALPHANUM, 'Some text value')));
+        $description = new external_function_parameters(array('someids' => new external_multiple_structure(new external_value(PARAM_INT, 'Some ID')),
+                                                              'scalar'  => new external_value(PARAM_ALPHANUM, 'Some text value')));
         $result = external_api::validate_parameters($description, $params);
         $this->assertEqual(count($result), 2);
         reset($result);
@@ -54,8 +54,8 @@ class externallib_test extends UnitTestCase {
 
 
         $params = array('text'=>'aaa');
-        $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value', false),
-                                                              'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
+        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value', false),
+                                                              'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
         $result = external_api::validate_parameters($description, $params);
         $this->assertEqual(count($result), 2);
         reset($result);
@@ -65,8 +65,8 @@ class externallib_test extends UnitTestCase {
 
 
         $params = array('text'=>'aaa');
-        $description = new external_function_parameters(array('someid' => new external_param(PARAM_INT, 'Some int value', false, 6),
-                                                              'text'   => new external_param(PARAM_ALPHA, 'Some text value')));
+        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value', false, 6),
+                                                              'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
         $result = external_api::validate_parameters($description, $params);
         $this->assertEqual(count($result), 2);
         reset($result);
