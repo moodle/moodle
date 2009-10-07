@@ -70,7 +70,6 @@
 
     $morecourses = false;
     if ($courses_limit > 0) {
-    print "a";
         $courses_limit = $courses_limit + 1;
     }
 
