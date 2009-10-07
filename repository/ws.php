@@ -203,6 +203,9 @@ EOD;
                 // $file is the specific information of file, such as url, or meta information
                 // $title is the file name in file pool
                 // $itemid and $save_path will be used by local plugin only
+                if ($env == 'texturl') {
+                    $CFG->repositoryuseexternallink = true;
+                }
                 $filepath = $repo->get_file($file, $title, $itemid, $save_path);
                 if ($filepath === false) {
                     $err->e = get_string('cannotdownload', 'repository');
@@ -213,6 +216,7 @@ EOD;
                 }
                 if (is_array($filepath)) {
                     // file api don't have real file path, so we need more file api specific info for "local" plugin
+                    // only used by local plugin
                     $fileinfo = $filepath;
                     $info = array();
                     $info['client_id'] = $client_id;
@@ -225,6 +229,7 @@ EOD;
                     $url = $filepath;
                     echo json_encode(array('type'=>'link', 'client_id'=>$client_id, 'url'=>$url, 'id'=>$url, 'file'=>$url));
                 } else {
+                    // used by most repository plugins
                     // move downloaded file to file pool
                     $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
                     $info['client_id'] = $client_id;

@@ -640,13 +640,16 @@ abstract class repository {
                 if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
                     $tmp = $repository->supported_return_value();
                     if ($tmp != $returnvalue) {
-                        $is_supported = false;
+                        if ($returnvalue == 'link' && $repository->supported_external_link()) {
+                        } else {
+                            $is_supported = false;
+                        }
                     }
                 }
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
                     // super_called will make sure the parent construct function is called
                     // by repository construct function
-                    $capability = has_capability('repository/'.$repo->repositorytype.':view', $context, $USER->id);
+                    $capability = has_capability('repository/'.$repo->repositorytype.':view', get_system_context());
                     if ($is_supported && $capability) {
                         $ret[] = $repository;
                     }
@@ -1009,7 +1012,7 @@ abstract class repository {
         $updown = get_string('updown', 'repository');
         //retrieve list of instances. In administration context we want to display all
         //instances of a type, even if this type is not visible. In course/user context we
-        //want to display only visible instances, but for every type types. The repository_get_instances()
+        //want to display only visible instances, but for every type types. The repository::get_instances()
         //third parameter displays only visible type.
         $instances = repository::get_instances(array($context),null,!$admin,$typename);
         $instancesnumber = count($instances);
@@ -1145,12 +1148,15 @@ abstract class repository {
      */
     public function get_file($url, $filename = '') {
         global $CFG;
-
-        $path = $this->prepare_file($filename);
-        $fp = fopen($path, 'w');
-        $c = new curl;
-        $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        return $path;
+        if (!empty($CFG->repositoryuseexternallink) && $this->supported_external_link()) {
+            return $url;
+        } else {
+            $path = $this->prepare_file($filename);
+            $fp = fopen($path, 'w');
+            $c = new curl;
+            $c->download(array(array('url'=>$url, 'file'=>$fp)));
+            return $path;
+        }
     }
 
     /**
@@ -1212,6 +1218,13 @@ abstract class repository {
         // return 'link';
         // return 'ref_id';
         return 'ref_id';
+    }
+    /**
+     * does it return a file url or a item_id
+     * @return string
+     */
+    public function supported_external_link() {
+        return false;
     }
 
     /**
