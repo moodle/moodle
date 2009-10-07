@@ -193,8 +193,14 @@ class question_edit_calculated_form extends question_edit_form {
                 $mform->addElement('hidden', 'multiplier'."[$i]", optional_param('multiplier'."[$i]", '', PARAM_NUMBER));
                 $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
             }  
+          $mform->addElement('hidden','unitgradingtype',optional_param('unitgradingtype', '', PARAM_INT)) ;
+          $mform->addElement('hidden','unitpenalty',optional_param('unitpenalty', '', PARAM_NUMBER)) ;
+          $mform->addElement('hidden','showunits',optional_param('showunits', '', PARAM_INT)) ;
+          $mform->addElement('hidden','unitsleft',optional_param('unitsleft', '', PARAM_INT)) ; 
+          $mform->addElement('hidden','instructions',optional_param('instructions', '', PARAM_RAW)) ;  
 
         }else {
+        $QTYPES['numerical']->edit_numerical_options($mform,$this);
             $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));    
             $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
             $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
@@ -253,7 +259,7 @@ class question_edit_calculated_form extends question_edit_form {
 
     function set_data($question) {
         if (isset($this->editasmultichoice)){
-             $default_values['multichoice']= 1 ; //$this->editasmultichoice ;
+             $default_values['multichoice']= $this->editasmultichoice ; //$this->editasmultichoice ;
         }
         if (isset($question->options)){
             $answers = $question->options->answers;
@@ -270,6 +276,12 @@ class question_edit_calculated_form extends question_edit_form {
                     $key++;
                 }
             }
+          $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
+          $default_values['unitpenalty'] = $question->options->unitpenalty ;
+          $default_values['showunits'] = $question->options->showunits ;
+          $default_values['unitsleft'] = $question->options->unitsleft ;
+          $default_values['instructions'] = $question->options->instructions  ;
+
             if (isset($question->options->units)){
                 $units  = array_values($question->options->units);
                 // make sure the default unit is at index 0

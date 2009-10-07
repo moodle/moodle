@@ -24,7 +24,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
-        global $CFG, $DB;
+        global $CFG, $DB , $QTYPES;
 
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
@@ -40,7 +40,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         }
 
         // Save the units.
-        $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype = $this->get_virtual_qtype($question);
         $result = $virtualqtype->save_numerical_units($question);
         if (isset($result->error)) {
             return $result;
@@ -180,6 +180,11 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         if(!empty($question->makecopy) && !empty($question->convert)) {
             $DB->set_field('question', 'qtype', 'calculated', array('id'=> $question->id));
         }
+        $result = $QTYPES['numerical']->save_numerical_options($question);
+        if (isset($result->error)) {
+            return $result;
+        }
+
         if (!empty($result->notice)) {
             return $result;
         }
@@ -261,7 +266,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     }
 
     function comment_on_datasetitems($questionid, $answers,$data, $number) {
-        global $DB;
+        global $DB,$QTYPES;
         $comment = new stdClass;
         $comment->stranswers = array();
         $comment->outsidelimit = false ;
@@ -278,7 +283,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         $strmax = get_string('max', 'quiz');
         $errors = '';
         $delimiter = ': ';
-        $virtualqtype = $this->get_virtual_qtype();
+        $virtualqtype = & $QTYPES['numerical'] ; //$this->get_virtual_qtype($question);
         foreach ($answers as $key => $answer) {
             $formula = $this->substitute_variables($answer->answer,$data);
             $formattedanswer = qtype_calculated_calculate_answer(

@@ -31,13 +31,42 @@ class question_edit_numerical_form extends question_edit_form {
      * @param MoodleQuickForm $mform the form being built.
      */
     function definition_inner(&$mform) {
+        global $QTYPES ;
 
 //------------------------------------------------------------------------------------------
         $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
                 $creategrades->gradeoptions);
 //------------------------------------------------------------------------------------------
-        $repeated = array();
+        $QTYPES['numerical']->edit_numerical_options($mform);
+        /*
+        $mform->addElement('header', 'unithandling', get_string("Units handling", 'qtype_numerical'));
+        $currentgrp1 = array();
+        
+        $currentgrp1[] =& $mform->createElement('text', 'unitpenalty', get_string('Penalty for bad unit', 'qtype_numerical') ,
+                array('size' => 3));
+        $currentgrp1[] =& $mform->createElement('static', 'penalty1','hello', get_string('as decimal fraction (0-1) of', 'qtype_numerical'));
+        $mform->addGroup($currentgrp1, 'penaltygrp', get_string('Penalty for bad unit', 'qtype_numerical'), null, false);
+        $mform->setType('unitpenalty', PARAM_NUMBER);
+        //$mform->addRule('unitpenalty', null, 'required', null, 'client');
+        $mform->setDefault('unitpenalty', 0.1);
+        $currentgrp = array();
+        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', 'or', get_string('question grade', 'qtype_numerical'),1);
+        $currentgrp[] =& $mform->createElement('radio', 'unitgradingtype', '', get_string(' response grade', 'qtype_numerical'),2);
+        $mform->setDefault('unitgradingtype', 1);
+        $mform->addGroup($currentgrp, 'penaltychoicegrp', '',' or ', false);
+        $mform->setHelpButton('penaltychoicegrp', array('penaltygrp', get_string('unitpenalty', 'qtype_numerical'), 'qtype_numerical'));
+        $mform->addElement('radio', 'showunits', 'Edit unit  ', get_string('Editable text input element', 'qtype_numerical'),0);
+        $mform->addElement('radio', 'showunits', 'Select units ', get_string('Choice radio element', 'qtype_numerical'),1);
+        $mform->addElement('radio', 'showunits', 'Display unit ', get_string('NON editable text of Unit No1', 'qtype_numerical'),2);
+        $mform->addElement('radio', 'showunits', 'No unit display', get_string("Only numerical answer will be graded leave Unit No1 empty", 'qtype_numerical'),3);
+        $mform->setDefault('showunits', 0);
+        $currentgrp = array();
+        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('left as $1.00', 'qtype_numerical'),1);
+        $leftgrp[] =& $mform->createElement('radio', 'unitsleft', '', get_string('rigth as 1.00cm', 'qtype_numerical'),0);
+        $mform->addGroup($leftgrp, 'unitsleft', 'Unit position',' or ', false);
+        $mform->setDefault('unitsleft', 0);
+        $repeated = array();*/
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
@@ -71,6 +100,12 @@ class question_edit_numerical_form extends question_edit_form {
 
     function set_data($question) {
         if (isset($question->options)){
+          $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
+          $default_values['unitpenalty'] = $question->options->unitpenalty ;
+          $default_values['showunits'] = $question->options->showunits ;
+          $default_values['unitsleft'] = $question->options->unitsleft ;
+          $default_values['instructions'] = $question->options->instructions  ;
+
             $answers = $question->options->answers;
             if (count($answers)) {
                 $key = 0;

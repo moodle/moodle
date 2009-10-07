@@ -52,6 +52,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         global $QTYPES, $SESSION, $CFG, $DB;
         $this->regenerate = true;
         $this->question = $question;
+                echo "<p> question <pre>";print_r($question);echo "</pre></p>";
+
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
         //get the dataset definitions for this question
         //coming here everytime even when using a NoSubmitButton
@@ -136,6 +138,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                         if(trim($answer) != ''){  // just look for non-empty 
                             $this->answer[$key]=new stdClass();
                             $this->answer[$key]->answer = $answer;
+                            $this->answer[$key]->fraction = $fraction[$key];
                             $this->answer[$key]->tolerance = $tolerance[$key];
                             $this->answer[$key]->tolerancetype = $tolerancetype[$key];
                             $this->answer[$key]->correctanswerlength = $correctanswerlength[$key];
@@ -150,7 +153,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 if ($olddef  = optional_param('datasetdef', '', PARAM_RAW)){ 
                     $calcmin = optional_param('calcmin', '', PARAM_NUMBER); 
                     $calclength = optional_param('calclength', '', PARAM_INT); 
-                    $calcmax = optional_param('calcmax', '', PARAM_NUMBER); 
+                    $calcmax = optional_param('calcmax', '', PARAM_NUMBER);
+                    $oldoptions  = optional_param('defoptions', '', PARAM_RAW); 
                     $newdatasetvalues = false ; 
                     for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
                         $def = $olddef[$key] ;
@@ -158,7 +162,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                         $this->datasetdefs[$def]->type = 1;
                         $this->datasetdefs[$def]->category = 0;
                       //  $this->datasets[$key]->name = $datasetname;
-                      //  $this->datasetdefs[$def]->options = $oldoptions[$key] ;
+                        $this->datasetdefs[$def]->options = $oldoptions[$key] ;
                         $this->datasetdefs[$def]->calcmin = $calcmin[$key] ;
                         $this->datasetdefs[$def]->calcmax = $calcmax[$key] ;
                         $this->datasetdefs[$def]->calclength = $calclength[$key] ;
@@ -283,6 +287,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $this->qtypeobj =& $QTYPES[$this->qtype()];
         $strquestionlabel = $this->qtypeobj->comment_header($this->nonemptyanswer);
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $mform->addElement('hidden', 'multichoice', 0);
+        $mform->addElement('hidden', 'synchronize', 0);
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->setType('initialcategory', PARAM_INT);
         $mform->addElement('hidden', 'reload', 1);
@@ -297,6 +303,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
                 $creategrades->gradeoptions, 1, 1);
 
+        $QTYPES['numerical']->edit_numerical_options($mform,$this);
+        
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
@@ -324,6 +332,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $firstunit->setValue('1.0');
             $firstunit->setPersistantFreeze(true);
         }
+
         //hidden elements
    //     $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
    //     $mform->setType('wizard', PARAM_ALPHA);
@@ -359,6 +368,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
                     $mform->addElement('hidden', "datasetdef[$idx]");
                     $mform->setType("datasetdef[$idx]", PARAM_RAW);
+                    $mform->addElement('hidden', "defoptions[$idx]");
+                    $mform->setType("defoptions[$idx]", PARAM_RAW);                                        
                     $idx++;
                     $mform->addElement('static', "divider[$j]", '', '<hr />');
                     $j++;
@@ -538,6 +549,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $mform->closeHeaderBefore('warningnowildcards');
     }
 
+
 //------------------------------------------------------------------------------------------------------------------------------
         //non standard name for button element needed so not using add_action_buttons
         //hidden elements
@@ -575,10 +587,11 @@ class question_edit_calculatedsimple_form extends question_edit_form {
     function set_data($question) {
             $answer = $this->answer;
         $default_values = array();
-         /*   if (count($answer)) {
+            if (count($answer)) {
                 $key = 0;
                 foreach ($answer as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
+                  //  echo "<p> $answer->fraction </p>"; 
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
@@ -587,8 +600,16 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $default_values['feedback['.$key.']'] = $answer->feedback;
                     $key++;
                 }
-            }*/
+            }
+            $default_values['multichoice'] = 0 ;
+            $default_values['synchronize'] = 0 ;
             if (isset($question->options)){
+                    $default_values['unitgradingtype'] = $question->options->unitgradingtype ;
+                    $default_values['unitpenalty'] = $question->options->unitpenalty ;
+                    $default_values['showunits'] = $question->options->showunits ;
+                    $default_values['unitsleft'] = $question->options->unitsleft ;
+                    $default_values['instructions'] = $question->options->instructions  ;
+
                 $units  = array_values($question->options->units);
                 // make sure the default unit is at index 0
                 usort($units, create_function('$a, $b',
@@ -781,7 +802,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         }
                 /*Here we use the already done the error analysis so that 
         * we could force all wild cards values display if there is an error in values.
-        * as using a , in a number */
+        * as using a , in a number *//*
         $numbers = $data['number'];
         foreach ($numbers as $key => $number){
             if(! is_numeric($number)){
@@ -796,7 +817,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_datasetdependent');
             }        
         }
-        
+        */
         if ( $this->noofitems==0  ){
             $errors['warning'] = get_string('warning', 'mnet');
         }
