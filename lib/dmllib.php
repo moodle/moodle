@@ -234,8 +234,14 @@ function setup_DB() {
             case 'mssql_n':
                 $CFG->dbtype = 'mssql';
                 // continue, no break here
-
             case 'mssql':
+                $CFG->dblibrary = 'native';
+                break;
+
+            case 'oci8po':
+                $CFG->dbtype = 'oci';
+                // continue, no break here
+            case 'oci':
                 $CFG->dblibrary = 'native';
                 break;
 
