@@ -72,7 +72,7 @@ class mssql_native_moodle_database extends moodle_database {
     /**
      * Returns general database library name
      * Note: can be used before connect()
-     * @return string db type adodb, pdo, native
+     * @return string db type pdo, native
      */
     protected function get_dblibrary() {
         return 'native';

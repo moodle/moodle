@@ -184,7 +184,7 @@ abstract class moodle_database {
     /**
      * Returns general database library name
      * Note: can be used before connect()
-     * @return string db type adodb, pdo, native
+     * @return string db type pdo, native
      */
     protected abstract function get_dblibrary();
 
