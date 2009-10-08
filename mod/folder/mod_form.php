@@ -45,8 +45,7 @@ class mod_folder_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'folder'));
-        $mform->addElement('static', 'note', '', '<i>(TODO: This filemanager does not support subdirectories yet, sorry...)</i>');
-        $mform->addElement('filemanager', 'files', get_string('files'));
+        $mform->addElement('filemanager', 'files', get_string('files'), null, array('subdirs'=>1, 'filetypes'=>'*', 'returnvalue'=>'ref_id'));
 
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
