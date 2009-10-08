@@ -115,7 +115,9 @@ class webservice_rest_server extends webservice_base_server {
     protected function send_response() {
         $this->send_headers();
         $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+        $xml .= '<RESPONSE>'."\n";
         $xml .= self::xmlize_result($this->returns, $this->function->returns_desc);
+        $xml .= '</RESPONSE>'."\n";
         echo $xml;
     }
 
@@ -177,7 +179,7 @@ class webservice_rest_server extends webservice_base_server {
             foreach ($desc->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $returns)) {
                     if ($subdesc->rewquired) {
-                        // TODO: Huston, we have a problem! maybe we should better throw coding_exception
+                        $single .= '<ERROR>Missing key</ERROR>';
                         continue;
                     } else {
                         //optional field
