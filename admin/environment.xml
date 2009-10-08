@@ -221,7 +221,7 @@
       <VENDOR name="mssql" version="9.0" />
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
-      <VENDOR name="oracle" version="10.0" />
+      <VENDOR name="oracle" version="10.2" />
       <VENDOR name="sqlite" version="2.0" />
     </DATABASE>
     <PHP version="5.2.8" level="required">
