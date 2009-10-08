@@ -47,6 +47,8 @@ class oci_native_moodle_database extends moodle_database {
     private $last_error_reporting; // To handle oci driver default verbosity
     private $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming
 
+    private $dblocks_supported = null; // To cache locks support along the connection life
+
 
     /**
      * Detects if all needed PHP stuff installed.
@@ -1471,7 +1473,59 @@ class oci_native_moodle_database extends moodle_database {
     }
 
 /// session locking
-    // http://download.oracle.com/docs/cd/B10501_01/appdev.920/a96612/d_lock2.htm#999576
+    public function session_lock_supported() {
+        if (isset($this->dblocks_supported)) { // Use cached value if available
+            return $this->dblocks_supported;
+        }
+        $sql = "SELECT 1
+                FROM user_objects
+                WHERE object_type = 'PACKAGE BODY'
+                  AND object_name = 'MOODLE_LOCKS'
+                  AND status = 'VALID'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $stmt = $this->parse_query($sql);
+        $result = oci_execute($stmt, $this->commit_status);
+        $this->query_end($result, $stmt);
+        $records = null;
+        oci_fetch_all($stmt, $records, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
+        oci_free_statement($stmt);
+        $this->dblocks_supported = isset($records[0]) && reset($records[0]) ? true : false;
+        return $this->dblocks_supported;;
+    }
+
+    public function get_session_lock($rowid) {
+        if (!$this->session_lock_supported()) {
+            return;
+        }
+        parent::get_session_lock($rowid);
+
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $sql = 'SELECT MOODLE_LOCKS.GET_LOCK(:lockname, :locktimeout) FROM DUAL';
+        $params = array('lockname' => $fullname , 'locktimeout' => 120);
+        $this->query_start($sql, $params, SQL_QUERY_AUX);
+        $stmt = $this->parse_query($sql);
+        $this->bind_params($stmt, $params);
+        $result = oci_execute($stmt, $this->commit_status);
+        $this->query_end($result, $stmt);
+        oci_free_statement($stmt);
+    }
+
+    public function release_session_lock($rowid) {
+        if (!$this->session_lock_supported()) {
+            return;
+        }
+        parent::release_session_lock($rowid);
+
+        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $params = array('lockname' => $fullname);
+        $sql = 'SELECT MOODLE_LOCKS.RELEASE_LOCK(:lockname) FROM DUAL';
+        $this->query_start($sql, $params, SQL_QUERY_AUX);
+        $stmt = $this->parse_query($sql);
+        $this->bind_params($stmt, $params);
+        $result = oci_execute($stmt, $this->commit_status);
+        $this->query_end($result, $stmt);
+        oci_free_statement($stmt);
+    }
 
 /// transactions
     /**
