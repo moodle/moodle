@@ -5718,10 +5718,9 @@ wikiadminactions {
  *
  */
 .comment-ctrl {
-  max-width: 200px;
   font-size: 12px;
   display: none;
-  margin:0;
+  margin:0 auto;
   padding:0;
 }
 .comment-ctrl h5 {
@@ -5745,9 +5744,6 @@ wikiadminactions {
 }
 .comment-meta span {
   color:grey;
-}
-
-.comment-list-wrapper {
 }
 
 .comment-list {
@@ -5783,6 +5779,12 @@ wikiadminactions {
   padding:0;
 }
 .comment-content p{
+  width: 90%;
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
   padding:0;
   margin:0 18px 0 0;
 }
@@ -5867,7 +5869,7 @@ wikiadminactions {
     background: #CCC;
 }
 .fm-breadcrumb {
-    margin: 0;
+    margin:0;
 }
 .filemanager-container {
     padding: 5px;
