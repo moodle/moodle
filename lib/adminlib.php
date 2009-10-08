@@ -6210,15 +6210,6 @@ class admin_setting_managewsusersettings extends admin_setting {
         global $CFG, $OUTPUT;
         $output = "";
 
-        //run the discovery and display the result
-        $notifications = webservice_lib::services_discovery();
-        if (!empty($notifications)) {
-            $output .=  $OUTPUT->notification(get_string('discoveryrun', 'webservice'));
-            foreach ($notifications as $notification) {
-                $output .=  $OUTPUT->notification($notification);
-            }
-        }
-
         //search all web service users
         $users = get_users(true, '', false, null, 'firstname ASC','', '', '', 1000);
 
