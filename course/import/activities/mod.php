@@ -28,7 +28,7 @@
 
     $taught_courses = array();
     if (!empty($tcourseids)) {
-        $taught_courses = $DB->get_records_list('course', 'id', $tcourseids);
+        $taught_courses = $DB->get_records_list('course', 'id', $tcourseids, 'sortorder');
     }
 
     if (!empty($creator)) {
