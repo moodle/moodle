@@ -88,6 +88,7 @@ class tinymce_texteditor extends texteditor {
             }
         }
 
+        $xmedia = 'media, ';
         $filters = filter_get_active_in_context($context);
         if (array_key_exists('filter/tex', $filters)) {
             $xdragmath = 'dragmath,';
