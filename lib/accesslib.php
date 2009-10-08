@@ -1118,10 +1118,12 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         $c = make_context_subobj($c);
 
         if (has_capability_in_accessdata($cap, $c->context, $accessdata, $doanything)) {
-            $courses[] = $c;
-            if ($limit > 0 && $cc++ > $limit) {
+            if ($limit > 0 && $cc >= $limit) {
                 break;
             }
+            
+            $courses[] = $c;
+            $cc++;
         }
     }
     rs_close($rs);
