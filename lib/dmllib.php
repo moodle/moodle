@@ -223,42 +223,24 @@ function setup_DB() {
     }
 
     if (!isset($CFG->dblibrary)) {
+        $CFG->dblibrary = 'native';
+        // use new drivers instead of the old adodb driver names
         switch ($CFG->dbtype) {
             case 'postgres7' :
                 $CFG->dbtype = 'pgsql';
-                // continue, no break here
-            case 'pgsql' :
-                $CFG->dblibrary = 'native';
                 break;
 
             case 'mssql_n':
                 $CFG->dbtype = 'mssql';
-                // continue, no break here
-            case 'mssql':
-                $CFG->dblibrary = 'native';
                 break;
 
             case 'oci8po':
                 $CFG->dbtype = 'oci';
-                // continue, no break here
-            case 'oci':
-                $CFG->dblibrary = 'native';
                 break;
 
             case 'mysql' :
-                if (!extension_loaded('mysqli')) {
-                    $CFG->dblibrary = 'adodb';
-                    break;
-                }
                 $CFG->dbtype = 'mysqli';
-                // continue, no break here
-            case 'mysqli' :
-                $CFG->dblibrary = 'native';
                 break;
-
-            default:
-                // the rest of drivers is not converted yet - keep adodb for now
-                $CFG->dblibrary = 'adodb';
         }
     }
 
