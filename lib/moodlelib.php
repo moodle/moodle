@@ -6869,6 +6869,7 @@ function get_plugin_types($fullpaths=true) {
                       'gradeexport'   => 'grade/export',
                       'gradeimport'   => 'grade/import',
                       'gradereport'   => 'grade/report',
+                      'webservice'    => 'webservice',
                       'repository'    => 'repository',
                       'portfolio'     => 'portfolio/type',
                       'qtype'         => 'question/type',
