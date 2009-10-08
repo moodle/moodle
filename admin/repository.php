@@ -70,23 +70,27 @@ if (!empty($edit) || !empty($new)) {
             foreach($configs as $config) {
                 if (!empty($fromform->$config)) {
                     $settings[$config] = $fromform->$config;
+                } else {
+                    // if the config name is not appear in $fromform
+                    // empty this config value
+                    $settings[$config] = '';
                 }
             }
              $instanceoptionnames = repository::static_function($edit, 'get_instance_option_names');
             if (!empty($instanceoptionnames)) {
-                    if (array_key_exists('enablecourseinstances', $fromform)) {
-                        $settings['enablecourseinstances'] = $fromform->enablecourseinstances;
-                    }
-                    else {
-                        $settings['enablecourseinstances'] = 0;
-                    }
-                    if (array_key_exists('enableuserinstances', $fromform)) {
-                        $settings['enableuserinstances'] = $fromform->enableuserinstances;
-                    }
-                    else {
-                        $settings['enableuserinstances'] = 0;
-                    }
+                if (array_key_exists('enablecourseinstances', $fromform)) {
+                    $settings['enablecourseinstances'] = $fromform->enablecourseinstances;
                 }
+                else {
+                    $settings['enablecourseinstances'] = 0;
+                }
+                if (array_key_exists('enableuserinstances', $fromform)) {
+                    $settings['enableuserinstances'] = $fromform->enableuserinstances;
+                }
+                else {
+                    $settings['enableuserinstances'] = 0;
+                }
+            }
             $success = $repositorytype->update_options($settings);
         } else {
             $type = new repository_type($plugin,(array)$fromform);
