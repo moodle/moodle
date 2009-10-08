@@ -755,11 +755,11 @@ function chat_update_chat_times($chatid=0) {
  * @return bool|string Returns HTML or false
  */
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
-    global $CFG, $USER, $OUTPUT, $COURSE;
+    global $CFG, $USER;
 
-    $result = new object();
-    $result->beep = false;         // by default
-    $result->refreshusers = false; // by default
+    $output = new object();
+    $output->beep = false;       // by default
+    $output->refreshusers = false; // by default
 
     // Use get_user_timezone() to find the correct timezone for displaying this message:
     // It's either the current user's timezone or else decided by some Moodle config setting
@@ -774,11 +774,10 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
-    $message->picture = $OUTPUT->user_picture(moodle_user_picture::make($sender, $courseid));
-    if (empty($courseid)) {
-        $courseid = $COURSE->id;
+    $message->picture = print_user_picture($sender->id, $courseid, $sender->picture, false, true, false);
+    if ($courseid) {
+        $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
-    $message->picture = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
 
     //Calculate the row class
     if ($chat_lastrow !== NULL) {
@@ -788,35 +787,32 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     // Start processing the message
+
     if(!empty($message->system)) {
         // System event
-        $result->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
-
-        $result->html  = '<div class="chat-event">';
-        $result->html .= '<span class="time">'.$message->strtime.'</span> ';
-        $userlink = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">".fullname($sender)."</a>";
-        $result->html .= '<span class="event">'.get_string('message'.$message->message, 'chat', $userlink).'</span> ';
-        $result->html .= '</div>';
-
-        $result->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>';
+        $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
+        $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
+        $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
+        $output->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>';
 
         if($message->message == 'exit' or $message->message == 'enter') {
-            $result->refreshusers = true; //force user panel refresh ASAP
+            $output->refreshusers = true; //force user panel refresh ASAP
         }
-        return $result;
+        return $output;
     }
 
     // It's not a system event
+
     $text = $message->message;
 
     /// Parse the text to clean and filter it
+
     $options = new object();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases
     $special = false;
-    $outtime = $message->strtime;
 
     if (substr($text, 0, 5) == 'beep ') {
         /// It's a beep!
@@ -824,13 +820,15 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
-            $outmain =  get_string('messagebeepseveryone', 'chat', fullname($sender));
-            $result->beep = true;  // (eventually this should be set to
+            $outinfo = $message->strtime.': '.get_string('messagebeepseveryone', 'chat', fullname($sender));
+            $outmain = '';
+            $output->beep = true;  // (eventually this should be set to
                                    //  to a filename uploaded by the user)
 
         } else if ($beepwho == $currentuser->id) {  // current user
-            $outmain = get_string('messagebeepsyou', 'chat', fullname($sender));
-            $result->beep = true;
+            $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
+            $outmain = '';
+            $output->beep = true;
 
         } else {  //something is not caught?
             return false;
@@ -843,6 +841,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         switch ($command){
         case 'me':
             $special = true;
+            $outinfo = $message->strtime;
             $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
             break;
         }
@@ -850,35 +849,29 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $pattern = '#To[[:space:]](.*):(.*)#';
         preg_match($pattern, trim($text), $matches);
         $special = true;
-        $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+        $outinfo = $message->strtime;
+        $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
     }
 
     if(!$special) {
+        $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
 
-    $result->text = strip_tags($outtime.': '.$outmain);
+    /// Format the message as a small table
 
-    $result->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\" valign=\"top\">$message->picture</td><td class=\"text\">";
+    $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $result->html .= "<span class=\"time\">[{$outtime}]</span> ";
-    if(!$special) {
-        $result->html .= "<span class=\"user\">{$sender->firstname}</span>";
-        $result->html .= ": $outmain";
+    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\" valign=\"top\">$message->picture</td><td class=\"text\">";
+    $output->html .= "<span class=\"title\">$outinfo</span>";
+    if ($outmain) {
+        $output->html .= ": $outmain";
+        $output->basic = '<dl><dt class="title">'.$outinfo.':</dt><dd class="text">'.$outmain.'</dd></dl>';
     } else {
-        $result->html .= "$outmain";
+        $output->basic = '<dl><dt class="title">'.$outinfo.'</dt></dl>';
     }
-    $result->html .= "</td></tr></table>";
-
-    $result->basic = '<dl><dt>';
-    $result->basic .= '<span cass="time">['.$outtime.']</span> '; 
-    $result->basic .= '<span class="user">'.$sender->firstname.'</span>'; 
-    $result->basic .= ': ';
-    $result->basic .= '</dt>';
-    $result->basic .= '<dd class="text">'.$outmain.'</dd>';
-    $result->basic .= '</dl>';
-
-    return $result;
+    $output->html .= "</td></tr></table>";
+    return $output;
 }
 
 /**
@@ -906,6 +899,157 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
     }
     return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
 }
+
+/**
+ * @global object
+ * @param object $message
+ * @param int $courseid
+ * @param object $currentuser
+ * @param string $chat_lastrow
+ * @return bool|string Returns HTML or false
+ */
+function chat_format_message_theme ($message, $courseid, $currentuser, $theme = 'bubble') {
+    global $CFG, $USER, $OUTPUT, $COURSE, $DB;
+
+    static $users;     // Cache user lookups
+
+    $result = new object();
+
+    if (file_exists($CFG->dirroot . '/mod/chat/gui_ajax/theme/'.$theme.'/config.php')) {
+        include($CFG->dirroot . '/mod/chat/gui_ajax/theme/'.$theme.'/config.php');
+    }
+
+    if (isset($users[$message->userid])) {
+        $sender = $users[$message->userid];
+    } else if ($sender = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname')) {
+        $users[$message->userid] = $sender;
+    } else {
+        return NULL;
+    }
+
+    $USER->timezone = 99;
+    $tz = get_user_timezone($currentuser->timezone);
+    $USER->timezone = $tz;
+
+    if (empty($courseid)) {
+        $courseid = $COURSE->id;
+    }
+
+    $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
+    $message->picture = $OUTPUT->user_picture(moodle_user_picture::make($sender, $courseid));
+
+    $message->picture = "<a target='_blank' href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
+
+    // Start processing the message
+    if(!empty($message->system)) {
+        $result->type = 'system';
+
+        $userlink = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$message->userid,'course'=>$courseid));
+
+        $patterns = array();
+        $replacements = array();
+        $patterns[] = '___senderprofile___';
+        $patterns[] = '___sender___';
+        $patterns[] = '___time___';
+        $patterns[] = '___event___';
+        $replacements[] = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
+        $replacements[] = fullname($sender);
+        $replacements[] = $message->strtime;
+        $replacements[] = get_string('message'.$message->message, 'chat');
+        $result->html = str_replace($patterns, $replacements, $chattheme_cfg->event_message);
+        return $result;
+    }
+
+    // It's not a system event
+    $text = $message->message;
+
+    /// Parse the text to clean and filter it
+    $options = new object();
+    $options->para = false;
+    $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
+
+    // And now check for special cases
+    $special = false;
+    $outtime = $message->strtime;
+
+    if (substr($text, 0, 5) == 'beep ') {
+        $special = true;
+        /// It's a beep!
+        $result->type = 'beep';
+        $beepwho = trim(substr($text, 5));
+
+        if ($beepwho == 'all') {   // everyone
+            $outmain =  get_string('messagebeepseveryone', 'chat', fullname($sender));
+        } else if ($beepwho == $currentuser->id) {  // current user
+            $outmain = get_string('messagebeepsyou', 'chat', fullname($sender));
+        } else if ($sender->id == $currentuser->id) {  //something is not caught?
+
+            $receiver = $DB->get_record('user', array('id'=>$beepwho), 'id,picture,firstname,lastname');
+            $outmain = get_string('messageyoubeep', 'chat', fullname($receiver));
+        }
+    } else if (substr($text, 0, 1) == '/') {     /// It's a user command
+        $special = true;
+        $result->type = 'command';
+        // support some IRC commands
+        $pattern = '#(^\/)(\w+).*#';
+        preg_match($pattern, trim($text), $matches);
+        $command = $matches[2];
+        $special = true;
+        switch ($command){
+        case 'me':
+            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+            break;
+        }
+    } elseif (substr($text, 0, 2) == 'To') {
+        $special = true;
+        $result->type = 'dialogue';
+        $pattern = '#To[[:space:]](.*):(.*)#';
+        preg_match($pattern, trim($text), $matches);
+        $special = true;
+        $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+    }
+
+    if(!$special) {
+        $outmain = $text;
+    }
+
+    $result->text = strip_tags($outtime.': '.$outmain);
+
+    $ismymessage = '';
+    $rightalign = '';
+    if ($sender->id == $USER->id) {
+        $ismymessage = ' class="mymessage"';
+        $rightalign = ' align="right"';
+    }
+    $patterns = array();
+    $replacements = array();
+    $patterns[] = '___avatar___';
+    $patterns[] = '___sender___';
+    $patterns[] = '___senderprofile___';
+    $patterns[] = '___time___';
+    $patterns[] = '___message___';
+    $patterns[] = '___mymessageclass___';
+    $patterns[] = '___tablealign___';
+    $replacements[] = $message->picture;
+    $replacements[] = fullname($sender);
+    $replacements[] = $CFG->wwwroot.'/user/view.php?id='.$sender->id.'&amp;course='.$courseid;
+    $replacements[] = $outtime;
+    $replacements[] = $outmain;
+    $replacements[] = $ismymessage;
+    $replacements[] = $rightalign;
+    if (!empty($chattheme_cfg->avatar) and !empty($chattheme_cfg->align)) {
+        if (!empty($ismymessage)) {
+            $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message_right);
+        } else {
+            $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message_left);
+        }
+    } else {
+        $result->html = str_replace($patterns, $replacements, $chattheme_cfg->user_message);
+    }
+
+    return $result;
+}
+
 
 /**
  * @global object $DB

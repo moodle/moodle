@@ -132,9 +132,9 @@
 
         if ($CFG->enableajax) {
             echo '<p>';
-            
+
             $link = html_link::make("/mod/chat/gui_ajax/index.php?id=$chat->id$groupparam", get_string('ajax_gui', 'message'));
-            $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+            $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700, 'toolbar' => false, 'resizeable' => false, 'status' => false)));
             $link->title = get_string('modulename', 'chat');
             echo $OUTPUT->link($link);
             echo '</p>';

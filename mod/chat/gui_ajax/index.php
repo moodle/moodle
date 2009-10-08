@@ -1,15 +1,16 @@
 <?php
 require_once('../../../config.php');
 require_once('../lib.php');
+
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
+$theme   = optional_param('theme', 'compact', PARAM_ALPHANUM);
 
 $url = new moodle_url($CFG->wwwroot.'/mod/chat/gui_ajax/index.php', array('id'=>$id));
 if ($groupid !== 0) {
     $url->param('groupid', $groupid);
 }
 $PAGE->set_url($url);
-
 if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
     print_error('invalidid', 'chat');
 }
@@ -53,6 +54,7 @@ if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
 
 $str_title = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
 $str_send  = get_string('send', 'chat'); 
+$str_themes = get_string('themes'); 
 
 $PAGE->set_generaltype('popup');
 $PAGE->set_title('Chat');
@@ -62,13 +64,19 @@ $PAGE->requires->yui_lib('layout');
 $PAGE->requires->yui_lib('container');
 $PAGE->requires->yui_lib('connection');
 $PAGE->requires->yui_lib('json');
-$PAGE->requires->yui_lib('button');
-$PAGE->requires->yui_lib('selector');
+$PAGE->requires->yui_lib('animation');
+$PAGE->requires->yui_lib('menu');
+
+if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+    $theme = 'bubble';
+}
 $PAGE->requires->data_for_js('chat_cfg', array(
     'home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
+    'chaturl'=>$CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
+    'theme'=>$theme,
     'userid'=>$USER->id,
     'sid'=>$chat_sid,
-    'timer'=>5000,
+    'timer'=>3000,
     'chat_lasttime'=>0,
     'chat_lastrow'=>null,
     'chatroom_name'=>$str_title
@@ -84,38 +92,44 @@ $PAGE->requires->string_for_js('talk', 'chat');
 
 $PAGE->requires->js('mod/chat/gui_ajax/script.js');
 $PAGE->requires->yui_lib('animation')->in_head();
-$PAGE->requires->css('mod/chat/chat.css');
 
+$PAGE->requires->css('mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
 $PAGE->add_body_class('yui-skin-sam');
+$PAGE->set_generaltype('embedded');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($str_title, 1);
 $intro = format_text($chat->intro, $chat->introformat);
+$home_url = $CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id;
 
 echo <<<DIVS
+<!--
 <div id="chat-header">
-{$chat->name} {$intro}
+{$chat->name} <p>{$intro}</p>
 </div>
+-->
 <div id="chat-userlist">
     <ul id="users-list">
-        <li></li>
     </ul>
 </div>
-<div id="chat_options">
-</div>
+<div id="chat-options"></div>
 <div id="chat-messages">
-    <div>
-        <ul id="messages-list">
-            <li></li>
-        <ul>
-    </div>
+    <ul id="messages-list"><ul>
 </div>
-<div id="chat-input">
-    <input type="text" id="input_msgbox" value="" size="70" />
-    <input type="button" id="btn_send" value="$str_send" />
+<div id="chat-input-area">
+<table width="100%">
+<tr>
+    <td>
+         &raquo;
+        <input type="text" disabled="true" id="input-message" value="Loading..." size="50" />
+        <input type="button" id="button-send" value="$str_send" />
+    </td>
+    <td align="right">
+        <a id="choosetheme" href="###">{$str_themes} ▶</a>
+    </td>
+</tr>
+</table>
 </div>
-<div id="notify">
-</div>
+<div id="chat-notify"></div>
 DIVS;
 echo $OUTPUT->footer();
 ?>

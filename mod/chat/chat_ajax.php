@@ -20,6 +20,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 $action = optional_param('action', '', PARAM_ALPHANUM);
 $beep_id      = optional_param('beep', '', PARAM_RAW);
 $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
+$theme        = required_param('theme', PARAM_ALPHANUM);
 $chat_message = optional_param('chat_message', '', PARAM_RAW);
 $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
@@ -124,22 +125,15 @@ case 'update':
         foreach ($messages as $n => &$message) {
             $tmp = new stdclass;
             // when somebody enter room, user list will be updated
-            if($message->system == 1){
+            if (!empty($message->system)){
                 $send_user_list = true;
-                $tmp->type = 'system';
                 $users = chat_format_userlist(chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid), $course);
             }
-            if ($html = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow)) {
-                if ($html->beep) {
-                    $tmp->type = 'beep';
-                } elseif (empty($tmp->type)) {
-                    $tmp->type = 'user';
-                }
-                $tmp->mymessage = ($USER->id == $message->userid);
-                $tmp->msg  = $html->html;
-                $message = $tmp;
+            if ($html = chat_format_message_theme($message, $chatuser->course, $USER, $theme)) {
+                $message->mymessage = ($USER->id == $message->userid);
+                $message->message  = $html->html;
             } else {
-                unset($message);
+                unset($messages[$n]);
             }
         }
     }

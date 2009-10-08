@@ -4031,8 +4031,8 @@ table.mod_index {
   width:100%;
   padding:0;
   margin-top:7px
+  display:block;
 }
-
 #mod-chat-view #chatcurrentusers .chatuserdetails {
   vertical-align: middle;
 }
@@ -4042,16 +4042,6 @@ table.mod_index {
   margin-left: auto;
   margin-right: auto;
   width: 50%;
-}
-
-.chat-event .picture,
-.chat-message .picture {
-  width:40px;
-  vertical-align:top;
-}
-.chat-event .text,
-.chat-message .text {
-  text-align: left;
 }
 
 #mod-chat-gui_basic #participants ul {
@@ -4081,11 +4071,33 @@ table.mod_index {
   padding:0px;
   display:inline;
 }
-
-body.mod-chat-gui_ajax .yui-layout-doc .yui-layout-unit .yui-layout-wrap .yui-layout-hd h2 {
-  font-size:100%;
-  padding:0px;
-  font-weight:normal;
+#mod-chat-gui_ajax-index .mdl-chat-entry, .mdl-chat-my-entry {
+    clear:both;
+    display:block;
+}
+#mod-chat-gui_ajax-index #messages-list, #users-list {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+#mod-chat-gui_ajax-index #users-list a {
+    color: grey;
+    font-size: 10px;
+}
+#mod-chat-gui_ajax-index #chat-header {
+    font-size: 200%;
+}
+#mod-chat-gui_ajax-index #chat-header p{
+    display: inline;
+    font-size: 50%;
+}
+#mod-chat-gui_ajax-index .chat-event {
+ color:grey;
+ text-align:center;
+}
+#mod-chat-gui_ajax-index .time, #mod-chat-gui_ajax-index .user{
+    color: grey;
+    font-size: 9px;
 }
 
 /***

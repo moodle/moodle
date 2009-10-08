@@ -40,6 +40,7 @@ $string['helpchatting'] = 'Help with chatting';
 $string['idle'] = 'Idle';
 $string['invalidid'] = 'Could not find that chat room!';
 $string['inputarea'] = 'Input area';
+$string['messageyoubeep'] = 'You beeped $a';
 $string['messagebeepseveryone'] = '$a beeps everyone!';
 $string['messagebeepsyou'] = '$a has just beeped you!';
 $string['messageenter'] = '$a has just entered this chat';
