@@ -173,7 +173,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= '<div><input type="hidden" name="'.$elname.'[itemid]" value="'.$draftitemid.'" /></div>';
         /// embedded image files - TODO: hide on the fly when switching editors
             $str .= '<div id="'.$id.'_filemanager">';
-            $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=embedded&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id;
+            $editorurl = "$CFG->wwwroot/repository/filepicker.php?action=browse&amp;env=editor&amp;itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes&amp;ctx_id=".$ctx->id;
             $str .= '<object type="text/html" data="'.$editorurl.'" height="160" width="600" style="border:1px solid #000">Error</object>'; // TODO: localise, fix styles, etc.
             $str .= '</div>';
 
@@ -186,8 +186,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $str .= $PAGE->requires->js_function_call('id2_add_itemid', array($id, $draftitemid))->asap();
 
             if ($editor->supports_repositories()) {
-                $str .= $PAGE->requires->js_function_call('hide_item', array("{$id}_filemanager"))->asap();
+                $str .= $PAGE->requires->js_function_call('destroy_item', array("{$id}_filemanager"))->asap();
             }
+        } else {
+            // should disable file picker 
+            $str .= 'No file allowed';
         }
 
         $str .= '</div>';
