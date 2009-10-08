@@ -10,13 +10,10 @@ class database_transfer_form extends moodleform {
         $mform->addElement('header', 'database', get_string('dbtransfer', 'dbtransfer'));
 
         $supported = array (
-            'mysqli/adodb',
-            'mysql/adodb',
-            'postgres7/adodb',
-            'mssql_n/adodb',
-            'mssql/adodb',
-            'odbc_mssql/adodb',
-            'oci8po/adodb',
+            'mysqli/native',
+            'pgsql/native',
+            'mssql/native',
+            'oci/native',
             'sqlite3/pdo',
         );
         $drivers = array();

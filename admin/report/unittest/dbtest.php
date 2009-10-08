@@ -132,8 +132,8 @@ foreach ($dbinfos as $i=>$dbinfo) {
 echo '</ul>';
 echo '<p>External databases are configured in config.php, add lines:</p>
 <pre>
-$CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", "test", null);
-$CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", "test", null);
+$CFG->func_test_db_1 = array("native", "pgsql", "localhost", "moodleuser", "password", "moodle", "test", null);
+$CFG->func_test_db_2 = array("native", "mssql", "localhost", "moodleuser", "password", "moodle", "test", null);
 </pre>
 <p>where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, prefix, dboptions</p>';
 echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
