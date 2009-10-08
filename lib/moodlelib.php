@@ -7060,7 +7060,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
     }
     if (is_array($function) || function_exists($function)) {
         // Function exists, so just return function result
-        $ret = call_user_func_array($function, $options);
+        $ret = call_user_func_array($function, (array)$options);
         if (is_null($ret)) {
             return $default;
         } else {
