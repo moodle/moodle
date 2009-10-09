@@ -1752,7 +1752,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the proper substr() function for each DB.
+     * Returns the proper substr() SQL text used to extract substrings from DB
      * NOTE: this was originally returning only function name
      *
      * @param string $expr some string field, no aggregates
