@@ -58,7 +58,7 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint($result, 2009082000 , 'qtype', 'calculated');
     }
-    if ( $oldversion < 2009092000 ) { //New version in version.php
+    if ( $result && $oldversion < 2009092000 ) { //New version in version.php
 
     /// Define field multichoice to be added to question_calculated_options
         $table = new xmldb_table('question_calculated_options');
