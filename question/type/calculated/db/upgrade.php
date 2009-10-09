@@ -46,14 +46,6 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('question', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('synchronize', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('multichoice', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0','synchronize');
-        $table->add_field('single', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0','multichoice');
-        $table->add_field('shuffleanswers', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0','single');
-        $table->add_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null,'shuffleanswers');
-        $table->add_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'correctfeedback');
-        $table->add_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'partiallycorrectfeedback');
-        $table->add_field('answernumbering', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'abc', 'incorrectfeedback');
-
 
     /// Adding keys to table question_calculated_options
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -64,9 +56,9 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
         }
-        upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
+        upgrade_plugin_savepoint($result, 2009082000 , 'qtype', 'calculated');
     }
-    if ($result && $oldversion >= 2009082000 && $oldversion < 2009092000 ) { //New version in version.php
+    if ( $oldversion < 2009092000 ) { //New version in version.php
 
     /// Define field multichoice to be added to question_calculated_options
         $table = new xmldb_table('question_calculated_options');
