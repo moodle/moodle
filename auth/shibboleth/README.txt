@@ -25,6 +25,9 @@ Changes:
             language files.
 - 3.  2009: Added various improvements and bug fixes reported by Ina Müller from
             university Tuebingen and Peter Ellis of University of Washington
+- 4.  2009: Added another requirement for logout regarding the call back script
+- 6.  2009: Changed handler URL when integrated Discovery Service is used
+- 10. 2009: Fixed HTML entity preservation in Shibboleth settings
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -33,11 +36,11 @@ Moodle Configuration with Dual login
    For Apache you have to define a rule like the following in the Apache config:
 
 --
-<Location ~  "/auth/shibboleth/index.php">
+<Directory  /path/to/moodle/auth/shibboleth/index.php>
         AuthType shibboleth
         ShibRequireSession On
         require valid-user
-</Location>
+</Directory>
 --
 
    To restrict access to Moodle, replace the access rule 'require valid-user'
@@ -106,6 +109,14 @@ Moodle Configuration with Dual login
                     in step 1 only the index.php script in 
                     moodle/auth/shibboleth/ is protected but *not* the other 
                     scripts and especially not the login.php script.
+    
+    If you were using the integrated WAYF alread with Shibboleth 1.3, it could
+    be that the integrated WAYF is not working anymore after you updated Moodle.
+    The reason is that the implicitly set default SessionInitiator changed in
+    Moodle as well as in Shibboleth. For Shibboleth 1.3 one therefore has to
+    add /Shibboleth.sso as third parameter whereas this is /Shibboleth.sso/DS
+    for Shibboleth 2.x.
+
 
 5.  Save the changes for the 'Shibboleth settings'.
 
@@ -257,7 +268,6 @@ recommended to use the following approach when upgrading the Service Provider:
 
 How to add logout support
 --------------------------------------------------------------------------------
-
 In order make Moodle support Shibboleth logout, one has to make the Shibboleth 
 Service Provider (SP) aware of the Moodle logout capability. Only then the SP 
 can trigger Moodle's front or back channel logout handler.
@@ -270,15 +280,6 @@ just before the <MetadataProvider> element.
 <Notify 
 	Channel="back"
 	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
-
-<!-- 
-If possible, you should use only the back channel logout once it is working.
--->
-<!--
-<Notify 
-	Channel="front"
-	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
--->
 --
 
 Then restart the Shibboleth daemon and check the log file for errors. If there 
@@ -293,15 +294,35 @@ Requirements:
 - PHP needs the Soap Extension, which maybe must installed manually:
   More information is available here http://ch.php.net/soap
 - Logout only works with Shibboleth Service Provider 2.1 or higher
+- /moodle/auth/shibboleth/logout.php *must not* be protected by Shibboleth!
+  In case all of Moodle is protected with Shibboleth, you have to add something
+  like this to your Apache configuration after all the other require rules
+
+--
+<Directory /path/to/moodle/auth/shibboleth/logout.php>
+	AuthType shibboleth
+	ShibRequireSession Off
+	require shibboleth
+</Directory>
+--
+  When using IIS, the same can be achieved by something like:
+--
+<Path name="auth/shibboleth/logout.php" requireSession="false" >
+--
+  in the shibboleth2.xml RequestMap.
+
 
 Limitations:
 Single Logout is only supported when SAML2 is used at the SP and the IdP.
-As of December 2008, the Shibboleth Identity Provider 2.1.1 does not yet support
-Single Logout (SLO). Therefore, the single logout feature cannot be used yet. 
+As of October 2009, the Shibboleth Identity Provider 2.1.4 does not yet support
+Single Logout (SLO). Therefore, the single logout feature cannot be used yet
+in a Shibboleth only setup but there may be other SAML2 products that could
+be used as Identity Provider, e.g. SimpleSAML PHP.
 One of the reasons why SLO isn't supported yet is because there aren't many 
 applications yet that were adapted to support front and back channel 
 logout. Hopefully, the Moodle logout helps to motivate the developers to 
-implement SLO :)
+implement SLO. On the other hand, the easiest and safest way to log out
+still is to tell users to quit their web browsers :)
 
 Also see https://spaces.internet2.edu/display/SHIB2/SLOIssues and 
 https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator for some 
