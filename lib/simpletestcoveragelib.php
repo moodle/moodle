@@ -495,7 +495,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
                 $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
                     ' title="">' . $strlatestreport . '</a>', 3, 'main codecoveragelink');
-                $result .= $OUTPUT->heading('<p>' . $strlatestdetails . '</p>', 4, 'main codecoveragedetails');
+                $result .= $OUTPUT->heading($strlatestdetails, 4, 'main codecoveragedetails');
                 return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
             }
         }
