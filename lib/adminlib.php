@@ -6291,9 +6291,9 @@ class admin_setting_managewsservicelist extends admin_setting {
 
         //retrieve all services
         // $services = $DB->get_records('external_services',null,'custom DESC');
-        $servicesfunctions = $DB->get_records_sql("SELECT  fs.id as id, s.id as serviceid, s.custom as custom, s.name as servicename, s.enabled as serviceenabled, f.name as functionname, fs.enabled as functionenabled
+        $servicesfunctions = $DB->get_records_sql("SELECT  fs.id as id, s.id as serviceid, s.component as component, s.name as servicename, s.enabled as serviceenabled, f.name as functionname
                                     FROM {external_services} s, {external_functions} f, {external_services_functions} fs
-                                   WHERE fs.externalserviceid = s.id AND fs.externalfunctionid = f.id ORDER BY s.name ASC");
+                                   WHERE fs.externalserviceid = s.id AND fs.functionname = f.name ORDER BY s.name ASC");
 
         //create a services array
         $services = array();

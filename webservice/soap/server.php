@@ -29,7 +29,7 @@
  */
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once('lib.php');
-
+ini_set("soap.wsdl_cache_enabled", "0"); //must not cache wsdl
 if (empty($CFG->enablewebservices)) {
     die;
 }

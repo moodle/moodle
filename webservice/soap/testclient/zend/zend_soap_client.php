@@ -32,9 +32,8 @@ require_once('../../../../config.php');
 require_once('../../lib.php');
 
 
-
-include "Zend/Loader.php";
-Zend_Loader::registerAutoload();
+ini_set("soap.wsdl_cache_enabled", "0");
+include_once "Zend/Soap/Client.php";
 
 $PAGE->set_course($COURSE);
 $PAGE->set_url('webservice/soap/testclient/zend/zend_soap_client.php');
@@ -71,7 +70,7 @@ if (!webservice_lib::display_webservices_availability("soap")) {
 
 /// authenticate => get a conversation token from the server
 /// You need a wsuser/wspassword user in the remote Moodle
-$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl");
+$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?wsdl=true");
 try {
 
     $params = new stdClass();
@@ -104,77 +103,78 @@ try {
 
 
 /// build the Zend SOAP client from the remote WSDL
-$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl");
+$client = new Zend_Soap_Client($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&wsdl=true");
 print "<br><br><strong>You are accessing the WSDL: </strong>";
 print "<br><br>".$CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=user&wsdl<br>";
 
 /// Get any user with string "admin"
-print "<br><br><strong>Get users:</strong>";
-print "<pre>\n";
-try {
-    $params = new stdClass();
-    $params->search = "admin";
-    var_dump($client->get_users($params));
-} catch (exception $exception) {
-    print $exception;
-    print "<br><br><strong>An exception occured: \n</strong>";
-    printLastRequestResponse($client);
-}
-print "</pre>";
+//print "<br><br><strong>Get users:</strong>";
+//print "<pre>\n";
+//try {
+//    $params = new stdClass();
+//    $params->search = "admin";
+//    var_dump($client->get_users($params));
+//} catch (exception $exception) {
+//    print $exception;
+//    print "<br><br><strong>An exception occured: \n</strong>";
+//    printLastRequestResponse($client);
+//}
+//print "</pre>";
 
 /// Create a user with "mockuser66" username
 print "<br><br><strong>Create user:</strong>";
 print "<pre>\n";
 try {
-
-    $user = new stdClass();
-    $user->password = "password6";
-    $user->email = "mockuser6@mockuser6.com";
-    $user->username = "mockuser66";
-    $user->firstname = "firstname6";
-    $user->lastname = "lastname6";
+    $user = array();
+    $user['password'] = "password6";
+    $user['email'] = "mockuser6@mockuser6.com";
+    $user['username'] = "mockuser66";
+    $user['firstname'] = "firstname6";
+    $user['lastname'] = "lastname6";
     $params = new stdClass();
     $params->users = array($user);
-    var_dump($client->create_users($params));
+    $userlist = array();
+    $userlist[] = $user;
+    var_dump($client->create_users($userlist));
 } catch (exception $exception) {
     print $exception;
     print "<br><br><strong>An exception occured: \n</strong>";
-    printLastRequestResponse($client);
+    //printLastRequestResponse($client);
 }
 print "</pre>";
 
-/// Update this user
-print "<br><br><strong>Update user:</strong>";
-print "<pre>\n";
-try {
-    $usertoupdate = new stdClass();
-    $usertoupdate->email = "mockuser6@mockuser6.com";
-    $usertoupdate->username = "mockuser66";
-    $usertoupdate->newusername = 'mockuser6b';
-    $usertoupdate->firstname = "firstname6b";
-    $params = new stdClass();
-    $params->users = array($usertoupdate);
-    var_dump($client->update_users($params));
-} catch (exception $exception) {
-    print $exception;
-    print "<br><br><strong>An exception occured: \n</strong>";
-    printLastRequestResponse($client);
-}
-print "</pre>";
-
-/// Delete this user
-print "<br><br><strong>Delete user:</strong>";
-print "<pre>\n";
-try {
-    $params = new stdClass();
-    $params->usernames = array("mockuser6b");
-    var_dump($client->delete_users($params));
-} catch (exception $exception) {
-    print $exception;
-    print "<br><br><strong>An exception occured: \n</strong>";
-    printLastRequestResponse($client);
-}
-print "</pre>";
+///// Update this user
+//print "<br><br><strong>Update user:</strong>";
+//print "<pre>\n";
+//try {
+//    $usertoupdate = new stdClass();
+//    $usertoupdate->email = "mockuser6@mockuser6.com";
+//    $usertoupdate->username = "mockuser66";
+//    $usertoupdate->newusername = 'mockuser6b';
+//    $usertoupdate->firstname = "firstname6b";
+//    $params = new stdClass();
+//    $params->users = array($usertoupdate);
+//    var_dump($client->update_users($params));
+//} catch (exception $exception) {
+//    print $exception;
+//    print "<br><br><strong>An exception occured: \n</strong>";
+//    printLastRequestResponse($client);
+//}
+//print "</pre>";
+//
+///// Delete this user
+//print "<br><br><strong>Delete user:</strong>";
+//print "<pre>\n";
+//try {
+//    $params = new stdClass();
+//    $params->usernames = array("mockuser6b");
+//    var_dump($client->delete_users($params));
+//} catch (exception $exception) {
+//    print $exception;
+//    print "<br><br><strong>An exception occured: \n</strong>";
+//    printLastRequestResponse($client);
+//}
+//print "</pre>";
 
 /// Display Moodle page footer
 echo $OUTPUT->footer();

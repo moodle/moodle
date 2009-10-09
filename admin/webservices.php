@@ -21,6 +21,7 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 
 $serviceid      = optional_param('serviceid', '', PARAM_FORMAT);
+$remove         = optional_param('remove', '', PARAM_FORMAT);
 
 $pagename = 'webservicessettings';
 
@@ -34,6 +35,13 @@ $baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=webservices";
 
 if (!confirm_sesskey()) {
     print_error('confirmsesskeybad', '', $baseurl);
+}
+
+if (!empty($remove)) {
+    $functionserviceid         = optional_param('functionserviceid', '', PARAM_FORMAT);
+    if (!empty($functionserviceid)) {
+        $DB->delete_records('external_services_functions',array('id' => $functionserviceid));
+    } 
 }
 
 if (!empty($serviceid)) {
@@ -50,9 +58,9 @@ if (!empty($serviceid)) {
     }
 
     //display service functions
-    $servicesfunctions = $DB->get_records_sql("SELECT fs.id as id, f.component as component, fs.enabled as enabled, s.name as servicename, s.id as serviceid, f.name as functionname, f.id as functionid
+    $servicesfunctions = $DB->get_records_sql("SELECT fs.id as id, f.component as component, s.name as servicename, s.id as serviceid, f.name as functionname, f.id as functionid
                                     FROM {external_services} s, {external_functions} f, {external_services_functions} fs
-                                   WHERE fs.externalserviceid = s.id AND fs.externalfunctionid = f.id AND s.id = ?", array($serviceid));
+                                   WHERE fs.externalserviceid = s.id AND fs.functionname = f.name AND s.id = ?", array($serviceid));
 
     //save the administrator changes
     $saved      = optional_param('saved', 0, PARAM_NUMBER);
@@ -75,13 +83,15 @@ if (!empty($serviceid)) {
 
     $data = array();
     reset($servicesfunctions);
-    foreach($servicesfunctions as $function) {
-        $checkbox = html_select_option::make_checkbox($function->functionid, $function->enabled, 'functionenabled');
+    foreach($servicesfunctions as $servicefunction) {
+        $checkbox = html_select_option::make_checkbox($servicefunction->functionid, $servicefunction->enabled, 'functionenabled');
         $checkbox->label->add_class('accesshide');
-        $data[] = array($function->functionname, $function->component, $OUTPUT->checkbox($checkbox, $function->functionname));
+        $checkbox->disabled;
+        $checkboxhtml = $OUTPUT->checkbox($checkbox, $servicefunction->functionname);
+        $data[] = array($servicefunction->functionname, $servicefunction->component, "<a href=?sesskey=".sesskey()."&amp;serviceid=".$serviceid."&amp;remove=1&amp;functionserviceid=".$servicefunction->id.">".get_string("removefunctionfromservice","webservice")."</a>");
     }
     $table = new html_table();
-    $table->head  = array(get_string('functionname', 'webservice'), get_string('component', 'webservice'), get_string('enabled', 'webservice'));
+    $table->head  = array(get_string('functionname', 'webservice'), get_string('component', 'webservice'), get_string('actions', 'webservice'));
     $table->size  = array('40%', '40%', '20%');
     $table->align = array('left', 'left', 'left');
     //$table->width = '30%';

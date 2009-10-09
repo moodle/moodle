@@ -48,9 +48,12 @@ final class soap_server extends webservice_server {
         if (empty($enable)) {
             die;
         }
-        global $CFG;
-        include_once "Zend/Loader.php";
-        Zend_Loader::registerAutoload();
+        global $CFG, $DB;
+        //include_once "Zend/Loader/Autoloader.php";
+        //Zend_Loader_Autoloader::autoload('Zend_Loader');
+
+        include_once "Zend/Soap/Server.php";
+        include_once "Zend/Soap/AutoDiscover.php";
 
         // retrieve the token from the url
         // if the token doesn't exist, set a class containing only get_token()
@@ -85,8 +88,7 @@ final class soap_server extends webservice_server {
                 $autodiscover->setClass('ws_authentication');
                 $autodiscover->handle();
             } else {
-
-                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?wsdl"); // this current file here
+                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?wsdl=true"); // this current file here
                 
                 $soap->registerFaultException('moodle_exception');
                             
@@ -96,6 +98,7 @@ final class soap_server extends webservice_server {
         } else { // if token exist, do the authentication here
             /// TODO: following function will need to be modified
             $user = webservice_lib::mock_check_token($token);
+          //  varlog($user);
             if (empty($user)) {
                 throw new moodle_exception('wrongidentification');
             } else {
@@ -103,22 +106,39 @@ final class soap_server extends webservice_server {
                 global $USER;
                 $USER = $user;
             }
-            //retrieve the api name
-            if (empty($classpath)) {
-                $classpath = optional_param('classpath',null,PARAM_ALPHANUM);
-            }
-            require_once(dirname(__FILE__) . '/../../'.$classpath.'/external.php');
+
+            //load the service functions that the user can access
+                $sql = 'SELECT f.id, f.classname, f.classpath, f.methodname FROM {external_functions} f, {external_services} s, {external_services_functions} sf, {external_services_users} su
+                                 WHERE s.enabled = 1 AND f.id = sf.id AND sf.externalserviceid = su.externalserviceid AND s.id = su.externalserviceid AND su.userid = ?';
+                $functions = $DB->get_records_sql($sql,array($USER->id));
+                $classlist = array(); //key is the classname, value is the class path
+                foreach($functions as $function) {
+                    $classlist[$function->classname] = $function->classpath;
+                }
+                //varlog('List of services that '.$USER->username.' can access:');
+                //varlog($classlist);
+
             /// run the server
             if(isset($_GET['wsdl'])) {
                 $autodiscover = new Zend_Soap_AutoDiscover();
 
                 //this is a hack, because there is a bug in Zend framework (http://framework.zend.com/issues/browse/ZF-5736)
-                $autodiscover->setUri($CFG->wwwroot."/webservice/soap/server.php/".$token."/".$classpath);
-                $autodiscover->setClass($classpath."_external");
+                $autodiscover->setUri($CFG->wwwroot."/webservice/soap/server.php/".$token);
+
+                //we loading all class contaning the requested function
+                foreach ($classlist as $classname => $classpath) {
+                     require_once($CFG->dirroot."/".$classpath);
+                     $autodiscover->setClass($classname);
+                }
+
+                //$autodiscover->setClass($classpath."_external");
                 $autodiscover->handle();
             } else {
-                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&classpath=".$classpath."&wsdl"); // this current file here
-                $soap->setClass($classpath."_external");
+                $soap = new Zend_Soap_Server($CFG->wwwroot."/webservice/soap/server.php?token=".$token."&wsdl"); // this current file here
+                 foreach ($classlist as $classname => $classpath) {
+                     require_once($CFG->dirroot."/".$classpath);
+                     $soap->setClass($classname);
+                }
                 $soap->registerFaultException('moodle_exception');
                 $soap->handle();
             }
