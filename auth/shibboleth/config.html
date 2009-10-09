@@ -66,7 +66,7 @@
 https://another.idp-id.com/shibboleth, Other Example Organization, /Shibboleth.sso/DS/SWITCHaai
 urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/SWITCHaai';
         } else {
-            echo $config->organization_selection;
+            echo htmlentities($config->organization_selection);
         }
         ?>
 </textarea>
@@ -110,7 +110,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
     <td>
         <input name="login_name" type="text" size="30" value="<?php 
         if ( isset($config->login_name) and !empty($config->login_name)){
-            echo $config->login_name;
+            echo htmlentities($config->login_name);
         } else {
             echo 'Shibboleth Login';
         }
