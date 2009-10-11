@@ -946,24 +946,7 @@ class test extends XMLDBAction {
             $tests['rename table'] = $test;
         }
 
-    /// 45th test. Getting the PK sequence name for one table
-        if ($test->status) {
-            $table->setName('newnameforthetable');
-            $test = new stdClass;
-            $test->sql =  array($dbman->find_sequence_name($table));
-            $test->status = $dbman->find_sequence_name($table);
-            if (!$test->status) {
-                if (!$test->error = $DB->get_last_error()) { //If no db errors, result is ok. Just the driver doesn't support this
-                    $test->sql = array('Not needed for this DB. Correct.');
-                    $test->status = true;
-                } else {
-                    $test->error .= "\n" . $e;
-                }
-            }
-            $tests['find sequence name'] = $test;
-        }
-
-    /// 46th test. Inserting TEXT contents
+    /// 45th test. Inserting TEXT contents
         $textlib = textlib_get_instance();
         if ($test->status) {
             $test = new stdClass;
@@ -1002,7 +985,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 47th test. Inserting BINARY contents
+    /// 46th test. Inserting BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -1031,7 +1014,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
         }
 
-    /// 48th test. $DB->update_record with TEXT and BINARY contents
+    /// 47th test. $DB->update_record with TEXT and BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -1071,7 +1054,7 @@ class test extends XMLDBAction {
             $tests['update record '. $textlen . ' cc. (text) and ' . $imglen . ' bytes (binary)'] = $test;
         }
 
-    /// 49th test. $DB->set_field with TEXT contents
+    /// 48th test. $DB->set_field with TEXT contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -1101,7 +1084,7 @@ class test extends XMLDBAction {
             $tests['set field '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 50th test. $DB->set_field with BINARY contents
+    /// 49th test. $DB->set_field with BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;

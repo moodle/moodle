@@ -1183,25 +1183,6 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue(!empty($result));
     }
 
-    public function testFindSequenceName() {
-        $dbman = $this->tdb->get_manager();
-
-        // give nonexistent table param
-        $table = new xmldb_table("nonexistenttable");
-        try {
-            $dbman->find_sequence_name($table);
-            $this->assertTrue(false);
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof moodle_exception);
-        }
-
-        // Give existing and valid table param
-        $table = $this->create_deftable('test_table0');
-//TODO: this returns stuff depending on db internals
-        // $this->assertEqual(false, $dbman->find_sequence_name($table));
-
-    }
-
     public function testDeleteTablesFromXmldbFile() {
         global $CFG;
         $dbman = $this->tdb->get_manager();

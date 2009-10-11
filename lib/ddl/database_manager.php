@@ -311,25 +311,6 @@ class database_manager {
         }
     }
 
-
-    /**
-     * Given one xmldb_table, the function returns the name of its sequence in DB
-     *
-     * @param xmldb_table the table to be searched
-     * @return string sequence name of false
-     */
-    public function find_sequence_name(xmldb_table $xmldb_table) {
-        if (!$this->table_exists($xmldb_table)) {
-            throw new ddl_table_missing_exception($xmldb_table->getName());
-        }
-
-        $sequencename = false;
-
-        $sequencename = $this->generator->getSequenceFromDB($xmldb_table);
-
-        return $sequencename;
-    }
-
     /**
      * This function will delete all tables found in XMLDB file from db
      *

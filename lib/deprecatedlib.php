@@ -692,18 +692,6 @@ function find_key_name($table, $xmldb_key) {
  * @param string $table
  * @return bool
  */
-function find_sequence_name($table) {
-    global $DB;
-    debugging('Deprecated ddllib function used!');
-    return $DB->get_manager()->find_sequence_name($table);
-}
-
-/**
- * @deprecated
- * @global object
- * @param string $table
- * @return bool
- */
 function drop_table($table) {
     global $DB;
     debugging('Deprecated ddllib function used!');

@@ -86,7 +86,7 @@ class oracle_sql_generator extends sql_generator {
         $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'.$tablename.'}');
         $value++;
 
-        $seqname = $this->mdb->get_manager()->find_sequence_name($xmldb_table);
+        $seqname = $this->getSequenceFromDB($xmldb_table);
 
         if (!$seqname) {
         /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
