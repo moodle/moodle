@@ -32,6 +32,11 @@ if (!function_exists('get_all_sections')) {
 }
 
 /**
+ * The name that will be used to seperate the navigation cache within SESSION
+ */
+define('NAVIGATION_CACHE_NAME', 'navigation');
+
+/**
  * This class is used to represent a node in a navigation tree
  *
  * This class is used to represent a node in a navigation tree within Moodle,
@@ -772,7 +777,7 @@ class global_navigation extends navigation_node {
         $this->text = get_string('home');
         $this->forceopen = true;
         $this->action = new moodle_url($CFG->wwwroot);
-        $this->cache = new navigation_cache('navigation');
+        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
         $PAGE->requires->string_for_js('moveallsidetabstoblock','moodle');
         $regenerate = optional_param('regenerate', null, PARAM_TEXT);
         if ($regenerate==='navigation') {
@@ -820,7 +825,8 @@ class global_navigation extends navigation_node {
         $depth = 0;
 
         switch ($contextlevel) {
-            case CONTEXT_SYSTEM: 
+            case CONTEXT_SYSTEM:
+                $this->cache->volatile();
                 $depth = $this->load_for_category(false);
                 break;
             case CONTEXT_COURSECAT: 
@@ -1560,6 +1566,13 @@ class global_navigation extends navigation_node {
         }
         return 0;
     }
+
+    /**
+     * This function marks the cache as volatile so it is cleared during shutdown
+     */
+    public function clear_cache() {
+        $this->cache->volatile();
+    }
 }
 
 /**
@@ -2011,7 +2024,7 @@ class navbar extends navigation_node {
      * @param bool $firstnode
      * @return string HTML
      */
-    protected function parse_branch_to_html($navarray, $firstnode=true, $moreafterthis) {
+    protected function parse_branch_to_html($navarray, $firstnode=true, $moreafterthis=false) {
         $separator = get_separator();
         $output = '';
         if ($firstnode===true) {
@@ -2126,7 +2139,7 @@ class settings_navigation extends navigation_node {
         // before we try anything
         $this->page->navigation->initialise();
         // Initialise the navigation cache
-        $this->cache = new navigation_cache('navigation');
+        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
     }
     /**
      * Initialise the settings navigation based on the current context
@@ -2143,6 +2156,7 @@ class settings_navigation extends navigation_node {
         $this->context = $this->page->context;
         switch ($this->context->contextlevel) {
             case CONTEXT_SYSTEM:
+                $this->cache->volatile();
                 $adminkey = $this->load_administration_settings();
                 $settingskey = $this->load_user_settings(SITEID);
                 break;
@@ -2278,7 +2292,7 @@ class settings_navigation extends navigation_node {
                 if (!function_exists('admin_get_root')) {
                     require_once($CFG->dirroot.'/lib/adminlib.php');
                 }
-                $adminroot = admin_get_root();
+                $adminroot = admin_get_root(false, false);
                 $branchkey = $this->add(get_string('administrationsite'),new moodle_url($CFG->wwwroot.'/admin/'), self::TYPE_SETTING);
                 $referencebranch = $this->get($branchkey);
                 foreach ($adminroot->children as $adminbranch) {
@@ -3001,6 +3015,13 @@ class settings_navigation extends navigation_node {
             }
         }
     }
+
+    /**
+     * This function marks the cache as volatile so it is cleared during shutdown
+     */
+    public function clear_cache() {
+        $this->cache->volatile();
+    }
 }
 
 /**
@@ -3135,6 +3156,8 @@ class navigation_cache {
     const CACHEUSERID = 1;
     /** @var int */
     const CACHEVALUE = 2;
+    /** @var null|array An array of navigation cache areas to expire on shutdown */
+    public static $volatilecaches;
     
     /**
      * Contructor for the cache. Requires two arguments
@@ -3187,7 +3210,7 @@ class navigation_cache {
     public function __set($key, $information) {
         $this->set($key, $information);
     }
-    
+
     /**
      * Sets some information against the cache (session) for later retrieval
      *
@@ -3246,6 +3269,45 @@ class navigation_cache {
         foreach ($this->session as $key=>$cachedinfo) {
             if (is_array($cachedinfo) && $cachedinfo[self::CACHETIME]<$this->timeout) {
                 unset($this->session[$key]);
+            }
+        }
+    }
+
+    /**
+     * Marks the cache as being volatile (likely to change)
+     *
+     * Any caches marked as volatile will be destroyed at the on shutdown by
+     * {@link navigation_node::destroy_volatile_caches()} which is registered
+     * as a shutdown function if any caches are marked as volatile.
+     *
+     * @param bool $setting True to destroy the cache false not too
+     */
+    public function volatile($setting = true) {
+        if (self::$volatilecaches===null) {
+            self::$volatilecaches = array();
+            register_shutdown_function(array('navigation_cache','destroy_volatile_caches'));
+        }
+
+        if ($setting) {
+            self::$volatilecaches[$this->area] = $this->area;
+        } else if (array_key_exists($this->area, self::$volatilecaches)) {
+            unset(self::$volatilecaches[$this->area]);
+        }
+    }
+
+    /**
+     * Destroys all caches marked as volatile
+     *
+     * This function is static and works in conjunction with the static volatilecaches
+     * property of navigation cache.
+     * Because this function is static it manually resets the cached areas back to an
+     * empty array.
+     */
+    public static function destroy_volatile_caches() {
+        global $SESSION;
+        if (is_array(self::$volatilecaches) && count(self::$volatilecaches)>0) {
+            foreach (self::$volatilecaches as $area) {
+                $SESSION->navcache->{$area} = array();
             }
         }
     }

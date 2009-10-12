@@ -5218,6 +5218,8 @@ function admin_externalpage_setup($section, $extrabutton = '',
     if ($PAGE->user_allowed_editing() && $adminediting != -1) {
         $USER->editing = $adminediting;
     }
+
+    $PAGE->navigation->clear_cache();
 }
 
 /**
