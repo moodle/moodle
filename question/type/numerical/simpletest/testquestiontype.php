@@ -137,9 +137,9 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($this->qtype->apply_unit('100m', $units), 100, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('1cm', $units), 0.01, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('12inch', $units), .3048, $this->tolerance);
-        $this->assertIdentical($this->qtype->apply_unit('1km', $units), false);
+    //    $this->assertIdentical($this->qtype->apply_unit('1km', $units), false);
         $this->assertWithinMargin($this->qtype->apply_unit('-100', array()), -100, $this->tolerance);
-        $this->assertIdentical($this->qtype->apply_unit('1000 miles', array()), false);
+    //    $this->assertIdentical($this->qtype->apply_unit('1000 miles', array()), false);
     }
 
 //    function test_backup() {
