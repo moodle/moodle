@@ -15,10 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define('COMMENT_ERROR_DB', 1);
-define('COMMENT_ERROR_INSUFFICIENT_CAPS', 2);
-define('COMMENT_ERROR_MODULE_REJECT', 3);
-
 /**
  * comment is class to process moodle comments
  *
@@ -370,7 +366,6 @@ EOD;
         if (empty($this->viewcap)) {
             return false;
         }
-        // TODO: find a apropriate add page to add this option
         $CFG->commentsperpage = 15;
         if (!is_numeric($page)) {
             $page = 0;
@@ -462,7 +457,7 @@ EOD;
     public function add($content, $format = FORMAT_MOODLE) {
         global $CFG, $DB, $USER, $OUTPUT;
         if (empty($this->postcap)) {
-            return COMMENT_ERROR_INSUFFICIENT_CAPS;
+            throw new comment_exception('nopermissiontocomment');
         }
         $now = time();
         $newcmt = new stdclass;
@@ -478,7 +473,7 @@ EOD;
             // moodle module will check content
             $ret = plugin_callback($this->plugintype, $this->pluginname, FEATURE_COMMENT, 'add', array(&$newcmt, $this->options), true);
             if (!$ret) {
-                return COMMENT_ERROR_MODULE_REJECT;
+                throw new comment_exception('modulererejectcomment');
             }
         }
 
@@ -493,7 +488,7 @@ EOD;
             $newcmt->avatar = $OUTPUT->user_picture($userpic);
             return $newcmt;
         } else {
-            return COMMENT_ERROR_DB;
+            throw new comment_exception('dbupdatefailed');
         }
     }
 
@@ -519,10 +514,10 @@ EOD;
         global $DB, $USER;
         $candelete = has_capability('moodle/comment:delete', $this->context);
         if (!$comment = $DB->get_record('comments', array('id'=>$commentid))) {
-            return COMMENT_ERROR_DB;
+            throw new comment_exception('dbupdatefailed');
         }
         if (!($USER->id == $comment->userid || !empty($candelete))) {
-            return COMMENT_ERROR_INSUFFICIENT_CAPS;
+            throw new comment_exception('nopermissiontocomment');
         }
         return $DB->delete_records('comments', array('id'=>$commentid));
     }
@@ -588,3 +583,10 @@ EOD;
     }
 }
 
+class comment_exception extends moodle_exception {
+    public $message;
+    function __construct($errorcode) {
+        $this->errorcode = $errorcode;
+        $this->message = get_string($errorcode, 'error');
+    }
+}

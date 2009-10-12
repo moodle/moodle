@@ -62,15 +62,13 @@ $comment = new comment($cmt);
 
 switch ($action) {
 case 'add':
-    $cmt = $comment->add($content);
-    if (!empty($cmt) && is_object($cmt)) {
-        redirect($returnurl, get_string('pageshouldredirect'), 0);
-    } else if ($cmt === COMMENT_ERROR_DB) {
-        print_error('dbupdatefailed');
-    } else if ($cmt === COMMENT_ERROR_MODULE_REJECT) {
-        print_error('modulererejectcomment');
-    } else if ($cmt === COMMENT_ERROR_INSUFFICIENT_CAPS) {
-        print_error('nopermissiontocomment');
+    try {
+        $cmt = $comment->add($content);
+        if (!empty($cmt) && is_object($cmt)) {
+            redirect($returnurl, get_string('pageshouldredirect'), 0);
+        }
+    } catch(comment_exception $e) {
+        print_error($e->errorcode);
     }
     break;
 default:

@@ -68,42 +68,38 @@ if (!empty($client_id)) {
 }
 switch ($action) {
 case 'add':
-    $cmt = $comment->add($content);
-    $cmt->count = $comment->count();
-    if (!empty($cmt) && is_object($cmt)) {
-        $cmt->client_id = $client_id;
-        echo json_encode($cmt);
-    } else if ($cmt === COMMENT_ERROR_DB) {
-        $err->error = get_string('dbupdatefailed');
-        echo json_encode($err);
-    } else if ($cmt === COMMENT_ERROR_MODULE_REJECT) {
-        $err->error = get_string('modulererejectcomment');
-        echo json_encode($err);
-    } else if ($cmt === COMMENT_ERROR_INSUFFICIENT_CAPS) {
-        $err->error = get_string('nopermissiontocomment');
-        echo json_encode($err);
+    try {
+        $cmt = $comment->add($content);
+        $cmt->count = $comment->count();
+        if (!empty($cmt) && is_object($cmt)) {
+            $cmt->client_id = $client_id;
+            echo json_encode($cmt);
+        }
+    } catch (comment_exception $e) {
+        echo json_encode(array('error'=>$e->message));
     }
     break;
 case 'delete':
-    $result = $comment->delete($commentid);
-    if ($result === true) {
-        echo json_encode(array('client_id'=>$client_id, 'commentid'=>$commentid));
-    } else if ($result == COMMENT_ERROR_INSUFFICIENT_CAPS) {
-        $err->error = get_string('nopermissiontoeditcomment');
-        echo json_encode($err);
-    } else if ($result == COMMENT_ERROR_DB) {
-        $err->error = get_string('dbupdatefailed');
-        echo json_encode($err);
+    try {
+        $result = $comment->delete($commentid);
+        if ($result === true) {
+            echo json_encode(array('client_id'=>$client_id, 'commentid'=>$commentid));
+        }
+    } catch (comment_exception $e) {
+        echo json_encode(array('error'=>$e->message));
     }
     break;
 case 'get':
 default:
     $ret = array();
-    $comments = $comment->get_comments($page);
-    $ret['list'] = $comments;
-    $ret['count'] = $comment->count();
-    $ret['pagination'] = $comment->get_pagination($page);
-    $ret['client_id']  = $client_id;
-    echo json_encode($ret);
-    exit;
+    try {
+        $comments = $comment->get_comments($page);
+        $ret['list'] = $comments;
+        $ret['count'] = $comment->count();
+        $ret['pagination'] = $comment->get_pagination($page);
+        $ret['client_id']  = $client_id;
+        echo json_encode($ret);
+    } catch (comment_exception $e) {
+        echo json_encode(array('error'=>$e->message));
+    }
 }
