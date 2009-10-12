@@ -19,6 +19,11 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+// TODO: this needs to be rewritten to use the new description format
+//       the problem here is that the list of functions is different for each use or even token
+//       I guess this should ne moved to server itself and it should require user auth
+die('TODO');
+
 /**
  * This file generate a web service documentation in HTML
  * This documentation describe how to call a Moodle Web Service

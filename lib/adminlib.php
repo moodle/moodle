@@ -4964,7 +4964,7 @@ class admin_setting_manageeditors extends admin_setting {
             $table->data[] =array($displayname, $hideshow, $updown, $settings);
         }
         $return .= $OUTPUT->table($table);
-        $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'filters');
+        $return .= get_string('configeditorplugins', 'editor').'<br />'.get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
@@ -6077,26 +6077,23 @@ class admin_setting_managerepository extends admin_setting {
     }
 }
 
-/**
- *
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_managewsprotocols extends admin_setting {
-/** @var string */
-    private $baseurl;
 
+/**
+ * Special class for management of external services
+ *
+ * @author Petr Skoda (skodak)
+ */
+class admin_setting_manageexternalservices extends admin_setting {
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
-        global $CFG;
-        parent::__construct('managewsprotocols', get_string('managewsprotocols', 'admin'), '', '');
-        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/wsprotocols.php?sesskey=' . sesskey();
+        parent::__construct('webservicesui', get_string('externalservices', 'webservice'), '', '');
     }
 
     /**
      * Always returns true, does nothing
+     *
      * @return true
      */
     public function get_setting() {
@@ -6104,233 +6101,304 @@ class admin_setting_managewsprotocols extends admin_setting {
     }
 
     /**
-     * Doesnt nothing, always returns ''
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
      *
      * @return string Always returns ''
      */
     public function write_setting($data) {
-        $url = $this->baseurl . '&amp;new=' . $data;
+    // do not write any setting
         return '';
     }
 
     /**
-     * Builds XHTML to display the control
+     * Checks if $query is one of the available external services
      *
-     * @param string $data
-     * @param string $query
-     * @return string XHTML
+     * @param string $query The string to search for
+     * @return bool Returns true if found, false if not
      */
-    public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+    public function is_related($query) {
+        global $DB;
 
-        $namestr = get_string('name');
-        $settingsstr = get_string('settings');
-        $hiddenstr = get_string('activated', 'webservice');
-        require_once("../webservice/lib.php");
-        $protocols = webservice_lib::get_list_protocols();
-        $table = new html_table();
-        $table->head = array($namestr, $hiddenstr, $settingsstr);
-        $table->align = array('left', 'center', 'center');
-        $table->data = array();
-        $table->tablealign  = 'center';
+        if (parent::is_related($query)) {
+            return true;
+        }
 
-        foreach ($protocols as $i) {
-            $hidetitle = $i->get_protocolid() ? get_string('clicktodeactivate', 'webservice') : get_string('clicktoactivate', 'webservice');
-            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_protocolid() . '">'
-                .'<img src="' . $OUTPUT->old_icon_url('i/' . ($i->get_enable() ? 'hide' : 'show')) . '"'
-                .' alt="' . $hidetitle . '" '
-                .' title="' . $hidetitle . '" />'
-                .'</a>' . "\n";
-
-            $settingnames = $i->get_setting_names();
-            if (!empty($settingnames)) {
-                $settingsshow = ' <a href="' . $this->baseurl . '&amp;settings=' . $i->get_protocolid() . '">'
-                    .$settingsstr
-                    .'</a>' . "\n";
-            } else {
-                $settingsshow = "";
-            }
-            $table->data[] = array($i->get_protocolname(), $hiddenshow, $settingsshow);
-
-            //display a grey row if the type is defined as not visible
-            if (!$i->get_enable()) {
-                $table->rowclasses[] = 'dimmed_text';
-            } else {
-                $table->rowclasses[] = '';
+        $textlib = textlib_get_instance();
+        $services = $DB->get_records('external_services', array(), 'id, name');
+        foreach ($services as $service) {
+            if (strpos($textlib->strtolower($service->name), $query) !== false) {
+                return true;
             }
         }
-        $output = $OUTPUT->table($table);
-        $output .= "<br/><br/>";
-        return highlight($query, $output);
-    }
-}
-
-/**
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_managewsusersettings extends admin_setting {
-/** @var string */
-    private $baseurl;
-
-    /**
-     * Calls parent::__construct with specific arguments
-     */
-    public function __construct() {
-        global $CFG;
-        parent::__construct('managewsusersettings', get_string('managewsusersettings', 'admin'), '', '');
-        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/wsprotocols.php?sesskey=' . sesskey();
+        return false;
     }
 
     /**
-     * Always returns true does nothing
-     *
-     * @return true
-     */
-    public function get_setting() {
-        return true;
-    }
-
-    /**
-     * Does nothing always returns ''
-     *
-     * @return string Always returns ''
-     */
-    public function write_setting($data) {
-        $url = $this->baseurl . '&amp;new=' . $data;
-        return '';
-    }
-
-    /**
-     * Build XHTML to display the control
+     * Builds the XHTML to display the control
      *
      * @param string $data Unused
      * @param string $query
-     * @return string XHTML
-     */
-    public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
-        $output = "";
-
-        //search all web service users
-        $users = get_users(true, '', false, null, 'firstname ASC','', '', '', 1000);
-
-        $table = new html_table();
-        $table->head = array('username', 'whitelist');
-        $table->align = array('left', 'center');
-        $table->data = array();
-        $table->tablealign  = 'center';
-
-        foreach ($users as $user) {
-            if (has_capability("moodle/site:usewebservices",get_system_context(), $user->id)) { //test if the users has has_capability('use_webservice')
-                $wsusersetting = ' <a href="' . $this->baseurl . '&amp;username=' . $user->username . '">'
-                    . get_string("settings")
-                    .'</a>' . "\n";
-                $table->data[] = array($user->username, $wsusersetting);
-            }
-        }
-
-        $output .= $OUTPUT->table($table);
-        $output .= "<br/><br/>";
-        return highlight($query, $output);
-    }
-}
-
-/**
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_managewsservicelist extends admin_setting {
-/** @var string */
-    private $baseurl;
-
-    /**
-     * Calls parent::__construct with specific arguments
-     */
-    public function __construct() {
-        global $CFG;
-        parent::__construct('managewsservicelist', get_string('managewsservicelist', 'admin'), '', '');
-        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/webservices.php?sesskey=' . sesskey();
-    }
-
-    /**
-     * Always returns true does nothing
-     *
-     * @return true
-     */
-    public function get_setting() {
-        return true;
-    }
-
-    /**
-     * Does nothing always returns ''
-     *
-     * @return string Always returns ''
-     */
-    public function write_setting($data) {
-        $url = $this->baseurl . '&amp;new=' . $data;
-        return '';
-    }
-
-    /**
-     * Build XHTML to display the control
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @return string XHTML
+     * @return string
      */
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT, $DB;
-        $output = "<div style=\"text-align:center;\">";
 
-        $output .= $OUTPUT->link('/admin/webservices.php?sesskey='.sesskey().'&create=true',get_string('createservicelabel', 'webservice'));
-        $output .= "</div>";
+        // display strings
+        $stradministration = get_string('administration');
+        $stredit = get_string('edit');
+        $strservice = get_string('externalservice', 'webservice');
+        $strdelete = get_string('delete');
+        $strplugin = get_string('plugin', 'admin');
+        $stradd = get_string('add');
+        $strfunctions = get_string('functions', 'webservice');
+        $strusers = get_string('restrictedusers', 'webservice');
+
+        $esurl = "$CFG->wwwroot/$CFG->admin/external_service.php";
+        $efurl = "$CFG->wwwroot/$CFG->admin/external_service_functions.php";
+        $euurl = "$CFG->wwwroot/$CFG->admin/external_service_users.php";
+
+        // built in services
+        $return = $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main', true);
+
+        $services = $DB->get_records_select('external_services', 'component IS NOT NULL', null, 'name');
+
         $table = new html_table();
-        $table->head = array(get_string('servicename','webservice'), get_string('custom','webservice'), get_string('activated','webservice'),get_string('activatedfunctions','webservice'),get_string('settings'));
-        $table->align = array('left', 'center', 'center','center','center');
-        $table->data = array();
-        $table->tablealign  = 'center';
+        $table->head  = array($strservice, $strplugin, $strfunctions, $strusers, $stredit);
+        $table->align = array('left', 'left', 'center', 'center', 'center');
+        $table->size = array('30%', '20%', '20%', '20%', '10%');
+        $table->width = '100%';
+        $table->data  = array();
 
-        //retrieve all services
-        // $services = $DB->get_records('external_services',null,'custom DESC');
-        $servicesfunctions = $DB->get_records_sql("SELECT  fs.id as id, s.id as serviceid, s.component as component, s.name as servicename, s.enabled as serviceenabled, f.name as functionname
-                                    FROM {external_services} s, {external_functions} f, {external_services_functions} fs
-                                   WHERE fs.externalserviceid = s.id AND fs.functionname = f.name ORDER BY s.name ASC");
+        // iterate through auth plugins and add to the display table
+        foreach ($services as $service) {
+            $name = $service->name;
 
-        //create a services array
-        $services = array();
-        foreach($servicesfunctions as $servicefunction) {
-            if (!array_key_exists($servicefunction->servicename, $services)) {
-                $services[$servicefunction->servicename] = new object();
-                $services[$servicefunction->servicename]->name = $servicefunction->servicename;
-                $services[$servicefunction->servicename]->id = $servicefunction->serviceid;
-                $services[$servicefunction->servicename]->enabled = $servicefunction->serviceenabled;
-                $services[$servicefunction->servicename]->custom = $servicefunction->custom;
-                $services[$servicefunction->servicename]->funcnb = 0;
-                $services[$servicefunction->servicename]->enabledfuncnb = 0;
-            }
-            $services[$servicefunction->servicename]->funcnb = $services[$servicefunction->servicename]->funcnb +1;
-            if ($servicefunction->functionenabled) {
-                $services[$servicefunction->servicename]->enabledfuncnb = $services[$servicefunction->servicename]->enabledfuncnb +1;
+            // hide/show link
+            if ($service->enabled) {
+                $displayname = "<span>$name</span>";
+            } else {
+                $displayname = "<span class=\"dimmed_text\">$name</span>";
             }
 
+            $plugin = $service->component;
+
+            $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
+
+            if ($service->restrictedusers) {
+                $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
+            } else {
+                $users = '-';
+            }
+
+            $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
+
+            // add a row to the table
+            $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
+        }
+        $return .= $OUTPUT->table($table);
+
+        // Custom services
+        $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main', true);
+        $services = $DB->get_records_select('external_services', 'component IS NULL', null, 'name');
+
+        $table = new html_table();
+        $table->head  = array($strservice, $strdelete, $strfunctions, $strusers, $stredit);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->size = array('30%', '20%', '20%', '20%', '10%');
+        $table->width = '100%';
+        $table->data  = array();
+
+        // iterate through auth plugins and add to the display table
+        foreach ($services as $service) {
+            $name = $service->name;
+
+            // hide/show link
+            if ($service->enabled) {
+                $displayname = "<span>$name</span>";
+            } else {
+                $displayname = "<span class=\"dimmed_text\">$name</span>";
+            }
+
+            // delete link
+            $delete = "<a href=\"$esurl?action=delete&amp;sesskey=".sesskey()."&amp;id=$service->id\">$strdelete</a>";
+
+            $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
+
+            if ($service->restrictedusers) {
+                $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
+            } else {
+                $users = '-';
+            }
+
+            $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
+
+            // add a row to the table
+            $table->data[] = array($displayname, $delete, $functions, $users, $edit);
+        }
+        // add new custom service option
+        $table->data[] = array('', '', '', '', "<a href=\"$esurl?id=0\">$stradd</a>");
+        $return .= $OUTPUT->table($table);
+
+        $return .= '<br />'.get_string('tablesnosave', 'admin');
+
+        return highlight($query, $return);
+    }
+}
+
+/**
+ * Special class for web service protocol administration.
+ *
+ * @author Petr Skoda (skodak)
+ */
+class admin_setting_managewebserviceprotokols extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        parent::__construct('webservicesui', get_string('manageprotocols', 'webservice'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+    // do not write any setting
+        return '';
+    }
+
+    /**
+     * Checks if $query is one of the available webservices
+     *
+     * @param string $query The string to search for
+     * @return bool Returns true if found, false if not
+     */
+    public function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
         }
 
-        foreach($services as $service) {
-        //$numberoffunc = $DB->count_records('external_services_functions',array('externalserviceid' => $service->id));
-            $activated = ' <!--a href="' . $this->baseurl . '&amp;deactivate=' . $service->id . '"-->'
-                .'<img src="' . $OUTPUT->old_icon_url('i/' . ($service->enabled ? 'deactivate' : 'activate')) . '"'
-                .' alt="' . ($service->enabled ? 'activated' : 'not activated') . '" '
-                .' title="' . ($service->enabled ? 'activated' : 'not activated') . '" />'.'<!--/a-->' ;
-            $custom = ($service->custom ? get_string('yes') : '');
-            $settings = $OUTPUT->link('/admin/webservices.php?serviceid='.$service->id.'&sesskey='.sesskey().'&settings=true',get_string('settings'));
-            $table->data[] = array(get_string($service->name,'webservice'), $custom, $activated, $service->enabledfuncnb."/".$service->funcnb, $settings);
+        $textlib = textlib_get_instance();
+        $protocols = get_plugin_list('webservice');
+        foreach ($protocols as $protocol=>$location) {
+            if (strpos($protocol, $query) !== false) {
+                return true;
+            }
+            $protocolstr = get_string('pluginname', 'webservice_'.$protocol);
+            if (strpos($textlib->strtolower($protocolstr), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+
+        // display strings
+        $stradministration = get_string('administration');
+        $strsettings = get_string('settings');
+        $stredit = get_string('edit');
+        $strprotocol = get_string('protocol', 'webservice');
+        $strenable = get_string('enable');
+        $strdisable = get_string('disable');
+        $strversion = get_string('version');
+        $struninstall = get_string('uninstallplugin', 'admin');
+
+        $protocols_available = get_plugin_list('webservice');
+        $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        ksort($protocols_available);
+
+        foreach ($active_protocols as $key=>$protocol) {
+            if (empty($protocols_available[$protocol])) {
+                unset($active_protocols[$key]);
+            }
         }
 
-        $output .= $OUTPUT->table($table);
+        $return = $OUTPUT->heading(get_string('actwebserviceshhdr', 'webservice'), 3, 'main', true);
+        $return .= $OUTPUT->box_start('generalbox webservicesui');
 
-        $output .= '<br/>';
+        $table = new html_table();
+        $table->head  = array($strprotocol, $strversion, $strenable, $struninstall, $strsettings);
+        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->width = '100%';
+        $table->data  = array();
 
-        return highlight($query, $output);
+        // iterate through auth plugins and add to the display table
+        $url = "$CFG->wwwroot/$CFG->admin/webservice_protocols.php?sesskey=" . sesskey();
+        foreach ($protocols_available as $protocol => $location) {
+            $name = get_string('pluginname', 'webservice_'.$protocol);
+
+            $plugin = new object();
+            if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/version.php')) {
+                include($CFG->dirroot.'/webservice/'.$protocol.'/version.php');
+            }
+            $version = isset($plugin->version) ? $plugin->version : '';
+
+            // hide/show link
+            if (in_array($protocol, $active_protocols)) {
+                $hideshow = "<a href=\"$url&amp;action=disable&amp;webservice=$protocol\">";
+                $hideshow .= "<img src=\"" . $OUTPUT->old_icon_url('i/hide') . "\" class=\"icon\" alt=\"$strdisable\" /></a>";
+                $displayname = "<span>$name</span>";
+            } else {
+                $hideshow = "<a href=\"$url&amp;action=enable&amp;webservice=$protocol\">";
+                $hideshow .= "<img src=\"" . $OUTPUT->old_icon_url('i/show') . "\" class=\"icon\" alt=\"$strenable\" /></a>";
+                $displayname = "<span class=\"dimmed_text\">$name</span>";
+            }
+
+            // delete link
+            $uninstall = "<a href=\"$url&amp;action=uninstall&amp;webservice=$protocol\">$struninstall</a>";
+
+            // settings link
+            if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/settings.php')) {
+                $settings = "<a href=\"settings.php?section=webservicesetting$protocol\">$strsettings</a>";
+            } else {
+                $settings = '';
+            }
+
+            // add a row to the table
+            $table->data[] = array($displayname, $version, $hideshow, $uninstall, $settings);
+        }
+        $return .= $OUTPUT->table($table);
+        $return .= get_string('configwebserviceplugins', 'webservice').'<br />'.get_string('tablenosave', 'admin');
+        $return .= $OUTPUT->box_end();
+
+        return highlight($query, $return);
     }
 }

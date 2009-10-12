@@ -1,394 +1,393 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *         http://moodle.com
+ * Web services utility functions and classes
  *
- * LICENSE
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details:
- *
- *         http://www.gnu.org/copyleft/gpl.html
- *
- * @category  Moodle
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html     GNU GPL License
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(__FILE__)) . '/lib/formslib.php');
+require_once($CFG->libdir.'/externallib.php');
 
-/**
- * Returns detailed information about external function
- * @param string $functionname name of external function
- * @return aray
- */
-function ws_get_function_info($functionname) {
-    global $CFG, $DB;
+function webservice_protocol_is_enabled($protocol) {
+    global $CFG;
 
-    $function = $DB->get_record('external_functions', array('name'=>$functionname), '*', MUST_EXIST);
-
-    $defpath = get_component_directory($function->component);
-    if (!file_exists("$defpath/db/services.php")) {
-        //TODO: maybe better throw invalid parameter exception
-        return null;
+    if (empty($CFG->enablewebservices)) {
+        return false;
     }
 
-    $functions = array();
-    include("$defpath/db/services.php");
+    $active = explode(',', $CFG->webserviceprotocols);
 
-    if (empty($functions[$functionname])) {
-        return null;
-    }
-
-    $desc = $functions[$functionname];
-    if (empty($desc['classpath'])) {
-        $desc['classpath'] = "$defpath/externallib.php";
-    } else {
-        $desc['classpath'] = "$CFG->dirroot/".$desc['classpath'];
-    }
-    $desc['component'] = $function->component;
-
-    return $desc;
+    return(in_array($protocol, $active));
 }
 
 /**
- * web service library
+ * Mandatory web service server interface
+ * @author Petr Skoda (skodak)
  */
-final class webservice_lib {
-
-/**
- * Return list of all web service protocol into the webservice folder
- * @global <type> $CFG
- * @return <type>
- */
-    public static function get_list_protocols() {
-        global $CFG;
-        $protocols = array();
-        $directorypath = $CFG->dirroot . "/webservice";
-        if( $dh = opendir($directorypath)) {
-            while( false !== ($file = readdir($dh))) {
-                if( $file == '.' || $file == '..' || $file == 'CVS') {   // Skip '.' and '..'
-                    continue;
-                }
-                $path = $directorypath . '/' . $file;
-                ///browse the subfolder
-                if( is_dir($path) ) {
-                    if ($file != 'db') { //we don't want to browse the 'db' subfolder of webservice folder
-                        require_once($path."/lib.php");
-                        $classname = $file."_server";
-                        $protocols[] = new $classname;
-                    }
-                }
-                ///retrieve api.php file
-                else {
-                    continue;
-                }
-            }
-            closedir($dh);
-        }
-        return $protocols;
-    }
-
+interface webservice_server {
     /**
-     * Temporary Authentication method to be modified/removed
-     * @global <type> $DB
-     * @param <type> $token
-     * @return <type>
+     * Process request from client.
+     * @param bool $simple use simple authentication
+     * @return void
      */
-    public static function mock_check_token($token) {
-    //fake test
-        if ($token == 456) {
-        ///retrieve the user
-            global $DB;
-            $user = $DB->get_record('user', array('username'=>'wsuser', 'mnethostid'=>1));
-
-            if (empty($user)) {
-                return false;
-            }
-
-            return $user;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Retrieve all external.php from Moodle (except the one of the exception list)
-     * @param <type> $
-     * @param <type> $directorypath
-     * @return boolean true if n
-     */
-    public static function setListApiFiles( &$files, $directorypath ) {
-        global $CFG;
-
-        if(is_dir($directorypath)) { //check that we are browsing a folder not a file
-
-            if( $dh = opendir($directorypath)) {
-                while( false !== ($file = readdir($dh))) {
-
-                    if( $file == '.' || $file == '..') {   // Skip '.' and '..'
-                        continue;
-                    }
-                    $path = $directorypath . '/' . $file;
-                    ///browse the subfolder
-                    if( is_dir($path) ) {
-                        webservice_lib::setListApiFiles($files, $path);
-                    }
-                    ///retrieve api.php file
-                    else if ($file == "external.php") {
-                            $files[] = $path;
-                        }
-                }
-                closedir($dh);
-
-            }
-        }
-
-    }
-
-    /**
-     * Check if the Moodle site has the web service protocol enable
-     * @global object $CFG
-     * @param string $protocol
-     */
-    function display_webservices_availability($protocol) {
-        global $CFG;
-
-        $available = true;
-
-        echo get_string('webservicesenable','webservice').": ";
-        if (empty($CFG->enablewebservices)) {
-            echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
-            $available = false;
-        } else {
-            echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
-        }
-        echo "<br/>";
-
-        foreach(webservice_lib::get_list_protocols() as $wsprotocol) {
-            if (strtolower($wsprotocol->get_protocolid()) == strtolower($protocol)) {
-                echo get_string('protocolenable','webservice',array($wsprotocol->get_protocolid())).": ";
-                if ( get_config($wsprotocol-> get_protocolid(), "enable")) {
-                    echo "<strong style=\"color:green\">".get_string('ok','webservice')."</strong>";
-                } else {
-                    echo "<strong style=\"color:red\">".get_string('fail','webservice')."</strong>";
-                    $available = false;
-                }
-                echo "<br/>";
-                continue;
-            }
-        }
-
-        //check debugging
-        if ($CFG->debugdisplay) {
-            echo "<strong style=\"color:red\">".get_string('debugdisplayon','webservice')."</strong>";
-            $available = false;
-        }
-
-        return $available;
-    }
-
+    public function run($simple);
 }
 
 /**
- * Web Service server base class
+ * Special abstraction of our srvices that allows
+ * interaction with stock Zend ws servers.
+ * @author skodak
  */
-abstract class webservice_server {
+abstract class webservice_zend_server implements webservice_server {
+    //TODO: implement base class for all ws servers in zend framework
+    //      the idea is to create one huge class on the fly, this class contains all
+    //      methods user is allowed to access and contains all needed PHPDoc metadata.
+}
+
 
 /**
- * Web Service Protocol name (eg. SOAP, REST, XML-RPC,...)
- * @var String
+ * Web Service server base class, this class handles both
+ * simple and token authentication.
+ * @author Petr Skoda (skodak)
  */
-    private $protocolname;
+abstract class webservice_base_server implements webservice_server {
+
+    /** @property string $wsname name of the web server plugin */
+    protected $wsname = null;
+
+    /** @property bool $simple true if simple auth used */
+    protected $simple;
+
+    /** @property string $username name of local user */
+    protected $username = null;
+
+    /** @property string $password password of the local user */
+    protected $password = null;
+
+    /** @property string $token authentication token*/
+    protected $token = null;
+
+    /** @property array $parameters the function parameters - the real values submitted in the request */
+    protected $parameters = null;
+
+    /** @property string $functionname the name of the function that is executed */
+    protected $functionname = null;
+
+    /** @property object $function full function description */
+    protected $function = null;
+
+    /** @property mixed $returns function return value */
+    protected $returns = null;
 
     /**
-     * Web Service Protocol id (eg. soap, rest, xmlrpc...)
-     * @var String
+     * Contructor
      */
-    private $protocolid;
-
     public function __construct() {
     }
 
-    abstract public function run();
+    /**
+     * This method parses the request input, it needs to get:
+     *  1/ user authentication - username+password or token
+     *  2/ function name
+     *  3/ function parameters
+     *
+     * @return void
+     */
+    abstract protected function parse_request();
 
-    public function get_protocolname() {
-        return $this->protocolname;
-    }
+    /**
+     * Send the result of function call to the WS client.
+     * @return void
+     */
+    abstract protected function send_response();
 
-    public function get_protocolid() {
-        return $this->protocolid;
-    }
+    /**
+     * Send the error information to the WS client.
+     * @param exception $ex
+     * @return void
+     */
+    abstract protected function send_error($ex=null);
 
-    public function set_protocolname($protocolname) {
-        $this->protocolname = $protocolname;
-    }
 
-    public function set_protocolid($protocolid) {
-        $this->protocolid = $protocolid;
-    }
+    /**
+     * Process request from client.
+     * @param bool $simple use simple authentication
+     * @return void
+     */
+    public function run($simple) {
+        $this->simple = $simple;
 
-    public function get_enable() {
-        return get_config($this->get_protocolid(), "enable");
-    }
+        // we will probably need a lot of memory in some functions
+        @raise_memory_limit('128M');
 
-    public function set_enable($enable) {
-        set_config("enable", $enable, $this->get_protocolid());
+        // set some longer timeout, this script is not sending any output,
+        // this means we need to manually extend the timeout operations
+        // that need longer time to finish
+        external_api::set_timeout();
+
+        // set up exception handler first, we want to sent them back in correct format that
+        // the other system understands
+        // we do not need to call the original default handler because this ws handler does everything
+        set_exception_handler(array($this, 'exception_handler'));
+
+        // init all properties from the request data
+        $this->parse_request();
+
+        // authenticate user, this has to be done after the request parsing
+        // this also sets up $USER and $SESSION
+        $this->authenticate_user();
+
+        // find all needed function info and make sure user may actually execute the function
+        $this->load_function_info();
+
+        // finally, execute the function - any errors are catched by the default exception handler
+        $this->execute();
+
+        // send the results back in correct format
+        $this->send_response();
+
+        // session cleanup
+        $this->session_cleanup();
+
+        die;
     }
 
     /**
-     * Names of the server settings
-     * @return array
+     * Specialised exception handler, we can not use the standard one because
+     * it can not just print html to output.
+     *
+     * @param exception $ex
+     * @return void does not return
      */
-    public static function get_setting_names() {
-        return array();
+    public function exception_handler($ex) {
+        global $CFG, $DB, $SCRIPT;
+
+        // detect active db transactions, rollback and log as error
+        if ($DB->is_transaction_started()) {
+            error_log('Database transaction aborted by exception in ' . $CFG->dirroot . $SCRIPT);
+            try {
+                // note: transaction blocks should never change current $_SESSION
+                $DB->rollback_sql();
+            } catch (Exception $ignored) {
+            }
+        }
+
+        // now let the plugin send the exception to client
+        $this->send_error($ex);
+
+        // some hacks might need a cleanup hook
+        $this->session_cleanup($ex);
+
+        // not much else we can do now, add some logging later
+        exit(1);
     }
 
-    public function settings_form(&$mform) {
-    }
-
-}
-
-/**
- * Temporary authentication class to be removed/modified
- */
-class ws_authentication {
-/**
- *
- * @param object|struct $params
- * @return integer
- */
-    function get_token($params) {
-        $params->username = clean_param($params->username, PARAM_ALPHANUM);
-        $params->password = clean_param($params->password, PARAM_ALPHANUM);
-        if ($params->username == 'wsuser' && $params->password == 'wspassword') {
-            return '456';
+    /**
+     * Future hook needed for emulated sessions.
+     * @param exception $exception null means normal termination, $exception received when WS call failed
+     * @return void
+     */
+    protected function session_cleanup($exception=null) {
+        if ($this->simple) {
+            // nothing needs to be done, there is no persistent session
         } else {
-            throw new moodle_exception('wrongusernamepassword');
+            // close emulated session if used
         }
     }
-}
-
-/**
- * Form for web service user settings (administration)
- */
-final class wsuser_form extends moodleform {
-    protected $username;
 
     /**
-     * Definition of the moodleform
+     * Authenticate user using username+password or token.
+     * This function sets up $USER global.
+     * It is safe to use has_capability() after this.
+     * This method also verifies user is allowed to use this
+     * server.
+     * @return void
      */
-    public function definition() {
-        global $DB;
-        $this->username = $this->_customdata['username'];
-        $mform =& $this->_form;
+    protected function authenticate_user() {
+        global $CFG, $DB;
 
-        $mform->addElement('hidden', 'username', $this->username);
-        $mform->setType('username', PARAM_RAW);
-        $param = new stdClass();
-        $param->username = $this->username;
-        $wsuser = $DB->get_record("user", array("username" => $this->username));
+        if (!NO_MOODLE_COOKIES) {
+            throw new coding_exception('Cookies must be disabled in WS servers!');
+        }
 
-        $mform->addElement('text', 'ipwhitelist', get_string('ipwhitelist', 'admin'), array('value'=>get_user_preferences("ipwhitelist", "", $wsuser->id),'size' => '40'));
-        $mform->addElement('static', null, '',  get_string('ipwhitelistdesc','admin', $param));
+        if ($this->simple) {
+            if (!is_enabled_auth('webservice')) {
+                die('WS auth not enabled');
+            }
 
-        $this->add_action_buttons(true, get_string('savechanges','admin'));
+            if (!$auth = get_auth_plugin('webservice')) {
+                die('WS auth missing');
+            }
+
+            if (!$this->username) {
+                throw new invalid_parameter_exception('Missing username');
+            }
+
+            if (!$this->password) {
+                throw new invalid_parameter_exception('Missing password');
+            }
+
+            if (!$auth->user_login_webservice($this->username, $this->password)) {
+                throw new invalid_parameter_exception('Wrong username or password');
+            }
+
+            $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+
+            // now fake user login, the session is completely empty too
+            session_set_user($user);
+
+            if (!has_capability("webservice/$this->wsname:use", get_context_instance(CONTEXT_SYSTEM))) {
+                throw new invalid_parameter_exception('Access to web service not allowed');
+            }
+
+        } else {
+            //TODO: not implemented yet
+            die('token login not implemented yet');
+
+            // note we had to wait until here because we did not know the security context earlier
+            if (!has_capability("webservice/$this->wsname:use", $context)) {
+                throw new invalid_parameter_exception('Access to web service not allowed');
+            }
+        }
     }
-}
-
-/**
- * Form for web service server settings (administration)
- */
-final class wssettings_form extends moodleform {
-    protected $settings;
 
     /**
-     * Definition of the moodleform
+     * Fetches the function description from database,
+     * verifies user is allowed to use this function and
+     * loads all paremeters and return descriptions.
+     * @return void
      */
-    public function definition() {
-        global $DB,$CFG;
-        $settings = $this->_customdata['settings'];
-        $mform =& $this->_form;
+    protected function load_function_info() {
+        global $DB, $USER, $CFG;
 
-        $mform->addElement('hidden', 'settings', $settings);
-        $mform->setType('settings', PARAM_RAW);
-        $param = new stdClass();
-
-        require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');
-        $servername = $settings.'_server';
-        $server = new $servername();
-        $server->settings_form($mform);
-
-        // set the data if we have some.
-        $data = array();
-        $option_names = $server->get_setting_names();
-        foreach ($option_names as $config) {
-            $data[$config] = get_config($settings, $config);
+        if (empty($this->functionname)) {
+            throw new invalid_parameter_exception('Missing function name');
         }
-        $this->set_data($data);
+
+        // function must exist
+        $function = $DB->get_record('external_functions', array('name'=>$this->functionname), '*', MUST_EXIST);
 
 
-        $this->add_action_buttons(true, get_string('savechanges','admin'));
+        // now let's verify access control
+        if ($this->simple) {
+            // now make sure the function is listed in at least one service user is allowed to use
+            // allow access only if:
+            //  1/ entry in the external_services_users table if required
+            //  2/ validuntil not reached
+            //  3/ has capability if specified in service desc
+            //  4/ iprestriction
+
+            $sql = "SELECT s.*, NULL AS iprestriction
+                      FROM {external_services} s
+                      JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0 AND sf.functionname = :name1)
+                     WHERE s.enabled = 1
+
+                     UNION
+
+                    SELECT s.*, su.iprestriction
+                      FROM {external_services} s
+                      JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1 AND sf.functionname = :name2)
+                      JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
+                     WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now";
+
+            $rs = $DB->get_recordset_sql($sql, array('userid'=>$USER->id, 'name1'=>$function->name, 'name2'=>$function->name, 'now'=>time()));
+            // now make sure user may access at least one service
+            $syscontext = get_context_instance(CONTEXT_SYSTEM);
+            $remoteaddr = getremoteaddr();
+            $allowed = false;
+            foreach ($rs as $service) {
+                if ($service->requiredcapability and !has_capability($service->requiredcapability, $syscontext)) {
+                    continue; // cap required, sorry
+                }
+                if ($service->iprestriction and !address_in_subnet($remoteaddr, $service->iprestriction)) {
+                    continue; // wrong request source ip, sorry
+                }
+                $allowed = true;
+                break; // one service is enough, no need to continue
+            }
+            $rs->close();
+            if (!$allowed) {
+                throw new invalid_parameter_exception('Access to external function not allowed');
+            }
+            // now we finally know the user may execute this function,
+            // the last step is to set context restriction - in this simple case
+            // we use system context because each external system has different user account
+            // and we can manage everything through normal permissions.
+            external_api::set_context_restriction($syscontext);
+
+        } else {
+            //TODO: implement token security checks
+            die('not implemented yet');
+        }
+
+        // get the params and return descriptions of the function
+        unset($function->id); // we want to prevent any accidental db updates ;-)
+
+        $function->classpath = empty($function->classpath) ? get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
+        if (!file_exists($function->classpath)) {
+            throw new coding_exception('Can not find file with external function implementation');
+        }
+        require_once($function->classpath);
+
+        $function->parameters_method = $function->methodname.'_parameters';
+        $function->returns_method    = $function->methodname.'_returns';
+
+        // make sure the implementaion class is ok
+        if (!method_exists($function->classname, $function->methodname)) {
+            throw new coding_exception('Missing implementation method');
+        }
+        if (!method_exists($function->classname, $function->parameters_method)) {
+            throw new coding_exception('Missing parameters description');
+        }
+        if (!method_exists($function->classname, $function->returns_method)) {
+            throw new coding_exception('Missing returned values description');
+        }
+
+        // fetch the parameters description
+        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
+        if (!($function->parameters_desc instanceof external_function_parameters)) {
+            throw new coding_exception('Invalid parameters description');
+        }
+
+        // fetch the return values description
+        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
+        // null means void result or result is ignored
+        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
+            throw new coding_exception('Invalid return description');
+        }
+
+        // we have all we need now
+        $this->function = $function;
     }
-}
-
-/**
- * Form for web service server settings (administration)
- */
-final class wsservicesettings_form extends moodleform {
-    protected $settings;
 
     /**
-     * Definition of the moodleform
+     * Execute previously loaded function using parameters parsed from the request data.
+     * @return void
      */
-    public function definition() {
-        global $DB,$CFG;
-        $serviceid = $this->_customdata['serviceid'];
-        $mform =& $this->_form;
+    protected function execute() {
+        // validate params, this also sorts the params properly, we need the correct order in the next part
+        $params = call_user_func(array($this->function->classname, 'validate_parameters'), $this->function->parameters_desc, $this->parameters);
 
-        $mform->addElement('hidden', 'serviceid', $serviceid);
-        $mform->setType('serviceid', PARAM_INT);
-        $param = new stdClass();
-
-     //   require_once($CFG->dirroot . '/webservice/'. $settings . '/lib.php');
-      //  $servername = $settings.'_server';
-      //  $server = new $servername();
-      //  $server->settings_form($mform);
-
-        // set the data if we have some.
-    //    $data = array();
-     //   $option_names = $server->get_setting_names();
-    //    foreach ($option_names as $config) {
-    //        $data[$config] = get_config($settings, $config);
-    //    }
-    //    $this->set_data($data);
-        $service = $DB->get_record('external_services',array('id' => $serviceid));
-
-        $mform->addElement('text', 'servicename', get_string('servicename', 'webservice'));
-        $mform->setDefault('servicename',get_string($service->name, 'webservice'));
-        if (!empty($serviceid)) {
-            $mform->disabledIf('servicename', 'serviceid', 'eq', $serviceid);
-        }
-
-        if (empty($serviceid)) {
-            //display list of functions to select
-        }
-
-        //display list of functions associated to the service
-        
-        
-
-        $this->add_action_buttons(true,  get_string('savechanges','admin'));
+        // execute - yay!
+        $this->returns = call_user_func_array(array($this->function->classname, $this->function->methodname), array_values($params));
     }
 }
 
 
-?>

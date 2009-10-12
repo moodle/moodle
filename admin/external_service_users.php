@@ -16,23 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * REST web service entry point. The authentication is done via tokens.
+ * Web services function UI
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_MOODLE_COOKIES', true);
+require_once('../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once('external_forms.php');
 
-require('../../config.php');
-require_once("$CFG->dirroot/webservice/rest/locallib.php");
+$id = required_param('id', PARAM_INT);
 
-if (!webservice_protocol_is_enabled('rest')) {
-    die;
-}
+$PAGE->set_url('admin/external_service_users.php', array('id'=>$id));
 
-$server = new webservice_rest_server();
-$server->run(false);
-die;
+admin_externalpage_setup('externalserviceusers');
 
+echo('TODO: we need something like the role assign UI');
+
+echo $OUTPUT->footer();

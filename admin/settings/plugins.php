@@ -237,6 +237,33 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 
+    // Web services
+    $ADMIN->add('modules', new admin_category('webservicesettings', get_string('webservices', 'webservice')));
+    $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
+    $temp->add(new admin_setting_manageexternalservices());
+    $ADMIN->add('webservicesettings', $temp);
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service.php"), 'moodle/site:config', true);
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_functions.php"), 'moodle/site:config', true);
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_users.php"), 'moodle/site:config', true);
+    $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
+    $temp->add(new admin_setting_managewebserviceprotokols());
+    if (empty($CFG->enablewebservices)) {
+        $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
+    }
+    $ADMIN->add('webservicesettings', $temp);
+    $webservices_available = get_plugin_list('webservice');
+    $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+    foreach ($webservices_available as $webservice => $location) {
+        if (file_exists("$location/settings.php")) {
+            $name = get_string('pluginname', 'webservice_'.$webservice);
+            $settings = new admin_settingpage('webservicesetting'.$webservice, $name, 'moodle/site:config', !in_array($webservice, $active_webservices) or empty($CFG->enablewebservices));
+            if ($ADMIN->fulltree) {
+                include("$location/settings.php");
+            }
+            $ADMIN->add('webservicesettings', $settings);
+        }
+    }
+
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', get_string('questiontypes', 'admin')));
     $ADMIN->add('qtypesettings', new admin_page_manageqtypes());

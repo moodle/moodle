@@ -11,26 +11,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                                 '', ''));
     $ADMIN->add('security', $temp);
 
-    // "web service" settingpage
-    $temp = new admin_settingpage('webservices', get_string('webservices', 'admin'));
-    $temp->add(new admin_setting_heading('webserviceprotocols', get_string('protocols', 'webservice'), ''));
-    $temp->add(new admin_setting_managewsprotocols());
-    $url = $CFG->wwwroot.'/'.$CFG->admin.'/wsprotocols.php';
-    $ADMIN->add('security', new admin_externalpage('managews',
-        get_string('managews', 'admin'), $url, 'moodle/site:config', true),
-        '', $url);
-    $temp->add(new admin_setting_heading('webservicesystemsettings', get_string('systemsettings', 'webservice'), ''));
-    $temp->add(new admin_setting_configiplist('ipwhitelist', get_string('ipwhitelist', 'admin'),'', ''));
-    $temp->add(new admin_setting_heading('webserviceusersettings', get_string('usersettings', 'webservice'), ''));
-    $temp->add(new admin_setting_managewsusersettings());
-    $temp->add(new admin_setting_heading('webserviceservicelist', get_string('servicelist', 'webservice'), ''));
-    $temp->add(new admin_setting_managewsservicelist());
-    $url = $CFG->wwwroot.'/'.$CFG->admin.'/webservices.php';
-     $ADMIN->add('security', new admin_externalpage('webservicessettings',
-        get_string('webservicessettings', 'admin'), $url, 'moodle/site:config', true),
-        '', $url);
-    $ADMIN->add('security', $temp);
-
     // "sitepolicies" settingpage
     $temp = new admin_settingpage('sitepolicies', get_string('sitepolicies', 'admin'));
     $temp->add(new admin_setting_configcheckbox('protectusernames', get_string('protectusernames', 'admin'), get_string('configprotectusernames', 'admin'), 1));
@@ -137,4 +117,4 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
 } // end of speedup
 
-?>
+
