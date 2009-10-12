@@ -125,7 +125,7 @@ function data_restore_mods($mod,$restore) {
 
             // now use the new field in the defaultsort
             $newdefaultsort = empty($fieldids[$database->defaultsort]) ? 0 : $fieldids[$database->defaultsort];
-            set_field('data', 'defaultsort', $newdefaultsort, 'id', $newid);
+            $DB->set_field('data', 'defaultsort', $newdefaultsort, array('id' => $newid));
 
             if ($restore_userdata_selected) {
                 $status = $status and data_records_restore_mods ($mod->id, $newid, $info, $restore);
