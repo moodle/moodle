@@ -1970,6 +1970,10 @@ body.has_navigation_bar {
   padding-bottom:2px;
 }
 
+.sideblock_js_expansion .footer .adminsearchform {
+    text-align:left;
+}
+
 /***
  *** Blogs
  ***/
