@@ -54,19 +54,34 @@ define('RFC2445_TYPE_UTC_OFFSET',  13);
 
 
 function rfc2445_fold($string) {
-    if(strlen($string) <= RFC2445_FOLDED_LINE_LENGTH) {
+    if(mb_strlen($string, 'utf-8') <= RFC2445_FOLDED_LINE_LENGTH) {
         return $string;
     }
 
     $retval = '';
+  
+    $i=0;
+    $len_count=0;
 
-    while(strlen($string) > RFC2445_FOLDED_LINE_LENGTH) {
-        $retval .= substr($string, 0, RFC2445_FOLDED_LINE_LENGTH - 1) . RFC2445_CRLF . ' ';
-        $string  = substr($string, RFC2445_FOLDED_LINE_LENGTH - 1);
+    //multi-byte string, get the correct length
+    $section_len = mb_strlen($string, 'utf-8');
+
+    while($len_count<$section_len) {
+        
+        //get the current portion of the line
+        $section = mb_substr($string, ($i * RFC2445_FOLDED_LINE_LENGTH), (RFC2445_FOLDED_LINE_LENGTH), 'utf-8');
+
+        //increment the length we've processed by the length of the new portion
+        $len_count += mb_strlen($section, 'utf-8');
+        
+        /* Add the portion to the return value, terminating with CRLF.HTAB
+           As per RFC 2445, CRLF.HTAB will be replaced by the processor of the 
+           data */
+        $retval .= $section.RFC2445_CRLF.RFC2445_WSP;
+        
+        $i++;
     }
 
-    $retval .= $string;
-    
     return $retval;
 
 }
