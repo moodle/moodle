@@ -11,40 +11,16 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <style type="text/css">
 @import url(../htmlarea.css);
-html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
-
-
+html, body {margin: 0px; border: 0px; background-color: buttonface;}
+</style>
 <script type="text/javascript" src="../htmlarea.php?id=<?php p($id); ?>"></script>
 <script type="text/javascript" src="../lang/en.php"></script>
 <script type="text/javascript" src="../dialog.js" charset="utf-8"></script>
 <script type="text/javascript" src="../plugins/TableOperations/table-operations.js" charset="utf-8"></script>
 <script type="text/javascript" src="../plugins/TableOperations/lang/en.js" charset="utf-8"></script>
-<script type="text/javascript">
-// load same scripts that were present in the opener page
-var scripts = opener.document.getElementsByTagName("script");
-var head = document.getElementsByTagName("head")[0];
-for (var i = 0; i < scripts.length; ++i) {
-  var script = scripts[i];
-  if (typeof script.src != "undefined" && /\S/.test(script.src)) {
-    // document.write("<scr" + "ipt type=" + "\"script/javascript\"");
-    // document.write(" src=\"../" + script.src + "\"></scr" + "ipt>");
-    var new_script = document.createElement("script");
-    if (/^https?:/i.test(script.src)) {
-      new_script.src = script.src;
-    } else {
-      new_script.src = "../" + script.src;
-    }
-    if (navigator.appVersion.indexOf("MSIE") == -1  || script.src.indexOf("yui/event/event") == -1) {
-      head.appendChild(new_script);
-    }
-  }
-}
-</script>
-
-<script type="text/javascript">
-
+<script type="text/javascript"> 
 var parent_object  = null;
-var editor         = null;      // to be initialized later [ function init() ]
+var editor         = null; // to be initialized later [ function init() ]
 
 /* ---------------------------------------------------------------------- *\
   Function    :
@@ -72,7 +48,7 @@ function _CloseOnEsc(ev) {
 \* ---------------------------------------------------------------------- */
 
 function cloneObject(obj) {
-  var newObj          = new Object;
+  var newObj = new Object;
 
   // check for array objects
   if (obj.constructor.toString().indexOf("function Array(") >= 0) {
@@ -118,40 +94,40 @@ function resize_editor() {  // resize editor to fix window
 \* ---------------------------------------------------------------------- */
 
 function init() {
-  parent_object      = opener.HTMLArea._object;
-  var config         = cloneObject( parent_object.config );
-  config.editorURL   = "../";
-  config.width       = "100%";
-  config.height      = "auto";
+    parent_object      = window.opener.HTMLArea._object;
+    var config         = cloneObject( parent_object.config );
+    config.editorURL   = "../";
+    config.width       = "100%";
+    config.height      = "auto";
 
-  // change maximize button to minimize button
-  config.btnList["popupeditor"] = [ "<?php print_string("minimize","editor");?>", "<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/fullscreen_minimize.gif", true,
-                                    function() { window.close(); } ];
+    // change maximize button to minimize button
+    config.btnList["popupeditor"] = [ "<?php print_string("minimize","editor");?>", "<?php echo $CFG->wwwroot ?>/lib/editor/htmlarea/images/fullscreen_minimize.gif", true,
+        function() { window.close(); } ];
 
-  // generate editor and resize it
-  editor = new HTMLArea("editor", config);
-  editor.registerPlugin(TableOperations);
-  editor.generate();
-  editor._iframe.style.width = "100%";
-  editor._textArea.style.width = "100%";
-  resize_editor();
+    // generate editor and resize it
+    editor = new HTMLArea("editor", config);
+    editor.registerPlugin(TableOperations);
+    editor.generate();
+    editor._iframe.style.width = "100%";
+    editor._textArea.style.width = "100%";
+    resize_editor();
 
-  // set child window contents and event handlers, after a small delay
-  setTimeout(function() {
-    editor.setHTML(parent_object.getInnerHTML());
+    // set child window contents and event handlers, after a small delay
+    setTimeout(function() {
+        editor.setHTML(parent_object.getInnerHTML());
 
-    // switch mode if needed
-    if (parent_object._mode == "textmode") { editor.setMode("textmode"); }
+        // switch mode if needed
+        if (parent_object._mode == "textmode") { editor.setMode("textmode"); }
 
-    // continuously update parent editor window
-    setInterval(update_parent, 500);
+        // continuously update parent editor window
+        setInterval(update_parent, 500);
 
-    // setup event handlers FAST FIX IS UNCOMMENT THESE, NOT WORKING!
-    //document.body.onkeypress = _CloseOnEsc;
-    //editor._doc.body.onkeypress = _CloseOnEsc;
-    //editor._textArea.onkeypress = _CloseOnEsc;
-    window.onresize = resize_editor;
-  }, 333);                      // give it some time to meet the new frame
+        // setup event handlers FAST FIX IS UNCOMMENT THESE, NOT WORKING!
+        //document.body.onkeypress = _CloseOnEsc;
+        //editor._doc.body.onkeypress = _CloseOnEsc;
+        //editor._textArea.onkeypress = _CloseOnEsc;
+        window.onresize = resize_editor;
+    }, 333);                      // give it some time to meet the new frame
 }
 
 /* ---------------------------------------------------------------------- *\
@@ -163,8 +139,6 @@ function update_parent() {
   // use the fast version
   parent_object.setHTML(editor.getInnerHTML());
 }
-
-
 </script>
 </head>
 <body scroll="no" onload="init()" onunload="update_parent()">
