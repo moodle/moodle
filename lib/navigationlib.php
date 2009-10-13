@@ -268,6 +268,9 @@ class navigation_node {
         if ($key===null) {
             $key = count($this->children);
         }
+
+        $key = $key.':'.$type;
+
         $itemarray['key'] = $key;
         $this->children[$key] = new navigation_node($itemarray);
         if (($type==self::TYPE_CATEGORY) || (isloggedin() && $type==self::TYPE_COURSE)) {
@@ -463,8 +466,9 @@ class navigation_node {
      * @return mixed The child node or what ever default contains (usually false)
      */
     public function find_child($key, $type=self::TYPE_CATEGORY, $default = false) {
-        if (array_key_exists($key, $this->children) && $this->children[$key]->type == $type) {
-            return $this->children[$key];
+        list($key, $type) = $this->split_key_type($key, $type);
+        if (array_key_exists($key.":".$type, $this->children)) {
+            return $this->children[$key.":".$type];
         } else if ($this->nodetype === self::NODETYPE_BRANCH && count($this->children)>0 && $this->type<=$type) {
             foreach ($this->children as &$child) {
                 $outcome = $child->find_child($key, $type);
@@ -512,7 +516,8 @@ class navigation_node {
      */
     public function find_child_depth($key, $type=self::TYPE_CATEGORY) {
         $depth = 0;
-        if (array_key_exists($key, $this->children) && $this->children[$key]->type == $type) {
+        list($key, $type) = $this->split_key_type($key, $type);
+        if (array_key_exists($key.':'.$type, $this->children)) {
             $depth = 1;
         } else if ($this->nodetype === self::NODETYPE_BRANCH && count($this->children)>0 && $this->type<=$type) {
             foreach ($this->children as $child) {
@@ -590,18 +595,57 @@ class navigation_node {
      * child. If the child doesn't exist then this function returns false.
      *
      * @param int|string $key The key to search for
+     * @param int $type Optional one of TYPE_* constants
      * @param navigation_node|bool The child if it exists or false
      */
-    public function get($key) {
+    public function get($key, $type=null) {
         if ($key===false) {
             return false;
         }
+        list($key, $type) = $this->split_key_type($key);
         if ($this->nodetype === self::NODETYPE_BRANCH && count($this->children)>0) {
-            if (array_key_exists($key, $this->children)) {
-                return $this->children[$key];
+            if ($type!==null) {
+                if (array_key_exists($key.':'.$type, $this->children)) {
+                    return $this->children[$key.':'.$type];
+                }
+            } else {
+                foreach (array_keys($this->children) as $childkey) {
+                    if (strpos($childkey, $key.':')===0) {
+                        return $this->children[$childkey];
+                    }
+                }
             }
         }
         return false;
+    }
+
+    /**
+     * This function is used to split a key into its key and value parts if the
+     * key is a combination of the two.
+     *
+     * Was introduced to help resolve MDL-20543
+     *
+     * @param string $key
+     * @param int|null $type
+     * @return array
+     */
+    protected function split_key_type($key, $type=null) {
+        /**
+         * If the key is a combination it will be of the form `key:type` where key
+         * could be anything and type will be an int value
+         */
+        if (preg_match('#^(.*)\:(\d{1,3})$#', $key, $match)) {
+            /**
+             * If type is null then we want to collect and return the type otherwise
+             * we will use the provided type. This ensures that if a type was specified
+             * it is not lost
+             */
+            if ($type===null) {
+                $type = $match[2];
+            }
+            $key = $match[1];
+        }
+        return array($key, $type);
     }
 
     /**
