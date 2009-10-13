@@ -48,7 +48,7 @@
   <div class="answer">
     <fieldset class="answer"  id="generalheader">
     	 <legend class="ftoggler">
-    	    <?php echo get_string('number', 'quiz') ; ?>
+    	    <?php echo get_string('datasetnumber', 'quiz') ; ?>
     	 </legend>
     <input type="text" class="<?php echo $class; ?>" <?php echo "$readonly  $nameanswer $valueanswer"; //
     ?> size="<?php echo $textlength;?>" />
@@ -193,7 +193,7 @@
  <div class="answer">
     <fieldset class="clearfix"  id="generalheader">
     	 <legend class="ftoggler">
-    	    <?php echo get_string('number', 'quiz'); ?>
+    	    <?php echo get_string('datasetnumber', 'quiz'); ?>
     	 </legend>
     <input type="text" class="<?php echo $class; ?>" <?php echo "$readonly  $nameanswer $valueanswer"; //
     ?> size="<?php echo $textlength;?>"/>
@@ -209,10 +209,15 @@
        <div class="feedback">
         <fieldset class="clearfix"  id="generalheader">
     	 <legend class="ftoggler">
-    	    <?php echo get_string('instructions', 'quiz'); ?>
+    	    <?php echo get_string('instructions', 'auth'); ?>
     	 </legend>
        <div class="feedback">
-     <?php echo get_string('validnumber', 'numerical');?>
+        <fieldset class="clearfix"  id="generalheader">
+    	 <legend class="ftoggler">
+     <?php echo get_string('validnumberformats', 'qtype_numerical');?>
+    	 </legend>
+     <?php echo get_string('validnumbers', 'qtype_numerical');?>
+     </fieldset>      
        </div>
      <?php if (!empty($question->options->instructions)){?>
         <div>
