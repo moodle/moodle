@@ -495,9 +495,9 @@
 
             // MDL-11818
             if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
-                $forum->intro = $updatepost->message;
+                $forum->intro = stripslashes($updatepost->message);
                 $forum->timemodified = time();
-                if (!update_record("forum", $forum)) {
+                if (!update_record("forum", addslashes_recursive($forum))) {
                     print_error("couldnotupdate", "forum", $errordestination);
                 }
             }
