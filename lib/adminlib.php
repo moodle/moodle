@@ -6259,7 +6259,7 @@ class admin_setting_manageexternalservices extends admin_setting {
  *
  * @author Petr Skoda (skodak)
  */
-class admin_setting_managewebserviceprotokols extends admin_setting {
+class admin_setting_managewebserviceprotocols extends admin_setting {
 
     /**
      * Calls parent::__construct with specific arguments

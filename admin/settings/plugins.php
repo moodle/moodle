@@ -246,7 +246,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_functions.php"), 'moodle/site:config', true);
     $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_users.php"), 'moodle/site:config', true);
     $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
-    $temp->add(new admin_setting_managewebserviceprotokols());
+    $temp->add(new admin_setting_managewebserviceprotocols());
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
     }
