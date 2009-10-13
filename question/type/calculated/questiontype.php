@@ -142,7 +142,7 @@ class question_calculated_qtype extends default_questiontype {
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
-        global $CFG, $DB;
+        global $CFG, $DB, $QTYPES ;
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
@@ -241,6 +241,10 @@ class question_calculated_qtype extends default_questiontype {
             foreach($oldoptions as $oo) {
                 $DB->delete_records('question_calculated', array('id' => $oo->id));
             }
+        }
+        $result = $QTYPES['numerical']->save_numerical_options($question);
+        if (isset($result->error)) {
+            return $result;
         }
 
 
