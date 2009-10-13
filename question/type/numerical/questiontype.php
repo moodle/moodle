@@ -406,8 +406,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (isset($teststate->responses['unit'])){
             $testresponses .= $teststate->responses['unit'];
         }
-        if ( isset($responses)  && isset($testresponses )) {
                          //   echo "<p> compare response $responses || $testresponses  <pre>";print_r($state);echo "</pre></p>";
+        if ( isset($responses)  && isset($testresponses )) {
 
             return $responses == $testresponses ;
         }
@@ -424,7 +424,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if ($answer->answer === '*') {
             return true;
         }
-        //        echo "<p> test response numerical state  <pre>";print_r($state);echo "</pre></p>";
+         //       echo "<p> test response numerical state  <pre>";print_r($state);echo "</pre></p>";
         //        echo "<p> test response numerical question  <pre>";print_r($question);echo "</pre></p>";
 
        if( isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
@@ -697,7 +697,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function print_question_grading_details(&$question, &$state, $cmoptions, $options) {
       //           echo "<p>state uestion_grading_details $question->id $question->qtype <pre>";print_r($state);echo "</pre></p>";
 
-        parent::print_question_grading_details(&$question, &$state, $cmoptions, $options);
+        parent::print_question_grading_details($question, $state, $cmoptions, $options);
         
     } 
         
