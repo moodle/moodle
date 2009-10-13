@@ -17,6 +17,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->libdir.'/adodb/adodb.inc.php');
 
 /**
  * External database authentication plugin.
