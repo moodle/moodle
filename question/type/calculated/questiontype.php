@@ -1425,19 +1425,29 @@ class question_calculated_qtype extends default_questiontype {
 
     function get_correct_responses(&$question, &$state) {
         $virtualqtype = $this->get_virtual_qtype( $question);
-        if($unit = $virtualqtype->get_default_numerical_unit($question)){
-             $unit = $unit->unit;
-        } else {
-            $unit = '';
-        }
-        foreach ($question->options->answers as $answer) {
-            if (((int) $answer->fraction) === 1) {
-                $answernumerical = qtype_calculated_calculate_answer(
-                 $answer->answer, $state->options->dataset, $answer->tolerance,
-                 $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit);
-                return array('' => $answernumerical->answer);
+        if ($question->options->multichoice != 1 ) {
+            if($unit = $virtualqtype->get_default_numerical_unit($question)){
+                 $unit = $unit->unit;
+            } else {
+                $unit = '';
             }
+            foreach ($question->options->answers as $answer) {
+                if (((int) $answer->fraction) === 1) {
+                    $answernumerical = qtype_calculated_calculate_answer(
+                     $answer->answer, $state->options->dataset, $answer->tolerance,
+                     $answer->tolerancetype, $answer->correctanswerlength,
+                        $answer->correctanswerformat, ''); // remove unit
+                        $correct = array('' => $answernumerical->answer);
+                        $correct['answer']= $correct[''];
+                    if (isset($correct['']) && $correct[''] != '*' && $unit ) {
+                            $correct[''] .= ' '.$unit;
+                            $correct['unit']= $unit;
+                    }
+                    return $correct;
+                }
+            }
+        }else{
+            return $virtualqtype->get_correct_responses($question, $state) ;
         }
         return null;
     }
