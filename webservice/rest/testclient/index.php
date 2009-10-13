@@ -59,15 +59,23 @@ if ($mform->is_cancelled()) {
     redirect('index.php');
 
 } else if ($data = $mform->get_data()) {
+    unset($data->submitbutton);
     $serverurl = "$CFG->wwwroot/webservice/rest/simpleserver.php";
     $serverurl .= '?wsusername='.urlencode($data->wsusername);
+    unset($data->wsusername);
     $serverurl .= '&wspassword='.urlencode($data->wspassword);
+    unset($data->wspassword);
     $serverurl .= '&wsfunction='.urlencode($data->function);
-    for ($i=0; $i<10; $i++) {
-        if (empty($data->groupids[$i])) {
-            continue;
+    unset($data->function);
+
+    if ($function === 'moodle_group_get_groups') {
+        //note: this could be placed into separate function lib file in the same dir
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->groupids[$i])) {
+                continue;
+            }
+            $serverurl .= "&groupids[$i]=".urlencode($data->groupids[$i]);
         }
-        $serverurl .= "&groupids[$i]=".urlencode($data->groupids[$i]);
     }
 
     echo $OUTPUT->header();
