@@ -2240,6 +2240,6 @@ MoodleQuickForm::registerElementType('submitlink', "$CFG->libdir/form/submitlink
 MoodleQuickForm::registerElementType('tags', "$CFG->libdir/form/tags.php", 'MoodleQuickForm_tags');
 MoodleQuickForm::registerElementType('text', "$CFG->libdir/form/text.php", 'MoodleQuickForm_text');
 MoodleQuickForm::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'MoodleQuickForm_textarea');
-MoodleQuickForm::registerElementType('texturl', "$CFG->libdir/form/texturl.php", 'MoodleQuickForm_texturl');
+MoodleQuickForm::registerElementType('url', "$CFG->libdir/form/url.php", 'MoodleQuickForm_url');
 MoodleQuickForm::registerElementType('warning', "$CFG->libdir/form/warning.php", 'MoodleQuickForm_warning');
 ?>
