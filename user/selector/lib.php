@@ -322,6 +322,9 @@ abstract class user_selector_base {
     public abstract function find_users($search);
 
     /**
+     * 
+     * Note: this function must be implemented if you use the search ajax field
+     *       (e.g. set $options['file'] = '/admin/filecontainingyourclass.php';)
      * @return array the options needed to recreate this user_selector.
      */
     protected function get_options() {
