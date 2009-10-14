@@ -528,6 +528,28 @@ class navigation_node {
     }
 
     /**
+     * Finds all nodes (recursivily) that have the specified type, regardless of
+     * assumed order or position.
+     *
+     * @param int $type One of navigation_node::TYPE_*
+     * @return array An array of navigation_node references for nodes of type $type
+     */
+    public function find_children_by_type($type) {
+        $nodes = array();
+        if (count($this->children)>0) {
+            foreach ($this->children as &$child) {
+                if ($child->type === $type) {
+                    $nodes[] = $child;
+                }
+                if (count($child->children)>0) {
+                    $nodes = array_merge($nodes, $child->find_children_by_type($type));
+                }
+            }
+        }
+        return $nodes;
+    }
+
+    /**
      * Toogles display of nodes and child nodes based on type
      *
      * If the type of a node if more than the type specified it's display property is set to false
@@ -571,19 +593,21 @@ class navigation_node {
      *
      * @param array $expandable An array to fill with the HTML id's of all branches
      * that can be expanded by AJAX. This is a forced reference.
+     * @param int $expansionlimit Optional/used internally can be one of navigation_node::TYPE_*
      */
-    public function find_expandable(&$expandable) {
+    public function find_expandable(&$expandable, $expansionlimit = null) {
         static $branchcount;
         if ($branchcount==null) {
             $branchcount=1;
         }
-        if ($this->nodetype == self::NODETYPE_BRANCH && count($this->children)==0) {
+        if ($this->nodetype == self::NODETYPE_BRANCH && count($this->children)==0 && ($expansionlimit === null || $this->type < $expansionlimit)) {
             $this->id = 'expandable_branch_'.$branchcount;
+            $this->add_class('canexpand');
             $branchcount++;
             $expandable[] = array('id'=>$this->id,'branchid'=>$this->key,'type'=>$this->type);
-        } else if ($this->nodetype==self::NODETYPE_BRANCH) {
+        } else if ($this->nodetype==self::NODETYPE_BRANCH && ($expansionlimit === null || $this->type <= $expansionlimit)) {
             foreach ($this->children as $child) {
-                $child->find_expandable($expandable);
+                $child->find_expandable($expandable, $expansionlimit);
             }
         }
     }
@@ -1559,7 +1583,7 @@ class global_navigation extends navigation_node {
         foreach ($courses as $course) {
             // If a category id has been specified and the current course is not within
             // that category or one of its children then skip this course
-            if ($categoryid!==0 && !preg_match('#/('.$categoryid.')(\/|$)#', $course->categorypath)) {
+            if ($categoryid!==0 && !preg_match('#/('.$categoryid.')(/|$)#', $course->categorypath)) {
                 continue;
             }
             $categorypathids = explode('/',trim($course->categorypath,' /'));
@@ -1588,7 +1612,7 @@ class global_navigation extends navigation_node {
             }
             // Add the courses that were retrieved earlier to the
             $this->add_courses($courses);
-        } else {
+        } else if ($categoryid === 0) {
             $keys = array();
             if ($categoryid!=0) {
                 if (!$this->cache->cached('category'.$categoryid)) {
@@ -1616,6 +1640,44 @@ class global_navigation extends navigation_node {
      */
     public function clear_cache() {
         $this->cache->volatile();
+    }
+
+    /**
+     * Finds all expandable nodes whilst ensuring that expansion limit is respected
+     *
+     * @param array $expandable A reference to an array that will be populated as
+     * we go.
+     */
+    public function find_expandable(&$expandable) {
+        parent::find_expandable($expandable, $this->expansionlimit);
+    }
+
+    /**
+     * Loads categories that contain no courses into the structure.
+     *
+     * These categories would normally be skipped, as such this function is purely
+     * for the benefit of code external to navigationlib
+     */
+    public function load_empty_categories() {
+        $categories = array();
+        $categorynames = array();
+        $categoryparents = array();
+        make_categories_list($categorynames, $categoryparents, '', 0, $category = NULL);
+        foreach ($categorynames as $id=>$name) {
+            if (!$this->find_child($id, self::TYPE_CATEGORY)) {
+                $category = new stdClass;
+                $category->id = $id;
+                if (array_key_exists($id, $categoryparents)) {
+                    $category->path = '/'.join('/',array_merge($categoryparents[$id],array($id)));
+                    $name = explode('/', $name);
+                    $category->name = join('/', array_splice($name, count($categoryparents[$id])));
+                } else {
+                    $category->path = '/'.$id;
+                    $category->name = $name;
+                }
+                $this->add_category_by_path($category);
+            }
+        }
     }
 }
 
@@ -1681,10 +1743,10 @@ class limited_global_navigation extends global_navigation {
      * @param int $instanceid
      */
     protected function load_category($instanceid) {
-        if (!$this->cache->cached('coursecontext'.$instanceid)) {
-            $this->cache->{'coursecontext'.$instanceid} = get_context_instance(CONTEXT_COURSE, $instanceid);
+        if (!$this->cache->cached('coursecatcontext'.$instanceid)) {
+            $this->cache->{'coursecatcontext'.$instanceid} = get_context_instance(CONTEXT_COURSECAT, $instanceid);
         }
-        $this->context = $this->cache->{'coursecontext'.$instanceid};
+        $this->context = $this->cache->{'coursecatcontext'.$instanceid};
         $this->load_categories($instanceid);
     }
 
@@ -3080,6 +3142,8 @@ class navigation_xml {
     protected $nodetype = array('node','branch');
     /** @var array */
     protected $expandable = array();
+    /** @var int */
+    protected $expansionceiling = array();
     /**
      * Turns a branch and all of its children into XML
      *
@@ -3098,6 +3162,15 @@ class navigation_xml {
         foreach ($expandable as $node) {
             $this->expandable[(string)$node['branchid']] = $node;
         }
+    }
+    /**
+     * Sets the upper limit for expandable nodes. Any nodes that are of the specified
+     * type or larger will not be expandable
+     *
+     * @param int $expansionceiling One of navigation_node::TYPE_*
+     */
+    public function set_expansionceiling($expansionceiling) {
+        $tihs->expansionceiling = $expansionceiling;
     }
     /**
      * Recusively converts a child node and its children to XML for output
@@ -3123,7 +3196,10 @@ class navigation_xml {
         if (array_key_exists((string)$child->key, $this->expandable)) {
             $attributes['expandable'] = $child->key;
             $child->add_class($this->expandable[$child->key]['id']);
+        } else if ($child->type >= $this->expansionceiling) {
+            $attributes['expansionceiling'] = $child->key;
         }
+
         if (count($child->classes)>0) {
             $attributes['class'] .= ' '.join(' ',$child->classes);
         }

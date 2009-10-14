@@ -49,7 +49,7 @@ if ($instanceid!==null) {
     // Get the db record for the block instance
     $blockrecords = $DB->get_record('block_instances', array('id'=>$instanceid,'blockname'=>'global_navigation_tree'));
     if ($blockrecords!=false) {
-        // Instantiate a block_instance object so we can access congif
+            // Instantiate a block_instance object so we can access congif
         $block = block_instance('global_navigation_tree', $blockrecords);
         // Check if the expansion limit config option has been set and isn't the default [everything]
         if (!empty($block->config->expansionlimit) && $block->config->expansionlimit > '0') {
@@ -65,10 +65,12 @@ if ($instanceid!==null) {
 
 // Create a navigation object to use, we can't guarantee PAGE will be complete
 $expandable = $navigation->initialise($branchtype, $branchid);
+$converter = new navigation_xml();
 
 if ($toggledisplay) {
     // Toggle display of item types we dont' want to display
     $navigation->toggle_type_display($navigation->expansionlimit);
+    $converter->set_expansionceiling($navigation->expansionlimit);
 }
 // Find the actuall branch we are looking for
 $branch = $navigation->find_child($branchid, $branchtype);
@@ -87,7 +89,6 @@ if (empty($branch) || $branch->nodetype !== navigation_node::NODETYPE_BRANCH) {
 }
 
 // Prepare an XML converter for the branch
-$converter = new navigation_xml();
 $converter->set_expandable($expandable);
 // Set XML headers
 header('Content-type: text/xml');
