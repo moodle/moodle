@@ -402,6 +402,15 @@ class navigation_node {
              $title = $this->title;
         }
 
+        if ($this->icon!==null) {
+            $icon = new html_image();
+            $icon->src = $this->icon;
+            $icon->alt = '';
+            $content = $OUTPUT->image($icon).' '.$content;
+        } else if ($this->helpbutton!==null) {
+            $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);
+        }
+
         if ($content != '' && ((is_object($this->action) && ($this->action instanceof moodle_url || $this->action instanceof html_link)) || is_string($this->action))) {
             if (!($this->action instanceof html_link)) {
                 $link = new html_link();
@@ -424,19 +433,15 @@ class navigation_node {
 
             $content = $OUTPUT->link($link);
         } else {
+            $span = new html_span();
+            $span->contents = $content;
             if ($title !== '') {
-                $title = ' title="'.s($title).'"';
+                $span->title = $title;
             }
             if ($this->hidden) {
-                $content = sprintf('<span class="dimmed_text"%s>%s</span>', $title, clean_text($content));
-            } else {
-                $content = sprintf('<span%s>%s</span>', $title, clean_text($content));
+                $span->add_class('dimmed_text');
             }
-        }
-        if ($this->icon!==null) {
-            $content = sprintf('<img src="%s" alt="" /> %s',$this->icon,$content);
-        } else if ($this->helpbutton!==null) {
-            $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);
+            $content = $OUTPUT->span($span);
         }
         return $content;
     }
