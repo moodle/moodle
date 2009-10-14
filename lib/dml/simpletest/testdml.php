@@ -1304,9 +1304,14 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->set_field($tablename, 'course', 2, array('id' => 1)));
         $this->assertEqual(2, $DB->get_field($tablename, 'course', array('id' => 1)));
+
+        // Note: All the nulls, booleans, empties, quoted and backslashes tests
+        // go to set_field_select() because set_field() is just one wrapper over it
     }
 
     public function test_set_field_select() {
+        global $CFG;
+
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1315,6 +1320,11 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('oneint', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null);
+        $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null);
+        $table->add_field('onechar', XMLDB_TYPE_CHAR, '100', null, null, null);
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
+        $table->add_field('onebinary', XMLDB_TYPE_BINARY, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
@@ -1324,6 +1334,92 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->set_field_select($tablename, 'course', 2, 'id = ?', array(1)));
         $this->assertEqual(2, $DB->get_field($tablename, 'course', array('id' => 1)));
 
+        // Check nulls are set properly for all types
+        $this->assertNull($DB->get_field($tablename, 'oneint', array('id' => 1)));
+        $this->assertNull($DB->get_field($tablename, 'onenum', array('id' => 1)));
+        $this->assertNull($DB->get_field($tablename, 'onechar', array('id' => 1)));
+        $this->assertNull($DB->get_field($tablename, 'onetext', array('id' => 1)));
+        $this->assertNull($DB->get_field($tablename, 'onebinary', array('id' => 1)));
+
+        // Check zeros are set properly for all types
+        $DB->set_field_select($tablename, 'oneint', 0, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onenum', 0, 'id = ?', array(1));
+        $this->assertEqual(0, $DB->get_field($tablename, 'oneint', array('id' => 1)));
+        $this->assertEqual(0, $DB->get_field($tablename, 'onenum', array('id' => 1)));
+
+        // Check booleans are set properly for all types
+        $DB->set_field_select($tablename, 'oneint', true, 'id = ?', array(1)); // trues
+        $DB->set_field_select($tablename, 'onenum', true, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onechar', true, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onetext', true, 'id = ?', array(1));
+        $this->assertEqual(1, $DB->get_field($tablename, 'oneint', array('id' => 1)));
+        $this->assertEqual(1, $DB->get_field($tablename, 'onenum', array('id' => 1)));
+        $this->assertEqual(1, $DB->get_field($tablename, 'onechar', array('id' => 1)));
+        $this->assertEqual(1, $DB->get_field($tablename, 'onetext', array('id' => 1)));
+
+        $DB->set_field_select($tablename, 'oneint', false, 'id = ?', array(1)); // falses
+        $DB->set_field_select($tablename, 'onenum', false, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onechar', false, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onetext', false, 'id = ?', array(1));
+        $this->assertEqual(0, $DB->get_field($tablename, 'oneint', array('id' => 1)));
+        $this->assertEqual(0, $DB->get_field($tablename, 'onenum', array('id' => 1)));
+        $this->assertEqual(0, $DB->get_field($tablename, 'onechar', array('id' => 1)));
+        $this->assertEqual(0, $DB->get_field($tablename, 'onetext', array('id' => 1)));
+
+        // Check string data causes exception in numeric types
+        try {
+            $DB->set_field_select($tablename, 'oneint', 'onestring', 'id = ?', array(1));
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+        try {
+            $DB->set_field_select($tablename, 'onenum', 'onestring', 'id = ?', array(1));
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+
+        // Check empty strings are set properly in string types
+        $DB->set_field_select($tablename, 'onechar', '', 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onetext', '', 'id = ?', array(1));
+        $this->assertTrue($DB->get_field($tablename, 'onechar', array('id' => 1)) === '');
+        $this->assertTrue($DB->get_field($tablename, 'onetext', array('id' => 1)) === '');
+
+        // Check operation ((210.10 + 39.92) - 150.02) against numeric types
+        $DB->set_field_select($tablename, 'oneint', ((210.10 + 39.92) - 150.02), 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onenum', ((210.10 + 39.92) - 150.02), 'id = ?', array(1));
+        $this->assertEqual(100, $DB->get_field($tablename, 'oneint', array('id' => 1)));
+        $this->assertEqual(100, $DB->get_field($tablename, 'onenum', array('id' => 1)));
+
+        // Check various quotes/backslashes combinations in string types
+        $teststrings = array(
+                'backslashes and quotes alone (even): "" \'\' \\\\',
+                'backslashes and quotes alone (odd): """ \'\'\' \\\\\\',
+                'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
+                'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
+        foreach ($teststrings as $teststring) {
+            $DB->set_field_select($tablename, 'onechar', $teststring, 'id = ?', array(1));
+            $DB->set_field_select($tablename, 'onetext', $teststring, 'id = ?', array(1));
+            $this->assertEqual($teststring, $DB->get_field($tablename, 'onechar', array('id' => 1)));
+            $this->assertEqual($teststring, $DB->get_field($tablename, 'onetext', array('id' => 1)));
+        }
+
+        // Check LOBs in text/binary columns
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
+        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
+        $DB->set_field_select($tablename, 'onetext', $clob, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onebinary', $blob, 'id = ?', array(1));
+        $this->assertEqual($clob, $DB->get_field($tablename, 'onetext', array('id' => 1)));
+        $this->assertEqual($blob, $DB->get_field($tablename, 'onebinary', array('id' => 1)));
+
+        // And "small" LOBs too, just in case
+        $newclob = substr($clob, 0, 500);
+        $newblob = substr($blob, 0, 250);
+        $DB->set_field_select($tablename, 'onetext', $newclob, 'id = ?', array(1));
+        $DB->set_field_select($tablename, 'onebinary', $newblob, 'id = ?', array(1));
+        $this->assertEqual($newclob, $DB->get_field($tablename, 'onetext', array('id' => 1)));
+        $this->assertEqual($newblob, $DB->get_field($tablename, 'onebinary', array('id' => 1)));
     }
 
     public function test_count_records() {
