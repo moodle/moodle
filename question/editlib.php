@@ -1272,7 +1272,9 @@ class question_bank_view {
         $questions = $this->load_page_questions($page, $perpage);
 
         echo '<div class="categorypagingbarcontainer">';
-        $pagingbar = moodle_paging_bar::make($totalnumber, $page, $perpage, $pageurl);
+        $pageing_url = new moodle_url('edit.php');
+        $r = $pageing_url->params($pageurl->params());
+        $pagingbar = moodle_paging_bar::make($totalnumber, $page, $perpage, $pageing_url);
         $pagingbar->pagevar = 'qpage';
         echo $OUTPUT->paging_bar($pagingbar);
         echo '</div>';
