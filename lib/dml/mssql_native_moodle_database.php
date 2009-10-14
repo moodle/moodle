@@ -520,8 +520,9 @@ class mssql_native_moodle_database extends moodle_database {
     private function normalise_value($column, $value) {
         if (is_bool($value)) { /// Always, convert boolean to int
             $value = (int)$value;
+        } // And continue processing because text columns with numeric info need special handling below
 
-        } else if ($column->meta_type == 'B') {   // BLOBs need to be properly "packed", but can be inserted directly if so.
+        if ($column->meta_type == 'B') {   // BLOBs need to be properly "packed", but can be inserted directly if so.
             if (!is_null($value)) {               // If value not null, unpack it to unquoted hexadecimal byte-string format
                 $value = unpack('H*hex', $value); // we leave it as array, so emulate_bound_params() can detect it
             }                                     // easily and "bind" the param ok.
