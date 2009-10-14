@@ -45,7 +45,6 @@ $alloweduserselector = new service_allowed_user_selector('removeselect', array('
             if (!empty($userstoassign)) {
 
                 foreach ($userstoassign as $adduser) {
-                    varlog($adduser);
                     global $DB;
                     $serviceuser = new object();
                     $serviceuser->externalserviceid = $id;
@@ -66,7 +65,6 @@ $alloweduserselector = new service_allowed_user_selector('removeselect', array('
             if (!empty($userstoremove)) {
 
                 foreach ($userstoremove as $removeuser) {
-                    varlog($removeuser);
                     global $DB;
                     $DB->delete_records('external_services_users', array('externalserviceid' => $id, 'userid' => $removeuser->id));
                     add_to_log(1, 'core', 'assign', 'admin/external_service_users.php?id='.$id, 'remove', '', $removeuser->id);
