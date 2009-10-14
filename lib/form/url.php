@@ -23,6 +23,9 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         foreach ($options as $name=>$value) {
             $this->_options[$name] = $value;
         }
+        if (!isset($this->_options['usefilepicker'])) {
+            $this->_options['usefilepicker'] = true;
+        }
         parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
         repository_head_setup();
     }
@@ -43,7 +46,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         } else {
             $str = parent::toHtml();
         }
-        if (!$CFG->repositoryusepickerbutton) {
+        if (empty($this->_options['usefilepicker'])) {
             return $str;
         }
         $strsaved = get_string('filesaved', 'repository');

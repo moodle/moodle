@@ -121,7 +121,6 @@ $string['uploading'] = 'Uploading...';
 $string['uploadsucc'] = 'The file has been uploaded successfully';
 $string['useexternallink'] = 'Use external link instead downloading files';
 $string['configuseexternallink'] = 'Will return the external link to file picker instead downloading external files';
-$string['usepickerbutton'] = 'Use file picker button beside text element';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using XHTML strict header, some YUI Component doesn\'t work in this mode, please turn it off in moodle';
 $string['ziped'] = 'Compress folder successfully';
