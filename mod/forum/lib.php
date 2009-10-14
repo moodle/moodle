@@ -127,7 +127,7 @@ function forum_add_instance($forum) {
  * @return bool success
  */
 function forum_update_instance($forum) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $USER;
 
     $forum->timemodified = time();
     $forum->id           = $forum->instance;
@@ -181,6 +181,7 @@ function forum_update_instance($forum) {
         $post->subject  = $forum->name;
         $post->message  = $forum->intro;
         $post->modified = $forum->timemodified;
+        $post->userid   = $USER->id;    // MDL-18599, so that current teacher can take ownership of activities
 
         $DB->update_record('forum_posts', $post);
         $discussion->name = $forum->name;
