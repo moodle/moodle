@@ -453,14 +453,16 @@ class file_storage {
     /**
      * Add new local file based on existing local file
      * @param mixed $file_record object or array describing changes
-     * @param int $fid id of existing local file
-     * @return object stored_file instance
+     * @param mixed $fileorid id or stored_file instance of the existing local file
+     * @return object stored_file instance of newly created file
      */
-    public function create_file_from_storedfile($file_record, $fid) {
+    public function create_file_from_storedfile($file_record, $fileorid) {
         global $DB;
 
-        if ($fid instanceof stored_file) {
-            $fid = $fid->get_id();
+        if ($fileorid instanceof stored_file) {
+            $fid = $fileorid->get_id();
+        } else {
+            $fid = $fileorid;
         }
 
         $file_record = (array)$file_record; // we support arrays too, do not modify the submitted record!
