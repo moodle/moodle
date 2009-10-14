@@ -826,12 +826,12 @@ class oci_native_moodle_database extends moodle_database {
                 switch ($type) {
                     case 'I':
                     case 'R':
-                    case 'N':
-                        $params[$key] = (int)$value;
+                        // TODO: Optimise
                         oci_bind_by_name($stmt, $key, $params[$key]);
                         break;
+                    case 'N':
                     case 'F':
-                        $params[$key] = (float)$value;
+                        // TODO: Optimise
                         oci_bind_by_name($stmt, $key, $params[$key]);
                         break;
 
@@ -844,6 +844,7 @@ class oci_native_moodle_database extends moodle_database {
                             // TODO: Shouldn't arrive here ever! BIG Clobs already bound above. Exception!
                         }
                     default: // Bind as CHAR (applying dirty hack)
+                        // TODO: Optimise
                         oci_bind_by_name($stmt, $key, $this->oracle_dirty_hack($tablename, $key, $params[$key]));
                 }
             }
