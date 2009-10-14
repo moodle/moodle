@@ -62,7 +62,7 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
 
         if ($this->blobs) {
             foreach ($this->blobs as $blob) {
-                $row[$blob] = pg_unescape_bytea($row[$blob]);
+                $row[$blob] = $row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null;
             }
         }
 

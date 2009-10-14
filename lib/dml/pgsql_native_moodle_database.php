@@ -653,7 +653,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $id = reset($row);
                 if ($blobs) {
                     foreach ($blobs as $blob) {
-                        $row[$blob] = pg_unescape_bytea($row[$blob]);
+                        $row[$blob] = $row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null;
                     }
                 }
                 if (isset($return[$id])) {
