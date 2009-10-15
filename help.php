@@ -23,6 +23,27 @@ $fortooltip = optional_param('fortooltip', 0, PARAM_INT);
 
 $PAGE->set_course($COURSE);
 
+$url = new moodle_url($CFG->wwwroot.'/help.php');
+if ($file !== '')  {
+    $url->param('file', $file);
+}
+if ($text !== 'No text to display')  {
+    $url->param('text', $text);
+}
+if ($module !== 'moodle')  {
+    $url->param('module', $module);
+}
+if ($forcelang !== '')  {
+    $url->param('forcelang', $forcelang);
+}
+if ($skiplocal !== 0)  {
+    $url->param('skiplocal', $skiplocal);
+}
+if ($fortooltip !== 0)  {
+    $url->param('fortooltip', $fortooltip);
+}
+$PAGE->set_url($url);
+
 // We look for the help to display in lots of different places, and
 // only display an error at the end if we can't find the help file
 // anywhere. This variable tracks that.
@@ -93,6 +114,7 @@ if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
 }
 
 // Do the main output.
+$PAGE->set_generaltype('popup');
 $PAGE->set_title($title);
 echo $OUTPUT->header();
 echo $OUTPUT->box_start();

@@ -1,9 +1,11 @@
-<?php // $Id$
+<?php
       // This script updates all users picturesi to remove black border.
 
 
     include('../config.php');
     include('../lib/gdlib.php');
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/userpix/upgrade.php'));
 
     require_login();
 

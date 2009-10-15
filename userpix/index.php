@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // This simple script displays all the users with pictures on one page.
       // By default it is not linked anywhere on the site.  If you want to
       // make it available you should link it in yourself from somewhere.
@@ -7,6 +7,8 @@
 
 
     include('../config.php');
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/userpix/index.php'));
 
     require_login();
 

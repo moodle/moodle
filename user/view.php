@@ -289,7 +289,7 @@ if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
 }
 
 if ($user->maildisplay == 1 or
-   ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
+   ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
    has_capability('moodle/course:useremail', $coursecontext)) {
 
     $emailswitch = '';
@@ -536,7 +536,7 @@ if (!$user->deleted and $USER->id != $user->id  && !session_is_loggedinas() && h
     echo '</form>';
 }
 
-if (!$user->deleted and !empty($CFG->messaging) and !isguest() and has_capability('moodle/site:sendmessage', $systemcontext)) {
+if (!$user->deleted and !empty($CFG->messaging) and !isguestuser() and has_capability('moodle/site:sendmessage', $systemcontext)) {
     if (!empty($USER->id) and ($USER->id == $user->id)) {
         if ($countmessages = $DB->count_records('message', array('useridto'=>$user->id))) {
             $messagebuttonname = get_string("messages", "message")."($countmessages)";

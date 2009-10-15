@@ -771,7 +771,7 @@
                     if (!empty($user->role)) {
                         $row->cells[1]->text .= get_string('role') .': '. $user->role .'<br />';
                     }
-                    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguest()) or
+                    if ($user->maildisplay == 1 or ($user->maildisplay == 2 and ($course->id != SITEID) and !isguestuser()) or
                                 has_capability('moodle/course:viewhiddenuserfields', $context)) {
                         $link = new html_link();
                         $link->url = "mailto:$user->email";

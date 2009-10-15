@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
        // index.php - the front page.
 
 ///////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@
         }
     }
 
-    if (isloggedin() and !isguest() and isset($CFG->frontpageloggedin)) {
+    if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
         $frontpagelayout = $CFG->frontpageloggedin;
     } else {
         $frontpagelayout = $CFG->frontpage;
@@ -176,10 +176,10 @@
 
             case FRONTPAGECOURSELIST:
 
-                if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest() and empty($CFG->disablemycourses)) {
+                if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser() and empty($CFG->disablemycourses)) {
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     print_my_moodle();
-                } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguest()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
+                } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
                     print_courses(0);
