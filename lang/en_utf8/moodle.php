@@ -445,6 +445,7 @@ $string['detailedmore'] = 'More detailed';
 $string['directory'] = 'Directory';
 $string['directorypaths'] = 'Directory Paths';
 $string['disable'] = 'Disable';
+$string['disabledcomments'] = 'Comments are disabled';
 $string['displayingfirst'] = 'Only the first $a->count $a->things are displayed';
 $string['displayingrecords'] = 'Displaying $a records';
 $string['displayingusers'] = 'Displaying users $a->start to $a->end';

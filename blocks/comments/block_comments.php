@@ -22,6 +22,14 @@ class block_comments extends block_base {
     }
 
     function get_content() {
+        global $CFG;
+        if (!$CFG->usecomments) {
+            $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('disabledcomments');
+            }
+            return $this->content;
+        }
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -37,7 +45,7 @@ class block_comments extends block_base {
             $cmt->itemid    = $this->instance->id;
             $cmt->course    = $this->page->course;
             // this is a hack to adjust commenting UI
-            // in block_comments 
+            // in block_comments
             $cmt->env       = 'block_comments';
             $cmt->linktext  = get_string('showcomments');
             $comment = new comment($cmt);

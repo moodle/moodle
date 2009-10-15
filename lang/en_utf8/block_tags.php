@@ -14,6 +14,7 @@ $string['communitytags2'] = 'Show all user created course tags';
 $string['coursetags'] = 'Course tags:';
 $string['coursetags1'] = 'course tags';
 $string['coursetags2'] = 'Show tags for this course';
+$string['disabledtags'] = 'Tags are disabled';
 $string['edit'] = 'edit...';
 $string['editdeletemytag'] = 'Delete tag from this course:';
 $string['editmytags'] = 'My tags - shortcuts to all your tagged courses.';

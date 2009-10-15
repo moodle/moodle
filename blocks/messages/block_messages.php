@@ -10,7 +10,11 @@ class block_messages extends block_base {
         global $USER, $CFG, $DB, $OUTPUT;
 
         if (!$CFG->messaging) {
-            return ''; 
+            $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('disabled', 'message');
+            }
+            return $this->content; 
         }
 
         if ($this->content !== NULL) {

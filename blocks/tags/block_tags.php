@@ -42,6 +42,9 @@ class block_tags extends block_base {
 
         if (empty($CFG->usetags)) {
             $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('disabledtags', 'block_tags');
+            }
             return $this->content;
         }
 
