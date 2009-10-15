@@ -405,7 +405,6 @@ class navigation_node {
         if ($this->icon!==null) {
             $icon = new html_image();
             $icon->src = $this->icon;
-            $icon->alt = '';
             $content = $OUTPUT->image($icon).' '.$content;
         } else if ($this->helpbutton!==null) {
             $content = sprintf('%s<span class="clearhelpbutton">%s</span>',trim($this->helpbutton),$content);
@@ -1201,9 +1200,21 @@ class global_navigation extends navigation_node {
     protected function load_activity($keys) {
         global $DB, $CFG, $PAGE;
 
+        if (!$PAGE->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
+            $cm = get_coursemodule_from_id('chat', $this->context->instanceid);
+            $cm->context = $this->context;
+            if ($cm) {
+                $PAGE->set_cm($cm, $PAGE->course);
+            } else {
+                debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
+                return;
+            }
+        }
+
         $module = $DB->get_record('modules', array('id'=>$PAGE->cm->module));
+        
         if (!$module) {
-            echo "Invalid Module ID";
+            debugging('Invalid Module ID picked up while attempting to load the activity for the navigation', DEBUG_DEVELOPER);
             return;
         }
 
@@ -2824,9 +2835,26 @@ class settings_navigation extends navigation_node {
      */
     protected function load_module_settings() {
         global $CFG, $DB;
-        $cm = $this->page->cm;
-        $module = $DB->get_record('modules', array('id'=>$cm->module));
+
+        if (!$this->page->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
+            $cm = get_coursemodule_from_id('chat', $this->context->instanceid);
+            $cm->context = $this->context;
+            if ($cm) {
+                $this->page->set_cm($cm, $this->page->course);
+            } else {
+                debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
+                return;
+            }
+        }
+
+        if (!$this->page->cm) {
+            debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
+            return;
+        }
+
+        $module = $DB->get_record('modules', array('id'=>$this->page->cm->module));
         if (!$module) {
+            debugging('Invalid Module ID picked up while attempting to load the activity for the navigation', DEBUG_DEVELOPER);
             return;
         }
 
