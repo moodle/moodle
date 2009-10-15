@@ -23,6 +23,12 @@ $url       = required_param('url', PARAM_URL); // only real urls here
 $id        = required_param('id', PARAM_INT); // course id
 $feedback  = optional_param('feedback', 0, PARAM_BOOL);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/import/xml/import.php', array('id'=>$id,'url'=>$url));
+if ($feedback !== 0) {
+    $url->param('feedback', $feedback);
+}
+$PAGE->set_url($url);
+
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
 }

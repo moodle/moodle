@@ -25,6 +25,15 @@ $id        = required_param('id', PARAM_INT);
 $section   = optional_param('section', 'calculation', PARAM_ALPHA);
 $idnumbers = optional_param('idnumbers', null, PARAM_RAW);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/calculation.php', array('id'=>$id, 'courseid'=>$courseid));
+if ($section !== 'calculation') {
+    $url->param('section', $section);
+}
+if ($idnumbers !== null) {
+    $url->param('idnumbers', $idnumbers);
+}
+$PAGE->set_url($url);
+
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }

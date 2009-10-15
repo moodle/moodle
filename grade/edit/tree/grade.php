@@ -25,6 +25,18 @@ $id       = optional_param('id', 0, PARAM_INT);
 $itemid   = optional_param('itemid', 0, PARAM_INT);
 $userid   = optional_param('userid', 0, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/grade.php', array('courseid'=>$courseid));
+if ($id !== 0) {
+    $url->param('id', $id);
+}
+if ($itemid !== 0) {
+    $url->param('itemid', $itemid);
+}
+if ($userid !== 0) {
+    $url->param('userid', $userid);
+}
+$PAGE->set_url($url);
+
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }

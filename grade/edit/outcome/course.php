@@ -21,6 +21,8 @@ require_once $CFG->libdir.'/gradelib.php';
 
 $courseid = required_param('id', PARAM_INT);
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/edit/outcome/course.php', array('id'=>$courseid)));
+
 /// Make sure they can even access this course
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');

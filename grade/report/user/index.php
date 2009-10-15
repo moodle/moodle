@@ -23,6 +23,12 @@ require_once $CFG->dirroot.'/grade/report/user/lib.php';
 $courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/report/user/index.php', array('id'=>$courseid));
+if ($userid !== $USER->id) {
+    $url->param('userid', $userid);
+}
+$PAGE->set_url($url);
+
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');

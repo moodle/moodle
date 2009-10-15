@@ -21,6 +21,8 @@ require_once 'grade_import_form.php';
 
 $id = required_param('id', PARAM_INT); // course id
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/import/xml/index.php', array('id'=>$id)));
+
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
 }

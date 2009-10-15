@@ -22,6 +22,8 @@ require_once 'form.php';
 
 $courseid  = optional_param('id', SITEID, PARAM_INT);
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/edit/setting/index.php', array('id'=>$courseid)));
+
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }

@@ -23,6 +23,12 @@ require_once 'item_form.php';
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/edit/tree/item.php', array('courseid'=>$courseid));
+if ($id !== 0) {
+    $url->param('id', $id);
+}
+$PAGE->set_url($url);
+
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }

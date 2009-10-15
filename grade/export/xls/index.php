@@ -21,6 +21,8 @@ require_once 'grade_export_xls.php';
 
 $id = required_param('id', PARAM_INT); // course id
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/grade/export/xls/index.php', array('id'=>$id)));
+
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
 }
