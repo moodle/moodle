@@ -24,74 +24,18 @@
 
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
-class service_allowed_user_selector extends user_selector_base {
+/*
+* This class displays either all the Moodle users allowed to use a service,
+* either all the other Moodle users.
+ */
+class service_user_selector extends user_selector_base {
     const MAX_USERS_PER_PAGE = 100;
 
     protected $serviceid;
-
-     public function __construct($name, $options) {
-        parent::__construct($name, $options);
-        if (!empty($options['serviceid'])) {
-            $this->serviceid = $options['serviceid'];
-        } else {
-            throw new moodle_exception('serviceidnotfound');
-        }
-    }
-
-    public function find_users($search) {
-        global $DB;
-
-        list($wherecondition, $params) = $this->search_sql($search, 'u'); //by default wherecondition retrieves
-                                                                         //all users except the deleted, not confirmed and guest
-        $params[] = $this->serviceid;
-
-        ///the following SQL retrieve all users that are allowed to the serviceid
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
-        $countfields = 'SELECT COUNT(1)';
-
-        $sql = " FROM {user} u, {external_services_users} esu
-                 WHERE $wherecondition
-                       AND esu.userid = u.id
-                       AND esu.externalserviceid = ?";
-
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
-
-        if (!$this->is_validating()) {
-            $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > service_allowed_user_selector::MAX_USERS_PER_PAGE) {
-                return $this->too_many_results($search, $potentialmemberscount);
-            }
-        }
-
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
-
-        if (empty($availableusers)) {
-            return array();
-        }
-
-        if ($search) {
-            $groupname = get_string('serviceusersmatching', 'webservice', $search);
-        } else {
-            $groupname = get_string('serviceusers', 'webservice');
-        }
-
-        return array($groupname => $availableusers);
-    }
-
-    protected function get_options() {
-        global $CFG;
-        $options = parent::get_options();
-        $options['file'] = '/admin/webservice/lib.php'; //need to be set, otherwise the /user/selector/search.php
-                                                        //will fail to find this user_selector class
-        $options['serviceid'] = $this->serviceid;
-        return $options;
-    }
-}
-
-class service_potential_user_selector extends user_selector_base {
-    const MAX_USERS_PER_PAGE = 100;
-
-    protected $serviceid;
+    protected $displayallowedusers; //set to true if the selector display the 
+                                    //allowed user on this service
+                                    //, set to false if the selector display the
+                                    // other user (false is the default default)
 
     public function __construct($name, $options) {
         parent::__construct($name, $options);
@@ -101,27 +45,40 @@ class service_potential_user_selector extends user_selector_base {
         else {
             throw new moodle_exception('serviceidnotfound');
         }
+        $this->displayallowedusers = !empty($options['displayallowedusers']);
     }
 
     public function find_users($search) {
         global $DB;
-
-        list($wherecondition, $params) = $this->search_sql($search, 'u'); //by default wherecondition retrieves
-                                                                         //all users except the deleted, not confirmed and guest
+        //by default wherecondition retrieves all users except the deleted, not
+        //confirmed and guest
+        list($wherecondition, $params) = $this->search_sql($search, 'u'); 
         $params[] = $this->serviceid;
-         ///the following SQL retrieve all users that are not allowed to the serviceid
+
+
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM {user} u WHERE $wherecondition
+        if ($this->displayallowedusers) {
+            ///the following SQL retrieve all users that are allowed to the serviceid
+            $sql = " FROM {user} u, {external_services_users} esu
+                 WHERE $wherecondition
+                       AND esu.userid = u.id
+                       AND esu.externalserviceid = ?";
+        }
+        else {
+            ///the following SQL retrieve all users that are not allowed to the serviceid
+            $sql = " FROM {user} u WHERE $wherecondition
                  AND NOT EXISTS (SELECT esu.userid FROM {external_services_users} esu
                                                   WHERE esu.externalserviceid = ?
                                                         AND esu.userid = u.id)";
-        $order = ' ORDER BY lastname ASC, firstname ASC';
+        }
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
-            if ($potentialmemberscount > service_potential_user_selector::MAX_USERS_PER_PAGE) {
+            if ($potentialmemberscount > service_user_selector::MAX_USERS_PER_PAGE) {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
@@ -132,10 +89,16 @@ class service_potential_user_selector extends user_selector_base {
             return array();
         }
 
+
         if ($search) {
-            $groupname = get_string('potusersmatching', 'webservice', $search);
-        } else {
-            $groupname = get_string('potusers', 'webservice');
+            $groupname = ($this->displayallowedusers) ?
+                get_string('serviceusersmatching', 'webservice', $search)
+                : get_string('potusersmatching', 'webservice', $search);
+        }
+        else {
+            $groupname = ($this->displayallowedusers) ?
+                get_string('serviceusers', 'webservice')
+                : get_string('potusers', 'webservice');
         }
 
         return array($groupname => $availableusers);
@@ -144,9 +107,11 @@ class service_potential_user_selector extends user_selector_base {
     protected function get_options() {
         global $CFG;
         $options = parent::get_options();
-        $options['file'] = '/admin/webservice/lib.php'; //need to be set, otherwise the /user/selector/search.php
+        $options['file'] = '/admin/webservice/lib.php'; //need to be set, otherwise
+                                                        // the /user/selector/search.php
                                                         //will fail to find this user_selector class
         $options['serviceid'] = $this->serviceid;
+        $options['displayallowedusers'] = $this->displayallowedusers;
         return $options;
     }
 }

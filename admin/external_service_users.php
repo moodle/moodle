@@ -36,8 +36,8 @@ admin_externalpage_setup('externalserviceusers');
 admin_externalpage_print_header();
 
 /// Get the user_selector we will need.
-$potentialuserselector = new service_potential_user_selector('addselect', array('serviceid' => $id));
-$alloweduserselector = new service_allowed_user_selector('removeselect', array('serviceid' => $id));
+$potentialuserselector = new service_user_selector('addselect', array('serviceid' => $id, 'displayallowedusers' => 0));
+$alloweduserselector = new service_user_selector('removeselect', array('serviceid' => $id, 'displayallowedusers' => 1));
 
 /// Process incoming user assignments to the service
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
