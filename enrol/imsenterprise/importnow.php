@@ -10,6 +10,7 @@ if (!$site = get_site()) {
 /// get language strings
 $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/enrol/imsenterprise/importnow.php'));
 $PAGE->set_title("$site->shortname: $str->enrolments");
 $PAGE->set_heading($site->fullname);
 $PAGE->navbar->add($str->administration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));

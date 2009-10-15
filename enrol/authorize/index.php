@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /// Load libraries
     require_once('../../config.php');
@@ -11,6 +11,18 @@
     $orderid  = optional_param('order', 0, PARAM_INT);
     $courseid = optional_param('course', SITEID, PARAM_INT);
     $userid   = optional_param('user', 0, PARAM_INT);
+
+    $url = new moodle_url($CFG->wwwroot.'/enrol/authorize/index.php');
+    if ($orderid !== 0) {
+        $url->param('order', $orderid);
+    }
+    if ($courseid !== SITEID) {
+        $url->param('course', $courseid);
+    }
+    if ($userid !== 0) {
+        $url->param('user', $userid);
+    }
+    $PAGE->set_url($url);
 
 /// Get course
     if (! $course = $DB->get_record('course', array('id'=>$courseid))) {

@@ -8,7 +8,7 @@ class enrolment_plugin_mnet {
 
     /// Override the base config_form() function
     function config_form($frm) {
-        global $CFG;
+        global $CFG, $OUTPUT, $PAGE;
 
        $vars = array('enrol_mnet_allow_allcourses',
                      'enrol_mnet_allowed_categories',

@@ -29,6 +29,7 @@
         redirect($destination, get_string('paymentthanks', '', $course->fullname));
 
     } else {   /// Somehow they aren't enrolled yet!  :-(
+        $PAGE->set_url($destination);
         echo $OUTPUT->header();
         notice(get_string('paymentsorry', '', get_string('defaultcourseteacher')), $destination);
     }

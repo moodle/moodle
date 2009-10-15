@@ -19,7 +19,6 @@ $removecategory = optional_param('removecategory', 0, PARAM_BOOL);
 $addcourse      = optional_param('addcourse', 0, PARAM_BOOL);
 $removecourse   = optional_param('removecourse', 0, PARAM_BOOL);
 
-require_login();
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 $sesskey = sesskey();
 $formerror = array();
