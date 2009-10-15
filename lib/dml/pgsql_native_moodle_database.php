@@ -981,7 +981,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
-        if ($column->meta_type == 'B') { /// If the column is a BLOB
+        if ($column->meta_type == 'B' && $newvalue !== null) { /// If the column is a BLOB and the value is not null
         /// Update BYTEA and return
             $newvalue = pg_escape_bytea($this->pgsql, $newvalue);
             $sql = "UPDATE {$this->prefix}$table SET $newfield = '$newvalue'::bytea $select";
