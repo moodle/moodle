@@ -360,7 +360,7 @@ function prepare_error_message($errorcode, $module, $link, $a) {
  * @return string formatted backtrace, ready for output.
  */
 function format_backtrace($callers, $plaintext = false) {
-    // do not use $CFG->dirroot because it might not be available in desctructors
+    // do not use $CFG->dirroot because it might not be available in destructors
     $dirroot = dirname(dirname(__FILE__));
  
     if (empty($callers)) {
