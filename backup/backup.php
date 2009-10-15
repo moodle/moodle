@@ -13,6 +13,18 @@
     $cancel = optional_param('cancel', '', PARAM_RAW);
     $launch = optional_param('launch', '', PARAM_ACTION);
 
+    $url = new moodle_url();
+    if ($id !== 0) {
+        $url->param('id', $id);
+    }
+    if ($to !== 0) {
+        $url->param('to', $to);
+    }
+    if ($launch !== '') {
+        $url->param('launch', $launch);
+    }
+    $PAGE->set_url($url);
+
     $loginurl = get_login_url();
 
     if (!empty($id)) {

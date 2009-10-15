@@ -34,7 +34,14 @@ $mode     = required_param('mode', PARAM_INT);
 $userid   = optional_param('userid', 0, PARAM_INT);
 $roleid   = optional_param('roleid',0,PARAM_INT);
 
-
+$url = new moodle_url($CFG->wwwroot.'/course/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode));
+if ($userid !== 0) {
+    $url->param('userid', $userid);
+}
+if ($roleid !== 0) {
+    $url->param('roleid', $roleid);
+}
+$PAGE->set_url($url);
 
 if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
     print_error("invalidcourseid");

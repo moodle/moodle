@@ -22,6 +22,29 @@
     $method = optional_param('method', '', PARAM_ACTION);
     $backup_unique_code = optional_param('backup_unique_code',0,PARAM_INT);
 
+    $url = new moodle_url($CFG->wwwroot.'/backup/restore.php');
+    if ($id !== 0) {
+        $url->param('id', $id);
+    }
+    if ($file !== 0) {
+        $url->param('file', $file);
+    }
+    if ($cancel !== '') {
+        $url->param('cancel', $cancel);
+    }
+    if ($launch !== '') {
+        $url->param('launch', $launch);
+    }
+    if ($to !== '') {
+        $url->param('to', $to);
+    }
+    if ($method !== '') {
+        $url->param('method', $method);
+    }
+    if ($backup_unique_code !== 0) {
+        $url->param('backup_unique_code', $backup_unique_code);
+    }
+
     //Check login
     require_login();
 
