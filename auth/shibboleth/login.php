@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
     require_once("../../config.php");
     require_once($CFG->dirroot."/auth/shibboleth/auth.php");
@@ -79,6 +79,7 @@ httpsrequired();
 
     $loginsite = get_string("loginsite");
 
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/shibboleth/login.php'));
     $PAGE->navbar->add($loginsite);
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);

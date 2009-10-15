@@ -14,17 +14,23 @@
 
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 
-require_login(SITEID,false);
-
-if (!is_enabled_auth('mnet')) {
-    print_error('mnetdisable');
-}
-
 // grab the GET params - wantsurl could be anything - take it
 // with PARAM_RAW
 $hostid = optional_param('hostid', '0', PARAM_INT);
 $hostwwwroot = optional_param('hostwwwroot', '', PARAM_URL);
 $wantsurl = optional_param('wantsurl', '', PARAM_RAW);
+
+$url = new moodle_url($CFG->wwwroot.'/auth/mnet/jump.php');
+if ($hostid !== '0') $url->param('hostid', $hostid);
+if ($hostwwwroot !== '') $url->param('hostwwwroot', $hostwwwroot);
+if ($wantsurl !== '') $url->param('wantsurl', $wantsurl);
+$PAGE->set_url($url);
+
+require_login(SITEID,false);
+
+if (!is_enabled_auth('mnet')) {
+    print_error('mnetdisable');
+}
 
 // If hostid hasn't been specified, try getting it using wwwroot
 if (!$hostid) {

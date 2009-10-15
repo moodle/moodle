@@ -15,6 +15,16 @@
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
+// grab the GET params
+$token         = required_param('token',    PARAM_BASE64);
+$remotewwwroot = required_param('idp',      PARAM_URL);
+$wantsurl      = required_param('wantsurl', PARAM_LOCALURL);
+$wantsremoteurl = optional_param('remoteurl', false, PARAM_BOOL);
+
+$url = new moodle_url($CFG->wwwroot.'/auth/mnet/jump.php', array('token'=>$token, 'idp'=>$remotewwwroot, 'wantsurl'=>$wantsurl));
+if ($wantsremoteurl !== false) $url->param('remoteurl', $wantsremoteurl);
+$PAGE->set_url($url);
+
 if (!$site = get_site()) {
     print_error('mnet_session_prohibited', 'mnet', '', '');
 }
@@ -22,11 +32,6 @@ if (!$site = get_site()) {
 if (!is_enabled_auth('mnet')) {
     print_error('mnetdisable');
 }
-// grab the GET params
-$token         = required_param('token',    PARAM_BASE64);
-$remotewwwroot = required_param('idp',      PARAM_URL);
-$wantsurl      = required_param('wantsurl', PARAM_LOCALURL);
-$wantsremoteurl = optional_param('remoteurl', false, PARAM_BOOL);
 
 // confirm the MNET session
 $mnetauth = get_auth_plugin('mnet');

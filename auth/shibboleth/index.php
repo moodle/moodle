@@ -1,7 +1,10 @@
-<?php // $Id$
-      // Designed to be redirected from moodle/login/index.php
+<?php
+
+    // Designed to be redirected from moodle/login/index.php
 
     require('../../config.php');
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
     if (isloggedin() && $USER->username != 'guest') {      // Nothing to do
         if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
