@@ -177,15 +177,25 @@ function forum_db_names() {
 * @param int $forum_id a forum identifier
 * @uses $CFG, $USER, $DB
 * @return an array of posts
-* @todo get rid of old isteacher() call
 */
 function forum_get_discussions_fast($forum_id) {
     global $CFG, $USER, $DB;
     
     $timelimit='';
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (!((has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))
-          && !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum_id)))) {
+
+        $courseid = $DB->get_field('forum', 'course', array('id'=>$forum_id));
+
+        if ($courseid) {
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        } else {
+            $coursecontext = get_context_instance(CONTEXT_SYSTEM);
+            $systemcontext = $coursecontext;
+        }
+
+        if (!((has_capability('moodle/site:doanything', $systemcontext) && !empty($CFG->admineditalways))
+                || has_any_capability(array('moodle/legacy:teacher', 'moodle/legacy:editingteacher', 'moodle/legacy:admin'), $coursecontext, $userid, false))) {
             $now = time();
             $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
             if (!empty($USER->id)) {
@@ -283,7 +293,7 @@ function forum_get_child_posts_fast($parent, $forum_id) {
 * @return true if access is allowed, false elsewhere
 */
 function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $SESSION;
     
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
@@ -307,9 +317,25 @@ function forum_check_text_access($path, $itemtype, $this_id, $user, $group_id, $
     }
 
     // group check : entries should be in accessible groups
-    $current_group = get_current_group($discussion->course);
+    if (isset($SESSION->currentgroup[$discussion->course])) {
+        $current_group =  $SESSION->currentgroup[$discussion->course];
+    } else {
+        $current_group = groups_get_all_groups($discussion->course, $USER->id);
+        if (is_array($current_group)) {
+            $current_group = array_shift(array_keys($current_group));
+            $SESSION->currentgroup[$discussion->course] = $current_group;
+        } else {
+            $current_group = 0;
+        }
+    }
+
     $course = $DB->get_record('course', array('id' => $discussion->course));
-    if ($group_id >= 0 && (groupmode($course, $cm)  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context)){
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
+    if ($group_id >= 0 && ($groupmode  == SEPARATEGROUPS) && ($group_id != $current_group) && !has_capability('mod/forum:viewdiscussionsfromallgroups', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : separated grouped forum item";
         return false;
     }

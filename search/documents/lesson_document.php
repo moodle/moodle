@@ -203,7 +203,8 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
     }
     
     // the user have it seen yet ? did he tried one time at least
-    $attempt = get_record('lesson_attempts', 'lessonid', $lesson->id, 'pageid', $page->id, 'userid', $USER->id);
+    $attempt = $DB->get_record('lesson_attempts', array('lessonid'=>$lesson->id,'pageid'=>$page->id, 'userid'=>$USER->id));
+
     if (!$attempt && !$lessonsuperuser){
         if (!empty($CFG->search_access_debug)) echo "search reject : never tried this lesson ";
         return false;

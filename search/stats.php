@@ -46,6 +46,7 @@ require_once($CFG->dirroot.'/search/lib.php');
 
     $site = get_site();
 
+    $PAGE->set_url($CFG->wwwroot.'/search/stats.php');
     $PAGE->navbar->add($strsearch, new moodle_url($CFG->wwwroot.'/search/index.php'));
     $PAGE->navbar->add($strquery, new moodle_url($CFG->wwwroot.'/search/stats.php'));
     $PAGE->set_title($strsearch);
@@ -125,7 +126,6 @@ require_once($CFG->dirroot.'/search/lib.php');
 
         echo $OUTPUT->table($admin_table);
         echo $OUTPUT->spacer($spacer) . '<br />';
-        print_spacer(20);
     }
 
 /// this is the standard summary table for normal users, shows document counts

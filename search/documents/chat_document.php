@@ -77,7 +77,7 @@ function chat_make_link($cm_id, $start, $end) {
 /**
 * fetches all the records for a given session and assemble them as a unique track
 * we revamped here the code of report.php for making sessions, but without any output.
-* note that we should collect sessions "by groups" if groupmode() is SEPARATEGROUPS.
+* note that we should collect sessions "by groups" if $groupmode is SEPARATEGROUPS.
 * @param int $chat_id the database
 * @param int $fromtime
 * @param int $totime
@@ -91,7 +91,11 @@ function chat_get_session_tracks($chat_id, $fromtime = 0, $totime = 0) {
     $course = $DB->get_record('course', array('id' => $chat->course));
     $coursemodule = $DB->get_field('modules', 'id', array('name' => 'data'));
     $cm = $DB->get_record('course_modules', array('course' => $course->id, 'module' => $coursemodule, 'instance' => $chat->id));
-    $groupmode = groupmode($course, $cm);
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
 
     $fromtimeclause = ($fromtime) ? "AND timestamp >= {$fromtime}" : ''; 
     $totimeclause = ($totime) ? "AND timestamp <= {$totime}" : ''; 
@@ -283,7 +287,12 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $course = $DB->get_record('course', array('id' => $chat->course));
-    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
+    if (($groupmode == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : chat element is in separated group ";
         return false;
     }

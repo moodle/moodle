@@ -56,6 +56,15 @@
     $advanced     = (optional_param('a', '0', PARAM_INT) == '1') ? true : false;
     $query_string = stripslashes(optional_param('query_string', '', PARAM_CLEAN));
 
+    $url = new moodle_url($CFG->wwwroot.'/search/query.php');
+    if ($page_number !== -1) {
+        $url->param('page', $page_number);
+    }
+    if ($advanced) {
+        $url->param('a', '1');
+    }
+    $PAGE->set_url($url);
+
 /// discard harmfull searches
 
     if (!isset($CFG->block_search_utf8dir)){

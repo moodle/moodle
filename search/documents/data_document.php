@@ -371,7 +371,12 @@ function data_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $course = $DB->get_record('course', 'id', $data->course);
-    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
+    if (($groupmode == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : separated group owned resource ";
         return false;
     }

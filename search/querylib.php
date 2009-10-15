@@ -402,7 +402,7 @@ class SearchQuery {
         $unenroled = !in_array($course_id, array_keys($myCourses));
         
         // if guests are allowed, logged guest can see
-        $isallowedguest = (isguest()) ? $DB->get_field('course', 'guest', array('id' => $course_id)) : false ;
+        $isallowedguest = (isguestuser()) ? $DB->get_field('course', 'guest', array('id' => $course_id)) : false ;
         
         if ($unenroled && !$isallowedguest){
             return false;

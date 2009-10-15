@@ -257,7 +257,7 @@ function wiki_db_names() {
 * @return true if access is allowed, false elsewhere
 */
 function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
-    global $CFG, $DB;
+    global $CFG, $DB, $SESSION;
     
     // get the wiki object and all related stuff
     $page = $DB->get_record('wiki_pages', array('id' => $this_id));
@@ -275,8 +275,24 @@ function wiki_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
-    $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && $group_id != $current_group && !has_capability('moodle/site:accessallgroups', $context)) {
+    if (isset($SESSION->currentgroup[$course->id])) {
+        $current_group =  $SESSION->currentgroup[$course->id];
+    } else {
+        $current_group = groups_get_all_groups($course->id, $USER->id);
+        if (is_array($current_group)) {
+            $current_group = array_shift(array_keys($current_group));
+            $SESSION->currentgroup[$course->id] = $current_group;
+        } else {
+            $current_group = 0;
+        }
+    }
+
+    if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
+        $groupmode =  $cm->groupmode;
+    } else {
+        $groupmode = $course->groupmode;
+    }
+    if (($groupmode == SEPARATEGROUPS) && $group_id != $current_group && !has_capability('moodle/site:accessallgroups', $context)) {
         if (!empty($CFG->search_access_debug)) echo "search reject : separated group owner wiki ";
         return false;
     }
