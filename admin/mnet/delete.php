@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
 
     require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
     include_once($CFG->dirroot.'/mnet/lib.php');
@@ -38,7 +38,17 @@
         if ($live_users > 0) {
             $warn[] = get_string('usersareonline', 'mnet', $live_users);
         }
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/admin/mnet/delete.php'));
+        $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+        $PAGE->navbar->add(get_string('mnetsettings', 'mnet'), new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/mnet/index.php'));
+        $PAGE->navbar->add(get_string('deletehost', 'mnet'));
+
+        $PAGE->set_title("$site->shortname: $strmnetsettings");
+        $PAGE->set_heading($site->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('mnetsettings', 'mnet'));
         include('delete.html');
+        echo $OUTPUT->footer();
     } elseif ('delete' == $step) {
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_id($hostid);

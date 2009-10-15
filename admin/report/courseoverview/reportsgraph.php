@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
@@ -30,7 +30,8 @@
     $courses = $DB->get_records_sql($sql, $param->$params, 0, $numcourses);
 
     if (empty($courses)) {
-        print_error('statsnodata', 'error', $CFG->wwwroot.'/'.$CFG->admin.'/report/course/index.php');
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/index.php'));
+        print_error('statsnodata', 'error', $PAGE->url->out());
     }
 
 

@@ -16,6 +16,8 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageauths";
 
+$PAGE->set_url($returnurl);
+
 $action = optional_param('action', '', PARAM_ACTION);
 $auth   = optional_param('auth', '', PARAM_SAFEDIR);
 

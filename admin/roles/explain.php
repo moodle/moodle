@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -36,6 +36,8 @@ require(dirname(__FILE__) . '/../../config.php');
 $userid = required_param('user', PARAM_INTEGER); // We use 0 here to mean not-logged-in.
 $contextid = required_param('contextid', PARAM_INTEGER);
 $capability = required_param('capability', PARAM_CAPABILITY);
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/admin/roles/explain.php', array('user'=>$userid, 'contextid'=>$contextid, 'capability'=>$capability)));
 
 // Get the context and its parents.
 $context = get_context_instance_by_id($contextid);

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?PHP
        // dbperformance.php - shows latest ADOdb stats for the current server
 
     require_once('../config.php');
@@ -21,6 +21,7 @@ error('TODO: rewrite db perf code'); // TODO: rewrite
     $site = get_site();
 
     if (!empty($topframe)) {
+        $PAGE->set_url(new moodle_url($CFG->wwwroot.'/admin/dbperformance.php'));
         $PAGE->navbar->add($stradministration, new moodle_url($CFG->wwwroot.'/admin/index.php'));
         $PAGE->navbar->add($strdatabaseperformance);
         $PAGE->set_title("$site->shortname: $strdatabaseperformance");
