@@ -24,7 +24,7 @@
  */
 
 require('../../../config.php');
-require_once("$CFG->dirroot/webservice/webservice_test_client_form.php");
+require_once("$CFG->dirroot/webservice/testclient_forms.php");
 require_once("$CFG->dirroot/webservice/rest/locallib.php");
 
 $function = optional_param('function', '', PARAM_SAFEDIR);
@@ -51,7 +51,6 @@ if (!$function) {
 }
 
 $class = $function.'_form';
-require_once("$CFG->dirroot/webservice/rest/testclient/$class.php");
 
 $mform = new $class();
 
