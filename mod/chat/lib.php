@@ -755,7 +755,7 @@ function chat_update_chat_times($chatid=0) {
  * @return bool|string Returns HTML or false
  */
 function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
-    global $CFG, $USER;
+    global $CFG, $USER, $OUTPUT;
 
     $output = new object();
     $output->beep = false;       // by default
@@ -774,7 +774,15 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
-    $message->picture = print_user_picture($sender->id, $courseid, $sender->picture, false, true, false);
+    $userpic = new moodle_user_picture();
+    $userpic->user = $sender;
+    $userpic->courseid = $courseid;
+    $userpic->size = false;
+    $userpic->link = false;
+    $userpic->alttext = true;
+    $userpic->image->src = $sender->picture;
+    $message->picture = $OUTPUT->user_picture($userpic);
+
     if ($courseid) {
         $message->picture = "<a onclick=\"window.open('$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid')\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
