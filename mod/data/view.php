@@ -279,7 +279,7 @@
     // The code will be much nicer than this eventually.
     $title = $course->shortname.': ' . format_string($data->name);
 
-    $buttons = '<table><tr><td>'.update_module_button($cm->id, $course->id, get_string('modulename', 'data')).'</td>';
+    $buttons = '<table><tr><td>'.$OUTPUT->update_module_button($cm->id, $cm->modname).'</td>';
     if ($PAGE->user_allowed_editing() && !empty($CFG->showblocksonmodpages)) {
         $buttons .= '<td><form '.$CFG->frametarget.' method="get" action="view.php"><div>'.
             '<input type="hidden" name="id" value="'.$cm->id.'" />'.
