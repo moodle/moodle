@@ -215,7 +215,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
 
 function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limitfrom='', $limitnum='',
                    $modname="", $modid=0, $modaction="", $groupid=0) {
-    global $DB;
+    global $DB, $SESSION;
     // It is assumed that $date is the GMT time of midnight for that day,
     // and so the next 86400 seconds worth of logs are printed.
 
@@ -224,7 +224,17 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     /// If the group mode is separate, and this user does not have editing privileges,
     /// then only the user's group can be viewed.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        $groupid = get_current_group($course->id);
+        if (isset($SESSION->currentgroup[$course->id])) {
+            $groupid =  $SESSION->currentgroup[$course->id];
+        } else {
+            $groupid = groups_get_all_groups($course->id, $USER->id);
+            if (is_array($groupid)) {
+                $groupid = array_shift(array_keys($groupid));
+                $SESSION->currentgroup[$course->id] = $groupid;
+            } else {
+                $groupid = 0;
+            }
+        }
     }
     /// If this course doesn't have groups, no groupid can be specified.
     else if (!$course->groupmode) {

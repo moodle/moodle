@@ -26,7 +26,7 @@
 function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG, $SITE, $DB, $OUTPUT;
+    global $USER, $CFG, $SITE, $DB, $OUTPUT, $SESSION;
     require_once $CFG->dirroot.'/mnet/peer.php';
     
     $mnet_peer = new mnet_peer();
@@ -51,16 +51,27 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 
         /// Setup for group handling.
         if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-            $selectedgroup = get_current_group($course->id);
+            $selectedgroup = -1;
             $showgroups = false;
-        }
-        else if ($course->groupmode) {
-            $selectedgroup = ($selectedgroup == -1) ? get_current_group($course->id) : $selectedgroup;
+        } else if ($course->groupmode) {
             $showgroups = true;
-        }
-        else {
+        } else {
             $selectedgroup = 0;
             $showgroups = false;
+        }
+
+        if ($selectedgroup === -1) {
+            if (isset($SESSION->currentgroup[$course->id])) {
+                $selectedgroup =  $SESSION->currentgroup[$course->id];
+            } else {
+                $selectedgroup = groups_get_all_groups($course->id, $USER->id);
+                if (is_array($selectedgroup)) {
+                    $selectedgroup = array_shift(array_keys($selectedgroup));
+                    $SESSION->currentgroup[$course->id] = $selectedgroup;
+                } else {
+                    $selectedgroup = 0;
+                }
+            }
         }
 
     } else {
@@ -311,7 +322,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
-    global $USER, $CFG, $DB, $OUTPUT;
+    global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
     // first check to see if we can override showcourses and showusers
     $numcourses =  $DB->count_records("course");
@@ -324,16 +335,27 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
    
     /// Setup for group handling.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-        $selectedgroup = get_current_group($course->id);
+        $selectedgroup = -1;
         $showgroups = false;
-    }
-    else if ($course->groupmode) {
-        $selectedgroup = ($selectedgroup == -1) ? get_current_group($course->id) : $selectedgroup;
+    } else if ($course->groupmode) {
         $showgroups = true;
-    }
-    else {
+    } else {
         $selectedgroup = 0;
         $showgroups = false;
+    }
+
+    if ($selectedgroup === -1) {
+        if (isset($SESSION->currentgroup[$course->id])) {
+            $selectedgroup =  $SESSION->currentgroup[$course->id];
+        } else {
+            $selectedgroup = groups_get_all_groups($course->id, $USER->id);
+            if (is_array($selectedgroup)) {
+                $selectedgroup = array_shift(array_keys($selectedgroup));
+                $SESSION->currentgroup[$course->id] = $selectedgroup;
+            } else {
+                $selectedgroup = 0;
+            }
+        }
     }
 
     // Get all the possible users
@@ -341,7 +363,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
 
     if ($course->id != SITEID) {
         $courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC', '','',$selectedgroup,null, false);
-} else {
+    } else {
         // this may be a lot of users :-(
         $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');
     }
