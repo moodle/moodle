@@ -18,16 +18,19 @@ $id       = optional_param('id', 0, PARAM_INT);
 $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
+$url = new moodle_url($CFG->wwwroot.'/group/grouping.php');
 if ($id) {
+    $url->param('id', $id);
     if (!$grouping = $DB->get_record('groupings', array('id'=>$id))) {
         print_error('invalidgroupid');
     }
     $grouping->description = clean_text($grouping->description);
     if (empty($courseid)) {
         $courseid = $grouping->courseid;
-
     } else if ($courseid != $grouping->courseid) {
         print_error('invalidcourseid');
+    } else {
+        $url->param('courseid', $courseid);
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
@@ -35,12 +38,15 @@ if ($id) {
     }
 
 } else {
+    $url->param('courseid', $courseid);
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
     $grouping = new object();
     $grouping->courseid = $course->id;
 }
+
+$PAGE->set_url($url);
 
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
