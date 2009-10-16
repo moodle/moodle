@@ -17,9 +17,9 @@
     </div>
 <?php } ?>
 
-<?php if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
+<?php if ($OUTPUT->has_navbar()) { // This is the navigation bar with breadcrumbs  ?>
     <div class="navbar clearfix">
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
         <div class="navbutton"><?php echo $PAGE->button; ?></div>
     </div>
 <?php } else if ($PAGE->heading) { // If no navigation, but a heading, then print a line ?>
