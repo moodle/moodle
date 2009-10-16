@@ -1178,7 +1178,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
  * @param array $htmlarray
  */
 function forum_print_overview($courses,&$htmlarray) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG, $DB, $SESSION;
 
     $LIKE = $DB->sql_ilike();
 
@@ -1231,7 +1231,18 @@ function forum_print_overview($courses,&$htmlarray) {
         foreach ($trackingforums as $track) {
             $sql .= '(d.forum = ? AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = ?)) OR ';
             $params[] = $track->id;
-            $params[] = get_current_group($track->course);
+            if (isset($SESSION->currentgroup[$track->course])) {
+                $groupid =  $SESSION->currentgroup[$track->course];
+            } else {
+                $groupid = groups_get_all_groups($track->course, $USER->id);
+                if (is_array($groupid)) {
+                    $groupid = array_shift(array_keys($groupid));
+                    $SESSION->currentgroup[$track->course] = $groupid;
+                } else {
+                    $groupid = 0;
+                }
+            }
+            $params[] = $groupid;
         }
         $sql = substr($sql,0,-3); // take off the last OR
         $sql .= ') AND p.modified >= ? AND r.id is NULL GROUP BY d.forum,d.course';

@@ -126,7 +126,7 @@ foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
 }
 
 /// Do course wide subscribe/unsubscribe
-if (!is_null($subscribe) and !isguestuser() and !isguest()) {
+if (!is_null($subscribe) and !isguestuser()) {
     foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
         $forum = $forums[$forumid];
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -396,7 +396,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 
-if (!isguest()) {
+if (!isguestuser()) {
     echo $OUTPUT->box_start('subscription');
     echo '<span class="helplink">';
     echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
