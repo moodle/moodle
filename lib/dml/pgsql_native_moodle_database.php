@@ -585,7 +585,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
             if ($limitnum < 1) {
-                $limitnum = "18446744073709551615";
+                $limitnum = "ALL";
             }
             $sql .= " LIMIT $limitnum OFFSET $limitfrom";
         }
@@ -624,7 +624,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
             if ($limitnum < 1) {
-                $limitnum = "18446744073709551615";
+                $limitnum = "ALL";
             }
             $sql .= " LIMIT $limitnum OFFSET $limitfrom";
         }

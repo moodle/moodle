@@ -700,12 +700,11 @@ class mssql_native_moodle_database extends moodle_database {
         $limitfrom = ($limitfrom < 0) ? 0 : $limitfrom;
         $limitnum  = ($limitnum < 0)  ? 0 : $limitnum;
         if ($limitfrom or $limitnum) {
-            if ($limitnum < 1) {
-                $limitnum = "18446744073709551615";
+            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is hadled later)
+                $fetch = $limitfrom + $limitnum;
+                $sql = preg_replace('/^([\s(])*SELECT( DISTINCT)?(?!\s*TOP\s*\()/i',
+                                    "\\1SELECT\\2 TOP $fetch", $sql);
             }
-            $fetch = $limitfrom + $limitnum;
-            $sql = preg_replace('/^([\s(])*SELECT( DISTINCT)?(?!\s*TOP\s*\()/i',
-                                "\\1SELECT\\2 TOP $fetch", $sql);
         }
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
@@ -715,7 +714,7 @@ class mssql_native_moodle_database extends moodle_database {
         $result = mssql_query($rawsql, $this->mssql);
         $this->query_end($result);
 
-        if ($limitfrom) {
+        if ($limitfrom) { // Skip $limitfrom records
             mssql_data_seek($result, $limitfrom);
         }
 
