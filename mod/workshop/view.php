@@ -106,7 +106,7 @@
             foreach ($submissions as $submission) {
                 $grade = workshop_submission_grade($workshop, $submission);
                 if ($workshop->wtype) {
-                    $gradinggrade = workshop_gradinggrade($workshop, $student);
+                    $gradinggrade = workshop_gradinggrade($workshop, $USER);
                 } else { // ignore grading grades for simple assignments
                     $gradinggrade = 0;
                 }
