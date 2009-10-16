@@ -180,7 +180,15 @@
                 message_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
-                $teacher = get_teacher($course->id);
+                // Pass $view=true to filter hidden caps if the user cannot see them
+                if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
+                                                     '', '', '', '', false, true)) {
+                    $users = sort_by_roleassignment_authority($users, $context);
+                    $teacher = array_shift($users);
+                } else {
+                    $teacher = false;
+                }
+
 
                 if (!empty($CFG->enrol_mailstudents)) {
                     $a->coursename = $course->fullname;
