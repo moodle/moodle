@@ -13,6 +13,18 @@ $sort = optional_param('sort', 'alpha', PARAM_TEXT); //alpha, date or popularity
 $show = optional_param('show', 'all', PARAM_TEXT); //all, my, official, community or course
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/tag/coursetags_more.php');
+if ($sort !== 'alpha') {
+    $url->param('sort', $sort);
+}
+if ($show !== 'all') {
+    $url->param('show', $show);
+}
+if ($courseid !== 0) {
+    $url->param('courseid', $courseid);
+}
+$PAGE->set_url($url);
+
 if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }

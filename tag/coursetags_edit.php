@@ -14,6 +14,18 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
 $deltag = optional_param('del_tag', 0, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/tag/coursetags_edit.php');
+if ($courseid !== 0) {
+    $url->param('courseid', $courseid);
+}
+if ($keyword !== '') {
+    $url->param('coursetag_new_tag', $keyword);
+}
+if ($deltag !== 0) {
+    $url->param('del_tag', $deltag);
+}
+$PAGE->set_url($url);
+
 require_login();
 
 if (empty($CFG->usetags)) {
