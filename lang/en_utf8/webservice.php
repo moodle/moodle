@@ -1,6 +1,7 @@
 <?php
 
 $string['addfunction'] = 'Add function';
+$string['addrequiredcapability'] = 'Assign/Unassign the required capability';
 $string['actwebserviceshhdr'] = 'Active web service protocols';
 $string['configwebserviceplugins'] = 'For security reasons enable only protocols that are used.';
 $string['deleteserviceconfirm'] = 'Do you really want to delete external service \"$a\"?';
@@ -12,10 +13,11 @@ $string['externalservicefunctions'] = 'External service functions';
 $string['externalserviceusers'] = 'External service users';
 $string['function'] = 'Function';
 $string['functions'] = 'Functions';
+$string['iprestriction'] = 'IP restriction';
 $string['manageprotocols'] = 'Manage protocols';
 $string['nouserrestriction'] = 'No restriction';
-$string['potusers'] = 'Potential users';
-$string['potusersmatching'] = 'Potential users matching';
+$string['potusers'] = 'Not authorized users';
+$string['potusersmatching'] = 'Not authorized users matching';
 $string['protocol'] = 'Protocol';
 $string['removefunction'] = 'Remove';
 $string['removefunctionconfirm'] = 'Do you really want to remove function \"$a->function\" from service \"$a->service\"?';
@@ -23,8 +25,10 @@ $string['requiredcapability'] = 'Required capability';
 $string['restrictedusers'] = 'Restricted users';
 $string['servicesbuiltin'] = 'Built-in services';
 $string['servicescustom'] = 'Custom services';
-$string['serviceusers'] = 'Allowed users';
-$string['serviceusersmatching'] = 'Allowed users matching';
+$string['serviceusers'] = 'Authorized users';
+$string['serviceusersmatching'] = 'Authorized users matching';
+$string['serviceuserssettings'] = 'Change settings for the Authorized users';
 $string['test'] = 'Test';
 $string['testclient'] = 'Test client';
+$string['validuntil'] = 'Valid until';
 $string['webservices'] = 'Web services';

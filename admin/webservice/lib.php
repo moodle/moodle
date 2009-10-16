@@ -32,10 +32,10 @@ class service_user_selector extends user_selector_base {
     const MAX_USERS_PER_PAGE = 100;
 
     protected $serviceid;
-    protected $displayallowedusers; //set to true if the selector display the 
-                                    //allowed user on this service
-                                    //, set to false if the selector display the
-                                    // other user (false is the default default)
+    protected $displayallowedusers; //set to true if the selector displays the
+                                    //allowed users on this service
+                                    //, set to false if the selector displays the
+                                    // other users (false is the default default)
 
     public function __construct($name, $options) {
         parent::__construct($name, $options);
@@ -48,6 +48,12 @@ class service_user_selector extends user_selector_base {
         $this->displayallowedusers = !empty($options['displayallowedusers']);
     }
 
+    /**
+     * Find allowed or not allowed users of a service (depend of $this->displayallowedusers)
+     * @global object $DB
+     * @param <type> $search
+     * @return array
+     */
     public function find_users($search) {
         global $DB;
         //by default wherecondition retrieves all users except the deleted, not
@@ -104,6 +110,11 @@ class service_user_selector extends user_selector_base {
         return array($groupname => $availableusers);
     }
 
+    /**
+     * This options are automatically used by the AJAX search
+     * @global object $CFG
+     * @return object options pass to the constructor when AJAX search call a new selector
+     */
     protected function get_options() {
         global $CFG;
         $options = parent::get_options();

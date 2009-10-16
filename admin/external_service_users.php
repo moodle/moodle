@@ -34,7 +34,7 @@ $PAGE->set_url('admin/external_service_users.php', array('id'=>$id));
 
 admin_externalpage_setup('externalserviceusers');
 admin_externalpage_print_header();
-
+global $DB;
 /// Get the user_selector we will need.
 $potentialuserselector = new service_user_selector('addselect', array('serviceid' => $id, 'displayallowedusers' => 0));
 $alloweduserselector = new service_user_selector('removeselect', array('serviceid' => $id, 'displayallowedusers' => 1));
@@ -45,7 +45,6 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
             if (!empty($userstoassign)) {
 
                 foreach ($userstoassign as $adduser) {
-                    global $DB;
                     $serviceuser = new object();
                     $serviceuser->externalserviceid = $id;
                     $serviceuser->userid = $adduser->id;
@@ -64,8 +63,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
          $userstoremove = $alloweduserselector->get_selected_users();
             if (!empty($userstoremove)) {
 
-                foreach ($userstoremove as $removeuser) {
-                    global $DB;
+                foreach ($userstoremove as $removeuser) {             
                     $DB->delete_records('external_services_users', array('externalserviceid' => $id, 'userid' => $removeuser->id));
                     add_to_log(1, 'core', 'assign', 'admin/external_service_users.php?id='.$id, 'remove', '', $removeuser->id);
                 }
@@ -105,5 +103,92 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
 </div></form>
 
 <?php
+
+/// save user settings (administrator clicked on update button)
+if (optional_param('updateuser', false, PARAM_BOOL) && confirm_sesskey()) {
+    $useridtoupdate = optional_param('userid', false, PARAM_BOOL);
+    $iprestriction = optional_param('iprestriction', '', PARAM_TEXT);
+    $serviceuserid = optional_param('serviceuserid', '', PARAM_INT);
+    $fromday = optional_param('fromday', '', PARAM_INT);
+    $frommonth = optional_param('frommonth', '', PARAM_INT);
+    $fromyear = optional_param('fromyear', '', PARAM_INT);
+    $addcap = optional_param('addcap', false, PARAM_INT);
+    $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
+
+    $serviceuser = new object();
+    $serviceuser->id = $serviceuserid;
+    $serviceuser->validuntil = $validuntil;
+    $serviceuser->iprestriction = $iprestriction;
+    $DB->update_record('external_services_users', $serviceuser);
+
+    //TODO: assign capability
+}
+
+//display the list of allowed users with their options (ip/timecreated / validuntil...)
+//check that the user has the service required capability (if needed)
+$sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstname as firstname, u.lastname as lastname,
+                  esu.iprestriction as iprestriction, esu.validuntil as validuntil,
+                  esu.timecreated as timecreated
+                  FROM {user} u, {external_services_users} esu
+                  WHERE username <> 'guest' AND deleted = 0 AND confirmed = 1
+                        AND esu.userid = u.id
+                        AND esu.externalserviceid = ?";
+$allowedusers = $DB->get_records_sql($sql, array($id));
+if (!empty($allowedusers)) {
+    echo $OUTPUT->box_start('generalbox', 'alloweduserlist');
+   
+    echo "<label><strong>".get_string('serviceuserssettings', 'webservice').":</strong></label>";
+    echo "<br/><br/><span style=\"font-size:90%\">"; //reduce font of the user settings
+    foreach($allowedusers as $user) {
+
+        echo "<strong>";
+        echo print_collapsible_region_start('', 'usersettings'.$user->id,$user->firstname." ".$user->lastname.", ".$user->email,false,true,true);
+        echo "</strong>";
+
+        //user settings form
+        $contents = "<div class=\"fcontainer clearfix\">";
+        $form = new html_form();
+        $form->url = new moodle_url('/admin/external_service_users.php', array('id' => $id, 'userid' => $user->id, 'updateuser' => 1, 'serviceuserid' => $user->serviceuserid)); // Required
+        $form->button = new html_button();
+        $form->button->text = get_string('update'); // Required
+        $form->button->disabled = false;
+        $form->button->title = get_string('update');
+        $form->method = 'post';
+        $form->id = 'usersetting'.$user->id;
+        //ip restriction textfield
+        $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('iprestriction','webservice')." </label></div><div class=\"felement\">";
+        $field = new html_field();
+        $field->name = 'iprestriction';
+        $field->value = $user->iprestriction;
+        $field->style = 'width: 30em;';
+        $contents .= $OUTPUT->textfield($field);
+        $contents .= "</div></div>";
+        //valid until date selector
+        $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('validuntil','webservice')." </label></div><div class=\"felement\">";
+        $selectors = html_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear'),$user->validuntil);
+        foreach ($selectors as $select) {
+            $contents .= $OUTPUT->select($select);
+        }
+        $contents .= "</div></div>";
+        //TO IMPLEMENT : assign the required capability (if needed)
+        $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";
+        $checkbox = new html_select_option();
+        $checkbox->value = $user->id; 
+        $checkbox->selected = false;
+        $checkbox->text = ' ';
+        $checkbox->label->text = ' ';
+        $checkbox->alt = 'TODO:'.get_string('addrequiredcapability', 'webservice');
+        $contents .= $OUTPUT->checkbox($checkbox, 'addcap')."</div></div>";
+        $contents .= "</div>";
+        echo $OUTPUT->form($form, $contents);
+        
+        echo print_collapsible_region_end(true);
+
+
+    }
+    echo "</span>";
+    echo $OUTPUT->box_end();
+}
+
 
 echo $OUTPUT->footer();
