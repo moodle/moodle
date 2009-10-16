@@ -54,6 +54,15 @@ if ($newquestioninfo) {
 $quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
+$url = new moodle_url($CFG->wwwroot.'/mod/quiz/addrandom.php');
+if ($quiz_page != 0) {
+    $url->param('quiz_page', $quiz_page);
+}
+if ($returnurl != 0) {
+    $url->param('returnurl', $returnurl);
+}
+$PAGE->set_url($url);
+
 $strquizzes = get_string('modulenameplural', 'quiz');
 $strquiz = get_string('modulename', 'quiz');
 $streditingquestions = get_string('editquestions', 'quiz');

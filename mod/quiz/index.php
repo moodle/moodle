@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * This page lists all the instances of quiz in a particular course
  *
@@ -10,6 +10,7 @@
     require_once("locallib.php");
 
     $id = required_param('id', PARAM_INT);
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/quiz/index.php', array('id'=>$id)));
     if (!$course = $DB->get_record('course', array('id' => $id))) {
         print_error('invalidcourseid');
     }

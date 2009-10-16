@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page allows the teacher to enter a manual grade for a particular question.
  * This page is expected to only be used in a popup window.
@@ -12,6 +12,8 @@
 
     $attemptid = required_param('attempt', PARAM_INT); // attempt id
     $questionid = required_param('question', PARAM_INT); // question id
+
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/quiz/comment.php', array('attempt'=>$attemptid, 'question'=>$questionid)));
 
     $attemptobj = new quiz_attempt($attemptid);
 

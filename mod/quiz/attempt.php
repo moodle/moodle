@@ -100,8 +100,9 @@
         $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
                 format_string($attemptobj->get_quiz_name()), $headtags);
     } elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-        print_header($attemptobj->get_course()->shortname . ': '.
-                format_string($attemptobj->get_quiz_name()), '', '', '', $headtags, false, '', '', false, '');
+        $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
     } else {
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
         $PAGE->set_button($attemptobj->update_module_button());

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page prints a review of a particular question attempt.
  * This page is expected to only be used in a popup window.
@@ -14,6 +14,12 @@
     $attemptid = required_param('attempt', PARAM_INT); // attempt id
     $questionid = required_param('question', PARAM_INT); // question id
     $stateid = optional_param('state', 0, PARAM_INT); // state id
+
+    $url = new moodle_url($CFG->wwwroot.'/mod/quiz/reviewquestion.php', array('attempt'=>$attemptid,'question'=>$questionid));
+    if ($stateid !== 0) {
+        $url->param('state', $stateid);
+    }
+    $PAGE->set_url($url);
 
     $attemptobj = new quiz_attempt($attemptid);
 

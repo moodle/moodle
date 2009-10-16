@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page prints a summary of a quiz attempt before it is submitted.
  *
@@ -11,6 +11,9 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/quiz/summary.php', array('attempt'=>$attemptid)));
+
 $attemptobj = new quiz_attempt($attemptid);
 
 /// Check login.
@@ -50,8 +53,9 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
             format_string($attemptobj->get_quiz_name()), '');
 } elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    print_header($attemptobj->get_course()->shortname . ': '.
-            format_string($attemptobj->get_quiz_name()), '', '', '', '', false, '', '', false, '');
+    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_cacheable(false);
+    echo $OUTPUT->header();
 } else {
     $attemptobj->navigation($title);
     $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
