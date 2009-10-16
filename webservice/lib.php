@@ -261,23 +261,60 @@ echo "<xmp>".$code."</xmp>";
 
         $params      = array();
         $params_desc = array();
-        foreach ($function->parameters_desc->keys as $name=>$unused) {
+        foreach ($function->parameters_desc->keys as $name=>$keydesc) {
             $params[]      = '$'.$name;
-            $params_desc[] = '     * @param mixed '.$name. '';
+            $type = 'string';
+            if ($keydesc instanceof external_value) {
+                switch($keydesc->type) {
+                    case PARAM_BOOL: // 0 or 1 only for now
+                    case PARAM_INT:
+                        $type = 'int'; break;
+                    case PARAM_FLOAT;
+                        $type = 'double'; break;
+                    default:
+                        $type = 'string';
+                }
+            } else if ($keydesc instanceof external_single_structure) {
+                $type = 'struct';
+            } else if ($keydesc instanceof external_multiple_structure) {
+                $type = 'array';
+            }
+            $params_desc[] = '     * @param '.$type.' $'.$name.' '.$keydesc->desc;
         }
         $params      = implode(', ', $params);
         $params_desc = implode("\n", $params_desc);
 
-
+        if (is_null($function->returns_desc)) {
+            $return = '     * @return void';
+        } else {
+            $type = 'string';
+            if ($function->returns_desc instanceof external_value) {
+                switch($function->returns_desc->type) {
+                    case PARAM_BOOL: // 0 or 1 only for now
+                    case PARAM_INT:
+                        $type = 'int'; break;
+                    case PARAM_FLOAT;
+                        $type = 'double'; break;
+                    default:
+                        $type = 'string';
+                }
+            } else if ($function->returns_desc instanceof external_single_structure) {
+                $type = 'struct';
+            } else if ($function->returns_desc instanceof external_multiple_structure) {
+                $type = 'array';
+            }
+            $return = '     * @return '.$type.' '.$function->returns_desc->desc;
+        }
+        
         // now crate a virtual method that calls the ext implemenation
         // TODO: add PHP docs and all missing info here
 
         $code = '
     /**
      * External function: '.$function->name.'
-     * TODO: add proper param and return description
+     * TODO: add function description
 '.$params_desc.'
-     * @return mixed result
+'.$return.'
      */
     public function '.$function->name.'('.$params.') {
         return '.$function->classname.'::'.$function->methodname.'('.$params.');
