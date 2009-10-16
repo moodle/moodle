@@ -44,6 +44,7 @@
     if ($backup_unique_code !== 0) {
         $url->param('backup_unique_code', $backup_unique_code);
     }
+    $PAGE->set_url($url);
 
     //Check login
     require_login();
