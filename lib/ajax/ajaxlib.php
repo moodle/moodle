@@ -145,7 +145,7 @@ class jsportal {
      * Prints the JavaScript code needed to set up AJAX for the course.
      */
     function print_javascript($courseid, $return=false) {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
 
         $blocksoutput = $output = '';
         for ($i=0; $i<count($this->blocks); $i++) {
@@ -160,6 +160,7 @@ class jsportal {
         $output .= "<script type=\"text/javascript\">\n";
         $output .= "    main.portal.id = ".$courseid.";\n";
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
+        $output .= "    main.portal.strings['courseformat']='".$COURSE->format."';\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
         $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
