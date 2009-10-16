@@ -11,15 +11,32 @@
     $contextid = optional_param('contextid', 0, PARAM_INT);
     $usercourseid = optional_param('usercourseid', SITEID, PARAM_INT);  // Extra: used for user context only
 
+    $url = new moodle_url($CFG->wwwroot.'/repository/manage_instances.php');
+
     if ($edit){
+        $url->param('edit', $edit);
         $pagename = 'repositoryinstanceedit';
     } else if ($delete) {
+        $url->param('delete', $delete);
         $pagename = 'repositorydelete';
     } else if ($new) {
+        $url->param('new', $new);
         $pagename = 'repositoryinstancenew';
     } else {
         $pagename = 'repositorylist';
     }
+
+    if ($sure !== '') {
+        $url->param('sure', $sure);
+    }
+    if ($contextid !== 0) {
+        $url->param('contextid', $contextid);
+    }
+    if ($usercourseid !== SITEID) {
+        $url->param('usercourseid', $usercourseid);
+    }
+
+    $PAGE->set_url($url);
 
     require_login(SITEID, false);
 
