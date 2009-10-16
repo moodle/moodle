@@ -467,6 +467,8 @@ class dml_test extends UnitTestCase {
             next($data);
         }
         $rs->close();
+
+        // note: delegate limits testing to test_get_recordset_sql()
     }
 
     public function test_get_recordset_iterator_keys() {
@@ -577,8 +579,10 @@ class dml_test extends UnitTestCase {
         foreach ($rs as $record) {
             $counter++;
         }
-        $this->assertEqual(0, $counter);
         $rs->close();
+        $this->assertEqual(0, $counter);
+
+        // note: delegate limits testing to test_get_recordset_sql()
     }
 
     public function test_get_recordset_select() {
@@ -614,6 +618,8 @@ class dml_test extends UnitTestCase {
         }
         $rs->close();
         $this->assertEqual(2, $counter);
+
+        // note: delegate limits testing to test_get_recordset_sql()
     }
 
     public function test_get_recordset_sql() {
@@ -629,10 +635,13 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 5));
-        $DB->insert_record($tablename, array('course' => 2));
+        $inskey1 = $DB->insert_record($tablename, array('course' => 3));
+        $inskey2 = $DB->insert_record($tablename, array('course' => 5));
+        $inskey3 = $DB->insert_record($tablename, array('course' => 4));
+        $inskey4 = $DB->insert_record($tablename, array('course' => 3));
+        $inskey5 = $DB->insert_record($tablename, array('course' => 2));
+        $inskey6 = $DB->insert_record($tablename, array('course' => 1));
+        $inskey7 = $DB->insert_record($tablename, array('course' => 0));
 
         $this->assertTrue($rs = $DB->get_recordset_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
         $counter = 0;
@@ -641,6 +650,20 @@ class dml_test extends UnitTestCase {
         }
         $rs->close();
         $this->assertEqual(2, $counter);
+
+        // limits - only need to test this case, the rest have been tested by test_get_records_sql()
+        // only limitfrom = skips that number of records
+        $rs = $DB->get_recordset_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 2, 0);
+        $records = array();
+        foreach($rs as $key => $record) {
+            $records[$key] = $record;
+        }
+        $rs->close();
+        $this->assertEqual(5, count($records));
+        $this->assertEqual($inskey3, reset($records)->id);
+        $this->assertEqual($inskey7, end($records)->id);
+
+        // note: fetching nulls, empties, LOBs already tested by test_insert_record() no needed here
     }
 
     public function test_get_records() {
@@ -693,19 +716,7 @@ class dml_test extends UnitTestCase {
         $this->assertFalse(empty($records[1]->id));
         $this->assertEqual(4, count($records));
 
-        // test limitfrom and limitnum
-        $records = $DB->get_records($tablename, null, '', 'id', 0, 0);
-        $this->assertEqual(4, count($records));
-        $records = $DB->get_records($tablename, null, '', 'id', -1, -1);
-        $this->assertEqual(4, count($records));
-        $records = $DB->get_records($tablename, null, '', 'id', 2, 2);
-        $this->assertEqual(2, count($records));
-        $first = reset($records);
-        $last  = array_pop($records);
-        $this->assertEqual(3, $first->id);
-        $this->assertEqual(4, $last->id);
-
-// TODO: more LIMIT tests
+        // note: delegate limits testing to test_get_records_sql()
     }
 
     public function test_get_records_list() {
@@ -735,6 +746,30 @@ class dml_test extends UnitTestCase {
         $this->assertIdentical(array(), $records = $DB->get_records_list($tablename, 'course', array())); /// Must return 0 rows without conditions. MDL-17645
         $this->assertEqual(0, count($records));
 
+        // note: delegate limits testing to test_get_records_sql()
+    }
+
+    public function test_get_record_select() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 2));
+
+        $this->assertTrue($record = $DB->get_record_select($tablename, "id = ?", array(2)));
+
+        $this->assertEqual(2, $record->course);
+
+        // note: delegates limit testing to test_get_records_sql()
     }
 
     public function test_get_records_sql() {
@@ -751,15 +786,18 @@ class dml_test extends UnitTestCase {
         $dbman->create_table($table);
         $this->tables[$tablename] = $table;
 
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 5));
-        $DB->insert_record($tablename, array('course' => 2));
+        $inskey1 = $DB->insert_record($tablename, array('course' => 3));
+        $inskey2 = $DB->insert_record($tablename, array('course' => 5));
+        $inskey3 = $DB->insert_record($tablename, array('course' => 4));
+        $inskey4 = $DB->insert_record($tablename, array('course' => 3));
+        $inskey5 = $DB->insert_record($tablename, array('course' => 2));
+        $inskey6 = $DB->insert_record($tablename, array('course' => 1));
+        $inskey7 = $DB->insert_record($tablename, array('course' => 0));
 
         $this->assertTrue($records = $DB->get_records_sql("SELECT * FROM {".$tablename."} WHERE course = ?", array(3)));
         $this->assertEqual(2, count($records));
-        $this->assertEqual(1, reset($records)->id);
-        $this->assertEqual(2, next($records)->id);
+        $this->assertEqual($inskey1, reset($records)->id);
+        $this->assertEqual($inskey4, next($records)->id);
 
         // Awful test, requires debug enabled and sent to browser. Let's do that and restore after test
         $olddebug   = $CFG->debug;       // Save current debug settings
@@ -773,8 +811,36 @@ class dml_test extends UnitTestCase {
         $CFG->debug = $olddebug;         // Restore original debug settings
         $CFG->debugdisplay = $olddisplay;
 
-        $this->assertEqual(3, count($records));
+        $this->assertEqual(6, count($records));
         $this->assertFalse($debuginfo === '');
+
+        // negative limits = no limits
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, -1, -1);
+        $this->assertEqual(7, count($records));
+
+        // zero limits = no limits
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 0, 0);
+        $this->assertEqual(7, count($records));
+
+        // only limitfrom = skips that number of records
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 2, 0);
+        $this->assertEqual(5, count($records));
+        $this->assertEqual($inskey3, reset($records)->id);
+        $this->assertEqual($inskey7, end($records)->id);
+
+        // only limitnum = fetches that number of records
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 0, 3);
+        $this->assertEqual(3, count($records));
+        $this->assertEqual($inskey1, reset($records)->id);
+        $this->assertEqual($inskey3, end($records)->id);
+
+        // both limitfrom and limitnum = skips limitfrom records and fetches limitnum ones
+        $records = $DB->get_records_sql("SELECT * FROM {".$tablename."} ORDER BY id", null, 3, 2);
+        $this->assertEqual(2, count($records));
+        $this->assertEqual($inskey4, reset($records)->id);
+        $this->assertEqual($inskey5, end($records)->id);
+
+        // note: fetching nulls, empties, LOBs already tested by test_update_record() no needed here
     }
 
     public function test_get_records_menu() {
@@ -802,6 +868,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(3, $records[1]);
         $this->assertEqual(3, $records[2]);
 
+        // note: delegate limits testing to test_get_records_sql()
     }
 
     public function test_get_records_select_menu() {
@@ -833,6 +900,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(3, $records[3]);
         $this->assertEqual(5, $records[4]);
 
+        // note: delegate limits testing to test_get_records_sql()
     }
 
     public function test_get_records_sql_menu() {
@@ -864,6 +932,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(3, $records[3]);
         $this->assertEqual(5, $records[4]);
 
+        // note: delegate limits testing to test_get_records_sql()
     }
 
     public function test_get_record() {
@@ -885,28 +954,6 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($record = $DB->get_record($tablename, array('id' => 2)));
 
         $this->assertEqual(2, $record->course);
-    }
-
-    public function test_get_record_select() {
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $DB->insert_record($tablename, array('course' => 3));
-        $DB->insert_record($tablename, array('course' => 2));
-
-        $this->assertTrue($record = $DB->get_record_select($tablename, "id = ?", array(2)));
-
-        $this->assertEqual(2, $record->course);
-
     }
 
     public function test_get_record_sql() {
@@ -1254,6 +1301,7 @@ class dml_test extends UnitTestCase {
         $rs->close();
         $this->assertEqual($newclob, $record->onetext);
         $this->assertEqual($newblob, $record->onebinary);
+        $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
     }
 
     public function test_import_record() {
@@ -1280,59 +1328,6 @@ class dml_test extends UnitTestCase {
         $records = $DB->get_records($tablename);
         $this->assertEqual(2, $records[13]->course);
     }
-
-    public function test_insert_record_clob() {
-        global $CFG;
-
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
-
-        $id = $DB->insert_record($tablename, array('description' => $clob));
-        $this->assertEqual($id, 1);
-        $record = $DB->get_record($tablename, array('id' => $id));
-        $this->assertEqual($clob, $record->description);
-
-    }
-
-    public function test_insert_record_multiple_lobs() {
-        global $CFG;
-
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('image', XMLDB_TYPE_BINARY, 'big', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/clob.txt');
-        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/fixtures/randombinary');
-
-        $this->assertTrue($id = $DB->insert_record($tablename, array('description' => $clob, 'image' => $blob)));
-        $record = $DB->get_record($tablename, array('id' => $id));
-        $this->assertEqual($clob, $record->description);
-        $this->assertEqual($blob, $record->image);
-        $this->assertEqual($clob, $DB->get_field($tablename, 'description', array('id' => $id)));
-        $this->assertEqual($blob, $DB->get_field($tablename, 'image', array('id' => $id)));
-
-    }
-
 
     public function test_update_record_raw() {
         $DB = $this->tdb;
