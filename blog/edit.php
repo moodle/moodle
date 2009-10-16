@@ -49,7 +49,7 @@ if (empty($CFG->bloglevel)) {
     print_error('blogdisable', 'blog');
 }
 
-if (isguest()) {
+if (isguestuser()) {
     print_error('noguestentry', 'blog');
 }
 

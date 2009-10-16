@@ -47,7 +47,7 @@ define('BLOG_PUBLISHSTATE_PUBLIC', 2);
 function blog_check_and_install_blocks() {
     global $USER, $DB;
 
-    if (isloggedin() && !isguest()) {
+    if (isloggedin() && !isguestuser()) {
         // if this user has not visited this page before
         if (!get_user_preferences('blogpagesize')) {
             // find the correct ids for blog_menu and blog_from blocks
