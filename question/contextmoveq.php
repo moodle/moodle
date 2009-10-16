@@ -182,6 +182,7 @@ if ($cmid) {
     $strupdatemodule = '';
 }
 $strmovingquestions = get_string('movingquestions', 'question');
+$PAGE->set_url($thispageurl->out());
 $PAGE->navbar->add($strmovingquestions);
 $PAGE->set_title($strmovingquestions);
 $PAGE->set_button($strupdatemodule);

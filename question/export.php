@@ -32,6 +32,7 @@
     }
 
     /// Header
+    $PAGE->set_url($thispageurl->out());
     $PAGE->set_title($strexportquestions);
     if ($cm!==null) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())

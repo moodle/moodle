@@ -76,6 +76,8 @@ if (!empty($appendqnumstring)) {
     $hiddenparams['appendqnumstring'] = $appendqnumstring;
 }
 
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/question/addquestion.php', $hiddenparams));
+
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 if ($cm !== null) {
     if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0) {
@@ -87,7 +89,7 @@ if ($cm !== null) {
     $PAGE->set_button($OUTPUT->update_module_button($cm->id, $cm->modname));
     echo $OUTPUT->header();
 } else {
-    $PAGE->navbar->add(get_string('editquestions', 'question'),$returnurl);
+    $PAGE->navbar->add(get_string('questionbank', 'question'),$returnurl);
     $PAGE->navbar->add($chooseqtype);
     $PAGE->set_title($chooseqtype);
     echo $OUTPUT->header();
