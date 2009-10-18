@@ -1,0 +1,7 @@
+      <MOD>
+        <ID>[#mod_instance#]</ID>
+        <MODTYPE>label</MODTYPE>
+        <NAME><![CDATA[[#mod_name#]]]></NAME>
+        <CONTENT><![CDATA[[#mod_content#]]]></CONTENT>
+        <TIMEMODIFIED>[#date_now#]</TIMEMODIFIED>
+      </MOD>

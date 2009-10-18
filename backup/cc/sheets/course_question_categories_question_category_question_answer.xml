@@ -1,0 +1,6 @@
+              <ANSWER>
+                <ID>[#answer_id#]</ID>
+                <ANSWER_TEXT><![CDATA[[#answer_text#]]]></ANSWER_TEXT>
+                <FRACTION>[#answer_score#]</FRACTION>
+                <FEEDBACK><![CDATA[[#answer_feedback#]]]></FEEDBACK>
+              </ANSWER>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MOODLE_BACKUP>
+  <INFO>
+    <NAME>[#zip_filename#]</NAME>
+    <MOODLE_VERSION>2007101540</MOODLE_VERSION>
+    <MOODLE_RELEASE>1.9.4 (Build: 20090128)</MOODLE_RELEASE>
+    <BACKUP_VERSION>2008030301</BACKUP_VERSION>
+    <BACKUP_RELEASE>1.9.3</BACKUP_RELEASE>
+    <DATE>1244044665</DATE>
+    <ORIGINAL_WWWROOT>[#www_root#]</ORIGINAL_WWWROOT>
+    <ORIGINAL_SITE_IDENTIFIER_HASH>e9e0cd91fb39442e3baef853f645b2a3</ORIGINAL_SITE_IDENTIFIER_HASH>
+    <ZIP_METHOD>internal</ZIP_METHOD>
+    <DETAILS>
+      [#node_info_details_mod#]
+      <METACOURSE>false</METACOURSE>
+      <USERS>none</USERS>
+      <LOGS>false</LOGS>
+      <USERFILES>false</USERFILES>
+      <COURSEFILES>true</COURSEFILES>
+      <SITEFILES>false</SITEFILES>
+      <GRADEBOOKHISTORIES>false</GRADEBOOKHISTORIES>
+      <MESSAGES>false</MESSAGES>
+      <BLOGS>false</BLOGS>
+      <BLOCKFORMAT>instances</BLOCKFORMAT>
+    </DETAILS>
+  </INFO>
+  <ROLES></ROLES>
+  <COURSE>
+    <HEADER>
+      [#node_course_header#]
+    </HEADER>
+    <BLOCKS>
+      [#node_course_blocks_block#]
+    </BLOCKS>
+    <SECTIONS>
+      [#node_course_sections_section#]
+    </SECTIONS>
+    <USERS></USERS>
+    [#node_course_question_categories#]
+    <GRADEBOOK></GRADEBOOK>
+    <MODULES>
+      [#node_course_modules#]
+    </MODULES>
+    <FORMATDATA></FORMATDATA>
+  </COURSE>
+</MOODLE_BACKUP>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" targetNamespace="http://www.imsglobal.org/xsd/imscc/imscp_v1p1">
+  <xsd:import namespace="http://www.imsglobal.org/xsd/imscp_v1p1" schemaLocation="imscp_v1p2.xsd" />
+  <!--****************************************************************************************-->
+  <!--** Definition document - this document holds AP defined simpleType elements that have **-->
+  <!--** been referenced through a type attribute in one of the modified, resultant schema. **-->
+  <!--****************************************************************************************-->
+  <xs:simpleType name="schemaversionFixed">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="schemaFixed">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="rootedHierarchy">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="predefinedContentTypes">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+      <xs:enumeration value="imsdt_xmlv1p0" />
+      <xs:enumeration value="imswl_xmlv1p0" />
+      <xs:enumeration value="webcontent" />
+      <xs:enumeration value="imsqti_xmlv1p2/imscc_xmlv1p0/assessment" />
+      <xs:enumeration value="imsqti_xmlv1p2/imscc_xmlv1p0/question-bank" />
+      <xs:enumeration value="associatedcontent/imscc_xmlv1p0/learning-application-resource" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="isNotVisible">
+    <xs:restriction base="xs:boolean">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="defaultOrganizationProhibited">
+    <xs:restriction base="xs:IDREF">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RequiredHref">
+    <xs:restriction base="xs:anyURI">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ProhibitedHref">
+    <xs:restriction base="xs:anyURI">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="OptionalHref">
+    <xs:restriction base="xs:anyURI">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NoParameters">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NoParameter">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NoIsVisible">
+    <xs:restriction base="xs:boolean">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NoIdentifierRef">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+</xsd:schema>
+

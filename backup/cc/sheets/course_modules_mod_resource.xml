@@ -1,0 +1,12 @@
+      <MOD>
+        <ID>[#mod_instance#]</ID>
+        <MODTYPE>resource</MODTYPE>
+        <NAME><![CDATA[[#mod_name#]]]></NAME>
+        <TYPE>[#mod_type#]</TYPE>
+        <REFERENCE>[#mod_reference#]</REFERENCE>
+        <SUMMARY><![CDATA[[#mod_summary#]]]></SUMMARY>
+        <ALLTEXT><![CDATA[[#mod_alltext#]]]></ALLTEXT>
+        <POPUP></POPUP>
+        <OPTIONS></OPTIONS>
+        <TIMEMODIFIED>[#date_now#]</TIMEMODIFIED>
+      </MOD>
