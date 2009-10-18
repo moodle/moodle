@@ -1,0 +1,13 @@
+            <MULTICHOICE>
+              <LAYOUT>0</LAYOUT>
+              <ANSWERS>[#answer_string#]</ANSWERS>
+              <SINGLE>[#is_single#]</SINGLE>
+              <SHUFFLEANSWERS>0</SHUFFLEANSWERS>
+              <CORRECTFEEDBACK></CORRECTFEEDBACK>
+              <PARTIALLYCORRECTFEEDBACK></PARTIALLYCORRECTFEEDBACK>
+              <INCORRECTFEEDBACK></INCORRECTFEEDBACK>
+              <ANSWERNUMBERING>abc</ANSWERNUMBERING>
+            </MULTICHOICE>
+            <ANSWERS>
+              [#node_course_question_categories_question_category_question_answer#]
+            </ANSWERS>

@@ -1,0 +1,2179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	IPR, License and Distribution Notices
+	This machine readable file is derived from IMS specification IMS Question & Test Interoperability Version: 1.2 found at http://www.imsglobal.org/question/ and the original IMS schema binding or code base http://www.imsglobal.org/question/.
+	
+	Recipients of this document are requested to submit, with their comments, notification of any relevant patent claims or other intellectual property rights of which they may be aware that might be infringed by the schema binding contained in this document.
+	
+	IMS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on IMS�s procedures with respect to rights in IMS specifications can be found at the IMS Intellectual Property Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+	
+	Copyright © IMS Global Learning Consortium 1999-2008. All Rights Reserved.
+	
+	License Notice for Users
+	Users of products or services that include this document are hereby granted a worldwide, royalty-free, non-exclusive license to use this document.
+	
+	Distribution Notice for Developers
+	Developers of products or services that are not original incorporators of this document and have not changed this document, that is, are distributing a software product that incorporates this document as is from a third-party source other than IMS, are hereby granted permission to copy, display and distribute the contents of this document in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof.
+	
+	Developers of products or services that are original incorporators of this document and wish to provide distribution of this document as is or with modifications and developers of products and services that are not original incorporators of this document and have changed this document, are required to register with the IMS community on the IMS website as described in the following two paragraphs:
+	
+	- If you wish to distribute this document as is, with no modifications, you are hereby granted permission to copy, display and distribute the contents of this document in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid license registration with IMS and receive an email from IMS granting the license. To register, follow the instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once registered you are granted permission to transfer unlimited distribution rights of this document for the purposes of third-party or other distribution of your product or service that incorporates this document as long as this IPR, License and Distribution notice remains in place in its entirety.
+	
+	- If you wish to create and distribute a derived work from this document, you are hereby granted permission to copy, display and distribute the contents of the derived work in any medium for any purpose without fee or royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid profile registration with IMS and receive an email from IMS granting the license. To register, follow the instructions on the IMS website: http://www.imsglobal.org/profile/. Once registered you are granted permission to transfer unlimited distribution rights of the derived work for the purposes of third-party or other distribution of your product or service that incorporates the derived work as long as this IPR, License and Distribution notice remains in place in its entirety.
+	
+	The limited permissions granted above are perpetual and will not be revoked by IMS or its successors or assigns.
+	
+	THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, 
+	ANY WARRANTY OF NONINFRINGEMENT IS EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION 
+	SHALL BE MADE ENTIRELY AT THE IMPLEMENTER�S OWN RISK, AND NEITHER THE CONSORTIUM, NOR 
+	ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER 
+	OR THIRD PARTY FOR ANY DAMAGES OF ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING 
+	FROM THE USE OF THIS SPECIFICATION.
+-->
+<!--*************************************************************************-->
+<!--** This schema has been modified from the original base schema named - **-->
+<!--** ims_qtiasiv1p2.xsd                                                  **-->
+<!--** using the IMS SchemaProf tool. This tool is based on software from  **-->
+<!--** the TELCERT Project which was funded in part by the European        **-->
+<!--** Commission under contract IST-507128                                **-->
+<!--*************************************************************************-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" elementFormDefault="qualified" version="IMS QTI ASI 1.2 localised_Schema_2008_6_10">
+	<xsd:include xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaLocation="imscc_q_definition.xsd" />
+	<!-- **************************** -->
+	<!-- ** Inclusions and Imports ** -->
+	<!-- **************************** -->
+<!-- ID changed schemaLocation from "http://www.w3.org/2001/03/xml.xsd" to "http://www.w3.org/2001/xml.xsd" -->
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+	<!-- ****************** -->
+	<!-- ** Root Element ** -->
+	<!-- ****************** -->
+	<xs:element name="questestinterop" type="questestinteropType" />
+	<!-- ************************** -->
+	<!-- ** Element Declarations ** -->
+	<!-- ************************** -->
+	<xs:element name="altmaterial" type="altmaterialType" />
+	<xs:element name="and" type="andType" />
+	<xs:element name="and_objects" type="and_objectsType" />
+	<xs:element name="and_selection" type="and_selectionType" />
+	<xs:element name="and_test" type="and_testType" />
+	<xs:element name="assessfeedback" type="assessfeedbackType" />
+	<xs:element name="assessment" type="assessmentType" />
+	<xs:element name="assessmentcontrol" type="assessmentcontrolType" />
+	<xs:element name="assessproc_extension" type="assessproc_extensionType" />
+	<xs:element name="conditionvar" type="conditionvarType" />
+	<xs:element name="decvar" type="decvarType" />
+	<xs:element name="displayfeedback" type="displayfeedbackType" />
+	<xs:element name="duration" type="xs:string" />
+	<xs:element name="durequal" type="durequalType" />
+	<xs:element name="durgt" type="durgtType" />
+	<xs:element name="durgte" type="durgteType" />
+	<xs:element name="durlt" type="durltType" />
+	<xs:element name="durlte" type="durlteType" />
+	<xs:element name="fieldentry" type="xs:string" />
+	<xs:element name="fieldlabel" type="xs:string" />
+	<xs:element name="flow" type="flowType" />
+	<xs:element name="flow_label" type="flow_labelType" />
+	<xs:element name="flow_mat" type="flow_matType" />
+	<xs:element name="hint" type="hintType" />
+	<xs:element name="hintmaterial" type="hintmaterialType" />
+	<xs:element name="interpretvar" type="interpretvarType" />
+	<xs:element name="item" type="itemType" />
+	<xs:element name="itemcontrol" type="itemcontrolType" />
+	<xs:element name="itemfeedback" type="itemfeedbackType" />
+	<xs:element name="itemmetadata" type="itemmetadataType" />
+	<xs:element name="itempostcondition" type="xs:string" />
+	<xs:element name="itemprecondition" type="xs:string" />
+	<xs:element name="itemproc_extension" type="itemproc_extensionType" />
+	<xs:element name="itemref" type="itemrefType" />
+	<xs:element name="itemrubric" type="itemrubricType" />
+	<xs:element name="map_input" type="map_inputType" />
+	<xs:element name="map_output" type="map_outputType" />
+	<xs:element name="mat_extension" type="mat_extensionType" />
+	<xs:element name="matapplet" type="matappletType" />
+	<xs:element name="matapplication" type="matapplicationType" />
+	<xs:element name="mataudio" type="mataudioType" />
+	<xs:element name="matbreak" type="matbreakType" />
+	<xs:element name="matemtext" type="matemtextType" />
+	<xs:element name="material" type="materialType" />
+	<xs:element name="material_ref" type="material_refType" />
+	<xs:element name="matimage" type="matimageType" />
+	<xs:element name="matref" type="matrefType" />
+	<xs:element name="mattext" type="mattextType" />
+	<xs:element name="matvideo" type="matvideoType" />
+	<xs:element name="not" type="notType" />
+	<xs:element name="not_objects" type="not_objectsType" />
+	<xs:element name="not_selection" type="not_selectionType" />
+	<xs:element name="not_test" type="not_testType" />
+	<xs:element name="objectbank" type="objectbankType" />
+	<xs:element name="objectives" type="objectivesType" />
+	<xs:element name="objects_condition" type="objects_conditionType" />
+	<xs:element name="objects_parameter" type="objects_parameterType" />
+	<xs:element name="objectscond_extension" type="xs:string" />
+	<xs:element name="or" type="orType" />
+	<xs:element name="or_objects" type="or_objectsType" />
+	<xs:element name="or_selection" type="or_selectionType" />
+	<xs:element name="or_test" type="or_testType" />
+	<xs:element name="order" type="orderType" />
+	<xs:element name="order_extension" type="order_extensionType" />
+	<xs:element name="other" type="xs:string" />
+	<xs:element name="outcomes" type="outcomesType" />
+	<xs:element name="outcomes_feedback_test" type="outcomes_feedback_testType" />
+	<xs:element name="outcomes_metadata" type="outcomes_metadataType" />
+	<xs:element name="outcomes_processing" type="outcomes_processingType" />
+	<xs:element name="presentation" type="presentationType" />
+	<xs:element name="presentation_material" type="presentation_materialType" />
+	<xs:element name="processing_parameter" type="processing_parameterType" />
+	<xs:element name="qmd_computerscored" type="xs:string" />
+	<xs:element name="qmd_feedbackpermitted" type="xs:string" />
+	<xs:element name="qmd_hintspermitted" type="xs:string" />
+	<xs:element name="qmd_itemtype" type="xs:string" />
+	<xs:element name="qmd_levelofdifficulty" type="xs:string" />
+	<xs:element name="qmd_material" type="xs:string" />
+	<xs:element name="qmd_maximumscore" type="xs:string" />
+	<xs:element name="qmd_renderingtype" type="xs:string" />
+	<xs:element name="qmd_responsetype" type="xs:string" />
+	<xs:element name="qmd_scoringpermitted" type="xs:string" />
+	<xs:element name="qmd_solutionspermitted" type="xs:string" />
+	<xs:element name="qmd_status" type="xs:string" />
+	<xs:element name="qmd_timedependence" type="xs:string" />
+	<xs:element name="qmd_timelimit" type="xs:string" />
+	<xs:element name="qmd_toolvendor" type="xs:string" />
+	<xs:element name="qmd_topic" type="xs:string" />
+	<xs:element name="qmd_typeofsolution" type="xs:string" />
+	<xs:element name="qmd_weighting" type="xs:string" />
+	<xs:element name="qticomment" type="qticommentType" />
+	<xs:element name="qtimetadata" type="qtimetadataType" />
+	<xs:element name="qtimetadatafield" type="qtimetadatafieldType" />
+	<xs:element name="reference" type="referenceType" />
+	<xs:element name="render_choice" type="render_choiceType" />
+	<xs:element name="render_fib" type="render_fibType" />
+	<xs:element name="render_hotspot" type="render_hotspotType" />
+	<xs:element name="render_slider" type="render_sliderType" />
+	<xs:element name="respcond_extension" type="respcond_extensionType" />
+	<xs:element name="respcondition" type="respconditionType" />
+	<xs:element name="render_extension" type="render_extensionType" />
+	<xs:element name="response_extension" type="response_extensionType" />
+	<xs:element name="response_grp" type="response_grpType" />
+	<xs:element name="response_labelType" type="response_labelType" />
+	<xs:element name="response_lid" type="response_lidType" />
+	<xs:element name="response_na" type="response_naType" />
+	<xs:element name="response_num" type="response_numType" />
+	<xs:element name="response_str" type="response_strType" />
+	<xs:element name="response_xy" type="response_xyType" />
+	<xs:element name="resprocessing" type="resprocessingType" />
+	<xs:element name="rubric" type="rubricType" />
+	<xs:element name="section" type="sectionType" />
+	<xs:element name="sectioncontrol" type="sectioncontrolType" />
+	<xs:element name="sectionfeedback" type="sectionfeedbackType" />
+	<xs:element name="sectionproc_extension" type="sectionproc_extensionType" />
+	<xs:element name="sectionpostcondition" type="xs:string" />
+	<xs:element name="sectionprecondition" type="xs:string" />
+	<xs:element name="sectionref" type="sectionrefType" />
+	<xs:element name="selection" type="selectionType" />
+	<xs:element name="selection_extension" type="selection_extensionType" />
+	<xs:element name="selection_metadata" type="selection_metadataType" />
+	<xs:element name="selection_number" type="xs:string" />
+	<xs:element name="selection_ordering" type="selection_orderingType" />
+	<xs:element name="sequence_parameter" type="sequence_parameterType" />
+	<xs:element name="setvar" type="setvarType" />
+	<xs:element name="solution" type="solutionType" />
+	<xs:element name="solutionmaterial" type="solutionmaterialType" />
+	<xs:element name="sourcebank_ref" type="xs:string" />
+	<xs:element name="test_variable" type="test_variableType" />
+	<xs:element name="unanswered" type="unansweredType" />
+	<xs:element name="var_extension" type="var_extensionType" />
+	<xs:element name="varequal" type="varequalType" />
+	<xs:element name="vargt" type="vargtType" />
+	<xs:element name="vargte" type="vargteType" />
+	<xs:element name="variable_test" type="variable_testType" />
+	<xs:element name="varinside" type="varinsideType" />
+	<xs:element name="varlt" type="varltType" />
+	<xs:element name="varlte" type="varlteType" />
+	<xs:element name="varsubset" type="varsubsetType" />
+	<xs:element name="varsubstring" type="varsubstringType" />
+	<xs:element name="vocabulary" type="vocabularyType" />
+	<!-- ******************************* -->
+	<!-- ** Complex Type Declarations ** -->
+	<!-- ******************************* -->
+	<!-- ***************** -->
+	<!-- ** altmaterial ** -->
+	<!-- ***************** -->
+	<xs:complexType name="altmaterialType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="mattext" type="mattextType" />
+				<xs:element name="matemtext" type="matemtextType" />
+				<xs:element name="matimage" type="matimageType" />
+				<xs:element name="mataudio" type="mataudioType" />
+				<xs:element name="matvideo" type="matvideoType" />
+				<xs:element name="matapplet" type="matappletType" />
+				<xs:element name="matapplication" type="matapplicationType" />
+				<xs:element name="matref" type="matrefType" />
+				<xs:element ref="matbreak" />
+				<xs:element ref="mat_extension" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="attribute3" type="xs:language" />
+	</xs:complexType>
+	<!-- ********* -->
+	<!-- ** and ** -->
+	<!-- ********* -->
+	<xs:complexType name="andType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="not" type="notType" />
+			<xs:element name="and" type="andType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="or" type="orType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="unanswered" type="unansweredType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="other" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varequal" type="varequalType" />
+			<xs:element name="varlt" type="varltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varlte" type="varlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargt" type="vargtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargte" type="vargteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubset" type="varsubsetType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varinside" type="varinsideType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubstring" type="varsubstringType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durequal" type="durequalType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlt" type="durltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlte" type="durlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgt" type="durgtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgte" type="durgteType" minOccurs="0" maxOccurs="0" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** and_objects ** -->
+	<!-- ***************** -->
+	<xs:complexType name="and_objectsType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="outcomes_metadata" type="outcomes_metadataType" />
+			<xs:element name="and_objects" type="and_objectsType" />
+			<xs:element name="or_objects" type="or_objectsType" />
+			<xs:element name="not_objects" type="not_objectsType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** and_selection ** -->
+	<!-- ******************* -->
+	<xs:complexType name="and_selectionType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="selection_metadata" type="selection_metadataType" />
+			<xs:element name="and_selection" type="and_selectionType" />
+			<xs:element name="or_selection" type="or_selectionType" />
+			<xs:element name="not_selection" type="not_selectionType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** and_test ** -->
+	<!-- ************** -->
+	<xs:complexType name="and_testType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="variable_test" type="variable_testType" />
+			<xs:element name="and_test" type="and_testType" />
+			<xs:element name="or_test" type="or_testType" />
+			<xs:element name="not_test" type="not_testType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ******************** -->
+	<!-- ** assessfeedback ** -->
+	<!-- ******************** -->
+	<xs:complexType name="assessfeedbackType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:choice>
+				<xs:element name="material" type="materialType" maxOccurs="unbounded" />
+				<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** assessment ** -->
+	<!-- **************** -->
+	<xs:complexType name="assessmentType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="duration" minOccurs="0" maxOccurs="0" />
+			<xs:element name="qtimetadata" type="qtimetadataType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="objectives" type="objectivesType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="assessmentcontrol" type="assessmentcontrolType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="rubric" type="rubricType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="presentation_material" type="presentation_materialType" minOccurs="0" />
+			<xs:element name="outcomes_processing" type="outcomes_processingType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="assessproc_extension" minOccurs="0" maxOccurs="0" />
+			<xs:element name="assessfeedback" type="assessfeedbackType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="selection_ordering" type="selection_orderingType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="reference" type="referenceType" minOccurs="0" maxOccurs="0" />
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:element name="sectionref" type="sectionrefType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="section" type="sectionType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+		<xs:attribute ref="xml:lang" />
+	</xs:complexType>
+	<!-- *********************** -->
+	<!-- ** assessmentcontrol ** -->
+	<!-- *********************** -->
+	<xs:complexType name="assessmentcontrolType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="hintswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="solutionswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="feedbackswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ************************** -->
+	<!-- ** assessproc_extension ** -->
+	<!-- ************************** -->
+	<xs:complexType name="assessproc_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** conditionvar ** -->
+	<!-- ****************** -->
+	<xs:complexType name="conditionvarType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="not" type="notType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="and" type="andType" />
+			<xs:element name="or" type="orType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="unanswered" type="unansweredType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="other" />
+			<xs:element name="varequal" type="varequalType" />
+			<xs:element name="varlt" type="varltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varlte" type="varlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargt" type="vargtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargte" type="vargteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubset" type="varsubsetType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varinside" type="varinsideType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubstring" type="varsubstringType" />
+			<xs:element name="durequal" type="durequalType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlt" type="durltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlte" type="durlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgt" type="durgtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgte" type="durgteType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="var_extension" minOccurs="0" maxOccurs="0" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** decvar ** -->
+	<!-- ************ -->
+	<xs:complexType name="decvarType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="varname" type="ScoreOnlyType" default="SCORE" />
+				<xs:attribute name="vartype" default="Integer" type="DecimalIntegerOnly">
+					</xs:attribute>
+				<xs:attribute name="defaultval" type="xs:string" use="prohibited" />
+				<xs:attribute name="minvalue" type="xs:string" />
+				<xs:attribute name="maxvalue" type="xs:string" />
+				<xs:attribute name="members" type="xs:string" use="prohibited" />
+				<xs:attribute name="cutvalue" type="xs:string" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ********************* -->
+	<!-- ** displayfeedback ** -->
+	<!-- ********************* -->
+	<xs:complexType name="displayfeedbackType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="feedbacktype" default="Response">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Response" />
+							<xs:enumeration value="Solution" />
+							<xs:enumeration value="Hint" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="linkrefid" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** durequal ** -->
+	<!-- ************** -->
+	<xs:complexType name="durequalType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *********** -->
+	<!-- ** durgt ** -->
+	<!-- *********** -->
+	<xs:complexType name="durgtType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** durgte ** -->
+	<!-- ************ -->
+	<xs:complexType name="durgteType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *********** -->
+	<!-- ** durlt ** -->
+	<!-- *********** -->
+	<xs:complexType name="durltType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** durlte ** -->
+	<!-- ************ -->
+	<xs:complexType name="durlteType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ********** -->
+	<!-- ** flow ** -->
+	<!-- ********** -->
+	<xs:complexType name="flowType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="flow" type="flowType" />
+			<xs:element name="material" type="materialType" />
+			<xs:element name="material_ref" type="material_refType" />
+			<xs:element name="response_lid" type="response_lidType" />
+			<xs:element name="response_xy" type="response_xyType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="response_str" type="response_strType" />
+			<xs:element name="response_num" type="response_numType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="response_grp" type="response_grpType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="response_extension" minOccurs="0" maxOccurs="0" />
+		</xs:choice>
+		<xs:attribute name="class" type="xs:string" default="Block" />
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** flow_label ** -->
+	<!-- **************** -->
+	<xs:complexType name="flow_labelType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="flow_label" type="flow_labelType" />
+			<xs:element name="response_label" type="response_labelType" />
+		</xs:choice>
+		<xs:attribute name="class" type="xs:string" default="Block" />
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** flow_mat ** -->
+	<!-- ************** -->
+	<xs:complexType name="flow_matType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="flow_mat" type="flow_matType" />
+			<xs:element name="material" type="materialType" />
+			<xs:element name="material_ref" type="material_refType" />
+		</xs:choice>
+		<xs:attribute name="class" type="xs:string" default="Block" />
+	</xs:complexType>
+	<!-- ********** -->
+	<!-- ** hint ** -->
+	<!-- ********** -->
+	<xs:complexType name="hintType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="hintmaterial" type="hintmaterialType" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="feedbackstyle" default="Complete" type="CompleteOnly">
+			</xs:attribute>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** hintmaterial ** -->
+	<!-- ****************** -->
+	<xs:complexType name="hintmaterialType">
+		<xs:choice>
+			<xs:element name="material" type="materialType" maxOccurs="0" minOccurs="0" />
+			<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** interpretvar ** -->
+	<!-- ****************** -->
+	<xs:complexType name="interpretvarType">
+		<xs:choice>
+			<xs:element name="material" type="materialType" />
+			<xs:element name="material_ref" type="material_refType" />
+		</xs:choice>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="varname" type="xs:string" default="SCORE" />
+	</xs:complexType>
+	<!-- ********** -->
+	<!-- ** item ** -->
+	<!-- ********** -->
+	<xs:complexType name="itemType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="duration" minOccurs="0" maxOccurs="0" />
+			<xs:element name="itemmetadata" type="itemmetadataType" minOccurs="0" />
+			<xs:element name="objectives" type="objectivesType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="itemcontrol" type="itemcontrolType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="itemprecondition" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="itempostcondition" minOccurs="0" maxOccurs="0" />
+			<xs:choice minOccurs="0" maxOccurs="0">
+				<xs:element name="itemrubric" type="itemrubricType" />
+				<xs:element name="rubric" type="rubricType" />
+			</xs:choice>
+			<xs:element name="presentation" type="presentationType" minOccurs="0" />
+			<xs:element name="resprocessing" type="resprocessingType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="itemproc_extension" minOccurs="0" maxOccurs="0" />
+			<xs:element name="itemfeedback" type="itemfeedbackType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="reference" type="referenceType" minOccurs="0" maxOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="maxattempts" type="xs:string" use="prohibited" />
+		<xs:attribute name="label" type="xs:string" use="prohibited" />
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+		<xs:attribute ref="xml:lang" />
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** itemcontrol ** -->
+	<!-- ***************** -->
+	<xs:complexType name="itemcontrolType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="feedbackswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="hintswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="solutionswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** itemfeedback ** -->
+	<!-- ****************** -->
+	<xs:complexType name="itemfeedbackType">
+		<xs:choice maxOccurs="unbounded" minOccurs="1">
+			<xs:choice>
+				<xs:element name="flow_mat" type="flow_matType" />
+				<xs:element name="material" type="materialType" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+			<xs:element name="solution" type="solutionType" />
+			<xs:element name="hint" type="hintType" />
+		</xs:choice>
+		<xs:attribute name="view" default="All" type="AllOnlyValue">
+			</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** itemmetadata ** -->
+	<!-- ****************** -->
+	<xs:complexType name="itemmetadataType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qtimetadata" type="qtimetadataType" minOccurs="1" maxOccurs="unbounded" />
+			<xs:element ref="qmd_computerscored" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_feedbackpermitted" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_hintspermitted" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_itemtype" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_levelofdifficulty" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_maximumscore" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_renderingtype" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_responsetype" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_scoringpermitted" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_solutionspermitted" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_status" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_timedependence" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_timelimit" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_toolvendor" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_topic" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_weighting" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_material" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="qmd_typeofsolution" minOccurs="0" maxOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** itemproc_extension ** -->
+	<!-- ************************ -->
+	<xs:complexType name="itemproc_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ************* -->
+	<!-- ** itemref ** -->
+	<!-- ************* -->
+	<xs:complexType name="itemrefType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="linkrefid" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** itemrubric ** -->
+	<!-- **************** -->
+	<xs:complexType name="itemrubricType">
+		<xs:sequence>
+			<xs:element name="material" type="materialType" />
+		</xs:sequence>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** map_input ** -->
+	<!-- *************** -->
+	<xs:complexType name="map_inputType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="varname" type="xs:string" default="SCORE" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** map_output ** -->
+	<!-- **************** -->
+	<xs:complexType name="map_outputType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="varname" type="xs:string" default="SCORE" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** mat_extension ** -->
+	<!-- ******************* -->
+	<xs:complexType name="mat_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** matapplet ** -->
+	<!-- *************** -->
+	<xs:complexType name="matappletType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="y0" type="xs:string" />
+				<xs:attribute name="height" type="xs:string" />
+				<xs:attribute name="width" type="xs:string" />
+				<xs:attribute name="x0" type="xs:string" />
+				<xs:attribute name="embedded" type="xs:string" default="base64" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ******************** -->
+	<!-- ** matapplication ** -->
+	<!-- ******************** -->
+	<xs:complexType name="matapplicationType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="apptype" type="xs:string" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="embedded" type="xs:string" default="base64" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** mataudio ** -->
+	<!-- ************** -->
+	<xs:complexType name="mataudioType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="audiotype" type="xs:string" default="audio/base" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="embedded" type="xs:string" default="base64" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** matbreak ** -->
+	<!-- ************** -->
+	<xs:complexType name="matbreakType" />
+	<!-- *************** -->
+	<!-- ** matemtext ** -->
+	<!-- *************** -->
+	<xs:complexType name="matemtextType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="texttype" type="xs:string" default="text/plain" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="charset" type="xs:string" default="ascii-us" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute ref="xml:space" default="default" />
+				<xs:attribute name="attribute11" type="xs:language" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+				<xs:attribute name="width" type="xs:string" />
+				<xs:attribute name="height" type="xs:string" />
+				<xs:attribute name="y0" type="xs:string" />
+				<xs:attribute name="x0" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** material ** -->
+	<!-- ************** -->
+	<xs:complexType name="materialType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="mattext" type="mattextType" />
+				<xs:element name="matemtext" type="matemtextType" />
+				<xs:element name="matimage" type="matimageType" />
+				<xs:element name="mataudio" type="mataudioType" />
+				<xs:element name="matvideo" type="matvideoType" />
+				<xs:element name="matapplet" type="matappletType" />
+				<xs:element name="matapplication" type="matapplicationType" />
+				<xs:element name="matref" type="matrefType" />
+				<xs:element ref="matbreak" />
+				<xs:element ref="mat_extension" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+			<xs:element name="altmaterial" type="altmaterialType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="label" type="string256" />
+		<xs:attribute name="attribute5" type="xs:language" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** material_ref ** -->
+	<!-- ****************** -->
+	<xs:complexType name="material_refType">
+		<xs:attribute name="linkrefid" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** matimage ** -->
+	<!-- ************** -->
+	<xs:complexType name="matimageType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="imagtype" type="xs:string" default="image/jpeg" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="height" type="xs:string" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="embedded" type="xs:string" default="base64" />
+				<xs:attribute name="width" type="xs:string" />
+				<xs:attribute name="y0" type="xs:string" />
+				<xs:attribute name="x0" type="xs:string" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** matref ** -->
+	<!-- ************ -->
+	<xs:complexType name="matrefType">
+		<xs:attribute name="linkrefid" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- ************* -->
+	<!-- ** mattext ** -->
+	<!-- ************* -->
+	<xs:complexType name="mattextType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="texttype" type="xs:string" default="text/plain" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="charset" type="xs:string" default="ascii-us" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute ref="xml:space" default="default" />
+				<xs:attribute name="attribute11" type="xs:language" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+				<xs:attribute name="width" type="xs:string" />
+				<xs:attribute name="height" type="xs:string" />
+				<xs:attribute name="y0" type="xs:string" />
+				<xs:attribute name="x0" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** matvideo ** -->
+	<!-- ************** -->
+	<xs:complexType name="matvideoType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="videotype" type="xs:string" default="video/avi" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="width" type="xs:string" />
+				<xs:attribute name="height" type="xs:string" />
+				<xs:attribute name="y0" type="xs:string" />
+				<xs:attribute name="x0" type="xs:string" />
+				<xs:attribute name="embedded" type="xs:string" default="base64" />
+				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ********* -->
+	<!-- ** not ** -->
+	<!-- ********* -->
+	<xs:complexType name="notType">
+		<xs:choice>
+			<xs:element name="and" type="andType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="or" type="orType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="not" type="notType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="unanswered" type="unansweredType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="other" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varequal" type="varequalType" />
+			<xs:element name="varlt" type="varltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varlte" type="varlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargt" type="vargtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="vargte" type="vargteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubset" type="varsubsetType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varinside" type="varinsideType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubstring" type="varsubstringType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durequal" type="durequalType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlt" type="durltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlte" type="durlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgt" type="durgtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgte" type="durgteType" minOccurs="0" maxOccurs="0" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** not_objects ** -->
+	<!-- ***************** -->
+	<xs:complexType name="not_objectsType">
+		<xs:choice>
+			<xs:element name="outcomes_metadata" type="outcomes_metadataType" />
+			<xs:element name="and_objects" type="and_objectsType" />
+			<xs:element name="or_objects" type="or_objectsType" />
+			<xs:element name="not_objects" type="not_objectsType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** not_selection ** -->
+	<!-- ******************* -->
+	<xs:complexType name="not_selectionType">
+		<xs:choice>
+			<xs:element name="selection_metadata" type="selection_metadataType" />
+			<xs:element name="and_selection" type="and_selectionType" />
+			<xs:element name="or_selection" type="or_selectionType" />
+			<xs:element name="not_selection" type="not_selectionType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** not_test ** -->
+	<!-- ************** -->
+	<xs:complexType name="not_testType">
+		<xs:choice>
+			<xs:element name="variable_test" type="variable_testType" />
+			<xs:element name="and_test" type="and_testType" />
+			<xs:element name="or_test" type="or_testType" />
+			<xs:element name="not_test" type="not_testType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** objectbank ** -->
+	<!-- **************** -->
+	<xs:complexType name="objectbankType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="qtimetadata" type="qtimetadataType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="section" type="sectionType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="item" type="itemType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** objectives ** -->
+	<!-- **************** -->
+	<xs:complexType name="objectivesType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:choice>
+				<xs:element name="material" type="materialType" maxOccurs="unbounded" />
+				<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- *********************** -->
+	<!-- ** objects_condition ** -->
+	<!-- *********************** -->
+	<xs:complexType name="objects_conditionType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:choice minOccurs="0">
+				<xs:element name="outcomes_metadata" type="outcomes_metadataType" />
+				<xs:element name="and_objects" type="and_objectsType" />
+				<xs:element name="or_objects" type="or_objectsType" />
+				<xs:element name="not_objects" type="not_objectsType" />
+			</xs:choice>
+			<xs:element name="objects_parameter" type="objects_parameterType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="map_input" type="map_inputType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="objectscond_extension" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- *********************** -->
+	<!-- ** objects_parameter ** -->
+	<!-- *********************** -->
+	<xs:complexType name="objects_parameterType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="pname" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ******** -->
+	<!-- ** or ** -->
+	<!-- ******** -->
+	<xs:complexType name="orType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="not" type="notType" />
+			<xs:element name="and" type="andType" />
+			<xs:element name="or" type="orType" />
+			<xs:element name="unanswered" type="unansweredType" />
+			<xs:element ref="other" />
+			<xs:element name="varequal" type="varequalType" />
+			<xs:element name="varlt" type="varltType" />
+			<xs:element name="varlte" type="varlteType" />
+			<xs:element name="vargt" type="vargtType" />
+			<xs:element name="vargte" type="vargteType" />
+			<xs:element name="varsubset" type="varsubsetType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varinside" type="varinsideType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="varsubstring" type="varsubstringType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durequal" type="durequalType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlt" type="durltType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durlte" type="durlteType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgt" type="durgtType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="durgte" type="durgteType" minOccurs="0" maxOccurs="0" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** or_objects ** -->
+	<!-- **************** -->
+	<xs:complexType name="or_objectsType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="outcomes_metadata" type="outcomes_metadataType" />
+			<xs:element name="and_objects" type="and_objectsType" />
+			<xs:element name="or_objects" type="or_objectsType" />
+			<xs:element name="not_objects" type="not_objectsType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** or_selection ** -->
+	<!-- ****************** -->
+	<xs:complexType name="or_selectionType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="selection_metadata" type="selection_metadataType" />
+			<xs:element name="and_selection" type="and_selectionType" />
+			<xs:element name="or_selection" type="or_selectionType" />
+			<xs:element name="not_selection" type="not_selectionType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ************* -->
+	<!-- ** or_test ** -->
+	<!-- ************* -->
+	<xs:complexType name="or_testType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="variable_test" type="variable_testType" />
+			<xs:element name="and_test" type="and_testType" />
+			<xs:element name="or_test" type="or_testType" />
+			<xs:element name="not_test" type="not_testType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- *********** -->
+	<!-- ** order ** -->
+	<!-- *********** -->
+	<xs:complexType name="orderType">
+		<xs:sequence>
+			<xs:element ref="order_extension" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="order_type" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- ********************* -->
+	<!-- ** order_extension ** -->
+	<!-- ********************* -->
+	<xs:complexType name="order_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** outcomes ** -->
+	<!-- ************** -->
+	<xs:complexType name="outcomesType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:sequence maxOccurs="1" minOccurs="1">
+				<xs:element name="decvar" type="decvarType" />
+				<xs:element name="interpretvar" type="interpretvarType" minOccurs="0" maxOccurs="0" />
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- **************************** -->
+	<!-- ** outcomes_feedback_test ** -->
+	<!-- **************************** -->
+	<xs:complexType name="outcomes_feedback_testType">
+		<xs:sequence>
+			<xs:element name="test_variable" type="test_variableType" />
+			<xs:element name="displayfeedback" type="displayfeedbackType" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="title" type="xs:string" />
+	</xs:complexType>
+	<!-- *********************** -->
+	<!-- ** outcomes_metadata ** -->
+	<!-- *********************** -->
+	<xs:complexType name="outcomes_metadataType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="mdname" type="xs:string" use="required" />
+				<xs:attribute name="mdoperator" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="EQ" />
+							<xs:enumeration value="NEQ" />
+							<xs:enumeration value="LT" />
+							<xs:enumeration value="LTE" />
+							<xs:enumeration value="GT" />
+							<xs:enumeration value="GTE" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************************* -->
+	<!-- ** outcomes_processing ** -->
+	<!-- ************************* -->
+	<xs:complexType name="outcomes_processingType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:element name="outcomes" type="outcomesType" />
+			<xs:element name="objects_condition" type="objects_conditionType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="processing_parameter" type="processing_parameterType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="map_output" type="map_outputType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="outcomes_feedback_test" type="outcomes_feedback_testType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="scoremodel" type="xs:string" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** presentation ** -->
+	<!-- ****************** -->
+	<xs:complexType name="presentationType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:choice>
+				<xs:element name="flow" type="flowType" />
+				<xs:choice maxOccurs="unbounded">
+					<xs:element name="material" type="materialType" />
+					<xs:element name="response_lid" type="response_lidType" />
+					<xs:element name="response_xy" type="response_xyType" minOccurs="0" maxOccurs="0" />
+					<xs:element name="response_str" type="response_strType" />
+					<xs:element name="response_num" type="response_numType" minOccurs="0" maxOccurs="0" />
+					<xs:element name="response_grp" type="response_grpType" minOccurs="0" maxOccurs="0" />
+					<xs:element ref="response_extension" minOccurs="0" maxOccurs="0" />
+				</xs:choice>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="label" type="xs:string" />
+		<xs:attribute name="attribute5" type="xs:language" />
+		<xs:attribute name="y0" type="xs:string" />
+		<xs:attribute name="x0" type="xs:string" />
+		<xs:attribute name="width" type="xs:string" />
+		<xs:attribute name="height" type="xs:string" />
+	</xs:complexType>
+	<!-- *************************** -->
+	<!-- ** presentation_material ** -->
+	<!-- *************************** -->
+	<xs:complexType name="presentation_materialType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ************************** -->
+	<!-- ** processing_parameter ** -->
+	<!-- ************************** -->
+	<xs:complexType name="processing_parameterType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="pname" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** qticomment ** -->
+	<!-- **************** -->
+	<xs:complexType name="qticommentType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute ref="xml:lang" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** qtimetadata ** -->
+	<!-- ***************** -->
+	<xs:complexType name="qtimetadataType">
+		<xs:sequence>
+			<xs:element name="vocabulary" type="vocabularyType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="qtimetadatafield" type="qtimetadatafieldType" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ********************** -->
+	<!-- ** qtimetadatafield ** -->
+	<!-- ********************** -->
+	<xs:complexType name="qtimetadatafieldType">
+		<xs:sequence>
+			<xs:element ref="fieldlabel" />
+			<xs:element ref="fieldentry" />
+		</xs:sequence>
+		<xs:attribute ref="xml:lang" />
+	</xs:complexType>
+	<!-- ********************* -->
+	<!-- ** questestinterop ** -->
+	<!-- ********************* -->
+	<xs:complexType name="questestinteropType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:choice>
+				<xs:element name="objectbank" type="objectbankType" />
+				<xs:element name="assessment" type="assessmentType" />
+				<xs:choice maxOccurs="0" minOccurs="0">
+					<xs:element name="section" type="sectionType" />
+					<xs:element name="item" type="itemType" />
+				</xs:choice>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** reference ** -->
+	<!-- *************** -->
+	<xs:complexType name="referenceType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="qticomment" type="qticommentType" />
+			<xs:element name="material" type="materialType" />
+			<xs:element name="mattext" type="mattextType" />
+			<xs:element name="matemtext" type="matemtextType" />
+			<xs:element name="matimage" type="matimageType" />
+			<xs:element name="mataudio" type="mataudioType" />
+			<xs:element name="matvideo" type="matvideoType" />
+			<xs:element name="matapplet" type="matappletType" />
+			<xs:element name="matapplication" type="matapplicationType" />
+			<xs:element ref="matbreak" />
+			<xs:element ref="mat_extension" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** render_choice ** -->
+	<!-- ******************* -->
+	<xs:complexType name="render_choiceType">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+				<xs:element name="response_label" type="response_labelType" />
+				<xs:element name="flow_label" type="flow_labelType" />
+			</xs:choice>
+			<xs:element ref="response_na" minOccurs="0" maxOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="shuffle" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="minnumber" type="xs:string" />
+		<xs:attribute name="maxnumber" type="xs:string" />
+	</xs:complexType>
+	<!-- ********************** -->
+	<!-- ** render_extension ** -->
+	<!-- ********************** -->
+	<xs:complexType name="render_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** render_fib ** -->
+	<!-- **************** -->
+	<xs:complexType name="render_fibType">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+				<xs:element name="response_label" type="response_labelType" />
+				<xs:element name="flow_label" type="flow_labelType" />
+			</xs:choice>
+			<xs:element ref="response_na" minOccurs="0" maxOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="encoding" type="xs:string" default="UTF_8" />
+		<xs:attribute name="fibtype" default="String">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="String" />
+					<xs:enumeration value="Integer" />
+					<xs:enumeration value="Decimal" />
+					<xs:enumeration value="Scientific" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="rows" type="xs:string" />
+		<xs:attribute name="maxchars" type="xs:string" />
+		<xs:attribute name="prompt">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Box" />
+					<xs:enumeration value="Dashline" />
+					<xs:enumeration value="Asterisk" />
+					<xs:enumeration value="Underline" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="columns" type="xs:string" />
+		<xs:attribute name="charset" type="xs:string" default="ascii-us" />
+		<xs:attribute name="maxnumber" type="xs:string" />
+		<xs:attribute name="minnumber" type="xs:string" />
+	</xs:complexType>
+	<!-- ******************** -->
+	<!-- ** render_hotspot ** -->
+	<!-- ******************** -->
+	<xs:complexType name="render_hotspotType">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+				<xs:element name="response_label" type="response_labelType" />
+				<xs:element name="flow_label" type="flow_labelType" />
+			</xs:choice>
+			<xs:element ref="response_na" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="maxnumber" type="xs:string" />
+		<xs:attribute name="minnumber" type="xs:string" />
+		<xs:attribute name="showdraw" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** render_slider ** -->
+	<!-- ******************* -->
+	<xs:complexType name="render_sliderType">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+				<xs:element name="response_label" type="response_labelType" />
+				<xs:element name="flow_label" type="flow_labelType" />
+			</xs:choice>
+			<xs:element ref="response_na" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="orientation" default="Horizontal">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Horizontal" />
+					<xs:enumeration value="Vertical" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="lowerbound" type="xs:string" use="required" />
+		<xs:attribute name="upperbound" type="xs:string" use="required" />
+		<xs:attribute name="step" type="xs:string" />
+		<xs:attribute name="startval" type="xs:string" />
+		<xs:attribute name="steplabel" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="maxnumber" type="xs:string" />
+		<xs:attribute name="minnumber" type="xs:string" />
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** respcond_extension ** -->
+	<!-- ************************ -->
+	<xs:complexType name="respcond_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** respcondition ** -->
+	<!-- ******************* -->
+	<xs:complexType name="respconditionType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="conditionvar" type="conditionvarType" />
+			<xs:element name="setvar" type="setvarType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="displayfeedback" type="displayfeedbackType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="respcond_extension" minOccurs="0" maxOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="continue" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="title" type="xs:string" />
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** response_extension ** -->
+	<!-- ************************ -->
+	<xs:complexType name="response_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** response_grp ** -->
+	<!-- ****************** -->
+	<xs:complexType name="response_grpType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="render_choice" type="render_choiceType" />
+				<xs:element name="render_hotspot" type="render_hotspotType" />
+				<xs:element name="render_slider" type="render_sliderType" />
+				<xs:element name="render_fib" type="render_fibType" />
+				<xs:element ref="render_extension" />
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="rcardinality" default="Single">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Single" />
+					<xs:enumeration value="Multiple" />
+					<xs:enumeration value="Ordered" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="rtiming" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** response_lableType ** -->
+	<!-- ************************ -->
+	<xs:complexType name="response_labelType" mixed="true">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="material" type="materialType" />
+			<xs:element name="material_ref" type="material_refType" />
+			<xs:element name="flow_mat" type="flow_matType" />
+		</xs:choice>
+		<xs:attribute name="rshuffle" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="rarea" default="Ellipse" type="EclipseOnlyType">
+			</xs:attribute>
+		<xs:attribute name="rrange" default="Exact" type="ExactOnlyType">
+			</xs:attribute>
+		<xs:attribute name="labelrefid" type="xs:string" />
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="match_group" type="xs:string" />
+		<xs:attribute name="match_max" type="xs:string" />
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** response_lid ** -->
+	<!-- ****************** -->
+	<xs:complexType name="response_lidType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="render_choice" type="render_choiceType" />
+				<xs:element name="render_hotspot" type="render_hotspotType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="render_slider" type="render_sliderType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="render_fib" type="render_fibType" />
+				<xs:element ref="render_extension" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="rcardinality" default="Single">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Single" />
+					<xs:enumeration value="Multiple" />
+					<xs:enumeration value="Ordered" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="rtiming" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** response_na ** -->
+	<!-- ***************** -->
+	<xs:complexType name="response_naType" />
+	<!-- ****************** -->
+	<!-- ** response_num ** -->
+	<!-- ****************** -->
+	<xs:complexType name="response_numType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="render_choice" type="render_choiceType" />
+				<xs:element name="render_hotspot" type="render_hotspotType" />
+				<xs:element name="render_slider" type="render_sliderType" />
+				<xs:element name="render_fib" type="render_fibType" />
+				<xs:element ref="render_extension" />
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="numtype" default="Integer">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Integer" />
+					<xs:enumeration value="Decimal" />
+					<xs:enumeration value="Scientific" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="rcardinality" default="Single">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Single" />
+					<xs:enumeration value="Multiple" />
+					<xs:enumeration value="Ordered" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="rtiming" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** response_str ** -->
+	<!-- ****************** -->
+	<xs:complexType name="response_strType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="render_choice" type="render_choiceType" />
+				<xs:element name="render_hotspot" type="render_hotspotType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="render_slider" type="render_sliderType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="render_fib" type="render_fibType" />
+				<xs:element ref="render_extension" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="rcardinality" default="Single">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Single" />
+					<xs:enumeration value="Multiple" />
+					<xs:enumeration value="Ordered" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="rtiming" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ***************** -->
+	<!-- ** response_xy ** -->
+	<!-- ***************** -->
+	<xs:complexType name="response_xyType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="render_choice" type="render_choiceType" />
+				<xs:element name="render_hotspot" type="render_hotspotType" />
+				<xs:element name="render_slider" type="render_sliderType" />
+				<xs:element name="render_fib" type="render_fibType" />
+				<xs:element ref="render_extension" />
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="material" type="materialType" />
+				<xs:element name="material_ref" type="material_refType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="rcardinality" default="Single">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Single" />
+					<xs:enumeration value="Multiple" />
+					<xs:enumeration value="Ordered" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="rtiming" default="No">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** resprocessing ** -->
+	<!-- ******************* -->
+	<xs:complexType name="resprocessingType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="outcomes" type="outcomesType" />
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="respcondition" type="respconditionType" />
+				<xs:element ref="itemproc_extension" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="scoremodel" type="xs:string" use="prohibited" />
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** rubric ** -->
+	<!-- ************ -->
+	<xs:complexType name="rubricType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:choice>
+				<xs:element name="material" type="materialType" maxOccurs="unbounded" />
+				<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ************* -->
+	<!-- ** section ** -->
+	<!-- ************* -->
+	<xs:complexType name="sectionType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="duration" minOccurs="0" maxOccurs="0" />
+			<xs:element name="qtimetadata" type="qtimetadataType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="objectives" type="objectivesType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="sectioncontrol" type="sectioncontrolType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="sectionprecondition" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="sectionpostcondition" minOccurs="0" maxOccurs="0" />
+			<xs:element name="rubric" type="rubricType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="presentation_material" type="presentation_materialType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="outcomes_processing" type="outcomes_processingType" minOccurs="0" maxOccurs="0" />
+			<xs:element ref="sectionproc_extension" minOccurs="0" maxOccurs="0" />
+			<xs:element name="sectionfeedback" type="sectionfeedbackType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="selection_ordering" type="selection_orderingType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="reference" type="referenceType" minOccurs="0" maxOccurs="0" />
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="itemref" type="itemrefType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="item" type="itemType" />
+				<xs:element name="sectionref" type="sectionrefType" minOccurs="0" maxOccurs="0" />
+				<xs:element name="section" type="sectionType" minOccurs="0" maxOccurs="0" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+		<xs:attribute name="attribute7" type="xs:language" />
+	</xs:complexType>
+	<!-- ******************** -->
+	<!-- ** sectioncontrol ** -->
+	<!-- ******************** -->
+	<xs:complexType name="sectioncontrolType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="feedbackswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="hintswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="solutionswitch" default="Yes">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Yes" />
+					<xs:enumeration value="No" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- ********************* -->
+	<!-- ** sectionfeedback ** -->
+	<!-- ********************* -->
+	<xs:complexType name="sectionfeedbackType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:choice>
+				<xs:element name="material" type="materialType" maxOccurs="unbounded" />
+				<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="view" default="All">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="All" />
+					<xs:enumeration value="Administrator" />
+					<xs:enumeration value="AdminAuthority" />
+					<xs:enumeration value="Assessor" />
+					<xs:enumeration value="Author" />
+					<xs:enumeration value="Candidate" />
+					<xs:enumeration value="InvigilatorProctor" />
+					<xs:enumeration value="Psychometrician" />
+					<xs:enumeration value="Scorer" />
+					<xs:enumeration value="Tutor" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ident" type="xs:string" use="required" />
+		<xs:attribute name="title" type="xs:string" />
+	</xs:complexType>
+	<!-- *************************** -->
+	<!-- ** sectionproc_extension ** -->
+	<!-- *************************** -->
+	<xs:complexType name="sectionproc_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** sectionref ** -->
+	<!-- **************** -->
+	<xs:complexType name="sectionrefType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="linkrefid" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** selection ** -->
+	<!-- *************** -->
+	<xs:complexType name="selectionType">
+		<xs:sequence>
+			<xs:element ref="sourcebank_ref" minOccurs="0" />
+			<xs:element ref="selection_number" minOccurs="0" />
+			<xs:element name="selection_metadata" type="selection_metadataType" minOccurs="0" />
+			<xs:choice minOccurs="0">
+				<xs:element name="and_selection" type="and_selectionType" />
+				<xs:element name="or_selection" type="or_selectionType" />
+				<xs:element name="not_selection" type="not_selectionType" />
+				<xs:element ref="selection_extension" />
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ************************* -->
+	<!-- ** selection_extension ** -->
+	<!-- ************************* -->
+	<xs:complexType name="selection_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** selection_metadata ** -->
+	<!-- ************************ -->
+	<xs:complexType name="selection_metadataType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="mdname" type="xs:string" use="required" />
+				<xs:attribute name="mdoperator" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="EQ" />
+							<xs:enumeration value="NEQ" />
+							<xs:enumeration value="LT" />
+							<xs:enumeration value="LTE" />
+							<xs:enumeration value="GT" />
+							<xs:enumeration value="GTE" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** selection_ordering ** -->
+	<!-- ************************ -->
+	<xs:complexType name="selection_orderingType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" />
+			<xs:element name="sequence_parameter" type="sequence_parameterType" minOccurs="0" />
+			<xs:element name="selection" type="selectionType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="order" type="orderType" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="sequence_type" type="xs:string" />
+	</xs:complexType>
+	<!-- ************************ -->
+	<!-- ** sequence_parameter ** -->
+	<!-- ************************ -->
+	<xs:complexType name="sequence_parameterType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="pname" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** setvar ** -->
+	<!-- ************ -->
+	<xs:complexType name="setvarType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="varname" type="xs:string" default="SCORE" />
+				<xs:attribute name="action" default="Set" type="SetAddSubtractOnly">
+					</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** solution ** -->
+	<!-- ************** -->
+	<xs:complexType name="solutionType">
+		<xs:sequence>
+			<xs:element name="qticomment" type="qticommentType" minOccurs="0" maxOccurs="0" />
+			<xs:element name="solutionmaterial" type="solutionmaterialType" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="feedbackstyle" default="Complete" type="CompleteOnly">
+			</xs:attribute>
+	</xs:complexType>
+	<!-- ********************** -->
+	<!-- ** solutionmaterial ** -->
+	<!-- ********************** -->
+	<xs:complexType name="solutionmaterialType">
+		<xs:choice>
+			<xs:element name="material" type="materialType" maxOccurs="0" minOccurs="0" />
+			<xs:element name="flow_mat" type="flow_matType" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** test_variable ** -->
+	<!-- ******************* -->
+	<xs:complexType name="test_variableType">
+		<xs:choice>
+			<xs:element name="variable_test" type="variable_testType" />
+			<xs:element name="and_test" type="and_testType" />
+			<xs:element name="or_test" type="or_testType" />
+			<xs:element name="not_test" type="not_testType" />
+		</xs:choice>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** unanswered ** -->
+	<!-- **************** -->
+	<xs:complexType name="unansweredType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** var_extension ** -->
+	<!-- ******************* -->
+	<xs:complexType name="var_extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax" />
+	</xs:complexType>
+	<!-- ************** -->
+	<!-- ** varequal ** -->
+	<!-- ************** -->
+	<xs:complexType name="varequalType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="case" default="No">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Yes" />
+							<xs:enumeration value="No" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="respident" type="xs:string" use="required" />
+				<xs:attribute name="index" type="xs:string" use="prohibited" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *********** -->
+	<!-- ** vargt ** -->
+	<!-- *********** -->
+	<xs:complexType name="vargtType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+				<xs:attribute name="index" type="string2" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** vargte ** -->
+	<!-- ************ -->
+	<xs:complexType name="vargteType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+				<xs:attribute name="index" type="string2" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ******************* -->
+	<!-- ** variable_test ** -->
+	<!-- ******************* -->
+	<xs:complexType name="variable_testType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="varname" type="xs:string" default="SCORE" />
+				<xs:attribute name="testoperator" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="EQ" />
+							<xs:enumeration value="NEQ" />
+							<xs:enumeration value="LT" />
+							<xs:enumeration value="LTE" />
+							<xs:enumeration value="GT" />
+							<xs:enumeration value="GTE" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** varinside ** -->
+	<!-- *************** -->
+	<xs:complexType name="varinsideType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="areatype" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Ellipse" />
+							<xs:enumeration value="Rectangle" />
+							<xs:enumeration value="Bounded" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="respident" type="xs:string" use="required" />
+				<xs:attribute name="index" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *********** -->
+	<!-- ** varlt ** -->
+	<!-- *********** -->
+	<xs:complexType name="varltType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+				<xs:attribute name="index" type="string2" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ************ -->
+	<!-- ** varlte ** -->
+	<!-- ************ -->
+	<xs:complexType name="varlteType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+				<xs:attribute name="index" type="string2" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- *************** -->
+	<!-- ** varsubset ** -->
+	<!-- *************** -->
+	<xs:complexType name="varsubsetType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="respident" type="string32" use="required" />
+				<xs:attribute name="setmatch" default="Exact">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Exact" />
+							<xs:enumeration value="Partial" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="index" type="string2" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- ****************** -->
+	<!-- ** varsubstring ** -->
+	<!-- ****************** -->
+	<xs:complexType name="varsubstringType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="index" type="xs:string" use="prohibited" />
+				<xs:attribute name="respident" type="xs:string" use="required" />
+				<xs:attribute name="case" default="No">
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Yes" />
+							<xs:enumeration value="No" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- **************** -->
+	<!-- ** vocabulary ** -->
+	<!-- **************** -->
+	<xs:complexType name="vocabularyType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="uri" type="xs:string" />
+				<xs:attribute name="entityref" type="xs:ENTITY" />
+				<xs:attribute name="vocab_type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

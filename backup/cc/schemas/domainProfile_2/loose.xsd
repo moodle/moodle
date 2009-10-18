@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ltsc.ieee.org/xsd/LOM/unique" targetNamespace="http://ltsc.ieee.org/xsd/LOM/unique" elementFormDefault="qualified" version="IEEE LTSC LOM XML 1.0">
+
+  <xs:annotation>
+    <xs:documentation>
+       This work is licensed under the Creative Commons Attribution-ShareAlike
+       License.  To view a copy of this license, see the file license.txt,
+       visit http://creativecommons.org/licenses/by-sa/2.0 or send a letter to
+       Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+    </xs:documentation>
+
+    <xs:documentation>
+       This component schema definition provides attribute group declarations for
+       LOM data elements to support schema-based validation of uniqueness constraints
+       within a LOM XML instance where the exact set of attributes associated with each
+       element has to be as specified by the LOM XML Schema binding (i.e., where extra
+       attributes to enforce uniqueness have to be avoided).
+
+       Duplicate declarations are included as comments for completeness.  These
+       declarations should remain commented out or they can be removed completely.
+
+       NOTE: The absence of the enforcement of the uniqueness constraints does not
+       relieve a particular LOM XML instance from satisfying the uniqueness constraints
+       described in the LOMv1.0 base schema. Applications that require the use of
+       the unique/loose.xsd component XSD have to enforce those uniqueness constraints
+       by other means.
+    </xs:documentation>
+      <xs:documentation>
+         This file has been modified by the Knowledge Media Institute of the
+         University Koblenz-Landau (http://iwm.uni-koblenz.de). It contains the
+         following changes:
+         1) Instead of "unique/strict.xsd" the schema "unique/loose.xsd" is imported
+            because this reflects what is said in 1484.12.3-2005, page 35 (section C.1.3)
+         2) In all component XSDs the schemaLocation attribute was amended to the
+            xs:import and xs:include statements. This enables the usage of the schemas
+            with tools which don't deal well with missing schemaLocation informations.
+
+         This file is available at "http://iwm.uni-koblenz.de/xsd/IEEE-LOM/loose"
+      </xs:documentation>
+  </xs:annotation>
+
+  <!-- Attribute group declarations -->
+
+  <!-- Duplicate declarations are included as comments. -->
+
+  <!-- Learning Object Metadata -->
+  <xs:attributeGroup name="lom" />
+
+  <!-- DateTime -->
+  <xs:attributeGroup name="DateTimeValue" />
+
+  <!-- Duration -->
+  <xs:attributeGroup name="DurationValue" />
+
+  <!-- Source -->
+  <xs:attributeGroup name="source" />
+
+  <!-- Value -->
+  <xs:attributeGroup name="value" />
+
+  <!-- 1 General -->
+  <xs:attributeGroup name="general" />
+
+  <!-- 1.1 Identifier -->
+  <xs:attributeGroup name="identifier" />
+
+  <!-- 1.1.1 Catalog -->
+  <xs:attributeGroup name="catalog" />
+
+  <!-- 1.1.2 Entry -->
+  <xs:attributeGroup name="entry" />
+
+  <!-- 1.2 Title -->
+  <xs:attributeGroup name="title" />
+
+  <!-- 1.3 Language -->
+  <xs:attributeGroup name="language" />
+
+  <!-- 1.4 Description -->
+  <xs:attributeGroup name="description" />
+
+  <!-- 1.5 Keyword -->
+  <xs:attributeGroup name="keyword" />
+
+  <!-- 1.6 Coverage -->
+  <xs:attributeGroup name="coverage" />
+
+  <!-- 1.7 Structure -->
+  <xs:attributeGroup name="structure" />
+
+  <!-- 1.8 Aggregation Level -->
+  <xs:attributeGroup name="aggregationLevel" />
+
+  <!-- 2 Life Cycle -->
+  <xs:attributeGroup name="lifeCycle" />
+
+  <!-- 2.1 Version -->
+  <xs:attributeGroup name="version" />
+
+  <!-- 2.2 Status -->
+  <xs:attributeGroup name="status" />
+
+  <!-- 2.3 Contribute -->
+  <xs:attributeGroup name="contribute" />
+
+  <!-- 2.3.1 Role -->
+  <xs:attributeGroup name="role" />
+
+  <!-- 2.3.2 Entity -->
+  <xs:attributeGroup name="entity" />
+
+  <!-- 2.3.3 Date -->
+  <xs:attributeGroup name="date" />
+
+  <!-- 3 Meta-Metadata -->
+  <xs:attributeGroup name="metaMetadata" />
+
+  <!-- 3.1 Identifier
+  <xs:attributeGroup name="identifier"/> -->
+
+  <!-- 3.1.1 Catalog
+  <xs:attributeGroup name="catalog"/> -->
+
+  <!-- 3.1.2 Entry
+  <xs:attributeGroup name="entry"/> -->
+
+  <!-- 3.2 Contribute
+  <xs:attributeGroup name="contribute"/> -->
+
+  <!-- 3.2.1 Role
+  <xs:attributeGroup name="role"/> -->
+
+  <!-- 3.2.2 Entity
+  <xs:attributeGroup name="entity"/> -->
+
+  <!-- 3.2.3 Date
+  <xs:attributeGroup name="date"/> -->
+
+  <!-- 3.3 Metadata Schema -->
+  <xs:attributeGroup name="metadataSchema" />
+
+  <!-- 3.4 Language
+  <xs:attributeGroup name="language"/> -->
+
+  <!-- 4 Technical -->
+  <xs:attributeGroup name="technical" />
+
+  <!-- 4.1 Format -->
+  <xs:attributeGroup name="format" />
+
+  <!-- 4.2 Size -->
+  <xs:attributeGroup name="size" />
+
+  <!-- 4.3 Location -->
+  <xs:attributeGroup name="location" />
+
+  <!-- 4.4 Requirement -->
+  <xs:attributeGroup name="requirement" />
+
+  <!-- 4.4.1 OrComposite -->
+  <xs:attributeGroup name="orComposite" />
+
+  <!-- 4.4.1.1 Type -->
+  <xs:attributeGroup name="type" />
+
+  <!-- 4.4.1.2 Name -->
+  <xs:attributeGroup name="name" />
+
+  <!-- 4.4.1.3 Minimum Version -->
+  <xs:attributeGroup name="minimumVersion" />
+
+  <!-- 4.4.1.4 Maximum Version -->
+  <xs:attributeGroup name="maximumVersion" />
+
+  <!-- 4.5 Installation Remarks -->
+  <xs:attributeGroup name="installationRemarks" />
+
+  <!-- 4.6 Other Platform Requirements -->
+  <xs:attributeGroup name="otherPlatformRequirements" />
+
+  <!-- 4.7 Duration -->
+  <xs:attributeGroup name="duration" />
+
+  <!-- 5 Educational -->
+  <xs:attributeGroup name="educational" />
+
+  <!-- 5.1 Interactivity Type -->
+  <xs:attributeGroup name="interactivityType" />
+
+  <!-- 5.2 Learning Resource Type -->
+  <xs:attributeGroup name="learningResourceType" />
+
+  <!-- 5.3 Interactivity Level -->
+  <xs:attributeGroup name="interactivityLevel" />
+
+  <!-- 5.4 Semantic Density -->
+  <xs:attributeGroup name="semanticDensity" />
+
+  <!-- 5.5 Intended End User Role -->
+  <xs:attributeGroup name="intendedEndUserRole" />
+
+  <!-- 5.6 Context -->
+  <xs:attributeGroup name="context" />
+
+  <!-- 5.7 Typical Age Range -->
+  <xs:attributeGroup name="typicalAgeRange" />
+
+  <!-- 5.8 Difficulty -->
+  <xs:attributeGroup name="difficulty" />
+
+  <!-- 5.9 Typical Learning Time -->
+  <xs:attributeGroup name="typicalLearningTime" />
+
+  <!-- 5.10 Description
+  <xs:attributeGroup name="description"/> -->
+
+  <!-- 5.11 Language
+  <xs:attributeGroup name="language"/> -->
+
+  <!-- 6 Rights -->
+  <xs:attributeGroup name="rights" />
+
+  <!-- 6.1 Cost -->
+  <xs:attributeGroup name="cost" />
+
+  <!-- 6.2 Copyright and Other Restrictions -->
+  <xs:attributeGroup name="copyrightAndOtherRestrictions" />
+
+  <!-- 6.3 Description
+  <xs:attributeGroup name="description"/> -->
+
+  <!-- 7 Relation -->
+  <xs:attributeGroup name="relation" />
+
+  <!-- 7.1 Kind -->
+  <xs:attributeGroup name="kind" />
+
+  <!-- 7.2 Resource -->
+  <xs:attributeGroup name="resource" />
+
+  <!-- 7.2.1 Identifier
+  <xs:attributeGroup name="identifier"/> -->
+
+  <!-- 7.2.1.1 Catalog
+  <xs:attributeGroup name="catalog"/> -->
+
+  <!-- 7.2.1.2 Entry
+  <xs:attributeGroup name="entry"/> -->
+
+  <!-- 7.2.2 Description
+  <xs:attributeGroup name="description"/> -->
+
+  <!-- 8 Annotation -->
+  <xs:attributeGroup name="annotation" />
+
+  <!-- 8.1 Entity
+  <xs:attributeGroup name="entity"/> -->
+
+  <!-- 8.2 Date
+  <xs:attributeGroup name="date"/> -->
+
+  <!-- 8.3 Description
+  <xs:attributeGroup name="description"/> -->
+
+  <!-- 9 Classification -->
+  <xs:attributeGroup name="classification" />
+
+  <!-- 9.1 Purpose -->
+  <xs:attributeGroup name="purpose" />
+
+  <!-- 9.2 Taxon Path -->
+  <xs:attributeGroup name="taxonPath" />
+
+  <!-- 9.2.1 Source
+  <xs:attributeGroup name="source"/> -->
+
+  <!-- 9.2.2 Taxon -->
+  <xs:attributeGroup name="taxon" />
+
+  <!-- 9.2.2.1 Id -->
+  <xs:attributeGroup name="id" />
+
+  <!-- 9.2.2.2 Entry
+  <xs:attributeGroup name="entry"/> -->
+
+  <!-- 9.3 Description
+  <xs:attributeGroup name="description"/> -->
+
+  <!-- 9.4 Keyword
+  <xs:attributeGroup name="keyword"/> -->
+
+</xs:schema>

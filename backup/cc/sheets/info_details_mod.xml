@@ -1,0 +1,8 @@
+      <MOD>
+        <NAME>[#mod_type#]</NAME>
+        <INCLUDED>true</INCLUDED>
+        <USERINFO>false</USERINFO>
+        <INSTANCES>
+          [#node_info_details_mod_instances_instance#]
+        </INSTANCES>
+      </MOD>
