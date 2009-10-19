@@ -354,6 +354,34 @@ class moodlelib_test extends UnitTestCase {
         $this->assertFalse(make_user_directory(true, true));
 
     }
+
+    function test_shorten_text() {
+        $text = "short text already no tags";
+        $this->assertEqual($text, shorten_text($text));
+
+        $text = "<p>short <b>text</b> already</p><p>with tags</p>";
+        $this->assertEqual($text, shorten_text($text));
+
+        $text = "long text without any tags blah de blah blah blah what";
+        $this->assertEqual('long text without any tags ...', shorten_text($text));
+
+        $text = "<div class='frog'><p><blockquote>Long text with tags that will ".
+            "be chopped off but <b>should be added back again</b></blockquote></p></div>";
+        $this->assertEqual("<div class='frog'><p><blockquote>Long text with " .
+            "tags that ...</blockquote></p></div>", shorten_text($text));
+
+        $text = "some text which shouldn't &nbsp; break there";
+        $this->assertEqual("some text which shouldn't &nbsp; ...", 
+            shorten_text($text, 31));
+        $this->assertEqual("some text which shouldn't ...", 
+            shorten_text($text, 30));
+        
+        // This case caused a bug up to 1.9.5
+        $text = "<h3>standard 'break-out' sub groups in TGs?</h3>&nbsp;&lt;&lt;There are several";
+        $this->assertEqual("<h3>standard 'break-out' sub groups in ...</h3>",
+            shorten_text($text, 43));
+    }
+
 }
 
 ?>
