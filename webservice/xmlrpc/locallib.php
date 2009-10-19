@@ -16,23 +16,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * XML-RPC web service entry point. The authentication is done via tokens.
+ * XML-RPC web service implementation classes and methods.
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_MOODLE_COOKIES', true);
+require_once("$CFG->dirroot/webservice/lib.php");
 
-require('../../config.php');
-require_once("$CFG->dirroot/webservice/xmlrpc/locallib.php");
+/**
+ * XML-RPC service server implementation.
+ * @author Petr Skoda (skodak)
+ */
+class webservice_xmlrpc_server extends webservice_zend_server {
+    /**
+     * Contructor
+     */
+    public function __construct() {
+        parent::__construct('Zend_XmlRpc_Server');
+        $this->wsname = 'xmlrpc';
+    }
 
-if (!webservice_protocol_is_enabled('xmlrpc')) {
-    die;
+
 }
-
-$server = new webservice_xmlrpc_server();
-$server->run(false);
-die;
 

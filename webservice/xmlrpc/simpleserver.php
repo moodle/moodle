@@ -28,11 +28,23 @@ define('NO_MOODLE_COOKIES', true);
 require('../../config.php');
 require_once("$CFG->dirroot/webservice/xmlrpc/locallib.php");
 
+//ob_start();
+
+//TODO: for now disable all mess in xml
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+$CFG->debug = 0;
+$CFG->debugdisplay = false;
+
+//error_log('yy');
+//error_log(var_export($_SERVER, true));
+
 if (!webservice_protocol_is_enabled('xmlrpc')) {
     die;
 }
 
 $server = new webservice_xmlrpc_server();
-$server->run(false);
+$server->run(true);
 die;
+
 

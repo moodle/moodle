@@ -112,9 +112,15 @@ abstract class webservice_zend_server implements webservice_server {
         // make a list of all functions user is allowed to excecute
         $this->init_service_class();
 
+        // TODO: solve debugging level somehow
+        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
+
         // start the server
         $this->zend_server->setClass($this->service_class);
         $response = $this->zend_server->handle();
+
+        //$grrr = ob_get_clean();
+        //error_log($grrr);
 
         // session cleanup
         $this->session_cleanup();
@@ -213,7 +219,6 @@ class '.$classname.' {
 ';
         // load the virtual class definition into memory
         eval($code);
-echo "<xmp>".$code."</xmp>";
         $this->service_class = $classname;
     }
 
@@ -305,7 +310,7 @@ echo "<xmp>".$code."</xmp>";
             }
             $return = '     * @return '.$type.' '.$function->returns_desc->desc;
         }
-        
+
         // now crate a virtual method that calls the ext implemenation
         // TODO: add PHP docs and all missing info here
 
@@ -365,10 +370,12 @@ echo "<xmp>".$code."</xmp>";
             $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
 
             if (!is_enabled_auth('webservice')) {
+                error_log('WS auth not enabled');
                 die('WS auth not enabled');
             }
 
             if (!$auth = get_auth_plugin('webservice')) {
+                error_log('WS auth missing');
                 die('WS auth missing');
             }
 
