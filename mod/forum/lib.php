@@ -1203,7 +1203,7 @@ function forum_print_overview($courses,&$htmlarray) {
     }
     $sql = substr($sql,0,-3); // take off the last OR
 
-    $sql .= ") AND l.module = 'forum' AND action $LIKE 'add post%' "
+    $sql .= ") AND l.module = 'forum' AND action = 'add post' "
         ." AND userid != ? GROUP BY cmid,l.course,instance";
 
     $params[] = $USER->id;
