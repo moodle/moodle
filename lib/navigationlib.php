@@ -46,6 +46,7 @@ define('NAVIGATION_CACHE_NAME', 'navigation');
  * the node then becomes a branch.
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -813,6 +814,7 @@ class navigation_node {
  * </ul>
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1709,6 +1711,7 @@ class global_navigation extends navigation_node {
  * which of course will speed up the response time.. because no one likes laggy AJAX.
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2016,6 +2019,7 @@ class limited_global_navigation extends global_navigation {
  * object held by PAGE
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2238,6 +2242,7 @@ class navbar extends navigation_node {
  * and was created initially for use with the settings blocks.
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3167,6 +3172,7 @@ class settings_navigation extends navigation_node {
  * Simple class used to output a navigation branch in XML
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3289,6 +3295,7 @@ class navigation_xml {
  * </code>
  *
  * @package moodlecore
+ * @subpackage navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3410,7 +3417,7 @@ class navigation_cache {
         return false;
     }
     /**
-     * Whipes the entire cache, good to force regeneration
+     * Wipes the entire cache, good to force regeneration
      */
     public function clear() {
         $this->session = array();
