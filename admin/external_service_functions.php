@@ -25,7 +25,6 @@
 
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once('external_forms.php');
 
 $id      = required_param('id', PARAM_INT);
 $fid     = optional_param('fid', 0, PARAM_INT);
