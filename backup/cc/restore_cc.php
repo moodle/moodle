@@ -53,6 +53,10 @@ function cc_convert ($dir) {
                 return false;
             }
 
+            if (!$detected_requirements["libxmlminversion"]) {
+                notify(get_string('cc_import_req_libxmlminversion', 'imscc'));
+                return false;
+            }
             if (!$detected_requirements["xsl"]) {
                 notify(get_string('cc_import_req_xsl', 'imscc'));
                 return false;
@@ -102,6 +106,7 @@ function detect_requirements () {
     $detected["xsl"] = extension_loaded('xsl');
     $detected['dom'] = extension_loaded('dom');
     $detected['libxml'] = extension_loaded('libxml');
+    $detected['libxmlminversion'] = extension_loaded('libxml') && version_compare(LIBXML_DOTTED_VERSION, '2.6.30', '>=');
 
     return $detected;
 
