@@ -210,6 +210,12 @@ class navigation_node {
      * This function checks if the node is the active child by comparing its action
      * to the current page URL obtained via $ME
      *
+     * This function compares the nodes url to the static var {@link navigation_node::fullmeurl}
+     * and if they match (based on $strenght) then the node is considered active.
+     *
+     * Note: This function is recursive, when you call it it will check itself and all
+     * children recursivily.
+     *
      * @staticvar moodle_url $fullmeurl
      * @param int $strength When using the moodle_url compare function how strictly
      *                       to check for a match. Defaults to URL_MATCH_EXACT
