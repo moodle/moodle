@@ -25,39 +25,6 @@
 
 require_once $CFG->libdir.'/formslib.php';
 
-class external_service_form extends moodleform {
-    function definition() {
-        global $CFG, $USER;
-
-        $mform = $this->_form;
-        $service = $this->_customdata;
-
-        $mform->addElement('header', 'extservice', get_string('externalservice', 'webservice'));
-
-        $mform->addElement('text', 'name', get_string('name'));
-        $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
-        $mform->addElement('text', 'requiredcapability', get_string('requiredcapability', 'webservice'));
-        $mform->addElement('advcheckbox', 'restrictedusers', get_string('restrictedusers', 'webservice'));
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $this->add_action_buttons(true);
-
-        $this->set_data($service);
-    }
-
-    function definition_after_data() {
-        $mform = $this->_form;
-        $service = $this->_customdata;
-
-        if (!empty($service->component)) {
-            // custom component
-            $mform->hardFreeze('name,requiredcapability,restrictedusers');
-        }
-    }
-}
-
 class external_service_functions_form extends moodleform {
     function definition() {
         global $CFG, $USER, $DB;
