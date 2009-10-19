@@ -56,29 +56,80 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     $DB->delete_records('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name));
     redirect($thisurl);
 
-} else if ($action === 'add') {
-    $mform = new external_service_functions_form(null, array('action'=>'add', 'id'=>$service->id));
+}
+else if ($action === 'add') {
 
-    if ($mform->is_cancelled()) {
-        redirect($thisurl);
-    } else if ($data = $mform->get_data()) {
+    if (optional_param('save', 0, PARAM_ACTION)) {
+
         ignore_user_abort(true); // no interruption here!
-        $function = $DB->get_record('external_functions', array('id'=>$data->fid), '*', MUST_EXIST);
-        // make sure the function is not there yet
-        if ($DB->record_exists('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name))) {
+        $functionname = optional_param('function', 0, PARAM_ACTION);
+        if (!empty($functionname)) {
+            $function = $DB->get_record('external_functions', array('name'=> $functionname), '*', MUST_EXIST);
+            // make sure the function is not there yet
+            if ($DB->record_exists('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name))) {
+                redirect($thisurl);
+            }
+            $new = new object();
+            $new->externalserviceid = $service->id;
+            $new->functionname      = $functionname;
+            $DB->insert_record('external_services_functions', $new);
             redirect($thisurl);
+        } 
+        else {
+            $errormessage = get_string('nofunctionselected', 'webservice');
         }
-        $new = new object();
-        $new->externalserviceid = $service->id;
-        $new->functionname      = $function->name;
-        $DB->insert_record('external_services_functions', $new);
-        redirect($thisurl);
+
     }
 
-    //ask for function id
+    // Prepare the list of function to choose from
+   $select = "name NOT IN (SELECT s.functionname
+                                  FROM {external_services_functions} s
+                                 WHERE s.externalserviceid = :sid
+                               )";
+    $functions = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$id), 'name', 'id, name');
+    $functionchoices = array();
+
+    foreach ($functions as $functionname) {
+        $functionchoices[$functionname] = $functionname . ': ' . get_string($functionname, 'servicedescription');
+    }
+
+    // Javascript for the function search/selection fields
+    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->js('admin/webservice/script.js');
+    $PAGE->requires->js_function_call('capability_service.cap_filter_init', array(get_string('search'))); //TODO generalize javascript
+
     admin_externalpage_print_header();
+    if (!empty($errormessage)) {
+        echo $OUTPUT->notification($errormessage);
+    }
     echo $OUTPUT->heading($service->name);
-    $mform->display();
+     echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
+    //the service form
+    $form = new html_form();
+    $form->url = new moodle_url('/admin/external_service_functions.php', array('id' => $id, 'action' => 'add', 'save' => 1)); // Required
+    $form->button = new html_button();
+    $form->button->id = 'settingssubmit';
+    $form->button->text = get_string('addfunction', 'webservice'); // Required
+    $form->button->disabled = false;
+    $form->button->title = get_string('addfunction', 'webservice');
+    $form->method = 'post';
+    $form->id = 'settingsform';
+    //help text
+    $contents = '<p id="intro">'. get_string('addfunctionhelp', 'webservice') . '</p>';
+    //function section (search field + selection field)
+    $select = new html_select();
+    $select->options = $functionchoices;
+    $select->name = 'function';
+    $select->id = 'menucapability'; //TODO generalize javascript
+    $select->nothingvalue = '';
+    $select->listbox = true;
+    $select->tabindex = 0;
+    $contents .= $OUTPUT->select($select);
+    $contents .= "<br/><br/>";
+    echo $OUTPUT->form($form, $contents);
+
+    echo $OUTPUT->box_end();
+
     echo $OUTPUT->footer();
     die;
 }
@@ -103,6 +154,9 @@ $table->head  = array($strfunction);
 $table->align = array('left');
 $table->width = '100%';
 $table->data  = array();
+$table->head[] = get_string('description');
+$table->align[] = 'left';
+
 if (empty($service->component)) {
     $table->head[] = $stredit;
     $table->align[] = 'center';
@@ -111,11 +165,13 @@ if (empty($service->component)) {
 $durl = "$CFG->wwwroot/$CFG->admin/external_service_functions.php?sesskey=".sesskey();
 
 foreach ($functions as $function) {
+    //TODO: manage when the description is into a module/plugin lang file
+    $description = "<span style=\"font-size:90%\">".get_string($function->name,'servicedescription')."</span>";
     if (empty($service->component)) {
         $delete = "<a href=\"$durl&amp;action=delete&amp;fid=$function->id&amp;id=$service->id\">$strdelete</a>";
-        $table->data[] = array($function->name, $delete);
+        $table->data[] = array($function->name, $description, $delete);
     } else {
-        $table->data[] = array($function->name);
+        $table->data[] = array($function->name, $description);
     }
 }
 

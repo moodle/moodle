@@ -1,6 +1,7 @@
 <?php
 
 $string['addfunction'] = 'Add function';
+$string['addfunctionhelp'] = 'Select the function to add to the service.';
 $string['addrequiredcapability'] = 'Assign/Unassign the required capability';
 $string['addservicehelp'] = 'Set settings for your service. You can add a unique required capability. In this case any
     user accessing to this service will need this capability. When you enable restricted users option, you will be able
@@ -20,6 +21,7 @@ $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['iprestriction'] = 'IP restriction';
 $string['manageprotocols'] = 'Manage protocols';
+$string['nofunctionselected'] = 'Please select a function to add';
 $string['nouserrestriction'] = 'No restriction';
 $string['potusers'] = 'Not authorized users';
 $string['potusersmatching'] = 'Not authorized users matching';
