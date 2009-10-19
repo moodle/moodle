@@ -671,9 +671,9 @@ class quiz extends entities {
             $answer_identifier = !empty($answer_identifier->item(0)->nodeValue) ? $answer_identifier->item(0)->nodeValue : '';
 
             if ($question_cc_type == CC_QUIZ_FIB) {
-                $answers = $this->get_answers_fib ($identifier, $answer_identifier, $assessment, &$last_answer_id);
+                $answers = $this->get_answers_fib ($identifier, $answer_identifier, $assessment, $last_answer_id);
             } else {
-                $answers = $this->get_answers_pattern_match ($identifier, $answer_identifier, $assessment, &$last_answer_id);
+                $answers = $this->get_answers_pattern_match ($identifier, $answer_identifier, $assessment, $last_answer_id);
             }
 
         } else {
