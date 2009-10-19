@@ -228,6 +228,9 @@ $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterio
 <p>A sua versão é $a</p>
 <p>Atualize a versão do PHP!</p>';
 $string['postgres7'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p> <p>A sua versão é $a</p> <p>Atualize a versão do PHP!</p> PostgreSQL (postgres7)';
+$string['postgresqlwarning'] = '<strong>Nota:</strong> Em caso de problemas de conexão, tente configurar o campo Host Server assim: 
+Servidor hospedeiro=\'postgresql_host\' porta=\'5432\' nome do db=\'postgresql_database_name\' usuário=\'postgresql_user\' senha=\'postgresql_user_password\'
+e deixe vazios os campos Database, Usuário e Senha. Leia também <a href=\"http://docs.moodle.org/en/Installing_Postgres_for_PHP\">Moodle Docs</a>';
 $string['previous'] = 'Anterior';
 $string['qtyperqpwillberemoved'] = 'Durante a migração, o tipo de questão RQP será removido. Como você não estava usando este tipo de questão então não terá problemas.';
 $string['qtyperqpwillberemovedanyway'] = 'Durante a migração, as questões do tipo RQP serão removidas. Você tem algumas questões RQP no seu banco de dados e elas não funcionarão a menos que você reinstale o código de http://moodle.org/mod/data/view.php?d=13&amp;rid=797 antes de continuar a migração.';
