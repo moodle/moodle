@@ -198,6 +198,7 @@ class navigation_node {
     /**
      * This function overrides the active URL that is used to compare new nodes
      * to find out if they are active.
+     * 
      * If null is passed then $fullmeurl will be regenerated when the next node
      * is created/added
      */
