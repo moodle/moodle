@@ -6196,7 +6196,7 @@ class admin_setting_manageexternalservices extends admin_setting {
             if ($service->restrictedusers) {
                 $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
             } else {
-                $users = '-';
+                $users = get_string('nouserrestriction','webservice');
             }
 
             $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
@@ -6236,7 +6236,7 @@ class admin_setting_manageexternalservices extends admin_setting {
             if ($service->restrictedusers) {
                 $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
             } else {
-                $users = '-';
+                $users = get_string('nouserrestriction','webservice');
             }
 
             $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";

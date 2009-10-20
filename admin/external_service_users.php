@@ -71,7 +71,8 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
                 $alloweduserselector->invalidate_selected_users();
                 }
         }
-
+/// Print the form.
+    check_theme_arrows();
 
 /// display the UI
 ?>
@@ -112,11 +113,16 @@ if (optional_param('updateuser', false, PARAM_BOOL) && confirm_sesskey()) {
     $frommonth = optional_param('frommonth', '', PARAM_INT);
     $fromyear = optional_param('fromyear', '', PARAM_INT);
     $addcap = optional_param('addcap', false, PARAM_INT);
+    $enablevaliduntil = optional_param('enablevaliduntil', false, PARAM_INT);
     $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
 
     $serviceuser = new object();
     $serviceuser->id = $serviceuserid;
-    $serviceuser->validuntil = $validuntil;
+    if ($enablevaliduntil) {
+        $serviceuser->validuntil = $validuntil;
+    } else {
+        $serviceuser->validuntil = null; //the valid until field is disabled, we reset the value
+    }
     $serviceuser->iprestriction = $iprestriction;
     $DB->update_record('external_services_users', $serviceuser);
 
@@ -137,7 +143,7 @@ if (!empty($allowedusers)) {
     echo $OUTPUT->box_start('generalbox', 'alloweduserlist');
    
     echo "<label><strong>".get_string('serviceuserssettings', 'webservice').":</strong></label>";
-    echo "<br/><br/><span style=\"font-size:90%\">"; //reduce font of the user settings
+    echo "<br/><br/><span style=\"font-size:85%\">"; //reduce font of the user settings
     foreach($allowedusers as $user) {
 
         echo "<strong>";
@@ -167,7 +173,13 @@ if (!empty($allowedusers)) {
         $selectors = html_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear'),$user->validuntil);
         foreach ($selectors as $select) {
             $contents .= $OUTPUT->select($select);
-        }
+        } $checkbox = new html_select_option();
+        $checkbox->value = 1;
+        $checkbox->selected = empty($user->validuntil)?false:true;
+        $checkbox->text = get_string('enabled', 'webservice');
+        $checkbox->label->text = get_string('enabled', 'webservice');
+        $checkbox->alt = get_string('enabled', 'webservice');
+        $contents .= $OUTPUT->checkbox($checkbox, 'enablevaliduntil');
         $contents .= "</div></div>";
         //TO IMPLEMENT : assign the required capability (if needed)
         $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";

@@ -242,9 +242,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);
-    $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service.php"), 'moodle/site:config', true);
-    $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_functions.php"), 'moodle/site:config', true);
-    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_users.php"), 'moodle/site:config', true);
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservice', get_string('externalservice', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service.php", 'moodle/site:config', true));
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalservicefunctions', get_string('externalservicefunctions', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_functions.php", 'moodle/site:config', true));
+    $ADMIN->add('webservicesettings', new admin_externalpage('externalserviceusers', get_string('externalserviceusers', 'webservice'), "$CFG->wwwroot/$CFG->admin/external_service_users.php", 'moodle/site:config', true));
     $temp = new admin_settingpage('webserviceprotocols', get_string('manageprotocols', 'webservice'));
     $temp->add(new admin_setting_managewebserviceprotocols());
     if (empty($CFG->enablewebservices)) {
