@@ -135,7 +135,8 @@ abstract class webservice_zend_server implements webservice_server {
         // session cleanup
         $this->session_cleanup();
 
-        //TODO: we need to send some headers too I guess
+        //finally send the result
+        $this->send_headers();
         echo $response;
         die;
     }
@@ -382,6 +383,17 @@ class '.$classname.' {
     }
 
     /**
+     * Internal implementation - sending of page headers.
+     * @return void
+     */
+    protected function send_headers() {
+        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        header('Pragma: no-cache');
+        header('Accept-Ranges: none');
+    }
+
+    /**
      * Specialised exception handler, we can not use the standard one because
      * it can not just print html to output.
      *
@@ -401,11 +413,12 @@ class '.$classname.' {
             }
         }
 
-        // now let the plugin send the exception to client
-        echo $this->zend_server->fault($ex);
-
         // some hacks might need a cleanup hook
         $this->session_cleanup($ex);
+
+        // now let the plugin send the exception to client
+        $this->send_headers();
+        echo $this->zend_server->fault($ex);
 
         // not much else we can do now, add some logging later
         exit(1);
@@ -557,11 +570,11 @@ abstract class webservice_base_server implements webservice_server {
             }
         }
 
-        // now let the plugin send the exception to client
-        $this->send_error($ex);
-
         // some hacks might need a cleanup hook
         $this->session_cleanup($ex);
+
+        // now let the plugin send the exception to client
+        $this->send_error($ex);
 
         // not much else we can do now, add some logging later
         exit(1);
