@@ -2444,7 +2444,7 @@ class settings_navigation extends navigation_node {
             }
             // Return the branch key
             return $branchkey;
-        } else if ($adminbranch->check_access() && !$adminbranch->is_hidden()) {
+        } else if ($adminbranch->check_access()) {
             // We have a reference branch that we can access and is not hidden `hurrah`
             // Now we need to display it and any children it may have
             $url = null;
@@ -2458,6 +2458,11 @@ class settings_navigation extends navigation_node {
             // Add the branch
             $branchkey = $referencebranch->add($adminbranch->visiblename, $url, self::TYPE_SETTING, null, null, $icon);
             $reference = $referencebranch->get($branchkey);
+
+            if ($adminbranch->is_hidden()) {
+                $reference->display = false;
+            }
+
             // Check if we are generating the admin notifications and whether notificiations exist
             if ($adminbranch->name === 'adminnotifications' && admin_critical_warnings_present()) {
                 $reference->add_class('criticalnotification');
