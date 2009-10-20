@@ -30,6 +30,7 @@ require_once($CFG->dirroot.'/admin/webservice/lib.php');
 $id = required_param('id', PARAM_INT);
 
 $PAGE->set_url('admin/external_service_users.php', array('id'=>$id));
+$PAGE->requires->js('admin/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');
 admin_externalpage_print_header();
@@ -106,15 +107,20 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
 
 /// save user settings (administrator clicked on update button)
 if (optional_param('updateuser', false, PARAM_BOOL) && confirm_sesskey()) {
-    $useridtoupdate = optional_param('userid', false, PARAM_BOOL);
+    $useridtoupdate = optional_param('userid', false, PARAM_INT);
     $iprestriction = optional_param('iprestriction', '', PARAM_TEXT);
     $serviceuserid = optional_param('serviceuserid', '', PARAM_INT);
-    $fromday = optional_param('fromday', '', PARAM_INT);
-    $frommonth = optional_param('frommonth', '', PARAM_INT);
-    $fromyear = optional_param('fromyear', '', PARAM_INT);
+    $fromday = optional_param('fromday'.$useridtoupdate, '', PARAM_INT);
+    $frommonth = optional_param('frommonth'.$useridtoupdate, '', PARAM_INT);
+    $fromyear = optional_param('fromyear'.$useridtoupdate, '', PARAM_INT);
     $addcap = optional_param('addcap', false, PARAM_INT);
     $enablevaliduntil = optional_param('enablevaliduntil', false, PARAM_INT);
-    $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
+    if (!empty($fromday) && !empty($frommonth) && !empty($fromyear)) {
+        $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
+    }
+    else {
+        $validuntil = "";
+    }
 
     $serviceuser = new object();
     $serviceuser->id = $serviceuserid;
@@ -170,16 +176,26 @@ if (!empty($allowedusers)) {
         $contents .= "</div></div>";
         //valid until date selector
         $contents .= "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('validuntil','webservice')." </label></div><div class=\"felement\">";
-        $selectors = html_select::make_time_selectors(array('days' => 'fromday','months' => 'frommonth', 'years' => 'fromyear'),$user->validuntil);
+        // the following date selector needs to have specific day/month/year field ids because we use javascript (enable/disable).
+        $selectors = html_select::make_time_selectors(array('days' => 'fromday'.$user->id,'months' => 'frommonth'.$user->id, 'years' => 'fromyear'.$user->id),$user->validuntil);
         foreach ($selectors as $select) {
+            if (empty($user->validuntil)) {
+                $select->disabled = true;
+            }
             $contents .= $OUTPUT->select($select);
-        } $checkbox = new html_select_option();
+        }
+        $checkbox = new html_select_option();
         $checkbox->value = 1;
+        $checkbox->id = 'enablevaliduntil'.$user->id;
+        $checkbox->name = 'enablevaliduntil';
         $checkbox->selected = empty($user->validuntil)?false:true;
         $checkbox->text = get_string('enabled', 'webservice');
         $checkbox->label->text = get_string('enabled', 'webservice');
         $checkbox->alt = get_string('enabled', 'webservice');
+        $checkbox->add_action('change', 'disablevaliduntil', array($user->id)); //into admin/webservice/script.js
         $contents .= $OUTPUT->checkbox($checkbox, 'enablevaliduntil');
+        $contents .= ""; //init date selector disable status
+
         $contents .= "</div></div>";
         //TO IMPLEMENT : assign the required capability (if needed)
         $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";

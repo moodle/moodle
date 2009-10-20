@@ -31,6 +31,11 @@ die('TODO');
 require_once('../config.php');
 require_once('lib.php');
 $protocol = optional_param('protocol',"soap",PARAM_ALPHA);
+$username = optional_param('username',"",PARAM_ALPHA);
+$password = optional_param('password',"",PARAM_ALPHA);
+
+/// TODO Retrieve user (authentication)
+$user = "";
 
 /// PAGE settings
 $PAGE->set_course($COURSE);
@@ -38,12 +43,33 @@ $PAGE->set_url('webservice/wsdoc.php');
 $PAGE->set_title(get_string('wspagetitle', 'webservice'));
 $PAGE->set_heading(get_string('wspagetitle', 'webservice'));
 $PAGE->set_generaltype("form");
+
+// Display the documentation
 echo $OUTPUT->header();
-webservice_lib::display_webservices_availability($protocol);
-generate_documentation($protocol);
-generate_functionlist();
+generate_documentation($protocol); //documentation relatif to the protocol
+generate_functionlist($protocol, $user); //documentation relatif to the available function
 echo $OUTPUT->footer();
 
+
+function generate_functionlist($protocol, $user) {
+
+    /// retrieve all function that the user can access
+    /// =>
+    /// retrieve all function that are available into enable services that
+    /// have (no restriction user or the user is into the restricted user list)
+    ///      and (no required capability or the user has the required capability)
+
+        // do SQL request here
+
+    /// load once all externallib.php of the retrieved functions
+
+    /// foreach retrieved functions display the description
+
+        // in order to display the description we need to use an algo similar to the validation
+        // every time we get a scalar value, we need to convert it into a human readable value as
+        // PARAM_INT => 'integer' or PARAM_TEXT => 'string' or PARAM_BOOL => 'boolean' ...
+
+}
 
 
 /**
@@ -67,132 +93,6 @@ function generate_documentation($protocol) {
 
 }
 
-
-/**
- * Generate web service function list
- * @global object $CFG
- */
-function generate_functionlist () {
-    global $CFG;
-    $documentation = "<H2>".get_string('functionlist','webservice')."</H2>";
-
-    //retrieve all external file
-    $externalfiles = array();
-    $externalfunctions = array();
-    webservice_lib::setListApiFiles($externalfiles, $CFG->dirroot);
-
-    foreach ($externalfiles as $file) {
-        require($file);
-
-        $classpath = substr($file,strlen($CFG->dirroot)+1); //remove the dir root + / from the file path
-        $classpath = substr($classpath,0,strlen($classpath) - 13); //remove /external.php from the classpath
-        $classpath = str_replace('/','_',$classpath); //convert all / into _
-        $classname = $classpath."_external";
-        $api = new $classname();
-        $documentation .= "<H3><u>".get_string('moodlepath','webservice').": ".$classpath."</u></H3><ul>";
-        if ($classname == "user_external") {
-            $description = $api->get_descriptions();
-            var_dump("<pre>");
-            convertDescriptionType($description);
-            var_dump("</pre>");
-            foreach ($description as $functionname => $functiondescription) {
-                $documentation .= <<<EOF
-        <li><b>{$functionname}(</b>
-EOF;
-                $arrayparams = array();
-                $comma="";
-                //TODO: this is not an array anymore!!! (all algo function)
-                foreach($functiondescription['params'] as $param => $type) {
-                    $documentation .= <<<EOF
-                <span style=color:green>{$comma} {$type} <b>{$param}</b>
-EOF;
-                    if (empty($comma)) {
-                        $comma = ',';
-                    }
-                }
-                $documentation .= <<<EOF
-                    <b></span>)</b> :
-EOF;
-                if (array_key_exists('return', $functiondescription)) {
-                    foreach($functiondescription['return'] as $return => $type) {
-                        $documentation .= <<<EOF
-                <span style=color:blue>
-                <i>
-                            {$type}</i>
-EOF;
-                        if (is_array($type)) {
-                            $arraytype = "<pre>".print_r($type, true)."</pre>";
-                            $documentation .= <<<EOF
-                 <b>{$return}</b><br/><br/><b>{$return}</b>  {$arraytype} </span>
-EOF;
-                        }
-                    }
-                }
-
-                $documentation .= <<<EOF
-                    <br/><br/><span style=color:green>
-EOF;
-                foreach($functiondescription['params'] as $param => $type) {
-
-                    if (is_array($type)) {
-                        $arraytype = "<pre>".print_r($type, true)."</pre>";
-                        $documentation .= <<<EOF
-         <b>{$param}</b> : {$arraytype} <br>
-EOF;
-                    }
-                    else {
-                        $documentation .= <<<EOF
-         <b>{$param}</b> : {$type} <br>
-EOF;
-                    }
-
-                }
-                $documentation .= <<<EOF
-                    </div><br/><br/>
-EOF;
-
-            }
-        }
-        $documentation .= <<<EOF
-            </ul>
-EOF;
-
-    }
-
-    echo $documentation;
-
-}
-
-function convertDescriptionType(&$description) {
-    foreach ($description as &$type) {
-        if (is_array($type)) { //is it a List ?
-            convertDescriptionType($type);
-        }
-        else {
-            if (is_object($type)) { //is it a object
-                convertObjectTypes($type);
-            }
-            else { //it's a primary type
-                $type = converterMoodleParamIntoWsParam($type);
-            }
-        }
-    }
-}
-
-function convertObjectTypes(&$type) {
-    foreach (get_object_vars($type) as $propertyname => $propertytype) { //browse all properties of the object
-        if (is_array($propertytype)) { //the property is an array
-            convertDescriptionType($propertytype);
-            $type->$propertyname = $propertytype;
-        } else if (is_object($propertytype)) { //the property is an object
-                convertObjectTypes($propertytype);
-                $type->$propertyname = $propertytype;
-            }
-            else { //the property is a primary type
-                $type->$propertyname = converterMoodleParamIntoWsParam($propertytype);
-            }
-    }
-}
 
 /**
  * Convert a Moodle type (PARAM_ALPHA, PARAM_NUMBER,...) as a SOAP type (string, interger,...)
@@ -227,23 +127,6 @@ function converterMoodleParamIntoWsParam($moodleparam) {
             break;
         case PARAM_TEXT:
             return "string";
-            break;
-        //here we check that the value has not already been changed
-        //the algo could want to do it in the case two functions of the web description use the
-        //same object ($params or $return could be the same for two functions, so the guy
-        //writing the web description use the same object)
-        //as the convertDescriptionType function passes parameter in reference
-        case "integer":
-            return "integer";
-            break;
-        case "boolean":
-            return "boolean";
-            break;
-        case "string":
-            return "string";
-            break;
-        default:
-            return "object";
             break;
     }
 }
