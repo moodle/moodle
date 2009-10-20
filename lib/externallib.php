@@ -25,6 +25,74 @@
  */
 
 /**
+ * Returns detailed functio information
+ * @param string|object $function name of external function or record from external_function
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        MUST_EXIST means throw exception if no record or multiple records found
+ * @return object description or false if not found or exception thrown
+ */
+function external_function_info($function, $strictness=MUST_EXIST) {
+    global $DB, $CFG;
+
+    if (!is_object($function)) {
+        if (!$function = $DB->get_record('external_functions', array('name'=>$function), '*', $strictness)) {
+            return false;
+        }
+    }
+
+    //first find and include the ext implementation class
+    $function->classpath = empty($function->classpath) ? get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
+    if (!file_exists($function->classpath)) {
+        throw new coding_exception('Can not find file with external function implementation');
+    }
+    require_once($function->classpath);
+
+    $function->parameters_method = $function->methodname.'_parameters';
+    $function->returns_method    = $function->methodname.'_returns';
+
+    // make sure the implementaion class is ok
+    if (!method_exists($function->classname, $function->methodname)) {
+        throw new coding_exception('Missing implementation method');
+    }
+    if (!method_exists($function->classname, $function->parameters_method)) {
+        throw new coding_exception('Missing parameters description');
+    }
+    if (!method_exists($function->classname, $function->returns_method)) {
+        throw new coding_exception('Missing returned values description');
+    }
+
+    // fetch the parameters description
+    $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
+    if (!($function->parameters_desc instanceof external_function_parameters)) {
+        throw new coding_exception('Invalid parameters description');
+    }
+
+    // fetch the return values description
+    $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
+    // null means void result or result is ignored
+    if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
+        throw new coding_exception('Invalid return description');
+    }
+
+    //now get the function description
+    //TODO: use localised lang pack descriptions, it would be nice to have
+    //      easy to understand descriptiosn in admin UI,
+    //      on the other hand this is still a bit in a flux and we need to find some new naming
+    //      conventions for these descriptions in lang packs
+    $function->description = null;
+    $servicesfile = get_component_directory($function->component).'/db/services.php';
+    if (file_exists($servicesfile)) {
+        $functions = null;
+        include($servicesfile);
+        if (isset($functions[$function->name]['description'])) {
+            $function->description = $functions[$function->name]['description'];
+        }
+    }
+
+    return $function;
+}
+
+/**
  * Exception indicating user is not allowed to use external function in
  * the current context.
  */

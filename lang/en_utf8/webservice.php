@@ -1,5 +1,6 @@
 <?php
 
+$string['accessexception'] = 'Access control exception';
 $string['addfunction'] = 'Add function';
 $string['addfunctionhelp'] = 'Select the function to add to the service.';
 $string['addrequiredcapability'] = 'Assign/Unassign the required capability';

@@ -37,7 +37,5 @@ class webservice_xmlrpc_server extends webservice_zend_server {
         parent::__construct('Zend_XmlRpc_Server');
         $this->wsname = 'xmlrpc';
     }
-
-
 }
 

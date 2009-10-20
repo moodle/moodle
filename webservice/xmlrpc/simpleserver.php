@@ -33,11 +33,7 @@ require_once("$CFG->dirroot/webservice/xmlrpc/locallib.php");
 //TODO: for now disable all mess in xml
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
-$CFG->debug = 0;
 $CFG->debugdisplay = false;
-
-//error_log('yy');
-//error_log(var_export($_SERVER, true));
 
 if (!webservice_protocol_is_enabled('xmlrpc')) {
     die;

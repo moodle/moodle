@@ -25,6 +25,18 @@
 
 require_once($CFG->libdir.'/externallib.php');
 
+/**
+ * Exception indicating access control problem in web service call
+ */
+class webservice_access_exception extends moodle_exception {
+    /**
+     * Constructor
+     */
+    function __construct($debuginfo) {
+        parent::__construct('accessexception', 'exception', '', null, $debuginfo);
+    }
+}
+
 function webservice_protocol_is_enabled($protocol) {
     global $CFG;
 
@@ -118,10 +130,11 @@ abstract class webservice_zend_server implements webservice_server {
         // start the server
         $this->zend_server->setClass($this->service_class);
         $response = $this->zend_server->handle();
-
-        //$grrr = ob_get_clean();
-        //error_log($grrr);
-
+/*
+        $grrr = ob_get_clean();
+        error_log($grrr);
+        error_log($response);
+*/
         // session cleanup
         $this->session_cleanup();
 
@@ -204,6 +217,7 @@ abstract class webservice_zend_server implements webservice_server {
             $methods .= $this->get_virtual_method_code($function);
         }
 
+        // let's use unique class name, there might be problem in unit tests
         $classname = 'webservices_virtual_class_000000';
         while(class_exists($classname)) {
             $classname++;
@@ -230,39 +244,7 @@ class '.$classname.' {
     protected function get_virtual_method_code($function) {
         global $CFG;
 
-        //first find and include the ext implementation class
-        $function->classpath = empty($function->classpath) ? get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
-        if (!file_exists($function->classpath)) {
-            throw new coding_exception('Can not find file with external function implementation');
-        }
-        require_once($function->classpath);
-
-        $function->parameters_method = $function->methodname.'_parameters';
-        $function->returns_method    = $function->methodname.'_returns';
-
-        // make sure the implementaion class is ok
-        if (!method_exists($function->classname, $function->methodname)) {
-            throw new coding_exception('Missing implementation method');
-        }
-        if (!method_exists($function->classname, $function->parameters_method)) {
-            throw new coding_exception('Missing parameters description');
-        }
-        if (!method_exists($function->classname, $function->returns_method)) {
-            throw new coding_exception('Missing returned values description');
-        }
-
-        // fetch the parameters description
-        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
-        if (!($function->parameters_desc instanceof external_function_parameters)) {
-            throw new coding_exception('Invalid parameters description');
-        }
-
-        // fetch the return values description
-        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
-        // null means void result or result is ignored
-        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
-            throw new coding_exception('Invalid return description');
-        }
+        $function = external_function_info($function);
 
         $params      = array();
         $params_desc = array();
@@ -316,8 +298,8 @@ class '.$classname.' {
 
         $code = '
     /**
-     * External function: '.$function->name.'
-     * TODO: add function description
+     * '.$function->description.'
+     *
 '.$params_desc.'
 '.$return.'
      */
@@ -370,27 +352,25 @@ class '.$classname.' {
             $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
 
             if (!is_enabled_auth('webservice')) {
-                error_log('WS auth not enabled');
-                die('WS auth not enabled');
+                throw new webservice_access_exception('WS auth not enabled');
             }
 
             if (!$auth = get_auth_plugin('webservice')) {
-                error_log('WS auth missing');
-                die('WS auth missing');
+                throw new webservice_access_exception('WS auth missing');
             }
 
             // the username is hardcoded as URL parameter because we can not easily parse the request data :-(
             if (!$username = optional_param('wsusername', '', PARAM_RAW)) {
-                throw new invalid_parameter_exception('Missing username');
+                throw new webservice_access_exception('Missing username');
             }
 
             // the password is hardcoded as URL parameter because we can not easily parse the request data :-(
             if (!$password = optional_param('wspassword', '', PARAM_RAW)) {
-                throw new invalid_parameter_exception('Missing password');
+                throw new webservice_access_exception('Missing password');
             }
 
             if (!$auth->user_login_webservice($username, $password)) {
-                throw new invalid_parameter_exception('Wrong username or password');
+                throw new webservice_access_exception('Wrong username or password');
             }
 
             $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
@@ -406,7 +386,7 @@ class '.$classname.' {
         }
 
         if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new invalid_parameter_exception('Access to web service not allowed');
+            throw new webservice_access_exception('Access to web service not allowed');
         }
 
         external_api::set_context_restriction($this->restricted_context);
@@ -630,23 +610,23 @@ abstract class webservice_base_server implements webservice_server {
             $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
 
             if (!is_enabled_auth('webservice')) {
-                die('WS auth not enabled');
+                throw new webservice_access_exception('WS auth not enabled');
             }
 
             if (!$auth = get_auth_plugin('webservice')) {
-                die('WS auth missing');
+                throw new webservice_access_exception('WS auth missing');
             }
 
             if (!$this->username) {
-                throw new invalid_parameter_exception('Missing username');
+                throw new webservice_access_exception('Missing username');
             }
 
             if (!$this->password) {
-                throw new invalid_parameter_exception('Missing password');
+                throw new webservice_access_exception('Missing password');
             }
 
             if (!$auth->user_login_webservice($this->username, $this->password)) {
-                throw new invalid_parameter_exception('Wrong username or password');
+                throw new webservice_access_exception('Wrong username or password');
             }
 
             $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
@@ -661,7 +641,7 @@ abstract class webservice_base_server implements webservice_server {
         }
 
         if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new invalid_parameter_exception('Access to web service not allowed');
+            throw new webservice_access_exception('Access to web service not allowed');
         }
 
         external_api::set_context_restriction($this->restricted_context);
@@ -681,8 +661,7 @@ abstract class webservice_base_server implements webservice_server {
         }
 
         // function must exist
-        $function = $DB->get_record('external_functions', array('name'=>$this->functionname), '*', MUST_EXIST);
-
+        $function = external_function_info($this->functionname);
 
         // now let's verify access control
         if ($this->simple) {
@@ -729,46 +708,6 @@ abstract class webservice_base_server implements webservice_server {
         $rs->close();
         if (!$allowed) {
             throw new invalid_parameter_exception('Access to external function not allowed');
-        }
-        // now we finally know the user may execute this function,
-        // the last step is to set context restriction - in this simple case
-        // we use system context because each external system has different user account
-        // and we can manage everything through normal permissions.
-
-        // get the params and return descriptions of the function
-        unset($function->id); // we want to prevent any accidental db updates ;-)
-
-        $function->classpath = empty($function->classpath) ? get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
-        if (!file_exists($function->classpath)) {
-            throw new coding_exception('Can not find file with external function implementation');
-        }
-        require_once($function->classpath);
-
-        $function->parameters_method = $function->methodname.'_parameters';
-        $function->returns_method    = $function->methodname.'_returns';
-
-        // make sure the implementaion class is ok
-        if (!method_exists($function->classname, $function->methodname)) {
-            throw new coding_exception('Missing implementation method');
-        }
-        if (!method_exists($function->classname, $function->parameters_method)) {
-            throw new coding_exception('Missing parameters description');
-        }
-        if (!method_exists($function->classname, $function->returns_method)) {
-            throw new coding_exception('Missing returned values description');
-        }
-
-        // fetch the parameters description
-        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
-        if (!($function->parameters_desc instanceof external_function_parameters)) {
-            throw new coding_exception('Invalid parameters description');
-        }
-
-        // fetch the return values description
-        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
-        // null means void result or result is ignored
-        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
-            throw new coding_exception('Invalid return description');
         }
 
         // we have all we need now
