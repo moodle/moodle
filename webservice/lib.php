@@ -33,7 +33,7 @@ class webservice_access_exception extends moodle_exception {
      * Constructor
      */
     function __construct($debuginfo) {
-        parent::__construct('accessexception', 'exception', '', null, $debuginfo);
+        parent::__construct('accessexception', 'webservice', '', null, $debuginfo);
     }
 }
 
@@ -110,22 +110,19 @@ abstract class webservice_zend_server implements webservice_server {
         // that need longer time to finish
         external_api::set_timeout();
 
+        // now create the instance of zend server
+        $this->init_zend_server();
+
         // set up exception handler first, we want to sent them back in correct format that
         // the other system understands
         // we do not need to call the original default handler because this ws handler does everything
         set_exception_handler(array($this, 'exception_handler'));
-
-        // now create the instance of zend server
-        $this->init_zend_server();
 
         // this sets up $USER and $SESSION and context restrictions
         $this->authenticate_user();
 
         // make a list of all functions user is allowed to excecute
         $this->init_service_class();
-
-        // TODO: solve debugging level somehow
-        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
 
         // start the server
         $this->zend_server->setClass($this->service_class);
@@ -320,17 +317,9 @@ class '.$classname.' {
         //TODO: set up some server options and debugging too - maybe a new method
         //TODO: add some zend exeption handler too
         $this->zend_server = new $this->zend_class();
-    }
 
-    /**
-     * Send the error information to the WS client.
-     * @param exception $ex
-     * @return void
-     */
-    protected function send_error($ex=null) {
-        var_dump($ex);
-        die('TODO');
-        // TODO: find some way to send the error back through the Zend
+        // TODO: solve debugging level somehow
+        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
     }
 
     /**
@@ -413,7 +402,7 @@ class '.$classname.' {
         }
 
         // now let the plugin send the exception to client
-        $this->send_error($ex);
+        echo $this->zend_server->fault($ex);
 
         // some hacks might need a cleanup hook
         $this->session_cleanup($ex);
