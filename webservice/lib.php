@@ -709,7 +709,7 @@ abstract class webservice_base_server implements webservice_server {
         }
         $rs->close();
         if (!$allowed) {
-            throw new invalid_parameter_exception('Access to external function not allowed');
+            throw new webservice_access_exception('Access to external function not allowed');
         }
 
         // we have all we need now
