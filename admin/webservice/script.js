@@ -1,5 +1,5 @@
 
-/* This function disable the valid until field of a user into external_service_users.php*/
+/* This function disable the valid until field of a user into service_users.php*/
 function disablevaliduntil(event, userid) {
    var disabled;
    if (document.getElementById('enablevaliduntil'+userid).checked)

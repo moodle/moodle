@@ -23,14 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/admin/webservice/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('admin/external_service_users.php', array('id'=>$id));
-$PAGE->requires->js('admin/webservice/script.js');
+$PAGE->set_url('admin/webservice/service_users.php', array('id'=>$id));
+$PAGE->requires->js($CFG->admin.'/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusers');
 admin_externalpage_print_header();
@@ -50,7 +50,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
                     $serviceuser->userid = $adduser->id;
                     $serviceuser->timecreated = mktime();
                     $DB->insert_record('external_services_users', $serviceuser);
-                    add_to_log(1, 'core', 'assign', 'admin/external_service_users.php?id='.$id, 'add', '', $adduser->id);
+                    add_to_log(1, 'core', 'assign', $CFG->admin.'/webservice/service_users.php?id='.$id, 'add', '', $adduser->id);
                 }
 
                 $potentialuserselector->invalidate_selected_users();
@@ -65,7 +65,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
 
                 foreach ($userstoremove as $removeuser) {             
                     $DB->delete_records('external_services_users', array('externalserviceid' => $id, 'userid' => $removeuser->id));
-                    add_to_log(1, 'core', 'assign', 'admin/external_service_users.php?id='.$id, 'remove', '', $removeuser->id);
+                    add_to_log(1, 'core', 'assign', $CFG->admin.'/webservice/service_users.php?id='.$id, 'remove', '', $removeuser->id);
                 }
 
                 $potentialuserselector->invalidate_selected_users();
@@ -77,7 +77,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
 
 /// display the UI
 ?>
-<form id="assignform" method="post" action="external_service_users.php?id=<?php echo $id ?>"><div>
+<form id="assignform" method="post" action="service_users.php?id=<?php echo $id ?>"><div>
   <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
 
   <table summary="" class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
@@ -117,8 +117,7 @@ if (optional_param('updateuser', false, PARAM_BOOL) && confirm_sesskey()) {
     $enablevaliduntil = optional_param('enablevaliduntil', false, PARAM_INT);
     if (!empty($fromday) && !empty($frommonth) && !empty($fromyear)) {
         $validuntil = mktime(23, 59, 59, $frommonth, $fromday, $fromyear);
-    }
-    else {
+    } else {
         $validuntil = "";
     }
 
@@ -159,7 +158,7 @@ if (!empty($allowedusers)) {
         //user settings form
         $contents = "<div class=\"fcontainer clearfix\">";
         $form = new html_form();
-        $form->url = new moodle_url('/admin/external_service_users.php', array('id' => $id, 'userid' => $user->id, 'updateuser' => 1, 'serviceuserid' => $user->serviceuserid)); // Required
+        $form->url = new moodle_url('service_users.php', array('id' => $id, 'userid' => $user->id, 'updateuser' => 1, 'serviceuserid' => $user->serviceuserid)); // Required
         $form->button = new html_button();
         $form->button->text = get_string('update'); // Required
         $form->button->disabled = false;

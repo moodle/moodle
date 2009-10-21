@@ -6163,9 +6163,9 @@ class admin_setting_manageexternalservices extends admin_setting {
         $strusers = get_string('restrictedusers', 'webservice');
         $strserviceusers = get_string('serviceusers', 'webservice');
 
-        $esurl = "$CFG->wwwroot/$CFG->admin/external_service.php";
-        $efurl = "$CFG->wwwroot/$CFG->admin/external_service_functions.php";
-        $euurl = "$CFG->wwwroot/$CFG->admin/external_service_users.php";
+        $esurl = "$CFG->wwwroot/$CFG->admin/webservice/service.php";
+        $efurl = "$CFG->wwwroot/$CFG->admin/webservice/service_functions.php";
+        $euurl = "$CFG->wwwroot/$CFG->admin/webservice/service_users.php";
 
         // built in services
         $return = $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main');
@@ -6362,7 +6362,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $table->data  = array();
 
         // iterate through auth plugins and add to the display table
-        $url = "$CFG->wwwroot/$CFG->admin/webservice_protocols.php?sesskey=" . sesskey();
+        $url = "$CFG->wwwroot/$CFG->admin/webservice/protocols.php?sesskey=" . sesskey();
         foreach ($protocols_available as $protocol => $location) {
             $name = get_string('pluginname', 'webservice_'.$protocol);
 

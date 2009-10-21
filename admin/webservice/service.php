@@ -23,9 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once('external_forms.php');
+require_once('forms.php');
 
 $id      = required_param('id', PARAM_INT);
 $action  = optional_param('action', '', PARAM_ACTION);
@@ -48,8 +48,8 @@ if ($action == 'delete' and confirm_sesskey() and $service and empty($service->c
         admin_externalpage_print_header();
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey());
         $optionsno  = array('section'=>'externalservices');
-        $formcontinue = html_form::make_button('external_service.php', $optionsyes, get_string('delete'), 'post');
-        $formcancel = html_form::make_button('settings.php', $optionsno, get_string('cancel'), 'get');
+        $formcontinue = html_form::make_button('service.php', $optionsyes, get_string('delete'), 'post');
+        $formcancel = html_form::make_button("$CFG->wwwroot/$CFG->admin/settings.php", $optionsno, get_string('cancel'), 'get');
         echo $OUTPUT->confirm(get_string('deleteserviceconfirm', 'webservice', $service->name), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;

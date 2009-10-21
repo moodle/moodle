@@ -118,7 +118,7 @@ class service_user_selector extends user_selector_base {
     protected function get_options() {
         global $CFG;
         $options = parent::get_options();
-        $options['file'] = '/admin/webservice/lib.php'; //need to be set, otherwise
+        $options['file'] = $CFG->admin.'/webservice/lib.php'; //need to be set, otherwise
                                                         // the /user/selector/search.php
                                                         //will fail to find this user_selector class
         $options['serviceid'] = $this->serviceid;

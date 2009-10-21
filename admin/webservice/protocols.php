@@ -23,11 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-$PAGE->set_url('admin/webservice_protocols.php', array());
+$PAGE->set_url('/admin/webservice/protocols.php', array());
 //TODO: disable the blocks here or better make the page layout default to no blocks!
 
 require_login();

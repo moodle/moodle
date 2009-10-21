@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $id      = required_param('id', PARAM_INT);
@@ -31,12 +31,12 @@ $fid     = optional_param('fid', 0, PARAM_INT);
 $action  = optional_param('action', '', PARAM_ACTION);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('admin/external_service_functions.php', array('id'=>$id));
+$PAGE->set_url('admin/websevice/service_functions.php', array('id'=>$id));
 
 admin_externalpage_setup('externalservicefunctions');
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=externalservices";
-$thisurl   = "external_service_functions.php?id=$id";
+$thisurl   = "service_functions.php?id=$id";
 
 $service = $DB->get_record('external_services', array('id'=>$id), '*', MUST_EXIST);
 
@@ -46,8 +46,8 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
         admin_externalpage_print_header();
         $optionsyes = array('id'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'fid'=>$function->id);
         $optionsno  = array('id'=>$id);
-        $formcontinue = html_form::make_button('external_service_functions.php', $optionsyes, get_string('delete'), 'post');
-        $formcancel = html_form::make_button('external_service_functions.php', $optionsno, get_string('cancel'), 'get');
+        $formcontinue = html_form::make_button('service_functions.php', $optionsyes, get_string('delete'), 'post');
+        $formcancel = html_form::make_button('service_functions.php', $optionsno, get_string('cancel'), 'get');
         echo $OUTPUT->confirm(get_string('removefunctionconfirm', 'webservice', (object)array('service'=>$service->name, 'function'=>$function->name)), $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         die;
@@ -94,7 +94,7 @@ else if ($action === 'add') {
 
     // Javascript for the function search/selection fields
     $PAGE->requires->yui_lib('event');
-    $PAGE->requires->js('admin/webservice/script.js');
+    $PAGE->requires->js($CFG->admin.'/webservice/script.js');
     $PAGE->requires->js_function_call('capability_service.cap_filter_init', array(get_string('search'))); //TODO generalize javascript
 
     admin_externalpage_print_header();
@@ -105,7 +105,7 @@ else if ($action === 'add') {
      echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
     //the service form
     $form = new html_form();
-    $form->url = new moodle_url('/admin/external_service_functions.php', array('id' => $id, 'action' => 'add', 'save' => 1)); // Required
+    $form->url = new moodle_url('service_functions.php', array('id' => $id, 'action' => 'add', 'save' => 1)); // Required
     $form->button = new html_button();
     $form->button->id = 'settingssubmit';
     $form->button->text = get_string('addfunction', 'webservice'); // Required
@@ -161,7 +161,7 @@ if (empty($service->component)) {
     $table->align[] = 'center';
 }
 
-$durl = "$CFG->wwwroot/$CFG->admin/external_service_functions.php?sesskey=".sesskey();
+$durl = "service_functions.php?sesskey=".sesskey();
 
 foreach ($functions as $function) {
     //TODO: manage when the description is into a module/plugin lang file
@@ -180,7 +180,7 @@ echo $OUTPUT->table($table);
 // we can edit only custom functions, the build-in would be overridden after each upgrade
 if (empty($service->component)) {
     $form = new html_form();
-    $form->url = new moodle_url('external_service_functions.php', array('sesskey'=>sesskey(), 'id'=>$service->id, 'action'=>'add'));
+    $form->url = new moodle_url('service_functions.php', array('sesskey'=>sesskey(), 'id'=>$service->id, 'action'=>'add'));
     $form->button->text = get_string('add');
     $form->method = 'get';
     echo $OUTPUT->button($form);
@@ -188,7 +188,7 @@ if (empty($service->component)) {
 
 // simple back button
 $form = new html_form();
-$form->url = new moodle_url('settings.php', array('section'=>'externalservices'));
+$form->url = new moodle_url('../settings.php', array('section'=>'externalservices'));
 $form->button->text = get_string('back');
 $form->method = 'get';
 echo $OUTPUT->button($form);
