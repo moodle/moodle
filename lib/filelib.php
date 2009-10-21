@@ -865,10 +865,23 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 
     // use POST if requested
     if (is_array($postdata)) {
+        $data = array();
         foreach ($postdata as $k=>$v) {
-            $postdata[$k] = urlencode($k).'='.urlencode($v);
+            if (is_array($v)) {
+                foreach ($v as $sk=>$sv) {
+                    if (is_array($sv)) {
+                        foreach ($sv as $ssk=>$ssv) {
+                            $data[] = urlencode($k).'['.urlencode($sk).']['.urlencode($ssk).']='.urlencode($ssv);
+                        }
+                    } else {
+                        $data[] = urlencode($k).'['.urlencode($sk).']='.urlencode($sv);
+                    }
+                }
+            }  else {
+                $data[] = urlencode($k).'='.urlencode($v);
+            }
         }
-        $postdata = implode('&', $postdata);
+        $postdata = implode('&', $data);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
     }
