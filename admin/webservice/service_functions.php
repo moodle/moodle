@@ -25,6 +25,7 @@
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/externallib.php');
 
 $id      = required_param('id', PARAM_INT);
 $fid     = optional_param('fid', 0, PARAM_INT);
@@ -55,28 +56,19 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     $DB->delete_records('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name));
     redirect($thisurl);
 
-} else if ($action === 'add') {
+} else if ($action === 'add' and confirm_sesskey() and $service and empty($service->component)) {
 
-    if (optional_param('save', 0, PARAM_ACTION)) {
-
+    if ($fid and $function = $DB->get_record('external_functions', array('id'=> $fid))) {
         ignore_user_abort(true); // no interruption here!
-        $functionname = optional_param('function', 0, PARAM_ACTION);
-        if (!empty($functionname)) {
-            $function = $DB->get_record('external_functions', array('name'=> $functionname), '*', MUST_EXIST);
-            // make sure the function is not there yet
-            if ($DB->record_exists('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name))) {
-                redirect($thisurl);
-            }
-            $new = new object();
-            $new->externalserviceid = $service->id;
-            $new->functionname      = $functionname;
-            $DB->insert_record('external_services_functions', $new);
+        // make sure the function is not there yet
+        if ($DB->record_exists('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name))) {
             redirect($thisurl);
-        } 
-        else {
-            $errormessage = get_string('nofunctionselected', 'webservice');
         }
-
+        $new = new object();
+        $new->externalserviceid = $service->id;
+        $new->functionname      = $function->name;
+        $DB->insert_record('external_services_functions', $new);
+        redirect($thisurl);
     }
 
     // Prepare the list of function to choose from
@@ -84,12 +76,7 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
                                   FROM {external_services_functions} s
                                  WHERE s.externalserviceid = :sid
                                )";
-    $functions = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$id), 'name', 'id, name');
-    $functionchoices = array();
-
-    foreach ($functions as $functionname) {
-        $functionchoices[$functionname] = $functionname . ': ' . get_string($functionname, 'servicedescription');
-    }
+    $functionchoices = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$id), 'name', 'id, name');
 
     // Javascript for the function search/selection fields
     $PAGE->requires->yui_lib('event');
@@ -97,11 +84,13 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     $PAGE->requires->js_function_call('capability_service.cap_filter_init', array(get_string('search'))); //TODO generalize javascript
 
     admin_externalpage_print_header();
-    if (!empty($errormessage)) {
-        echo $OUTPUT->notification($errormessage);
-    }
+
     echo $OUTPUT->heading($service->name);
-     echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
+    echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
+
+    //TODO: hmm, is this supposed to be replaced by the roles UI, right? If not the use of output lib is definitely wrong, we need more buttons (Cancel!) and custom JS, etc.
+    //TODO: add JS disabling of submit button if no functio nselected, the error string is not user friendly
+
     //the service form
     $form = new html_form();
     $form->url = new moodle_url('service_functions.php', array('id' => $id, 'action' => 'add', 'save' => 1)); // Required
@@ -117,8 +106,9 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     //function section (search field + selection field)
     $select = new html_select();
     $select->options = $functionchoices;
-    $select->name = 'function';
+    $select->name = 'fid';
     $select->id = 'menucapability'; //TODO generalize javascript
+    $select->nothinglabel = '';
     $select->nothingvalue = '';
     $select->listbox = true;
     $select->tabindex = 0;
@@ -163,8 +153,8 @@ if (empty($service->component)) {
 $durl = "service_functions.php?sesskey=".sesskey();
 
 foreach ($functions as $function) {
-    //TODO: manage when the description is into a module/plugin lang file
-    $description = "<span style=\"font-size:90%\">".get_string($function->name,'servicedescription')."</span>";
+    $function = external_function_info($function);
+    $description = "<span style=\"font-size:90%\">".$function->description."</span>"; //TODO: must use class here!
     if (empty($service->component)) {
         $delete = "<a href=\"$durl&amp;action=delete&amp;fid=$function->id&amp;id=$service->id\">$strdelete</a>";
         $table->data[] = array($function->name, $description, $delete);

@@ -17,7 +17,6 @@ $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['iprestriction'] = 'IP restriction';
 $string['manageprotocols'] = 'Manage protocols';
-$string['nofunctionselected'] = 'Please select a function to add';
 $string['potusers'] = 'Not authorised users';
 $string['potusersmatching'] = 'Not authorised users matching';
 $string['protocol'] = 'Protocol';
