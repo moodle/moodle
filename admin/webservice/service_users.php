@@ -191,7 +191,7 @@ if (!empty($allowedusers)) {
         $checkbox->text = get_string('enabled', 'webservice');
         $checkbox->label->text = get_string('enabled', 'webservice');
         $checkbox->alt = get_string('enabled', 'webservice');
-        $checkbox->add_action('change', 'disablevaliduntil', array($user->id)); //into admin/webservice/script.js
+        $checkbox->add_action('change', 'external_disablevaliduntil', array($user->id)); //into admin/webservice/script.js
         $contents .= $OUTPUT->checkbox($checkbox, 'enablevaliduntil');
         $contents .= ""; //init date selector disable status
 

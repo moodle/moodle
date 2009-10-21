@@ -1,12 +1,10 @@
 
 /* This function disable the valid until field of a user into service_users.php*/
-function disablevaliduntil(event, userid) {
+function external_disablevaliduntil(event, userid) {
    var disabled;
-   if (document.getElementById('enablevaliduntil'+userid).checked)
-   {
+   if (document.getElementById('enablevaliduntil'+userid).checked) {
        disabled = false;
-   }
-   else {
+   } else {
        disabled = true;
    }
    document.getElementById('menufromday'+userid).disabled = disabled;
