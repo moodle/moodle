@@ -33,7 +33,20 @@
     $chooselog   = optional_param('chooselog', 0, PARAM_INT);
     $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
-    $PAGE->set_url(new moodle_url($FULLME));
+    $params = array();
+    if ($group !== 0) $params['group'] = $group;
+    if ($user !== 0) $params['user'] = $user;
+    if ($date !== 0) $params['date'] = $date;
+    if ($modname !== 0) $params['modname'] = $modname;
+    if ($modid !== 0) $params['modid'] = $modid;
+    if ($modaction !== '') $params['modaction'] = $modaction;
+    if ($page !== '0') $params['page'] = $page;
+    if ($perpage !== '100') $params['perpage'] = $perpage;
+    if ($showcourses !== 0) $params['showcourses'] = $showcourses;
+    if ($showusers !== 0) $params['showusers'] = $showusers;
+    if ($chooselog !== 0) $params['chooselog'] = $chooselog;
+    if ($logformat !== 'showashtml') $params['logformat'] = $logformat;
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/report/log/index.php', $params));
 
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = $DB->get_record('course', array('id'=>$id))) {

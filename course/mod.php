@@ -45,7 +45,25 @@ $cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
 $confirm       = optional_param('confirm', 0, PARAM_BOOL);
 
 // This page should always redirect
-$PAGE->set_url($FULLME);
+$url = new moodle_url($CFG->wwwroot.'/course/mod.php');
+foreach (compact('indent','update','hide','show','copy','moveto','movetosection','delete','course','cancelcopy','confirm') as $key=>$value) {
+    if ($value !== 0) {
+        $url->param($key, $value);
+    }
+}
+if ($sectionreturn !== '') {
+    $url->param('sr', $sectionreturn);
+}
+if ($add !== '') {
+    $url->param('add', $add);
+}
+if ($type !== '') {
+    $url->param('type', $type);
+}
+if ($groupmode !== '') {
+    $url->param('groupmode', $groupmode);
+}
+$PAGE->set_url($url);
 
 //check if we are adding / editing a module that has new forms using formslib
 if (!empty($add)) {

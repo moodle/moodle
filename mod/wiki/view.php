@@ -23,7 +23,35 @@
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '', PARAM_RAW);
 
-    $PAGE->set_url(new moodle_url($FULLME));
+    $url = new moodle_url($CFG->wwwroot.'/mod/wiki/view.php');
+    if ($ewiki_action !== '') {
+        $url->param('ewiki_action', $ewiki_action);
+    }
+    if ($id !== 0) {
+        $url->param('id', $id);
+    }
+    if ($wid !== 0) {
+        $url->param('wid', $wid);
+    }
+    if ($page !== false) {
+        $url->param('page', $page);
+    }
+    if ($q !== '') {
+        $url->param('q', $q);
+    }
+    if ($userid !== 0) {
+        $url->param('userid', $userid);
+    }
+    if ($groupid !== 0) {
+        $url->param('groupid', $groupid);
+    }
+    if ($canceledit !== '') {
+        $url->param('canceledit', $canceledit);
+    }
+    if ($cacheme !== 1) {
+        $url->param('allowcache', $cacheme);
+    }
+    $PAGE->set_url($url);
 
     if($page) {
         // Split page command into action and page

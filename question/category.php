@@ -34,7 +34,13 @@
     $param->moveto = optional_param('moveto', 0, PARAM_INT);
     $param->edit = optional_param('edit', 0, PARAM_INT);
 
-    $PAGE->set_url(new moodle_url($FULLME));
+    $url = new moodle_url($thispageurl);
+    foreach ((array)$param as $key=>$value) {
+        if (($key !== 'cancel' && $value !== 0) || ($key === 'cancel' && $value !== '')) {
+            $url->param($key, $value);
+        }
+    }
+    $PAGE->set_url($url);
 
     $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                                 $contexts->having_cap('moodle/question:add'));
