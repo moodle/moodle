@@ -96,7 +96,7 @@
         // Note, 'right side' is BEFORE content.
         echo '<li id="section-0" class="section main" >';
 	echo '<div class="left side">&nbsp;</div>';
-        echo '<div class="right side" >&nbsp;</div>';        
+        echo '<div class="right side" >&nbsp;</div>';
         echo '<div class="content">';
         echo '<div class="summary">';
 
@@ -197,14 +197,14 @@
             	} else {
                     echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strmarkthistopic.'">'.'<img src="'.$OUTPUT->old_icon_url('i/marker') . '" alt="'.$strmarkthistopic.'" /></a><br />';
             	}
-
+                
                 if ($thissection->visible) {        // Show the hide/show eye
                     echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strtopichide.'">'.
-                         '<img src="'.$OUTPUT->old_icon_url('i/hide') . '" class="icon hide" alt="'.$strtopichide.'" /></a><br />';
+                         '<img src="'.$OUTPUT->old_icon_url('i/hide') . '" class="icon hide" alt="'.$strtopichide.'" /></a><br />';                                        
                 } else {
                     echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.sesskey().'#section-'.$section.'" title="'.$strtopicshow.'">'.
                          '<img src="'.$OUTPUT->old_icon_url('i/show') . '" class="icon hide" alt="'.$strtopicshow.'" /></a><br />';
-                }
+                }                   
                 if ($section > 1) {                       // Add a arrow to move section up
                     echo '<a href="view.php?id='.$course->id.'&amp;random='.rand(1,10000).'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.sesskey().'#section-'.($section-1).'" title="'.$strmoveup.'">'.
                          '<img src="'.$OUTPUT->old_icon_url('t/up') . '" class="icon up" alt="'.$strmoveup.'" /></a><br />';
@@ -236,7 +236,7 @@
                 echo '</div>';
 
                 print_section($course, $thissection, $mods, $modnamesused);
-
+                echo '<br />';
                 if ($PAGE->user_is_editing()) {
                     print_section_add_menus($course, $section, $modnames);
                 }

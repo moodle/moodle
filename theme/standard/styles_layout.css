@@ -684,7 +684,7 @@ fieldset.fdate_selector label {
 }
 /* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
 #date_selector_calendar_panel.yui-overlay-hidden table {
-  *display:none;
+  display:none;
 }
 #date_selector_calendar_panel th.calhead {
   padding-right: 2em;
@@ -2428,10 +2428,11 @@ border-width:0px;
   margin-bottom: 0.5em;
   border-style:solid;
   border-width:1px;
+  clear: both;
 }
 .weeks .content,
 .topics .content {
-  padding: 5px;
+  padding: 5px 5px 15px 5px;
   margin: 0 1.7em 0 1.7em;
 }
 .weeks .right,
