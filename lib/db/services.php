@@ -27,19 +27,20 @@
 $functions = array(
 
     // === group related functions ===
-
+/*
     'moodle_group_create_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'create_groups',
         'classpath'   => 'group/externallib.php',
     ),
-
+*/
     'moodle_group_get_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'get_groups',
         'classpath'   => 'group/externallib.php',
+        'description' => 'Returns group details.',
     ),
-
+/*
     'moodle_group_delete_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groups',
@@ -89,5 +90,5 @@ $functions = array(
         'methodname'  => 'update_users',
         'classpath'   => 'user/externallib.php',
     ),
-
+*/
 );
