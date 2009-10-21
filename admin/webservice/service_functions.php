@@ -55,8 +55,7 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     $DB->delete_records('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name));
     redirect($thisurl);
 
-}
-else if ($action === 'add') {
+} else if ($action === 'add') {
 
     if (optional_param('save', 0, PARAM_ACTION)) {
 
