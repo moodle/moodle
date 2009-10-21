@@ -39,3 +39,24 @@ class webservice_xmlrpc_server extends webservice_zend_server {
     }
 }
 
+/**
+ * XML-RPC test client class
+ */
+class webservice_xmlrpc_test_client implements webservice_test_client_interface {
+    /**
+     * Execute test client WS request
+     * @param string $serverurl
+     * @param string $function
+     * @param array $params
+     * @return mixed
+     */
+    public function simpletest($serverurl, $function, $params) {
+        //zend expects 0 based array with numeric indexes
+        $params = array_values($params);
+
+        include "Zend/Loader.php";
+        Zend_Loader::registerAutoload();
+        $client = new Zend_XmlRpc_Client($serverurl);
+        return $client->call($function, $params);
+    }
+}

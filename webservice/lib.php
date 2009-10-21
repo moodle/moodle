@@ -37,6 +37,11 @@ class webservice_access_exception extends moodle_exception {
     }
 }
 
+/**
+ * Is protocol enabled?
+ * @param string $protocol name of WS protocol
+ * @return bool
+ */
 function webservice_protocol_is_enabled($protocol) {
     global $CFG;
 
@@ -60,6 +65,20 @@ interface webservice_server {
      * @return void
      */
     public function run($simple);
+}
+
+/**
+ * Mandatory test client interface.
+ */
+interface webservice_test_client_interface {
+    /**
+     * Execute test client WS request
+     * @param string $serverurl
+     * @param string $function
+     * @param array $params
+     * @return mixed
+     */
+    public function simpletest($serverurl, $function, $params);
 }
 
 /**
@@ -229,6 +248,7 @@ class '.$classname.' {
 '.$methods.'
 }
 ';
+
         // load the virtual class definition into memory
         eval($code);
         $this->service_class = $classname;
@@ -505,7 +525,6 @@ abstract class webservice_base_server implements webservice_server {
      * @return void
      */
     abstract protected function send_error($ex=null);
-
 
     /**
      * Process request from client.

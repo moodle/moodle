@@ -122,8 +122,11 @@ class webservice_rest_server extends webservice_base_server {
             return '';
 
         } else if ($desc instanceof external_value) {
-            //TODO: there should be some way to indicate the real NULL value
-            return '<VALUE>'.htmlentities($returns, ENT_COMPAT, 'UTF-8').'</VALUE>'."\n";
+            if (is_null($returns)) {
+                return '<VALUE null="null"/>'."\n";
+            } else {
+                return '<VALUE>'.htmlentities($returns, ENT_COMPAT, 'UTF-8').'</VALUE>'."\n";
+            }
 
         } else if ($desc instanceof external_multiple_structure) {
             $mult = '<MULTIPLE>'."\n";
@@ -153,3 +156,19 @@ class webservice_rest_server extends webservice_base_server {
     }
 }
 
+
+/**
+ * REST test client class
+ */
+class webservice_rest_test_client implements webservice_test_client_interface {
+    /**
+     * Execute test client WS request
+     * @param string $serverurl
+     * @param string $function
+     * @param array $params
+     * @return mixed
+     */
+    public function simpletest($serverurl, $function, $params) {
+        return download_file_content($serverurl.'&wsfunction='.$function, null, $params);
+    }
+}

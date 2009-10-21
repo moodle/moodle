@@ -1,3 +1,3 @@
 <?php
 
-$string['pluginname'] = 'XMLRPC protocol';
+$string['pluginname'] = 'XML-RPC protocol';

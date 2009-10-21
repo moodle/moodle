@@ -8,9 +8,11 @@ class webservice_test_client_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
-        $functions = $this->_customdata;
+        list($functions, $protocols) = $this->_customdata;
 
         $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        $mform->addElement('select', 'protocol', get_string('protocol', 'webservice'), $protocols);
 
         $mform->addElement('select', 'function', get_string('function', 'webservice'), $functions);
 
@@ -36,7 +38,9 @@ class moodle_group_get_groups_form extends moodleform {
 
         $mform->addElement('hidden', 'function');
         $mform->setType('function', PARAM_SAFEDIR);
-        $mform->setDefault('function', 'moodle_group_get_groups');
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
 
         $this->add_action_buttons(true, get_string('test', 'webservice'));
     }

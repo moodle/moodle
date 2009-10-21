@@ -40,6 +40,6 @@ $string['serviceusers'] = 'Authorized users';
 $string['serviceusersmatching'] = 'Authorized users matching';
 $string['serviceuserssettings'] = 'Change settings for the Authorized users';
 $string['test'] = 'Test';
-$string['testclient'] = 'Test client';
+$string['testclient'] = 'Web service test client';
 $string['validuntil'] = 'Valid until';
 $string['webservices'] = 'Web services';
