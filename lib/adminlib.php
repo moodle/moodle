@@ -6161,13 +6161,14 @@ class admin_setting_manageexternalservices extends admin_setting {
         $stradd = get_string('add');
         $strfunctions = get_string('functions', 'webservice');
         $strusers = get_string('restrictedusers', 'webservice');
+        $strserviceusers = get_string('serviceusers', 'webservice');
 
         $esurl = "$CFG->wwwroot/$CFG->admin/external_service.php";
         $efurl = "$CFG->wwwroot/$CFG->admin/external_service_functions.php";
         $euurl = "$CFG->wwwroot/$CFG->admin/external_service_users.php";
 
         // built in services
-        $return = $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main', true);
+        $return = $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main');
 
         $services = $DB->get_records_select('external_services', 'component IS NOT NULL', null, 'name');
 
@@ -6194,9 +6195,9 @@ class admin_setting_manageexternalservices extends admin_setting {
             $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
 
             if ($service->restrictedusers) {
-                $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
+                $users = "<a href=\"$euurl?id=$service->id\">$strserviceusers</a>";
             } else {
-                $users = get_string('nouserrestriction','webservice');
+                $users = '-';
             }
 
             $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
@@ -6207,7 +6208,7 @@ class admin_setting_manageexternalservices extends admin_setting {
         $return .= $OUTPUT->table($table);
 
         // Custom services
-        $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main', true);
+        $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main');
         $services = $DB->get_records_select('external_services', 'component IS NULL', null, 'name');
 
         $table = new html_table();
@@ -6234,9 +6235,9 @@ class admin_setting_manageexternalservices extends admin_setting {
             $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
 
             if ($service->restrictedusers) {
-                $users = "<a href=\"$euurl?id=$service->id\">$strusers</a>";
+                $users = "<a href=\"$euurl?id=$service->id\">$strserviceusers</a>";
             } else {
-                $users = get_string('nouserrestriction','webservice');
+                $users = '-';
             }
 
             $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
