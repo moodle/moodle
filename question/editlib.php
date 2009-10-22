@@ -1509,9 +1509,12 @@ class question_bank_view {
             if ($inuse) {
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
+            $baseurl = new moodle_url('edit.php');
+            $r = $baseurl->params($this->baseurl->params());
+           
             echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $this->baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $this->baseurl);
+                        $baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
+                        $baseurl);
 
             return true;
         }
