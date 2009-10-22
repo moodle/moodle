@@ -111,7 +111,7 @@ class save_xml_file extends XMLDBAction {
 
     /// If unload has been disabled, simulate it by reloading the file now
         if (!$unload) {
-            $this->launch('load_xml_file');
+            return $this->launch('load_xml_file');
         }
 
     /// Launch postaction if exists (leave this here!)
