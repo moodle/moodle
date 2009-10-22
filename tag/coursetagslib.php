@@ -241,85 +241,39 @@ function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_siz
  * @uses $CFG
  */
 function coursetag_get_jscript($coursetagdivs = '') {
-
     global $CFG, $DB, $PAGE;
 
-    $tabscript = '';
+    $PAGE->requires->js('tag/tag.js');
+    $PAGE->requires->strings_for_js(array('jserror1', 'jserror2'), 'block_tags');
+
     if ($coursetagdivs) {
-        $tabscript = 'var coursetagdivs = new Array('.$coursetagdivs.');';
+        $PAGE->requires->js_function_call('set_course_tag_divs', $coursetagdivs);
     }
 
-    $coursetags = $DB->get_records('tag', null, 'name ASC', 'name, id');
-    $a = 0;
-    $coursetagscript = '';
-    if (!empty($coursetags)) {
+    if ($coursetags = $DB->get_records('tag', null, 'name ASC', 'name, id')) {
         foreach ($coursetags as $key => $value) {
-            $coursetagscript .= "coursetag_tags[$a] = \"".addslashes_js($key)."\"; ";
-            $a++;
+            $PAGE->requires->js_function_call('set_course_tag', array($key));
         }
     }
-
-    $jserror1 = get_string('jserror1', 'block_tags');
-    $jserror2 = get_string('jserror2', 'block_tags');
-
-    $inputscript = <<<EOT
-    function ctags_checkinput(val) {
-        var len = val.length;
-        if (len < 2 || len > 50) {
-            alert("$jserror1");
-            return false;
-        //can't check this - unterminated string error } else if (val.indexOf("\\") > 0) {
-        } else if (val.indexOf("<") > 0) {
-            alert("$jserror2");
-            return false;
-        } else if (val.indexOf(">") > 0) {
-            alert("$jserror2");
-            return false;
-        } else {
-            return true;
-        }
-    }
-EOT;
-
-    $str = '
-    <script type="text/javascript">
-        //<![CDATA[
-            '.$tabscript.'
-            var coursetag_tags = new Array();
-            '.$coursetagscript.'
-            '.$inputscript.'
-        //]]>
-    </script>';
 
     $PAGE->requires->js('blocks/tags/coursetags.js');
 
-    return $str;
+    return '';
 }
 
 /**
  * Returns javascript to create the links in the tag block footer.
  */
 function coursetag_get_jscript_links($coursetagslinks) {
-
-    $links = '';
+    global $PAGE;
+    
     if (!empty($coursetagslinks)) {
-        $links .= '<hr />';
         foreach ($coursetagslinks as $a) {
-            $links .= '<a href="" title="'.$a['title'].'"
-                        onclick="return ctags_show_div(\''.$a['onclick'].'\')">'.$a['text'].'</a> |';
+            $PAGE->requires->js_function_call('add_tag_footer_link', array('coursetagslinks', $a['title'], $a['onclick'], $a['text']))->on_dom_ready();
         }
-        $links = addslashes_js(rtrim($links, '|'));
     }
 
-    $str = '
-    <script type="text/javascript">
-        //<![CDATA[
-            var element = document.getElementById("coursetagslinks");
-            element.innerHTML = "'.$links.'";
-        //]]>
-    </script>';
-
-    return $str;
+    return '';
 }
 
 /**

@@ -75,7 +75,7 @@ echo $OUTPUT->header();
 
     // Print personal tags for all courses
     $title = get_string('edittitle', $tagslang);
-    echo $OUTPUT->heading($title, 'center');
+    echo $OUTPUT->heading($title, 2, 'center');
 
     $mytags = coursetag_print_cloud(coursetag_get_tags(0, $USER->id, 'default'), true);
     $outstr = '
@@ -126,13 +126,13 @@ echo $OUTPUT->header();
         }
 
         // Print the add and delete form
-        $script = coursetag_get_jscript();
+        coursetag_get_jscript();
         $addtagshelp = $OUTPUT->help_icon(moodle_help_icon::make('addtags', 'adding tags', $tagslang));
         $edittagthisunit = get_string('edittagthisunit', $tagslang);
         $arrowtitle = get_string('arrowtitle', $tagslang);
         $sesskey = sesskey();
+        $leftarrow = $OUTPUT->old_icon_url('t/arrow_left');
         $outstr .= <<<EOT
-            $script
             <form action="$CFG->wwwroot/tag/coursetags_edit.php" method="post" id="coursetag">
                 <div style="display: none;">
                     <input type="hidden" name="courseid" value="$course->id" />
@@ -153,7 +153,7 @@ echo $OUTPUT->header();
                             </div>
                             <div class="coursetag_edit_input3" id="coursetag_sug_btn">
                                 <a title="$arrowtitle">
-                                    <img src="" . $OUTPUT->old_icon_url('t/arrow_left') . "" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
+                                    <img src="$leftarrow" width="10" height="10" alt="enter" onclick="ctags_setKeywords()" />
                                 </a>
                             </div>
                         </div>

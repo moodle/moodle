@@ -104,7 +104,8 @@ class block_tags extends block_base {
             //TODO check whether time limited personal tags are required
             $numoftags = $this->config->numberoftags;
             $sort = 'name';
-            $alltags = $officialtags = $coursetags = $commtags = $mytags = $coursetagdivs = $courseflag = '';
+            $coursetagdivs = array();
+            $alltags = $officialtags = $coursetags = $commtags = $mytags = $courseflag = '';
             if ($sitepage or $coursepage) {
                 $alltags = coursetag_print_cloud(coursetag_get_all_tags($sort, $this->config->numberoftags), true);
                 $officialtags = coursetag_print_cloud(coursetag_get_tags(0, 0, 'official', $numoftags, $sort), true);
@@ -144,7 +145,7 @@ class block_tags extends block_base {
                             <a href="'.$moretags.'?show=all'.$courseflag.'" title="'.$moretagstitle.'">'.$moretagsstring.'</a>
                         </div>
                     </div>';
-                $coursetagdivs .= '"f_alltags", ';
+                $coursetagdivs[] = 'f_alltags';
             }
             if ($mytags) {
                 if ($mymoodlepage) {
@@ -168,7 +169,7 @@ class block_tags extends block_base {
                             <a href="'.$moretags.'?show=my'.$courseflag.'" title="'.$moretagstitle.'">'.$moretagsstring.'</a>
                         </div>
                     </div>';
-                $coursetagdivs .= '"f_mytags", ';
+                $coursetagdivs[] = 'f_mytags';
             }
             if ($officialtags) {
                 if ($mytags or $alltags) {
@@ -184,7 +185,7 @@ class block_tags extends block_base {
                             <a href="'.$moretags.'?show=official'.$courseflag.'" title="'.$moretagstitle.'">'.$moretagsstring.'</a>
                         </div>
                     </div>';
-                $coursetagdivs .= '"f_officialtags", ';
+                $coursetagdivs[] = 'f_officialtags';
             }
             if ($coursetags) {
                 if ($coursepage) {
@@ -200,7 +201,7 @@ class block_tags extends block_base {
                             <a href="'.$moretags.'?show=course'.$courseflag.'" title="'.$moretagstitle.'">'.$moretagsstring.'</a>
                         </div>
                     </div>';
-                $coursetagdivs .= '"f_coursetags", ';
+                $coursetagdivs[] = 'f_coursetags';
             }
             if ($commtags) {
                 $commtagscontent = '
@@ -211,11 +212,10 @@ class block_tags extends block_base {
                             <a href="'.$moretags.'?show=community'.$courseflag.'" title="'.$moretagstitle.'">'.$moretagsstring.'</a>
                         </div>
                     </div>';
-                $coursetagdivs .= '"f_commtags", ';
+                $coursetagdivs[] .= 'f_commtags';
             }
             // Tidy up the end of a javascript array and add javascript
-            $coursetagdivs = rtrim($coursetagdivs, ', ');
-            $this->content->text .= coursetag_get_jscript($coursetagdivs);
+            coursetag_get_jscript($coursetagdivs);
 
             // Add the divs (containing the tags) to the block's content
             if ($alltags) { $this->content->text .= $alltagscontent; }
@@ -308,7 +308,7 @@ EOT;
                                                     'onclick'=>'f_coursetags',
                                                     'text'=>get_string('coursetags1', $tagslang));
                 }
-                $this->content->footer .= coursetag_get_jscript_links($coursetagslinks);
+                coursetag_get_jscript_links($coursetagslinks);
 
             } else {
                 //if not logged in

@@ -131,28 +131,8 @@ if (!empty($errorstring)) {
 $tagform->display();
 
 if (ajaxenabled()) {
-?>
-
-<script type="text/javascript">
-
-// An XHR DataSource
-var myServer = "./tag_autocomplete.php";
-var myDataSource = new YAHOO.widget.DS_XHR(myServer, ["\n", "\t"]);
-myDataSource.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
-myDataSource.maxCacheEntries = 60;
-myDataSource.queryMatchSubset = true;
-
-var myAutoComp = new YAHOO.widget.AutoComplete("id_relatedtags","relatedtags-autocomplete", myDataSource);
-myAutoComp.delimChar = ",";
-myAutoComp.maxResultsDisplayed = 20;
-myAutoComp.minQueryLength = 2;
-myAutoComp.allowBrowserAutocomplete = false;
-myAutoComp.formatResult = function(aResultItem, sQuery) {
-    return aResultItem[1];
-}
-</script>
-
-<?php
+    $PAGE->requires->js('tag/tag.js');
+    $PAGE->requires->js_function_call('init_tag_autocomplete')->on_dom_ready();
 }
 echo $OUTPUT->footer();
 
