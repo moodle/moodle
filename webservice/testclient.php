@@ -36,7 +36,7 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)); 
 
 // list of all available functions for testing - please note there must be explicit
 // support for testing of each functions, the parameter conversion and form is hardcoded
-$functions = array('moodle_group_get_groups');
+$functions = array('moodle_group_create_groups', 'moodle_group_get_groups');
 $functions = array_combine($functions, $functions);
 if (!isset($functions[$function])) { // whitelisting security
     $function = '';
@@ -96,7 +96,11 @@ if ($mform->is_cancelled()) {
 
     // now get the function parameters - each functions processing must be hardcoded here
     $params = array();
-    if ($function === 'moodle_group_get_groups') {
+    if ($function === 'moodle_group_create_groups') {
+        $params['groups'] = array();
+        $params['groups'][] = (array)$data;
+
+    } else if ($function === 'moodle_group_get_groups') {
         $params['groupids'] = array();
         for ($i=0; $i<10; $i++) {
             if (empty($data->groupids[$i])) {
@@ -118,7 +122,7 @@ if ($mform->is_cancelled()) {
 
     try {
         $response = $testclient->simpletest($serverurl, $function, $params);
-        echo str_replace("\n", '<br />', s(var_export($response, true)));
+        echo str_replace("\n", '<br />', s($response));
     } catch (Exception $ex) {
         //TODO: handle exceptions and faults without exposing of the sensitive information such as debug traces!
         echo str_replace("\n", '<br />', s($ex));

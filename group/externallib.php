@@ -30,59 +30,95 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @return ?
+     * @return external_function_parameters
      */
     public static function create_groups_parameters() {
-        //TODO
+        return new external_function_parameters(
+            array(
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course'),
+                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                            'description' => new external_value(PARAM_RAW, 'group description text'),
+                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**
      * Create groups
      * @param array $groups array of group description arrays (with keys groupname and courseid)
-     * @return array of newly created group ids
+     * @return array of newly created groups
      */
     public static function create_groups($groups) {
-        global $CFG;
+        global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
 
         $params = self::validate_parameters(self::create_groups_parameters(), array('groups'=>$groups));
 
-        $groups = array();
+        // ideally create all groups or none at all, unfortunately myisam engine does not support transactions :-(
+        $DB->begin_sql();
+        try {
+            $groups = array();
 
-        foreach ($params['groups'] as $group) {
-            $group = (object)$group;
+            foreach ($params['groups'] as $group) {
+                $group = (object)$group;
 
-            if (trim($group->name) == '') {
-                throw new invalid_parameter_exception('Invalid group name');
+                if (trim($group->name) == '') {
+                    throw new invalid_parameter_exception('Invalid group name');
+                }
+                if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
+                    throw new invalid_parameter_exception('Group with the same name already exists in the course');
+                }
+
+                // now security checks
+                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+                self::validate_context($context);
+                require_capability('moodle/course:managegroups', $context);
+
+                // finally create the group
+                $group->id = groups_create_group($group, false);
+                $groups[] = (array)$group;
             }
-            if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
-                throw new invalid_parameter_exception('Group with the same name already exists in the course');
-            }
-
-            // now security checks
-            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
-            require_capability('moodle/course:managegroups', $context);
-
-            $group->id = groups_create_group($group, false);
-            $groups[] = (array)$group;
+        } catch (Exception $ex) {
+            $DB->rollback_sql();
+            throw $ex;
         }
+        $DB->commit_sql();
 
         return $groups;
     }
 
    /**
      * Returns description of method result value
-     * @return ?
+     * @return external_description
      */
     public static function create_groups_returns() {
-        //TODO
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'group record id'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'description' => new external_value(PARAM_RAW, 'group description text'),
+                    'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                )
+            )
+        );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function get_groups_parameters() {
         return new external_function_parameters(
             array(
-                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID'))
+                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID')),
             )
         );
     }
@@ -96,9 +132,6 @@ class moodle_group_external extends external_api {
         $groups = array();
 
         $params = self::validate_parameters(self::get_groups_parameters(), array('groupids'=>$groupids));
-
-        //TODO: we do need to search for groups in courses too,
-        //      fetching by id is not enough!
 
         foreach ($params['groupids'] as $groupid) {
             // validate params
@@ -115,14 +148,19 @@ class moodle_group_external extends external_api {
         return $groups;
     }
 
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function get_groups_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id' => new external_value(PARAM_INT, 'some group id'),
+                    'id' => new external_value(PARAM_INT, 'group record id'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
-                    'description' => new external_value(PARAM_RAW, 'just some text'),
-                    'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase')
+                    'description' => new external_value(PARAM_RAW, 'group description text'),
+                    'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
                 )
             )
         );
