@@ -10,6 +10,7 @@
 /// using strings defined in stringnames.txt (same dir)
 
 $string['language'] = 'Limba';
+$string['reload'] = 'Reîncarcă';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Română';
 ?>
