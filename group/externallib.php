@@ -124,15 +124,14 @@ class moodle_group_external extends external_api {
     }
 
     /**
-     * Get groups definition
+     * Get groups definition specified by ids
      * @param array $groupids arrays of group ids
      * @return array of group objects (id, courseid, name, enrolmentkey)
      */
     public static function get_groups($groupids) {
-        $groups = array();
-
         $params = self::validate_parameters(self::get_groups_parameters(), array('groupids'=>$groupids));
 
+        $groups = array();
         foreach ($params['groupids'] as $groupid) {
             // validate params
             $group = groups_get_group($groupid, 'id, courseid, name, description, enrolmentkey', MUST_EXIST);
@@ -153,6 +152,59 @@ class moodle_group_external extends external_api {
      * @return external_description
      */
     public static function get_groups_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'group record id'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'description' => new external_value(PARAM_RAW, 'group description text'),
+                    'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_course_groups_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of course'),
+            )
+        );
+    }
+
+    /**
+     * Get all groups in the specified course
+     * @param int $courseid id of course
+     * @return array of group objects (id, courseid, name, enrolmentkey)
+     */
+    public static function get_course_groups($courseid) {
+        $params = self::validate_parameters(self::get_course_groups_parameters(), array('courseid'=>$courseid));
+
+        // now security checks
+        $context = get_context_instance(CONTEXT_COURSE, $params['courseid']);
+        self::validate_context($context);
+        require_capability('moodle/course:managegroups', $context);
+
+        $gs = groups_get_all_groups($params['courseid'], 0, 0, 'g.id, g.courseid, g.name, g.description, g.enrolmentkey');
+
+        $groups = array();
+        foreach ($gs as $group) {
+            $groups[] = (array)$group;
+        }
+
+        return $groups;
+    }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_course_groups_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(

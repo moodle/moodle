@@ -140,8 +140,8 @@ class webservice_rest_server extends webservice_base_server {
             $single = '<SINGLE>'."\n";
             foreach ($desc->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $returns)) {
-                    if ($subdesc->rewquired) {
-                        $single .= '<ERROR>Missing required key</ERROR>';
+                    if ($subdesc->required) {
+                        $single .= '<ERROR>Missing required key "'.$key.'"</ERROR>';
                         continue;
                     } else {
                         //optional field

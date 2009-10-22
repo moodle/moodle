@@ -22,32 +22,6 @@ class webservice_test_client_form extends moodleform {
 
 // === Test client forms ===
 
-class moodle_group_get_groups_form extends moodleform {
-    public function definition() {
-        global $CFG;
-
-        $mform = $this->_form;
-
-        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
-
-        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
-        $mform->addElement('text', 'wsusername', 'wsusername');
-        $mform->addElement('text', 'wspassword', 'wspassword');
-        $mform->addElement('text', 'groupids[0]', 'groupids[0]');
-        $mform->addElement('text', 'groupids[1]', 'groupids[1]');
-        $mform->addElement('text', 'groupids[2]', 'groupids[2]');
-        $mform->addElement('text', 'groupids[3]', 'groupids[3]');
-
-        $mform->addElement('hidden', 'function');
-        $mform->setType('function', PARAM_SAFEDIR);
-
-        $mform->addElement('hidden', 'protocol');
-        $mform->setType('protocol', PARAM_SAFEDIR);
-
-        $this->add_action_buttons(true, get_string('execute', 'webservice'));
-    }
-}
-
 class moodle_group_create_groups_form extends moodleform {
     public function definition() {
         global $CFG;
@@ -75,3 +49,53 @@ class moodle_group_create_groups_form extends moodleform {
         $this->add_action_buttons(true, get_string('execute', 'webservice'));
     }
 }
+
+class moodle_group_get_groups_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $mform->addElement('text', 'wsusername', 'wsusername');
+        $mform->addElement('text', 'wspassword', 'wspassword');
+        $mform->addElement('text', 'groupids[0]', 'groupids[0]');
+        $mform->addElement('text', 'groupids[1]', 'groupids[1]');
+        $mform->addElement('text', 'groupids[2]', 'groupids[2]');
+        $mform->addElement('text', 'groupids[3]', 'groupids[3]');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+}
+
+class moodle_group_get_course_groups_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $mform->addElement('text', 'wsusername', 'wsusername');
+        $mform->addElement('text', 'wspassword', 'wspassword');
+        $mform->addElement('text', 'courseid', 'courseid');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+}
+

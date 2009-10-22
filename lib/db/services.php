@@ -43,6 +43,15 @@ $functions = array(
         'description' => 'Returns group details.',
         'type'        => 'read',
     ),
+
+    'moodle_group_get_course_groups' => array(
+        'classname'   => 'moodle_group_external',
+        'methodname'  => 'get_course_groups',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Returns all groups in specified course.',
+        'type'        => 'read',
+    ),
+
 /*
     'moodle_group_delete_groups' => array(
         'classname'   => 'moodle_group_external',

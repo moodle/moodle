@@ -36,7 +36,8 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)); 
 
 // list of all available functions for testing - please note there must be explicit
 // support for testing of each functions, the parameter conversion and form is hardcoded
-$functions = array('moodle_group_create_groups', 'moodle_group_get_groups');
+// TODO: automate this list by fetching all known functiosn from db and looking if client form defined
+$functions = array('moodle_group_create_groups', 'moodle_group_get_groups', 'moodle_group_get_course_groups');
 $functions = array_combine($functions, $functions);
 if (!isset($functions[$function])) { // whitelisting security
     $function = '';
@@ -108,6 +109,9 @@ if ($mform->is_cancelled()) {
             }
             $params['groupids'][] = $data->groupids[$i];
         }
+
+    } else if ($function === 'moodle_group_get_course_groups') {
+        $params['courseid'] = $data->courseid;
 
     } else {
         throw new coding_exception('Testing of function '.$function.' not implemented yet!');
