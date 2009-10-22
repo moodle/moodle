@@ -1203,6 +1203,11 @@ class ddl_test extends UnitTestCase {
         }
 
         // Real file but invalid xml file
+        $devhack = false;
+        if (!empty($CFG->xmldbdisablenextprevchecking)) {
+            $CFG->xmldbdisablenextprevchecking = false;
+            $devhack = true;
+        }
         try {
             ob_start(); // hide debug warning
             $dbman->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml');
@@ -1211,6 +1216,9 @@ class ddl_test extends UnitTestCase {
         } catch (Exception $e) {
             ob_end_clean();
             $this->assertTrue($e instanceof moodle_exception);
+        }
+        if ($devhack) {
+            $CFG->xmldbdisablenextprevchecking = true;
         }
 
         // Check that the table has not been deleted from DB
@@ -1239,6 +1247,11 @@ class ddl_test extends UnitTestCase {
         }
 
         // Real but invalid xml file
+        $devhack = false;
+        if (!empty($CFG->xmldbdisablenextprevchecking)) {
+            $CFG->xmldbdisablenextprevchecking = false;
+            $devhack = true;
+        }
         try {
             ob_start(); // hide debug warning
             $dbman->install_from_xmldb_file($CFG->libdir.'/ddl/simpletest/fixtures/invalid.xml');
@@ -1247,6 +1260,9 @@ class ddl_test extends UnitTestCase {
         } catch (Exception $e) {
             ob_end_clean();
             $this->assertTrue($e instanceof moodle_exception);
+        }
+        if ($devhack) {
+            $CFG->xmldbdisablenextprevchecking = true;
         }
 
         // Check that the table has not yet been created in DB
