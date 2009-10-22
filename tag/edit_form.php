@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -31,8 +31,8 @@ class tag_edit_form extends moodleform {
         $mform->addElement('html', '<br/><div id="relatedtags-autocomplete-container">');
         $mform->addElement('textarea', 'relatedtags', get_string('relatedtags','tag'), 'cols="50" rows="3"');
         $mform->setType('relatedtags', PARAM_TAGLIST);
-        $mform->addElement('html', '</div>');
         $mform->addElement('html', '<div id="relatedtags-autocomplete"></div>');
+        $mform->addElement('html', '</div>');
 
         $this->add_action_buttons(false, get_string('updatetag', 'tag'));
 

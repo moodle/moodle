@@ -2,21 +2,31 @@ var coursetagdivs = null;
 var coursetag_tags = new Array();
 
 function init_tag_autocomplete() {
-    // An XHR DataSource
-    var myServer = "./tag_autocomplete.php";
-    var myDataSource = new YAHOO.widget.DS_XHR(myServer, ["\n", "\t"]);
-    myDataSource.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
-    myDataSource.maxCacheEntries = 60;
-    myDataSource.queryMatchSubset = true;
 
-    var myAutoComp = new YAHOO.widget.AutoComplete("id_relatedtags","relatedtags-autocomplete", myDataSource);
-    myAutoComp.delimChar = ",";
-    myAutoComp.maxResultsDisplayed = 20;
-    myAutoComp.minQueryLength = 2;
+    var myDataSource = new YAHOO.util.XHRDataSource("./tag_autocomplete.php");
+    myDataSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
+    myDataSource.responseSchema = {
+        recordDelim: "\n",
+        fieldDelim: "\t"
+    };
+    myDataSource.maxCacheEntries = 60;
+    myDataSource.minQueryLength = 3;
+
+    // Instantiate the AutoComplete
+    var myAutoComp = new YAHOO.widget.AutoComplete("id_relatedtags", "relatedtags-autocomplete", myDataSource);
+    document.getElementById('id_relatedtags').style.width = '30%';
     myAutoComp.allowBrowserAutocomplete = false;
-    myAutoComp.formatResult = function(aResultItem, sQuery) {
-        return aResultItem[1];
-    }
+    myAutoComp.maxResultsDisplayed = 20;
+    myAutoComp.delimChar = [","," "]; 
+    myAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
+        return (sResultMatch);
+    };
+
+    return {
+        myDataSource: myDataSource,
+        myAutoComp: myAutoComp
+    };
+
 }
 
 function ctags_checkinput(val) {
