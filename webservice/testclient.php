@@ -126,7 +126,7 @@ if ($mform->is_cancelled()) {
 
     try {
         $response = $testclient->simpletest($serverurl, $function, $params);
-        echo str_replace("\n", '<br />', s($response));
+        echo str_replace("\n", '<br />', s(var_export($response, true)));
     } catch (Exception $ex) {
         //TODO: handle exceptions and faults without exposing of the sensitive information such as debug traces!
         echo str_replace("\n", '<br />', s($ex));
