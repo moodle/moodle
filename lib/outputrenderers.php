@@ -1333,21 +1333,6 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function link_to_popup($link, $image=null) {
         $link = clone($link);
-        $link->prepare();
-
-        $this->prepare_event_handlers($link);
-
-        if (empty($link->url)) {
-            throw new coding_exception('Called $OUTPUT->link_to_popup($link) method without $link->url set.');
-        }
-
-        $linkurl = prepare_url($link->url);
-
-        $tagoptions = array(
-                'title' => $link->title,
-                'id' => $link->id,
-                'href' => ($linkurl) ? $linkurl : prepare_url($popup->url),
-                'class' => $link->get_classes_string());
 
         // Use image if one is given
         if (!empty($image) && $image instanceof html_image) {
@@ -1363,6 +1348,21 @@ class moodle_core_renderer extends moodle_renderer_base {
                 $link->text = "$link->title &#160; $link->text";
             }
         }
+
+        $link->prepare();
+        $this->prepare_event_handlers($link);
+
+        if (empty($link->url)) {
+            throw new coding_exception('Called $OUTPUT->link_to_popup($link) method without $link->url set.');
+        }
+
+        $linkurl = prepare_url($link->url);
+
+        $tagoptions = array(
+                'title' => $link->title,
+                'id' => $link->id,
+                'href' => ($linkurl) ? $linkurl : prepare_url($popup->url),
+                'class' => $link->get_classes_string());
 
         return $this->output_tag('a', $tagoptions, $link->text);
     }
