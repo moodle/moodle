@@ -24,6 +24,7 @@
  */
 
 require('../config.php');
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/webservice/testclient_forms.php");
 
 $function = optional_param('function', '', PARAM_SAFEDIR);
@@ -75,6 +76,9 @@ if ($mform->is_cancelled()) {
     redirect('testclient.php');
 
 } else if ($data = $mform->get_data()) {
+
+    $functioninfo = external_function_info($function);
+    
     // remove unused from form data
     unset($data->submitbutton);
     unset($data->protocol);
@@ -116,6 +120,9 @@ if ($mform->is_cancelled()) {
     } else {
         throw new coding_exception('Testing of function '.$function.' not implemented yet!');
     }
+
+    // now test the parameters, this also fixes PHP data types
+    $params = external_api::validate_parameters($functioninfo->parameters_desc, $params);
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'webservice_'.$protocol).': '.$function);
