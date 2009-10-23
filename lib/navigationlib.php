@@ -32,7 +32,7 @@ if (!function_exists('get_all_sections')) {
 }
 
 /**
- * The name that will be used to seperate the navigation cache within SESSION
+ * The name that will be used to separate the navigation cache within SESSION
  */
 define('NAVIGATION_CACHE_NAME', 'navigation');
 
