@@ -820,8 +820,9 @@ class question_bank_view {
     }
 
     protected function wanted_columns() {
-        $columns = array('checkbox', 'qtype', 'questionname', 'creatorname',
-                'modifiername', 'editaction', 'previewaction', 'moveaction', 'deleteaction');
+        $columns = array('checkbox', 'qtype', 'questionname', 'editaction',
+                'previewaction', 'moveaction', 'deleteaction', 'creatorname',
+                'modifiername');
         if (optional_param('qbshowtext', false, PARAM_BOOL)) {
             $columns[] = 'questiontext';
         }
