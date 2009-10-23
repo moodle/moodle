@@ -6840,12 +6840,18 @@ function shorten_text($text, $ideal=30, $exact = false) {
         return $text;
     }
 
-    // splits all html-tags to scanable lines
+    // Splits on HTML tags. Each open/close/empty tag will be the first thing
+    // and only tag in its 'line'
     preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
 
     $total_length = strlen($ending);
-    $open_tags = array();
     $truncate = '';
+
+    // This array stores information about open and close tags and their position
+    // in the truncated string. Each item in the array is an object with fields
+    // ->open (true if open), ->tag (tag name in lower case), and ->pos 
+    // (byte position in truncated text)
+    $tagdetails = array();
 
     foreach ($lines as $line_matchings) {
         // if there is any html-tag in this line, handle it and add it (uncounted) to the output
@@ -6855,15 +6861,14 @@ function shorten_text($text, $ideal=30, $exact = false) {
                     // do nothing
             // if tag is a closing tag (f.e. </b>)
             } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-                // delete tag from $open_tags list
-                $pos = array_search($tag_matchings[1], array_reverse($open_tags, true)); // can have multiple exact same open tags, close the last one
-                if ($pos !== false) {
-                    unset($open_tags[$pos]);
-                }
+                // record closing tag
+                $tagdetails[] = (object)array('open'=>false, 
+                    'tag'=>strtolower($tag_matchings[1]), 'pos'=>strlen($truncate));
             // if tag is an opening tag (f.e. <b>)
             } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
-                // add tag to the beginning of $open_tags list
-                array_unshift($open_tags, strtolower($tag_matchings[1]));
+                // record opening tag
+                $tagdetails[] = (object)array('open'=>true, 
+                    'tag'=>strtolower($tag_matchings[1]), 'pos'=>strlen($truncate));
             }
             // add html-tag to $truncate'd text
             $truncate .= $line_matchings[1];
@@ -6925,6 +6930,24 @@ function shorten_text($text, $ideal=30, $exact = false) {
 
     // add the defined ending to the text
     $truncate .= $ending;
+
+    // Now calculate the list of open html tags based on the truncate position
+    $open_tags = array();
+    foreach ($tagdetails as $taginfo) {
+        if(isset($breakpos) && $taginfo->pos >= $breakpos) {
+            // Don't include tags after we made the break!
+            break;
+        }
+        if($taginfo->open) {
+            // add tag to the beginning of $open_tags list
+            array_unshift($open_tags, $taginfo->tag);
+        } else {
+            $pos = array_search($taginfo->tag, array_reverse($open_tags, true)); // can have multiple exact same open tags, close the last one
+            if ($pos !== false) {
+                unset($open_tags[$pos]);
+            }
+        }
+    }
 
     // close all unclosed html-tags
     foreach ($open_tags as $tag) {
