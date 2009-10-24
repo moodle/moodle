@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision$"/>
+		<generation date="$Date$"/>
+		<language type="kk"/>
+		<territory type="KZ"/>
+	</identity>
+	<alias source="kk_Cyrl_KZ" path="//ldml"/>
+</ldml>

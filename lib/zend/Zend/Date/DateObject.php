@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Date
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -23,7 +23,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @subpackage Zend_Date_DateObject
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Date_DateObject {
@@ -534,12 +534,12 @@ abstract class Zend_Date_DateObject {
                     break;
 
                 case 'O':  // difference to GMT in hours
-                    $gmtstr = ($gmt === true) ? 0 : $this->_offset;
+                    $gmtstr = ($gmt === true) ? 0 : $this->getGmtOffset();
                     $output .= sprintf('%s%04d', ($gmtstr <= 0) ? '+' : '-', abs($gmtstr) / 36);
                     break;
 
                 case 'P':  // difference to GMT with colon
-                    $gmtstr = ($gmt === true) ? 0 : $this->_offset;
+                    $gmtstr = ($gmt === true) ? 0 : $this->getGmtOffset();
                     $gmtstr = sprintf('%s%04d', ($gmtstr <= 0) ? '+' : '-', abs($gmtstr) / 36);
                     $output = $output . substr($gmtstr, 0, 3) . ':' . substr($gmtstr, 3);
                     break;
@@ -555,13 +555,13 @@ abstract class Zend_Date_DateObject {
                     break;
 
                 case 'Z':  // timezone offset in seconds
-                    $output .= ($gmt === true) ? 0 : -$this->_offset;
+                    $output .= ($gmt === true) ? 0 : -$this->getGmtOffset();
                     break;
 
 
                 // complete time formats
                 case 'c':  // ISO 8601 date format
-                    $difference = $this->_offset;
+                    $difference = $this->getGmtOffset();
                     $difference = sprintf('%s%04d', ($difference <= 0) ? '+' : '-', abs($difference) / 36);
                     $output .= $date['year'] . '-'
                              . (($date['mon']     < 10) ? '0' . $date['mon']     : $date['mon'])     . '-'
@@ -573,7 +573,7 @@ abstract class Zend_Date_DateObject {
                     break;
 
                 case 'r':  // RFC 2822 date format
-                    $difference = $this->_offset;
+                    $difference = $this->getGmtOffset();
                     $difference = sprintf('%s%04d', ($difference <= 0) ? '+' : '-', abs($difference) / 36);
                     $output .= gmdate('D', 86400 * (3 + self::dayOfWeek($date['year'], $date['mon'], $date['mday']))) . ', '
                              . (($date['mday']    < 10) ? '0' . $date['mday']    : $date['mday'])    . ' '
@@ -658,13 +658,13 @@ abstract class Zend_Date_DateObject {
     {
 
         // actual timestamp
-        if ($timestamp === null) {
+        if (!is_numeric($timestamp)) {
             return getdate();
         }
 
         // 32bit timestamp
         if (abs($timestamp) <= 0x7FFFFFFF) {
-            return @getdate($timestamp);
+            return @getdate((int) $timestamp);
         }
 
         if (isset(self::$_cache)) {
@@ -895,10 +895,10 @@ abstract class Zend_Date_DateObject {
         if (abs($this->_unixTimestamp) <= 0x7FFFFFFF) {
             if ($rise === false) {
                 return date_sunset($this->_unixTimestamp, SUNFUNCS_RET_TIMESTAMP, $location['latitude'],
-                                   $location['longitude'], 90 + $horizon, $this->_offset / 3600);
+                                   $location['longitude'], 90 + $horizon, $this->getGmtOffset() / 3600);
             }
             return date_sunrise($this->_unixTimestamp, SUNFUNCS_RET_TIMESTAMP, $location['latitude'],
-                                $location['longitude'], 90 + $horizon, $this->_offset / 3600);
+                                $location['longitude'], 90 + $horizon, $this->getGmtOffset() / 3600);
         }
 
         // self calculation - timestamp bigger than 32bit
@@ -1041,6 +1041,17 @@ abstract class Zend_Date_DateObject {
      */
     public function getGmtOffset()
     {
-        return $this->_offset;
+        $date   = $this->getDateParts($this->getUnixTimestamp(), true);
+        $zone   = @date_default_timezone_get();
+        $result = @date_default_timezone_set($this->_timezone);
+        if ($result === true) {
+            $offset = $this->mktime($date['hours'], $date['minutes'], $date['seconds'],
+                                    $date['mon'], $date['mday'], $date['year'], false)
+                    - $this->mktime($date['hours'], $date['minutes'], $date['seconds'],
+                                    $date['mon'], $date['mday'], $date['year'], true);
+        }
+        date_default_timezone_set($zone);
+
+        return $offset;
     }
 }

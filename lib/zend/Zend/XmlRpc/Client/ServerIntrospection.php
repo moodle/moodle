@@ -15,14 +15,10 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
-
-
-/** Zend_XmlRpc_Client_IntrospectException */
-require_once 'Zend/XmlRpc/Client/IntrospectException.php';
-
 
 /**
  * Wraps the XML-RPC system.* introspection methods
@@ -30,7 +26,7 @@ require_once 'Zend/XmlRpc/Client/IntrospectException.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Client_ServerIntrospection
@@ -60,6 +56,7 @@ class Zend_XmlRpc_Client_ServerIntrospection
     {
         $methods = $this->listMethods();
 
+        require_once 'Zend/XmlRpc/Client/FaultException.php';
         try {
             $signatures = $this->getSignatureForEachMethodByMulticall($methods);
         } catch (Zend_XmlRpc_Client_FaultException $e) {
@@ -98,11 +95,13 @@ class Zend_XmlRpc_Client_ServerIntrospection
         if (! is_array($serverSignatures)) {
             $type = gettype($serverSignatures);
             $error = "Multicall return is malformed.  Expected array, got $type";
+            require_once 'Zend/XmlRpc/Client/IntrospectException.php';
             throw new Zend_XmlRpc_Client_IntrospectException($error);
         }
 
         if (count($serverSignatures) != count($methods)) {
             $error = 'Bad number of signatures received from multicall';
+            require_once 'Zend/XmlRpc/Client/IntrospectException.php';
             throw new Zend_XmlRpc_Client_IntrospectException($error);
         }
 

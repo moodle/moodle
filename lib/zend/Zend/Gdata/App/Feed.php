@@ -15,8 +15,10 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage App
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
 
 /**
@@ -34,7 +36,8 @@ require_once 'Zend/Gdata/App/FeedSourceParent.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage App
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
@@ -89,9 +92,9 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
      * @param DOMDocument $doc
      * @return DOMElement
      */
-    public function getDOM($doc = null)
+    public function getDOM($doc = null, $majorVersion = 1, $minorVersion = null)
     {
-        $element = parent::getDOM($doc);
+        $element = parent::getDOM($doc, $majorVersion, $minorVersion);
         foreach ($this->_entry as $entry) {
             $element->appendChild($entry->getDOM($element->ownerDocument));
         }
@@ -111,6 +114,8 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
         case $this->lookupNamespace('atom') . ':' . 'entry':
             $newEntry = new $this->_entryClassName($child);
             $newEntry->setHttpClient($this->getHttpClient());
+            $newEntry->setMajorProtocolVersion($this->getMajorProtocolVersion());
+            $newEntry->setMinorProtocolVersion($this->getMinorProtocolVersion());
             $this->_entry[] = $newEntry;
             break;
         default:
@@ -223,7 +228,8 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
      * @param Zend_Gdata_App_Entry $value The value to set
      * @return void
      */
-    public function offsetSet($key, $value) {
+    public function offsetSet($key, $value)
+    {
         $this->_entry[$key] = $value;
     }
 
@@ -233,7 +239,8 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
      * @param int $key The index to get
      * @param Zend_Gdata_App_Entry $value The value to set
      */
-    public function offsetGet($key) {
+    public function offsetGet($key)
+    {
         if (array_key_exists($key, $this->_entry)) {
             return $this->_entry[$key];
         }
@@ -245,7 +252,8 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
      * @param int $key The index to set
      * @param Zend_Gdata_App_Entry $value The value to set
      */
-    public function offsetUnset($key) {
+    public function offsetUnset($key)
+    {
         if (array_key_exists($key, $this->_entry)) {
             unset($this->_entry[$key]);
         }
@@ -257,8 +265,88 @@ class Zend_Gdata_App_Feed extends Zend_Gdata_App_FeedSourceParent
      * @param int $key The index to check for existence
      * @return boolean
      */
-    public function offsetExists($offset) {
+    public function offsetExists($key)
+    {
         return (array_key_exists($key, $this->_entry));
+    }
+
+   /**
+     * Retrieve the next set of results from this feed.
+     *
+     * @throws Zend_Gdata_App_Exception
+     * @return mixed|null Returns the next set of results as a feed of the same
+     *          class as this feed, or null if no results exist.
+     */
+    public function getNextFeed()
+    {
+        $nextLink = $this->getNextLink();
+        if (!$nextLink) {
+            require_once 'Zend/Gdata/App/HttpException.php';
+            throw new Zend_Gdata_App_Exception('No link to next set ' .
+            'of results found.');
+        }
+        $nextLinkHref = $nextLink->getHref();
+        $service = new Zend_Gdata_App($this->getHttpClient());
+
+        return $service->getFeed($nextLinkHref, get_class($this));
+    }
+
+   /**
+     * Retrieve the previous set of results from this feed.
+     *
+     * @throws Zend_Gdata_App_Exception
+     * @return mixed|null Returns the previous set of results as a feed of
+     *          the same class as this feed, or null if no results exist.
+     */
+    public function getPreviousFeed()
+    {
+        $previousLink = $this->getPreviousLink();
+        if (!$previousLink) {
+            require_once 'Zend/Gdata/App/HttpException.php';
+            throw new Zend_Gdata_App_Exception('No link to previous set ' .
+            'of results found.');
+        }
+        $previousLinkHref = $previousLink->getHref();
+        $service = new Zend_Gdata_App($this->getHttpClient());
+
+        return $service->getFeed($previousLinkHref, get_class($this));
+    }
+
+    /**
+     * Set the major protocol version that should be used. Values < 1 will
+     * cause a Zend_Gdata_App_InvalidArgumentException to be thrown.
+     *
+     * This value will be propogated to all child entries.
+     *
+     * @see _majorProtocolVersion
+     * @param (int|NULL) $value The major protocol version to use.
+     * @throws Zend_Gdata_App_InvalidArgumentException
+     */
+    public function setMajorProtocolVersion($value)
+    {
+        parent::setMajorProtocolVersion($value);
+        foreach ($this->entries as $entry) {
+            $entry->setMajorProtocolVersion($value);
+        }
+    }
+
+    /**
+     * Set the minor protocol version that should be used. If set to NULL, no
+     * minor protocol version will be sent to the server. Values < 0 will
+     * cause a Zend_Gdata_App_InvalidArgumentException to be thrown.
+     *
+     * This value will be propogated to all child entries.
+     *
+     * @see _minorProtocolVersion
+     * @param (int|NULL) $value The minor protocol version to use.
+     * @throws Zend_Gdata_App_InvalidArgumentException
+     */
+    public function setMinorProtocolVersion($value)
+    {
+        parent::setMinorProtocolVersion($value);
+        foreach ($this->entries as $entry) {
+            $entry->setMinorProtocolVersion($value);
+        }
     }
 
 }

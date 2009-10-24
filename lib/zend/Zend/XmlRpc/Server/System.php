@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,15 +26,20 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Server_System
 {
     /**
+     * @var Zend_XmlRpc_Server
+     */
+    protected $_server;
+
+    /**
      * Constructor
-     * 
-     * @param  Zend_XmlRpc_Server $server 
+     *
+     * @param  Zend_XmlRpc_Server $server
      * @return void
      */
     public function __construct(Zend_XmlRpc_Server $server)
@@ -65,7 +70,8 @@ class Zend_XmlRpc_Server_System
     {
         $table = $this->_server->getDispatchTable();
         if (!$table->hasMethod($method)) {
-            throw new Zend_Server_Exception('Method "' . $method . '"does not exist', 640);
+            require_once 'Zend/XmlRpc/Server/Exception.php';
+            throw new Zend_XmlRpc_Server_Exception('Method "' . $method . '" does not exist', 640);
         }
 
         return $table->getMethod($method)->getMethodHelp();
@@ -81,7 +87,8 @@ class Zend_XmlRpc_Server_System
     {
         $table = $this->_server->getDispatchTable();
         if (!$table->hasMethod($method)) {
-            throw new Zend_Server_Exception('Method "' . $method . '"does not exist', 640);
+            require_once 'Zend/XmlRpc/Server/Exception.php';
+            throw new Zend_XmlRpc_Server_Exception('Method "' . $method . '" does not exist', 640);
         }
         $method = $table->getMethod($method)->toArray();
         return $method['prototypes'];
@@ -130,7 +137,13 @@ class Zend_XmlRpc_Server_System
                     $request->setMethod($method['methodName']);
                     $request->setParams($method['params']);
                     $response = $this->_server->handle($request);
-                    $responses[] = $response->getReturnValue();
+                    if ($response instanceof Zend_XmlRpc_Fault 
+                        || $response->isFault()
+                    ) {
+                        $fault = $response;
+                    } else {
+                        $responses[] = $response->getReturnValue();
+                    }
                 } catch (Exception $e) {
                     $fault = $this->_server->fault($e);
                 }

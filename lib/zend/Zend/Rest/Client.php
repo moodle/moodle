@@ -15,8 +15,9 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
 
 
@@ -33,7 +34,7 @@ require_once 'Zend/Uri.php';
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Client extends Zend_Service_Abstract
@@ -125,6 +126,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      *
      * @param string $path
      * @param array  $query Array of GET parameters
+     * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
     final public function restGet($path, array $query = null)
@@ -162,6 +164,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      *
      * @param string $path
      * @param mixed $data Raw data to send
+     * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
     final public function restPost($path, $data = null)
@@ -175,6 +178,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      *
      * @param string $path
      * @param mixed $data Raw data to send in request
+     * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
     final public function restPut($path, $data = null)
@@ -187,6 +191,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * Performs an HTTP DELETE request to $path.
      *
      * @param string $path
+     * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
     final public function restDelete($path)

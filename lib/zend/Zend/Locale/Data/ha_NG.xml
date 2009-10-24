@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision$"/>
+		<generation date="$Date$"/>
+		<language type="ha"/>
+		<territory type="NG"/>
+	</identity>
+	<alias source="ha_Latn_NG" path="//ldml"/>
+</ldml>

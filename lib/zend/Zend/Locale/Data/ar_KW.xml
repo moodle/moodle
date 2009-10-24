@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision$"/>
+		<generation date="$Date$"/>
+		<language type="ar"/>
+		<territory type="KW"/>
+	</identity>
+	<localeDisplayNames>
+		<scripts>
+			<script type="Ital">اللأيطالية القديمة</script>
+		</scripts>
+	</localeDisplayNames>
+</ldml>

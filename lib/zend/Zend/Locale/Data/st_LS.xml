@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision$"/>
+		<generation date="$Date$"/>
+		<language type="st"/>
+		<territory type="LS"/>
+	</identity>
+	<numbers>
+		<currencies>
+			<currency type="LSL">
+				<symbol>M</symbol>
+			</currency>
+		</currencies>
+	</numbers>
+</ldml>

@@ -256,7 +256,7 @@
     <location>zend</location>
     <name>Zend Framework</name>
     <license>new BSD</license>
-    <version>1.7.3</version>
+    <version>1.9.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>

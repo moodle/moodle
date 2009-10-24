@@ -15,8 +15,10 @@
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage App
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +31,8 @@ require_once 'Zend/Gdata/App/MediaSource.php';
  *
  * @category   Zend
  * @package    Zend_Gdata
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage App
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSource
@@ -50,8 +53,8 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
      * @var string
      */
     protected $_slug = null;
-    
-    /** 
+
+    /**
      * The content type for the attached file (example image/png)
      *
      * @return string The content type
@@ -61,7 +64,7 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
         return $this->_contentType;
     }
 
-    /** 
+    /**
      * Set the content type for the file attached (example image/png)
      *
      * @param string $value The content type
@@ -74,7 +77,7 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
     }
 
     /**
-     * Returns the Slug header value.  Used by some services to determine the 
+     * Returns the Slug header value.  Used by some services to determine the
      * title for the uploaded file.  Returns null if no slug should be used.
      *
      * @return string
@@ -84,7 +87,7 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
     }
 
     /**
-     * Sets the Slug header value.  Used by some services to determine the 
+     * Sets the Slug header value.  Used by some services to determine the
      * title for the uploaded file.  A null value indicates no slug header.
      *
      * @var string The slug value
@@ -134,7 +137,7 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
         $method = 'set'.ucfirst($name);
         if (method_exists($this, $method)) {
             return call_user_func(array(&$this, $method), $val);
-        } else if (isset($this->{'_' . $name}) || is_null($this->{'_' . $name})) {
+        } else if (isset($this->{'_' . $name}) || ($this->{'_' . $name} === null)) {
             $this->{'_' . $name} = $val;
         } else {
             require_once 'Zend/Gdata/App/InvalidArgumentException.php';
@@ -172,5 +175,5 @@ abstract class Zend_Gdata_App_BaseMediaSource implements Zend_Gdata_App_MediaSou
             }
         }
     }
-    
+
 }

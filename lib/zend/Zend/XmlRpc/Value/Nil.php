@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@ require_once 'Zend/XmlRpc/Value/Scalar.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Value_Nil extends Zend_XmlRpc_Value_Scalar
@@ -55,25 +55,6 @@ class Zend_XmlRpc_Value_Nil extends Zend_XmlRpc_Value_Scalar
     public function getValue()
     {
         return null;
-    }
-
-    /**
-     * Return the XML code representing the nil
-     * 
-     * @return string
-     */
-    public function saveXML()
-    {
-        if (! $this->_as_xml) {   // The XML was not generated yet
-            $dom   = new DOMDocument('1.0', 'UTF-8');
-            $value = $dom->appendChild($dom->createElement('value'));
-            $type  = $value->appendChild($dom->createElement($this->_type));
-
-            $this->_as_dom = $value;
-            $this->_as_xml = $this->_stripXmlDeclaration($dom);
-        }
-
-        return $this->_as_xml;
     }
 }
 

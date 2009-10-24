@@ -14,8 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
 
 /**
@@ -23,7 +24,7 @@
  * deserialization to detect the AMF marker and encoding types.
  *
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 final class Zend_Amf_Constants 
@@ -67,6 +68,8 @@ final class Zend_Amf_Constants
     const ET_EXTERNAL            = 0x01;
     const ET_DYNAMIC             = 0x02;
     const ET_PROXY               = 0x03;
+    
+    const FMS_OBJECT_ENCODING    = 0x01;
 
     /**
      * Special content length value that indicates "unknown" content length 
@@ -76,4 +79,9 @@ final class Zend_Amf_Constants
     const URL_APPEND_HEADER      = 'AppendToGatewayUrl';
     const RESULT_METHOD          = '/onResult';
     const STATUS_METHOD          = '/onStatus';
+    const CREDENTIALS_HEADER     = 'Credentials';
+    const PERSISTENT_HEADER      = 'RequestPersistentHeader';
+    const DESCRIBE_HEADER        = 'DescribeService';
+    
+    const GUEST_ROLE             = 'anonymous';
 }

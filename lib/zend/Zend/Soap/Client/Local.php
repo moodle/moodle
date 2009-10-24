@@ -14,20 +14,17 @@
  *
  * @category   Zend
  * @package    Zend_Soap
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @subpackage Client
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @version    $Id$
  */
-
-/** Zend_Soap_Client_Exception */
-require_once 'Zend/Soap/Server/Exception.php';
-
 
 /** Zend_Soap_Server */
 require_once 'Zend/Soap/Server.php';
 
 /** Zend_Soap_Client */
 require_once 'Zend/Soap/Client.php';
-
 
 if (extension_loaded('soap')) {
 
@@ -41,6 +38,7 @@ if (extension_loaded('soap')) {
  *
  * @category   Zend
  * @package    Zend_Soap
+ * @subpackage Client
  */
 class Zend_Soap_Client_Local extends Zend_Soap_Client
 {
