@@ -175,12 +175,13 @@ class question_edit_multianswer_form extends question_edit_form {
     
             }
             echo '</div>';
-            if ( ($countsavedsubquestions > $countsubquestions) ||$this->type_change || ($this->used_in_quiz && ($countsavedsubquestions < $countsubquestions))){
+            $this->negative_diff =$countsavedsubquestions - $countsubquestions ;
+            if ( ($this->negative_diff > 0 ) ||$this->type_change || ($this->used_in_quiz && $this->negative_diff != 0)){
                     $mform->addElement('header', 'additemhdr', "WARNING");
                 }
-            if($countsavedsubquestions > $countsubquestions) {
+            if($this->negative_diff > 0) {
                 //$this->used_in_quiz
-                $this->negative_diff =$countsavedsubquestions - $countsubquestions ;
+                
                             $mform->addElement('static', 'alert1', "<strong>"."Question deleted"."</strong>","<strong>".$this->negative_diff.get_string(' questions less than in the multtianswer question stored in the database','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
             }
             if($this->type_change )
@@ -193,14 +194,14 @@ class question_edit_multianswer_form extends question_edit_form {
             echo '</div>';
         }
         if( $this->used_in_quiz){
-        if($countsavedsubquestions < $countsubquestions) {
+        if($this->negative_diff < 0) {
             $diff = $countsubquestions - $countsavedsubquestions;
                         $mform->addElement('static', 'alert1', "<strong>"."Question added "."</strong>","<strong>".$diff.get_string(' questions more than in the multtianswer question stored in the database','qtype_multianswer')."</strong>");//$countsubquestions."-".$countsavedsubquestions
         }
                 $mform->addElement('header', 'additemhdr2', "This question is used in $this->nb_of_quiz  quiz(s), total attempt(s) : $this->nb_of_attempts ");
                              $mform->addElement('static', 'alertas', "<strong>"."YOU SHOULD NOT "."</strong>");//$countsubquestions."-".$countsavedsubquestions
          }
-        if ( $this->negative_diff || $this->used_in_quiz ){
+        if ( ($this->negative_diff > 0 || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ) ) &&  $this->reload ){
             $mform->addElement('header', 'additemhdr', get_string('The question will be saved as edited', 'qtype_calculatedsimple'));            
             $mform->addElement('checkbox', 'confirm','' ,get_string('I confirm that I want the question be saved as edited', 'qtype_calculatedsimple'));
             $mform->setDefault('confirm', 0);
