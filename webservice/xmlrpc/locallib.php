@@ -41,7 +41,7 @@ class webservice_xmlrpc_server extends webservice_zend_server {
     }
 
     /**
-     * Set up zend serice class
+     * Set up zend service class
      * @return void
      */
     protected function init_zend_server() {

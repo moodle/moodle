@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * SOAP web service entry point. The authentication is done via tokens.
+ * XML-RPC web service entry point. The authentication is done via tokens.
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
@@ -28,6 +28,14 @@ define('NO_MOODLE_COOKIES', true);
 require('../../config.php');
 require_once("$CFG->dirroot/webservice/soap/locallib.php");
 
+//ob_start();
+
+//TODO: for now disable all mess in xml
+/*
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+$CFG->debugdisplay = false;
+*/
 if (!webservice_protocol_is_enabled('soap')) {
     die;
 }
@@ -35,4 +43,5 @@ if (!webservice_protocol_is_enabled('soap')) {
 $server = new webservice_soap_server(true);
 $server->run();
 die;
+
 

@@ -101,7 +101,7 @@ abstract class webservice_zend_server implements webservice_server {
 
     /** @property string $password password of the local user */
     protected $password = null;
-    
+
     /** @property bool $simple true if simple auth used */
     protected $simple;
 
@@ -158,8 +158,7 @@ abstract class webservice_zend_server implements webservice_server {
         $response = $this->zend_server->handle();
 
 /*
-        $grrr = ob_get_clean();
-        error_log($grrr);
+        error_log(ob_get_clean());
         error_log($response);
 */
         // session cleanup
@@ -340,7 +339,7 @@ class '.$classname.' {
     }
 
     /**
-     * Set up zend serice class
+     * Set up zend service class
      * @return void
      */
     protected function init_zend_server() {
@@ -467,13 +466,23 @@ class '.$classname.' {
         $this->session_cleanup($ex);
 
         // now let the plugin send the exception to client
-        $this->send_headers();
-        echo $this->zend_server->fault($ex);
+        $this->send_error($ex);
 
         // not much else we can do now, add some logging later
         exit(1);
     }
 
+    /**
+     * Send the error information to the WS client
+     * formatted as XML document.
+     * @param exception $ex
+     * @return void
+     */
+    protected function send_error($ex=null) {
+        $this->send_headers();
+        echo $this->zend_server->fault($ex);
+    }
+    
     /**
      * Future hook needed for emulated sessions.
      * @param exception $exception null means normal termination, $exception received when WS call failed
