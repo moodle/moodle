@@ -14,22 +14,17 @@
  *
  * @category  Zend
  * @package   Zend_Uri
- * @copyright Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
-
-/**
- * @see Zend_Loader
- */
-require_once 'Zend/Loader.php';
 
 /**
  * Abstract class for all Zend_Uri handlers
  *
  * @category  Zend
  * @package   Zend_Uri
- * @copyright Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Uri
@@ -41,6 +36,15 @@ abstract class Zend_Uri
      */
     protected $_scheme = '';
 
+    /**
+     * Global configuration array
+     *
+     * @var array
+     */
+    static protected $_config = array(
+        'allow_unwise' => false
+    );
+    
     /**
      * Return a string representation of this URI.
      *
@@ -119,7 +123,10 @@ abstract class Zend_Uri
                 break;
         }
 
-        Zend_Loader::loadClass($className);
+        if (!class_exists($className)) {
+            require_once 'Zend/Loader.php';
+            Zend_Loader::loadClass($className);
+        }
         $schemeHandler = new $className($scheme, $schemeSpecific);
 
         return $schemeHandler;
@@ -139,6 +146,18 @@ abstract class Zend_Uri
         }
     }
 
+    /**
+     * Set global configuration options
+     *
+     * @param array $config
+     */
+    static public function setConfig(array $config)
+    {
+        foreach ($config as $k => $v) {
+            self::$_config[$k] = $v;
+        }
+    }
+    
     /**
      * Zend_Uri and its subclasses cannot be instantiated directly.
      * Use Zend_Uri::factory() to return a new Zend_Uri object.
