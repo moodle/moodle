@@ -33,8 +33,8 @@ class webservice_rest_server extends webservice_base_server {
     /**
      * Contructor
      */
-    public function __construct() {
-        parent::__construct();
+    public function __construct($simple) {
+        parent::__construct($simple);
         $this->wsname = 'rest';
     }
 

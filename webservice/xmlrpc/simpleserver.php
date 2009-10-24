@@ -39,8 +39,8 @@ if (!webservice_protocol_is_enabled('xmlrpc')) {
     die;
 }
 
-$server = new webservice_xmlrpc_server();
-$server->run(true);
+$server = new webservice_xmlrpc_server(true);
+$server->run();
 die;
 
 

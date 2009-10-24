@@ -61,10 +61,9 @@ function webservice_protocol_is_enabled($protocol) {
 interface webservice_server {
     /**
      * Process request from client.
-     * @param bool $simple use simple authentication
      * @return void
      */
-    public function run($simple);
+    public function run();
 }
 
 /**
@@ -108,8 +107,10 @@ abstract class webservice_zend_server implements webservice_server {
 
     /**
      * Contructor
+     * @param bool $simple use simple authentication
      */
-    public function __construct($zend_class) {
+    public function __construct($simple, $zend_class) {
+        $this->simple = $simple;
         $this->zend_class = $zend_class;
     }
 
@@ -118,9 +119,7 @@ abstract class webservice_zend_server implements webservice_server {
      * @param bool $simple use simple authentication
      * @return void
      */
-    public function run($simple) {
-        $this->simple = $simple;
-
+    public function run() {
         // we will probably need a lot of memory in some functions
         @raise_memory_limit('128M');
 
@@ -143,9 +142,12 @@ abstract class webservice_zend_server implements webservice_server {
         // make a list of all functions user is allowed to excecute
         $this->init_service_class();
 
-        // start the server
+        // tell server what functions are available
         $this->zend_server->setClass($this->service_class);
+
+        // execute and return response, this sends some headers too
         $response = $this->zend_server->handle();
+
 /*
         $grrr = ob_get_clean();
         error_log($grrr);
@@ -333,14 +335,7 @@ class '.$classname.' {
      * @return void
      */
     protected function init_zend_server() {
-        include "Zend/Loader.php";
-        Zend_Loader::registerAutoload();
-        //TODO: set up some server options and debugging too - maybe a new method
-        //TODO: add some zend exeption handler too
         $this->zend_server = new $this->zend_class();
-
-        // TODO: solve debugging level somehow
-        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
     }
 
     /**
@@ -499,8 +494,10 @@ abstract class webservice_base_server implements webservice_server {
 
     /**
      * Contructor
+     * @param bool $simple use simple authentication
      */
-    public function __construct() {
+    public function __construct($simple) {
+        $this->simple = $simple;
     }
 
     /**
@@ -528,12 +525,9 @@ abstract class webservice_base_server implements webservice_server {
 
     /**
      * Process request from client.
-     * @param bool $simple use simple authentication
      * @return void
      */
-    public function run($simple) {
-        $this->simple = $simple;
-
+    public function run() {
         // we will probably need a lot of memory in some functions
         @raise_memory_limit('128M');
 

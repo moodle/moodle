@@ -32,8 +32,8 @@ if (!webservice_protocol_is_enabled('rest')) {
     die;
 }
 
-$server = new webservice_rest_server();
-$server->run(true);
+$server = new webservice_rest_server(true);
+$server->run();
 die;
 
 

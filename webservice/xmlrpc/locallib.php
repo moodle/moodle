@@ -32,10 +32,22 @@ require_once("$CFG->dirroot/webservice/lib.php");
 class webservice_xmlrpc_server extends webservice_zend_server {
     /**
      * Contructor
+     * @param bool $simple use simple authentication
      */
-    public function __construct() {
-        parent::__construct('Zend_XmlRpc_Server');
+    public function __construct($simple) {
+        require_once 'Zend/XmlRpc/Server.php';
+        parent::__construct($simple, 'Zend_XmlRpc_Server');
         $this->wsname = 'xmlrpc';
+    }
+
+    /**
+     * Set up zend serice class
+     * @return void
+     */
+    protected function init_zend_server() {
+        parent::init_zend_server();
+        // this exception indicates request failed
+        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
     }
 }
 
@@ -54,8 +66,7 @@ class webservice_xmlrpc_test_client implements webservice_test_client_interface 
         //zend expects 0 based array with numeric indexes
         $params = array_values($params);
 
-        include "Zend/Loader.php";
-        Zend_Loader::registerAutoload();
+        require_once 'Zend/XmlRpc/Client.php';
         $client = new Zend_XmlRpc_Client($serverurl);
         return $client->call($function, $params);
     }
