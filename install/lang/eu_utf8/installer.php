@@ -19,6 +19,12 @@ $string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde.';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu';
 $string['chooselanguagehead'] = 'Aukeratu hizkuntza bat';
 $string['chooselanguagesub'] = 'Instalazio-prozesurako hizkuntza aukeratu, mesedez.';
+$string['cliincorrectvalueerror'] = 'Errorea, \"$a->value\" balorea ez da egokia \"$a->option\"-rako';
+$string['cliincorrectvalueretry'] = 'Balore ezegokia, mesedez saiatu berriz';
+$string['clitypevalue'] = 'Sartu balorea';
+$string['clitypevaluedefault'] = 'sartu balorea, sakatu Enter-i berezko balorea erabiltzeko ($a)';
+$string['cliunknowoption'] = 'Aukera ezezagunak:$a
+.Mesedez, erabili --laguntza aukera.';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['dirroot'] = 'Moodle-ren direktorioa';
 $string['environment'] = 'Ingurunea';
