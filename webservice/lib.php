@@ -96,6 +96,12 @@ abstract class webservice_zend_server implements webservice_server {
     /** @property string $wsname name of the web server plugin */
     protected $wsname = null;
 
+    /** @property string $username name of local user */
+    protected $username = null;
+
+    /** @property string $password password of the local user */
+    protected $password = null;
+    
     /** @property bool $simple true if simple auth used */
     protected $simple;
 
@@ -135,6 +141,9 @@ abstract class webservice_zend_server implements webservice_server {
         // the other system understands
         // we do not need to call the original default handler because this ws handler does everything
         set_exception_handler(array($this, 'exception_handler'));
+
+        // init all properties from the request data
+        $this->parse_request();
 
         // this sets up $USER and $SESSION and context restrictions
         $this->authenticate_user();
@@ -339,6 +348,32 @@ class '.$classname.' {
     }
 
     /**
+     * This method parses the $_REQUEST superglobal and looks for
+     * the following information:
+     *  1/ user authentication - username+password or token (wsusername, wspassword and wstoken parameters)
+     *
+     * @return void
+     */
+    protected function parse_request() {
+        if ($this->simple) {
+            //note: some clients have problems with entity encoding, this is a horrible hack that solves this
+            if (isset($_REQUEST['wsusername'])) {
+                $this->username = $_REQUEST['wsusername'];
+            } else {
+                $this->username = null;
+            }
+            if (isset($_REQUEST['wspassword'])) {
+                $this->password = $_REQUEST['wspassword'];
+            } else {
+                $this->password = null;
+            }
+        } else {
+            //TODO
+            die('not implemented yet');
+        }
+    }
+
+    /**
      * Authenticate user using username+password or token.
      * This function sets up $USER global.
      * It is safe to use has_capability() after this.
@@ -365,20 +400,20 @@ class '.$classname.' {
             }
 
             // the username is hardcoded as URL parameter because we can not easily parse the request data :-(
-            if (!$username = optional_param('wsusername', '', PARAM_RAW)) {
+            if (!$this->username) {
                 throw new webservice_access_exception('Missing username');
             }
 
             // the password is hardcoded as URL parameter because we can not easily parse the request data :-(
-            if (!$password = optional_param('wspassword', '', PARAM_RAW)) {
+            if (!$this->password) {
                 throw new webservice_access_exception('Missing password');
             }
 
-            if (!$auth->user_login_webservice($username, $password)) {
+            if (!$auth->user_login_webservice($this->username, $this->password)) {
                 throw new webservice_access_exception('Wrong username or password');
             }
 
-            $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+            $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
 
             // now fake user login, the session is completely empty too
             session_set_user($user);
