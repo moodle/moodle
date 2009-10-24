@@ -211,7 +211,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
         $currenttext = file_prepare_draft_area($draftid_editor, $contextid, $filearea, $itemid, $options, $data->{$field});
         $data->{$field.'_editor'} = array('text'=>$currenttext, 'format'=>$data->{$field.'format'}, 'itemid'=>$draftid_editor);
     } else {
-        $data->{$field.'_editor'} = array('text'=>$data->{$field}, 'format'=>$data->{$field.'format'}, 0);
+        $data->{$field.'_editor'} = array('text'=>$data->{$field}, 'format'=>$data->{$field.'format'}, 'itemid'=>0);
     }
 
     return $data;
