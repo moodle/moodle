@@ -84,7 +84,7 @@ class navigation_node_test extends UnitTestCase {
         // Add a node with the minimum args required
         $key2 = $this->node->add('test_add_2',null, navigation_node::TYPE_CUSTOM,'testadd2');
         $key3 = $this->node->add(str_repeat('moodle ', 15),str_repeat('moodle', 15));
-        $this->assertEqual('key',$key1);
+        $this->assertEqual('key:'.navigation_node::TYPE_COURSE,$key1);
         $this->assertEqual($key2, $this->node->get($key2)->key);
         $this->assertEqual($key3, $this->node->get($key3)->key);
         $this->assertIsA($this->node->get('key'), 'navigation_node');
@@ -106,7 +106,7 @@ class navigation_node_test extends UnitTestCase {
         global $CFG;
         $path = array('demo3','demo5');
         $key1 = $this->node->add_to_path($path,'testatp1', 'Test add to path 1', 'testatp1',  navigation_node::TYPE_COURSE, 'http://www.moodle.org/', $CFG->httpswwwroot . '/pix/i/course.gif');
-        $this->assertEqual($key1, 'testatp1');
+        $this->assertEqual($key1, 'testatp1:'.navigation_node::TYPE_COURSE);
 
         // This should generate an exception as we have not provided any text for
         // the node
@@ -157,7 +157,8 @@ class navigation_node_test extends UnitTestCase {
         $content5 = $this->node->get('hiddendemo1')->get('hiddendemo3')->content();
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo1')->action->out()), $content1);
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('demo3')->action->out()), $content2);
-        $this->assertEqual($content3, 'A fake help button<span class="clearhelpbutton"><span class="dimmed_text" title="This is a title">demo5</span></span>');
+        $this->assert(new ContainsTagWithAttribute('span','class','dimmed_text'), $content3);
+        #$this->assertEqual($content3, 'A fake help button<span class="clearhelpbutton"><span class="dimmed_text" title="This is a title">demo5</span></span>');
         $this->assert(new ContainsTagWithAttribute('a','href',$this->node->get('hiddendemo1')->get('hiddendemo2')->action->out()), $content4);
         $this->assertTrue(empty($content5));
     }
@@ -221,7 +222,7 @@ class navigation_node_test extends UnitTestCase {
             $name .= $expandable[2]['branchid'];
             $name .= $expandable[3]['branchid'];
             $name .= $expandable[4]['branchid'];
-            $this->assertEqual($name, 'demo1demo2demo4hiddendemo2hiddendemo3');
+            $this->assertEqual($name, 'demo1:20demo2:20demo4:20hiddendemo2:20hiddendemo3:20');
         }
     }
 

@@ -749,11 +749,14 @@ class navigation_node {
      * @param string|int $key The key that identifies a child node
      * @return bool
      */
-    public function remove_child($key) {
-        if (array_key_exists($key, $this->children)) {
-            unset($this->children[$key]);
+    public function remove_child($key, $type=null) {
+        $child = $this->get($key, $type);
+
+        if ($child) {
+            unset($this->children[$child->key]);
             return true;
         }
+
         return false;
     }
 
