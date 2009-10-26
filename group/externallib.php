@@ -63,6 +63,7 @@ class moodle_group_external extends external_api {
         // ideally create all groups or none at all, unfortunately myisam engine does not support transactions :-(
         $DB->begin_sql();
         try {
+//TODO: there is a potential problem with events propagating actions to external systems :-(
             $groups = array();
 
             foreach ($params['groups'] as $group) {
@@ -218,8 +219,16 @@ class moodle_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function delete_groups_parameters() {
-        //TODO
+        return new external_function_parameters(
+            array(
+                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID')),
+            )
+        );
     }
 
     /**
@@ -233,32 +242,51 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
 
-        $groups = array();
+        $DB->begin_sql();
+        try {
+// TODO: this is problematic because the DB rollback does not handle deleting of images!!
+//       there is also potential problem with events propagating action to external systems :-(
+            foreach ($params['groupids'] as $groupid) {
+                // validate params
+                $groupid = validate_param($groupid, PARAM_INTEGER);
+                if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
+                    // silently ignore attempts to delete nonexisting groups
+                    continue;
+                }
 
-        foreach ($params['groupids'] as $groupid) {
-            // validate params
-            $groupid = validate_param($groupid, PARAM_INTEGER);
-            if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
-                // silently ignore attempts to delete nonexisting groups
-                continue;
+                // now security checks
+                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+                self::validate_context($context);
+                require_capability('moodle/course:managegroups', $context);
+
+                groups_delete_group($group);
             }
-
-            // now security checks
-            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
-            require_capability('moodle/course:managegroups', $context);
-
-            groups_delete_group($group);
+        } catch (Exception $ex) {
+            $DB->rollback_sql();
+            throw $ex;
         }
+        $DB->commit_sql();
     }
 
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function delete_groups_returns() {
-        //TODO
+        return null;
     }
 
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function get_groupmembers_parameters() {
-        //TODO
+        return new external_function_parameters(
+            array(
+                'groupids' => new external_multiple_structure(new external_value(PARAM_INT, 'Group ID')),
+            )
+        );
     }
 
     /**
@@ -267,7 +295,7 @@ class moodle_group_external extends external_api {
      * @return array with  group id keys containing arrays of user ids
      */
     public static function get_groupmembers($groupids) {
-        $groups = array();
+        $members = array();
 
         $params = self::validate_parameters(self::get_groupmembers_parameters(), array('groupids'=>$groupids));
 
@@ -281,19 +309,41 @@ class moodle_group_external extends external_api {
 
             $groupmembers = groups_get_members($group->id, 'u.id', 'lastname ASC, firstname ASC');
 
-            $groups[$group->id] = array_keys($groupmembers);
+            $members[] = array('groupid'=>$groupid, 'userids'=>array_keys($groupmembers));
         }
 
-        return $groups;
+        return $members;
     }
 
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function get_groupmembers_returns() {
-        //TODO
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'groupid' => new external_value(PARAM_INT, 'group record id'),
+                    'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user id')),
+                )
+            )
+        );
     }
 
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function add_groupmembers_parameters() {
-        //TODO
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'groupid' => new external_value(PARAM_INT, 'group record id'),
+                    'userid' => new external_value(PARAM_INT, 'user id'),
+                )
+            )
+        );
     }
 
     /**
@@ -307,31 +357,53 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::add_groupmembers_parameters(), array('members'=>$members));
 
-        foreach ($params['members'] as $member) {
-            // validate params
-            $groupid = $member['groupid'];
-            $userid = $member['userid'];
+        $DB->begin_sql();
+        try {
+// TODO: there is a potential problem with events propagating action to external systems :-(
+            foreach ($params['members'] as $member) {
+                // validate params
+                $groupid = $member['groupid'];
+                $userid = $member['userid'];
 
-            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
-            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
+                $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+                $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
-            // now security checks
-            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
-            require_capability('moodle/course:managegroups', $context);
-            require_capability('moodle/course:view', $context, $user->id, false); // only enrolled users may be members of group!!!
+                // now security checks
+                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+                self::validate_context($context);
+                require_capability('moodle/course:managegroups', $context);
 
-            groups_add_member($group, $user);
+                groups_add_member($group, $user);
+            }
+        } catch (Exception $ex) {
+            $DB->rollback_sql();
+            throw $ex;
         }
+        $DB->commit_sql();
     }
 
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function add_groupmembers_returns() {
-        //TODO
+        return null;
     }
 
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function delete_groupmembers_parameters() {
-        //TODO
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'groupid' => new external_value(PARAM_INT, 'group record id'),
+                    'userid' => new external_value(PARAM_INT, 'user id'),
+                )
+            )
+        );
     }
 
     /**
@@ -345,25 +417,37 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::delete_groupmembers_parameters(), array($members=>'members'));
 
+        $DB->begin_sql();
+        try {
+// TODO: there is a potential problem with events propagating action to external systems :-(
         foreach ($params['members'] as $member) {
-            // validate params
-            $groupid = $member['groupid'];
-            $userid = $member['userid'];
+                // validate params
+                $groupid = $member['groupid'];
+                $userid = $member['userid'];
 
-            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
-            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
+                $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+                $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
-            // now security checks
-            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-            self::validate_context($context);
-            require_capability('moodle/course:managegroups', $context);
+                // now security checks
+                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+                self::validate_context($context);
+                require_capability('moodle/course:managegroups', $context);
 
-            groups_remove_member($group, $user);
+                groups_remove_member($group, $user);
+            }
+        } catch (Exception $ex) {
+            $DB->rollback_sql();
+            throw $ex;
         }
+        $DB->commit_sql();
     }
 
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function delete_groupmembers_returns() {
-        //TODO
+        return null;
     }
 
 }
