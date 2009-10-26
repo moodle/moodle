@@ -16,23 +16,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * AMF web service entry point. The authentication is done via tokens.
+ * AMF web service implementation classes and methods.
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_MOODLE_COOKIES', true);
+require_once("$CFG->dirroot/webservice/lib.php");
 
-require('../../config.php');
-require_once("$CFG->dirroot/webservice/amf/locallib.php");
+/**
+ * AMF service server implementation.
+ * @author Petr Skoda (skodak)
+ */
+class webservice_amf_server extends webservice_zend_server {
+    /**
+     * Contructor
+     * @param bool $simple use simple authentication
+     */
+    public function __construct($simple) {
+        require_once 'Zend/Amf/Server.php';
+        parent::__construct($simple, 'Zend_Amf_Server');
+        $this->wsname = 'amf';
+    }
 
-if (!webservice_protocol_is_enabled('amf')) {
-    die;
+    /**
+     * Set up zend service class
+     * @return void
+     */
+    protected function init_zend_server() {
+        parent::init_zend_server();
+        // TODO: add some exception handling
+    }
 }
 
-$server = new webservice_amf_server(true);
-$server->run();
-die;
-
+// TODO: implement AMF test client somehow, maybe we could use moodle form to feed the data to the flash app somehow

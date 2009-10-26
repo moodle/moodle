@@ -28,6 +28,13 @@ define('NO_MOODLE_COOKIES', true);
 require('../../config.php');
 require_once("$CFG->dirroot/webservice/amf/locallib.php");
 
+//ob_start();
+
+//TODO: for now disable all mess in xml
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+$CFG->debugdisplay = false;
+
 if (!webservice_protocol_is_enabled('amf')) {
     die;
 }
@@ -35,4 +42,5 @@ if (!webservice_protocol_is_enabled('amf')) {
 $server = new webservice_amf_server(true);
 $server->run();
 die;
+
 

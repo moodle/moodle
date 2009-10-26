@@ -1,6 +1,7 @@
 <?php
 require "../../../config.php";
 
+die('TODO');
 
 $args['movie'] = $CFG->wwwroot.'/webservice/amf/testclient/moodleclient.swf';
 $args['width'] = '100%';

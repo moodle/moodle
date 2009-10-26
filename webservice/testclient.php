@@ -52,6 +52,11 @@ foreach ($active_protocols as $p) {
     if (empty($available_protocols[$p])) {
         continue;
     }
+    include_once($available_protocols[$p].'/locallib.php');
+    if (!class_exists('webservice_'.$p.'_test_client')) {
+        // test client support not implemented
+        continue;
+    }
     $protocols[$p] = get_string('pluginname', 'webservice_'.$p);
 }
 if (!isset($protocols[$protocol])) { // whitelisting security
