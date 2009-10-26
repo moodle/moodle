@@ -346,7 +346,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
             }
         }
-        if (( $this->negative_diff || $this->used_in_quiz )&& $this->confirm == 0 ){
+        if (( $this->negative_diff || $this->used_in_quiz && ($this->negative_diff > 0 ||$this->negative_diff < 0 || $this->type_change ))&& $this->confirm == 0 ){
             $this->_form->setElementError('confirm',"confirm then save");
         } 
        $default_values['alertas']= "<strong>".get_string(" 
