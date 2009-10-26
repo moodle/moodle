@@ -4056,6 +4056,14 @@ function get_capability_string($capabilityname) {
             $string = get_string($stringname, 'repository_'.$componentname);
         break;
 
+        case 'local':
+            $string = get_string($stringname, 'local_'.$componentname);
+        break;
+
+        case 'webservice':
+            $string = get_string($stringname, 'webservice_'.$componentname);
+        break;
+        
         default:
             $string = get_string($stringname);
         break;
@@ -4108,6 +4116,8 @@ function get_component_string($component, $contextlevel) {
                 $string = get_string('gradebook', 'admin');
             } else if (preg_match('|^coursereport/|', $component)) {
                 $string = get_string('coursereports');
+            } else if (preg_match('|^webservice/|', $component)) {
+                $string = get_string('webservices', 'webservice');
             } else {
                 $string = get_string('course');
             }

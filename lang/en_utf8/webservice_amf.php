@@ -1,3 +1,4 @@
 <?php
 
-$string['pluginname'] = 'AMF protocok';
+$string['amf:use'] = 'Use AMF protocol';
+$string['pluginname'] = 'AMF protocol';
