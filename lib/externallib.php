@@ -163,6 +163,13 @@ class external_api {
             if (is_array($params) or is_object($params)) {
                 throw new invalid_parameter_exception('Scalar type expected, array or object received.');
             }
+
+            if ($description->type == PARAM_BOOL) {
+                // special case for PARAM_BOOL - we want true/false instead of the usual 1/0 - we can not be too strict here ;-)
+                if (is_bool($params) or $params === 0 or $params === 1 or $params === '0' or $params === '1') {
+                    return (bool)$params;
+                }
+            }
             return validate_param($params, $description->type, $description->allownull, 'Invalid external api parameter');
 
         } else if ($description instanceof external_single_structure) {

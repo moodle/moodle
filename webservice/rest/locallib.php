@@ -127,6 +127,10 @@ class webservice_rest_server extends webservice_base_server {
             return '';
 
         } else if ($desc instanceof external_value) {
+            if (is_bool($returns)) {
+                // we want 1/0 instead of true/false here
+                $returns = (int)$returns;
+            }
             if (is_null($returns)) {
                 return '<VALUE null="null"/>'."\n";
             } else {
