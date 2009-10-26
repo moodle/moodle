@@ -21,7 +21,8 @@
 
 // TODO: this needs to be rewritten to use the new description format
 //       the problem here is that the list of functions is different for each use or even token
-//       I guess this should ne moved to server itself and it should require user auth
+//       I guess this should be moved to server itself and it should require user auth,
+//       SOAP does already support WSDL when parameters &wsdl=1 used
 die('TODO');
 
 /**

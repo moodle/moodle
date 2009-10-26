@@ -61,8 +61,13 @@ class webservice_rest_server extends webservice_base_server {
             $this->parameters = $_REQUEST;
 
         } else {
-            //TODO
-            die('not implemented yet');
+            $this->token = isset($_REQUEST['wstoken']) ? $_REQUEST['wstoken'] : null;
+            unset($_REQUEST['wstoken']);
+
+            $this->functionname = isset($_REQUEST['wsfunction']) ? $_REQUEST['wsfunction'] : null;
+            unset($_REQUEST['wsfunction']);
+
+            $this->parameters = $_REQUEST;
         }
     }
 

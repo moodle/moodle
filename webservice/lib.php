@@ -27,6 +27,7 @@ require_once($CFG->libdir.'/externallib.php');
 
 /**
  * Exception indicating access control problem in web service call
+ * @author Petr Skoda (skodak)
  */
 class webservice_access_exception extends moodle_exception {
     /**
@@ -54,20 +55,11 @@ function webservice_protocol_is_enabled($protocol) {
     return(in_array($protocol, $active));
 }
 
-/**
- * Mandatory web service server interface
- * @author Petr Skoda (skodak)
- */
-interface webservice_server {
-    /**
-     * Process request from client.
-     * @return void
-     */
-    public function run();
-}
+//=== WS classes ===
 
 /**
  * Mandatory test client interface.
+ * @author Petr Skoda (skodak)
  */
 interface webservice_test_client_interface {
     /**
@@ -81,17 +73,22 @@ interface webservice_test_client_interface {
 }
 
 /**
- * Special abstraction of our srvices that allows
- * interaction with stock Zend ws servers.
- * @author skodak
+ * Mandatory web service server interface
+ * @author Petr Skoda (skodak)
  */
-abstract class webservice_zend_server implements webservice_server {
+interface webservice_server_interface {
+    /**
+     * Process request from client.
+     * @return void
+     */
+    public function run();
+}
 
-    /** @property string name of the zend server class */
-    protected $zend_class;
-
-    /** @property object Zend server instance */
-    protected $zend_server;
+/**
+ * Abstract web service base class.
+ * @author Petr Skoda (skodak)
+ */
+abstract class webservice_server implements webservice_server_interface {
 
     /** @property string $wsname name of the web server plugin */
     protected $wsname = null;
@@ -105,11 +102,106 @@ abstract class webservice_zend_server implements webservice_server {
     /** @property bool $simple true if simple auth used */
     protected $simple;
 
-    /** @property string $service_class virtual web service class with all functions user name execute, created on the fly */
-    protected $service_class;
+    /** @property string $token authentication token*/
+    protected $token = null;
 
     /** @property object restricted context */
     protected $restricted_context;
+
+    /** @property int restrict call to one service id*/
+    protected $restricted_serviceid = null;
+
+    /**
+     * Authenticate user using username+password or token.
+     * This function sets up $USER global.
+     * It is safe to use has_capability() after this.
+     * This method also verifies user is allowed to use this
+     * server.
+     * @return void
+     */
+    protected function authenticate_user() {
+        global $CFG, $DB;
+
+        if (!NO_MOODLE_COOKIES) {
+            throw new coding_exception('Cookies must be disabled in WS servers!');
+        }
+
+        if (!is_enabled_auth('webservice')) {
+            throw new webservice_access_exception('WS auth not enabled');
+        }
+
+        if (!$auth = get_auth_plugin('webservice')) {
+            throw new webservice_access_exception('WS auth missing');
+        }
+
+        // NOTE: the exception details are here for debugging only, it is controlled via the $CFG->degug
+
+        if ($this->simple) {
+            $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
+
+            if (!$this->username) {
+                throw new webservice_access_exception('Missing username');
+            }
+
+            if (!$this->password) {
+                throw new webservice_access_exception('Missing password');
+            }
+
+            if (!$auth->user_login_webservice($this->username, $this->password)) {
+                // TODO: log failed login attempts
+                throw new webservice_access_exception('Wrong username or password');
+            }
+
+            $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
+
+        } else {
+            if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
+                // TODO: log failed login attempts
+                throw new webservice_access_exception('Invalid token');
+            }
+
+            if ($token->validuntil and $token->validuntil > time()) {
+                throw new webservice_access_exception('Invalid token');
+            }
+
+            if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+                throw new webservice_access_exception('Invalid token');
+            }
+
+            $this->restricted_context = get_context_instance_by_id($token->contextid);
+
+            $user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
+
+            // log token access
+            $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
+        }
+
+        // now fake user login, the session is completely empty too
+        session_set_user($user);
+
+        if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
+            throw new webservice_access_exception('Access to web service not allowed');
+        }
+
+        external_api::set_context_restriction($this->restricted_context);
+    }
+}
+
+/**
+ * Special abstraction of our srvices that allows
+ * interaction with stock Zend ws servers.
+ * @author Petr Skoda (skodak)
+ */
+abstract class webservice_zend_server extends webservice_server {
+
+    /** @property string name of the zend server class */
+    protected $zend_class;
+
+    /** @property object Zend server instance */
+    protected $zend_server;
+
+    /** @property string $service_class virtual web service class with all functions user name execute, created on the fly */
+    protected $service_class;
 
     /**
      * Contructor
@@ -178,32 +270,38 @@ abstract class webservice_zend_server implements webservice_server {
         global $USER, $DB;
 
         // first ofall get a complete list of services user is allowed to access
-        if ($this->simple) {
-            // now make sure the function is listed in at least one service user is allowed to use
-            // allow access only if:
-            //  1/ entry in the external_services_users table if required
-            //  2/ validuntil not reached
-            //  3/ has capability if specified in service desc
-            //  4/ iprestriction
 
-            $sql = "SELECT s.*, NULL AS iprestriction
-                      FROM {external_services} s
-                      JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0)
-                     WHERE s.enabled = 1
-
-                     UNION
-
-                    SELECT s.*, su.iprestriction
-                      FROM {external_services} s
-                      JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
-                      JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
-                     WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now";
-            $params = array('userid'=>$USER->id, 'now'=>time());
+        if ($this->restricted_serviceid) {
+            $params = array('sid1'=>$this->restricted_serviceid, 'sid2'=>$this->restricted_serviceid);
+            $wscond1 = 'AND s.id = :sid1';
+            $wscond2 = 'AND s.id = :sid2';
         } else {
-
-            //TODO: token may restrict access to one service only
-            die('not implemented yet');
+            $params = array();
+            $wscond1 = '';
+            $wscond2 = '';
         }
+
+        // now make sure the function is listed in at least one service user is allowed to use
+        // allow access only if:
+        //  1/ entry in the external_services_users table if required
+        //  2/ validuntil not reached
+        //  3/ has capability if specified in service desc
+        //  4/ iprestriction
+
+        $sql = "SELECT s.*, NULL AS iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0)
+                 WHERE s.enabled = 1 $wscond1
+
+                 UNION
+
+                SELECT s.*, su.iprestriction
+                  FROM {external_services} s
+                  JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
+                  JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
+                 WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+
+        $params = array_merge($params, array('userid'=>$USER->id, 'now'=>time()));
 
         $serviceids = array();
         $rs = $DB->get_recordset_sql($sql, $params);
@@ -321,8 +419,7 @@ class '.$classname.' {
             $return = '     * @return '.$type.' '.$function->returns_desc->desc;
         }
 
-        // now crate a virtual method that calls the ext implemenation
-        // TODO: add PHP docs and all missing info here
+        // now crate the virtual method that calls the ext implementation
 
         $code = '
     /**
@@ -355,80 +452,18 @@ class '.$classname.' {
      */
     protected function parse_request() {
         if ($this->simple) {
-            //note: some clients have problems with entity encoding, this is a horrible hack that solves this
+            //note: some clients have problems with entity encoding :-(
             if (isset($_REQUEST['wsusername'])) {
                 $this->username = $_REQUEST['wsusername'];
-            } else {
-                $this->username = null;
             }
             if (isset($_REQUEST['wspassword'])) {
                 $this->password = $_REQUEST['wspassword'];
-            } else {
-                $this->password = null;
             }
         } else {
-            //TODO
-            die('not implemented yet');
+            if (isset($_REQUEST['wstoken'])) {
+                $this->token = $_REQUEST['wstoken'];
+            }
         }
-    }
-
-    /**
-     * Authenticate user using username+password or token.
-     * This function sets up $USER global.
-     * It is safe to use has_capability() after this.
-     * This method also verifies user is allowed to use this
-     * server.
-     * @return void
-     */
-    protected function authenticate_user() {
-        global $CFG, $DB;
-
-        if (!NO_MOODLE_COOKIES) {
-            throw new coding_exception('Cookies must be disabled in WS servers!');
-        }
-
-        if ($this->simple) {
-            $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
-
-            if (!is_enabled_auth('webservice')) {
-                throw new webservice_access_exception('WS auth not enabled');
-            }
-
-            if (!$auth = get_auth_plugin('webservice')) {
-                throw new webservice_access_exception('WS auth missing');
-            }
-
-            // the username is hardcoded as URL parameter because we can not easily parse the request data :-(
-            if (!$this->username) {
-                throw new webservice_access_exception('Missing username');
-            }
-
-            // the password is hardcoded as URL parameter because we can not easily parse the request data :-(
-            if (!$this->password) {
-                throw new webservice_access_exception('Missing password');
-            }
-
-            if (!$auth->user_login_webservice($this->username, $this->password)) {
-                throw new webservice_access_exception('Wrong username or password');
-            }
-
-            $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
-
-            // now fake user login, the session is completely empty too
-            session_set_user($user);
-
-        } else {
-
-            //TODO: not implemented yet
-            die('token login not implemented yet');
-            //TODO: $this->restricted_context is derived from the token context
-        }
-
-        if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new webservice_access_exception('Access to web service not allowed');
-        }
-
-        external_api::set_context_restriction($this->restricted_context);
     }
 
     /**
@@ -482,7 +517,7 @@ class '.$classname.' {
         $this->send_headers();
         echo $this->zend_server->fault($ex);
     }
-    
+
     /**
      * Future hook needed for emulated sessions.
      * @param exception $exception null means normal termination, $exception received when WS call failed
@@ -498,31 +533,12 @@ class '.$classname.' {
 
 }
 
-
 /**
  * Web Service server base class, this class handles both
  * simple and token authentication.
  * @author Petr Skoda (skodak)
  */
-abstract class webservice_base_server implements webservice_server {
-
-    /** @property string $wsname name of the web server plugin */
-    protected $wsname = null;
-
-    /** @property bool $simple true if simple auth used */
-    protected $simple;
-
-    /** @property string $username name of local user */
-    protected $username = null;
-
-    /** @property string $password password of the local user */
-    protected $password = null;
-
-    /** @property string $token authentication token*/
-    protected $token = null;
-
-    /** @property object restricted context */
-    protected $restricted_context;
+abstract class webservice_base_server extends webservice_server {
 
     /** @property array $parameters the function parameters - the real values submitted in the request */
     protected $parameters = null;
@@ -651,62 +667,6 @@ abstract class webservice_base_server implements webservice_server {
     }
 
     /**
-     * Authenticate user using username+password or token.
-     * This function sets up $USER global.
-     * It is safe to use has_capability() after this.
-     * This method also verifies user is allowed to use this
-     * server.
-     * @return void
-     */
-    protected function authenticate_user() {
-        global $CFG, $DB;
-
-        if (!NO_MOODLE_COOKIES) {
-            throw new coding_exception('Cookies must be disabled in WS servers!');
-        }
-
-        if ($this->simple) {
-            $this->restricted_context = get_context_instance(CONTEXT_SYSTEM);
-
-            if (!is_enabled_auth('webservice')) {
-                throw new webservice_access_exception('WS auth not enabled');
-            }
-
-            if (!$auth = get_auth_plugin('webservice')) {
-                throw new webservice_access_exception('WS auth missing');
-            }
-
-            if (!$this->username) {
-                throw new webservice_access_exception('Missing username');
-            }
-
-            if (!$this->password) {
-                throw new webservice_access_exception('Missing password');
-            }
-
-            if (!$auth->user_login_webservice($this->username, $this->password)) {
-                throw new webservice_access_exception('Wrong username or password');
-            }
-
-            $user = $DB->get_record('user', array('username'=>$this->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0), '*', MUST_EXIST);
-
-            // now fake user login, the session is completely empty too
-            session_set_user($user);
-        } else {
-
-            //TODO: not implemented yet
-            die('token login not implemented yet');
-            //TODO: $this->restricted_context is derived from the token context
-        }
-
-        if (!has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new webservice_access_exception('Access to web service not allowed');
-        }
-
-        external_api::set_context_restriction($this->restricted_context);
-    }
-
-    /**
      * Fetches the function description from database,
      * verifies user is allowed to use this function and
      * loads all paremeters and return descriptions.
@@ -722,6 +682,16 @@ abstract class webservice_base_server implements webservice_server {
         // function must exist
         $function = external_function_info($this->functionname);
 
+        if ($this->restricted_serviceid) {
+            $params = array('sid1'=>$this->restricted_serviceid, 'sid2'=>$this->restricted_serviceid);
+            $wscond1 = 'AND s.id = :sid1';
+            $wscond2 = 'AND s.id = :sid2';
+        } else {
+            $params = array();
+            $wscond1 = '';
+            $wscond2 = '';
+        }
+
         // now let's verify access control
         if ($this->simple) {
             // now make sure the function is listed in at least one service user is allowed to use
@@ -734,7 +704,7 @@ abstract class webservice_base_server implements webservice_server {
             $sql = "SELECT s.*, NULL AS iprestriction
                       FROM {external_services} s
                       JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 0 AND sf.functionname = :name1)
-                     WHERE s.enabled = 1
+                     WHERE s.enabled = 1 $wscond1
 
                      UNION
 
@@ -742,12 +712,8 @@ abstract class webservice_base_server implements webservice_server {
                       FROM {external_services} s
                       JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1 AND sf.functionname = :name2)
                       JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
-                     WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now";
-            $params = array('userid'=>$USER->id, 'name1'=>$function->name, 'name2'=>$function->name, 'now'=>time());
-        } else {
-
-            //TODO: token may restrict access to one service only
-            die('not implemented yet');
+                     WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+            $params = array_merge($params, array('userid'=>$USER->id, 'name1'=>$function->name, 'name2'=>$function->name, 'now'=>time()));
         }
 
         $rs = $DB->get_recordset_sql($sql, $params);
