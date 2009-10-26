@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20091006" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20091026" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2276,7 +2276,7 @@
         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="external_services_users" COMMENT="users allowed to use services with restricted users flag" PREVIOUS="external_services_functions">
+    <TABLE NAME="external_services_users" COMMENT="users allowed to use services with restricted users flag" PREVIOUS="external_services_functions" NEXT="external_tokens">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
@@ -2289,6 +2289,27 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="externalserviceid"/>
         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="externalserviceid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="external_tokens" COMMENT="Security tokens for accessing of external services" PREVIOUS="external_services_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="security token, aka private access key" PREVIOUS="id" NEXT="tokentype"/>
+        <FIELD NAME="tokentype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="type of token: 0=permanent, no session; 1=linked to current browser session via sid; 2=permanent, with emulated session" PREVIOUS="token" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="owner of the token" PREVIOUS="tokentype" NEXT="externalserviceid"/>
+        <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="sid"/>
+        <FIELD NAME="sid" TYPE="char" LENGTH="128" NOTNULL="false" SEQUENCE="false" COMMENT="link to browser or emulated session" PREVIOUS="externalserviceid" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="context id where in token valid" PREVIOUS="sid" NEXT="iprestriction"/>
+        <FIELD NAME="iprestriction" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="ip restriction" PREVIOUS="contextid" NEXT="validuntil"/>
+        <FIELD NAME="validuntil" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="timestampt - valid until data" PREVIOUS="iprestriction" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="created timestamp" PREVIOUS="validuntil" NEXT="lastaccess"/>
+        <FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="last access timestamp" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="externalserviceid"/>
+        <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="userid" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="externalserviceid"/>
       </KEYS>
     </TABLE>
   </TABLES>

@@ -2598,6 +2598,37 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009100605);
     }
 
+    if ($result && $oldversion < 2009102600) {
+
+    /// Define table external_tokens to be created
+        $table = new xmldb_table('external_tokens');
+
+    /// Adding fields to table external_tokens
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('token', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('tokentype', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('externalserviceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('sid', XMLDB_TYPE_CHAR, '128', null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('iprestriction', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('validuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('lastaccess', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+
+    /// Adding keys to table external_tokens
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('externalserviceid', XMLDB_KEY_FOREIGN, array('externalserviceid'), 'external_services', array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+    /// Launch create table for external_tokens
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009102600);
+    }
+
     return $result;
 }
 
