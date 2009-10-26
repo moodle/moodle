@@ -7658,6 +7658,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
         }
 
+        // If experimental option is enabled (enableimsccimport)
+        // check for Common Cartridge packages and convert to Moodle format
+        if ($status && isset($CFG->enableimsccimport) && $CFG->enableimsccimport == 1) {
+            require_once($CFG->dirroot. '/backup/cc/restore_cc.php');
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string('checkingforimscc', 'imscc').'</li>';
+            }
+            $status = cc_convert($CFG->dataroot. DIRECTORY_SEPARATOR .'temp'. DIRECTORY_SEPARATOR . 'backup'. DIRECTORY_SEPARATOR . $backup_unique_code);
+        }
+
         //Check for Blackboard backups and convert
         if ($status){
             require_once("$CFG->dirroot/backup/bb/restore_bb.php");
