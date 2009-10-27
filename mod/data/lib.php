@@ -706,6 +706,15 @@ function data_delete_instance($id) {    // takes the dataid
  ************************************************************************/
 function data_user_outline($course, $user, $mod, $data) {
     global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'data', $data->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        $grade = false;
+    } else {
+        $grade = reset($grades->items[0]->grades);
+    }
+
     if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
         $result = new object();
         $result->info = get_string('numrecords', 'data', $countrecords);
@@ -713,6 +722,14 @@ function data_user_outline($course, $user, $mod, $data) {
                                          WHERE dataid = '.$data->id.' AND userid = '.$user->id.'
                                       ORDER BY timemodified DESC', true);
         $result->time = $lastrecord->timemodified;
+        if ($grade) {
+            $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
+        }
+        return $result;
+    } else if ($grade) {
+        $result = new object();
+        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        $result->time = $grade->dategraded;
         return $result;
     }
     return NULL;
@@ -722,6 +739,17 @@ function data_user_outline($course, $user, $mod, $data) {
  * Prints all the records uploaded by this user                         *
  ************************************************************************/
 function data_user_complete($course, $user, $mod, $data) {
+    global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'data', $data->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo '<p>'.get_string('grade').': '.$grade->str_long_grade.'</p>';
+        if ($grade->str_feedback) {
+            echo '<p>'.get_string('feedback').': '.$grade->str_feedback.'</p>';
+        }
+    }
     if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id,
                                                       'timemodified DESC')) {
         data_print_template('singletemplate', $records, $data);

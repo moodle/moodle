@@ -219,10 +219,16 @@ function scorm_delete_instance($id) {
 function scorm_user_outline($course, $user, $mod, $scorm) { 
     global $CFG;
     require_once('locallib.php');
-
-    $return = scorm_grade_user($scorm, $user->id, true);
-
-    return $return;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        $result = new object();
+        $result->info = get_string('grade') . ': '. $grade->str_long_grade;
+        $result->time = $grade->dategraded;
+        return $result;
+    }
+    return null;
 }
 
 /**
@@ -237,6 +243,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 */
 function scorm_user_complete($course, $user, $mod, $scorm) {
     global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
 
     $liststyle = 'structlist';
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
@@ -246,6 +253,15 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $sometoreport = false;
     $report = '';
     
+    $grades = grade_get_grades($course->id, 'mod', 'scorm', $scorm->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo '<p>'.get_string('grade').': '.$grade->str_long_grade.'</p>';
+        if ($grade->str_feedback) {
+            echo '<p>'.get_string('feedback').': '.$grade->str_feedback.'</p>';
+        }
+    }
+
     if ($orgs = get_records_select('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);

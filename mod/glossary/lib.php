@@ -161,11 +161,19 @@ function glossary_delete_instance($id) {
 }
 
 function glossary_user_outline($course, $user, $mod, $glossary) {
+    global $CFG;
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'glossary', $glossary->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        $grade = false;
+    } else {
+        $grade = reset($grades->items[0]->grades);
+    }
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
         $result = new object();
@@ -173,8 +181,18 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
 
         $lastentry = array_pop($entries);
         $result->time = $lastentry->timemodified;
+
+        if ($grade) {
+            $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
+        }
+        return $result;
+    } else if ($grade) {
+        $result = new object();
+        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        $result->time = $grade->dategraded;
         return $result;
     }
+
     return NULL;
 }
 
@@ -197,7 +215,16 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
     global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
 
+    $grades = grade_get_grades($course->id, 'mod', 'glossary', $glossary->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo '<p>'.get_string('grade').': '.$grade->str_long_grade.'</p>';
+        if ($grade->str_feedback) {
+            echo '<p>'.get_string('feedback').': '.$grade->str_feedback.'</p>';
+        }
+    }
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
         echo '<table width="95%" border="0"><tr><td>';
         foreach ($entries as $entry) {

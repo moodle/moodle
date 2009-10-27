@@ -198,25 +198,36 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    $grade = quiz_get_best_grade($quiz, $user->id);
-    if (is_null($grade)) {
-        return NULL;
+    global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        return null;
+    } else {
+        $grade = reset($grades->items[0]->grades);
     }
 
     $result = new stdClass;
-    $result->info = get_string('grade') . ': ' . $grade . '/' . $quiz->grade;
-    $result->time = get_field('quiz_attempts', 'MAX(timefinish)', 'userid', $user->id, 'quiz', $quiz->id);
+    $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+    $result->time = $grade->dategraded;
     return $result;
 }
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
+    global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo '<p>'.get_string('grade').': '.$grade->str_long_grade.'</p>';
+        if ($grade->str_feedback) {
+            echo '<p>'.get_string('feedback').': '.$grade->str_feedback.'</p>';
+        }
+    }
 
     if ($attempts = get_records_select('quiz_attempts', "userid='$user->id' AND quiz='$quiz->id'", 'attempt ASC')) {
-        if ($quiz->grade && $quiz->sumgrades && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
-            echo get_string('grade').': '.round($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
-        }
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
             if ($attempt->timefinish == 0) {

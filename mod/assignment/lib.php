@@ -1778,18 +1778,14 @@ class assignment_base {
      * Return an outline of the user's interaction with the assignment
      *
      * The default method prints the grade and timemodified
-     * @param $user object
+     * @param $grade object
      * @return object with properties ->info and ->time
      */
-    function user_outline($user) {
-        if ($submission = $this->get_submission($user->id)) {
-
-            $result = new object();
-            $result->info = get_string('grade').': '.$this->display_grade($submission->grade);
-            $result->time = $submission->timemodified;
-            return $result;
-        }
-        return NULL;
+    function user_outline($grade) {
+        $result = new object();
+        $result->info = get_string('grade').': '.$grade->str_long_grade;
+        $result->time = $grade->dategraded;
+        return $result;
     }
 
     /**
@@ -1797,7 +1793,14 @@ class assignment_base {
      *
      * @param $user object
      */
-    function user_complete($user) {
+    function user_complete($user, $grade=null) {
+        if ($grade) {
+            echo '<p>'.get_string('grade').': '.$grade->str_long_grade.'</p>';
+            if ($grade->str_feedback) {
+                echo '<p>'.get_string('feedback').': '.$grade->str_feedback.'</p>';
+            }
+        }
+
         if ($submission = $this->get_submission($user->id)) {
             if ($basedir = $this->file_area($user->id)) {
                 if ($files = get_directory_list($basedir)) {
@@ -1817,11 +1820,7 @@ class assignment_base {
 
             echo '<br />';
 
-            if (empty($submission->timemarked)) {
-                print_string("notgradedyet", "assignment");
-            } else {
-                $this->view_feedback($submission);
-            }
+            $this->view_feedback($submission);
 
             print_simple_box_end();
 
@@ -2063,10 +2062,16 @@ function assignment_add_instance($assignment) {
 function assignment_user_outline($course, $user, $mod, $assignment) {
     global $CFG;
 
+    require_once("$CFG->libdir/gradelib.php");
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
     $ass = new $assignmentclass($mod->id, $assignment, $mod, $course);
-    return $ass->user_outline($user);
+    $grades = grade_get_grades($course->id, 'mod', 'assignment', $assignment->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        return $ass->user_outline(reset($grades->items[0]->grades));
+    } else {
+        return null;
+    }
 }
 
 /**
@@ -2077,10 +2082,17 @@ function assignment_user_outline($course, $user, $mod, $assignment) {
 function assignment_user_complete($course, $user, $mod, $assignment) {
     global $CFG;
 
+    require_once("$CFG->libdir/gradelib.php");
     require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
     $ass = new $assignmentclass($mod->id, $assignment, $mod, $course);
-    return $ass->user_complete($user);
+    $grades = grade_get_grades($course->id, 'mod', 'assignment', $assignment->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        $grade = false;
+    } else {
+        $grade = reset($grades->items[0]->grades);
+    }
+    return $ass->user_complete($user, $grade);
 }
 
 /**
