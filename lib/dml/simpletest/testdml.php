@@ -2332,6 +2332,41 @@ class dml_test extends UnitTestCase {
             $this->assertTrue(true, 'DB Transactions not supported. Test skipped');
         }
     }
+
+    /**
+     * Test some more complex SQL syntax which moodle uses and depends on to work
+     * useful to determine if new database libraries can be supported.
+     */
+    public function test_get_records_sql_complicated() {
+        global $CFG;
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 5));
+        $DB->insert_record($tablename, array('course' => 2));
+
+        // we have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
+        $sql = 'SELECT a.id AS id, a.course AS course
+                FROM {'.$tablename.'} a
+                JOIN (SELECT * FROM {'.$tablename.'}) b
+                ON a.id = b.id
+                WHERE a.course = ?';
+
+        $this->assertTrue($records = $DB->get_records_sql($sql, array(3)));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual(1, reset($records)->id);
+        $this->assertEqual(2, next($records)->id);
+    }
 }
 
 /**
