@@ -40,6 +40,11 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)); 
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
 $functions = array();
 foreach ($allfunctions as $f) {
+    $finfo = external_function_info($f);
+    if (!empty($finfo->testclientpath) and file_exists($CFG->dirroot.'/'.$finfo->testclientpath)) {
+        //some plugins may want to have own test client forms
+        include_once($CFG->dirroot.'/'.$finfo->testclientpath);
+    }
     $class = $f->name.'_form';
     if (class_exists($class)) {
         $functions[$f->name] = $f->name;
