@@ -572,11 +572,17 @@ class grade_report_grader extends grade_report {
             } else {
                 $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
                 if ($key == $numrows - 1) {
+                    $colspan = 1;
+                    if (has_capability('gradereport/user:view', $this->context)) {
+                        $colspan++;
+                    }
+                    $colspan='colspan="'.$colspan.'"';
+
                     $sortfirstname = html_link::make(clone($this->baseurl), $strfirstname);
                     $sortfirstname->url->param('sortitemid', 'firstname');
                     $sortlastname = html_link::make(clone($this->baseurl), $strlastname);
                     $sortlastname->url->param('sortitemid', 'lastname');
-                    $headerhtml .= '<th class="header c'.$columncount++.'" scope="col">' . $OUTPUT->link($sortfirstname)
+                    $headerhtml .= '<th '.$colspan.' class="header c'.$columncount++.'" scope="col">' . $OUTPUT->link($sortfirstname)
                             . $firstarrow. '/ ' . $OUTPUT->link($sortlastname) . $lastarrow .'</th>';
                     if ($showuseridnumber) {
                         if ('idnumber' == $this->sortitemid) {
@@ -592,11 +598,16 @@ class grade_report_grader extends grade_report {
                         $sortidnumber->url->param('sortitemid', 'idnumber');
                         $headerhtml .= '<th class="header cc'.$columncount++.' useridnumber" scope="col">' . $OUTPUT->link($sortidnumber) . $idnumberarrow . '</th>';
                     }
-                 } else {
-                    $colspan='';
-                    if ($showuseridnumber) {
-                        $colspan = 'colspan="2" ';
+                } else {
+                    $colspan = 1;
+                    if (has_capability('gradereport/user:view', $this->context)) {
+                        $colspan++;
                     }
+                    if ($showuseridnumber) {
+                        $colspan++;
+                    }
+
+                    $colspan='colspan="'.$colspan.'"';
 
                     $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
 
@@ -745,10 +756,23 @@ class grade_report_grader extends grade_report {
                     $userpic = $OUTPUT->container($OUTPUT->user_picture(moodle_user_picture::make($user, $this->courseid)), 'userpic');
                 }
 
+                $userreportcell = '';
+
+                if (has_capability('gradereport/user:view', $this->context)) {
+                    $a->user = fullname($user);
+                    $strgradesforuser = get_string('gradesforuser', 'grades', $a);
+                    $userreporticon = new moodle_action_icon();
+                    $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/user/index.php', array('userid' => $user->id, 'id' => $this->course->id));
+                    $userreporticon->image->add_class('iconsmall');
+                    $userreporticon->image->src = $OUTPUT->old_icon_url('t/grades');
+                    $userreporticon->image->alt = $strgradesforuser;
+                    $userreportcell = '<th class="userreport">'.$OUTPUT->action_icon($userreporticon).'</th>';
+                }
+
                 $userlink = html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $rowclasses[$this->rowcount % 2] . '">'
                               .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$userpic
-                              .$OUTPUT->link($userlink).'</th>';
+                              .$OUTPUT->link($userlink).$userreportcell.'</th>';
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
@@ -969,9 +993,14 @@ class grade_report_grader extends grade_report {
             $fixedcolumntable->add_class('fixed_grades_column');
             $fixedcolumntable->bodyclasses = 'leftbody';
 
-            $colspan = null;
+            $colspan = 1;
+
+            if (has_capability('gradereport/user:view', $this->context)) {
+                $colspan++;
+            }
+
             if ($showuseridnumber) {
-                $colspan = 2;
+                $colspan++;
             }
 
             $levels = count($this->gtree->levels) - 1;
@@ -997,6 +1026,9 @@ class grade_report_grader extends grade_report {
             $studentheader->scope = 'col';
             $studentheader->header = true;
             $studentheader->id = 'studentheader';
+            if (has_capability('gradereport/user:view', $this->context)) {
+                $studentheader->colspan = 2;
+            }
             $studentheader->text = $OUTPUT->link($sortfirstname) . $firstarrow. '/ ' . $OUTPUT->link($sortlastname) . $lastarrow;
 
             $headerrow->cells[] = $studentheader;
@@ -1052,7 +1084,23 @@ class grade_report_grader extends grade_report {
                 }
 
                 $usercell->text .= $OUTPUT->link(html_link::make(new moodle_url($CFG->wwwroot.'/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user)));
+
                 $userrow->cells[] = $usercell;
+
+                if (has_capability('gradereport/user:view', $this->context)) {
+                    $userreportcell = new html_table_cell();
+                    $userreportcell->add_class('userreport');
+                    $userreportcell->header = true;
+                    $a->user = fullname($user);
+                    $strgradesforuser = get_string('gradesforuser', 'grades', $a);
+                    $userreporticon = new moodle_action_icon();
+                    $userreporticon->link->url = new moodle_url($CFG->wwwroot.'/grade/report/user/index.php', array('userid' => $user->id, 'id' => $this->course->id));
+                    $userreporticon->image->add_class('iconsmall');
+                    $userreporticon->image->src = $OUTPUT->old_icon_url('t/grades');
+                    $userreporticon->image->alt = $strgradesforuser;
+                    $userreportcell->text = $OUTPUT->action_icon($userreporticon);
+                    $userrow->cells[] = $userreportcell;
+                }
 
                 if ($showuseridnumber) {
                     $idnumbercell = new html_table_cell();

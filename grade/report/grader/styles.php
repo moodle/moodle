@@ -375,6 +375,10 @@ vertical-align:middle;
 border-right-color:#000;
 }
 
+.grade-report-grader table#fixed_column th.user{
+border-right-color:#cecece;
+}
+
 .grade-report-grader table#fixed_column {
 padding-top:20px;
 border-top:1px solid #cecece;

@@ -260,6 +260,7 @@ $string['gradessettings'] = 'Grade settings';
 $string['gradepreferences'] = 'Grade preferences';
 $string['gradepreferenceshelp'] = 'Grade preferences Help';
 $string['grades'] = 'Grades';
+$string['gradesforuser'] = 'Grades for $a->user';
 $string['gradesonly'] = 'Grades only';
 $string['gradetype'] = 'Grade type';
 $string['gradetypehelp'] = 'Specifies the type of grade used: none (no grading possible), value (enables the maximum and minimum grade settings), scale (enables the scale setting) or text (feedback only). Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the update activity page.';
