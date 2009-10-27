@@ -20,6 +20,7 @@
  *
  * @package   webservice
  * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
+ * @author    Petr Skoda (skodak)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,12 +36,19 @@ $PAGE->set_url('webservice/testclient.php');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)); // TODO: do we need some new capability?
 
-// list of all available functions for testing - please note there must be explicit
-// support for testing of each functions, the parameter conversion and form is hardcoded
-// TODO: automate this list by fetching all known functiosn from db and looking if client form defined
-$functions = array('moodle_group_create_groups', 'moodle_group_get_groups', 'moodle_group_get_course_groups');
-$functions = array_combine($functions, $functions);
-if (!isset($functions[$function])) { // whitelisting security
+// list of all available functions for testing
+$allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
+$functions = array();
+foreach ($allfunctions as $f) {
+    $class = $f->name.'_form';
+    if (class_exists($class)) {
+        $functions[$f->name] = $f->name;
+        continue;
+    }
+}
+
+// whitelisting security
+if (!isset($functions[$function])) {
     $function = '';
 }
 
@@ -83,11 +91,6 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
 
     $functioninfo = external_function_info($function);
-    
-    // remove unused from form data
-    unset($data->submitbutton);
-    unset($data->protocol);
-    unset($data->function);
 
     // first load lib of selected protocol
     require_once("$CFG->dirroot/webservice/$protocol/locallib.php");
@@ -100,31 +103,10 @@ if ($mform->is_cancelled()) {
 
     $serverurl = "$CFG->wwwroot/webservice/$protocol/simpleserver.php";
     $serverurl .= '?wsusername='.urlencode($data->wsusername);
-    unset($data->wsusername);
     $serverurl .= '&wspassword='.urlencode($data->wspassword);
-    unset($data->wspassword);
 
-    // now get the function parameters - each functions processing must be hardcoded here
-    $params = array();
-    if ($function === 'moodle_group_create_groups') {
-        $params['groups'] = array();
-        $params['groups'][] = (array)$data;
-
-    } else if ($function === 'moodle_group_get_groups') {
-        $params['groupids'] = array();
-        for ($i=0; $i<10; $i++) {
-            if (empty($data->groupids[$i])) {
-                continue;
-            }
-            $params['groupids'][] = $data->groupids[$i];
-        }
-
-    } else if ($function === 'moodle_group_get_course_groups') {
-        $params['courseid'] = $data->courseid;
-
-    } else {
-        throw new coding_exception('Testing of function '.$function.' not implemented yet!');
-    }
+    // now get the function parameters
+    $params = $mform->get_params();
 
     // now test the parameters, this also fixes PHP data types
     $params = external_api::validate_parameters($functioninfo->parameters_desc, $params);

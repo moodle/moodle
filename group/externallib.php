@@ -237,7 +237,7 @@ class moodle_group_external extends external_api {
      * @return void
      */
     public static function delete_groups($groupids) {
-        global $CFG;
+        global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
 
         $params = self::validate_parameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
@@ -352,7 +352,7 @@ class moodle_group_external extends external_api {
      * @return void
      */
     public static function add_groupmembers($members) {
-        global $CFG;
+        global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
 
         $params = self::validate_parameters(self::add_groupmembers_parameters(), array('members'=>$members));
@@ -412,7 +412,7 @@ class moodle_group_external extends external_api {
      * @return void
      */
     public static function delete_groupmembers($members) {
-        global $CFG;
+        global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
 
         $params = self::validate_parameters(self::delete_groupmembers_parameters(), array($members=>'members'));

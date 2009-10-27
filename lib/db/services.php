@@ -51,7 +51,7 @@ $functions = array(
         'description' => 'Returns all groups in specified course.',
         'type'        => 'read',
     ),
-/*
+
     'moodle_group_delete_groups' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groups',
@@ -59,7 +59,7 @@ $functions = array(
         'description' => 'Deletes all specified groups.',
         'type'        => 'delete',
     ),
-
+/*
     'moodle_group_get_groupmembers' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'get_groupmembers',
