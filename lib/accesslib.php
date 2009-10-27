@@ -510,7 +510,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
         }
         $USER->access = $ACCESSLIB_PRIVATE->accessdatabyuser[$userid];
 
-    } else if ($USER->id == $userid && !isset($USER->access)) {
+    } else if (isset($USER->id) && ($USER->id == $userid) && !isset($USER->access)) {
         // caps not loaded yet - better to load them to keep BC with 1.8
         // not-logged-in user or $USER object set up manually first time here
         load_all_capabilities();
@@ -549,7 +549,7 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
     // divulge how many times we are called
     //// error_log("has_capability: id:{$context->id} path:{$context->path} userid:$userid cap:$capability");
 
-    if ($USER->id == $userid) { // we must accept strings and integers in $userid
+    if (isset($USER->id) && ($USER->id == $userid)) { // we must accept strings and integers in $userid
         //
         // For the logged in user, we have $USER->access
         // which will have all RAs and caps preloaded for
