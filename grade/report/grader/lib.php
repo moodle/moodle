@@ -561,7 +561,7 @@ class grade_report_grader extends grade_report {
             } else {
                 $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
                 if ($key == $numrows - 1) {
-                    $headerhtml .= '<th class=" c'.$columncount++.'" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                    $headerhtml .= '<th class=" header c'.$columncount++.'" scope="col" colspan="2"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
                                 . $strfirstname . '</a> '
                                 . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
                     if ($showuseridnumber) {
@@ -574,13 +574,13 @@ class grade_report_grader extends grade_report {
                         } else {
                             $idnumberarrow = '';
                         }
-                        $headerhtml .= '<th class=" c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
+                        $headerhtml .= '<th class="header  c'.$columncount++.' useridnumber" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=idnumber">'
                                 . get_string('idnumber') . '</a> ' . $idnumberarrow . '</th>';
                     }
                  } else {
-                    $colspan='';
+                    $colspan = 'colspan="2" ';
                     if ($showuseridnumber) {
-                        $colspan = 'colspan="2" ';
+                        $colspan = 'colspan="3" ';
                     }
 
                     $headerhtml .= '<td '.$colspan.'class="cell c'.$columncount++.' topleft">&nbsp;</td>';
@@ -708,8 +708,6 @@ class grade_report_grader extends grade_report {
 
         $row_classes = array(' even ', ' odd ');
 
-        $row_classes = array(' even ', ' odd ');
-
         foreach ($this->users as $userid => $user) {
 
             if ($this->canviewhidden) {
@@ -732,10 +730,18 @@ class grade_report_grader extends grade_report {
                     $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, null, 0, true) . '</div>';
                 }
 
+                $userreportcell = '';
+                if (has_capability('gradereport/user:view', $this->context)) {
+                    $a->user = fullname($user);
+                    $strgradesforuser = get_string('gradesforuser', 'grades', $a);
+                    $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
+                                    .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
+                }
+
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                               .'<th class="c'.$columncount++.' user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                              .fullname($user).'</a></th>';
+                              .fullname($user)."</a>$userreportcell</th>\n";
 
                 if ($showuseridnumber) {
                     $studentshtml .= '<th class="c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
@@ -957,9 +963,9 @@ class grade_report_grader extends grade_report {
                 <table id="fixed_column" class="fixed_grades_column">
                     <tbody class="leftbody">';
 
-            $colspan = '';
+            $colspan = 'colspan="2"';
             if ($showuseridnumber) {
-                $colspan = 'colspan="2"';
+                $colspan = 'colspan="3"';
             }
 
             $levels = count($this->gtree->levels) - 1;
@@ -973,7 +979,7 @@ class grade_report_grader extends grade_report {
                         ';
             }
 
-            $studentshtml .= '<tr class="heading"><th id="studentheader" class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+            $studentshtml .= '<tr class="heading"><th id="studentheader" colspan="2" class="header c0" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
                         . $strfirstname . '</a> '
                         . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
 
@@ -1006,13 +1012,21 @@ class grade_report_grader extends grade_report {
                     $user_pic = '<div class="userpic">' . print_user_picture($user, $this->courseid, NULL, 0, true) . "</div>\n";
                 }
 
+                $userreportcell = '';
+                if (has_capability('gradereport/user:view', $this->context)) {
+                    $a->user = fullname($user);
+                    $strgradesforuser = get_string('gradesforuser', 'grades', $a);
+                    $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
+                                    .'<img src="'.$CFG->pixpath.'/t/grades.gif" alt="'.$strgradesforuser.'" title="'.$strgradesforuser.'" /></a></th>';
+                }
+
                 $studentshtml .= '<tr class="r'.$this->rowcount++ . $row_classes[$this->rowcount % 2] . '">'
                               .'<th class="c0 user" scope="row" onclick="set_row(this.parentNode.rowIndex);">'.$user_pic
                               .'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->course->id.'">'
-                              .fullname($user)."</a></th>\n";
+                              .fullname($user)."</a>$userreportcell</th>\n";
 
                 if ($showuseridnumber) {
-                    $studentshtml .= '<th class="header c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
+                    $studentshtml .= '<th class="c0 useridnumber" onclick="set_row(this.parentNode.rowIndex);">'. $user->idnumber."</th>\n";
                 }
                 $studentshtml .= "</tr>\n";
             }

@@ -372,6 +372,10 @@ vertical-align:middle;
 border-right-color:#000;
 }
 
+.grade-report-grader table#fixed_column th.user{
+border-right-color:#cecece;
+}
+
 .grade-report-grader table#fixed_column {
 padding-top:20px;
 border-top:1px solid #cecece;
@@ -433,44 +437,12 @@ padding:0;
 }
 
 .grade-report-grader tr.avg,tr.controls,td.controls,th.controls,.grade-report-grader tr.groupavg,tr.range,th.range,td.range,tr.heading th.range {
-height:2em!important;
+height:2.8em!important;
 white-space:nowrap;
 }
-
 .heading_name_row th {
 white-space:nowrap;
 width:2000px;
-}
-
-.ie .right_scroller {
-padding-bottom:15px;
-overflow-y:hidden;
-}
-
-.ie table#fixed_column th {
-height:40.5px;
-}
-
-.ie table#fixed_column tr.avg th {
-height:21px;
-}
-
-.ie div.left_scroller td {
-height:42px;
-}
-
-.ie6 div.left_scroller {
-margin-top:40px;
-}
-
-.ie6 div.right_scroller {
-margin-top:40px;
-width:auto;
-position:absolute;
-}
-
-.ie6 .excludedfloater {
-font-size:7px;
 }
 
 .grade_icons img.ajax {
@@ -511,7 +483,7 @@ border-style:solid;
 border-width:0;
 }
 
-.grade-report-grader table#user-grades td.useridnumber,.grade-report-grader table#user-grades th,.grade-report-grader div.gradeparent,.ie6 form,.grade-report-grader table#user-grades td.ajax {
+.grade-report-grader table#user-grades td.useridnumber,.grade-report-grader table#user-grades th,.grade-report-grader div.gradeparent,.grade-report-grader table#user-grades td.ajax {
 text-align:left;
 }
 
@@ -520,7 +492,7 @@ background-color:#f3ead8;
 }
 
 .grade-report-grader div.left_scroller tr,.grade-report-grader div.right_scroller tr,.grade-report-grader div.left_scroller td,.grade-report-grader div.right_scroller td,.grade-report-grader div.left_scroller th,.grade-report-grader div.right_scroller th {
-height:4em;
+height:4.4em;
 font-size:10px;
 }
 
@@ -571,5 +543,4 @@ vertical-align:middle;
 #hiddentooltiproot, .tooltipDiv {
   display: none;
 }
-
 
