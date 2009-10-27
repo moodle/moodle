@@ -1094,13 +1094,30 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
  * @return object A standard object with 2 variables: info (number of posts for this user) and time (last modified)
  */
 function forum_user_outline($course, $user, $mod, $forum) {
-    if ($count = forum_count_user_posts($forum->id, $user->id)) {
-        if ($count->postcount > 0) {
-            $result = new object();
-            $result->info = get_string("numposts", "forum", $count->postcount);
-            $result->time = $count->lastpost;
-            return $result;
+    global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        $grade = false;
+    } else {
+        $grade = reset($grades->items[0]->grades);
+    }
+
+    $count = forum_count_user_posts($forum->id, $user->id);
+
+    if ($count && $count->postcount > 0) {
+        $result = new object();
+        $result->info = get_string("numposts", "forum", $count->postcount);
+        $result->time = $count->lastpost;
+        if ($grade) {
+            $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
         }
+        return $result;
+    } else if ($grade) {
+        $result = new object();
+        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        $result->time = $grade->dategraded;
+        return $result;
     }
     return NULL;
 }
@@ -1115,7 +1132,17 @@ function forum_user_outline($course, $user, $mod, $forum) {
  * @param object $forum
  */
 function forum_user_complete($course, $user, $mod, $forum) {
-    global $CFG,$USER;
+    global $CFG,$USER, $OUTPUT;
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'forum', $forum->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+        if ($grade->str_feedback) {
+            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        }
+    }
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
 

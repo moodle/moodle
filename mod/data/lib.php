@@ -931,7 +931,16 @@ function data_delete_instance($id) {    // takes the dataid
  * @return object|null
  */
 function data_user_outline($course, $user, $mod, $data) {
-    global $DB;
+    global $DB, $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'data', $data->id, $user->id);
+    if (empty($grades->items[0]->grades)) {
+        $grade = false;
+    } else {
+        $grade = reset($grades->items[0]->grades);
+    }
+
 
     if ($countrecords = $DB->count_records('data_records', array('dataid'=>$data->id, 'userid'=>$user->id))) {
         $result = new object();
@@ -940,6 +949,14 @@ function data_user_outline($course, $user, $mod, $data) {
                                               WHERE dataid = ? AND userid = ?
                                            ORDER BY timemodified DESC', array($data->id, $user->id), true);
         $result->time = $lastrecord->timemodified;
+        if ($grade) {
+            $result->info .= ', ' . get_string('grade') . ': ' . $grade->str_long_grade;
+        }
+        return $result;
+    } else if ($grade) {
+        $result = new object();
+        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+        $result->time = $grade->dategraded;
         return $result;
     }
     return NULL;
@@ -955,7 +972,17 @@ function data_user_outline($course, $user, $mod, $data) {
  * @param object $data
  */
 function data_user_complete($course, $user, $mod, $data) {
-    global $DB;
+    global $DB, $CFG, $OUTPUT;
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'data', $data->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+        if ($grade->str_feedback) {
+            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        }
+    }
 
     if ($records = $DB->get_records('data_records', array('dataid'=>$data->id,'userid'=>$user->id), 'timemodified DESC')) {
         data_print_template('singletemplate', $records, $data);

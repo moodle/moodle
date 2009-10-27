@@ -181,21 +181,16 @@ function lesson_delete_course($course, $feedback=true) {
 function lesson_user_outline($course, $user, $mod, $lesson) {
     global $DB;
 
-    $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
-    if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid", $params,
-                "grade DESC")) {
-        foreach ($grades as $grade) {
-            $max_grade = number_format($grade->grade * $lesson->grade / 100.0, 1);
-            break;
-        }
-        $return->time = $grade->completed;
-        if ($lesson->retake) {
-            $return->info = get_string("gradeis", "lesson", $max_grade)." (".
-                get_string("attempt", "lesson", count($grades)).")";
-        } else {
-            $return->info = get_string("gradeis", "lesson", $max_grade);
-        }
+    global $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'lesson', $lesson->id, $user->id);
+
+    if (empty($grades->items[0]->grades)) {
+        $return->info = get_string("no")." ".get_string("attempts", "lesson");
     } else {
+        $grade = reset($grades->items[0]->grades);
+        $return->info = get_string("grade") . ': ' . $grade->str_long_grade;
+        $return->time = $grade->dategraded;
         $return->info = get_string("no")." ".get_string("attempts", "lesson");
     }
     return $return;
@@ -213,7 +208,18 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
  * @return bool
  */
 function lesson_user_complete($course, $user, $mod, $lesson) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $CFG;
+
+    require_once("$CFG->libdir/gradelib.php");
+
+    $grades = grade_get_grades($course->id, 'mod', 'lesson', $lesson->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+        if ($grade->str_feedback) {
+            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        }
+    }
 
     $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
     if ($attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params,
@@ -255,25 +261,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         }
         echo $OUTPUT->table($table);
         echo $OUTPUT->box_end();
-        // also print grade summary
-        $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
-        if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid", $params,
-                    "grade DESC")) {
-            foreach ($grades as $grade) {
-                $max_grade = number_format($grade->grade * $lesson->grade / 100.0, 1);
-                break;
-            }
-            if ($lesson->retake) {
-                echo "<p>".get_string("gradeis", "lesson", $max_grade)." (".
-                    get_string("attempts", "lesson").": ".count($grades).")</p>";
-            } else {
-                echo "<p>".get_string("gradeis", "lesson", $max_grade)."</p>";
-            }
-        }
-    } else {
-        echo get_string("no")." ".get_string("attempts", "lesson");
     }
-
 
     return true;
 }

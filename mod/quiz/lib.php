@@ -225,17 +225,21 @@ function quiz_delete_all_attempts($quiz) {
  * @return object|null
  */
 function quiz_user_outline($course, $user, $mod, $quiz) {
-    global $DB;
-    $grade = quiz_get_best_grade($quiz, $user->id);
-    if (is_null($grade)) {
-        return NULL;
+    global $DB, $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
+
+    if (empty($grades->items[0]->grades)) {
+        return null;
+    } else {
+        $grade = reset($grades->items[0]->grades);
     }
 
     $result = new stdClass;
-    $result->info = get_string('grade') . ': ' . $grade . '/' . $quiz->grade;
-    $result->time = $DB->get_field('quiz_attempts', 'MAX(timefinish)', array('userid' => $user->id, 'quiz' => $quiz->id));
+    $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+    $result->time = $grade->dategraded;
     return $result;
-    }
+}
 
 /**
  * Is this a graded quiz? If this method returns true, you can assume that
@@ -282,12 +286,18 @@ function quiz_get_best_grade($quiz, $userid) {
  * @return bool
  */
 function quiz_user_complete($course, $user, $mod, $quiz) {
-    global $DB;
+    global $DB, $CFG;
+    require_once("$CFG->libdir/gradelib.php");
+    $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
+    if (!empty($grades->items[0]->grades)) {
+        $grade = reset($grades->items[0]->grades);
+        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+        if ($grade->str_feedback) {
+            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        }
+    }
 
     if ($attempts = $DB->get_records('quiz_attempts', array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
-        if (quiz_has_grades($quiz) && $grade = quiz_get_best_grade($quiz, $user->id)) {
-            echo get_string('grade') . ': ' . $grade . '/' . quiz_format_grade($quiz, $quiz->grade) . '<br />';
-        }
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
             if ($attempt->timefinish == 0) {
