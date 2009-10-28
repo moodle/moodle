@@ -447,7 +447,7 @@ table.minicalendar tr td.weekend {
  ***/
 
 .errorbox {
-/*   color:#ffffff; */
+   color:#000000;
    border-color:#990000;
    background-color:#FEF9F6;
  }
