@@ -29,8 +29,17 @@ $type = optional_param('type', false, PARAM_ALPHA);
 $action = optional_param('action', false, PARAM_ALPHA);
 $newvalue = optional_param('newvalue', false, PARAM_MULTILANG);
 
+/// basic access checks
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+    print_error('nocourseid');
+}
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_login($course);
+
 switch ($action) {
     case 'update':
+        require_capability('moodle/grade:edit', $context);
+
         if (!empty($userid) && !empty($itemid) && $newvalue !== false && !empty($type)) {
             // Save the grade or feedback
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) { // we must verify course id here!
