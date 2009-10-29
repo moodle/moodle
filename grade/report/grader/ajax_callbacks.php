@@ -35,6 +35,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 }
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_login($course);
+confirm_sesskey();
 
 switch ($action) {
     case 'update':
