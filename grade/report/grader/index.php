@@ -170,16 +170,7 @@ if (!empty($studentsperpage)) {
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($numusers, $report->page, $studentsperpage, $report->pbarurl));
 }
 
-$reporthtml = '<div class="gradeparent">';
-$reporthtml .= $report->get_studentnameshtml();
-$reporthtml .= $report->get_headerhtml();
-$reporthtml .= $report->get_iconshtml();
-$reporthtml .= $report->get_studentshtml();
-$reporthtml .= $report->get_rangehtml();
-$reporthtml .= $report->get_avghtml(true);
-$reporthtml .= $report->get_avghtml();
-$reporthtml .= $report->get_endhtml();
-$reporthtml .= '</div>';
+$reporthtml = $report->get_grade_table();
 
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') || $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
