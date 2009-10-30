@@ -137,7 +137,7 @@ class jsportal {
         if ($hidden) {
             $hidden_binary = 1;
         }
-        $this->blocks[count($this->blocks)] = array($this->currentblocksection, $id, $hidden_binary);
+        $this->blocks[count($this->blocks)] = array($this->currentblocksection, $id, $hidden_binary);        
     }
 
 
@@ -156,15 +156,16 @@ class jsportal {
             if ($i != (count($this->blocks) - 1)) {
                 $blocksoutput .= ',';
             }
-        }
+        }        
         $output .= "<script type=\"text/javascript\">\n";
         $output .= "    main.portal.id = ".$courseid.";\n";
-        $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
+        $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";        
         $output .= "    main.portal.strings['courseformat']='".$COURSE->format."';\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['pixpath']='".$CFG->pixpath."';\n";
         $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
         $output .= "    main.portal.strings['marked']='".get_string('markedthistopic', '', '_var_')."';\n";
+        $output .= "    main.portal.numsections = ".$COURSE->numsections.";\n";
         $output .= "    main.portal.strings['hide']='".get_string('hide')."';\n";
         $output .= "    main.portal.strings['hidesection']='".get_string('hidesection', '', '_var_')."';\n";
         $output .= "    main.portal.strings['show']='".get_string('show')."';\n";
