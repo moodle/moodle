@@ -224,7 +224,7 @@ function url_print_workaround($url, $cm, $course) {
  * @return does not return
  */
 function url_display_embed($url, $cm, $course) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $OUTPUT;
 
     $clicktoopen = get_string('clicktoopen', 'url', $url->externalurl);
 
@@ -278,7 +278,7 @@ function url_display_embed($url, $cm, $course) {
 
     url_print_intro($url, $cm, $course);
 
-    print_footer();
+    echo $OUTPUT->footer();
     die;
 }
 
