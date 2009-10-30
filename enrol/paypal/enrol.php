@@ -25,7 +25,7 @@ function print_entry($course) {
         $teacher = false;
     }
 
-    if ( (float) $course->cost < 0 ) {
+    if ( (float) $course->cost <= 0 ) {
         $cost = (float) $CFG->enrol_cost;
     } else {
         $cost = (float) $course->cost;
