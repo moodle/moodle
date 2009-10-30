@@ -1928,7 +1928,11 @@ class moodle_core_renderer extends moodle_renderer_base {
             $output .= $this->opencontainers->pop_all_but_last();
         } else {
             // Header not yet printed
-            @header('HTTP/1.0 404 Not Found');
+            if (isset($_SERVER['SERVER_PROTOCOL'])) {
+				// server protocol should be always present, because this render
+				// can not be used from command line or when outputting custom XML
+                @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            }
             $this->page->set_title(get_string('error'));
             $output .= $this->header();
         }
