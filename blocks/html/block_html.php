@@ -91,5 +91,12 @@ class block_html extends block_base {
 
         return true;
     }
+
+    /*
+     * Hide the title bar when none set..
+     */
+    function hide_header(){
+        return empty($this->config->title);
+    }
 }
 ?>
