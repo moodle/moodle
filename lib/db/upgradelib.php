@@ -204,7 +204,7 @@ function upgrade_migrate_files_blog() {
             }
 
             if (!$fs->file_exists(SYSCONTEXTID, 'blog', $entry->id, '/', $filename)) {
-                $file_record = array('contextid'=>SYSCONTEXTID, 'filearea'=>'blog', 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename,
+                $file_record = array('contextid'=>SYSCONTEXTID, 'filearea'=>'blog_attachment', 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename,
                                      'timecreated'=>filectime($pathname), 'timemodified'=>filemtime($pathname), 'userid'=>$entry->userid);
                 $fs->create_file_from_pathname($file_record, $pathname);
             }

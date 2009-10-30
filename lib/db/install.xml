@@ -2291,7 +2291,7 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="externalserviceid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="external_tokens" COMMENT="Security tokens for accessing of external services" PREVIOUS="external_services_users">
+    <TABLE NAME="external_tokens" COMMENT="Security tokens for accessing of external services" PREVIOUS="external_services_users" NEXT="blog_association">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
         <FIELD NAME="token" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="security token, aka private access key" PREVIOUS="id" NEXT="tokentype"/>
@@ -2310,6 +2310,35 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="externalserviceid"/>
         <KEY NAME="externalserviceid" TYPE="foreign" FIELDS="externalserviceid" REFTABLE="external_services" REFFIELDS="id" PREVIOUS="userid" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="externalserviceid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="blog_association" COMMENT="Associations of blog entries with courses and module instances" PREVIOUS="external_tokens" NEXT="blog_external">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="blogid"/>
+        <FIELD NAME="blogid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="contextid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="blogid"/>
+        <KEY NAME="blogid" TYPE="foreign" FIELDS="blogid" REFTABLE="post" REFFIELDS="id" PREVIOUS="contextid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="blog_external" COMMENT="External blog links used for RSS copying of blog entries to Moodle user blogs" PREVIOUS="blog_association">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="url"/>
+        <FIELD NAME="url" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="description" NEXT="filtertags"/>
+        <FIELD NAME="filtertags" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma-separated list of tags that will be used to filter which entries are copied over from the external blog. They refer to existing tags in the external blog." PREVIOUS="url" NEXT="failedlastsync"/>
+        <FIELD NAME="failedlastsync" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the last sync failed for some reason" PREVIOUS="filtertags" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="failedlastsync" NEXT="timefetched"/>
+        <FIELD NAME="timefetched" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
   </TABLES>

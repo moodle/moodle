@@ -2629,6 +2629,83 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009102600);
     }
 
+   if ($result && $oldversion < 2009103000) {
+
+    /// Define table blog_association to be created
+        $table = new xmldb_table('blog_association');
+
+    /// Adding fields to table blog_association
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('blogid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+    /// Adding keys to table blog_association
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $table->add_key('blogid', XMLDB_KEY_FOREIGN, array('blogid'), 'post', array('id'));
+
+    /// Conditionally launch create table for blog_association
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+/// Define table blog_external to be created
+        $table = new xmldb_table('blog_external');
+
+    /// Adding fields to table blog_external
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table->add_field('url', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('filtertags', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('failedlastsync', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timefetched', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+    /// Adding keys to table blog_external
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Conditionally launch create table for blog_external
+        if ($dbman->table_exists($table)) {
+            // Delete the existing one first (comes from early dev version)
+            $dbman->drop_table($table);
+        }
+        $dbman->create_table($table);
+
+        // Print notice about need to upgrade bloglevel
+        if (($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete)) {
+            echo $OUTPUT->notification(get_string('bloglevelupgradenotice', 'admin'));
+
+            // email admins about the need to upgrade their system using the admin/bloglevelupgrade.php script
+            $admins = get_admins();
+            $site = get_site();
+
+            $a = new StdClass;
+            $a->sitename = $site->fullname;
+            $a->fixurl   = "$CFG->wwwroot/$CFG->admin/bloglevelupgrade.php";
+
+            $subject   = get_string('bloglevelupgrade', 'admin');
+            $plainbody = get_string('bloglevelupgradebody', 'admin', $a);
+            $htmlbody  = get_string('bloglevelupgradehtml', 'admin', $a);
+
+            foreach ($admins as $admin) {
+                $eventdata = new object();
+                $eventdata->component = 'moodle';
+                $eventdata->userfrom = $USER;
+                $eventdata->userto = $admin;
+                $eventdata->subject = $subject;
+                $eventdata->fullmessage = $plainbody;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml = $htmlbody;
+                events_trigger('message_send', $eventdata);
+            }
+        }
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009103000);
+    }
+    
     return $result;
 }
 
