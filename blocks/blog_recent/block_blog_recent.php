@@ -40,73 +40,75 @@ class block_blog_recent extends block_base {
         $this->version = 2009070900;
     }
 
+    function applicable_formats() {
+        return array('all' => true, 'my' => false, 'tag' => false);
+    }
+
+    function has_config() {
+        return true;
+    }
+
+    function instance_allow_config() {
+        return true;
+    }
+
     function get_content() {
-        global $CFG, $USER, $PAGE, $DB;
+        global $CFG, $USER, $PAGE, $DB, $OUTPUT;
+
+        if (empty($this->config->recentbloginterval)) {
+            $this->config->recentbloginterval = 8400;
+        }
+
+        if (empty($this->config->numberofrecentblogentries)) {
+            $this->config->numberofrecentblogentries = 4;
+        }
+
+        if (empty($CFG->bloglevel) || ($CFG->bloglevel < BLOG_GLOBAL_LEVEL && !(isloggedin() && !isguestuser()))) {
+            $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('blogdisable', 'blog');
+            }
+            return $this->content;
+        }
 
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        $tag     = optional_param('tag', null, PARAM_NOTAGS);
-        $tagid   = optional_param('tagid', null, PARAM_INT);
-        $entryid = optional_param('entryid', null, PARAM_INT);
-        $groupid = optional_param('groupid', null, PARAM_INT);
-        $search  = optional_param('search', null, PARAM_RAW);
-
-        //correct tagid if a text tag is provided as a param
-        if (!empty($tag)) {  //text tag parameter takes precedence
-            if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE name LIKE ?", array($tag))) {
-                $tagid = $tagrec->id;
-            } else {
-                unset($tagid);
-            }
-        }
-
         $context = $PAGE->get_context();
-        
-        $strlevel = '';
 
-        switch ($context->contextlevel) {
-            case CONTEXT_COURSE:
-                $strlevel = ($context->instanceid == SITEID) ? '' : get_string('course');
-                break;
-            case CONTEXT_MODULE:
-                $strlevel = print_context_name($context);
-                break;
-            case CONTEXT_USER:
-                $strlevel = get_string('user');
-                break;
+        $blogheaders = blog_get_headers();
+
+        // Remove entryid filter
+        if (!empty($blogheaders['filters']['entry'])) {
+            unset($blogheaders['filters']['entry']);
+            $blogheaders['url']->remove_params(array('entryid'));
         }
 
-        $filters = array();
+        $blogheaders['filters']['since'] = $this->config->recentbloginterval;
 
-        if (!empty($entryid)) {
-            $filters['entry'] = $entryid;
+        $bloglisting = new blog_listing($blogheaders['filters']);
+        $entries = $bloglisting->get_entries(0, $this->config->numberofrecentblogentries, 4);
+
+        if (!empty($entries)) {
+            $entrieslist = new html_list();
+            $entrieslist->add_class('list');
+            $viewblogurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+
+            foreach ($entries as $entryid => $entry) {
+                $viewblogurl->param('entryid', $entryid);
+                $entrylink = html_link::make($viewblogurl, shorten_text($entry->subject));
+                $entrieslist->add_item($OUTPUT->link($entrylink));
+            }
+
+            $this->content->text .= $OUTPUT->htmllist($entrieslist);
+            $strview = get_string('viewsiteentries', 'blog');
+            if (!empty($blogheaders['strview'])) {
+                $strview = $blogheaders['strview'];
+            }
+            $viewallentrieslink = html_link::make($blogheaders['url'], $strview);
+            $this->content->text .= $OUTPUT->link($viewallentrieslink);
+        } else {
+            $this->content->text .= get_string('norecentblogentries', 'block_blog_recent');
         }
-
-        if (!empty($groupid)) {
-            $filters['group'] = $groupid;
-        }
-
-        if (!empty($tagid)) {
-            $filters['tag'] = $tagid;
-        }
-
-        if (!empty($search)) {
-            $filters['search'] = $search;
-        }
-
-        $blog_listing = new blog_listing($filters);
-        $entries = $blog_listing->get_entries(0, get_user_preferences('blogrecententriesnumber', 4));
-
-        $this->content->text = '<ul class="list">';
-        $viewblog_url = $CFG->wwwroot . '/blog/index.php?entryid=';
-
-        foreach ($entries as $entry_id => $entry) {
-            $this->content->text .= "<li><a href=\"$viewblog_url$entry_id\">".shorten_text($entry->subject)."</a></li>\n";
-        }
-
-        $this->content->text .= '<li>&nbsp;</li>';
-        $this->content->text .= '<li><a href="'.blog_get_context_url().'">'.get_string('viewallblogentries', 'blog', $strlevel).'</a></li>'; 
-        $this->content->text .= '</ul>';
     }
 }
