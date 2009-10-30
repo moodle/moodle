@@ -43,6 +43,9 @@ class block_blog_tags extends block_base {
 
         if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
             $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('tagsaredisabled', 'tag');
+            }
             return $this->content;
         }
 
@@ -64,9 +67,10 @@ class block_blog_tags extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        /// Get a list of tags
-
+        /// Get a list of tags 
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
+        
+        $blogheaders = blog_get_headers();
 
         // admins should be able to read all tags
         $type = '';
@@ -75,11 +79,21 @@ class block_blog_tags extends block_base {
         }
 
         $sql  = "SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
-                   FROM {tag} t, {tag_instance} ti, {post} p
+                   FROM {tag} t, {tag_instance} ti, {post} p, {blog_association} ba
                   WHERE t.id = ti.tagid AND p.id = ti.itemid
                         $type
                         AND ti.itemtype = 'post'
-                        AND ti.timemodified > $timewithin
+                        AND ti.timemodified > $timewithin";
+
+        if (!empty($blogheaders['filters']['module'])) {
+            $modulecontext = get_context_instance(CONTEXT_MODULE, $blogheaders['filters']['module']);
+            $sql .= " AND ba.contextid = $modulecontext->id AND p.id = ba.blogid ";
+        } else if (!empty($blogheaders['filters']['course'])) {
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $blogheaders['filters']['course']);
+            $sql .= " AND ba.contextid = $coursecontext->id AND p.id = ba.blogid ";
+        }
+
+        $sql .= "
                GROUP BY t.id, t.tagtype, t.name, t.rawname
                ORDER BY ct DESC, t.name ASC";
 
@@ -122,24 +136,25 @@ class block_blog_tags extends block_base {
         /// Accessibility: markup as a list.
             $this->content->text .= "\n<ul class='inline-list'>\n";
             foreach ($etags as $tag) {
+                $blogurl = new moodle_url($CFG->wwwroot.'/blog/index.php');
+
                 switch ($CFG->bloglevel) {
                     case BLOG_USER_LEVEL:
-                        $filtertype = 'user';
-                        $filterselect = $USER->id;
+                        $blogurl->param('userid', $USER->id);
                     break;
 
                     default:
-                        if ($this->page->course->id != SITEID) {
-                            $filtertype = 'course';
-                            $filterselect = $this->page->course->id;
-                        } else {
-                            $filtertype = 'site';
-                            $filterselect = SITEID;
+                        if (!empty($blogheaders['filters']['module'])) {
+                            $blogurl->param('modid', $blogheaders['filters']['module']);
+                        } else if (!empty($blogheaders['filters']['course'])) {
+                            $blogurl->param('courseid', $blogheaders['filters']['course']);
                         }
+                        
                     break;
                 }
 
-                $link = html_link::make(blog_get_blogs_url(array($filtertype => $filterselect, 'tag'=>$tag->id)), tag_display_name($tag));
+                $blogurl->param('tagid', $tag->id);
+                $link = html_link::make($blogurl, tag_display_name($tag));
                 $link->add_class($tag->class);
                 $link->title = get_string('numberofentries','blog',$tag->ct);
                 $this->content->text .= '<li>' . $OUTPUT->link($link) . '</li> ';
