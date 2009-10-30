@@ -1651,6 +1651,8 @@ function workshop_list_teacher_submissions($workshop, $user) {
                     $assessment->userid = $user->id;
                     $assessment->grade = -1; // set impossible grade
                     $assessment->timecreated = $yearfromnow;
+                    $assessment->generalcomment = '';
+                    $assessment->teachercomment = '';
                     if (!$assessment->id = insert_record("workshop_assessments", $assessment)) {
                         error("Could not insert workshop assessment!");
                     }
