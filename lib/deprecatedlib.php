@@ -574,27 +574,18 @@ function get_current_group($courseid, $full = false) {
 
 
 /**
- * Print an error page displaying an error message.
+ * Inndicates fatal error. This function was originally printing the
+ * error message directly, since 2.0 it is throwing exception instead.
+ * The error printing is handled in default exception hadnler.
+ *
  * Old method, don't call directly in new code - use print_error instead.
  *
- * @global object
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
- * @return void Terminates script, does not return!
+ * @return void, always throws moodle_exception
  */
 function error($message, $link='') {
-    global $UNITTEST, $OUTPUT;
-
-    // If unittest running, throw exception instead
-    if (!empty($UNITTEST->running)) {
-        // Errors in unit test become exceptions, so you can unit test
-        // code that might call error().
-        throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
-    }
-
-    list($message, $moreinfourl, $link) = prepare_error_message('notlocalisederrormessage', 'error', $link, $message);
-    echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace(), null, true); // show debug warning
-    die;
+	throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
 }
 
 
