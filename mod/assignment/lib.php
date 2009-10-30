@@ -1893,6 +1893,10 @@ class assignment_base {
         $status = array();
 
         $typestr = get_string('type'.$this->type, 'assignment');
+        // ugly hack to support pluggable assignment type titles...
+        if($typestr === '[[type'.$this->type.']]'){
+            $typestr = get_string('type'.$this->type, 'assignment_'.$this->type);
+        }
 
         if (!empty($data->reset_assignment_submissions)) {
             $assignmentssql = "SELECT a.id
@@ -2893,6 +2897,11 @@ function assignment_types() {
     $names = get_list_of_plugins('mod/assignment/type');
     foreach ($names as $name) {
         $types[$name] = get_string('type'.$name, 'assignment');
+
+        // ugly hack to support pluggable assignment type titles..
+        if ($types[$name] == '[[type'.$name.']]') { 
+            $types[$name] = get_string('type'.$name, 'assignment_'.$name);
+        } 
     }
     asort($types);
     return $types;
@@ -3081,7 +3090,7 @@ function assignment_get_types() {
             $type = new object();
             $type->modclass = MOD_CLASS_ACTIVITY;
             $type->type = "assignment&amp;type=$assignmenttype";
-            $type->typestr = get_string("type$assignmenttype", 'assignment');
+            $type->typestr = get_string("type$assignmenttype", 'assignment_'.$assignmenttype);
             $types[] = $type;
         }
     }
