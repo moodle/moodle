@@ -548,6 +548,17 @@ class moodle_url {
 
         return true;
     }
+
+    /**
+     * Sets the anchor for the URI (the bit after the hash)
+     * @param string $anchor
+     */
+    public function set_anchor($anchor) {
+        // Match the anchor against the NMTOKEN spec
+        if (preg_match('#[a-zA-Z\_\:][a-zA-Z0-9\_\-\.\:]*#', $anchor)) {
+            $this->fragment = $anchor;
+        }
+    }
 }
 
 /**
