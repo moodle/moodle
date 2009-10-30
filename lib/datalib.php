@@ -1931,11 +1931,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
 
-    if ($CFG->type = 'oci8po') {
-        if (empty($info)) {
-            $info = ' ';
-        }
-    }
+    $info = empty($info) ? sql_empty() : $info; // Use proper empties for each database
+    $url  = empty($url)  ? sql_empty() : $url;
     $sql ='INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
         VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')";
 
