@@ -13,16 +13,16 @@ require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->dirroot .'/tag/lib.php');
 require_once($CFG->libdir .'/commentlib.php');
 
-$id           = optional_param('id', null, PARAM_INT);
-$start        = optional_param('formstart', 0, PARAM_INT);
-$tag          = optional_param('tag', '', PARAM_NOTAGS);
-$userid       = optional_param('userid', null, PARAM_INT);
-$tagid        = optional_param('tagid', null, PARAM_INT);
-$modid        = optional_param('modid', null, PARAM_INT);
-$entryid      = optional_param('entryid', null, PARAM_INT);
-$groupid      = optional_param('groupid', null, PARAM_INT);
-$courseid     = optional_param('courseid', null, PARAM_INT); // needed for user tabs and course tracking
-$search       = optional_param('search', null, PARAM_RAW);
+$id       = optional_param('id', null, PARAM_INT);
+$start    = optional_param('formstart', 0, PARAM_INT);
+$tag      = optional_param('tag', '', PARAM_NOTAGS);
+$userid   = optional_param('userid', null, PARAM_INT);
+$tagid    = optional_param('tagid', null, PARAM_INT);
+$modid    = optional_param('modid', null, PARAM_INT);
+$entryid  = optional_param('entryid', null, PARAM_INT);
+$groupid  = optional_param('groupid', null, PARAM_INT);
+$courseid = optional_param('courseid', null, PARAM_INT);
+$search   = optional_param('search', null, PARAM_RAW);
 
 comment::js();
 
@@ -35,8 +35,9 @@ foreach ($url_params as $var => $val) {
 $PAGE->set_url('blog/index.php', $url_params);
 
 //correct tagid if a text tag is provided as a param
-if (!empty($tag)) {  //text tag parameter takes precedence
-    if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE name LIKE ?", array($tag))) {
+if (!empty($tag)) {
+    $ILIKE = $DB->sql_ilike();
+    if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE name $ILIKE ?", array("%$tag%"))) {
         $tagid = $tagrec->id;
     } else {
         unset($tagid);
@@ -61,19 +62,16 @@ $tabsfile = null;
 
 if (!$userid && has_capability('moodle/blog:view', $sitecontext) && $CFG->bloglevel > BLOG_USER_LEVEL) {
     if ($entryid) {
-        if (!$entryobject = $DB->get_record('blog_entries', array('id'=>$entryid))) {
+        if (!$entryobject = $DB->get_record('post', array('id'=>$entryid))) {
             print_error('nosuchentry', 'blog');
         }
         $userid = $entryobject->userid;
     }
 } else if (!$userid) {
-    // user might have capability to write blogs, but not read blogs at site level
-    // users might enter this url manually without parameters
     $userid = $USER->id;
 }
-/// check access and prepare filters
 
-if (!empty($modid)) {  //check mod access
+if (!empty($modid)) {
     if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
         print_error(get_string('nocourseblogs', 'blog'));
     }
@@ -83,7 +81,7 @@ if (!empty($modid)) {  //check mod access
     $courseid = $mod->course;
 }
 
-if ((empty($courseid) ? true : $courseid == SITEID) && empty($userid)) {  //check site access
+if ((empty($courseid) ? true : $courseid == SITEID) && empty($userid)) {
     if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
         print_error('siteblogdisable', 'blog');
     }
@@ -120,8 +118,7 @@ if (!empty($groupid)) {
         print_error('groupblogdisable', 'blog');
     }
 
-        // fix for MDL-9268
-    if (! $group = groups_get_group($groupid)) { //TODO:check.
+    if (! $group = groups_get_group($groupid)) {
         print_error(get_string('invalidgroupid', 'blog'));
     }
 
@@ -182,47 +179,18 @@ if (!empty($user)) {
 $courseid = (empty($courseid)) ? SITEID : $courseid;
 
 if (!empty($courseid)) {
-    $filters['course'] = $courseid;
     $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
 }
 
 if (!empty($modid)) {
-    $filters['module'] = $modid;
     $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
 }
 
-if (!empty($groupid)) {
-    $filters['group'] = $groupid;
-}
-
-if (!empty($userid)) {
-    $filters['user'] = $userid;
-}
-
-if (!empty($tagid)) {
-    $filters['tag'] = $tagid;
-}
-
-if (!empty($search)) {
-    $filters['search'] = $search;
-}
-
-if (!empty($entryid)) {
-    $filters['entry'] = $entryid;
-}
 $blogheaders = blog_get_headers();
 blog_extend_settings_navigation($PAGE->settingsnav);
 
-// prints the tabs
-$showroles = !empty($userid);
-$currenttab = 'blogs';
-
-$user = $USER;
-$userid = $USER->id;
-
-// Unless this is a user's blog listing, the context is system
 if (empty($entryid) && empty($modid) && empty($groupid)) {
-    $PAGE->set_context(get_context_instance(CONTEXT_USER, $userid));
+    $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
 }
 
 echo $OUTPUT->header();
@@ -233,8 +201,8 @@ if (!empty($tabsfile)) {
 
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 
-$blog_listing = new blog_listing($filters);
-$blog_listing->print_entries();
+$bloglisting = new blog_listing($blogheaders['filters']);
+$bloglisting->print_entries();
 
 echo $OUTPUT->footer();
 

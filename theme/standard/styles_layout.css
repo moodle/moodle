@@ -1997,6 +1997,11 @@ body.has_navigation_bar {
   width: auto;
 }
 
+.officialblogtags {
+    display: inline;
+    font-weight: bold;
+}
+
 /***
  *** Calendar
  ***/

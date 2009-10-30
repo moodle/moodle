@@ -92,14 +92,15 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
 }
 
 // Print up to 10 previous blogs entries
+if (has_capability('moodle/blog:view', $systemcontext)) {
+    require_once($CFG->dirroot.'/blog/lib.php');
+    require_once($CFG->dirroot.'/blog/locallib.php');
 
-// I was not able to use get_items_tagged_with() because it automatically
-// tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
-// uses the post table so this would not really work.    - Yu 29/8/07
-if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see blogs obviously
+    $bloglisting = new blog_listing(array('tag' => $tag->id));
+    $limit = 10;
+    $start = 0;
 
-    $count = 10;
-    if ($blogs = blog_fetch_entries(array('tag'=>$tag->id), $count)) {
+    if ($blogs = $bloglisting->get_entries($start, $limit)) {
 
         echo $OUTPUT->box_start('generalbox', 'tag-blogs');
         $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
@@ -114,7 +115,7 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
                 $class = '';
             }
             echo '<li '.$class.'>';
-            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blog->id.'">';
+            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?entryid='.$blog->id.'">';
             echo format_string($blog->subject);
             echo '</a>';
             echo ' - ';
@@ -126,7 +127,8 @@ if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see bl
         }
         echo '</ul>';
 
-        echo '<p class="moreblogs"><a href="'.blog_get_blogs_url(array('tag'=>$tag->id))->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+        $allblogsurl = new moodle_url($CFG->wwwroot.'/blog/index.php', array('tagid' => $tag->id));
+        echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
 
         echo $OUTPUT->box_end();
     }

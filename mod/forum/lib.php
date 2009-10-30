@@ -3054,6 +3054,12 @@ function forum_get_course_forum($courseid, $type) {
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;
+        case "blog":
+            $forum->name = get_string('blogforum', 'forum');
+            $forum->intro = get_string('introblog', 'forum');
+            $forum->assessed = 0;
+            $forum->forcesubscribe = 0;
+            break;
         default:
             echo $OUTPUT->notification("That forum type doesn't exist!");
             return false;
@@ -4599,12 +4605,17 @@ function forum_update_post($post, $mform, &$message) {
  * @param object $post
  * @param mixed $mform
  * @param string $message
+ * @param int $userid
  * @return object
  */
-function forum_add_discussion($discussion, $mform=null, &$message=null) {
+function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=null) {
     global $USER, $CFG, $DB;
 
     $timenow = time();
+
+    if (is_null($userid)) {
+        $userid = $USER->id;
+    }
 
     // The first post is stored as a real post, and linked
     // to from the discuss entry.
@@ -4616,7 +4627,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $post = new object();
     $post->discussion    = 0;
     $post->parent        = 0;
-    $post->userid        = $USER->id;
+    $post->userid        = $userid;
     $post->created       = $timenow;
     $post->modified      = $timenow;
     $post->mailed        = 0;
@@ -4639,7 +4650,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
     $discussion->firstpost    = $post->id;
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
-    $discussion->userid       = $USER->id;
+    $discussion->userid       = $userid;
 
     $post->discussion = $DB->insert_record("forum_discussions", $discussion);
 
@@ -5531,12 +5542,19 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo '<div>';
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
-        echo '<input type="submit" value="';
-        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum')
-            : (($forum->type == 'qanda')
-               ? get_string('addanewquestion','forum')
-               : get_string('addanewdiscussion', 'forum'));
-        echo '" />';
+        switch ($forum->type) {
+            case 'news':
+            case 'blog':
+                $buttonadd = get_string('addanewtopic', 'forum');
+                break;
+            case 'qanda':
+                $buttonadd = get_string('addanewquestion', 'forum');
+                break;
+            default:
+                $buttonadd = get_string('addanewdiscussion', 'forum');
+                break;
+        }
+        echo '<input type="submit" value="'.$buttonadd.'" />';
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
@@ -7895,7 +7913,7 @@ function forum_get_layout_modes() {
 }
 
 /**
- * Returns array of forum types
+ * Returns array of forum types chooseable on the forum editing form
  *
  * @return array
  */
@@ -7903,7 +7921,8 @@ function forum_get_forum_types() {
     return array ('general'  => get_string('generalforum', 'forum'),
                   'eachuser' => get_string('eachuserforum', 'forum'),
                   'single'   => get_string('singleforum', 'forum'),
-                  'qanda'    => get_string('qandaforum', 'forum'));
+                  'qanda'    => get_string('qandaforum', 'forum'),
+                  'blog'     => get_string('blogforum', 'forum'));
 }
 
 /**
@@ -7917,7 +7936,8 @@ function forum_get_forum_types_all() {
                   'general'  => get_string('generalforum', 'forum'),
                   'eachuser' => get_string('eachuserforum', 'forum'),
                   'single'   => get_string('singleforum', 'forum'),
-                  'qanda'    => get_string('qandaforum', 'forum'));
+                  'qanda'    => get_string('qandaforum', 'forum'),
+                  'blog'     => get_string('blogforum', 'forum'));
 }
 
 /**

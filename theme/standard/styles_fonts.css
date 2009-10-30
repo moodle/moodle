@@ -933,7 +933,7 @@ body#user-index #longtimenosee {
 .forumpost .topic .subject {
   font-weight: bold;
 }
-.forumpost .topic .author {
+.forumpost .topic .author , .forumpost .topic .externalblog {
   font-size: 0.8em;
 }
 .forumpost .commands,

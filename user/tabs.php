@@ -2,7 +2,6 @@
 /// This file to be included so we can assume config.php has already been included.
 /// We also assume that $user, $course, $currenttab have been set
 
-    require_once($CFG->dirroot.'/blog/lib.php');
     require_once($CFG->libdir . '/portfoliolib.php');
 
     if (!isset($filtertype)) {
@@ -29,27 +28,17 @@
     $toprow = array();
     $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
-    /**************************************
-     * Site Level participation or Blogs  *
-     **************************************/
+    /****************************
+     * Site Level participation *
+     ****************************/
     if ($filtertype == 'site') {
 
         $site = get_site();
         echo $OUTPUT->heading(format_string($site->fullname));
 
-        if ($CFG->bloglevel >= 4) {
-            if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
-                $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.SITEID,
-                    get_string('participants'));
-            }
-
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array())->out(),
-                get_string('blogs','blog'));
-        }
-
-    /**************************************
-     * Course Level participation or Blogs  *
-     **************************************/
+    /******************************
+     * Course Level participation *
+     ******************************/
     } else if ($filtertype == 'course' && $filterselect) {
 
         $course = $DB->get_record('course', array('id'=>$filterselect));
@@ -59,34 +48,22 @@
         $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect,
             get_string('participants'));
 
-        if ($CFG->bloglevel >= 3) {
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('course'=>$filterselect))->out(), get_string('blogs','blog'));
-        }
-
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
             $toprow[] = new tabobject('notes', $CFG->wwwroot.'/notes/index.php?filtertype=course&amp;filterselect=' . $filterselect, get_string('notes', 'notes'));
         }
 
-    /**************************************
-     * Group Level participation or Blogs  *
-     **************************************/
+    /*****************************
+     * Group Level participation *
+     *****************************/
     } else if ($filtertype == 'group' && $filterselect) {
 
         $group_name = groups_get_group_name($filterselect);
         echo $OUTPUT->heading($group_name);
 
-        if ($CFG->bloglevel >= 2) {
 
-            $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect,
-                get_string('participants'));
-
-
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('group'=>$filterselect))->out(), get_string('blogs','blog'));
-        }
-
-    /**************************************
-     * User Level participation or Blogs  *
-     **************************************/
+    /****************************
+     * User Level participation *
+     ****************************/
     } else {
         if (isset($userid)) {
             $user = $DB->get_record('user', array('id'=>$userid));
@@ -127,19 +104,6 @@
                                       '&amp;id='.$user->id.'&amp;mode=discussions', get_string('discussions', 'forum'));
             }
 
-        }
-
-    /// Personal blog entries tab
-        require_once($CFG->dirroot.'/blog/lib.php');
-        if ($CFG->bloglevel >= BLOG_USER_LEVEL and // blogs must be enabled
-            (has_capability('moodle/user:readuserblogs', $personalcontext) // can review posts (parents etc)
-            or has_capability('moodle/blog:manageentries', $systemcontext)     // entry manager can see all posts
-            or ($user->id == $USER->id and has_capability('moodle/blog:create', $systemcontext)) // viewing self
-            or (has_capability('moodle/blog:view', $systemcontext) or has_capability('moodle/blog:view', $coursecontext))
-            ) // able to read blogs in site or course context
-        ) { //end if
-
-            $toprow[] = new tabobject('blogs', blog_get_blogs_url(array('user'=>$user->id,'course'=>$course->id))->out(), get_string('blog', 'blog'));
         }
 
         if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {

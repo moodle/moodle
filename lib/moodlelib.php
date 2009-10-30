@@ -4196,6 +4196,12 @@ function reset_course_userdata($data) {
         note_delete_all($data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotes', 'notes'), 'error'=>false);
     }
+    
+    if (!empty($data->delete_blog_associations)) {
+        require_once($CFG->dirroot.'/blog/lib.php');
+        blog_remove_associations_for_course($data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteblogassociations', 'blog'), 'error'=>false);
+    }
 
     $componentstr = get_string('roles');
 

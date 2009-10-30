@@ -179,6 +179,18 @@
             }
             break;
 
+        case 'blog':
+            if (!empty($forum->intro)) {
+                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
+            }
+            echo '<br />';
+            if (!empty($showall)) {
+                forum_print_latest_discussions($course, $forum, 0, 'plain', '', -1, -1, -1, 0, $cm);
+            } else {
+                forum_print_latest_discussions($course, $forum, -1, 'plain', '', -1, -1, $page, $CFG->forum_manydiscussions, $cm);
+            }
+            break;
+
         default:
             if (!empty($forum->intro)) {
                 echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');

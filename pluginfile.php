@@ -57,7 +57,7 @@ $fs = get_file_storage();
 
 
 if ($context->contextlevel == CONTEXT_SYSTEM) {
-    if ($filearea === 'blog') {
+    if ($filearea === 'blog_attachment' || $filearea === 'blog_post') {
 
         if (empty($CFG->bloglevel)) {
             print_error('siteblogdisable', 'blog');
@@ -95,7 +95,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
         //TODO: implement shared course and shared group access
 
         $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'blog'.$entryid.$relativepath;
+        $fullpath = $context->id.$filearea.$entryid.$relativepath;
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();

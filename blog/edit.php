@@ -27,17 +27,36 @@
 require_once(dirname(dirname(__FILE__)).'/config.php');
 include_once('lib.php');
 include_once('locallib.php');
-include_once($CFG->dirroot.'/tag/lib.php');
 
 $action   = required_param('action', PARAM_ALPHA);
 $id       = optional_param('entryid', 0, PARAM_INT);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
-$modid    = optional_param('modid', 0, PARAM_INT);
-$courseid = optional_param('courseid', 0, PARAM_INT); // needed for user tab - does nothing here
+$modid    = optional_param('modid', 0, PARAM_INT); // To associate the entry with a module instance
+$courseid = optional_param('courseid', 0, PARAM_INT); // To associate the entry with a course
 
 $PAGE->set_url('blog/edit.php', array('action' => $action, 'entryid' => $id, 'confirm' => $confirm, 'modid' => $modid, 'courseid' => $courseid));
 
-$blog_headers = blog_get_headers();
+// If action is add, we ignore $id to avoid any further problems
+if (!empty($id) && $action == 'add') {
+    $id = null;
+}
+
+$returnurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
+
+if (!empty($courseid) && empty($modid)) {
+    $returnurl->param('courseid', $courseid);
+    $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
+}
+
+// If a modid is given, guess courseid
+if (!empty($modid)) {
+    $returnurl->param('modid', $modid);
+    $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
+    $returnurl->param('courseid', $courseid);
+    $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
+}
+
+$blogheaders = blog_get_headers();
 
 require_login($courseid);
 
@@ -58,117 +77,120 @@ if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('mood
     print_error('cannoteditentryorblog');
 }
 
-$returnurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
-
-// Make sure that the person trying to edit have access right
+// Make sure that the person trying to edit has access right
 if ($id) {
-    if (!$existing = new blog_entry($id)) {
+    if (!$entry = new blog_entry($id)) {
         print_error('wrongentryid', 'blog');
     }
 
-    if (!blog_user_can_edit_entry($existing)) {
+    if (!blog_user_can_edit_entry($entry)) {
         print_error('notallowedtoedit', 'blog');
     }
-    $userid    = $existing->userid;
-    $returnurl->param('userid', $existing->userid);
+    $userid = $entry->userid;
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
         print_error('noentry', 'blog'); // manageentries is not enough for adding
     }
-    $existing  = false;
-    $userid    = $USER->id;
-    $returnurl->param('userid', $userid);
+    $entry  = new stdClass();
+    $entry->id = null;
+    $userid = $USER->id;
 }
-
-if (!empty($courseid) && empty($modid)) {
-    $returnurl->param('courseid', $courseid);
-    $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
-}
-
-// If a modid is given, guess courseid
-if (!empty($modid)) {
-    $returnurl->param('modid', $modid);
-    $courseid = $DB->get_field('course_modules', 'course', array('id' => $modid));
-    $returnurl->param('courseid', $courseid);
-    $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
-}
+$returnurl->param('userid', $userid);
 
 $strblogs = get_string('blogs','blog');
 
 if ($action === 'delete'){
-    if (!$existing) {
+    if (empty($entry->id)) {
         print_error('wrongentryid', 'blog');
     }
     if (data_submitted() && $confirm && confirm_sesskey()) {
-        $existing->delete();
-        redirect($returnurl);
-    } else {
+        // Make sure the current user is the author of the blog entry, or has some deleteanyentry capability
+        if (!blog_user_can_edit_entry($entry)) {
+            print_error('nopermissionstodeleteentry', 'blog');
+        } else {
+            $entry->delete();
+            redirect($returnurl);
+        }
+    } else if (blog_user_can_edit_entry($entry)) {
         $optionsyes = array('entryid'=>$id, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey(), 'courseid'=>$courseid);
-        $optionsno = array('userid'=>$existing->userid, 'courseid'=>$courseid);
+        $optionsno = array('userid'=>$entry->userid, 'courseid'=>$courseid);
         $PAGE->set_title("$SITE->shortname: $strblogs");
         $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
-        //blog_print_entry($existing);
-        $existing->print_html();
+        $entry->print_html();
         echo '<br />';
         echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'), new moodle_url('edit.php', $optionsyes),new moodle_url( 'index.php', $optionsno));
         echo $OUTPUT->footer();
         die;
     }
+} else if ($action == 'add') {
+    $PAGE->set_title("$SITE->shortname: $strblogs: " . get_string('addnewentry', 'blog'));
+    $PAGE->set_heading($SITE->shortname);
+} else if ($action == 'edit') {
+    $PAGE->set_title("$SITE->shortname: $strblogs: " . get_string('editentry', 'blog'));
+    $PAGE->set_heading($SITE->shortname);
 }
 
-require_once('edit_form.php');
-
-if (!empty($existing)) {
-    if ($blogassociations = $DB->get_records('blog_association', array('blogid' => $existing->id))) {
+if (!empty($entry->id)) {
+    if ($CFG->useblogassociations && ($blogassociations = $DB->get_records('blog_association', array('blogid' => $entry->id)))) {
 
         foreach ($blogassociations as $assocrec) {
             $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
 
             switch ($contextrec->contextlevel) {
                 case CONTEXT_COURSE:
-                    $existing->courseassoc = $assocrec->contextid;
+                    $entry->courseassoc = $assocrec->contextid;
                     break;
                 case CONTEXT_MODULE:
-                    $existing->modassoc[] = $assocrec->contextid;
+                    $entry->modassoc = $assocrec->contextid;
                     break;
             }
         }
     }
 }
 
-$textfieldoptions = array('trusttext'=>true, 'subdirs'=>true);
-$blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext', 'textfieldoptions', 'id'));
-$draftitemid = file_get_submitted_draft_itemid('attachments');
-file_prepare_draft_area($draftitemid, $PAGE->context->id, 'blog_attachment', empty($id)?null:$id);
+require_once('edit_form.php');
+$summaryoptions = array('subdirs'=>false, 'maxfiles'=> 99, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true, 'context'=>$sitecontext);
+$attachmentoptions = array('subdirs'=>false, 'maxfiles'=> 99, 'maxbytes'=>$CFG->maxbytes);
 
-$editordraftid = file_get_submitted_draft_itemid('summary');
-$currenttext = file_prepare_draft_area($editordraftid, $PAGE->context->id, 'blog_post', empty($id) ? null : $id, array('subdirs'=>true), @$existing->summary);
+$blogeditform = new blog_edit_form(null, compact('entry', 'summaryoptions', 'attachmentoptions', 'sitecontext', 'courseid', 'modid'));
 
-$data = array('id'=>$id, 'summary'=>array('text'=>$currenttext, 'format'=>FORMAT_HTML, 'itemid' => $editordraftid));
-$blogeditform->set_data($data); // set defaults
+$entry = file_prepare_standard_editor($entry, 'summary', $summaryoptions, $sitecontext, 'blog_post', $entry->id);
+$entry = file_prepare_standard_filemanager($entry, 'attachment', $attachmentoptions, $sitecontext, 'blog_attachment', $entry->id);
 
-if ($blogeditform->is_cancelled()){
+if (!empty($CFG->usetags) && !empty($entry->id)) {
+    include_once($CFG->dirroot.'/tag/lib.php');
+    $entry->tags = tag_get_tags_array('post', $entry->id);
+}
+
+$entry->action = $action;
+// set defaults
+$blogeditform->set_data($entry);
+
+if ($blogeditform->is_cancelled()) {
     redirect($returnurl);
-} else if ($fromform = $blogeditform->get_data()){
 
-    //save stuff in db
+} else if ($data = $blogeditform->get_data()){
+
     switch ($action) {
         case 'add':
-            $blogentry = new blog_entry($fromform, $blogeditform);
-            $blogentry->summary = file_save_draft_area_files($fromform->summary['itemid'], $PAGE->context->id, 'blog_post', $blogentry->id, array('subdirs'=>true), $fromform->summary['text']);
+            $blogentry = new blog_entry(null, $data, $blogeditform);
             $blogentry->add();
+            $blogentry->edit($data, $blogeditform, $summaryoptions, $attachmentoptions);
         break;
 
         case 'edit':
-            if (!$existing) {
+            if (empty($entry->id)) {
                 print_error('wrongentryid', 'blog');
             }
-            $existing->edit($fromform, $blogeditform);
+
+            $entry->edit($data, $blogeditform, $summaryoptions, $attachmentoptions);
         break;
+
         default :
             print_error('invalidaction');
     }
+
     redirect($returnurl);
 }
 
@@ -181,68 +203,40 @@ switch ($action) {
         $strformheading = get_string('addnewentry', 'blog');
         $entry->action       = $action;
 
-        if ($courseid) {  //pre-select the course for associations
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
-            $entry->courseassoc = $context->id;
-        }
+        if ($CFG->useblogassociations) {
 
-        if ($modid) { //pre-select the mod for associations
-            $context = get_context_instance(CONTEXT_MODULE, $modid);
-            $entry->modassoc = array($context->id);
+            //pre-select the course for associations
+            if ($courseid) {
+                $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                $entry->courseassoc = $context->id;
+            }
+
+            //pre-select the mod for associations
+            if ($modid) {
+                $context = get_context_instance(CONTEXT_MODULE, $modid);
+                $entry->modassoc = $context->id;
+            }
         }
         break;
 
     case 'edit':
-        if (!$existing) {
+        if (empty($entry->id)) {
             print_error('wrongentryid', 'blog');
         }
-
-        $entry->id           = $existing->id;
-        $entry->subject      = $existing->subject;
-        $entry->fakesubject  = $existing->subject;
-        $entry->summary      = $existing->summary;
-        $entry->fakesummary  = $existing->summary;
-        $entry->publishstate = $existing->publishstate;
-        $entry->format       = $existing->format;
-        $entry->tags         = tag_get_tags_array('blog_entries', $entry->id);
-        $entry->action       = $action;
-
-        if (!empty($existing->courseassoc)) {
-            $entry->courseassoc = $existing->courseassoc;
-        }
-
-        if (!empty($existing->modassoc)) {
-            $entry->modassoc = $existing->modassoc;
-        }
-
+        $entry->tags = tag_get_tags_array('post', $entry->id);
         $strformheading = get_string('updateentrywithid', 'blog');
 
         break;
+
     default :
         print_error('unknowaction');
 }
 
 $entry->modid = $modid;
 $entry->courseid = $courseid;
-$entry->attachments = $draftitemid;
-$entry->summary = array('text' => @$existing->summary, 'format' => empty($existing->summaryformat) ? FORMAT_HTML : $existing->summaryformat, 'itemid' => $editordraftid);
-$entry->summaryformat = (empty($existing->summaryformat)) ? FORMAT_HTML : $existing->summaryformat;
-$PAGE->requires->data_for_js('blog_edit_existing', $entry);
-
-// done here in order to allow deleting of entries with wrong user id above
-if (!$user = $DB->get_record('user', array('id'=>$userid))) {
-    print_error('invaliduserid');
-}
-
-$PAGE->requires->js('blog/edit_form.js');
 
 echo $OUTPUT->header();
-
-$blogeditform->set_data($entry);
 $blogeditform->display();
-
-$PAGE->requires->js_function_call('select_initial_course');
-
 echo $OUTPUT->footer();
 
 die;

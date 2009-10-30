@@ -385,6 +385,12 @@ if (empty($CFG->filter_multilang_converted)) {
     echo $OUTPUT->box(get_string('multilangupgradenotice', 'admin'), 'generalbox adminwarning');
 }
 
+// Hidden bloglevel upgrade
+$showbloglevelupgrade = ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete);
+if ($showbloglevelupgrade) {
+    echo $OUTPUT->box(get_string('bloglevelupgradenotice', 'admin'), 'generalbox adminwarning');
+}
+
 // Alert if we are currently in maintenance mode
 if (!empty($CFG->maintenance_enabled)) {
     echo $OUTPUT->box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');

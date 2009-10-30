@@ -21,29 +21,32 @@ class blog_edit_form extends moodleform {
     public $modnames = array();
 
     function definition() {
-        global $CFG, $COURSE, $USER, $DB, $PAGE;
+        global $CFG, $DB;
 
-        $mform    =& $this->_form;
+        $mform =& $this->_form;
 
-        $entryid  = $this->_customdata['id'];
-        $existing = $this->_customdata['existing'];
+        $entry = $this->_customdata['entry'];
+        $courseid = $this->_customdata['courseid'];
+        $modid = $this->_customdata['modid'];
+        $summaryoptions = $this->_customdata['summaryoptions'];
+        $attachmentoptions = $this->_customdata['attachmentoptions'];
         $sitecontext = $this->_customdata['sitecontext'];
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'subject', get_string('entrytitle', 'blog'), 'size="60"');
-        $mform->addElement('editor', 'summary', get_string('entrybody', 'blog'), null, array('trusttext'=>true, 'subdirs'=>true, 'maxfiles' => -1));
+        $mform->addElement('editor', 'summary_editor', get_string('entrybody', 'blog'), null, $summaryoptions);
 
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('emptytitle', 'blog'), 'required', null, 'client');
 
-        $mform->setType('summary', PARAM_RAW);
-        $mform->addRule('summary', get_string('emptybody', 'blog'), 'required', null, 'client');
-        $mform->setHelpButton('summary', array('writing', 'richtext2'), false, 'editorhelpbutton');
+        $mform->setType('summary_editor', PARAM_RAW);
+        $mform->addRule('summary_editor', get_string('emptybody', 'blog'), 'required', null, 'client');
+        $mform->setHelpButton('summary_editor', array('writing', 'richtext2'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'summaryformat', get_string('format'));
 
-        $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'));
+        $mform->addElement('filemanager', 'attachment_filemanager', get_string('attachment', 'forum'), null, $attachmentoptions);
 
         //disable publishstate options that are not allowed
         $publishstates = array();
@@ -56,7 +59,7 @@ class blog_edit_form extends moodleform {
 
         $mform->addElement('select', 'publishstate', get_string('publishto', 'blog'), $publishstates);
         $mform->setHelpButton('publishstate', array('publish_state', get_string('publishto', 'blog'), 'blog'));
-
+        $mform->setDefault('publishstate', 0);
 
         if (!empty($CFG->usetags)) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
@@ -66,45 +69,38 @@ class blog_edit_form extends moodleform {
         $allmodnames = array();
 
         if (!empty($CFG->useblogassociations)) {
-            $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
-            $mform->addElement('static', 'assocdescription', '', get_string('assocdescription', 'blog'));
-            if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_USER, $USER->id))) {
-                $courses = get_courses('all', 'visible DESC, fullname ASC');
-            } else {
-                $courses = get_my_courses($USER->id, 'visible DESC, fullname ASC');
-            }
-
-            $coursenames[0] = 'none';
-
-            if (!empty($courses)) {
-
-                foreach ($courses as $course) {
-                    $coursenames[$course->context->id] = $course->fullname;
-                    $modinfo = get_fast_modinfo($course, $USER->id);
-                    $coursecontextpath = $DB->get_field('context', 'path', array('id' => $course->context->id));
-
-                    foreach ($modinfo->instances as $modname => $instances) {
-
-                        foreach ($instances as $modid => $mod) {
-                            $modcontextid = $DB->get_field_select('context', 'id',
-                                'instanceid = '.$mod->id.' AND ' .
-                                'contextlevel = ' . CONTEXT_MODULE . ' AND ' .
-                                'path LIKE \''.$coursecontextpath.'/%\'');
-
-                            $modstring = $mod->name . ' (' . get_plugin_name($modname) . ')';
-                            $this->modnames[$course->context->id][$modcontextid] = $modstring;
-                            $allmodnames[$modcontextid] = $course->shortname . " - " . $modstring;
-                        }
-                    }
+            if ((!empty($entry->courseassoc) || (!empty($courseid) && empty($modid))) && has_capability('moodle/blog:associatecourse', $sitecontext)) {
+                if (!empty($courseid)) {
+                    $course = $DB->get_record('course', array('id' => $courseid));
+                    $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
+                    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    $a->coursename = $course->fullname;
+                    $contextid = $context->id;
+                } else {
+                    $sql = 'SELECT fullname FROM {course} cr LEFT JOIN {context} ct ON ct.instanceid = cr.id WHERE ct.id = ?';
+                    $a->coursename = $DB->get_field_sql($sql, array($entry->courseassoc));
+                    $contextid = $entry->courseassoc;
                 }
-            }
-            $mform->addElement('select', 'courseassoc', get_string('course'), $coursenames, 'onchange="addCourseAssociations()"');
-            $mform->setAdvanced('courseassoc');
-            $selectassoc = &$mform->addElement('select', 'modassoc', get_string('managemodules'), $allmodnames);
-            $mform->setAdvanced('modassoc');
-            $selectassoc->setMultiple(true);
-            $PAGE->requires->data_for_js('blog_edit_form_modnames', $this->modnames);
 
+                $mform->addElement('advcheckbox', 'courseassoc', get_string('associatewithcourse', 'blog', $a), null, null, array(0, $contextid));
+                $mform->setDefault('courseassoc', $contextid);
+            } else if ((!empty($entry->modassoc) || !empty($modid)) && has_capability('moodle/blog:associatemodule', $sitecontext)) {
+                if (!empty($modid)) {
+                    $mod = get_coursemodule_from_id(false, $modid);
+                    $a->modtype = get_string('modulename', $mod->modname);
+                    $a->modname = $mod->name;
+                    $context = get_context_instance(CONTEXT_MODULE, $modid);
+                } else {
+                    $context = $DB->get_record('context', array('id' => $entry->modassoc));
+                    $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
+                    $a->modtype = $DB->get_field('modules', 'name', array('id' => $cm->module));
+                    $a->modname = $DB->get_field($a->modtype, 'name', array('id' => $cm->instance));
+                }
+
+                $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
+                $mform->addElement('advcheckbox', 'modassoc', get_string('associatewithmodule', 'blog', $a), null, null, array(0, $context->id));
+                $mform->setDefault('modassoc', $context->id);
+            }
         }
 
         $this->add_action_buttons();
@@ -112,40 +108,30 @@ class blog_edit_form extends moodleform {
         $mform->setType('action', PARAM_ACTION);
         $mform->setDefault('action', '');
 
-        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-
         $mform->addElement('hidden', 'entryid');
         $mform->setType('entryid', PARAM_INT);
-        $mform->setDefault('entryid', $entryid);
+        $mform->setDefault('entryid', $entry->id);
 
         $mform->addElement('hidden', 'modid');
         $mform->setType('modid', PARAM_INT);
-        $mform->setDefault('modid', 0);
+        $mform->setDefault('modid', $modid);
 
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
-        $mform->setDefault('courseid', 0);
-
-        // $this->set_data($existing);
+        $mform->setDefault('courseid', $courseid);
     }
 
     function validation($data, $files) {
         global $CFG, $DB, $USER;
 
         $errors = array();
+        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-        if (empty($data['courseassoc']) && ($data['publishstate'] == 'course' || $data['publishstate'] == 'group') && !empty($CFG->useblogassociations)) {
-            return array('publishstate' => get_string('mustassociatecourse', 'blog'));
-        }
-
-        //validate course association
-        if (!empty($data['courseassoc'])) {
+        // validate course association
+        if (!empty($data['courseassoc']) && has_capability('moodle/blog:associatecourse', $sitecontext)) {
             $coursecontext = $DB->get_record('context', array('id' => $data['courseassoc'], 'contextlevel' => CONTEXT_COURSE));
 
-            if ($coursecontext)  {    //insure associated course has a valid context id
-                //insure the user has access to this course
-
+            if ($coursecontext)  {
                 if (!has_capability('moodle/course:view', $coursecontext, $USER->id)) {
                     $errors['courseassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
                 }
@@ -154,34 +140,32 @@ class blog_edit_form extends moodleform {
             }
         }
 
-        //validate mod associations
+        // validate mod association
         if (!empty($data['modassoc'])) {
-            //insure mods are valid
+            $modcontextid = $data['modassoc'];
 
-            foreach ($data['modassoc'] as $modid) {
-                $modcontext = $DB->get_record('context', array('id' => $modid, 'contextlevel' => CONTEXT_MODULE));
+            $modcontext = $DB->get_record('context', array('id' => $modcontextid, 'contextlevel' => CONTEXT_MODULE));
 
-                if ($modcontext) {  //insure associated mod has a valid context id
-                    //get context of the mod's course
-                    $path = split('/', $modcontext->path);
-                    $coursecontext = $DB->get_record('context', array('id' => $path[(count($path) - 2)]));
+            if ($modcontext) {
+                // get context of the mod's course
+                $path = split('/', $modcontext->path);
+                $coursecontext = $DB->get_record('context', array('id' => $path[(count($path) - 2)]));
 
-                    //insure only one course is associated
-                    if (!empty($data['courseassoc'])) {
-                        if ($data['courseassoc'] != $coursecontext->id) {
-                            $errors['modassoc'] = get_string('onlyassociateonecourse', 'blog');
-                        }
-                    } else {
-                        $data['courseassoc'] = $coursecontext->id;
-                    }
-
-                    //insure the user has access to each mod's course
-                    if (!has_capability('moodle/course:view', $coursecontext)) {
-                        $errors['modassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
+                // ensure only one course is associated
+                if (!empty($data['courseassoc'])) {
+                    if ($data['courseassoc'] != $coursecontext->id) {
+                        $errors['modassoc'] = get_string('onlyassociateonecourse', 'blog');
                     }
                 } else {
-                    $errors['modassoc'] = get_string('invalidcontextid', 'blog');
+                    $data['courseassoc'] = $coursecontext->id;
                 }
+
+                // ensure the user has access to each mod's course
+                if (!has_capability('moodle/course:view', $coursecontext)) {
+                    $errors['modassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
+                }
+            } else {
+                $errors['modassoc'] = get_string('invalidcontextid', 'blog');
             }
         }
 
@@ -190,24 +174,4 @@ class blog_edit_form extends moodleform {
         }
         return true;
     }
-
-    /**
-     * This function sets up options of otag select element. This is called from definition and also
-     * after adding new official tags with the add tag button.
-     *
-     */
-    function otags_select_setup(){
-        global $DB;
-
-        $mform =& $this->_form;
-        if ($otagsselect =& $mform->getElement('otags')) {
-            $otagsselect->removeOptions();
-        }
-        $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
-        if ($otags = $DB->get_records_sql_menu("SELECT id, $namefield FROM {tag} WHERE tagtype='official' ORDER by $namefield ASC")) {
-            $otagsselect->loadArray($otags);
-        }
-
-    }
-
 }

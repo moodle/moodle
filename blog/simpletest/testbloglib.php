@@ -32,6 +32,7 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
     public static $includecoverage = array('blog/locallib.php');
 
     public function test_overrides() {
+
         // Try all the filters at once: Only the entry filter is active
         $blog_listing = new blog_listing(array('site' => 1, 'course' => 1, 'module' => 1, 'group' => 1, 'user' => 1, 'tag' => 1, 'entry' => 1));
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
@@ -60,28 +61,6 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
         $this->assertTrue(array_key_exists('user', $blog_listing->filters));
         $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
 
-        // Now use the group and module together
-        $blog_listing = new blog_listing(array('module' => 1, 'group' => 1, 'tag' => 1));
-        $this->assertTrue(array_key_exists('group', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('module', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('user', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
-
-        $blog_listing = new blog_listing(array('course' => 2));
-        $this->assertTrue(array_key_exists('course', $blog_listing->filters));
-
-        $blog_listing = new blog_listing(array('course' => 2, 'group' => 12));
-        $this->assertFalse(array_key_exists('course', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('group', $blog_listing->filters));
-
-        $blog_listing = new blog_listing(array('site' => 2, 'group' => 12));
-        $this->assertFalse(array_key_exists('site', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('group', $blog_listing->filters));
-
-        $blog_listing = new blog_listing(array('user' => 2, 'group' => 12));
-        $this->assertFalse(array_key_exists('group', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('user', $blog_listing->filters));
-
     }
 
     /**
@@ -89,38 +68,6 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
      */
     public function test_blog_get_headers_case_1() {
         global $CFG, $PAGE, $OUTPUT;
-        
-        $this->create_test_tables('post', 'tag', 'course', 'user', 'role', 'role_assignments', 'group', 'blog_associations', 
-                                  'course_modules', 'role_capabilities', 'tag_correlation', 'tag_instance');
-        
-        $contexts = $this->load_test_data('context',
-                array('contextlevel', 'instanceid', 'path', 'depth'), array(
-           1 => array(40, 666, '', 2),
-           2 => array(50, 666, '', 3),
-           3 => array(70, 666, '', 4),
-        ));
-
-        $this->load_test_data('course', 
-                              array('id', 'fullname', 'shortname', 'format'), 
-                              array(
-                                array(1, 'My Moodle Site', 'moodle', 'site'),
-                                array(2, 'Course 1', 'course1', 'weeks'),
-                                array(3, 'Course 2', 'course2', 'weeks')
-                                )
-                              );
-        $this->load_test_data('user',
-                              array('id', 'confirmed', 'username', 'firstname', 'lastname'),
-                              array( array(1, 1, 'joebloe', 'Joe', 'Bloe')));
-
-        $this->switch_to_test_db();
-        
-        $userrole = create_role(get_string('authenticateduser'), 'user', get_string('authenticateduserdescription'), 'moodle/legacy:user');
-        $student = $this->testdb->get_record('role', array('shortname' => 'student'));
-        
-        $ras = $this->load_test_data('role_assignments', array('userid', 'roleid', 'contextid'),
-                                     array(array(1, $student->id, $context[2]->id)));
-
-        // Case 1: A single blog entry
         $PAGE->url = new moodle_url($CFG->wwwroot . '/blog/index.php', array('entryid' => 1));
         $blog_headers = blog_get_headers();
 

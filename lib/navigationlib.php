@@ -1378,7 +1378,8 @@ class global_navigation extends navigation_node {
                         $filterselect = clean_param($filterselect, PARAM_INT);
 
                         if ($CFG->bloglevel >= 3) {
-                            $participants->add(get_string('blogs','blog'), blog_get_blogs_url(array('course'=>$filterselect))->out());
+                            $blogsurls = new moodle_url($CFG->wwwroot.'/blog/index.php', array('courseid' => $filterselect));
+                            $participants->add(get_string('blogs','blog'), $blogsurls->out());
                         }
                         
                         if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->context) || has_capability('moodle/notes:view', $this->context))) {
