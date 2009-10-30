@@ -548,12 +548,21 @@
     // Run external blog cron if needed
     if ($CFG->useexternalblogs) {
         require_once($CFG->dirroot . '/blog/lib.php');
-        $sql = "SELECT * FROM {blog_external} WHERE timefetched < ? - ? OR timefetched = 0";
-        $external_blogs = $DB->get_records_sql($sql, array(mktime(), $CFG->externalblogcrontime));
+        mtrace("Fetching external blog entries...", '');
+        $sql = "timefetched < ? - ? OR timefetched = 0";
+        $externalblogs = $DB->get_records_select('blog_external', $sql, array(mktime(), $CFG->externalblogcrontime));
         
         foreach ($external_blogs as $eb) {
-            blog_fetch_external_entries($eb);
+            blog_sync_external_entries($eb);
         }
+    }
+
+    // Run blog associations cleanup
+    if ($CFG->useblogassociations) {
+        require_once($CFG->dirroot . '/blog/lib.php');
+        // delete entries whose contextids no longer exists
+        mtrace("Deleting blog associations linked to non-existent contexts...", '');
+        $DB->delete_records_select('blog_association', 'contextid NOT IN (SELECT id FROM {context})');
     }
 
     // cleanup file trash
