@@ -26,34 +26,27 @@
  */
 
 require_once($CFG->libdir.'/formslib.php');
-// TODO remove "Blogging is disabled" text from blog_menu when editing not on
-// DONE put Associations in Advanced items
-// TODO add descriptive text to Associations fieldset
-// TODO forceopen on preferences page
-// TODO Add Blog link under course navigation tree
-// DONE add string for invalidgroupid
-// DONE Restrict groupid entries to entries associated with the course
+
 class blog_edit_external_form extends moodleform {
     public function definition() {
         global $CFG;
 
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'url', get_string('url'));
+        $mform->addElement('text', 'url', get_string('url'), array('size' => 50));
         $mform->addRule('url', get_string('emptyurl', 'blog'), 'required', null, 'client');
         $mform->setHelpButton('url', array('url', get_string('url', 'blog'), 'blog'));
 
         $mform->addElement('text', 'name', get_string('name'));
-        // No need to require the name, it gets prefilled with the external blog's site name if empty
-        // $mform->addRule('name', get_string('emptyname', 'blog'), 'required', null, 'client');
         $mform->setHelpButton('name', array('name', get_string('name', 'blog'), 'blog'));
 
         $mform->addElement('textarea', 'description', get_string('description'), array('cols' => 50, 'rows' => 7));
         $mform->setHelpButton('description', array('description', get_string('description', 'blog'), 'blog'));
 
         if (!empty($CFG->usetags)) {
-            $mform->addElement('text', 'tags', get_string('tags'));
-            $mform->setHelpButton('tags', array('tags', get_string('tags', 'blog'), 'blog'));
+            $mform->addElement('text', 'filtertags', get_string('filtertags', 'blog'), array('size' => 50));
+            $mform->setHelpButton('filtertags', array('filtertags', get_string('filtertags', 'blog'), 'blog'));
+            $mform->addElement('text', 'autotags', get_string('autotags', 'blog'), array('size' => 50));
         }
 
         $this->add_action_buttons();
@@ -71,10 +64,17 @@ class blog_edit_external_form extends moodleform {
      * Additional validation includes checking URL and tags
      */
     public function validation($data, $files) {
+        global $CFG;
+
         $errors = parent::validation($data, $files);
 
-        if (!blog_is_valid_url($data['url'])) {
-            $errors['url'] = get_string('invalidurl', 'blog');
+        require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
+
+        $rssfile = new moodle_simplepie_file($data['url']);
+        $filetest = new SimplePie_Locator($rssfile);
+
+        if (!$filetest->is_feed($rssfile)) {
+            $errors['url'] = get_string('feedisinvalid', 'blog');
         } else {
             $rss = new moodle_simplepie($data['url']);
             if (!$rss->init()) {
@@ -85,7 +85,6 @@ class blog_edit_external_form extends moodleform {
         return $errors;
     }
 
-/// tweak the form - depending on existing data
     public function definition_after_data() {
         global $CFG, $COURSE;
         $mform =& $this->_form;
@@ -107,7 +106,11 @@ class blog_edit_external_form extends moodleform {
         }
 
         if ($id = $mform->getElementValue('id')) {
-            $mform->setDefault('tags', implode(',', tag_get_tags_array('blog_external', $id)));
+            $mform->setDefault('autotags', implode(',', tag_get_tags_array('blog_external', $id)));
+            $mform->freeze('url');
+            $mform->freeze('filtertags');
+            // TODO change the filtertags element to a multiple select, using the tags of the external blog
+            // Use $rss->get_channel_tags()
         }
     }
 }

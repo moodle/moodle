@@ -27,20 +27,20 @@
 
 require_once('../config.php');
 require_once('lib.php');
-require_once('external_form.php');
+require_once('external_blog_edit_form.php');
 require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
 require_login();
-
-$user = $USER;
+require_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM));
 
 // TODO redirect if $CFG->useexternalblogs is off, $CFG->maxexternalblogsperuser == 0, or if user doesn't have caps to manage external blogs
 
 $id = optional_param('id', null, PARAM_INT);
-$PAGE->set_url('/blog/external.php', array('id' => $id));
+$PAGE->set_url('/blog/external_blog_edit.php', array('id' => $id));
 
-$returnurl = urldecode(optional_param('returnurl', $PAGE->url->out(), PARAM_RAW));
+$returnurl = new moodle_url($CFG->wwwroot . '/blog/external_blogs.php');
+
 $action = (empty($id)) ? 'add' : 'edit';
 
 $external = new stdClass();
@@ -67,18 +67,17 @@ if ($externalblogform->is_cancelled()){
         case 'add':
             $rss = new moodle_simplepie($data->url);
 
-            $new_external = new stdClass();
-            $new_external->name = (empty($data->name)) ? $rss->get_title() : $data->name;
-            $new_external->description = (empty($data->description)) ? $rss->get_description() : $data->description;
-            $new_external->userid = $user->id;
-            $new_external->url = $data->url;
-            $new_external->timemodified = mktime();
+            $newexternal = new stdClass();
+            $newexternal->name = (empty($data->name)) ? $rss->get_title() : $data->name;
+            $newexternal->description = (empty($data->description)) ? $rss->get_description() : $data->description;
+            $newexternal->userid = $USER->id;
+            $newexternal->url = $data->url;
+            $newexternal->filtertags = $data->filtertags;
+            $newexternal->timemodified = mktime();
 
-            if ($new_external->id = $DB->insert_record('blog_external', $new_external)) {
-                tag_set('blog_external', $new_external->id, $data->tags);
-                // TODO success message
-            } else {
-                // TODO error message
+            if ($newexternal->id = $DB->insert_record('blog_external', $newexternal)) {
+                blog_sync_external_entries($newexternal);
+                tag_set('blog_external', $newexternal->id, $data->autotags);
             }
 
             break;
@@ -91,15 +90,13 @@ if ($externalblogform->is_cancelled()){
                 $external->id = $data->id;
                 $external->name = (empty($data->name)) ? $rss->get_title() : $data->name;
                 $external->description = (empty($data->description)) ? $rss->get_description() : $data->description;
-                $external->userid = $user->id;
+                $external->userid = $USER->id;
                 $external->url = $data->url;
+                $external->filtertags = $data->filtertags;
                 $external->timemodified = mktime();
 
                 if ($DB->update_record('blog_external', $external)) {
-                    tag_set('blog_external', $external->id, explode(',', $data->tags));
-                    // TODO success message
-                } else {
-                    // TODO error message
+                    tag_set('blog_external', $external->id, explode(',', $data->autotags));
                 }
 
             } else {
@@ -115,8 +112,8 @@ if ($externalblogform->is_cancelled()){
     redirect($returnurl);
 }
 
-$PAGE->navbar->add(fullname($user), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id)));
-$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/index.php', array('userid'=>$user->id)));
+$PAGE->navbar->add(fullname($USER), new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$USER->id)));
+$PAGE->navbar->add($strblogs, new moodle_url($CFG->wwwroot.'/blog/index.php', array('userid'=>$USER->id)));
 $PAGE->navbar->add($strformheading);
 $PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
@@ -124,7 +121,6 @@ $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strformheading, 2);
 
-$external->returnurl = $returnurl;
 $externalblogform->set_data($external);
 $externalblogform->display();
 
