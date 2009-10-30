@@ -31,6 +31,7 @@
     $strlast           = get_string('lastaccess');
     $strreports        = get_string('reports');
     $strviews          = get_string('views');
+    $strrelatedblogentries = get_string('relatedblogentries', 'blog');
 
     $PAGE->set_title($course->shortname .': '. $stractivityreport);
     $PAGE->set_heading($course->fullname);
@@ -43,15 +44,21 @@
         print_error('logfilenotavailable');
     }
 
-    echo '<div class="loginfo">'.get_string('computedfromlogs', 'admin', userdate($logstart)).'</div>';
+    echo $OUTPUT->container(get_string('computedfromlogs', 'admin', userdate($logstart)), 'loginfo');
 
-    echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5"><tr>';
-    echo '<th class="header c0" scope="col">'.$stractivity.'</th>';
-    echo '<th class="header c1" scope="col">'.$strviews.'</th>';
-    if ($showlastaccess) {
-        echo '<th class="header c2" scope="col">'.$strlast.'</th>';
+    $outlinetable = new html_table();
+    $outlinetable->add_class('generaltable boxaligncenter');
+    $outlinetable->cellpadding = 5;
+    $outlinetable->id = 'outlinetable';
+    $outlinetable->head = array($stractivity, $strviews);
+
+    if ($CFG->useblogassociations) {
+        $outlinetable->head[] = $strrelatedblogentries;
     }
-    echo '</tr>';
+
+    if ($showlastaccess) {
+        $outlinetable->head[] = $strlast;
+    }
 
     $modinfo = get_fast_modinfo($course);
 
@@ -63,7 +70,6 @@
           GROUP BY cm.id";
     $views = $DB->get_records_sql($sql, array($course->id));
 
-    $ri = 0;
     $prevsecctionnum = 0;
     foreach ($modinfo->sections as $sectionnum=>$section) {
         foreach ($section as $cmid) {
@@ -75,41 +81,81 @@
                 continue;
             }
             if ($prevsecctionnum != $sectionnum) {
-                echo '<tr class="r'.$ri++.' section"><td colspan="3"><h3>';
+                $sectionrow = new html_table_row();
+                $sectionrow->add_class('section');
+                $sectioncell = new html_table_cell();
+                $sectioncell->colspan = count($outlinetable->head);
+
+                $sectiontitle = '';
                 switch ($course->format) {
-                    case 'weeks': print_string('week'); break;
-                    case 'topics': print_string('topic'); break;
-                    default: print_string('section'); break;
+                    case 'weeks': $sectiontitle = get_string('week'); break;
+                    case 'topics': $sectiontitle = get_string('topic'); break;
+                    default: $sectiontitle = get_string('section'); break;
                 }
-                echo ' '.$sectionnum.'</h3></td></tr>';
+
+                $sectioncell->text = $OUTPUT->heading($sectiontitle . ' ' . $sectionnum, 3);
+                $sectionrow->cells[] = $sectioncell;
+                $outlinetable->data[] = $sectionrow;
 
                 $prevsecctionnum = $sectionnum;
             }
 
             $dimmed = $cm->visible ? '' : 'class="dimmed"';
             $modulename = get_string('modulename', $cm->modname);
-            echo '<tr class="r'.$ri++.'">';
-            echo "<td class=\"cell c0 actvity\"><img src=\"" . $OUTPUT->mod_icon_url('icon', $cm->modname) . "\" class=\"icon\" alt=\"$modulename\" />";
-            echo "<a $dimmed title=\"$modulename\" href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\">".format_string($cm->name)."</a></td>";
-            echo "<td class=\"cell c1 numviews\">";
-            if (!empty($views[$cm->id]->numviews)) {
-                echo $views[$cm->id]->numviews;
-            } else {
-                echo '-';
+
+            $reportrow = new html_table_row();
+            $activitycell = new html_table_cell();
+            $activitycell->add_class('activity');
+
+            $activityicon = html_image::make($OUTPUT->mod_icon_url('icon', $cm->modname));
+            $activityicon->add_class('icon');
+            $activityicon->alt = $modulename;
+
+            $activitylink = html_link::make("$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id", format_string($cm->name));
+            if (!$cm->visible) {
+                $activitylink->add_class('dimmed');
             }
-            echo "</td>";
+
+            $activitycell->text = $OUTPUT->image($activityicon) . $OUTPUT->link($activitylink);
+
+            $reportrow->cells[] = $activitycell;
+
+            $numviewscell = new html_table_cell();
+            $numviewscell->add_class('numviews');
+
+            if (!empty($views[$cm->id]->numviews)) {
+                $numviewscell->text = $views[$cm->id]->numviews;
+            } else {
+                $numviewscell->text = '-';
+            }
+
+            $reportrow->cells[] = $numviewscell;
+
+            if ($CFG->useblogassociations) {
+                $blogcell = new html_table_cell();
+                $blogcell->add_class('blog');
+                if ($blogcount = blog_get_associated_count($course->id, $cm->id)) {
+                    $blogcell->text = $OUTPUT->link(html_link::make('/blog/index.php?modid='.$cm->id, $blogcount));
+                } else {
+                    $blogcell->text = '-';
+                }
+                $reportrow->cells[] = $blogcell;
+            }
+
             if ($showlastaccess) {
-                echo "<td class=\"cell c2 lastaccess\">";
+                $lastaccesscell = new html_table_cell();
+                $lastaccesscell->add_class('lastaccess');
+
                 if (isset($views[$cm->id]->lasttime)) {
                     $timeago = format_time(time() - $views[$cm->id]->lasttime);
-                    echo userdate($views[$cm->id]->lasttime)." ($timeago)";
+                    $lastaccesscell->text = userdate($views[$cm->id]->lasttime)." ($timeago)";
                 }
-                echo "</td>";
+                $reportrow->cells[] = $lastaccesscell;
             }
-            echo '</tr>';
+            $outlinetable->data[] = $reportrow;
         }
     }
-    echo '</table>';
+    echo $OUTPUT->table($outlinetable);
 
     echo $OUTPUT->footer();
 
