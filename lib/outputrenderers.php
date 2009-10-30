@@ -1912,11 +1912,9 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @param string $link Link for the Continue button
      * @param array $backtrace The execution backtrace
      * @param string $debuginfo Debugging information
-     * @param bool $showerrordebugwarning Whether or not to show a debugging warning
      * @return string the HTML to output.
      */
-    public function fatal_error($message, $moreinfourl, $link, $backtrace,
-                $debuginfo = null, $showerrordebugwarning = false) {
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
 
         $output = '';
 
@@ -2421,11 +2419,9 @@ class cli_core_renderer extends moodle_core_renderer {
      * @param string $link Link for the Continue button
      * @param array $backtrace The execution backtrace
      * @param string $debuginfo Debugging information
-     * @param bool $showerrordebugwarning Whether or not to show a debugging warning
      * @return string A template fragment for a fatal error
      */
-    public function fatal_error($message, $moreinfourl, $link, $backtrace,
-                $debuginfo = null, $showerrordebugwarning = false) {
+    public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
         $output = "!!! $message !!!\n";
 
         if (debugging('', DEBUG_DEVELOPER)) {
