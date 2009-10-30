@@ -1940,10 +1940,6 @@ class moodle_core_renderer extends moodle_renderer_base {
                 get_string('moreinformation') . '</a></p>';
         $output .= $this->box($message, 'errorbox');
 
-        if ($showerrordebugwarning) {
-            $output .= $this->notification('error() is a deprecated function. ' .
-                    'Please call print_error() instead of error()', 'notifytiny');
-        }
         if (!empty($debuginfo)) {
             $output .= $this->notification($debuginfo, 'notifytiny');
         }

@@ -585,7 +585,7 @@ function get_current_group($courseid, $full = false) {
  * @return void, always throws moodle_exception
  */
 function error($message, $link='') {
-	throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
+	throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a deprecated function, please call print_error() instead of error()');
 }
 
 
