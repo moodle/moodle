@@ -35,9 +35,6 @@ require '../config.php';
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/lib/session-test.php'));
 $PAGE->set_generaltype('form');
 
-list($message, $moreinfourl, $link) = prepare_error_message('notlocalisederrormessage', 'error', '', 'session test not reimplemented yet');
-echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
+error('session test not reimplemented yet'); //DO NOT localize or use print_error()!
 //
 //TODO: add code that actually tests moodle sessions, the old one only tested PHP sessions used from installer, not the real moodle sessions 
-
-?>
