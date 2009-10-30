@@ -2086,11 +2086,6 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
 
-    if ($CFG->type = 'oci8po') {
-        if ($info == '') {
-            $info = ' ';
-        }
-    }
     $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
                  'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
     $result = $DB->insert_record_raw('log', $log, false);
