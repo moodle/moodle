@@ -1398,6 +1398,7 @@ class jsportal {
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
         $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
         $output .= "    main.portal.strings['marked']='".get_string('markedthistopic', '', '_var_')."';\n";
+        $output .= "    main.portal.numsections = ".$COURSE->numsections.";\n";
         $output .= "    main.portal.strings['hide']='".get_string('hide')."';\n";
         $output .= "    main.portal.strings['hidesection']='".get_string('hidesection', '', '_var_')."';\n";
         $output .= "    main.portal.strings['show']='".get_string('show')."';\n";
