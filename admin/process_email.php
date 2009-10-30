@@ -72,7 +72,7 @@ while(!feof($fd)) {
 
 $function($modargs,$body); 
 
-fclose($handle);
+fclose($fd);
 
 
 
