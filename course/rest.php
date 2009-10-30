@@ -47,13 +47,11 @@ require_capability('moodle/course:update', $context);
 
 
 // OK, now let's process the parameters and do stuff
-// MDL-10221 the DELETE method is not allowed on some web servers, so we simulate it with the action URL param
-$requestmethod = $_SERVER['REQUEST_METHOD'];
-if ($pageaction == 'DELETE') {
-    $requestmethod = 'DELETE';
-}
 
-switch($requestmethod) {
+$req_method = ($page_action == 'DELETE') ? 'DELETE' : $_SERVER['REQUEST_METHOD'];
+
+switch($req_method) {
+
     case 'POST':
 
         switch ($class) {
@@ -68,7 +66,79 @@ switch($requestmethod) {
                         // We want to move the block around. This means changing
                         // the column (position field) and/or block sort order
                         // (weight field).
-                        blocks_move_block($PAGE, $blockinstance, $column, $value);
+                        $undifinedinsertedid = FALSE;
+                        $isaddednewblock = FALSE;
+
+                        if (!empty($positiontoinsertid) && $positiontoinsertid != 'undefined' && strpos($positiontoinsertid, 'column') === FALSE ) {
+                            $isaddednewblock = (substr($positiontoinsertid,0,1) != 'i') ? TRUE : FALSE;
+                            if ($positiontoinsertid == 'linst0' || $positiontoinsertid == 'rinst0') {
+                               $isaddednewblock = FALSE;
+                            }
+
+                            $positiontoinsertid = clean_param($positiontoinsertid, PARAM_SEQUENCE);
+                        } else if($positiontoinsertid == 'undefined') {
+                            $undifinedinsertedid = TRUE;
+                            $positiontoinsertid = 0;
+                        } else {
+                            $positiontoinsertid = 0;
+                        }
+                        
+                        if ($positiontoinsertid > 0) {
+                            
+                            $instsql = 'SELECT * FROM '. $CFG->prefix .'block_instance WHERE '
+                                .' id = \''. $instanceid .'\' AND position = \''. $column .'\' AND pageId = \''. $courseid .'\'';
+                            $instweight = get_record_sql($instsql);
+
+                            $sql = 'SELECT * FROM '. $CFG->prefix .'block_instance WHERE '
+                                .' id = \''. $positiontoinsertid .'\' AND position = \''. $column .'\' AND pageId = \''. $courseid .'\'';
+                            $targetweight = get_record_sql($sql);
+
+                            //$instweight = get_record("block_instance", 'id', $positiontoinsertid, "position",$column, 'pageId', $courseid);
+                            if (!empty($targetweight->weight) && !empty($instweight->weight)) {
+                                if ($positiontoinsert == "before") {
+                                    if ($targetweight->weight < $instweight->weight || ($instanceid == $positiontoinsertid)) {
+                                        $destweight = ($targetweight->weight == 0 || empty($targetweight->weight)) ? 0 : $targetweight->weight ;
+                                    } else {
+                                        $destweight = ($targetweight->weight == 0 || empty($targetweight->weight)) ? 0 : $targetweight->weight -1 ;
+                                    }
+                                } else if ($positiontoinsert == "after") {
+                                    $destweight = $targetweight->weight + 1;                                    
+                                }
+                            } else {
+                                $destweight = ($targetweight->weight == 0 || empty($targetweight->weight)) ? 0 : $targetweight->weight - 1 ;
+                            }                            
+                        } else {
+                            $sql = 'SELECT max(weight) as weight FROM '. $CFG->prefix .'block_instance WHERE '
+                               .'position = \''. $column .'\' AND pageId = \''. $courseid .'\'';
+                            $instweight = get_record_sql($sql);
+
+                            $countrecords = count_records('block_instance', 'position', $column, 'pageId', $courseid);
+                            $recordexists = record_exists('block_instance', 'position', $column, 'pageId', $courseid, 'id', $instanceid);
+
+                            if ($isaddednewblock || $undifinedinsertedid) {
+                                if (!empty($countrecords)) {
+                                    $destweight = ($recordexists) ? $instweight->weight : $instweight->weight + 1 ;
+                                } else {
+                                    $destweight = 0;
+                                }                                
+                            } else {                   
+                                if (!empty($countrecords)) {
+                                    $destweight = ($recordexists) ? $instweight->weight  : $instweight->weight + 1  ;
+                                } else {
+                                    $destweight = 0;
+                                }
+                            }
+                        }
+                       
+                        blocks_move_block($PAGE, $blockinstance, $column, $destweight);
+                                          
+                        $current_blocks = blocks_get_by_page_pinned($PAGE);
+                        global $COURSE;
+                        foreach ($current_blocks as $pos =>$blocks) {
+                            if (count($current_blocks[$pos]) == 0) {
+                                print_side_block('', '', NULL, NULL, '', array('id'=> $pos.'inst0', 'class'=>'tempblockhandle'), '');                                
+                            }
+                        }
                         break;
                 }
                 break;
