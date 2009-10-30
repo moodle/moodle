@@ -208,7 +208,7 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
         $CFG->debug = DEBUG_DEVELOPER;
     }
 
-    if (is_stacktrace_during_output_init($backtrace)) {
+    if (is_early_init($backtrace)) {
         echo bootstrap_renderer::early_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
     } else {
         echo $OUTPUT->fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
@@ -222,8 +222,8 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
 }
 
 /**
- * This function encapsulates the tests for whether an exception was thrown in the middle
- * of initialising the $OUTPUT variable and starting output.
+ * This function encapsulates the tests for whether an exception was thrown in
+ * early init -- either during setup.php or during init of $OUTPUT.
  *
  * If another exception is thrown then, and if we do not take special measures,
  * we would just get a very cryptic message "Exception thrown without a stack
@@ -233,10 +233,11 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
  * @param array $backtrace the stack trace to analyse.
  * @return boolean whether the stack trace is somewhere in output initialisation.
  */
-function is_stacktrace_during_output_init($backtrace) {
+function is_early_init($backtrace) {
     $dangerouscode = array(
         array('function' => 'header', 'type' => '->'),
         array('class' => 'bootstrap_renderer'),
+        array('file' => dirname(__FILE__).'/setup.php'),
     );
     foreach ($backtrace as $stackframe) {
         foreach ($dangerouscode as $pattern) {
@@ -271,16 +272,10 @@ function print_error($errorcode, $module = 'error', $link = '', $a = null) {
     // Errors in unit test become exceptions, so you can unit test code that might call print_error().
     if (!empty($UNITTEST->running)) {
         throw new moodle_exception($errorcode, $module, $link, $a);
-    } else {
-        // It is really bad if library code calls print_error when output buffering
-        // is on.
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
     }
 
     list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
-    if (is_stacktrace_during_output_init(debug_backtrace())) {
+    if (is_early_init(debug_backtrace())) {
         echo bootstrap_renderer::early_error($message, $moreinfourl, $link, debug_backtrace());
     } else {
         echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
@@ -865,7 +860,7 @@ class bootstrap_renderer {
             $backtrace = debug_backtrace();
             array_shift($backtrace);
             array_shift($backtrace);
-            $recursing = is_stacktrace_during_output_init($backtrace);
+            $recursing = is_early_init($backtrace);
         }
 
         // If lib/outputlib.php has been loaded, call it.

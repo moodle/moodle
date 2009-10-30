@@ -1923,8 +1923,18 @@ class moodle_core_renderer extends moodle_renderer_base {
         }
 
         if ($this->has_started()) {
+            // we can not always recover properly here, we have problems with output buffering,
+            // html tables, etc.
             $output .= $this->opencontainers->pop_all_but_last();
+
         } else {
+            // It is really bad if library code throws exception when output buffering is on,
+            // because the buffered text would be printed before our start of page.
+            // NOTE: this hack might be behave unexpectedly in case output buffering is enabled in PHP.ini
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            
             // Header not yet printed
             if (isset($_SERVER['SERVER_PROTOCOL'])) {
 				// server protocol should be always present, because this render
