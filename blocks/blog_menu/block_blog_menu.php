@@ -70,21 +70,7 @@ class block_blog_menu extends block_base {
         $this->content = new stdClass;
         $this->content->footer = '';
 
-        $viewblogentriesurl = blog_get_context_url();
-        $strlevel = '';
-
-        switch ($context->contextlevel) {
-            case CONTEXT_COURSE:
-                $strlevel = ($context->instanceid == SITEID) ? '' : get_string('course');
-                break;
-            case CONTEXT_MODULE:
-                $strlevel = print_context_name($context);
-                break;
-            case CONTEXT_USER:
-                $strlevel = get_string('user');
-                break;
-        }
-
+        $blogheaders = blog_get_headers();
         $canviewblogs = has_capability('moodle/blog:view', $context);
 
         /// Accessibility: markup as a list.
@@ -93,16 +79,19 @@ class block_blog_menu extends block_base {
         $menulist = new html_list();
         $menulist->add_class('list');
 
-        if (!empty($strlevel)) {
-            $url = html_link::make($viewblogentriesurl, get_string('viewblogentries', 'blog', $strlevel));
-            $url->disableifcurrent = true;
+        if (!empty($blogheaders['strview']) && $CFG->useblogassociations) {
+            $url = html_link::make($blogheaders['url'], $blogheaders['strview']);
+            if ($blogheaders['url']->compare($PAGE->url)) {
+                $url->disabled = true;
+            }
             $menulist->add_item($OUTPUT->link($url));
         }
 
         // show View site entries link
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL && $canviewblogs) {
             $viewsiteentriesurl = html_link::make($CFG->wwwroot .'/blog/index.php', get_string('viewsiteentries', 'blog'));
-            if (!$PAGE->url->param('search') && !$PAGE->url->param('tag') && !$PAGE->url->param('tagid')) {
+            if (!$PAGE->url->param('search') && !$PAGE->url->param('tag') && !$PAGE->url->param('tagid') &&
+                !$PAGE->url->param('modid') && !$PAGE->url->param('courseid') && !$PAGE->url->param('userid') && !$PAGE->url->param('entryid')) {
                 $viewsiteentriesurl->disableifcurrent = true;
             }
             $menulist->add_item($OUTPUT->link($viewsiteentriesurl));
@@ -111,30 +100,35 @@ class block_blog_menu extends block_base {
         $output .= '';
 
         // show View my entries link
-        if ($context->contextlevel != CONTEXT_USER) {
-            $myentrieslink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
-            $myentrieslink->url->params($viewblogentriesurl->params());
-            $myentrieslink->disableifcurrent = true;
-            $menulist->add_item($OUTPUT->link($myentrieslink));
+        $myentrieslink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/index.php', array('userid' => $USER->id)), get_string('viewmyentries', 'blog'));
+        $myentrieslink->url->params($blogheaders['url']->params());
+        $myentrieslink->url->param('userid', $USER->id);
+        $pageuserid = $PAGE->url->param('userid');
+        if (!empty($pageuserid) && $pageuserid == $USER->id) {
+            $myentrieslink->disabled = true;
         }
 
-        // show Add entry link
+        $menulist->add_item($OUTPUT->link($myentrieslink));
+
+        // show "Add entry" or "Blog about this" link
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         if (has_capability('moodle/blog:create', $sitecontext)) {
-            $addentrylink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/edit.php', array('action' => 'add')), get_string('addnewentry', 'blog'));
-            $addentrylink->url->params($viewblogentriesurl->params());
+            $addentrylink = html_link::make(new moodle_url($CFG->wwwroot .'/blog/edit.php', array('action' => 'add')), $blogheaders['stradd']);
+            $addentrylink->url->params($blogheaders['url']->params());
             $addentrylink->disableifcurrent = true;
             $menulist->add_item($OUTPUT->link($addentrylink));
         }
 
         // Full-text search field
-        $searchform = new html_form();
-        $searchform->method = 'get';
-        $searchform->url = new moodle_url($viewblogentriesurl);
-        $searchform->button->text = get_string('search');
-        $formcontents = $OUTPUT->field(html_field::make_text('search', '', '', 99));
+        if (has_capability('moodle/blog:search', $sitecontext)) {
+            $searchform = new html_form();
+            $searchform->method = 'get';
+            $searchform->url = new moodle_url($blogheaders['url']);
+            $searchform->button->text = get_string('search');
+            $formcontents = $OUTPUT->field(html_field::make_text('search', '', '', 99));
+            $menulist->add_item($OUTPUT->form($searchform, $formcontents));
+        }
 
-        $menulist->add_item($OUTPUT->form($searchform, $formcontents));
         $this->content->text = $OUTPUT->htmllist($menulist);
     }
 }
