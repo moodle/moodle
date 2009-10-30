@@ -215,7 +215,7 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
     }
 
     $errmsg = "Default exception handler: " . $ex->getMessage() . "\n" .  format_backtrace($backtrace);
-    if (debugging($errmsg, DEBUG_MINIMAL)) {
+    if (debugging('', DEBUG_MINIMAL)) {
         error_log($errmsg, 0);
     }
     exit(1); // General error code
