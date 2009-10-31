@@ -840,6 +840,14 @@ function external_delete_descriptions($component) {
  * upgrade logging functions
  */
 function upgrade_handle_exception($ex, $plugin = null) {
+    $info = get_exception_info($ex);
+
+    // First log upgrade error
+    upgrade_log(UPGRADE_LOG_ERROR, $plugin, 'Exception: ' . get_class($ex), $info->message, $info->backtrace);
+
+    // Always turn on debugging - admins need to know what is going on
+    $CFG->debug = DEBUG_DEVELOPER;
+
     default_exception_handler($ex, true, $plugin);
 }
 
@@ -1166,6 +1174,7 @@ function install_core($version, $verbose) {
 
         print_upgrade_part_end(null, true, $verbose);
     } catch (exception $ex) {
+        //TODO: unconditionally rollback DB transaction if active
         upgrade_handle_exception($ex);
     }
 }
@@ -1216,6 +1225,7 @@ function upgrade_core($version, $verbose) {
 
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {
+        //TODO: unconditionally rollback DB transaction if active
         upgrade_handle_exception($ex);
     }
 }

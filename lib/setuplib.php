@@ -160,15 +160,18 @@ class invalid_state_exception extends moodle_exception {
 }
 
 /**
- * Default exception handler, uncought exceptions are equivalent to using print_error()
+ * Default exception handler, uncought exceptions are equivalent to error() in 1.9 and earlier
  *
  * @param Exception $ex 
- * @param boolean $isupgrade 
- * @param string $plugin 
- * Does not return. Terminates execution.
+ * @return void -does not return. Terminates execution!
  */
-function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
+function default_exception_handler($ex) {
     global $CFG, $DB, $OUTPUT, $SCRIPT;
+
+    if ($DB) {
+        // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
+        $DB->set_debug(0);
+    }
 
     // detect active db transactions, rollback and log as error
     if ($DB && $DB->is_transaction_started()) {
@@ -180,44 +183,19 @@ function default_exception_handler($ex, $isupgrade = false, $plugin = null) {
         }
     }
 
-    $backtrace = $ex->getTrace();
-    $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
-    array_unshift($backtrace, $place);
+    $info = get_exception_info($ex);
 
-    if ($ex instanceof moodle_exception) {
-        $errorcode = $ex->errorcode;
-        $module = $ex->module;
-        $a = $ex->a;
-        $link = $ex->link;
-        $debuginfo = $ex->debuginfo;
-    } else {
-        $errorcode = 'generalexceptionmessage';
-        $module = 'error';
-        $a = $ex->getMessage();
-        $link = '';
-        $debuginfo = null;
-    }
-
-    list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
-
-    if ($isupgrade) {
-        // First log upgrade error
-        upgrade_log(UPGRADE_LOG_ERROR, $plugin, 'Exception: ' . get_class($ex), $message, $backtrace);
-
-        // Always turn on debugging - admins need to know what is going on
-        $CFG->debug = DEBUG_DEVELOPER;
-    }
-
-    if (is_early_init($backtrace)) {
-        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
-    } else {
-        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo);
-    }
-
-    $errmsg = "Default exception handler: " . $ex->getMessage() . "\n" .  format_backtrace($backtrace);
     if (debugging('', DEBUG_MINIMAL)) {
-        error_log($errmsg, 0);
+        $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace);
+        error_log($logerrmsg, 0);
     }
+
+    if (is_early_init($info->backtrace)) {
+        echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+    } else {
+        echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+    }
+
     exit(1); // General error code
 }
 
@@ -273,20 +251,30 @@ function print_error($errorcode, $module = 'error', $link = '', $a = null, $debu
 }
 
 /**
- * Private method used by print_error and default_exception_handler.
- * @param $errorcode
- * @param $module
- * @param $link
- * @param $a
- * @return array
+ * Returns detailed information about specified exception.
+ * @param exception $ex
+ * @return object
  */
-function prepare_error_message($errorcode, $module, $link, $a) {
+function get_exception_info($ex) {
     global $CFG, $DB, $SESSION;
 
-    if ($DB) {
-        // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
-        $DB->set_debug(0);
+    if ($ex instanceof moodle_exception) {
+        $errorcode = $ex->errorcode;
+        $module = $ex->module;
+        $a = $ex->a;
+        $link = $ex->link;
+        $debuginfo = $ex->debuginfo;
+    } else {
+        $errorcode = 'generalexceptionmessage';
+        $module = 'error';
+        $a = $ex->getMessage();
+        $link = '';
+        $debuginfo = null;
     }
+
+    $backtrace = $ex->getTrace();
+    $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
+    array_unshift($backtrace, $place);
 
     // Be careful, no guarantee moodlelib.php is loaded.
     if (empty($module) || $module == 'moodle' || $module == 'core') {
@@ -332,7 +320,16 @@ function prepare_error_message($errorcode, $module, $link, $a) {
         }
     }
 
-    return array($message, $moreinfourl, $link);
+    $info = new object();
+    $info->message     = $message;
+    $info->errorcode   = $errorcode;
+    $info->backtrace   = $backtrace;
+    $info->link        = $link;
+    $info->moreinfourl = $moreinfourl;
+    $info->a           = $a;
+    $info->debuginfo   = $debuginfo;
+    
+    return $info;
 }
 
 /**
