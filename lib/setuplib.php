@@ -20,7 +20,7 @@
  * These functions are required very early in the Moodle
  * setup process, before any of the main libraries are
  * loaded.
- * 
+ *
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -162,7 +162,7 @@ class invalid_state_exception extends moodle_exception {
 /**
  * Default exception handler, uncought exceptions are equivalent to error() in 1.9 and earlier
  *
- * @param Exception $ex 
+ * @param Exception $ex
  * @return void -does not return. Terminates execution!
  */
 function default_exception_handler($ex) {
@@ -328,7 +328,7 @@ function get_exception_info($ex) {
     $info->moreinfourl = $moreinfourl;
     $info->a           = $a;
     $info->debuginfo   = $debuginfo;
-    
+
     return $info;
 }
 
@@ -342,7 +342,7 @@ function get_exception_info($ex) {
 function format_backtrace($callers, $plaintext = false) {
     // do not use $CFG->dirroot because it might not be available in destructors
     $dirroot = dirname(dirname(__FILE__));
- 
+
     if (empty($callers)) {
         return '';
     }
@@ -790,7 +790,7 @@ function init_eaccelerator() {
  * The problem is caused be two factors
  * <ol>
  * <li>On the one hand, we cannot be sure when output will start. In particular,
- * an error, which needs to be displayed, could br thrown at any time.</li>
+ * an error, which needs to be displayed, could be thrown at any time.</li>
  * <li>On the other hand, we cannot be sure when we will have all the information
  * necessary to correctly initialise $OUTPUT. $OUTPUT depends on the theme, which
  * (potentially) depends on the current course, course categories, and logged in user.
@@ -868,17 +868,17 @@ class bootstrap_renderer {
     }
 
     /**
-     * This function should only be called by this class, or by 
-     * @return unknown_type
+     * This function should only be called by this class, or from exception handlers
+     * @return string
      */
-    public static function early_error($message, $moreinfourl, $link, $backtrace,
-                $debuginfo = null, $showerrordebugwarning = false) {
+    public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
         global $CFG;
 
         // In the name of protocol correctness, monitoring and performance
         // profiling, set the appropriate error headers for machine comsumption
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             // Avoid it with cron.php. Note that we assume it's HTTP/1.x
+            // The 503 ode here means our Moodle does not work at all, the error happended too early
             @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
         }
 
