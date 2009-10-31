@@ -187,7 +187,7 @@ function default_exception_handler($ex) {
     $info = get_exception_info($ex);
 
     if (debugging('', DEBUG_MINIMAL)) {
-        $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace);
+        $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
         error_log($logerrmsg, 0);
     }
 
@@ -198,7 +198,7 @@ function default_exception_handler($ex) {
             echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
         } catch (Exception $out_ex) {
             // default exception handler MUST not throw any exceptions!!
-            // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme 
+            // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme
             // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(
             echo bootstrap_renderer::early_error_content($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
             $outinfo = get_exception_info($out_ex);

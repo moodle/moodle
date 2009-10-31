@@ -1,12 +1,13 @@
 <?PHP
-       // dbperformance.php - shows latest ADOdb stats for the current server
+// dbperformance.php - shows latest ADOdb stats for the current server
 
-    require_once('../config.php');
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
+require_once('../config.php');
 
 error('TODO: rewrite db perf code'); // TODO: rewrite
 
-    // disable moodle specific debug messages that would be breaking the frames
-    disable_debugging();
 
     $topframe    = optional_param('topframe', 0, PARAM_BOOL);
     $bottomframe = optional_param('bottomframe', 0, PARAM_BOOL);

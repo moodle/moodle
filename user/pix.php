@@ -1,7 +1,10 @@
-<?PHP // $Id$
+<?PHP
       // This function fetches user pictures from the data directory
       // Syntax:   pix.php/userid/f1.jpg or pix.php/userid/f2.jpg
       //     OR:   ?file=userid/f1.jpg or ?file=userid/f2.jpg
+
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
@@ -11,9 +14,6 @@
         // do not use require_login() because it is expensive and not suitable here anyway
         redirect($OUTPUT->old_icon_url('u/f1'));
     }
-
-    // disable moodle specific debug messages
-    disable_debugging();
 
     $relativepath = get_file_argument();
 
@@ -33,4 +33,3 @@
 
     // picture was deleted - use default instead
     redirect($OUTPUT->old_icon_url('u/f1'));
-?>

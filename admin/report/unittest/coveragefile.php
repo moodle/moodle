@@ -29,15 +29,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
 // basic security, require login + require site config cap
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-
-// disable moodle specific debug messages
-disable_debugging();
 
 // get file requested
 $relativepath  = get_file_argument();

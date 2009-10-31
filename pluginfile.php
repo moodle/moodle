@@ -24,11 +24,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
 require_once('config.php');
 require_once('lib/filelib.php');
-
-// disable moodle specific debug messages
-disable_debugging();
 
 $relativepath = get_file_argument();
 $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);

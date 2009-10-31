@@ -161,6 +161,14 @@ global $FULLSCRIPT;
  */
 global $SCRIPT;
 
+// Scripts may request no debug and error messages in output
+// please note it must be defined before including the config.php script
+// and in some cases you also need to set custom default exception handler
+if (!defined('NO_DEBUG_DISPLAY')) {
+    define('NO_DEBUG_DISPLAY', false);
+}
+
+/// wwwroot is mandatory
     if (!isset($CFG->wwwroot)) {
         trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
         die;
@@ -354,26 +362,25 @@ global $SCRIPT;
     unset($originaldatabasedebug);
     error_reporting($CFG->debug);
 
-/// find out if PHP cofigured to display warnings
+    // find out if PHP cofigured to display warnings,
+    // this is a security problem because some moodle scripts may
+    // disclose sensitive information 
     if (ini_get_bool('display_errors')) {
         define('WARN_DISPLAY_ERRORS_ENABLED', true);
     }
-/// If we want to display Moodle errors, then try and set PHP errors to match
+    // If we want to display Moodle errors, then try and set PHP errors to match
     if (!isset($CFG->debugdisplay)) {
-        //keep it as is during installation
+        // keep it "as is" during installation
+    } else if (NO_DEBUG_DISPLAY) {
+        // some parts of Moodle cannot display errors and debug at all.
+        @ini_set('display_errors', '0');
+        @ini_set('log_errors', '1');
     } else if (empty($CFG->debugdisplay)) {
         @ini_set('display_errors', '0');
         @ini_set('log_errors', '1');
     } else {
+        // This is very problematic in XHTML strict mode!
         @ini_set('display_errors', '1');
-    }
-// Even when users want to see errors in the output,
-// some parts of Moodle cannot display them at all.
-// (Once we are XHTML strict compliant, debugdisplay
-//  _must_ go away).
-    if (defined('MOODLE_SANE_OUTPUT')) {
-        @ini_set('display_errors', '0');
-        @ini_set('log_errors', '1');
     }
 
 /// detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
@@ -685,6 +692,6 @@ global $SCRIPT;
 
     }
 
-/// note: we can not block non utf-8 installatrions here, because empty mysql database
+/// note: we can not block non utf-8 installations here, because empty mysql database
 /// might be converted to utf-8 in admin/index.php during installation
 

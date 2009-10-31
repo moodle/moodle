@@ -1,18 +1,17 @@
-<?PHP // $Id$
+<?PHP
       // This function fetches math. images from the data directory
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
 
-    define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
-
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
+    
     require_once('../../config.php');
 
     if (!filter_is_enabled('filter/algebra')) {
         print_error('filternotenabled');
     }
-
-    // disable moodle specific debug messages
-    disable_debugging();
 
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/filter/tex/lib.php');
@@ -61,4 +60,4 @@
             echo "Please turn on debug mode in site configuration to see more info here.";
         }
     }
-?>
+

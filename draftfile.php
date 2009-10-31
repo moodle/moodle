@@ -24,6 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
 require_once('config.php');
 require_once('lib/filelib.php');
 
@@ -31,9 +34,6 @@ require_login();
 if (isguestuser()) {
     print_error('noguest');
 }
-
-// disable moodle specific debug messages
-disable_debugging();
 
 $relativepath = get_file_argument();
 

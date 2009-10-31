@@ -1,15 +1,14 @@
-<?php // $Id$
+<?php
       // This function fetches group pictures from the data directory
       // Syntax:   pix.php/groupid/f1.jpg or pix.php/groupid/f2.jpg
       //     OR:   ?file=groupid/f1.jpg or ?file=groupid/f2.jpg
 
-    define('NO_MOODLE_COOKIES', true);                  // session not used here
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true);                  // session not used here
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
-
-    // disable moodle specific debug messages
-    disable_debugging();
 
     $relativepath = get_file_argument();
 
@@ -30,4 +29,3 @@
         header('HTTP/1.0 404 not found');
         print_error('filenotfound', 'error'); //this is not displayed on IIS??
     }
-?>

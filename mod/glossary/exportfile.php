@@ -1,10 +1,10 @@
 <?php
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
 require_once("../../config.php");
 require_once("lib.php");
-
-// disable moodle specific debug messages
-disable_debugging();
 
 $id = required_param('id', PARAM_INT);      // Course Module ID
 
@@ -42,4 +42,3 @@ $content = glossary_generate_export_file($glossary,$l,$cat);
 
 send_file($content, $filename, 0, 0, true, true);
 
-?>

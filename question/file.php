@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
       // This script fetches files from the dataroot/questionattempt directory
       // It is based on the top-level file.php
       //
@@ -8,11 +8,11 @@
       // Syntax:      question/file.php/attemptid/questionid/filename.ext
       // Workaround:  question/file.php?file=/attemptid/questionid/filename.ext
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+
     require_once('../config.php');
     require_once('../lib/filelib.php');
-
-    // disable moodle specific debug messages
-    disable_debugging();
 
     $relativepath = get_file_argument();
     // force download for any student-submitted files to prevent XSS attacks.
@@ -83,4 +83,4 @@
         header('HTTP/1.0 404 not found');
         print_error('filenotfound', 'error', $CFG->wwwroot); //this is not displayed on IIS??
     }
-?>
+

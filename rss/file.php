@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?PHP
     //This file returns the required rss feeds
     //The URL format MUST include:
     //    course: the course id
@@ -13,7 +13,9 @@
     //to correct users. It isn't unbreakable,
     //obviously, but its the best I've thought!!
 
-    define('NO_MOODLE_COOKIES', true); // session not used here
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true); // session not used here
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
@@ -23,9 +25,6 @@
 
     // this is a big one big hack - NO_MOODLE_COOKIES is not compatible with capabilities MDL-7243
     // it should be replaced once we get to codes in urls 
-
-    // disable moodle specific debug messages
-    disable_debugging();
 
     $relativepath = get_file_argument();
 
@@ -114,4 +113,4 @@
         global $lifetime, $filename;
         send_file(rss_geterrorxmlfile(), $filename, $lifetime, false, true);
     }
-?>
+

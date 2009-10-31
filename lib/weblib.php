@@ -3140,8 +3140,8 @@ function get_docs_url($path) {
  * trigger_error() or error_log(). Using echo or print will break XHTML
  * JS and HTTP headers.
  *
+ * It is also possible to define NO_DEBUG_DISPLAY which redirects the message to error_log.
  *
- * @global object
  * @uses DEBUG_NORMAL
  * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
@@ -3164,33 +3164,31 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             $backtrace = debug_backtrace();
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
-        if ($CFG->debugdisplay || isset($UNITTEST->running)) {
-        	// When the unit tests are running, any call to trigger_error
-        	// is intercepted by the test framework and reported as an exception.
-        	// Therefore, we cannot use trigger_error during unit tests.
-        	// At the same time I do not think we should just discard those messages,
-        	// so displaying them on-screen seems like the only option. (MDL-20398)
+        if (!empty($UNITTEST->running)) {
+            // When the unit tests are running, any call to trigger_error
+            // is intercepted by the test framework and reported as an exception.
+            // Therefore, we cannot use trigger_error during unit tests.
+            // At the same time I do not think we should just discard those messages,
+            // so displaying them on-screen seems like the only option. (MDL-20398)
+            echo '<div class="notifytiny">' . $message . $from . '</div>';
+
+        } else if (NO_DEBUG_DISPLAY) {
+            // script does not want any errors or debugging in output,
+            // we send the info to error log instead
+            error_log('Debugging: ' . $message . $from);
+
+        } else if ($CFG->debugdisplay) {
             if (!defined('DEBUGGING_PRINTED')) {
                 define('DEBUGGING_PRINTED', 1); // indicates we have printed something
             }
             echo '<div class="notifytiny">' . $message . $from . '</div>';
+
         } else {
             trigger_error($message . $from, E_USER_NOTICE);
         }
     }
     return true;
 }
-
-/**
- * Disable debug messages from debugging(), while keeping PHP error reporting level as is.
- *
- * @global object
- */
-function disable_debugging() {
-    global $CFG;
-    $CFG->debug = $CFG->debug | 0x80000000; // switch the sign bit in integer number ;-)
-}
-
 
 /**
  *  Returns string to add a frame attribute, if required
