@@ -715,7 +715,6 @@ class moodle_core_renderer extends moodle_renderer_base {
             $header = $this->doctype() . $header;
         }
 
-        
         send_headers($this->contenttype, $this->page->cacheable);
 
         $this->opencontainers->push('header/footer', $footer);
@@ -1059,7 +1058,7 @@ class moodle_core_renderer extends moodle_renderer_base {
      */
     public function link($link, $text=null) {
         global $CFG;
-        
+
         $attributes = array();
 
         if (is_a($link, 'html_link')) {
@@ -1917,10 +1916,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
 
         $output = '';
-
-        if (!debugging('', DEBUG_DEVELOPER)) {
-            return false;
-        }
+        $obbuffer = '';
 
         if ($this->has_started()) {
             // we can not always recover properly here, we have problems with output buffering,
@@ -1932,9 +1928,9 @@ class moodle_core_renderer extends moodle_renderer_base {
             // because the buffered text would be printed before our start of page.
             // NOTE: this hack might be behave unexpectedly in case output buffering is enabled in PHP.ini
             while (ob_get_level() > 0) {
-                ob_end_clean();
+                $obbuffer .= ob_get_clean();
             }
-            
+
             // Header not yet printed
             if (isset($_SERVER['SERVER_PROTOCOL'])) {
 				// server protocol should be always present, because this render
@@ -1952,12 +1948,16 @@ class moodle_core_renderer extends moodle_renderer_base {
                 get_string('moreinformation') . '</a></p>';
         $output .= $this->box($message, 'errorbox');
 
-        if (!empty($debuginfo)) {
-            $output .= $this->notification($debuginfo, 'notifytiny');
-        }
-        if (!empty($backtrace)) {
-            $output .= $this->notification('Stack trace: ' .
-                    format_backtrace($backtrace), 'notifytiny');
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if (!empty($debuginfo)) {
+                $output .= $this->notification('<strong>Debug info:</strong> '.s($debuginfo), 'notifytiny');
+            }
+            if (!empty($backtrace)) {
+                $output .= $this->notification('<strong>Stack trace:</strong> '.format_backtrace($backtrace), 'notifytiny');
+            }
+            if ($obbuffer !== '' ) {
+                $output .= $this->notification('<strong>Output buffer:</strong> '.s($obbuffer), 'notifytiny');
+            }
         }
 
         if (!empty($link)) {
