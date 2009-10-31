@@ -58,7 +58,6 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     }
 
     if(!function_exists('xmlrpc_encode_request')) {
-        trigger_error("You must have xml-rpc enabled in your PHP build to use this feature.");
         print_error('xmlrpc-missing', 'mnet','peers.php');
         exit;
     }
@@ -81,7 +80,6 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             // PARAM_URL requires a genuine TLD (I think) This breaks my testing
             $temp_wwwroot = clean_param($form->wwwroot, PARAM_URL);
             if ($temp_wwwroot !== $form->wwwroot) {
-                trigger_error("We now parse the wwwroot with PARAM_URL. Your URL will need to have a valid TLD, etc.");
                 print_error('invalidurl', 'mnet', 'peers.php');
                 exit;
             }
