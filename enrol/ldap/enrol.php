@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
@@ -431,7 +431,7 @@ function enrol_ldap_connect(){
                                  $CFG->enrol_ldap_bind_pw );
             if (!$bind) {
                 echo $OUTPUT->notification("Error in binding to LDAP server");
-                trigger_error("Error in binding to LDAP server $!");
+                error_log("Error in binding to LDAP server $!");
             }
 
         }
@@ -655,4 +655,3 @@ function check_legacy_config () {
 
 } // end of class
 
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
 * enrolment_factory is used to "manufacture" an instance of required enrolment plugin.
@@ -15,10 +15,8 @@ class enrolment_factory {
             $class = "enrolment_plugin_$enrol";
             return new $class;
         } else {
-            trigger_error("$CFG->dirroot/enrol/$enrol/enrol.php does not exist");
+            error_log("$CFG->dirroot/enrol/$enrol/enrol.php does not exist");
             echo $OUTPUT->notification("Enrolment file $enrol/enrol.php does not exist");
         }
     }
 }
-
-?>
