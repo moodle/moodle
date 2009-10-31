@@ -266,6 +266,7 @@ require_once($CFG->libdir .'/editorlib.php');       // All text editor related f
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
+//please note zend library is supposed to be used only from web service protocol classes, it may be removed in future
 ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
 
 // make sure PHP is not severly misconfigured
