@@ -22,11 +22,11 @@ $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stro
 $string['dataroot'] = 'Katalog z danymi';
 $string['dirroot'] = 'Katalog Moodle';
 $string['environment'] = 'Środowisko';
-$string['environmentrequireinstall'] = 'Musi być zainstalowane i włączone';
+$string['environmentrequireinstall'] = 'jest niezbędnę, żeby było zainstalowane/włączone';
 $string['environmentrequireversion'] = 'wersja $a->needed jest niezbędna a ty używasz wersji $a->current';
 $string['installation'] = 'Instalacja';
 $string['language'] = 'Język';
-$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tlumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.>>';
+$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tłumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.>>';
 $string['phpversion'] = 'Wersja PHP';
 $string['reload'] = 'Odśwież';
 $string['thischarset'] = 'UTF-8';
@@ -36,7 +36,7 @@ $string['welcomep20'] = 'Widzisz tę stronę, ponieważ z powodzeniem zainstalow
 $string['welcomep30'] = 'Ten instalator <strong>$a->installername</strong> zawiera aplikacje, by stworzyć środowisko, w którym będzie działać <strong>Moodle</strong>, czyli';
 $string['welcomep40'] = 'Pakiet zawiera<strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Wszystkie aplikacje w tym pakiecie maja własne, oddzielne licencje. Kompletny pakiet <strong>$a->installername</strong> jest <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> i jest dystrybuowany na <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licencji.';
-$string['welcomep60'] = 'Następujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb.';
+$string['welcomep60'] = 'Nastepujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb.';
 $string['welcomep70'] = 'Kliknij \"Dalej\" żeby kontynuować instalację Moodle';
 $string['wwwroot'] = 'Adres w sieci';
 ?>
