@@ -36,7 +36,7 @@ $string['componentisuptodate'] = 'Komponent jest aktualny';
 $string['configfilenotwritten'] = 'Instalator nie mógł automatycznie utworzyć plik config.php zawierający Twoje parametry instalacyjne, prawdopodobnie dlatego że katalog Moodle nie ma prawa zapisu. Musisz ręcznie przekopiować poniższy kod do pliku config.php, który powinien znajdować się w głównym katalogu Moodle.';
 $string['configfilewritten'] = 'config.php został pomyślnie stworzony';
 $string['configurationcompletehead'] = 'Konfiguracja skończona';
-$string['configurationcompletesub'] = 'Moodle starał się zapisać twoją konfigurację w pliku w katalogu głównym instalacji Moodle.';
+$string['configurationcompletesub'] = 'Moodle starał sie zapisać twoją konfigurację w pliku w katalogu głównym instalacji Moodle.';
 $string['continue'] = 'Kontynuuj';
 $string['database'] = 'Baza danych';
 $string['databasecreationsettingshead'] = 'Teraz musisz skonfigurować ustawienia bazy danych, w której będzie przechowywana większa część danych Moodle. Zostanie ona stworzona automatycznie w czasie instalacji z wyszczególnionymi poniżej ustawieniami.';
@@ -53,10 +53,8 @@ $string['databasesettingssub'] = '<b>Typ:</b>  mysql or postgres7<br/>
 <b>Użytkownik:</b> Użytkownik Twojej bazy danych<br />
 <b>Hasło:</b> Hasło dostępu do bazy danych<br />
 <b>Prefiksy tabel:</b> opcjonalny prefiks używany przed wszystkimi nazwami tabeli';
-$string['databasesettingswillbecreated'] = '<b>Uwaga:</b> Instalator będzie próbował automatycznie utworzyć bazę danych jeśli jej nie będzie.';
 $string['dataroot'] = 'Katalog z danymi';
 $string['datarooterror'] = 'Katalog z danymi który podałeś nie może być znaleziony lub utworzony. Popraw ścieżkę lub utwórz katalog ręcznie.';
-$string['datarootpublicerror'] = 'Katalog z danymi który podałeś jest dostępny bezpośrednio z internetu. Musisz użyć innego katalogu.';
 $string['dbconnectionerror'] = 'Nie można połączyć się z podaną bazą danych. Sprawdź ustawienia Twojej bazy danych.';
 $string['dbcreationerror'] = 'Błąd tworzenia bazy danych. Nie można stworzyć bazy danych o takiej nazwie z dostarczonymi ustawieniami';
 $string['dbhost'] = 'Serwer baz danych';
@@ -85,11 +83,10 @@ $string['downloadlanguagenotneeded'] = 'Możesz kontynuować proces instalacji, 
 $string['downloadlanguagesub'] = 'Teraz masz możliwość załadowania pakietu językowego i kontynuowania procesu instalacji w tym języku.<br/><br/>Jeśli nie możesz załadować pakietu, instalacja będzie się odbywać dalej po angielsku (kiedy się skończy, będziesz mieć możliwość załadowania i zainstalowania dodatkowych pakietów językowych)';
 $string['environmenterrortodo'] = 'Musisz usunąć wszystkie problemy (błędy) w środowisku serwera zanim rozpocznie się instalacja tej wersji Moodle!';
 $string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
-$string['environmentrecommendcustomcheck'] = 'Jeśli ten test się nie powiedzie, wskazuje to na potencjalne problemy';
 $string['environmentrecommendinstall'] = 'jest zalecane, żeby było zainstalowane/włączone';
 $string['environmentrecommendversion'] = 'wersja $a->needed jest zalecana a ty używasz wersji $a->current';
 $string['environmentrequirecustomcheck'] = 'ten test musi być zaliczony';
-$string['environmentrequireinstall'] = 'Musi być zainstalowane i włączone';
+$string['environmentrequireinstall'] = 'jest niezbędnę, żeby było zainstalowane/włączone';
 $string['environmentrequireversion'] = 'wersja $a->needed jest niezbędna a ty używasz wersji $a->current';
 $string['environmentsub'] = 'Sprawdzamy, czy różne komponenty systemu spełniają wymagania systemu';
 $string['environmentxmlerror'] = 'Błąd odczytywania danych środowiska ($a->error_code)';
@@ -113,7 +110,7 @@ $string['globalsquotes'] = 'Groźne zarządzanie zmiennymi globalnymi';
 $string['globalsquoteserror'] = 'Ustal swoje ustawienia PHP:  niedostępne register_globals i/lub udostępnione magic_quotes_gpc';
 $string['globalsquoteshelp'] = '<p> Nie jest zalecane ustawienie równocześnie kombinacji niedostępnego Magoc Quotes GPC i udostępnionego Register Globals.</p>
 
-<p> Zalecane ustawienie: <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> in your php.ini</p>
+<p> Zalecane ustawienie: <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> w twoim pliku php.ini</p>
 
 <p> Jeśli nie posiadasz dostępu do swojego php.ini, możesz zamieścić następującą linię w pliku called.htacces w swoim katalogu Moodle.
 	<blockquote>php_value magic_quotes_gpc On</blockquote>
@@ -145,23 +142,21 @@ Istnieje kilka sposobów przeprowadzenia tej operacji, których możesz spróbow
 <ol>
 <li> Jeśli możesz przekompiluj PHP za pomocą <i>--enable-memory-limit</i>.
 Pozwoli to Moodle ustawić samoczynnie limit pamięci. </li>
-<li> Jeśli masz dostęp do swojego pliku php.ini, możesz w nim zmienić ustawienie <b>memory_limit</b> do wielkości 40M. Jeśli nie posiadasz tego dostępu możesz poprosić swojego administratora aby zrobił to za Ciebie.</li>
+<li> Jeśli masz dostęp do swojego pliku php.ini, możesz w nim zmienić ustawienie <b>memory_limit</b> do wielkođci 40M. Jeśli nie posiadasz tego dostępu możesz poprosić swojego administratora aby zrobił to za Ciebie.</li>
 <li> Na niektórych serwerach PHP można stworzyć plik. htaccess w katalogu Moodle zawierający poniższą linię:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p> jednakże na niektórych serwerach będzie uniemożliwiało to działanie <b> wszystkich </b> stron PHP (ujrzysz błędy na stronie), a więc będziesz zmuszony usunąć plik .htaccess. </p></li></ol>”';
 $string['missingrequiredfield'] = 'Brak wymaganego pola';
 $string['moodledocslink'] = 'Dokumentacja Moodle dla tej strony';
 $string['mssql'] = 'SQL*Server (mssql)';
-$string['mssqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z serwerem SQL, aby mógł komunikować się z MSSQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP.';
 $string['mssql_n'] = 'SQL*Server z UTF-8 support (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
-$string['mysqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z rozszerzeniem MySQL aby mógł  komunikować się z MySQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP nie został prawidłowo skonfigurowany z rozszerzeniem MySQL, co może zostać zakomunikowane przez MySQL. Sprawdź proszę swój plik php.ini lub przekompiluj PHP';
 $string['name'] = 'Nazwa';
 $string['next'] = 'Następne';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Instalacja opcjonalnej biblioteki OpenSSL jest wysoce zalecane -- aktywuje sieciową funkcjonalność Moodle.';
-$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tlumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.>>';
-$string['pass'] = 'Udane';
+$string['parentlanguage'] = '<<DO TŁUMACZY: Jeżeli Twój język ma Język nadrzędny który powinien być użyty w przypadku braku tłumaczenia, wpisz tutaj odpowiedni kod (np: nl). Pozostawienia pustego powoduje używanie języka angielskiego.>>';
 $string['password'] = 'Hasło';
 $string['php50restricted'] = 'PHP 5.0.x posiada kilka znanych błędów, proszę uaktualnić do wersji 5.1.x lub zredukować do wersji 4.3.x lub 4.4.x';
 $string['phpversion'] = 'Wersja PHP';
@@ -184,8 +179,8 @@ $string['safemodehelp'] = '“<p> Moodle może mieć wiele zróżnicowanych prob
 <p> Można kontynuować instalacje, lecz należy spodziewać się pewnych problemów w przyszłości.</p>';
 $string['sessionautostart'] = 'Automatyczny start sesji';
 $string['sessionautostarterror'] = 'To powinno być wyłączone';
-$string['sessionautostarthelp'] = '<p>Moodle wymaga obsługi sesji i nie będzie bez tego funkcjonować.</p>
-<p>Sesja może być zainicjowana w pliku php.ini poszukaj w nim parametrów session.auto_start sesji </p>';
+$string['sessionautostarthelp'] = '<p>Moodle wymaga obsługi sesjii nie będzie bez niego funkcjonować.</p>
+<p>Sesja może być zainicjowana w pliku php.ini  poszukaj parametrów session.auto_start sesji </p>';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
@@ -198,11 +193,13 @@ $string['welcomep20'] = 'Widzisz tę stronę, ponieważ z powodzeniem zainstalow
 $string['welcomep30'] = 'Ten instalator <strong>$a->installername</strong> zawiera aplikacje, by stworzyć środowisko, w którym będzie działać <strong>Moodle</strong>, czyli';
 $string['welcomep40'] = 'Pakiet zawiera<strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Wszystkie aplikacje w tym pakiecie maja własne, oddzielne licencje. Kompletny pakiet <strong>$a->installername</strong> jest <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> i jest dystrybuowany na <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a> licencji.';
-$string['welcomep60'] = 'Następujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb.';
+$string['welcomep60'] = 'Nastepujące strony przeprowadzą cię przez instalację Moodle na twoim komputerze. Możesz zaakceptować ustawienia domyślne lub, opcjonalnie, dostosować je do swoich potrzeb.';
 $string['welcomep70'] = 'Kliknij \"Dalej\" żeby kontynuować instalację Moodle';
 $string['wrongdestpath'] = 'Błędna ścieżka docelowa';
 $string['wrongsourcebase'] = 'Błędne źródło bazy URL';
 $string['wrongzipfilename'] = 'Błędna nazwa pliku ZIP';
 $string['wwwroot'] = 'Adres w sieci';
 $string['wwwrooterror'] = 'Adres w sieci wydaje się być niepoprawny - wydaje się że nie ma tam instalacji Moodle';
+$string['xmlrpcrecommended'] = 'Instalacja opcjonalnego rozszerzenia xmlrpc jest wskazana dla zapewnienia Moodle sieciowej (Networking) funkcjonalności.';
+$string['ziprequired'] = 'Rozszerzenie Zip PHP jest obecnie wymagane przez Moodle. Binaria info-ZIP i biblioteki PclZip nie są już używane.';
 ?>
