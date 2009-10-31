@@ -256,7 +256,8 @@ function is_early_init($backtrace) {
 }
 
 /**
- * Abort execution, displaying an error message.
+ * Abort execution by throwing of a general exception,
+ * default exception handler displays the error message in most cases.
  *
  * @param string $errorcode The name of the language string containing the error message.
  *      Normally this should be in the error.php lang file.
@@ -264,24 +265,11 @@ function is_early_init($backtrace) {
  * @param string $link The url where the user will be prompted to continue.
  *      If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
- * @return void terminates script, does not return!
+ * @param string $debuginfo optional debugging information
+ * @return void, always throws exception!
  */
-function print_error($errorcode, $module = 'error', $link = '', $a = null) {
-    global $OUTPUT, $UNITTEST;
-
-    // Errors in unit test become exceptions, so you can unit test code that might call print_error().
-    if (!empty($UNITTEST->running)) {
-        throw new moodle_exception($errorcode, $module, $link, $a);
-    }
-
-    list($message, $moreinfourl, $link) = prepare_error_message($errorcode, $module, $link, $a);
-    if (is_early_init(debug_backtrace())) {
-        echo bootstrap_renderer::early_error($message, $moreinfourl, $link, debug_backtrace());
-    } else {
-        echo $OUTPUT->fatal_error($message, $moreinfourl, $link, debug_backtrace());
-    }
-
-    exit(1); // General error code
+function print_error($errorcode, $module = 'error', $link = '', $a = null, $debuginfo = null) {
+    throw new moodle_exception($errorcode, $module, $link, $a, $debuginfo);
 }
 
 /**
