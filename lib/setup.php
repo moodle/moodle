@@ -171,7 +171,9 @@ if (!defined('NO_DEBUG_DISPLAY')) {
 // wwwroot is mandatory
 if (!isset($CFG->wwwroot)) {
     // trigger_error() is not correct here, no need to log this
-    die('Fatal: $CFG->wwwroot is not configured! Exiting.');
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+    echo('Fatal: $CFG->wwwroot is not configured! Exiting.');
+    exit(1);
 }
 
 /// Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
@@ -230,8 +232,8 @@ if (!isset($CFG->wwwroot)) {
 /// http://www.google.com/webmasters/faq.html#prefetchblock
     if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
         header($_SERVER['SERVER_PROTOCOL'] . ' 404 Prefetch Forbidden');
-        trigger_error('Prefetch request forbidden.');
-        exit;
+        echo('Prefetch request forbidden.');
+        exit(1);
     }
 
 /// Define admin directory
