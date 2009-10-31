@@ -180,6 +180,7 @@ function default_exception_handler($ex) {
             // note: transaction blocks should never change current $_SESSION
             $DB->rollback_sql();
         } catch (Exception $ignored) {
+            // default exception handler MUST not throw any exceptions!!
         }
     }
 
@@ -193,7 +194,16 @@ function default_exception_handler($ex) {
     if (is_early_init($info->backtrace)) {
         echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
     } else {
-        echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+        try {
+            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+        } catch (Exception $out_ex) {
+            // default exception handler MUST not throw any exceptions!!
+            // the problem here is we do not know if page already started or not, we only know that somebody messed up in outputlib or theme 
+            // so we just print at least something instead of "Exception thrown without a stack frame in Unknown on line 0":-(
+            echo bootstrap_renderer::early_error_content($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+            $outinfo = get_exception_info($out_ex);
+            echo bootstrap_renderer::early_error_content($outinfo->message, $outinfo->moreinfourl, $outinfo->link, $outinfo->backtrace, $outinfo->debuginfo);
+        }
     }
 
     exit(1); // General error code
@@ -868,12 +878,34 @@ class bootstrap_renderer {
     }
 
     /**
+     * Returns nicely formated error message in a div box.
+     * @return string
+     */
+    public static function early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        global $CFG;
+
+        $content = '<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
+border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
+width: 80%; -moz-border-radius: 20px; padding: 15px">
+' . $message . '
+</div>';
+        if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
+            if (!empty($debuginfo)) {
+                $content .= '<div class="notifytiny">Debug info: ' . s($debuginfo) . '</div>';
+            }
+            if (!empty($backtrace)) {
+                $content .= '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
+            }
+        }
+
+        return $content;
+    }
+
+    /**
      * This function should only be called by this class, or from exception handlers
      * @return string
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
-        global $CFG;
-
         // In the name of protocol correctness, monitoring and performance
         // profiling, set the appropriate error headers for machine comsumption
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
@@ -896,19 +928,7 @@ class bootstrap_renderer {
             $strerror = 'Error';
         }
 
-        $content = '<div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
-    border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
-    width: 80%; -moz-border-radius: 20px; padding: 15px">
-' . $message . '
-</div>';
-        if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
-            if (!empty($debuginfo)) {
-                $content .= '<div class="notifytiny">' . $debuginfo . '</div>';
-            }
-            if (!empty($backtrace)) {
-                $content .= '<div class="notifytiny">Stack trace: ' . format_backtrace($backtrace, false) . '</div>';
-            }
-        }
+        $content = self::early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo);
 
         return self::plain_page($strerror, $content);
     }
