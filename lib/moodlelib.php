@@ -4765,10 +4765,7 @@ function setnew_password_and_mail($user) {
 
     $newpassword = generate_password();
 
-    if (! $DB->set_field('user', 'password', md5($newpassword), array('id'=>$user->id)) ) {
-        trigger_error('Could not set user password!');
-        return false;
-    }
+    $DB->set_field('user', 'password', md5($newpassword), array('id'=>$user->id));
 
     $a = new object();
     $a->firstname   = fullname($user, true);
