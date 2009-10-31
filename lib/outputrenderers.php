@@ -1941,6 +1941,8 @@ class moodle_core_renderer extends moodle_renderer_base {
 				// can not be used from command line or when outputting custom XML
                 @header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             }
+            $this->page->set_url(''); // no url
+            //$this->page->set_generaltype('form'); //TODO: MDL-20676 blocks on error pages are weird, unfortunately it somehow detect the geenralpagetype from URL :-(
             $this->page->set_title(get_string('error'));
             $output .= $this->header();
         }
