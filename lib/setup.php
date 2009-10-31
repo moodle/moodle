@@ -168,11 +168,11 @@ if (!defined('NO_DEBUG_DISPLAY')) {
     define('NO_DEBUG_DISPLAY', false);
 }
 
-/// wwwroot is mandatory
-    if (!isset($CFG->wwwroot)) {
-        trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
-        die;
-    }
+// wwwroot is mandatory
+if (!isset($CFG->wwwroot)) {
+    // trigger_error() is not correct here, no need to log this
+    die('Fatal: $CFG->wwwroot is not configured! Exiting.');
+}
 
 /// Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
     if (!defined('CLI_SCRIPT')) { // CLI_SCRIPT might be defined in 'fake' CLI scripts like admin/cron.php
