@@ -21,8 +21,13 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('lib.php');
+
+require_login();
+admin_externalpage_setup('comments');
+
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/comment:delete', $context);
+
 $PAGE->requires->yui_lib('yahoo')->in_head();
 $PAGE->requires->yui_lib('dom')->in_head();
 $PAGE->requires->yui_lib('event')->in_head();
@@ -35,10 +40,12 @@ $action     = optional_param('action', '', PARAM_ALPHA);
 $commentid  = optional_param('commentid', 0, PARAM_INT);
 $commentids = optional_param('commentids', '', PARAM_ALPHANUMEXT);
 $page       = optional_param('page', 0, PARAM_INT);
+
 $manager = new comment_manager();
 
-if (!empty($action)) {
-    confirm_sesskey();
+if ($action and !confirm_sesskey()) {
+    // no action if sesskey not confirmed
+    $action = '';
 }
 
 if ($action === 'delete') {
@@ -60,7 +67,6 @@ if ($action === 'delete') {
     }
 }
 
-admin_externalpage_setup('comments');
 admin_externalpage_print_header();
 echo $OUTPUT->heading(get_string('comments'));
 if (!empty($err)) {
