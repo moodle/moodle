@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -470,4 +470,3 @@ class grade_category_test extends grade_test {
         return $grade->rawgrade;
     }
 }
-?>

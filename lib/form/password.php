@@ -48,4 +48,3 @@ class MoodleQuickForm_password extends HTML_QuickForm_password{
         return $this->_helpbutton;
     }
 }
-?>

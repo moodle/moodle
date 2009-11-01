@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -106,4 +106,3 @@ class grade_outcome_test extends grade_test {
         $this->assertEqual(count($this->grade_outcomes), count($grade_outcomes));
     }
 }
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -92,4 +92,3 @@ class duration_form_element_test extends UnitTestCase {
         $this->assertEqual($el->exportValue(array('testel' => array('number' => 20, 'timeunit' => 1, 'enabled' => 1))), array('testel' => 20));
     }
 }
-?>

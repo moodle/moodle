@@ -23,7 +23,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
      * @var string
      */
     var $_helpbutton='';
-    
+
     var $_https=false;
 
     /**
@@ -61,7 +61,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         }
         $error = $attributes['error_message'];
         unset($attributes['error_message']);
-        
+
         $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
         $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
         $strenterthenumbersyouhear = get_string('enterthenumbersyouhear', 'auth');
@@ -83,11 +83,11 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 <div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
 <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a></div>
 <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a></div>
-</div>'; 
+</div>';
 
         return $html . recaptcha_get_html($CFG->recaptchapublickey, $error, $this->_https);
     }
-    
+
     /**
      * set html for help button
      *
@@ -109,7 +109,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         }
         $this->_helpbutton=call_user_func_array($function, $helpbuttonargs);
     }
-    
+
     /**
      * get html for help button
      *
@@ -137,5 +137,3 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         return true;
     }
 }
-
-?>

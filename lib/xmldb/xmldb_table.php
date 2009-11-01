@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -835,5 +835,3 @@ class XMLDBTable extends xmldb_table {
 
 }
 /// Deprecated API ends here
-
-?>

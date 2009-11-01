@@ -249,4 +249,3 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         return array($this->getName() => $tags);
     }
 }
-?>

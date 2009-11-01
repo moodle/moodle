@@ -82,4 +82,3 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio{
         return '<span>' . parent::toHtml() . '</span>';
     }
 }
-?>

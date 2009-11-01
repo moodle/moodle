@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -476,5 +476,3 @@ class XMLDBKey extends xmldb_key {
 
 }
 /// Deprecated API ends here
-
-?>

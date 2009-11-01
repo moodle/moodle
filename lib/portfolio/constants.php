@@ -183,5 +183,3 @@ define('PORTFOLIO_ADD_ICON_LINK', 3);
 */
 define('PORTFOLIO_ADD_TEXT_LINK', 4);
 
-
-?>

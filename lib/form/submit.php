@@ -57,10 +57,9 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
             return 'default';
         }
     }
-    
+
     function freeze(){
         $this->_flagFrozen = true;
     }
-    
+
 }
-?>

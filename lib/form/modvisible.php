@@ -51,4 +51,3 @@ class MoodleQuickForm_modvisible extends MoodleQuickForm_select{
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
 }
-?>

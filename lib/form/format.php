@@ -124,4 +124,3 @@ class MoodleQuickForm_format extends MoodleQuickForm_select{
     }
 
 }
-?>

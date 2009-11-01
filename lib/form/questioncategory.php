@@ -42,4 +42,3 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_selectgroups {
     }
 
 }
-?>

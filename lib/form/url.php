@@ -29,7 +29,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
         repository_head_setup();
     }
-    
+
     function setHiddenLabel($hiddenLabel){
         $this->_hiddenLabel = $hiddenLabel;
     }

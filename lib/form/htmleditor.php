@@ -97,4 +97,3 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
         return $html . $this->_getPersistantData();
     } //end func getFrozenHtml
 }
-?>

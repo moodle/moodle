@@ -805,5 +805,3 @@ class portfolio_exporter {
     }
 
 }
-
-?>

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 require_once 'HTML/QuickForm/header.php';
 
@@ -67,4 +66,3 @@ class MoodleQuickForm_header extends HTML_QuickForm_header
         return $this->_helpbutton;
     }
 } //end class MoodleQuickForm_header
-?>

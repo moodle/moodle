@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -408,12 +408,12 @@ class xmldb_object {
 
     /**
      * This function will perform the central debug of all the XMLDB classes
-     * being called automatically every time one error is found. Apart from 
+     * being called automatically every time one error is found. Apart from
      * the main actions performed in it (XMLDB agnostic) it looks for one
      * function called xmldb_debug() and invokes it, passing both the
-     * message code and the whole object. 
+     * message code and the whole object.
      * So, to perform custom debugging just add such function to your libs.
-     * 
+     *
      * Call to the external hook function can be disabled by request by
      * defining XMLDB_SKIP_DEBUG_HOOK
      */
@@ -447,7 +447,7 @@ class xmldb_object {
             $string = str_replace($foundconcats,array_keys($foundconcats),$string);
         }
 
-    /// Extract all the quoted elements from the string (skipping 
+    /// Extract all the quoted elements from the string (skipping
     /// backslashed quotes that are part of the content.
         preg_match_all("/(''|'.*?[^\\\\]')/is", $string, $matches);
         foreach (array_unique($matches[0]) as $key=>$value) {
@@ -481,5 +481,3 @@ class xmldb_object {
         return $arr;
     }
 }
-
-?>

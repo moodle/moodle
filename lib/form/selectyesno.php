@@ -52,4 +52,3 @@ class MoodleQuickForm_selectyesno extends MoodleQuickForm_select{
     }
 
 }
-?>

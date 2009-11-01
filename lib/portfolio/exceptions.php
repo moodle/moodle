@@ -85,4 +85,3 @@ class portfolio_plugin_exception extends portfolio_exception {}
 * exception for interacting with the button class
 */
 class portfolio_button_exception extends portfolio_exception {}
-?>

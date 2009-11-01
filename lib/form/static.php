@@ -53,4 +53,3 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
         return $this->_elementTemplateType;
     }
 }
-?>

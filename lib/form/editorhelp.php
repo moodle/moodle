@@ -89,5 +89,3 @@ function helplink($page, $linktext='', $module='moodle'){
     global $CFG;
     return "<a href=\"$CFG->wwwroot/help.php?module=$module&amp;file=$page.html\">$linktext</a>";
 }
-
-?>

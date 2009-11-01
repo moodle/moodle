@@ -772,5 +772,3 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
     }
 
 }
-
-?>

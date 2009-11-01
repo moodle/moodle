@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -802,5 +802,3 @@ class XMLDBField extends xmldb_field {
 
 }
 /// Deprecated API ends here
-
-?>

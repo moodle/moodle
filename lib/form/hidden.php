@@ -39,4 +39,3 @@ class MoodleQuickForm_hidden extends HTML_QuickForm_hidden{
         return '';
     }
 }
-?>

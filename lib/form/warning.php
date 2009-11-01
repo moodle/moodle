@@ -67,4 +67,3 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
         return $this->_elementTemplateType;
     }
 }
-?>

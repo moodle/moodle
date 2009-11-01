@@ -75,4 +75,3 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
     }
 
 }
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -282,5 +282,3 @@ class XMLDBIndex extends xmldb_index {
 
 }
 /// Deprecated API ends here
-
-?>

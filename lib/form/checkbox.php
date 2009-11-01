@@ -124,4 +124,3 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
         return $output;
     } //end func getFrozenHtml
 }
-?>

@@ -17,7 +17,7 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
     function MoodleQuickForm_passwordunmask($elementName=null, $elementLabel=null, $attributes=null) {
         parent::MoodleQuickForm_password($elementName, $elementLabel, $attributes);
     }
-    
+
     function toHtml() {
         global $PAGE;
         if ($this->_flagFrozen) {
@@ -32,4 +32,3 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
     } //end func toHtml
 
 }
-?>

@@ -12,7 +12,7 @@ require_once "$CFG->libdir/form/select.php";
 class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
 
     var $_hidenograde = false;
-    
+
     /**
      * Class constructor
      *
@@ -71,4 +71,3 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_select{
     }
 
 }
-?>

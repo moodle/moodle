@@ -84,4 +84,3 @@ class MoodleQuickForm_button extends HTML_QuickForm_button
         }
     }
 } //end class MoodleQuickForm_button
-?>

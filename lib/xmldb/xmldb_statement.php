@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -381,5 +381,3 @@ class XMLDBStatement extends xmldb_statement {
 
 }
 /// Deprecated API ends here
-
-?>

@@ -117,6 +117,3 @@ class portfolio_format_leap extends portfolio_format_rich { }
 * it's commented out in portfolio_supported_formats so cannot currently be used.
 */
 class portfolio_format_mbkp extends portfolio_format_rich {}
-
-
-?>

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 global $CFG;
 require_once "$CFG->libdir/form/group.php";
 
@@ -156,4 +156,3 @@ class MoodleQuickForm_choosecoursefileorimsrepo extends MoodleQuickForm_group
     } // end func onQuickFormEvent
 
 }
-?>

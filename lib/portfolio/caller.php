@@ -470,5 +470,3 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
         return get_string('exportingcontentfrom', 'portfolio', $this->display_name() . ': ' . $this->cm->name);
     }
 }
-
-?>

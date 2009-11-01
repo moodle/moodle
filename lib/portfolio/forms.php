@@ -269,5 +269,3 @@ class portfolio_instance_select extends moodleform {
         $this->add_action_buttons(true, get_string('next'));
     }
 }
-
-?>

@@ -160,4 +160,3 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
         }
     }
 }
-?>

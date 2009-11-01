@@ -798,4 +798,3 @@ class grade_grade extends grade_object {
         $completion->inform_grade_changed($cm, $this->grade_item, $this, $deleted);
      }
 }
-?>

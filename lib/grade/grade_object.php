@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -173,7 +173,7 @@ abstract class grade_object {
 
         global $DB;
         if ($datas = $DB->get_records_select($table, $wheresql, $params)) {
-            
+
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
@@ -183,7 +183,7 @@ abstract class grade_object {
             return $result;
 
         } else {
-            
+
             return false;
         }
     }
@@ -346,8 +346,8 @@ abstract class grade_object {
     }
 
     /**
-     * Called immediately after the object data has been inserted, updated, or 
-     * deleted in the database. Default does nothing, can be overridden to 
+     * Called immediately after the object data has been inserted, updated, or
+     * deleted in the database. Default does nothing, can be overridden to
      * hook in special behaviour.
      *
      * @param bool $deleted
@@ -355,4 +355,3 @@ abstract class grade_object {
     function notify_changed($deleted) {
     }
 }
-?>

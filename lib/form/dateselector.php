@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -238,4 +238,3 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
     // }}}
 }
-?>

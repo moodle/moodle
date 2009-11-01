@@ -114,4 +114,3 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         }
     }
 }
-?>
