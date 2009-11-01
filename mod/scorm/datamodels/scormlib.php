@@ -808,4 +808,3 @@ class xml2Array {
    }
 
 }
-?>

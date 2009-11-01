@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file replaces:
 //   * STATEMENTS section in db/install.xml

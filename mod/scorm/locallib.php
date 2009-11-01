@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once("$CFG->dirroot/mod/scorm/lib.php");
 
@@ -739,13 +739,13 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
             <div class='scorm-center'>
                 <?php print_string('organizations','scorm') ?>
                 <form id='changeorg' method='post' action='<?php echo $action ?>'>
-                    <?php 
+                    <?php
                     $select = new html_select();
                     $select->options = $orgs;
                     $select->name = 'organization';
                     $select->selectedvalue = $organization;
                     $select->add_action('change', 'submit_form_by_id', array('id' => 'changeorg'));
-                    echo $OUTPUT->select($select); 
+                    echo $OUTPUT->select($select);
                     ?>
                 </form>
             </div>

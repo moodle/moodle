@@ -14,7 +14,7 @@
 			$tempkey = strtolower($key);
 			$_POST[$tempkey] = $value;
 	}
-    
+
     $command = required_param('command', PARAM_ALPHA);
     $sessionid = required_param('session_id', PARAM_ALPHANUM);
     $aiccdata = optional_param('aicc_data', '', PARAM_RAW);
@@ -241,7 +241,7 @@
 
                                                  $value = '';
                                                  if (is_numeric($values[0])) {
-                                                     $value = trim($values[0]); 
+                                                     $value = trim($values[0]);
                                                      $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                                  }
                                                  $score = $value;
@@ -379,4 +379,3 @@
             echo "error=3\r\nerror_text=Invalid Session ID\r\n";
         }
     }
-?>

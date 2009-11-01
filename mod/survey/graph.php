@@ -56,7 +56,7 @@
 /// Check to see if groups are being used in this survey
     if ($group) {
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $group, null, false);
-    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) { 
+    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
         $groups = groups_get_all_groups($courseid, 0, $cm->groupingid);
         $groups = array_keys($groups);
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $groups, null, false);
@@ -67,7 +67,7 @@
 
     $stractual = get_string("actual", "survey");
     $stractualclass = get_string("actualclass", "survey");
-    
+
     $strpreferred = get_string("preferred", "survey");
     $strpreferredclass = get_string("preferredclass", "survey");
 
@@ -744,4 +744,4 @@
    exit;
 
 
-?>
+

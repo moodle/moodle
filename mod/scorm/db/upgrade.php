@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the scorm module
@@ -429,4 +429,4 @@ function xmldb_scorm_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

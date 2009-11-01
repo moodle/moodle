@@ -69,4 +69,4 @@ $mod_survey_capabilities = array(
 
 );
 
-?>
+

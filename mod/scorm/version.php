@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /////////////////////////////////////////////////////////////////////////////////
 ///  Code fragment to define the version of scorm
@@ -14,4 +14,3 @@ $module->version  = 2009042001;   // The (date) version of this module
 $module->requires = 2009041700;   // The version of Moodle that is required
 $module->cron     = 300;            // How often should cron check this module (seconds)?
 
-?>

@@ -1,6 +1,6 @@
 <?php
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
-    
+
     if (isset($userdata->status)) {
         if ($userdata->status == '') {
             $userdata->entry = 'ab-initio';
@@ -144,11 +144,11 @@ function SCORMapi1_2() {
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
     ?>
-    
+
     if (cmi.core.lesson_status == '') {
         cmi.core.lesson_status = 'not attempted';
-    } 
-    
+    }
+
     //
     // API Methods definition
     //
@@ -160,7 +160,7 @@ function SCORMapi1_2() {
             if (!Initialized) {
                 Initialized = true;
                 errorCode = "0";
-                <?php 
+                <?php
                     if (scorm_debugging($scorm)) {
                         //echo 'alert("Initialized SCORM 1.2");';
                         echo 'LogAPICall("LMSInitialize", param, "", errorCode);';
@@ -173,14 +173,14 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSInitialize", param, "", errorCode);';
             }
         ?>
         return "false";
     }
-    
+
     function LMSFinish (param) {
         errorCode = "0";
         if (param == "") {
@@ -197,8 +197,8 @@ function SCORMapi1_2() {
                     if (<?php echo $scorm->auto ?> == 1) {
                         setTimeout('top.document.location=top.next;',500);
                     }
-                }    
-                <?php 
+                }
+                <?php
                     if (scorm_debugging($scorm)) {
                         //echo 'alert("Finished SCORM 1.2");';
                         echo 'LogAPICall("LMSFinish", param, "", 0);';
@@ -211,14 +211,14 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSFinish", param, "", errorCode);';
             }
         ?>
         return "false";
     }
-    
+
     function LMSGetValue (element) {
         errorCode = "0";
         if (Initialized) {
@@ -236,7 +236,7 @@ function SCORMapi1_2() {
                         }
                             if (subelement == element) {
                             errorCode = "0";
-                            <?php 
+                            <?php
                                 if (scorm_debugging($scorm)) {
                                    //echo 'alert(element+": "+eval(element));';
                                     echo 'LogAPICall("LMSGetValue", element, eval(element), 0);';
@@ -276,14 +276,14 @@ function SCORMapi1_2() {
         } else {
             errorCode = "301";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSGetValue", element, "", errorCode);';
             }
         ?>
         return "";
     }
-    
+
     function LMSSetValue (element,value) {
         errorCode = "0";
         if (Initialized) {
@@ -309,7 +309,7 @@ function SCORMapi1_2() {
                                         }
                                         if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
                                             eval(subelement+'.'+elementIndex+'._count++;');
-                                        } 
+                                        }
                                         if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
                                             errorCode = "201";
                                         }
@@ -346,7 +346,7 @@ function SCORMapi1_2() {
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
                                         eval(element+'=value;');
                                         errorCode = "0";
-                                        <?php 
+                                        <?php
                                             if (scorm_debugging($scorm)) {
                                                 echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
                                                 //echo 'alert(element+":= "+value);';
@@ -363,7 +363,7 @@ function SCORMapi1_2() {
                                         eval(element+'=value;');
                                     }
                                     errorCode = "0";
-                                    <?php 
+                                    <?php
                                         if (scorm_debugging($scorm)) {
                                             echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
                                             //echo 'alert(element+":= "+value);';
@@ -387,20 +387,20 @@ function SCORMapi1_2() {
         } else {
             errorCode = "301";
         }
-       <?php 
+       <?php
         if (scorm_debugging($scorm)) {
             echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
         }
         ?>
         return "false";
     }
-    
+
     function LMSCommit (param) {
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
                 result = StoreData(cmi,false);
-                <?php 
+                <?php
                     if (scorm_debugging($scorm)) {
                         echo 'LogAPICall("Commit", param, "", 0);';
                         //echo 'alert("Data Commited");';
@@ -413,23 +413,23 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSCommit", param, "", 0);';
             }
         ?>
         return "false";
     }
-    
+
     function LMSGetLastError () {
-     <?php 
+     <?php
         if (scorm_debugging($scorm)) {
             echo 'LogAPICall("LMSGetLastError", "", "", errorCode);';
         }
     ?>
         return errorCode;
     }
-    
+
     function LMSGetErrorString (param) {
         if (param != "") {
             var errorString = new Array();
@@ -444,14 +444,14 @@ function SCORMapi1_2() {
             errorString["403"] = "Element is read only";
             errorString["404"] = "Element is write only";
             errorString["405"] = "Incorrect data type";
-            <?php 
+            <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSGetErrorString", param,  errorString[param], 0);';
             }
              ?>
             return errorString[param];
         } else {
-           <?php 
+           <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSGetErrorString", param,  "No error string found!", 0);';
             }
@@ -459,12 +459,12 @@ function SCORMapi1_2() {
            return "";
         }
     }
-    
+
     function LMSGetDiagnostic (param) {
         if (param == "") {
             param = errorCode;
         }
-        <?php 
+        <?php
             if (scorm_debugging($scorm)) {
                 echo 'LogAPICall("LMSGetDiagnostic", param, param, 0);';
             }
@@ -583,7 +583,7 @@ function SCORMapi1_2() {
         }
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $scoid ?>';
-        
+
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
         results = String(result).split('\n');

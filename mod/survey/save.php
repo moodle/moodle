@@ -46,10 +46,10 @@
 
     $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/survey/save.php', array('id'=>$id)));
     require_login($course->id, false, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/survey:participate', $context);
-    
+
     if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
         print_error('invalidsurveyid', 'survey');
     }
@@ -118,4 +118,4 @@
     exit;
 
 
-?>
+

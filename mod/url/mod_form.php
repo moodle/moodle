@@ -46,7 +46,7 @@ class mod_url_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'url'));
-        $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true)); 
+        $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true));
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
 

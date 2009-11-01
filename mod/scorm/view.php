@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-    
+
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $organization = optional_param('organization', '', PARAM_INT); // organization ID
@@ -36,7 +36,7 @@
         $url->param('organization', $organization);
     }
     $PAGE->set_url($url);
-    
+
     require_login($course->id, false, $cm);
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -65,7 +65,7 @@
     echo $OUTPUT->header();
 
     if (has_capability('mod/scorm:viewreport', $context)) {
-        
+
         $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
         if ($trackedusers > 0) {
             echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewalluserreports','scorm',$trackedusers).'</a></div>';
@@ -81,7 +81,7 @@
         $attemptstatus = scorm_get_attempt_status($USER,$scorm);
     }
     echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'generalbox boxaligncenter boxwidthwide', 'intro');
-    
+
     $scormopen = true;
     $timenow = time();
     if ($scorm->timeclose !=0) {
@@ -97,4 +97,4 @@
         scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
     }
     echo $OUTPUT->footer();
-?>
+

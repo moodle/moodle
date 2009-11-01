@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //survey mods
 
@@ -8,7 +8,7 @@
     //                        (CL,pk->id)                 |(CL,pk->id,?????) |
     //                            |                       --------------------
     //                            |
-    //             -----------------------------------        
+    //             -----------------------------------
     //             |                                 |
     //        survey_analysis                   survey_answers
     //    (UL,pk->id, fk->survey)           (UL,pk->id, fk->survey)
@@ -41,13 +41,13 @@
 
     function survey_backup_one_mod($bf,$preferences,$survey) {
         global $DB;
-        
+
         $status = true;
-        
+
         if (is_numeric($survey)) {
             $survey = $DB->get_record('survey', array('id'=>$survey));
         }
-        
+
         //Start mod
         fwrite ($bf,start_tag("MOD",3,true));
         //Print choice data
@@ -60,7 +60,7 @@
         fwrite ($bf,full_tag("NAME",4,false,$survey->name));
         fwrite ($bf,full_tag("INTRO",4,false,$survey->intro));
         fwrite ($bf,full_tag("QUESTIONS",4,false,$survey->questions));
-        
+
         //if we've selected to backup users info, then execute backup_survey_answers and
         //backup_survey_analysis
         if (backup_userdata_selected($preferences,'survey',$survey->id)) {
@@ -224,4 +224,4 @@
                                        WHERE s.survey = ?", array($instanceid));
     }
 
-?>
+

@@ -88,4 +88,3 @@ $mod_scorm_capabilities = array(
     )
 );
 
-?>

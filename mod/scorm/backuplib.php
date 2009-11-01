@@ -1,10 +1,10 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //scorm mods
 
     //This is the "graphical" structure of the scorm mod:
     //
-    //                      scorm                                      
+    //                      scorm
     //                   (CL,pk->id)-------------------------------------
     //                        |                                         |
     //                        |                                         |
@@ -78,7 +78,7 @@
         fwrite ($bf,full_tag("UPDATEFREQ",4,false,$scorm->updatefreq));
         fwrite ($bf,full_tag('TIMEMODIFIED',4,false,$scorm->timemodified));
         $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
-        
+
         //if we've selected to backup users info, then execute backup_scorm_scoes_track
         if ($status) {
             if (backup_userdata_selected($preferences,'scorm',$scorm->id)) {
@@ -128,7 +128,7 @@
         }
         return $status;
     }
-  
+
    //Backup scorm_scoes_data contents (executed from scorm_backup_scorm_scoes)
     function backup_scorm_scoes_data ($bf,$preferences,$sco) {
         global $CFG, $DB;
@@ -157,7 +157,7 @@
         }
         return $status;
     }
-   
+
    //Backup scorm_scoes_track contents (executed from scorm_backup_mods)
     function backup_scorm_scoes_track ($bf,$preferences,$scorm) {
         global $CFG, $DB;
@@ -203,7 +203,7 @@
             $status =fwrite ($bf,start_tag('SEQ_RULECONDS',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_ruleconditions as $seq_rulecondition) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_RULECOND',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_rulecondition->id));
@@ -235,7 +235,7 @@
             $status =fwrite ($bf,start_tag('SEQ_RULECOND_DATAS',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_ruleconditions as $seq_rulecondition) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_RULECOND_DATA',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_rulecondition->id));
@@ -266,7 +266,7 @@
             $status =fwrite ($bf,start_tag('SEQ_ROLLUPRULES',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_rolluprules as $seq_rolluprule) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_ROLLUPRULE',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_rolluprule->id));
@@ -299,7 +299,7 @@
             $status =fwrite ($bf,start_tag('SEQ_ROLLUPRULECONDS',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_rollupruleconditions as $seq_rolluprulecondition) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_ROLLUPRULECOND',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_rolluprulecondition->id));
@@ -330,7 +330,7 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
             $status =fwrite ($bf,start_tag('SEQ_OBJECTIVES',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_objectives as $seq_objective) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_OBJECTIVE',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_objective->id));
@@ -362,7 +362,7 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
             $status =fwrite ($bf,start_tag('SEQ_MAPINFO',4,true));
             //Iterate over each sco
             foreach ($scorm_seq_objectives as $seq_objective) {
-                //Start sco 
+                //Start sco
                 $status =fwrite ($bf,start_tag('SEQ_MAPINF',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$seq_objective->id));
@@ -381,7 +381,7 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
         }
         return $status;
     }
-   
+
    ////Return an array of info (name,value)
    function scorm_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
        if (!empty($instances) && is_array($instances) && count($instances)) {
@@ -506,7 +506,7 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
                                         FROM {scorm} a
                                        WHERE a.course = ?", array($course));
     }
-   
+
     //Returns an array of scorm_scoes id
     function scorm_scoes_track_ids_by_course ($course) {
         global $CFG, $DB;
@@ -525,4 +525,4 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
                                         FROM {scorm_scoes_track} s
                                        WHERE s.scormid = ?", array($instanceid));
     }
-?>
+

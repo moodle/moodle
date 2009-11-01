@@ -14,14 +14,14 @@ function scorm_set_next(url) {
 
 function scorm_get_element_style(obj, prop, cssProp) {
     var ret = '';
-    
+
     if (obj.currentStyle) {
         ret = obj.currentStyle[prop];
     } else if (document.defaultView && document.defaultView.getComputedStyle) {
         var compStyle = document.defaultView.getComputedStyle(obj, null);
         ret = compStyle.getPropertyValue(cssProp);
     }
-    
+
     if (ret == 'auto') ret = '0';
     return ret;
 }
@@ -43,14 +43,14 @@ function scorm_resize () {
         winwidth = document.body.clientWidth;
         winheight = document.body.clientHeight;
     }
-                              
-    var header = document.getElementById('header');   
+
+    var header = document.getElementById('header');
     var content = document.getElementById('content');
     var headerheight = 0;
     if (content) {
         headerheight = content.offsetTop;
     }
-    
+
     var footer = document.getElementById('footer');
     var imsnavbar = document.getElementById('tochead');
     var scormtop = document.getElementById('scormtop');
@@ -69,9 +69,9 @@ function scorm_resize () {
 
     var topmargin = parseInt(scorm_get_element_style(document.getElementsByTagName('body')[0], 'marginTop', 'margin-top'));
     var bottommargin = parseInt(scorm_get_element_style(document.getElementsByTagName('body')[0], 'marginBottom', 'margin-bottom'));
-    
-    var totalheight = headerheight + 
-                        footerheight + 
+
+    var totalheight = headerheight +
+                        footerheight +
                         scormtopheight+
                         topmargin +
                         bottommargin+10; // +10 to save a minor vertical scroll always present!
@@ -84,11 +84,11 @@ function scorm_resize () {
     var finalheighttoc = winheight - totalheighttoc;
     if (finalheighttoc <= 0) {
         finalheighttoc = winheight;
-    }                        
+    }
     var finalheight = winheight - totalheight;
     if (finalheight <= 0) {
         finalheight = winheight;
-    }                        
+    }
     var toctree = document.getElementById('toctree');
     if (toctree != null){
         var toctreeHeight = toctree.offsetHeight;

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //reservation mods
 
@@ -90,7 +90,7 @@
                     foreach ($oldoptions as $oldoption) {
                         list($element,$value) = explode('=',$oldoption);
                         $element = trim($element);
-                        $value = trim($value); 
+                        $value = trim($value);
                         switch ($element) {
                             case 'width':
                                 $scorm->width = $value;
@@ -146,8 +146,8 @@
                         $scorm->launch = $launchsco->new_id;
                         $DB->update_record('scorm',$scorm);
                     }
-                } 
-                
+                }
+
             } else {
                 $status = false;
             }
@@ -190,7 +190,7 @@
 
             //The structure is equal to the db, so insert the scorm_scoes
             $newid = $DB->insert_record ("scorm_scoes",$sco);
-            
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_scoes", $oldid, $newid);
@@ -212,8 +212,8 @@
                     $status = scorm_scoes_tracks_restore_mods ($scorm_id,$info,$restore);
                 }
             }
-        }    
-        
+        }
+
         return $status;
     }
 
@@ -225,7 +225,7 @@
 
         //Get the discussions array
         $objectives = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_OBJECTIVES']['0']['#']['SEQ_OBJECTIVE'])) {
             $objectives = $info['MOD']['#']['SEQ_OBJECTIVES']['0']['#']['SEQ_OBJECTIVE'];
         }
@@ -243,7 +243,7 @@
             $objective->objectiveid = backup_todb($obj_info['#']['OBJECTIVEID']['0']['#']);
             $objective->satisfiedbymeasure = backup_todb($obj_info['#']['SATISFIEDBYMEASURE']['0']['#']);
             $objective->minnormalizedmeasure = backup_todb($obj_info['#']['MINNORMALIZEDMEASURE']['0']['#']);
-            
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = $DB->insert_record ("scorm_seq_objective",$objective);
 
@@ -268,7 +268,7 @@
             //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_mapinfo_restore_mods ($sco_id,$newid,$obj_info,$restore);
-               
+
         }
 
         return $status;
@@ -283,7 +283,7 @@
 
         //Get the discussions array
         $rolluprules = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_ROLLUPRULES']['0']['#']['SEQ_ROLLUPRULE'])) {
             $rolluprules = $info['MOD']['#']['SEQ_ROLLUPRULES']['0']['#']['SEQ_ROLLUPRULE'];
         }
@@ -302,7 +302,7 @@
             $rolluprule->minimumpercent = backup_todb($rol_info['#']['MINIMUMPERCENT']['0']['#']);
             $rolluprule->conditioncombination = backup_todb($rol_info['#']['CONDITIONCOMBINATION']['0']['#']);
             $rolluprule->action = backup_todb($rol_info['#']['ACTION']['0']['#']);
-            
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = $DB->insert_record ("scorm_seq_rolluprule",$rolluprule);
 
@@ -327,7 +327,7 @@
             //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_rolluprulecond_restore_mods ($sco_id, $newid,$obj_info,$restore);
-               
+
         }
 
         return $status;
@@ -340,7 +340,7 @@
 
         //Get the discussions array
         $ruleconds = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_RULECONDS']['0']['#']['SEQ_RULECOND'])) {
             $ruleconds = $info['MOD']['#']['SEQ_RULECONDS']['0']['#']['SEQ_RULECOND'];
         }
@@ -352,12 +352,12 @@
 
             //We'll need this later!!
             $oldid = backup_todb($rul_info['#']['ID']['0']['#']);
-            
-            $rulecond->scoid = $sco_id;      
+
+            $rulecond->scoid = $sco_id;
             $rulecond->conditioncombination = backup_todb($rul_info['#']['CONDITIONCOMBINATION']['0']['#']);
             $rulecond->minimumpercent = backup_todb($rul_info['#']['RULETYPE']['0']['#']);
             $rulecond->action = backup_todb($rul_info['#']['ACTION']['0']['#']);
-            
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = $DB->insert_record ("scorm_seq_ruleconds",$rulecond);
 
@@ -382,7 +382,7 @@
             //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_rulecond_restore_mods ($sco_id, $newid,$obj_info,$restore);
-               
+
         }
 
         return $status;
@@ -395,26 +395,26 @@
 
         //Get the discussions array
         $rulecondsd = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_RULECOND_DATAS']['0']['#']['SEQ_RULECOND_DATA'])) {
             $rulecondsd = $info['MOD']['#']['SEQ_RULECOND_DATAS']['0']['#']['SEQ_RULECOND_DATA'];
         }
 
-        
+
         for($i = 0; $i < sizeof($rulecondsd); $i++) {
             $ruld_info = $rulecondsd[$i];
                      //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($rul_info['#']['ID']['0']['#']);
-            
-            $rulecondd->scoid = $sco_id;      
+
+            $rulecondd->scoid = $sco_id;
             $rulecondd->ruleconditions = $rulecondid;
             $rulecondd->refrencedobjective = backup_todb($ruld_info['#']['REFRENCEDOBJECTIVE']['0']['#']);
             $rulecondd->measurethreshold = backup_todb($ruld_info['#']['MEASURETHRESHOLD']['0']['#']);
             $rulecondd->operator = backup_todb($ruld_info['#']['OPERATOR']['0']['#']);
             $rulecondd->cond = backup_todb($ruld_info['#']['COND']['0']['#']);
-            
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = $DB->insert_record ("scorm_seq_rulecond",$rulecondd);
 
@@ -450,20 +450,20 @@
 
         //Get the discussions array
         $rollupruleconds = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_ROLLUPRULECONDS']['0']['#']['SEQ_ROLLUPRULECOND'])) {
             $rollupruleconds = $info['MOD']['#']['SEQ_ROLLUPRULECONDS']['0']['#']['SEQ_ROLLUPRULECOND'];
         }
 
-        
+
         for($i = 0; $i < sizeof($rollupruleconds); $i++) {
             $rulc_info = $rollupruleconds[$i];
                      //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($rulc_info['#']['ID']['0']['#']);
-            
-            $rolluprulecond->scoid = $sco_id;      
+
+            $rolluprulecond->scoid = $sco_id;
             $rolluprulecond->ruleconditions = $rolluprule;
             $rolluprulecond->cond = backup_todb($rulc_info['#']['COND']['0']['#']);
             $rolluprulecond->operator = backup_todb($rulc_info['#']['OPERATOR']['0']['#']);
@@ -504,20 +504,20 @@
 
         //Get the discussions array
         $mapinfos = array();
-        
+
         if (!empty($info['MOD']['#']['SEQ_MAPINFO']['0']['#']['SEQ_MAPINF'])) {
             $mapinfos = $info['MOD']['#']['SEQ_MAPINFO']['0']['#']['SEQ_MAPINF'];
         }
 
-        
+
         for($i = 0; $i < sizeof($mapinfos); $i++) {
             $map_info = $mapinfos[$i];
                      //Debug
 
             //We'll need this later!!
             $oldid = backup_todb($map_info['#']['ID']['0']['#']);
-            
-            $mapinfo->scoid = $sco_id;      
+
+            $mapinfo->scoid = $sco_id;
             $mapinfo->objectiveid = $ojectiveid;
             $mapinfo->targetobjectiveid = backup_todb($map_info['#']['TARGETOBJECTIVEID']['0']['#']);
             $mapinfo->readsatisfiedstatus = backup_todb($map_info['#']['READSATISFIEDSTATUS']['0']['#']);
@@ -525,7 +525,7 @@
             $mapinfo->writesatisfiedstatus = backup_todb($map_info['#']['WRITESATISFIEDSTATUS']['0']['#']);
             $mapinfo->writenormalizedmeasure = backup_todb($map_info['#']['WRITENORMALIZEDMEASURE']['0']['#']);
 
-            
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = $DB->insert_record ("scorm_seq_mapinfo",$mapinfo);
 
@@ -545,8 +545,8 @@
                     }
                 }
             }
-        }    
-        
+        }
+
         return $status;
     }
 
@@ -605,7 +605,7 @@
 
         return $status;
     }
-    
+
     //This function restores the scorm_scoes_track from Moodle 1.4
     function scorm_scoes_tracks_restore_mods_pre15 ($scorm_id,$info,$restore) {
         global $CFG, $DB;
@@ -617,7 +617,7 @@
         if (!empty($info['MOD']['#']['SCO_USERS']['0']['#']['SCO_USER'])) {
             $scousers = $info['MOD']['#']['SCO_USERS']['0']['#']['SCO_USER'];
         }
-        
+
         $oldelements = array ('CMI_CORE_LESSON_LOCATION',
                               'CMI_CORE_LESSON_STATUS',
                               'CMI_CORE_EXIT',
@@ -741,13 +741,13 @@
     //scorm_decode_content_links_caller() function in each module
     //in the restore process
     function scorm_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of scorms
-                
+
         $searchstring='/\$@(SCORMINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -764,7 +764,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/scorm/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/scorm/index.php?id='.$old_id,$result);
                 }
@@ -850,4 +850,4 @@
 
         return $status;
     }
-?>
+

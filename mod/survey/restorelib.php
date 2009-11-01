@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //survey mods
 
@@ -8,7 +8,7 @@
     //                        (CL,pk->id)                 |(CL,pk->id,?????) |
     //                            |                       --------------------
     //                            |
-    //             -----------------------------------        
+    //             -----------------------------------
     //             |                                 |
     //        survey_analysis                   survey_answers
     //    (UL,pk->id, fk->survey)           (UL,pk->id, fk->survey)
@@ -32,7 +32,7 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //Now get completed xmlized object   
+            //Now get completed xmlized object
             $info = $data->info;
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
@@ -177,7 +177,7 @@
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";       
+                    echo ".";
                     if (($i+1) % 1000 == 0) {
                         echo "<br />";
                     }
@@ -202,13 +202,13 @@
     //servey_decode_content_links_caller() function in each module
     //in the restore process
     function servey_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of serveys
-                
+
         $searchstring='/\$@(SURVEYINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -225,7 +225,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/servey/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/servey/index.php?id='.$old_id,$result);
                 }
@@ -268,7 +268,7 @@
     function survey_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         if ($surveys = $DB->get_records('survey', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each survey->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
@@ -406,4 +406,4 @@
         }
         return $status;
     }
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 function scorm_add_time($a, $b) {
     $aes = explode(':',$a);
@@ -548,4 +548,4 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     return $result;
 }
 
-?>
+

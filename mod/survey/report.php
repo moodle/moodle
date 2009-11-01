@@ -62,7 +62,7 @@
     $PAGE->set_url($url);
 
     require_login($course->id, false, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/survey:readresponses', $context);
@@ -133,7 +133,7 @@
 
     if ($currentgroup) {
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $currentgroup, null, false);
-    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) { 
+    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
         $groups = groups_get_all_groups($courseid, 0, $cm->groupingid);
         $groups = array_keys($groups);
         $users = get_users_by_capability($context, 'mod/survey:participate', '', '', '', '', $groups, null, false);
@@ -143,7 +143,7 @@
     }
 
     $groupingid = $cm->groupingid;
-    
+
     echo $OUTPUT->box_start("generalbox boxaligncenter");
     if ($showscales) {
         echo "<a href=\"report.php?action=summary&amp;id=$id\">$strsummary</a>";
@@ -307,7 +307,7 @@
                     $table->data[] = array($contents);
 
                     echo $OUTPUT->table($table);
-                    
+
                     $spacer = new html_image();
                     $spacer->height = 30;
                     $spacer->width = 1;
@@ -506,4 +506,4 @@
 
     }
     echo $OUTPUT->footer();
-?>
+

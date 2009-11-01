@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * This is really a little language parser for AICC_SCRIPT
 * evaluates the expression and returns a boolean answer
@@ -332,4 +332,4 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     return $result;
 }
 
-?>
+

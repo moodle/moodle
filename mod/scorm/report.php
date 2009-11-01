@@ -23,7 +23,7 @@
     if ($action !== '') {
         $url->param('action', $action);
     }
-    
+
     if (!empty($id)) {
         $url->param('id', $id);
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -472,4 +472,4 @@
     if (empty($noheader)) {
         echo $OUTPUT->footer();
     }
-?>
+

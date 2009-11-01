@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 $yesno = array(0 => get_string('no'),
                1 => get_string('yes'));
@@ -58,4 +58,4 @@ $settings->add(new admin_setting_configcheckbox('scorm/allowapidebug', get_strin
 
 $settings->add(new admin_setting_configtext('scorm/apidebugmask', get_string('apidebugmask', 'scorm'), '', '/.*/'));
 
-?>
+

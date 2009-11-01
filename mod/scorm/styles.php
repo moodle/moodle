@@ -47,8 +47,8 @@
    width: 100%;
 
    height: 100%;
-   
-   
+
+
 
 }
 
@@ -59,9 +59,9 @@
   position: relative;
 
   width: 100%;
-  
-  
-  
+
+
+
 
 }
 
@@ -73,37 +73,37 @@
 
   top: 3px;
 
-  height: 30px;  
-  
-  
+  height: 30px;
+
+
 
 }
 
 #mod-scorm-player .toc {
 
-  width: 80%; 
+  width: 80%;
 
-  margin-left: 20%; 
-  
-  
-  
+  margin-left: 20%;
+
+
+
 
 }
 
 #mod-scorm-player .no-toc {
 
   width: 100%;
-  
-  
+
+
 
 }
 
 #mod-scorm-player #scormobject {
 
-  height: 400px; 
-  
-  
-  
+  height: 400px;
+
+
+
 
 }
 
@@ -114,8 +114,8 @@
   width: 100%;
 
   height: 30px;
-  
-  
+
+
 
 }
 
@@ -126,9 +126,9 @@
   left: 5px;
 
   top: 0px;
-  
-  
-  
+
+
+
 
 }
 
@@ -145,9 +145,9 @@
   top: 3px;
 
   width: 100%;
-  
-  
-  
+
+
+
 
 }
 
@@ -156,8 +156,8 @@
 #mod-scorm-view .structurehead {
 
   text-align: center;
-  
-  
+
+
 
 }
 
@@ -168,8 +168,8 @@
   list-style-type: none;
 
   white-space: nowrap;
-  
-  
+
+
 
 }
 
@@ -184,8 +184,8 @@
   right: 0px;
 
   top: 0px;
-  
-  
+
+
 
 }
 
@@ -200,8 +200,8 @@
   width: 24%;
 
   font-size: 0.8em;
-  
-  
+
+
 
 }
 
@@ -215,9 +215,9 @@
 
   top: 3px;
 
-  height: 30px;  
-  
-  
+  height: 30px;
+
+
 
 }
 
@@ -232,8 +232,8 @@
   overflow-x: auto;
 
   overflow-y: auto;
-  
-  
+
+
 
 }
 
@@ -252,24 +252,24 @@
   width: 96%;
 
   margin-left:0;
-  
+
   padding-left: 0;
-  
+
   margin-right:0;
-  
+
   padding-right: 0;
-  
+
   padding-top: 0;
-  
+
   padding-bottom: 0;
-  
+
   margin-top:0;
-  
+
   margin-bottom:0;
-  
-  
-  
-  
+
+
+
+
 }
 
 

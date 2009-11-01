@@ -664,7 +664,7 @@ function scorm_get_post_actions() {
  */
 function scorm_option2text($scorm) {
     $scorm_popoup_options = scorm_get_popup_options_array();
-    
+
     if (isset($scorm->popup)) {
         if ($scorm->popup == 1) {
             $optionlist = array();
@@ -689,7 +689,7 @@ function scorm_option2text($scorm) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the scorm.
- * 
+ *
  * @param object $mform form passed by reference
  */
 function scorm_reset_course_form_definition(&$mform) {
@@ -791,7 +791,7 @@ function scorm_get_file_areas($course, $cm, $context) {
 
 /**
  * File browsing support
- * 
+ *
  * @todo Document this function
  */
 function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
@@ -809,7 +809,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
 
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
-    
+
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
         if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
@@ -843,7 +843,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
     } else if ($filearea === 'scorm_package') {
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
-    
+
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
         if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
@@ -884,7 +884,7 @@ function scorm_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedo
     if (!$cm = get_coursemodule_from_instance('scorm', $cminfo->instance, $course->id)) {
         return false;
     }
-    
+
     require_login($course, true, $cm);
 
     if ($filearea === 'scorm_content') {

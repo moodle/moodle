@@ -1,6 +1,6 @@
-<?php  //$Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the survey module
 //
 // Sometimes, changes between versions involve
@@ -44,4 +44,4 @@ function xmldb_survey_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

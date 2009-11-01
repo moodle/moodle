@@ -74,7 +74,7 @@ function survey_add_instance($survey) {
         return 0;
     }
 
-    $survey->questions    = $template->questions; 
+    $survey->questions    = $template->questions;
     $survey->timecreated  = time();
     $survey->timemodified = $survey->timecreated;
 
@@ -98,8 +98,8 @@ function survey_update_instance($survey) {
         return 0;
     }
 
-    $survey->id           = $survey->instance; 
-    $survey->questions    = $template->questions; 
+    $survey->id           = $survey->instance;
+    $survey->questions    = $template->questions;
     $survey->timemodified = time();
 
     return $DB->update_record("survey", $survey);
@@ -108,7 +108,7 @@ function survey_update_instance($survey) {
 /**
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
- * and any data that depends on it.  
+ * and any data that depends on it.
  *
  * @global object
  * @param int $id
@@ -179,11 +179,11 @@ function survey_user_complete($course, $user, $mod, $survey) {
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
-            
+
             foreach ($questionorder as $key=>$val) {
                 $question = $questions[$val];
                 $questiontext = get_string($question->shorttext, "survey");
-                
+
                 if ($answer = survey_get_user_answer($survey->id, $question->id, $user->id)) {
                     $answertext = "$answer->answer1";
                 } else {
@@ -192,12 +192,12 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 $table->data[] = array("<b>$questiontext</b>", $answertext);
             }
             echo $OUTPUT->table($table);
-            
+
         } else {
-        
+
             survey_print_graph("id=$mod->id&amp;sid=$user->id&amp;type=student.png");
         }
-        
+
     } else {
         print_string("notdone", "survey");
     }
@@ -249,7 +249,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
         $survey->name = $cm->name;
         $survey->cmid = $cm->id;
         $surveys[] = $survey;
-    } 
+    }
     $rs->close();
 
     if (!$surveys) {
@@ -261,7 +261,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
         $url = $CFG->wwwroot.'/mod/survey/view.php?id='.$survey->cmid;
         print_recent_activity_note($survey->time, $survey, $survey->name, $url, false, $viewfullnames);
     }
- 
+
     return true;
 }
 
@@ -321,7 +321,7 @@ function survey_log_info($log) {
 function survey_get_responses($surveyid, $groupid, $groupingid) {
     global $DB;
 
-    $params = array('surveyid'=>$surveyid, 'groupid'=>$groupid, 'groupingid'=>$groupingid); 
+    $params = array('surveyid'=>$surveyid, 'groupid'=>$groupid, 'groupingid'=>$groupingid);
 
     if ($groupid) {
         $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
@@ -351,7 +351,7 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
 function survey_get_analysis($survey, $user) {
     global $DB;
 
-    return $DB->get_record_sql("SELECT notes 
+    return $DB->get_record_sql("SELECT notes
                                   FROM {survey_analysis}
                                  WHERE survey=? AND userid=?", array($survey, $user));
 }
@@ -366,8 +366,8 @@ function survey_update_analysis($survey, $user, $notes) {
     global $DB;
 
     return $DB->execute("UPDATE {survey_analysis}
-                            SET notes=? 
-                          WHERE survey=? 
+                            SET notes=?
+                          WHERE survey=?
                             AND userid=?", array($notes, $survey, $user));
 }
 
@@ -389,10 +389,10 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
         $groupsql = "";
     }
 
-    return $DB->get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
-                                   FROM {survey_answers} sa,  {user} u, {groups_members} gm 
-                                  WHERE sa.survey = :surveyid 
-                                        AND sa.question = :questionid 
+    return $DB->get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture
+                                   FROM {survey_answers} sa,  {user} u, {groups_members} gm
+                                  WHERE sa.survey = :surveyid
+                                        AND sa.question = :questionid
                                         AND u.id = sa.userid $groupsql
                                ORDER BY $sort", $params);
 }
@@ -407,10 +407,10 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
 function survey_get_user_answer($surveyid, $questionid, $userid) {
     global $DB;
 
-    return $DB->get_record_sql("SELECT sa.* 
+    return $DB->get_record_sql("SELECT sa.*
                                   FROM {survey_answers} sa
-                                 WHERE sa.survey = ? 
-                                       AND sa.question = ? 
+                                 WHERE sa.survey = ?
+                                       AND sa.question = ?
                                        AND sa.userid = ?", array($surveyid, $questionid, $userid));
 }
 
@@ -471,7 +471,7 @@ function survey_print_all_responses($cmid, $results, $courseid) {
 
     foreach ($results as $a) {
         $table->data[] = array($OUTPUT->user_picture(moodle_user_picture::make($a, $courseid)),
-               $OUTPUT->link("report.php?action=student&student=$a->id&id=$cmid", fullname($a)), 
+               $OUTPUT->link("report.php?action=student&student=$a->id&id=$cmid", fullname($a)),
                userdate($a->time));
     }
 
@@ -549,7 +549,7 @@ function survey_print_multi($question) {
     if ($oneanswer) {
         echo "<tr><th scope=\"col\" colspan=\"6\">$question->intro</th></tr>\n";
     } else {
-        echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n"; 
+        echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
     }
 
     $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
@@ -575,8 +575,8 @@ function survey_print_multi($question) {
             $default = get_accesshide($strdefault, 'label', '', "for=\"q$P$q->id\"");
             echo "<td class=\"whitecell\"><input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_D\" value=\"0\" checked=\"checked\" />$default</td>";
             $checklist["q$P$q->id"] = $numoptions;
-        
-        } else { 
+
+        } else {
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
@@ -605,7 +605,7 @@ function survey_print_multi($question) {
             $default = get_accesshide($strdefault, 'label', '', "for=\"q$q->id\"");
             echo "<td class=\"buttoncell\"><input type=\"radio\" name=\"q$q->id\" id=\"q$q->id\" value=\"0\" checked=\"checked\" />$default</td>";
             $checklist["qP$q->id"] = $numoptions;
-            $checklist["q$q->id"] = $numoptions;            
+            $checklist["q$q->id"] = $numoptions;
         }
         echo "</tr>\n";
     }
@@ -706,7 +706,7 @@ function survey_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the survey.
- * 
+ *
  * @param object $mform form passed by reference
  */
 function survey_reset_course_form_definition(&$mform) {

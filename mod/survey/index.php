@@ -82,4 +82,4 @@
     echo $OUTPUT->table($table);
     echo $OUTPUT->footer();
 
-?>
+

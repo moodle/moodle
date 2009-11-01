@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
     global $CFG, $DB, $PAGE, $OUTPUT;
@@ -223,4 +223,4 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     return $result;
 }
 
-?>
+

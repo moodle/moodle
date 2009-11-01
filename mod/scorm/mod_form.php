@@ -372,4 +372,4 @@ class mod_scorm_mod_form extends moodleform_mod {
         parent::set_data($default_values);
     }
 }
-?>
+
