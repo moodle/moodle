@@ -24,7 +24,7 @@
  */
 
 /**#@+
- *  state defines 
+ *  state defines
  */
 define( "STATE_NONE",1 ); // blank line has been detected, so looking for first line on next para
 define( "STATE_PARAGRAPH",2 ); // currently processing vanilla paragraph
@@ -57,7 +57,7 @@ class WikiToMarkdown {
 
   function close_block( $state ) {
     // provide appropriate closure for block according to state
-    
+
     // if in list close this first
     $lclose = "";
     if ($this->list_state != LIST_NONE) {
@@ -77,7 +77,7 @@ class WikiToMarkdown {
         break;
       case STATE_NOTIKI:
         $sclose =  "\n";
-        break;  
+        break;
     }
 
     return $lclose . $sclose;
@@ -137,7 +137,7 @@ class WikiToMarkdown {
   function do_list( $line, $blank=false ) {
     // handle line with list character on it
     // if blank line implies drop to level 0
-    
+
     // get magic character and then delete it from the line if not blank
     if ($blank) {
       $listchar="";
@@ -148,7 +148,7 @@ class WikiToMarkdown {
       $count = strspn( $line, $listchar );
       $line = eregi_replace( "^[".$listchar."]+ ", "", $line );
     }
-    
+
     // find what sort of list this character represents
     $list_tag = "";
     $list_close_tag = "";
@@ -183,8 +183,8 @@ class WikiToMarkdown {
         $item_tag = "<dt>";
         $item_close_tag = "</dt>";
         $list_style = LIST_DEFINITION;
-        break;  
-      }  
+        break;
+      }
 
     // tag opening/closing regime now - fun bit :-)
     $tags = "";
@@ -207,31 +207,31 @@ class WikiToMarkdown {
 
     // get indent
     $indent = substr( "                      ",1,$count-1 );
- 
+
     if ($blank) {
       $newline = $tags;
     }
-    else {  
+    else {
       $newline = $tags . $indent . "$item_tag " . $line . "$item_close_tag";
     }
 
     return $newline;
-  } 
+  }
 
 
   function line_replace( $line ) {
     // return line after various formatting replacements
     // have been made - order is vital to stop them interfering with each other
-  
+
     global $CFG;
- 
+
     // ---- (at least) means a <hr />
     // MARKDOWN: no change so leave
 
-    // is this a list line (starts with * # ; :)    
+    // is this a list line (starts with * # ; :)
     if (eregi( "^([*]+|[#]+|[;]+|[:]+) ", $line )) {
-      $line = $this->do_list( $line );        
-    } 
+      $line = $this->do_list( $line );
+    }
 
    // typographic conventions
    // MARKDOWN: no equiv. so convert to entity as before
@@ -246,9 +246,9 @@ class WikiToMarkdown {
     $line = str_replace( "1/4", "&#188;", $line );
     $line = str_replace( "1/2", "&#189;", $line );
     $line = str_replace( "3/4", "&#190;", $line );
-    $line = eregi_replace( "([[:digit:]]+[[:space:]]*)x([[:space:]]*[[:digit:]]+)", "\\1&#215;\\2", $line ); // (digits) x (digits) - multiply    
+    $line = eregi_replace( "([[:digit:]]+[[:space:]]*)x([[:space:]]*[[:digit:]]+)", "\\1&#215;\\2", $line ); // (digits) x (digits) - multiply
     // do formatting tags
-    // NOTE: The / replacement  *has* to be first, or it will screw the 
+    // NOTE: The / replacement  *has* to be first, or it will screw the
     //    HTML tags that are added by the other ones
     // MARKDOWN: only bold and italic change, rest are just HTML
     $line = $this->do_replace_markdown( $line, "\*", "**" );
@@ -259,18 +259,18 @@ class WikiToMarkdown {
     $line = $this->do_replace_sub( $line, "\^", "sup" );
     $line = $this->do_replace( $line, "%", "code" );
     $line = $this->do_replace( $line, "@", "cite" );
-    
+
     // convert urls into proper link with optional link text URL(text)
     // MARDOWN: HTML conversion should work fine
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
       "\\1[\\5](\\2://\\3\\4)", $line);
-    $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)", 
+    $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
       "\\1[\\5](http://www.\\2\\3)", $line);
 
     // make urls (with and without httpd) into proper links
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
       "\\1<\\2://\\3\\4>", $line);
-    $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
+    $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])",
       "\\1<http://www.\\2\\3\>", $line);
 
     // make email addresses into mailtos....
@@ -298,7 +298,7 @@ class WikiToMarkdown {
     require_once($CFG->libdir.'/filelib.php');
     $coursefileurl = get_file_url($this->courseid);
 
-    // Replace picture resource link 
+    // Replace picture resource link
     $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
             "![\\3](".$coursefileurl."/\\1\\2)", $line );
 
@@ -355,7 +355,7 @@ class WikiToMarkdown {
           $buffer = $buffer . $this->line_replace($line) . "\n";
           $this->block_state = STATE_PREFORM;
         }
-        else 
+        else
         if (eregi("^\% ",$line) ) {
                 // preformatted text - no processing
                 // MARKDOWN: this is MD code form of a paragraph
@@ -365,7 +365,7 @@ class WikiToMarkdown {
         else {
           // ordinary paragraph
           $buffer = $buffer . $this->line_replace($line) . "\n";
-          $this->block_state = STATE_PARAGRAPH; 
+          $this->block_state = STATE_PARAGRAPH;
         }
         continue;
       }
@@ -384,8 +384,7 @@ class WikiToMarkdown {
     // close off any block level tags
     $buffer = $buffer . $this->close_block( $this->block_state );
 
-    //return $buffer;    
+    //return $buffer;
     return $buffer;
   }
 }
-?>

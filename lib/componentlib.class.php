@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -124,7 +124,7 @@
  * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
  /**
   * @global object $CFG
   * @name $CFG
@@ -140,7 +140,7 @@ define('COMPONENT_INSTALLED',       3);
 
 /**
  * This class is used to check, download and install items from
- * download.moodle.org to the moodledata directory. 
+ * download.moodle.org to the moodledata directory.
  *
  * It always return true/false in all their public methods to say if
  * execution has ended succesfuly or not. If there is any problem
@@ -545,5 +545,3 @@ class component_installer {
     }
 
 } /// End of component_installer class
-
-?>

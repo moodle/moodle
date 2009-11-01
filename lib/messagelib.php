@@ -25,7 +25,7 @@
 
 /** TIMETOSHOWUSERS = 300 */
 define('TIMETOSHOWUSERS', 300);
- 
+
 /**
  * Triggered when a message provider wants to send a message.
  * This functions checks the user's processor configuration to send the given type of message,
@@ -48,7 +48,7 @@ function message_send_handler($eventdata){
     } else {
         $userstate = 'loggedin';
     }
-    
+
 /// Create the message object
     $savemessage = new object();
     $savemessage->useridfrom        = $eventdata->userfrom->id;
@@ -61,10 +61,10 @@ function message_send_handler($eventdata){
     $savemessage->timecreated       = time();
 
 /// Find out what processors are defined currently
-/// When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned    
+/// When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
     $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, NULL, $eventdata->userto->id);
-    
-    if ($processor == NULL){ //this user never had a preference, save default        
+
+    if ($processor == NULL){ //this user never had a preference, save default
         if (!message_set_default_message_preferences( $eventdata->userto )){
             print_error('cannotsavemessageprefs', 'message');
         }
@@ -79,31 +79,31 @@ function message_send_handler($eventdata){
     //if we are suposed to do something with this message
     // No processor for this message, mark it as read
     if ($processor == "") {  //this user cleared all the preferences
-        $savemessage->timeread = time();        
+        $savemessage->timeread = time();
         $messageid = $message->id;
         unset($message->id);
         $DB->insert_record('message_read', $savemessage);
 
     } else {                        // Process the message
     /// Store unread message just in case we can not send it
-        $savemessage->id = $DB->insert_record('message', $savemessage);        
-        
+        $savemessage->id = $DB->insert_record('message', $savemessage);
+
     /// Try to deliver the message to each processor
         $processorlist = explode(',', $processor);
         foreach ($processorlist as $procname) {
             $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
 
-            if (is_readable($processorfile)) {        
+            if (is_readable($processorfile)) {
                 include_once( $processorfile );  // defines $module with version etc
                 $processclass = 'message_output_' . $procname;
-                
-                if (class_exists($processclass)) {                    
+
+                if (class_exists($processclass)) {
                     $pclass = new $processclass();
 
                     if (! $pclass->send_message($savemessage)) {
                         debugging('Error calling message processor '.$procname);
                         return false;
-                    }                    
+                    }
                 }
             } else {
                 debugging('Error calling message processor '.$procname);
@@ -133,7 +133,7 @@ function message_update_providers($component='moodle') {
     foreach ($fileproviders as $messagename => $fileprovider) {
 
         if (!empty($dbproviders[$messagename])) {   // Already exists in the database
-            
+
             if ($dbproviders[$messagename]->capability == $fileprovider['capability']) {  // Same, so ignore
                 // exact same message provider already present in db, ignore this entry
                 unset($dbproviders[$messagename]);
@@ -199,7 +199,7 @@ function message_get_my_providers() {
 function message_get_providers_from_db($component) {
     global $DB;
 
-    if ($dbproviders = $DB->get_records('message_providers', array('component'=>$component), '', 
+    if ($dbproviders = $DB->get_records('message_providers', array('component'=>$component), '',
                                         'name, id, component, capability')) {  // Name is unique per component
         return $dbproviders;
     }
@@ -234,7 +234,7 @@ function message_get_providers_from_file($component) {
 }
 
 /**
- * Remove all message providers 
+ * Remove all message providers
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
  */
 function message_uninstall($component) {
@@ -247,14 +247,12 @@ function message_uninstall($component) {
  */
 function message_set_default_message_preferences( $user ) {
     global $DB;
-    
+
     $providers = $DB->get_records('message_providers');
     $preferences = array();
     foreach ( $providers as $providerid => $provider){
         $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'  ] = 'popup';
         $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'  ] = 'email';
-    }    
+    }
     return set_user_preferences( $preferences, $user->id );
 }
-
-?>

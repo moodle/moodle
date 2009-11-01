@@ -149,7 +149,7 @@ class flexible_table {
         }
         return $this->download;
     }
-    
+
     function export_class_instance(&$exportclass=null){
         if (!is_null($exportclass)){
             $this->started_output = true;
@@ -164,8 +164,8 @@ class flexible_table {
         }
         return $this->exportclass;
     }
-    
-    
+
+
     /**
      * Probably don't need to call this directly. Calling is_downloading with a
      * param automatically sets table as downloadable.
@@ -821,7 +821,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_initials_bar(){
-        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) || $this->use_initials) 
+        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) || $this->use_initials)
                     && isset($this->columns['fullname'])) {
 
             $strall = get_string('all');
@@ -1338,7 +1338,7 @@ class table_default_export_format_parent{
      * object from which to export data.
      */
     var $table;
-    
+
     /**
      * @var boolean output started. Keeps track of whether any output has been
      * started yet.
@@ -1347,7 +1347,7 @@ class table_default_export_format_parent{
     function table_default_export_format_parent(&$table){
         $this->table =& $table;
     }
-    
+
     function set_table(&$table){
         $this->table =& $table;
     }
@@ -1618,7 +1618,7 @@ EOF;
         $this->table->start_html();
     }
 
-    
+
     function output_headers($headers){
         $this->table->print_headers();
     }
@@ -1657,4 +1657,3 @@ EOF;
         return format_text($text, $format, $options);
     }
 }
-?>

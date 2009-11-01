@@ -808,7 +808,7 @@ class moodle_page {
      * has been guessed, it will contain dangerous block-related actions.
      * Therefore, the blocks code calls this function to clean up such parameters
      * before doing any redirect.
-     * 
+     *
      * @param string $param the name of the parameter to make sure is not in the
      * page URL.
      */
@@ -1639,5 +1639,3 @@ class page_generic_activity extends page_base {
         echo $OUTPUT->header();
     }
 }
-
-?>

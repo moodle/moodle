@@ -457,4 +457,3 @@ class textlib {
         return implode(' ', $words);
     }
 }
-?>

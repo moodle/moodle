@@ -19,7 +19,7 @@
  * Major Contributors:
  *     - Eloy Lafuente (stronk7) {@link  http://contiento.com}
  *     - Petr Skoda (skodak)
- * 
+ *
  * @package   moodlecore
  * @copyright (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -311,7 +311,7 @@ class MoodleODSWorksheet {
     function hide_screen_gridlines() {
         // not implement
     }
-    
+
     /**
     * Insert a 24bit bitmap image in a worksheet.
     *
@@ -864,4 +864,3 @@ function get_ods_manifest() {
  <manifest:file-entry manifest:media-type="text/xml" manifest:full-path="meta.xml"/>
 </manifest:manifest>';
 }
-?>

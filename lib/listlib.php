@@ -635,4 +635,3 @@ class list_item {
         $this->parentlist =& $parent;
     }
 }
-?>

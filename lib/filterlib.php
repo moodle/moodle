@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -44,15 +44,15 @@ define('TEXTFILTER_DISABLED', -9999);
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter_manager {
-    /** 
+    /**
      * @var array This list of active filters, by context, for filtering content.
-     * An array contextid => array of filter objects. 
+     * An array contextid => array of filter objects.
      */
     protected $textfilters = array();
 
     /**
      * @var array This list of active filters, by context, for filtering strings.
-     * An array contextid => array of filter objects. 
+     * An array contextid => array of filter objects.
      */
     protected $stringfilters = array();
 
@@ -82,8 +82,8 @@ class filter_manager {
         return self::$singletoninstance;
     }
 
-    /** 
-     * Load all the filters required by this context. 
+    /**
+     * Load all the filters required by this context.
      *
      * @param object $context
      * @param int $courseid
@@ -137,7 +137,7 @@ class filter_manager {
     }
 
     /**
-     * @todo Document this function 
+     * @todo Document this function
      * @param string $text
      * @param array $filterchain
      * @return string $text
@@ -150,7 +150,7 @@ class filter_manager {
     }
 
     /**
-     * @todo Document this function 
+     * @todo Document this function
      * @param object $context
      * @param int $courseid
      * @return object A text filter
@@ -163,7 +163,7 @@ class filter_manager {
     }
 
     /**
-     * @todo Document this function 
+     * @todo Document this function
      * @param object $context
      * @param int $courseid
      * @return object A string filter
@@ -203,7 +203,7 @@ class filter_manager {
     }
 
     /**
-     * @todo Document this function 
+     * @todo Document this function
      * @param object $context
      * @param int $courseid
      * @return object A string filter
@@ -404,8 +404,8 @@ class legacy_filter extends moodle_text_filter {
 define('EXCL_SEPARATOR', '-%-');
 
 /**
- * This is just a little object to define a phrase and some instructions 
- * for how to process it.  Filters can create an array of these to pass 
+ * This is just a little object to define a phrase and some instructions
+ * for how to process it.  Filters can create an array of these to pass
  * to the filter_phrases function below.
  *
  * @package   moodlecore
@@ -441,9 +441,9 @@ class filterobject {
      * @param bool $fullmatch
      * @param mixed $replacementphrase
      */
-    function filterobject($phrase, $hreftagbegin='<span class="highlight">', 
-                                   $hreftagend='</span>', 
-                                   $casesensitive=false, 
+    function filterobject($phrase, $hreftagbegin='<span class="highlight">',
+                                   $hreftagend='</span>',
+                                   $casesensitive=false,
                                    $fullmatch=false,
                                    $replacementphrase=NULL) {
 
@@ -1005,7 +1005,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         $ignoretagsopen  = array('<a\s[^>]+?>');
         $ignoretagsclose = array('</a>');
     }
-    
+
     if ( is_array($ignoretagsopen) ) {
         foreach ($ignoretagsopen as $open) $filterignoretagsopen[] = $open;
         foreach ($ignoretagsclose as $close) $filterignoretagsclose[] = $close;
@@ -1015,7 +1015,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
     $text = preg_replace('/([#*%])/','\1\1',$text);
 
 
-////Remove everything enclosed by the ignore tags from $text    
+////Remove everything enclosed by the ignore tags from $text
     filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
 
 /// Remove tags from $text
@@ -1083,7 +1083,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 
         /// Work calculated
             $linkobject->work_calculated = true;
-    
+
         }
 
     /// If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
@@ -1116,12 +1116,12 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     /// Finally we do our highlighting
         if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
-            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
+            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
                                       $linkobject->work_hreftagbegin.
                                       $linkobject->work_replacementphrase.
                                       $linkobject->work_hreftagend, $text, 1);
         } else {
-            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
+            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
                                       $linkobject->work_hreftagbegin.
                                       $linkobject->work_replacementphrase.
                                       $linkobject->work_hreftagend, $text);
@@ -1132,7 +1132,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         if ($resulttext != $text) {
         /// Set $text to $resulttext
             $text = $resulttext;
-        /// Remove everything enclosed by the ignore tags from $text    
+        /// Remove everything enclosed by the ignore tags from $text
             filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
         /// Remove tags from $text
             filter_save_tags($text,$tags);
@@ -1161,7 +1161,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
 
-    //// Remove the protective doubleups 
+    //// Remove the protective doubleups
     $text =  preg_replace('/([#*%])(\1)/','\1',$text);
 
 /// Add missing javascript for popus
@@ -1182,14 +1182,14 @@ function filter_remove_duplicates($linkarray) {
     $lconcepts = array(); // a lower case version for case insensitive
 
     $cleanlinks = array();
-    
+
     foreach ($linkarray as $key=>$filterobject) {
         if ($filterobject->casesensitive) {
             $exists = in_array($filterobject->phrase, $concepts);
         } else {
             $exists = in_array(moodle_strtolower($filterobject->phrase), $lconcepts);
         }
-        
+
         if (!$exists) {
             $cleanlinks[] = $filterobject;
             $concepts[] = $filterobject->phrase;
@@ -1208,7 +1208,7 @@ function filter_remove_duplicates($linkarray) {
  *
  * @param string $text                  the text that we are filtering (in/out)
  * @param array $filterignoretagsopen  an array of open tags to start searching
- * @param array $filterignoretagsclose an array of close tags to end searching 
+ * @param array $filterignoretagsclose an array of close tags to end searching
  * @param array $ignoretags            an array of saved strings useful to rebuild the original text (in/out)
  **/
 function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsclose,&$ignoretags) {
@@ -1220,7 +1220,7 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
         $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
         $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
         $pregexp = '/'.$opentag.'(.*?)'.$closetag.'/is';
-        
+
         preg_match_all($pregexp, $text, $list_of_ignores);
         foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
             $prefix = (string)(count($ignoretags) + 1);
@@ -1236,7 +1236,7 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
  * Extract tags (any text enclosed by < and > to avoid being processed by filters.
  * It returns the text converted with some <%xEXCL_SEPARATORx%> codes replacing the extracted text. Such extracted
  * texts are returned in the tags array (as values), with codes as keys.
- *      
+ *
  * @param string $text   the text that we are filtering (in/out)
  * @param array $tags   an array of saved strings useful to rebuild the original text (in/out)
  **/
@@ -1268,7 +1268,7 @@ function filter_add_javascript($text) {
     if (strpos($text, 'onclick="return openpopup') === FALSE) {
         return $text; // no popup - no need to add javascript
     }
-    $js =" 
+    $js ="
     <script type=\"text/javascript\">
     <!--
         function openpopup(url,name,options,fullscreen) {
@@ -1292,4 +1292,3 @@ function filter_add_javascript($text) {
     //last chance - try adding head element
     return preg_replace("/<html.*?>/is", "\\0<head>".$js.'</head>', $text);
 }
-?>

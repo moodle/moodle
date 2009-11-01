@@ -86,7 +86,7 @@ class dml_read_exception extends dml_exception {
     public $sql;
     /** @var array */
     public $params;
-    
+
     /**
      * Constructor
      * @param string $error
@@ -110,7 +110,7 @@ class dml_multiple_records_exception extends dml_exception {
     public $sql;
     /** @var array */
     public $params;
-    
+
     /**
      * Constructor
      * @param string $table table name if known, '' if unknown
@@ -133,7 +133,7 @@ class dml_missing_record_exception extends dml_exception {
     public $sql;
     /** @var array */
     public $params;
-    
+
     /**
      * Constructor
      * @param string $table table name if known, '' if unknown
@@ -147,7 +147,7 @@ class dml_missing_record_exception extends dml_exception {
         $this->tablename = $tablename;
         $this->sql       = $sql;
         $this->params    = $params;
-        
+
         switch ($tablename) {
             case null:
                 $errcode = 'invalidrecordunknown';

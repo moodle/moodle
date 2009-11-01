@@ -1,4 +1,4 @@
-<?PHP  //$Id$
+<?PHP
 
 // This file keeps track of upgrades to Moodle.
 //
@@ -2705,7 +2705,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009103000);
     }
-    
+
     return $result;
 }
 

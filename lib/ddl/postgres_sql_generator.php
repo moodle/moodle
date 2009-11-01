@@ -473,5 +473,3 @@ function getSequenceFromDB($xmldb_table) {
         return $reserved_words;
     }
 }
-
-?>

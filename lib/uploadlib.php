@@ -38,12 +38,12 @@ class upload_manager {
 
    /**
     * Array to hold local copies of stuff in $_FILES
-    * @var array $files 
+    * @var array $files
     */
     var $files;
    /**
     * Holds all configuration stuff
-    * @var array $config 
+    * @var array $config
     */
     var $config;
    /**
@@ -55,19 +55,19 @@ class upload_manager {
    /**
     * The course this file has been uploaded for. {@link $COURSE}
     * (for logging and virus notifications)
-    * @var course $course 
+    * @var course $course
     */
     var $course;
    /**
     * If we're only getting one file.
     * (for logging and virus notifications)
-    * @var string $inputname 
+    * @var string $inputname
     */
     var $inputname;
    /**
-    * If we're given silent=true in the constructor, this gets built 
+    * If we're given silent=true in the constructor, this gets built
     * up to hold info about the process.
-    * @var string $notify 
+    * @var string $notify
     */
     var $notify;
 
@@ -88,13 +88,13 @@ class upload_manager {
      * @param boolean $allownullmultiple Whether we care if there's no files AT ALL  when we've got multiples. This won't complain if we have file 1 and file 3 but not file 2, only for NO FILES AT ALL.
      */
     function upload_manager($inputname='', $deleteothers=false, $handlecollisions=false, $course=null, $recoverifmultiple=false, $modbytes=0, $silent=false, $allownull=false, $allownullmultiple=true) {
-        
+
         global $CFG, $SITE;
 
         if (empty($course->id)) {
             $course = $SITE;
         }
-        
+
         $this->config->deleteothers = $deleteothers;
         $this->config->handlecollisions = $handlecollisions;
         $this->config->recoverifmultiple = $recoverifmultiple;
@@ -102,17 +102,17 @@ class upload_manager {
         $this->config->silent = $silent;
         $this->config->allownull = $allownull;
         $this->files = array();
-        $this->status = false; 
+        $this->status = false;
         $this->course = $course;
         $this->inputname = $inputname;
         if (empty($this->inputname)) {
             $this->config->allownull = $allownullmultiple;
         }
     }
-    
-    /** 
+
+    /**
      * Gets all entries out of $_FILES and stores them locally in $files and then
-     * checks each one against {@link get_max_upload_file_size()} and calls {@link cleanfilename()} 
+     * checks each one against {@link get_max_upload_file_size()} and calls {@link cleanfilename()}
      * and scans them for viruses etc.
      * @uses $CFG
      * @uses $_FILES
@@ -130,7 +130,7 @@ class upload_manager {
                 $this->status = $this->validate_file($this->files[$name]); // default to only allowing empty on multiple uploads.
                 if (!$this->status && ($this->files[$name]['error'] == 0 || $this->files[$name]['error'] == 4) && ($this->config->allownull || empty($this->inputname))) {
                     // this shouldn't cause everything to stop.. modules should be responsible for knowing which if any are compulsory.
-                    continue; 
+                    continue;
                 }
                 if ($this->status && !empty($CFG->runclamonupload)) {
                     $this->status = clam_scan_moodle_file($this->files[$name],$this->course);
@@ -202,7 +202,7 @@ class upload_manager {
         return true;
     }
 
-    /** 
+    /**
      * Moves all the files to the destination directory.
      *
      * @uses $CFG
@@ -212,7 +212,7 @@ class upload_manager {
      */
     function save_files($destination) {
         global $CFG, $USER, $OUTPUT;
-        
+
         if (!$this->status) { // preprocess_files hasn't been run
             $this->preprocess_files();
         }
@@ -238,7 +238,7 @@ class upload_manager {
                 $this->status = false;
                 return false;
             }
-            
+
             $destination = $CFG->dataroot .'/'. $destination; // now add it back in so we have a full path
 
             $exceptions = array(); //need this later if we're deleting other files.
@@ -277,13 +277,13 @@ class upload_manager {
         }
         return $this->status;
     }
-    
+
     /**
      * Wrapper function that calls {@link preprocess_files()} and {@link viruscheck_files()} and then {@link save_files()}
      * Modules that require the insert id in the filepath should not use this and call these functions seperately in the required order.
      * @parameter string $destination Where to save the uploaded files to.
      * @return boolean
-     */ 
+     */
     function process_file_uploads($destination) {
         if ($this->preprocess_files()) {
             return $this->save_files($destination);
@@ -291,7 +291,7 @@ class upload_manager {
         return false;
     }
 
-    /** 
+    /**
      * Deletes all the files in a given directory except for the files in $exceptions (full paths)
      *
      * @param string $destination The directory to clean up.
@@ -317,7 +317,7 @@ class upload_manager {
             }
         }
     }
-    
+
     /**
      * Handles filename collisions - if the desired filename exists it will rename it according to the pattern in $format
      * @param string $destination Destination directory (to check existing files against)
@@ -354,7 +354,7 @@ class upload_manager {
         $a->newname = $file['name'];
         $file['uploadlog'] .= "\n". get_string('uploadrenamedcollision','moodle', $a);
     }
-    
+
     /**
      * This function checks a potential filename against what's on the filesystem already and what's been saved already.
      * @param string $destination Destination directory (to check existing files against)
@@ -388,7 +388,7 @@ class upload_manager {
      * @todo Finish documenting this function
      */
     function get_file_upload_error(&$file) {
-        
+
         switch ($file['error']) {
         case 0: // UPLOAD_ERR_OK
             if ($file['size'] > 0) {
@@ -397,23 +397,23 @@ class upload_manager {
                 $errmessage = get_string('uploadnofilefound'); /// probably a dud file name
             }
             break;
-            
+
         case 1: // UPLOAD_ERR_INI_SIZE
             $errmessage = get_string('uploadserverlimit');
             break;
-            
+
         case 2: // UPLOAD_ERR_FORM_SIZE
             $errmessage = get_string('uploadformlimit');
             break;
-            
+
         case 3: // UPLOAD_ERR_PARTIAL
             $errmessage = get_string('uploadpartialfile');
             break;
-            
+
         case 4: // UPLOAD_ERR_NO_FILE
             $errmessage = get_string('uploadnofilefound');
             break;
-            
+
         // Note: there is no error with a value of 5
 
         case 6: // UPLOAD_ERR_NO_TMP_DIR
@@ -433,7 +433,7 @@ class upload_manager {
         }
         return $errmessage;
     }
-    
+
     /**
      * prints a log of everything that happened (of interest) to each file in _FILES
      * @param $return - optional, defaults to false (log is echoed)
@@ -465,7 +465,7 @@ class upload_manager {
         return false;
     }
 
-    /** 
+    /**
      * If we're only handling one file (if input name was given in the constructor) this will return the full path to the saved file.
      * @return boolean
      */
@@ -476,7 +476,7 @@ class upload_manager {
         return false;
     }
 
-    /** 
+    /**
      * If we're only handling one file (if inputname was given in the constructor) this will return the ORIGINAL filename of the file.
      * @return boolean
      */
@@ -487,7 +487,7 @@ class upload_manager {
         return false;
     }
 
-    /** 
+    /**
      * This function returns any errors wrapped up in red.
      * @return string
      */
@@ -520,7 +520,7 @@ UPLOAD_PRINT_FORM_FRAGMENT DOESN'T REALLY BELONG IN THE CLASS BUT CERTAINLY IN T
  * @param int $modbytes $coursebytes and $maxbytes are used to calculate upload max size ( using {@link get_max_upload_file_size})
  * @param boolean $return -Whether to return the string (defaults to false - string is echoed)
  * @return string Form returned as string if $return is true
- */ 
+ */
 function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
     global $CFG;
     $maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursebytes, $modbytes);
@@ -547,7 +547,7 @@ function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null
 
 
 /**
- * Deals with an infected file - either moves it to a quarantinedir 
+ * Deals with an infected file - either moves it to a quarantinedir
  * (specified in CFG->quarantinedir) or deletes it.
  *
  * If moving it fails, it deletes it.
@@ -560,7 +560,7 @@ function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null
  * @return string Details of what the function did.
  */
 function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
-    
+
     global $CFG, $USER;
     if ($USER && !$userid) {
         $userid = $USER->id;
@@ -568,7 +568,7 @@ function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
     $delete = true;
     if (file_exists($CFG->quarantinedir) && is_dir($CFG->quarantinedir) && is_writable($CFG->quarantinedir)) {
         $now = date('YmdHis');
-        if (rename($file, $CFG->quarantinedir .'/'. $now .'-user-'. $userid .'-infected')) { 
+        if (rename($file, $CFG->quarantinedir .'/'. $now .'-user-'. $userid .'-infected')) {
             $delete = false;
             clam_log_infected($file, $CFG->quarantinedir.'/'. $now .'-user-'. $userid .'-infected', $userid);
             if ($basiconly) {
@@ -618,7 +618,7 @@ function clam_handle_infected_file($file, $userid=0, $basiconly=false) {
  *
  * The replacement string is used to notify that the original file had a virus
  * This is to avoid missing files but could result in the wrong content-type.
- * 
+ *
  * @param string $file Full path to the file.
  * @return boolean
  */
@@ -644,12 +644,12 @@ function clam_replace_infected_file($file) {
  * @param mixed $file The file to scan from $files. or an absolute path to a file.
  * @param course $course {@link $COURSE}
  * @return int 1 if good, 0 if something goes wrong (opposite from actual error code from clam)
- */ 
+ */
 function clam_scan_moodle_file(&$file, $course) {
     global $CFG, $USER;
 
     if (is_array($file) && is_uploaded_file($file['tmp_name'])) { // it's from $_FILES
-        $appendlog = true; 
+        $appendlog = true;
         $fullpath = $file['tmp_name'];
     }
     else if (file_exists($file)) { // it's a path to somewhere on the filesystem!
@@ -667,7 +667,7 @@ function clam_scan_moodle_file(&$file, $course) {
         if ($CFG->clamfailureonupload == 'actlikevirus') {
             $notice .= "\n". get_string('clamlostandactinglikevirus');
             $notice .= "\n". clam_handle_infected_file($fullpath);
-            $newreturn = false; 
+            $newreturn = false;
         }
         clam_message_admins($notice);
         if ($appendlog) {
@@ -676,15 +676,15 @@ function clam_scan_moodle_file(&$file, $course) {
         }
         return $newreturn; // return 1 if we're allowing clam failures
     }
-    
+
     $cmd = $CFG->pathtoclam .' '. $fullpath ." 2>&1";
-    
+
     // before we do anything we need to change perms so that clamscan can read the file (clamdscan won't work otherwise)
     chmod($fullpath,0644);
-    
+
     exec($cmd, $output, $return);
-    
-    
+
+
     switch ($return) {
     case 0: // glee! we're ok.
         return 1; // translate clam return code into reasonable return code consistent with everything else.
@@ -699,7 +699,7 @@ function clam_scan_moodle_file(&$file, $course) {
         $info->user = fullname($USER);
         $notice = get_string('virusfound', 'moodle', $info);
         $notice .= "\n\n". implode("\n", $output);
-        $notice .= "\n\n". clam_handle_infected_file($fullpath); 
+        $notice .= "\n\n". clam_handle_infected_file($fullpath);
         clam_message_admins($notice);
         if ($appendlog) {
             $info->filename = $file['originalname'];
@@ -707,7 +707,7 @@ function clam_scan_moodle_file(&$file, $course) {
             $file['virus'] = 1;
         }
         return false; // in this case, 0 means bad.
-    default: 
+    default:
         // error - clam failed to run or something went wrong
         $notice .= get_string('clamfailed', 'moodle', get_clam_error_code($return));
         $notice .= "\n\n". implode("\n", $output);
@@ -731,9 +731,9 @@ function clam_scan_moodle_file(&$file, $course) {
  * @param string $notice The body of the email to be sent.
  */
 function clam_message_admins($notice) {
-    
+
     $site = get_site();
-        
+
     $subject = get_string('clamemailsubject', 'moodle', format_string($site->fullname));
     $admins = get_admins();
     foreach ($admins as $admin) {
@@ -774,7 +774,7 @@ function get_clam_error_code($returncode) {
     $returncodes[58] = 'I/O error, please check your filesystem.';
     $returncodes[59] = 'Can\'t get information about current user from /etc/passwd.';
     $returncodes[60] = 'Can\'t get information about user \'clamav\' (default name) from /etc/passwd.';
-    $returncodes[61] = 'Can\'t fork.'; 
+    $returncodes[61] = 'Can\'t fork.';
     $returncodes[63] = 'Can\'t create temporary files/directories (check permissions).';
     $returncodes[64] = 'Can\'t write to temporary directory (please specify another one).';
     $returncodes[70] = 'Can\'t allocate and clear memory (calloc).';
@@ -821,12 +821,12 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
     global $DB;
 
     add_to_log(0, 'upload', 'infected', $_SERVER['HTTP_REFERER'], $oldfilepath, 0, $userid);
-    
+
     $user = $DB->get_record('user', array('id'=>$userid));
-    
+
     $errorstr = 'Clam AV has found a file that is infected with a virus. It was uploaded by '
         . ((empty($user)) ? ' an unknown user ' : fullname($user))
-        . ((empty($oldfilepath)) ? '. The infected file was caught on upload ('.$oldfilepath.')' 
+        . ((empty($oldfilepath)) ? '. The infected file was caught on upload ('.$oldfilepath.')'
            : '. The original file path of the infected file was '. $oldfilepath)
         . ((empty($newfilepath)) ? '. The file has been deleted ' : '. The file has been moved to a quarantine directory and the new path is '. $newfilepath);
 
@@ -839,12 +839,12 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
  *
  * @global object
  * @param string $oldpath The old path to the file (should be in the log)
- * @param string $newpath The new path to the file 
+ * @param string $newpath The new path to the file
  * @param boolean $update If true this function will overwrite old record (used for forum moving etc).
  */
 function clam_change_log($oldpath, $newpath, $update=true) {
     global $DB;
-    
+
     if (!$record = $DB->get_record('log', array('info'=>$oldpath, 'module'=>'upload'))) {
         return false;
     }
@@ -856,4 +856,3 @@ function clam_change_log($oldpath, $newpath, $update=true) {
         $DB->insert_record('log', $record);
     }
 }
-?>

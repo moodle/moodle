@@ -1,20 +1,20 @@
 <?php
 
-//                                                                       
-// NOTICE OF COPYRIGHT                                                   
-//                                                                       
-// Original code:                                                        
-//                                                                       
-// Drupal - The copyright of both the Drupal software and the            
-//          "Druplicon" logo belongs to all the original authors,        
-//          though both are licensed under the GPL.                      
-//          http://drupal.org                                            
-//                                                                       
-// Modifications:                                                        
-//                                                                       
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         
-//          http://moodle.com                                                
-//                                                                       
+//
+// NOTICE OF COPYRIGHT
+//
+// Original code:
+//
+// Drupal - The copyright of both the Drupal software and the
+//          "Druplicon" logo belongs to all the original authors,
+//          though both are licensed under the GPL.
+//          http://drupal.org
+//
+// Modifications:
+//
+// Moodle - Modular Object-Oriented Dynamic Learning Environment
+//          http://moodle.com
+//
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//                                                                       
+//
 
 /**
  * Based on Drupal's search.module version 1.224
@@ -149,9 +149,9 @@ define('PREG_CLASS_CJK', '\x{3041}-\x{30ff}\x{31f0}-\x{31ff}\x{3400}-\x{4db5}'.
  * This function process the text passed at input, extracting all the tokens
  * and scoring each one based in their number of ocurrences and relation with
  * some well-known html tags
- * 
+ *
  * @param string  $text the text to be tokenised.
- * @param array   $stop_words array of utf-8 words than can be ignored in 
+ * @param array   $stop_words array of utf-8 words than can be ignored in
  *                the text being processed. There are some cool lists of
  *                stop words at http://snowball.tartarus.org/
  * @param boolean $overlap_cjk option to split CJK text into some overlapping
@@ -411,5 +411,3 @@ function tokenise_truncate_word(&$text) {
     $textlib = textlib_get_instance();
     $text = $textlib->substr($text, 0, MAXIMUM_WORD_SIZE);
 }
-
-?>

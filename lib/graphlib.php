@@ -1769,6 +1769,3 @@ class graph {
     }
 
 } // class graph
-
-
-?>

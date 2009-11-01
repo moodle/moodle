@@ -29,9 +29,9 @@
 require_once($CFG->libdir.'/filelib.php');
 
 /**
- * Base class for google authenticated http requests 
- * 
- * Most Google API Calls required that requests are sent with an 
+ * Base class for google authenticated http requests
+ *
+ * Most Google API Calls required that requests are sent with an
  * Authorization header + token. This class extends the curl class
  * to aid this
  *
@@ -76,7 +76,7 @@ abstract class google_auth_request extends curl{
 }
 
 /*******
- * The following two classes are usd to implement AuthSub google 
+ * The following two classes are usd to implement AuthSub google
  * authtentication, as documented here:
  * http://code.google.com/apis/accounts/docs/AuthSub.html
  *******/
@@ -94,7 +94,7 @@ class google_authsub_request extends google_auth_request {
     const AUTHSESSION_URL = 'https://www.google.com/accounts/AuthSubSessionToken';
 
     /**
-     * Constructor. Calls constructor of its parents 
+     * Constructor. Calls constructor of its parents
      *
      * @param string $authtoken The token to upgrade to a session token
      */
@@ -104,9 +104,9 @@ class google_authsub_request extends google_auth_request {
     }
 
     /**
-     * Requests a long-term session token from google based on the 
+     * Requests a long-term session token from google based on the
      *
-     * @return string Sub-Auth token 
+     * @return string Sub-Auth token
      */
     public function get_session_token(){
         $content = $this->get(google_authsub_request::AUTHSESSION_URL);
@@ -137,7 +137,7 @@ class google_authsub extends google_auth_request {
     const REVOKE_TOKEN_URL = 'https://www.google.com/accounts/AuthSubRevokeToken';
 
     /**
-     * Constructor, allows subauth requests using the response from an initial 
+     * Constructor, allows subauth requests using the response from an initial
      * AuthSubRequest or with the subauth long-term token. Note that constructing
      * this object without a valid token will cause an exception to be thrown.
      *
@@ -194,7 +194,7 @@ class google_authsub extends google_auth_request {
      * Creates a login url for subauth request
      *
      * @param string $returnaddr The address which the user should be redirected to recieve the token
-     * @param string $realm The google realm which is access is being requested 
+     * @param string $realm The google realm which is access is being requested
      * @return string URL to bounce the user to
      */
     public static function login_url($returnaddr, $realm){
@@ -278,16 +278,16 @@ class google_docs {
         $files = array();
         foreach($xml->entry as $gdoc){
 
-            // there doesn't seem to to be cleaner way of getting the id/type 
+            // there doesn't seem to to be cleaner way of getting the id/type
             // than spliting this..
             if (preg_match('/^http:\/\/docs.google.com\/feeds\/documents\/private\/full\/([^%]*)%3A(.*)$/', $gdoc->id, $matches)){
                 $docid = $matches[2];
 
-                // FIXME: We're making hard-coded choices about format here. 
-                // If the repo api can support it, we could let the user 
+                // FIXME: We're making hard-coded choices about format here.
+                // If the repo api can support it, we could let the user
                 // chose.
                 switch($matches[1]){
-                case 'document': 
+                case 'document':
                     $title = $gdoc->title.'.rtf';
                     $source = 'http://docs.google.com/feeds/download/documents/Export?docID='.$docid.'&exportFormat=rtf';
                     break;
@@ -301,9 +301,9 @@ class google_docs {
                     break;
                 }
 
-                $files[] =  array( 'title' => $title, 
+                $files[] =  array( 'title' => $title,
                     'url' => "{$gdoc->link[0]->attributes()->href}",
-                    'source' => $source, 
+                    'source' => $source,
                     'date'   => usertime(strtotime($gdoc->updated)),
                     'thumbnail' => $CFG->wwwroot.'/pix/f/'.mimeinfo('icon32', $title)
                 );
@@ -432,7 +432,7 @@ class google_picasa {
     }
 
     /**
-     * Does text search on the users photos and returns 
+     * Does text search on the users photos and returns
      * matches in format for picasa api
      *
      * @param string $query Search terms
@@ -526,11 +526,11 @@ class google_picasa {
 }
 
 /**
- * Beginings of an implementation of Clientogin authenticaton for google 
+ * Beginings of an implementation of Clientogin authenticaton for google
  * accounts as documented here:
  * {@link http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html#ClientLogin}
  *
- * With this authentication we have to accept a username and password and to post 
+ * With this authentication we have to accept a username and password and to post
  * it to google. Retrieving a token for use afterwards.
  *
  * @package    moodlecore
@@ -573,5 +573,3 @@ class google_authclient extends google_auth_request {
         return 'GoogleLogin auth=';
     }
 }
-
-?>

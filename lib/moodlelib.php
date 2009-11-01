@@ -4196,7 +4196,7 @@ function reset_course_userdata($data) {
         note_delete_all($data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotes', 'notes'), 'error'=>false);
     }
-    
+
     if (!empty($data->delete_blog_associations)) {
         require_once($CFG->dirroot.'/blog/lib.php');
         blog_remove_associations_for_course($data->courseid);
@@ -7747,7 +7747,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
     // This array stores information about open and close tags and their position
     // in the truncated string. Each item in the array is an object with fields
-    // ->open (true if open), ->tag (tag name in lower case), and ->pos 
+    // ->open (true if open), ->tag (tag name in lower case), and ->pos
     // (byte position in truncated text)
     $tagdetails = array();
 
@@ -7760,12 +7760,12 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
             // if tag is a closing tag (f.e. </b>)
             } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
                 // record closing tag
-                $tagdetails[] = (object)array('open'=>false, 
+                $tagdetails[] = (object)array('open'=>false,
                     'tag'=>strtolower($tag_matchings[1]), 'pos'=>strlen($truncate));
             // if tag is an opening tag (f.e. <b>)
             } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
                 // record opening tag
-                $tagdetails[] = (object)array('open'=>true, 
+                $tagdetails[] = (object)array('open'=>true,
                     'tag'=>strtolower($tag_matchings[1]), 'pos'=>strlen($truncate));
             }
             // add html-tag to $truncate'd text

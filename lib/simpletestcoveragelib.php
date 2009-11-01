@@ -603,5 +603,3 @@ function moodle_reflect_file($file) {
 
     return (object)array('classes' => $classes, 'functions' => $functions);
 }
-
-?>

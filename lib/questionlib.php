@@ -242,7 +242,7 @@ function question_sort_qtype_array($inarray, $config = null) {
 /**
  * Move one question type in a list of question types. If you try to move one element
  * off of the end, nothing will change.
- * 
+ *
  * @param array $sortedqtypes An array $qtype => anything.
  * @param string $tomove one of the keys from $sortedqtypes
  * @param integer $direction +1 or -1
@@ -1017,13 +1017,13 @@ function get_question_options(&$questions, $loadtags = false) {
 }
 
 /**
- * Load the basic state information for 
+ * Load the basic state information for
  *
  * @global object
  * @param integer $attemptid the attempt id to load the states for.
  * @return array an array of state data from the database, you will subsequently
  *      need to call question_load_states to get fully loaded states that can be
- *      used by the question types. The states here should be sufficient for 
+ *      used by the question types. The states here should be sufficient for
  *      basic tasks like rendering navigation.
  */
 function question_preload_states($attemptid) {
@@ -1552,7 +1552,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                 } else if ($states[$j]->grade > $question->maxgrade) {
                     $states[$j]->grade = $question->maxgrade;
                     $changed = true;
-                    
+
                 }
                 if (!$dryrun){
                     $error = question_process_comment($question, $replaystate, $attempt,
@@ -1876,7 +1876,7 @@ function get_question_image($question) {
         } else {
             require_once($CFG->libdir .'/filelib.php');
             $img = get_file_url("$coursefilesdir/{$question->image}");
-        }      
+        }
     }
     return $img;
 }
@@ -2227,7 +2227,7 @@ function get_question_fraction_grade($question, $state) {
 // ULPGc ecastro
 function question_get_random_guess_score($question) {
     global $QTYPES;
-    
+
     $r = $QTYPES[$question->qtype]->get_random_guess_score($question);
     return $r;
 }
@@ -2404,7 +2404,7 @@ function question_edit_url($context) {
         case CONTEXT_MODULE:
             return $baseurl . 'cmid=' . $context->instanceid;
     }
-    
+
 }
 
 /**

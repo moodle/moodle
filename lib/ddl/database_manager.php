@@ -429,7 +429,7 @@ class database_manager {
     }
 
     /**
-     * This function will generate all the needed SQL statements, specific for each 
+     * This function will generate all the needed SQL statements, specific for each
      * RDBMS type and, finally, it will execute all those statements against the DB.
      *
      * @param object $structure xmldb_structure object
@@ -965,11 +965,11 @@ class database_manager {
         }
         return $schema;
     }
-    
+
     /**
      * Checks the database schema against a schema specified by an xmldb_structure object
      * @param xmldb_structure $schema export schema describing all known tables
-     * @return array keyed by table name with array of difference messages as values 
+     * @return array keyed by table name with array of difference messages as values
      */
     public function check_database_schema(xmldb_structure $schema) {
         $errors = array();
@@ -1036,6 +1036,3 @@ class database_manager {
         return $errors;
     }
 }
-
-
-?>

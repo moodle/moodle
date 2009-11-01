@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -27,21 +27,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- /** 
+ /**
   * The maximum courses in a category
-  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer! 
+  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
   */
 define('MAX_COURSES_IN_CATEGORY', 10000);
-/** 
+/**
   * The maximum number of course categories
-  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer! 
+  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
   */
 define('MAX_COURSE_CATEGORIES', 10000);
 
- /** 
+ /**
   * Number of seconds to wait before updating lastaccess information in DB.
   */
- define('LASTACCESS_UPDATE_SECS', 60); 
+ define('LASTACCESS_UPDATE_SECS', 60);
 
 /**
  * Returns $user object of the main admin user
@@ -265,7 +265,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  * @param string $page The page or records to return
  * @param string $recordsperpage The number of records to return per page
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array|int|bool  {@link $USER} records unless get is false in which case the integer count of the records found is returned. 
+ * @return array|int|bool  {@link $USER} records unless get is false in which case the integer count of the records found is returned.
   *                        False is returned if an error is encountered.
  */
 function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
@@ -508,7 +508,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  * @param int $totalcount Reference for the number of courses
  * @param string $limitfrom The course to start from
  * @param string $limitnum The number of courses to limit to
- * @return array Array of courses 
+ * @return array Array of courses
  */
 function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
                           &$totalcount, $limitfrom="", $limitnum="") {
@@ -929,7 +929,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                 if ($limit > 0 && $cc >= $limit) {
                     break;
                 }
-                
+
                 $courses[$c->id] = $c;
                 $cc++;
             }
@@ -1287,7 +1287,7 @@ function get_all_subcategories($catid) {
 
 /**
  * Return specified category, default if given does not exist
- * 
+ *
  * @global object
  * @uses MAX_COURSES_IN_CATEGORY
  * @uses CONTEXT_COURSECAT
@@ -1947,7 +1947,7 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  * is visible or not, groupmembersonly visibility not tested
  *
  * @global object
- 
+
  * @param $moduletype Name of the module eg 'forum'
  * @param $module Object which is the instance of the module
  * @return bool Success
@@ -2001,8 +2001,8 @@ function coursemodule_visible_for_user($cm, $userid=0) {
     if ($CFG->enableavailability) {
         require_once($CFG->libdir.'/conditionlib.php');
         $ci=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
-        if(!$ci->is_available($cm->availableinfo,false,$userid) and 
-            !has_capability('moodle/course:viewhiddenactivities', 
+        if(!$ci->is_available($cm->availableinfo,false,$userid) and
+            !has_capability('moodle/course:viewhiddenactivities',
                 get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
             return false;
         }
@@ -2440,5 +2440,3 @@ function user_can_create_courses() {
     $catsrs->close();
     return false;
 }
-
-?>

@@ -225,7 +225,7 @@ class ContainsTagWithAttribute extends XMLStructureExpectation {
     function test($html) {
         $parser = $this->load_xml($html);
         $list = $parser->getElementsByTagName($this->tag);
-        
+
         foreach ($list as $node) {
             if ($node->attributes->getNamedItem($this->attribute)->nodeValue == $this->value) {
                 return true;
@@ -360,7 +360,7 @@ class ContainsTagWithContents extends XMLStructureExpectation {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -393,7 +393,7 @@ class ContainsEmptyTag extends XMLStructureExpectation {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -944,7 +944,7 @@ class UnitTestDB {
     /**
      * Overriding update_record: If we are updating a record that was NOT inserted by unit tests,
      * throw an exception and cancel update.
-     * 
+     *
      * throws moodle_exception If trying to update a record not inserted by unit tests.
      */
     public function update_record($table, $dataobject, $bulk=false) {
@@ -1059,4 +1059,3 @@ class UnitTestDB {
         return UnitTestDB::$DB->get_field($table, $return, $conditions);
     }
 }
-?>

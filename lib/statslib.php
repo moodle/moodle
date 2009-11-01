@@ -70,7 +70,7 @@
 
 /**
  * Print daily cron progress
- * @param string $ident 
+ * @param string $ident
  */
 function stats_daily_progress($ident) {
     static $start = 0;
@@ -1198,9 +1198,9 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
                        ) activity
                        INNER JOIN
                             (
-                            SELECT courseid, max(stat1) AS highest_enrolments 
+                            SELECT courseid, max(stat1) AS highest_enrolments
                               FROM {stats_'.$param->table.'}
-                             WHERE stattype=\'enrolments\' AND timeend >= '.$param->timeafter.' AND stat1 > '.$threshold.' 
+                             WHERE stattype=\'enrolments\' AND timeend >= '.$param->timeafter.' AND stat1 > '.$threshold.'
                           GROUP BY courseid
                       ) enrolments
                       ON (activity.courseid = enrolments.courseid)
@@ -1504,5 +1504,3 @@ function stats_check_uptodate($courseid=0) {
     //return error as string
     return get_string('statscatchupmode','error',$a);
 }
-
-?>

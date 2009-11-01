@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -19,7 +19,7 @@
  * Multiple plugin authentication Support library
  *
  * 2006-08-28  File created, AUTH return values defined.
- * 
+ *
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -101,7 +101,7 @@ class auth_plugin_base {
     /**
 
      * This is the primary method that is used by the authenticate_user_login()
-     * function in moodlelib.php. 
+     * function in moodlelib.php.
      *
      * This method should return a boolean indicating
      * whether or not the username and password authenticate successfully.
@@ -131,7 +131,7 @@ class auth_plugin_base {
 
     /**
      * Returns the URL for changing the users' passwords, or empty if the default
-     * URL can be used. 
+     * URL can be used.
      *
      * This method is used if can_change_password() returns true.
      * This method is called only when user is logged in, it may use global $USER.
@@ -156,7 +156,7 @@ class auth_plugin_base {
     }
 
     /**
-     * Updates the user's password. 
+     * Updates the user's password.
      *
      * In previous versions of Moodle, the function
      * auth_user_update_password accepted a username as the first parameter. The
@@ -420,7 +420,7 @@ class auth_plugin_base {
         }
         return $authdescription;
     }
-    
+
     /**
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      *
@@ -433,5 +433,3 @@ class auth_plugin_base {
 
 
 }
-
-?>

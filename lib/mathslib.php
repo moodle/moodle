@@ -122,7 +122,7 @@ class calc_formula {
     /**
      * Similar to unformat_float, converts floats and lists to PHP standards.
      * @param string $formula localised formula
-     * @return string 
+     * @return string
      */
     function unlocalize($formula) {
         $formula = str_replace(get_string('decsep'), '$', $formula);
@@ -131,5 +131,3 @@ class calc_formula {
         return $formula;
     }
 }
-
-?>

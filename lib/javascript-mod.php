@@ -44,8 +44,8 @@
 
     $lifetime = '86400';
 
-    @header('Content-type: text/javascript'); 
-    @header('Content-length: '.strlen($output)); 
+    @header('Content-type: text/javascript');
+    @header('Content-length: '.strlen($output));
     @header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     @header('Cache-control: max-age='.$lifetime);
     @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');

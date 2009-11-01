@@ -354,7 +354,3 @@ $LANGUAGES = array (
 "zh" => "Chinese",
 
 "zu" => "Zulu");
-
-
-
-?>

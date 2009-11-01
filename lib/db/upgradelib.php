@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 /*
  * This file is used for special upgrade functions - for example groups and gradebook.
@@ -342,7 +342,7 @@ function upgrade_fix_incorrect_mnethostids() {
  * before doing this I checked that the blocks did not override the
  * {@link block_base::instance_delete()} method. Should this function ever
  * be repeated check this again
- * 
+ *
  * @link lib/db/upgrade.php
  *
  * @since navigation upgrade 20090828
@@ -379,5 +379,3 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
 
     return ($outcome1 && $outcome2 && $outcome4 && $outcome4);
 }
-
-?>

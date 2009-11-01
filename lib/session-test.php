@@ -37,4 +37,4 @@ $PAGE->set_generaltype('form');
 
 error('session test not reimplemented yet'); //DO NOT localize or use print_error()!
 //
-//TODO: add code that actually tests moodle sessions, the old one only tested PHP sessions used from installer, not the real moodle sessions 
+//TODO: add code that actually tests moodle sessions, the old one only tested PHP sessions used from installer, not the real moodle sessions

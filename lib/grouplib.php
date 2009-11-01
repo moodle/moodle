@@ -208,7 +208,7 @@ function groups_get_user_groups($courseid, $userid=0) {
 
     $result    = array();
     $allgroups = array();
-    
+
     foreach ($rs as $group) {
         $allgroups[$group->id] = $group->id;
         if (is_null($group->groupingid)) {
@@ -228,7 +228,7 @@ function groups_get_user_groups($courseid, $userid=0) {
 
 /**
  * Gets array of all groupings in a specified course.
- * 
+ *
  * @global object
  * @global object
  * @param int $courseid return only groupings in this with this courseid
@@ -364,7 +364,7 @@ function groups_get_grouping_members($groupingid, $fields='u.*', $sort='lastname
 
 /**
  * Returns effective groupmode used in course
- * 
+ *
  * @return integer group mode
  */
 function groups_get_course_groupmode($course) {
@@ -480,7 +480,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $select = html_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
         $select->nothinglabel = false;
         $select->set_label($grouplabel);
-        $output = $OUTPUT->select($select); 
+        $output = $OUTPUT->select($select);
     }
 
     $output = '<div class="groupselector">'.$output.'</div>';
@@ -588,7 +588,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $select = html_select::make_popup_form($urlroot, 'group', $groupsmenu, 'selectgroup', $activegroup);
         $select->nothinglabel = false;
         $select->set_label($grouplabel);
-        $output = $OUTPUT->select($select); 
+        $output = $OUTPUT->select($select);
     }
 
     $output = '<div class="groupselector">'.$output.'</div>';
@@ -811,5 +811,3 @@ function groups_course_module_visible($cm, $userid=null) {
     }
     return false;
 }
-
-?>

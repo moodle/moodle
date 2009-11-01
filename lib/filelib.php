@@ -1885,7 +1885,7 @@ function get_records_csv($file, $table) {
 }
 
 /**
- * 
+ *
  * @global object
  * @global object
  * @param string $file The file to put the CSV content into
@@ -2143,7 +2143,7 @@ class curl {
     /** @var string */
     public  $info;
     public  $error;
-    
+
     /** @var array */
     private $options;
     /** @var string */
@@ -2493,7 +2493,7 @@ class curl {
     /**
      * HTTP HEAD method
      *
-     * @see request() 
+     * @see request()
      *
      * @param string $url
      * @param array $options
@@ -2510,7 +2510,7 @@ class curl {
      * HTTP POST method
      *
      * @param string $url
-     * @param array|string $params 
+     * @param array|string $params
      * @param array $options
      * @return bool
      */
@@ -2538,7 +2538,7 @@ class curl {
      * HTTP GET method
      *
      * @param string $url
-     * @param array $params 
+     * @param array $params
      * @param array $options
      * @return bool
      */
@@ -2556,7 +2556,7 @@ class curl {
      * HTTP PUT method
      *
      * @param string $url
-     * @param array $params 
+     * @param array $params
      * @param array $options
      * @return bool
      */
@@ -2582,7 +2582,7 @@ class curl {
      * HTTP DELETE method
      *
      * @param string $url
-     * @param array $params 
+     * @param array $params
      * @param array $options
      * @return bool
      */

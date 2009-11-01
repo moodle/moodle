@@ -1,6 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -10,7 +10,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -62,7 +62,7 @@ if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
 }
 
 /**
- * 
+ *
  * @staticvar bool $done
  */
 function form_init_date_js() {
@@ -231,7 +231,7 @@ abstract class moodleform {
 
     /**
      * Internal method. Validates all old-style uploaded files.
-     * 
+     *
      * @global object
      * @global object
      * @param array $files
@@ -1288,7 +1288,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     function getReqHTML(){
         return $this->_reqHTML;
     }
-    
+
     /**
      * @return string
      */
@@ -1995,7 +1995,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
 
     }
-    
+
     /**
      * @param object $group Passed by reference
      * @param mixed $required
@@ -2167,7 +2167,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $PAGE->requires->string_for_js('showadvanced', 'form');
             $PAGE->requires->string_for_js('hideadvanced', 'form');
             $PAGE->requires->js_function_call('showAdvancedInit', Array($elementName.(string)$advformcount, $elementName, $buttonlabel));
-            
+
             $advformcount++;
             $header_html = str_replace('{button}', $button_nojs, $header_html);
         } else {
@@ -2243,4 +2243,3 @@ MoodleQuickForm::registerElementType('text', "$CFG->libdir/form/text.php", 'Mood
 MoodleQuickForm::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'MoodleQuickForm_textarea');
 MoodleQuickForm::registerElementType('url', "$CFG->libdir/form/url.php", 'MoodleQuickForm_url');
 MoodleQuickForm::registerElementType('warning', "$CFG->libdir/form/warning.php", 'MoodleQuickForm_warning');
-?>

@@ -318,4 +318,3 @@ class csv_import_reader {
         return $iiid;
     }
 }
-?>

@@ -583,5 +583,3 @@ class html2text
             return strtoupper($str);
     }
 }
-
-?>

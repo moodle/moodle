@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,13 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions for events manipulation.
- * 
+ *
  * The public API is all at the end of this file.
  *
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -532,4 +532,3 @@ function events_pending_count($eventname) {
              WHERE qh.handlerid = h.id AND h.eventname=?";
     return $DB->count_records_sql($sql, array($eventname));
 }
-?>

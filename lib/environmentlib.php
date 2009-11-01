@@ -1578,4 +1578,3 @@ function process_environment_result($element, &$result) {
 /// Process restrict, modifying $result if needed.
     process_environment_restrict($element, $result);
 }
-?>

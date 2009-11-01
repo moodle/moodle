@@ -443,4 +443,3 @@ function rss_add_enclosures($item){
 
     return $returnstring;
 }
-?>

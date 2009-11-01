@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 // Defines core event handlers                                           //
@@ -32,19 +32,19 @@
 $handlers = array (
 
 /* Messaging required parameters (object):
- *  modulename     - 
+ *  modulename     -
  *  userfrom
  *  userto
  *  subject
  *  fullmessage - the full message in a given format
  *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
- *  fullmessagehtml  - the full version (the message processor will choose with one to use) 
+ *  fullmessagehtml  - the full version (the message processor will choose with one to use)
  *  smallmessage - the small version of the message
  */
 
     'message_send' => array (
          'handlerfile'      => '/lib/messagelib.php',
-         'handlerfunction'  => 'message_send_handler', 
+         'handlerfunction'  => 'message_send_handler',
          'schedule'         => 'instant'
      ),
 
@@ -106,5 +106,3 @@ role_assigned         - object role_assignments table record
 role_unassigned       - object role_assignments table record
 
 */
-
-?>

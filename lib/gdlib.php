@@ -337,4 +337,3 @@ function upgrade_profile_image($id, $dir='users') {
     }
     return 0;
 }
-?>

@@ -31,7 +31,7 @@
  */
 
 /**
- * Abstract sql generator class, base for all bd specific implementations. 
+ * Abstract sql generator class, base for all bd specific implementations.
  */
 abstract class sql_generator {
 
@@ -1237,5 +1237,3 @@ abstract class sql_generator {
         return $s;
     }
 }
-
-?>

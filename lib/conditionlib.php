@@ -1,6 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -10,14 +10,14 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Used for tracking conditions that apply before activities are displayed
  * to students ('conditional availability').
- * 
+ *
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  http://dougiamas.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +31,7 @@ define('CONDITION_STUDENTVIEW_SHOW',1);
 
 /** The $cm variable is expected to contain all completion-related data */
 define('CONDITION_MISSING_NOTHING',0);
-/** The $cm variable is expected to contain the fields from course_modules but 
+/** The $cm variable is expected to contain the fields from course_modules but
     not the course_modules_availability data */
 define('CONDITION_MISSING_EXTRATABLE',1);
 /** The $cm variable is expected to contain nothing except the ID */
@@ -66,12 +66,12 @@ class condition_info {
      * @uses DEBUG_DEVELOPER
      * @uses CONDITION_MISSING_EXTRATABLE
      * @param object $cm Moodle course-module object. May have extra fields
-     *   ->conditionsgrade, ->conditionscompletion which should come from 
-     *   get_fast_modinfo. Should have ->availablefrom, ->availableuntil, 
+     *   ->conditionsgrade, ->conditionscompletion which should come from
+     *   get_fast_modinfo. Should have ->availablefrom, ->availableuntil,
      *   and ->showavailability, ->course; but the only required thing is ->id.
      * @param int $expectingmissing Used to control whether or not a developer
-     *   debugging message (performance warning) will be displayed if some of 
-     *   the above data is missing and needs to be retrieved; a 
+     *   debugging message (performance warning) will be displayed if some of
+     *   the above data is missing and needs to be retrieved; a
      *   CONDITION_MISSING_xx constant
      * @param bool $loaddata If you need a 'write-only' object, set this value
      *   to false to prevent database access from constructor
@@ -95,12 +95,12 @@ class condition_info {
         }
 
         // Missing basic data from course_modules
-        if (!isset($cm->availablefrom) || !isset($cm->availableuntil) || 
+        if (!isset($cm->availablefrom) || !isset($cm->availableuntil) ||
             !isset($cm->showavailability) || !isset($cm->course)) {
             if ($expectingmissing<CONDITION_MISSING_EVERYTHING) {
-                debugging('Performance warning: condition_info constructor is 
-                    faster if you pass in $cm with at least basic fields 
-                    (availablefrom,availableuntil,showavailability,course). 
+                debugging('Performance warning: condition_info constructor is
+                    faster if you pass in $cm with at least basic fields
+                    (availablefrom,availableuntil,showavailability,course).
                     [This warning can be disabled, see phpdoc.]',
                     DEBUG_DEVELOPER);
             }
@@ -114,7 +114,7 @@ class condition_info {
         // Missing extra data
         if (!isset($cm->conditionsgrade) || !isset($cm->conditionscompletion)) {
             if ($expectingmissing<CONDITION_MISSING_EXTRATABLE) {
-                debugging('Performance warning: condition_info constructor is 
+                debugging('Performance warning: condition_info constructor is
                     faster if you pass in a $cm from get_fast_modinfo.
                     [This warning can be disabled, see phpdoc.]',
                     DEBUG_DEVELOPER);
@@ -125,7 +125,7 @@ class condition_info {
     }
 
     /**
-     * Adds the extra availability conditions (if any) into the given 
+     * Adds the extra availability conditions (if any) into the given
      * course-module object.
      *
      * @global object
@@ -145,7 +145,7 @@ class condition_info {
 
             global $DB, $CFG;
             $conditions = $DB->get_records_sql($sql="
-SELECT 
+SELECT
     cma.id as cmaid, gi.*,cma.sourcecmid,cma.requiredcompletion,cma.gradeitemid,
     cma.grademin as conditiongrademin, cma.grademax as conditiongrademax
 FROM
@@ -181,7 +181,7 @@ WHERE
         if (isset($gradeitemobj->id)) {
             require_once($CFG->libdir.'/gradelib.php');
             $item = new grade_item;
-            grade_object::set_properties($item, $gradeitemobj);    
+            grade_object::set_properties($item, $gradeitemobj);
             return $item->get_name();
         } else {
             return '!missing'; // Ooops, missing grade
@@ -276,9 +276,9 @@ WHERE
      * @global object
      * @global object
      * @param object $modinfo Usually leave as null for default. Specify when
-     *   calling recursively from inside get_fast_modinfo. The value supplied 
+     *   calling recursively from inside get_fast_modinfo. The value supplied
      *   here must include list of all CMs with 'id' and 'name'
-     * @return string Information string (for admin) about all restrictions on 
+     * @return string Information string (for admin) about all restrictions on
      *   this item
      */
     public function get_full_information($modinfo=null) {
@@ -343,9 +343,9 @@ WHERE
 
     /**
      * Determines whether this particular course-module is currently available
-     * according to these criteria. 
-     * 
-     * - This does not include the 'visible' setting (i.e. this might return 
+     * according to these criteria.
+     *
+     * - This does not include the 'visible' setting (i.e. this might return
      *   true even if visible is false); visible is handled independently.
      * - This does not take account of the viewhiddenactivities capability.
      *   That should apply later.
@@ -356,14 +356,14 @@ WHERE
      * @uses COMPLETION_COMPLETE_FAIL
      * @uses COMPLETION_COMPLETE_PASS
      * @param string $information If the item has availability restrictions,
-     *   a string that describes the conditions will be stored in this variable; 
+     *   a string that describes the conditions will be stored in this variable;
      *   if this variable is set blank, that means don't display anything
-     * @param bool $grabthelot Performance hint: if true, caches information 
+     * @param bool $grabthelot Performance hint: if true, caches information
      *   required for all course-modules, to make the front page and similar
      *   pages work more quickly (works only for current user)
      * @param int $userid If set, specifies a different user ID to check availability for
      * @param object $modinfo Usually leave as null for default. Specify when
-     *   calling recursively from inside get_fast_modinfo. The value supplied 
+     *   calling recursively from inside get_fast_modinfo. The value supplied
      *   here must include list of all CMs with 'id' and 'name'
      * @return bool True if this item is available to the user, false otherwise
      */
@@ -422,7 +422,7 @@ WHERE
             foreach ($this->cm->conditionsgrade as $gradeitemid=>$minmax) {
                 $score = $this->get_cached_grade_score($gradeitemid, $grabthelot, $userid);
                 if ($score===false ||
-                    (!is_null($minmax->min) && $score<$minmax->min) || 
+                    (!is_null($minmax->min) && $score<$minmax->min) ||
                     (!is_null($minmax->max) && $score>=$minmax->max)) {
                     // Grade fail
                     $available = false;
@@ -473,7 +473,7 @@ WHERE
     }
 
     /**
-     * Shows a time either as a date (if it falls exactly on the day) or 
+     * Shows a time either as a date (if it falls exactly on the day) or
      * a full date and time, according to user's timezone.
      *
      * @param int $time Time
@@ -508,7 +508,7 @@ WHERE
         $this->require_data();
         return $this->cm->showavailability;
     }
-    
+
     /**
      * Internal function cheks that data was loaded.
      *
@@ -522,19 +522,19 @@ WHERE
     }
 
     /**
-     * Obtains a grade score. Note that this score should not be displayed to 
-     * the user, because gradebook rules might prohibit that. It may be a 
+     * Obtains a grade score. Note that this score should not be displayed to
+     * the user, because gradebook rules might prohibit that. It may be a
      * non-final score subject to adjustment later.
      *
      * @global object
      * @global object
      * @global object
      * @param int $gradeitemid Grade item ID we're interested in
-     * @param bool $grabthelot If true, grabs all scores for current user on 
+     * @param bool $grabthelot If true, grabs all scores for current user on
      *   this course, so that later ones come from cache
-     * @param int $userid Set if requesting grade for a different user (does 
+     * @param int $userid Set if requesting grade for a different user (does
      *   not use cache)
-     * @return float Grade score as a percentage in range 0-100 (e.g. 100.0 
+     * @return float Grade score as a percentage in range 0-100 (e.g. 100.0
      *   or 37.21), or false if user does not have a grade yet
      */
     private function get_cached_grade_score($gradeitemid, $grabthelot=false, $userid=0) {
@@ -544,14 +544,14 @@ WHERE
             if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
                 $SESSION->gradescorecache = array();
                 $SESSION->gradescorecacheuserid = $USER->id;
-            } 
+            }
             if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
                 if ($grabthelot) {
                     // Get all grades for the current course
                     $rs = $DB->get_recordset_sql("
 SELECT
-    gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax 
-FROM 
+    gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
+FROM
     {grade_items} gi
     LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
 WHERE
@@ -560,7 +560,7 @@ WHERE
                         $SESSION->gradescorecache[$record->id] =
                             is_null($record->finalgrade)
                                 // No grade = false
-                                ? false 
+                                ? false
                                 // Otherwise convert grade to percentage
                                 : (($record->finalgrade - $record->rawgrademin) * 100) /
                                     ($record->rawgrademax - $record->rawgrademin);
@@ -605,8 +605,8 @@ WHERE
         }
     }
 
-    /** 
-     * For testing only. Wipes information cached in user session. 
+    /**
+     * For testing only. Wipes information cached in user session.
      *
      * @global object
      */
@@ -617,7 +617,7 @@ WHERE
     }
 
     /**
-     * Utility function called by modedit.php; updates the 
+     * Utility function called by modedit.php; updates the
      * course_modules_availability table based on the module form data.
      *
      * @param object $cm Course-module with as much data as necessary, min id
@@ -671,4 +671,3 @@ WHERE
         return array_key_exists($cm->id, $CONDITIONLIB_PRIVATE->usedincondition[$course->id]);
     }
 }
-?>

@@ -198,7 +198,7 @@ class navigation_node {
     /**
      * This function overrides the active URL that is used to compare new nodes
      * to find out if they are active.
-     * 
+     *
      * If null is passed then $fullmeurl will be regenerated when the next node
      * is created/added
      */
@@ -318,7 +318,7 @@ class navigation_node {
 
     /**
      * Add a css class to this particular node
-     * 
+     *
      * @param string $class The css class to add
      * @return bool Returns true
      */
@@ -452,10 +452,10 @@ class navigation_node {
         }
         return $content;
     }
-    
+
     /**
      * Get the CSS type for this node
-     * 
+     *
      * @return string
      */
     public function get_css_type() {
@@ -883,7 +883,7 @@ class global_navigation extends navigation_node {
         }
         return parent::content();
     }
-    
+
     /**
      * Initialise the navigation object, calling it to auto generate
      *
@@ -913,17 +913,17 @@ class global_navigation extends navigation_node {
                 $this->cache->volatile();
                 $depth = $this->load_for_category(false);
                 break;
-            case CONTEXT_COURSECAT: 
+            case CONTEXT_COURSECAT:
                 $depth = $this->load_for_category();
                 break;
             case CONTEXT_BLOCK:
-            case CONTEXT_COURSE: 
+            case CONTEXT_COURSE:
                 $depth = $this->load_for_course();
                 break;
             case CONTEXT_MODULE:
                 $depth = $this->load_for_activity();
                 break;
-            case CONTEXT_USER: 
+            case CONTEXT_USER:
                 $depth = $this->load_for_user();
                 break;
         }
@@ -1014,8 +1014,8 @@ class global_navigation extends navigation_node {
      */
     protected function format_display_course_content($format, $default=true) {
         global $CFG;
-        // 
-        // 
+        //
+        //
         $formatlib = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
         if (file_exists($formatlib)) {
             require_once($formatlib);
@@ -1050,7 +1050,7 @@ class global_navigation extends navigation_node {
             $this->cache->canviewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->context);
         }
         $viewhiddenactivities = $this->cache->canviewhiddenactivities;
-        
+
         foreach ($modinfo->cms as $module) {
             if ($module->sectionnum!='0' || (!$viewhiddenactivities && !$module->visible)) {
                 continue;
@@ -1087,7 +1087,7 @@ class global_navigation extends navigation_node {
     }
     /**
      * Internal function to load the activities within sections
-     * 
+     *
      * @param array $keys By reference
      */
     protected function load_section_activities(&$keys, $singlesectionid=false, $course=null) {
@@ -1224,7 +1224,7 @@ class global_navigation extends navigation_node {
         }
 
         $module = $DB->get_record('modules', array('id'=>$PAGE->cm->module));
-        
+
         if (!$module) {
             debugging('Invalid Module ID picked up while attempting to load the activity for the navigation', DEBUG_DEVELOPER);
             return;
@@ -1238,7 +1238,7 @@ class global_navigation extends navigation_node {
             $function = $module->name.'_extend_navigation';
             if (file_exists($file)) {
                 require_once($file);
-                if (function_exists($function)) {    
+                if (function_exists($function)) {
                     $function($node, $PAGE->course, $module, $PAGE->cm);
                 }
             }
@@ -1268,7 +1268,7 @@ class global_navigation extends navigation_node {
 
     /**
      * This function adds a category to the nav tree based on the categories path
-     * 
+     *
      * @param stdClass $category
      */
     protected function add_category_by_path($category) {
@@ -1381,7 +1381,7 @@ class global_navigation extends navigation_node {
                             $blogsurls = new moodle_url($CFG->wwwroot.'/blog/index.php', array('courseid' => $filterselect));
                             $participants->add(get_string('blogs','blog'), $blogsurls->out());
                         }
-                        
+
                         if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->context) || has_capability('moodle/notes:view', $this->context))) {
                             $participants->add(get_string('notes','notes'), new moodle_url($CFG->wwwroot.'/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$filterselect)));
                         }
@@ -1466,7 +1466,7 @@ class global_navigation extends navigation_node {
         } else {
             $sections = $this->cache->$coursesecstr;
         }
-        
+
         if (!$this->cache->compare('modinfo'.$course->id, $course->modinfo, false)) {
             $this->cache->{'modinfo'.$course->id} = get_fast_modinfo($course);
         }
@@ -1655,10 +1655,10 @@ class global_navigation extends navigation_node {
                         $this->add_category_by_path($category);
                     }
                 }
-            }   
+            }
             $categories = $DB->get_records('course_categories', array('parent' => $categoryid), 'sortorder ASC');
             $this->add_categories($keys, $categories);
-            #$courses = $DB->get_records('course', array('category' => $categoryid), 'sortorder ASC', 'id,fullname,shortname,visible,category'); 
+            #$courses = $DB->get_records('course', array('category' => $categoryid), 'sortorder ASC', 'id,fullname,shortname,visible,category');
             $this->add_courses($courses, $categoryid);
         }
         return 0;
@@ -1745,16 +1745,16 @@ class limited_global_navigation extends global_navigation {
         }
         $depth = 0;
         switch ($type) {
-            case self::TYPE_CATEGORY: 
+            case self::TYPE_CATEGORY:
                 $depth = $this->load_category($instanceid);
                 break;
-            case self::TYPE_COURSE: 
+            case self::TYPE_COURSE:
                 $depth = $this->load_course($instanceid);
                 break;
-            case self::TYPE_SECTION: 
+            case self::TYPE_SECTION:
                 $depth = $this->load_section($instanceid);
                 break;
-            case self::TYPE_ACTIVITY: 
+            case self::TYPE_ACTIVITY:
                 $depth = $this->load_activity($instanceid);
                 break;
         }
@@ -1782,7 +1782,7 @@ class limited_global_navigation extends global_navigation {
 
     /**
      * Use the instance id to load a course
-     * 
+     *
      * {@link global_navigation::load_course()}
      * @param int $instanceid
      */
@@ -1831,7 +1831,7 @@ class limited_global_navigation extends global_navigation {
     protected function load_section($instanceid=0) {
         global $DB, $PAGE, $CFG;
         $section = $DB->get_record('course_sections', array('id'=>$instanceid));
-        
+
         if (!$section) {
             echo "Invalid Course Section ID";
         }
@@ -1939,14 +1939,14 @@ class limited_global_navigation extends global_navigation {
         }
 
         $modinfo = get_fast_modinfo($course);
-        
+
         $resources = array('resource', 'label');
 
         if (!$this->cache->cached('canviewhiddenactivities')) {
             $this->cache->canviewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->context);
         }
         $viewhiddenactivities = $this->cache->canviewhiddenactivities;
-        
+
         foreach ($modinfo->cms as $module) {
             if ((!$viewhiddenactivities && !$module->visible) || $module->sectionnum != $section->section) {
                 continue;
@@ -2122,7 +2122,7 @@ class navbar extends navigation_node {
 
         // For screen readers
         $output = get_accesshide(get_string('youarehere','access'), 'h2')."<ul>\n";
-        
+
         $customchildren = (count($this->children) > 0);
         // Check if navigation contains the active node
         if (!$this->ignoreactive) {
@@ -2368,7 +2368,7 @@ class settings_navigation extends navigation_node {
      * root node class against all first level element
      *
      * It does this by first calling the parent's add method {@link navigation_node::add()}
-     * and then proceeds to use the key to set class and hr 
+     * and then proceeds to use the key to set class and hr
      *
      * @param string $text
      * @param sting|moodle_url $url
@@ -2568,10 +2568,10 @@ class settings_navigation extends navigation_node {
         }
 
         $coursenode = $this->page->navigation->find_child($course->id, global_navigation::TYPE_COURSE);
-        
+
         $coursenodekey = $this->add(get_string('courseadministration'), null, $coursenode->type, null, 'courseadmin');
         $coursenode = $this->get($coursenodekey);
-        
+
         if (has_capability('moodle/course:update', $course->context)) {
             // Add the turn on/off settings
             $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
@@ -2599,7 +2599,7 @@ class settings_navigation extends navigation_node {
                     $this->cache->{'coursesections'.$course->id} = get_all_sections($course->id);
                 }
                 $sections = $this->cache->{'coursesections'.$course->id};
-                
+
                 $addresource = $this->get($this->add(get_string('addresource')));
                 $addactivity = $this->get($this->add(get_string('addactivity')));
                 if ($formatidentifier!==0) {
@@ -2612,7 +2612,7 @@ class settings_navigation extends navigation_node {
                 }
                 $resources = $this->cache->{'course'.$course->id.'resources'};
                 $activities = $this->cache->{'course'.$course->id.'activities'};
-                
+
                 foreach ($sections as $section) {
                     if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
                         continue;
@@ -2667,7 +2667,7 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url($CFG->wwwroot.'/course/edit.php', array('id'=>$course->id));
             $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null, null, $OUTPUT->old_icon_url('i/settings'));
         }
-        
+
         // Add assign or override roles if allowed
         if (has_capability('moodle/role:assign', $course->context)) {
             $url = new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$course->context->id));
@@ -2881,7 +2881,7 @@ class settings_navigation extends navigation_node {
 
         $file = $CFG->dirroot.'/mod/'.$module->name.'/lib.php';
         $function = $module->name.'_extend_settings_navigation';
-        
+
         if (file_exists($file)) {
             require_once($file);
         }
@@ -2893,11 +2893,11 @@ class settings_navigation extends navigation_node {
 
     /**
      * Loads the user settings block of the settings nav
-     * 
+     *
      * This function is simply works out the userid and whether we need to load
-     * just the current users profile settings, or the current user and the user the 
+     * just the current users profile settings, or the current user and the user the
      * current user is viewing.
-     * 
+     *
      * This function has some very ugly code to work out the user, if anyone has
      * any bright ideas please feel free to intervene.
      *
@@ -3334,7 +3334,7 @@ class navigation_cache {
     const CACHEVALUE = 2;
     /** @var null|array An array of navigation cache areas to expire on shutdown */
     public static $volatilecaches;
-    
+
     /**
      * Contructor for the cache. Requires two arguments
      *

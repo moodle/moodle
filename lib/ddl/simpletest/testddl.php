@@ -1402,4 +1402,3 @@ class ddl_test extends UnitTestCase {
 */
 
 }
-?>

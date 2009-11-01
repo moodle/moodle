@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -78,7 +78,7 @@
  * $accessdata[ra][$contextpath]= array($roleid)
  *                [$contextpath]= array($roleid)
  *                [$contextpath]= array($roleid)
- * </code> 
+ * </code>
  *
  * Role definitions are stored like this
  * (no cap merge is done - so it's compact)
@@ -170,15 +170,15 @@ define('ROLENAME_ORIGINALANDSHORT', 3);
 define('ROLENAME_ALIAS_RAW', 4);
 
 /** size limit for context cache */
-if (!defined('MAX_CONTEXT_CACHE_SIZE')) { 
+if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
     define('MAX_CONTEXT_CACHE_SIZE', 5000);
 }
 
 /**
- * Although this looks like a global variable, it isn't really. 
+ * Although this looks like a global variable, it isn't really.
  *
- * It is just a private implementation detail to accesslib that MUST NOT be used elsewhere. 
- * It is used to cache various bits of data between function calls for performance reasons. 
+ * It is just a private implementation detail to accesslib that MUST NOT be used elsewhere.
+ * It is used to cache various bits of data between function calls for performance reasons.
  * Sadly, a PHP global variale is the only way to impleemnt this, withough rewriting everything
  * as methods of a class, instead of functions.
  *
@@ -198,7 +198,7 @@ $ACCESSLIB_PRIVATE->capabilitynames = null; // Used in is_valid_capability (only
 
 /**
  * Clears accesslib's private caches. ONLY BE USED BY UNIT TESTS
- * 
+ *
  * This method should ONLY BE USED BY UNIT TESTS. It clears all of
  * accesslib's private caches. You need to do this before setting up test data,
  * and also at the end fo the tests.
@@ -405,7 +405,7 @@ function get_default_frontpage_role_access($roleid, $accessdata=NULL) {
 
 /**
  * Get the default guest role
- * 
+ *
  * @global object
  * @global object
  * @return object role
@@ -443,7 +443,7 @@ function get_guest_role() {
  * By default checks the capabilties of the current user, but you can pass a
  * different userid. By default will return true for admin-like users who have the
  * moodle/site:doanything capability, but you can override that with the fourth argument.
- * 
+ *
  * @param string $capability the name of the capability to check. For example mod/forum:view
  * @param object $context the context to check the capability in. You normally get this with {@link get_context_instance}.
  * @param integer $userid A user id. By default (null) checks the permissions of the current user.
@@ -1284,7 +1284,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
                 if ($limit > 0 && $cc >= $limit) {
                     break;
                 }
-                
+
                 $courses[] = $c;
                 $cc++;
             }
@@ -1731,7 +1731,7 @@ function compact_rdefs(&$rdefs) {
  * for example. Call it only _after_ you've setup $USER and called
  * check_enrolment_plugins();
  * @see check_enrolment_plugins()
- * 
+ *
  * @global object
  * @global object
  * @global object
@@ -2808,7 +2808,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
 
 /**
  * Unassign a capability from a role.
- * 
+ *
  * @global object
  * @param int $roleid the role id
  * @param string $capability the name of the capability
@@ -2880,7 +2880,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
 
 /**
  * This function makes a role-assignment (a role for a user or group in a particular context)
- * 
+ *
  * @global object
  * @global object
  * @global object
@@ -3505,11 +3505,11 @@ function print_context_name($context, $withprefix = true, $short = false) {
 }
 
 /**
- * Get a URL for a context, if there is a natural one. For example, for 
+ * Get a URL for a context, if there is a natural one. For example, for
  * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
  * user profile page.
  *
- * First three parameters as for 
+ * First three parameters as for
  *
  * @global object
  * @global object
@@ -3559,10 +3559,10 @@ function get_context_url($context) {
 
 /**
  * Returns an array of all the known types of risk
- * The array keys can be used, for example as CSS class names, or in calls to 
+ * The array keys can be used, for example as CSS class names, or in calls to
  * print_risk_icon. The values are the corresponding RISK_ constants.
  *
- * @return array all the known types of risk. 
+ * @return array all the known types of risk.
  */
 function get_all_risks() {
     return array(
@@ -3649,7 +3649,7 @@ function fetch_context_capabilities($context) {
                 include_once($modfile);
                 $modfunction = $module->name.'_get_extra_capabilities';
                 if (function_exists($modfunction)) {
-                    $extracaps = $modfunction();        
+                    $extracaps = $modfunction();
                 }
             }
             if(empty($extracaps)) {
@@ -3797,7 +3797,7 @@ function get_parent_contextid($context) {
  * otherwise false.
  *
  * @param object $context a context object.
- * @return bool 
+ * @return bool
  */
 function is_inside_frontpage($context) {
     $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
@@ -4057,7 +4057,7 @@ function get_capability_string($capabilityname) {
         case 'webservice':
             $string = get_string($stringname, 'webservice_'.$componentname);
         break;
-        
+
         default:
             $string = get_string($stringname);
         break;
@@ -4442,7 +4442,7 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
     if (has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         // show all roles allowed in this context to admins
         $raafrom  = "";
-        $raawhere = "";        
+        $raawhere = "";
     }
 
     $params['userid'] = $USER->id;
@@ -4620,7 +4620,7 @@ function get_overridable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $wit
             SELECT ro.id, ro.name$extrafields
               FROM {role} ro
           ORDER BY ro.sortorder ASC", $params);
-        
+
     } else {
         $roles = $DB->get_records_sql("
             SELECT ro.id, ro.name$extrafields
@@ -5504,7 +5504,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='',
 
 /**
  * Counts all the users assigned this role in this context or higher
- * 
+ *
  * @global object
  * @param mixed $roleid either int or an array of ints
  * @param object $context
@@ -5766,7 +5766,7 @@ function get_users_from_role_on_context($role, $context) {
 
 /**
  * Simple function returning a boolean true if roles exist, otherwise false
- * 
+ *
  * @global object
  * @param int $userid
  * @param int $roleid
@@ -5879,7 +5879,7 @@ function role_fix_names($roleoptions, $context, $rolenamedisplay=ROLENAME_ALIAS)
  *
  * @param string $cap component string a
  * @param string $comp component string b
- * @param mixed $contextlevel 
+ * @param mixed $contextlevel
  * @return bool whether 2 component are in different "sections"
  */
 function component_level_changed($cap, $comp, $contextlevel) {
@@ -5966,7 +5966,7 @@ function build_context_path($force=false) {
      *
      * Different code for each database - mostly for performance reasons
      */
-    $dbfamily = $DB->get_dbfamily(); 
+    $dbfamily = $DB->get_dbfamily();
     if ($dbfamily == 'mysql') {
         $updatesql = "UPDATE {context} ct, {context_temp} temp
                          SET ct.path  = temp.path,
@@ -6169,7 +6169,7 @@ function make_context_subobj($rec) {
 /**
  * Do some basic, quick checks to see whether $rec->context looks like a valid context object.
  *
- * @param object $rec a think that has a context, for example a course, 
+ * @param object $rec a think that has a context, for example a course,
  *      course category, course modules, etc.
  * @param int $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
  * @return bool whether $rec->context looks like the correct context object
@@ -6316,5 +6316,3 @@ function role_cap_duplicate($sourcerole, $targetrole) {
         $DB->insert_record('role_capabilities', $cap);
     }
 }
-
-?>

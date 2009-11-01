@@ -54,7 +54,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
 
     $requires->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
-    // Note that, as a short-cut, the code 
+    // Note that, as a short-cut, the code
     // $js = "document.body.className += ' jsenabled';\n";
     // is hard-coded in {@link page_requirements_manager::get_top_of_body_code)
     $requires->yui_lib('container');
@@ -62,7 +62,7 @@ function setup_core_javascript(page_requirements_manager $requires) {
     $requires->string_for_js('confirmation', 'admin');
     $requires->string_for_js('cancel', 'moodle');
     $requires->string_for_js('yes', 'moodle');
-    $requires->js_function_call('init_help_icons'); 
+    $requires->js_function_call('init_help_icons');
 }
 
 
@@ -258,7 +258,7 @@ class page_requirements_manager {
 
     /**
      * Make a language string available to JavaScript.
-     * 
+     *
      * All the strings will be available in a mstr object in the global namespace.
      * So, for example, after a call to $PAGE->requires->string_for_js('course', 'moodle');
      * then the JavaScript variable mstr.moodle.course will be 'Course', or the
@@ -327,7 +327,7 @@ class page_requirements_manager {
 
     /**
      * Make some data from PHP available to JavaScript code.
-     * 
+     *
      * For example, if you call
      * <pre>
      *      $PAGE->requires->data_for_js('mydata', array('name' => 'Moodle'));
@@ -360,7 +360,7 @@ class page_requirements_manager {
         $this->variablesinitialised[$variable] = 1;
         return $requirement;
     }
-    
+
     /**
      * Creates a YUI event handler.
      *
@@ -1090,9 +1090,9 @@ class required_data_for_js extends required_js_code {
 }
 
 /**
- * This class represents a Javascript event handler, listening for a 
+ * This class represents a Javascript event handler, listening for a
  * specific Event to occur on a DOM element identified by a given id.
- * By default the data will be output at the end of the page, but you 
+ * By default the data will be output at the end of the page, but you
  * can change that using the {@link asap()}, {@link in_head()}, etc. methods.
  *
  * @copyright 2009 Nicolas Connault
@@ -1445,5 +1445,3 @@ class jsportal {
     }
 
 }
-
-?>

@@ -131,5 +131,3 @@ function handle_soap_wsdl_request($wsdlfile, $address=false) {
     echo $wsdl;
     exit;
 }
-
-?>

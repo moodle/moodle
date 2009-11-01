@@ -263,14 +263,14 @@ class sqlite_sql_generator extends sql_generator {
         $results[] = 'COMMIT';
         return $results;
     }
-    
+
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
         return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
-    
+
     /**
      * Given one xmldb_table and one xmldb_key, return the SQL statements needded to add the key to the table
      * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
@@ -360,7 +360,7 @@ class sqlite_sql_generator extends sql_generator {
         $xmldb_table->deleteKey($xmldb_key->getName());
         return $this->getAlterTableSchema($xmldb_table);
     }
-    
+
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()

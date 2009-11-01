@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file is executed right after the install.xml
 //

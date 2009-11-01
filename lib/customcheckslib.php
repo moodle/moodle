@@ -51,5 +51,3 @@ function php_check_register_globals($result) {
 
     return $result;
 }
-
-?>

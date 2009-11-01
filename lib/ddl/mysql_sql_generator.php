@@ -426,5 +426,3 @@ class mysql_sql_generator extends sql_generator {
         return $reserved_words;
     }
 }
-
-?>

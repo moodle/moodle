@@ -42,13 +42,13 @@ function olson_to_timezones ($filename) {
      *** To translate the combined Zone & Rule changes
      *** in the Olson files to the Moodle single ruleset
      *** format, we need to trasverse every year and see
-     *** if either the Zone or the relevant Rule has a 
+     *** if either the Zone or the relevant Rule has a
      *** change. It's yuck but it yields a rationalized
      *** set of data, which is arguably simpler.
      ***
      *** Also note that I am starting at the epoch (1970)
      *** because I don't think we'll see many events scheduled
-     *** before that, anyway. 
+     *** before that, anyway.
      ***
      **/
     $maxyear = localtime(time(), true);
@@ -59,13 +59,13 @@ function olson_to_timezones ($filename) {
          *** Loop over years, only adding a rule when zone or rule
          *** have changed. All loops preserver the last seen vars
          *** until there's an explicit decision to delete them
-         *** 
-         **/ 
+         ***
+         **/
 
         // clean the slate for a new zone
         $zone = NULL;
         $rule = NULL;
-        
+
         //
         // Find the pre 1970 zone rule entries
         //
@@ -79,16 +79,16 @@ function olson_to_timezones ($filename) {
         if (!empty($zone['rule']) && array_key_exists($zone['rule'], $rules)) {
             $rule = NULL;
             for ($y = 1970 ; $y > 0 ; $y--) {
-                if (array_key_exists((string)$y, $rules[$zone['rule']] )) { // we have a rule entry for the year                    
+                if (array_key_exists((string)$y, $rules[$zone['rule']] )) { // we have a rule entry for the year
                     $rule  =  $rules[$zone['rule']][$y];
                     //print_object("Rule $rule[name] pre1970 is $y\n");
                     break; // Perl's last -- get outta here
                 }
-                
-            }  
+
+            }
             if (empty($rule)) {
-                // Colombia and a few others refer to rules before they exist 
-                // Perhaps we should comment out this warning... 
+                // Colombia and a few others refer to rules before they exist
+                // Perhaps we should comment out this warning...
                 // trigger_error("Cannot find rule in $zone[rule] <= 1970");
                 $rule  = array();
             }
@@ -96,11 +96,11 @@ function olson_to_timezones ($filename) {
             // no DST this year!
             $rule  = array();
         }
-        
-        // Prepare to insert the base 1970 zone+rule        
+
+        // Prepare to insert the base 1970 zone+rule
         if (!empty($rule) && array_key_exists($zone['rule'], $rules)) {
             // merge the two arrays into the moodle rule
-            unset($rule['name']); // warning: $rule must NOT be a reference! 
+            unset($rule['name']); // warning: $rule must NOT be a reference!
             unset($rule['year']);
             $mdl_tz = array_merge($zone, $rule);
 
@@ -112,7 +112,7 @@ function olson_to_timezones ($filename) {
             $mdl_tz = $zone;
             // TODO: Add other default values here!
             $mdl_tz['dstoff'] = 0;
-        }        
+        }
 
         // Fix the from year to 1970
         $mdl_tz['year'] = 1970;
@@ -125,7 +125,7 @@ function olson_to_timezones ($filename) {
 
         ///
         /// 1971 onwards
-        /// 
+        ///
         for ($y = 1971; $y < $maxyear ; $y++) {
             $changed = false;
             ///
@@ -138,7 +138,7 @@ function olson_to_timezones ($filename) {
                 $changed = true;
                 $zone    = $zbyyear[(string)$y];
             }
-            if (!empty($zone['rule']) && array_key_exists($zone['rule'], $rules)) {                
+            if (!empty($zone['rule']) && array_key_exists($zone['rule'], $rules)) {
                 if (array_key_exists((string)$y, $rules[$zone['rule']])) {
                     $changed = true;
                     $rule    = $rules[$zone['rule']][(string)$y];
@@ -151,7 +151,7 @@ function olson_to_timezones ($filename) {
                 //print_object("CHANGE YEAR $y Zone $zone[name] Rule $zone[rule]\n");
                 if (!empty($rule)) {
                     // merge the two arrays into the moodle rule
-                    unset($rule['name']); 
+                    unset($rule['name']);
                     unset($rule['year']);
                     $mdl_tz = array_merge($zone, $rule);
 
@@ -164,7 +164,7 @@ function olson_to_timezones ($filename) {
                 } else {
                     // just a simple zone
                     $mdl_tz = $zone;
-                } 
+                }
 
 /*
 if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl_tz['std_time']) &&  !strpos($mdl_tz['std_time'], ':')) {
@@ -180,11 +180,11 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
                     $mdl_zones[] = $lasttimezone = $mdl_tz;
                 }
             }
-        } 
-        
+        }
+
     }
 
-    /* 
+    /*
     if (function_exists('memory_get_usage')) {
         trigger_error("We are consuming this much memory: " . get_memory_usage());
     }
@@ -193,13 +193,13 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
 /// Since Moodle 1.7, rule is tzrule in DB (reserved words problem), so change it here
 /// after everything is calculated to be properly loaded to the timezone table.
 /// Pre 1.7 users won't have the old rule if updating this from moodle.org but it
-/// seems that such field isn't used at all by the rest of Moodle (at least I haven't 
+/// seems that such field isn't used at all by the rest of Moodle (at least I haven't
 /// found any use when looking for it).
 
     foreach($mdl_zones as $key=>$mdl_zone) {
         $mdl_zones[$key]['tzrule'] = $mdl_zones[$key]['rule'];
     }
-    
+
     return $mdl_zones;
 }
 
@@ -215,15 +215,15 @@ if(isset($mdl_tz['dst_time']) && !strpos($mdl_tz['dst_time'], ':') || isset($mdl
  */
 function olson_simple_rule_parser ($filename) {
 
-    $file = fopen($filename, 'r', 0); 
+    $file = fopen($filename, 'r', 0);
 
     if (empty($file)) {
         return false;
     }
-    
+
     // determine the maximum year for this zone
     $maxyear = array();
-    
+
     while ($line = fgets($file)) {
         // only pay attention to rules lines
         if(!preg_match('/^Rule\s/', $line)){
@@ -248,11 +248,11 @@ function olson_simple_rule_parser ($filename) {
         } else {
             $maxyear[$name] = $from;
         }
-        
+
     }
-    
+
     fseek($file, 0);
-    
+
     $rules = array();
     while ($line = fgets($file)) {
         // only pay attention to rules lines
@@ -289,11 +289,11 @@ function olson_simple_rule_parser ($filename) {
 
     fclose($file);
 
-    $months = array('jan' =>  1, 'feb' =>  2, 
-                    'mar' =>  3, 'apr' =>  4, 
+    $months = array('jan' =>  1, 'feb' =>  2,
+                    'mar' =>  3, 'apr' =>  4,
                     'may' =>  5, 'jun' =>  6,
-                    'jul' =>  7, 'aug' =>  8, 
-                    'sep' =>  9, 'oct' => 10, 
+                    'jul' =>  7, 'aug' =>  8,
+                    'sep' =>  9, 'oct' => 10,
                     'nov' => 11, 'dec' => 12);
 
 
@@ -335,24 +335,24 @@ function olson_simple_rule_parser ($filename) {
                  $at,
                  $save,
                  $letter) = $rulesthisyear['set'];
-    
+
             $moodle_rule = array();
-    
+
             // $save is sometimes just minutes
             // and othertimes HH:MM -- only
             // parse if relevant
-            if (!preg_match('/^\d+$/', $save)) {                 
+            if (!preg_match('/^\d+$/', $save)) {
                 list($hours, $mins) = explode(':', $save);
                 $save = $hours * 60 + $mins;
             }
 
             // we'll parse $at later
-            // $at = olson_parse_at($at); 
+            // $at = olson_parse_at($at);
             $in = strtolower($in);
             if(!isset($months[$in])) {
                 trigger_error('Unknown month: '.$in);
             }
-    
+
             $moodle_rule['name']   = $name;
             $moodle_rule['year']   = $year;
             $moodle_rule['dstoff'] = $save; // time offset
@@ -365,7 +365,7 @@ function olson_simple_rule_parser ($filename) {
             $moodle_rule['dst_startday']  = $on['startday'];
             $moodle_rule['dst_weekday']   = $on['weekday'];
             $moodle_rule['dst_skipweeks'] = $on['skipweeks'];
-            
+
             // and now the "deactivate" data
             list($discard,
                  $name,
@@ -377,7 +377,7 @@ function olson_simple_rule_parser ($filename) {
                  $at,
                  $save,
                  $letter) = $rulesthisyear['reset'];
-    
+
             // we'll parse $at later
             // $at = olson_parse_at($at);
             $in = strtolower($in);
@@ -387,13 +387,13 @@ function olson_simple_rule_parser ($filename) {
 
             $moodle_rule['std_month'] = $months[$in]; // the month
             $moodle_rule['std_time']  = $at; // the time
-    
+
             // Encode index and day as per Moodle's specs
             $on = olson_parse_on($on);
             $moodle_rule['std_startday']  = $on['startday'];
             $moodle_rule['std_weekday']   = $on['weekday'];
             $moodle_rule['std_skipweeks'] = $on['skipweeks'];
-                
+
             $moodle_rules[$moodle_rule['name']][$moodle_rule['year']] = $moodle_rule;
             //print_object($moodle_rule);
 
@@ -404,7 +404,7 @@ function olson_simple_rule_parser ($filename) {
         // then we have to deal with closing the last rule
         //trigger_error("Rule $name ending to $to");
         if (!empty($to) && $to !== 'max') {
-            // We can handle two cases for TO: 
+            // We can handle two cases for TO:
             // a year, or "only"
             $reset_rule = $moodle_rule;
             $reset_rule['dstoff'] = '00';
@@ -435,12 +435,12 @@ function olson_simple_rule_parser ($filename) {
  */
 function olson_simple_zone_parser ($filename) {
 
-    $file = fopen($filename, 'r', 0); 
+    $file = fopen($filename, 'r', 0);
 
     if (empty($file)) {
         return false;
     }
-    
+
     $zones = array();
     $lastzone = NULL;
 
@@ -471,7 +471,7 @@ function olson_simple_zone_parser ($filename) {
          ***
          *** We are transforming "until" fields into "from" fields
          *** which make more sense from the Moodle perspective, so
-         *** each initial Zone entry is "from" the year 0, and for the 
+         *** each initial Zone entry is "from" the year 0, and for the
          *** continuation lines, we shift the "until" from the previous field
          *** into this line's "from".
          ***
@@ -479,7 +479,7 @@ function olson_simple_zone_parser ($filename) {
          *** I have no idea of how to create a DST rule out of that
          *** (what are the start/end times?)
          ***
-         *** We remove "until" from the data we keep, but preserve 
+         *** We remove "until" from the data we keep, but preserve
          *** it in $lastzone.
          */
         if (preg_match('/^Zone/', $line)) { // a new zone
@@ -493,15 +493,15 @@ function olson_simple_zone_parser ($filename) {
                   $discard // format
                   ) = $line;
             // the things we do to avoid warnings
-            if (!empty($line[5])) { 
+            if (!empty($line[5])) {
                 $zone['until'] = $line[5];
             }
             $zone['year'] = '0';
-            
+
             $zones[$zone['name']] = array();
 
-        } else if (!empty($lastzone) && preg_match('/^\s+/', $line)){ 
-            // looks like a credible continuation line  
+        } else if (!empty($lastzone) && preg_match('/^\s+/', $line)){
+            // looks like a credible continuation line
             $line = trim($line);
             $line = preg_split('/\s+/', $line);
             if (count($line) < 3) {
@@ -518,7 +518,7 @@ function olson_simple_zone_parser ($filename) {
                   $discard // format
                   ) = $line;
             // the things we do to avoid warnings
-            if (!empty($line[3])) { 
+            if (!empty($line[3])) {
                 $zone['until'] = $line[3];
             }
 
@@ -527,7 +527,7 @@ function olson_simple_zone_parser ($filename) {
             continue;
         }
 
-        // tidy up, we're done 
+        // tidy up, we're done
         // perhaps we should insert in the DB at this stage?
         $lastzone = $zone;
         unset($zone['until']);
@@ -535,12 +535,12 @@ function olson_simple_zone_parser ($filename) {
         if ($zone['rule'] === '-') { // cleanup empty rules
             $zone['rule'] = '';
         }
-        if (preg_match('/:/',$zone['rule'])) { 
+        if (preg_match('/:/',$zone['rule'])) {
             // we are not handling direct SAVE rules here
             // discard it
             $zone['rule'] = '';
         }
-        
+
         $zones[$zone['name']][(string)$zone['year']] = $zone;
     }
 
@@ -557,12 +557,12 @@ function olson_simple_zone_parser ($filename) {
  */
 function olson_parse_offset ($offset) {
     $offset = trim($offset);
-    
+
     // perhaps it's just minutes
     if (preg_match('/^(-?)(\d*)$/', $offset)) {
         return intval($offset);
     }
-    // (-)hours:minutes(:seconds) 
+    // (-)hours:minutes(:seconds)
     if (preg_match('/^(-?)(\d*):(\d+)/', $offset, $matches)) {
         // we are happy to discard the seconds
         $sign    = $matches[1];
@@ -570,7 +570,7 @@ function olson_parse_offset ($offset) {
         $seconds = intval($matches[3]);
         $offset  = $sign . ($hours*60 + $seconds);
         return intval($offset);
-    } 
+    }
 
     trigger_error('Strange time format in olson_parse_offset() ' .$offset);
     return 0;
@@ -581,7 +581,7 @@ function olson_parse_offset ($offset) {
 /**
  * olson_parse_on_($on)
  *
- * see `man zic`. This function translates the following formats 
+ * see `man zic`. This function translates the following formats
  * 5        the fifth of the month
  * lastSun  the last Sunday in the month
  * lastMon  the last Monday in the month
@@ -606,9 +606,9 @@ function olson_parse_offset ($offset) {
 function olson_parse_on ($on) {
 
     $rule = array();
-    $days = array('sun' => 0, 'mon' => 1, 
-                  'tue' => 2, 'wed' => 3, 
-                  'thu' => 4, 'fri' => 5, 
+    $days = array('sun' => 0, 'mon' => 1,
+                  'tue' => 2, 'wed' => 3,
+                  'thu' => 4, 'fri' => 5,
                   'sat' => 6);
 
     if(is_numeric($on)) {
@@ -654,7 +654,7 @@ function olson_parse_on ($on) {
         else {
             trigger_error('unknown on '.$on);
         }
-    }    
+    }
     return $rule;
 }
 
@@ -677,7 +677,7 @@ function olson_parse_on ($on) {
  *
  * @return string a moodle friendly $at, in GMT, which is what Moodle wants
  *
- * 
+ *
  */
 function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 
@@ -698,10 +698,10 @@ function olson_parse_at ($at, $set = 'set', $gmtoffset) {
     }
 
     // Wall clock
-    if (empty($sig) || $sig === 'w') { 
+    if (empty($sig) || $sig === 'w') {
         if ($set !== 'set'){ // wall clock is on DST, assume by 1hr
             $hours = $hours-1;
-        } 
+        }
         $sig = 's';
     }
 
@@ -716,6 +716,3 @@ function olson_parse_at ($at, $set = 'set', $gmtoffset) {
 
     trigger_error('unhandled case - AT flag is ' . $matches[0]);
 }
-
-
-?>

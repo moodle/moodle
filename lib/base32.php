@@ -194,5 +194,3 @@ function Base32_decode($inString) {
     
     return $outString;
 }
-
-?>

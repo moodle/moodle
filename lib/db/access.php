@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 //
 // Capability definitions for Moodle core.
 //
@@ -1481,6 +1481,3 @@ $moodle_capabilities = array(
         )
     )
 );
-
-
-?>

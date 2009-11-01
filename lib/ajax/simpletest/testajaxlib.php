@@ -503,5 +503,3 @@ class ajax_test extends ajaxlib_unit_test_base {
         $this->assertTrue(ajaxenabled($tested_browsers));
     }
 }
-
-?>

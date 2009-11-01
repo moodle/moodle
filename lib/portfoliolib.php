@@ -997,5 +997,3 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
         events_trigger('message_send', $eventdata);
     }
 }
-
-?>
