@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * Extend the base assignment class for assignments where you upload a single file
@@ -221,4 +221,4 @@ class assignment_uploadsingle extends assignment_base {
     }
 }
 
-?>
+

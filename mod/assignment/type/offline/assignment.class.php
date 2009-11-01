@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * Extend the base assignment class for offline assignments
@@ -100,4 +100,4 @@ class assignment_offline extends assignment_base {
 
 }
 
-?>
+

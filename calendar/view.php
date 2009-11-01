@@ -655,5 +655,3 @@ function calendar_course_filter_selector($getvars = '') {
     $select->nothinglabel = false;
     return $OUTPUT->select($select);
 }
-
-?>

@@ -193,4 +193,3 @@ if (empty($allmessages)) {
 echo '</div></div>';
 echo $OUTPUT->footer();
 
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/mod/assignment/lib.php');
 
@@ -275,8 +275,8 @@ class assignment_upload extends assignment_base {
             $link = html_link::make("/mod/assignment/type/upload/notes.php?id=$this->cm->id&userid=$userid", get_string('notes', 'assignment'));
             $link->add_action(new popup_action('click', $link->url, 'notes', array('height' => 500, 'width' => 780)));
             $link->title = get_string('notes', 'assignment');
-            $output .= $OUTPUT->link($link);                    
-            
+            $output .= $OUTPUT->link($link);
+
             $output .= '&nbsp;';
         }
 
@@ -1150,4 +1150,4 @@ class mod_assignment_upload_response_form extends moodleform {
 
 
 
-?>
+

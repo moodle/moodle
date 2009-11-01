@@ -657,5 +657,3 @@ function calendar_add_event_allowed($event) {
             return false;
     }
 }
-
-?>

@@ -1,16 +1,16 @@
 Official Chat Module for Moodle
 ------------------------------
 
-The chat module now supports a backend daemon for 
+The chat module now supports a backend daemon for
 more efficiency.
 
-It's still buggy and being worked on, but if you 
+It's still buggy and being worked on, but if you
 want to test it and help out here are some quick
 instructions:
 
 1) Admin -> Config -> Modules -> Chat -> Settings
 
-2) Set the method to "sockets" and set up the ports etc 
+2) Set the method to "sockets" and set up the ports etc
 
 3) Start the server like this (from the Unix command line):
 

@@ -1,15 +1,15 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //chat mods
 
     //This is the "graphical" structure of the chat mod:
     //
     //                       chat
-    //                    (CL,pk->id)             
+    //                    (CL,pk->id)
     //                        |
     //                        |
     //                        |
-    //                   chat_messages 
+    //                   chat_messages
     //               (UL,pk->id, fk->chatid)
     //
     // Meaning: pk->primary key field of the table
@@ -36,16 +36,16 @@
                 }
             }
         }
-        return $status;  
+        return $status;
     }
 
     function chat_backup_one_mod($bf,$preferences,$chat) {
         global $CFG, $DB;
-    
+
         if (is_numeric($chat)) {
             $chat = $DB->get_record('chat', array('id'=>$chat));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -86,12 +86,12 @@
                 //Start message
                 $status =fwrite ($bf,start_tag("MESSAGE",5,true));
                 //Print message contents
-                fwrite ($bf,full_tag("ID",6,false,$cha_mes->id));       
-                fwrite ($bf,full_tag("USERID",6,false,$cha_mes->userid));       
-                fwrite ($bf,full_tag("GROUPID",6,false,$cha_mes->groupid)); 
-                fwrite ($bf,full_tag("SYSTEM",6,false,$cha_mes->system));       
-                fwrite ($bf,full_tag("MESSAGE_TEXT",6,false,$cha_mes->message));       
-                fwrite ($bf,full_tag("TIMESTAMP",6,false,$cha_mes->timestamp));       
+                fwrite ($bf,full_tag("ID",6,false,$cha_mes->id));
+                fwrite ($bf,full_tag("USERID",6,false,$cha_mes->userid));
+                fwrite ($bf,full_tag("GROUPID",6,false,$cha_mes->groupid));
+                fwrite ($bf,full_tag("SYSTEM",6,false,$cha_mes->system));
+                fwrite ($bf,full_tag("MESSAGE_TEXT",6,false,$cha_mes->message));
+                fwrite ($bf,full_tag("TIMESTAMP",6,false,$cha_mes->timestamp));
                 //End submission
                 $status =fwrite ($bf,end_tag("MESSAGE",5,true));
             }
@@ -122,7 +122,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             $info[1][0] = get_string("messages","chat");
-            if ($ids = chat_message_ids_by_course ($course)) { 
+            if ($ids = chat_message_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
@@ -140,7 +140,7 @@
         //Now, if requested, the user_data
         if (!empty($instance->userdata)) {
             $info[$instance->id.'1'][0] = get_string("messages","chat");
-            if ($ids = chat_message_ids_by_instance ($instance->id)) { 
+            if ($ids = chat_message_ids_by_instance ($instance->id)) {
                 $info[$instance->id.'1'][1] = count($ids);
             } else {
                 $info[$instance->id.'1'][1] = 0;
@@ -170,7 +170,7 @@
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
-    //Returns an array of chats id 
+    //Returns an array of chats id
     function chat_ids ($course) {
         global $DB;
 
@@ -178,7 +178,7 @@
                                        FROM {chat} c
                                       WHERE c.course = ?", array($course));
     }
-    
+
     //Returns an array of assignment_submissions id
     function chat_message_ids_by_course ($course) {
         global $DB;
@@ -197,4 +197,4 @@
                                        FROM {chat_messages} m
                                       WHERE m.chatid = ?", array($instanceid));
     }
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /// This page prints a particular instance of chat
 
@@ -126,8 +126,8 @@
         $link = html_link::make($chattarget, $strenterchat);
         $link->add_action(new popup_action('click', $link->url, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
         $link->title = get_string('modulename', 'chat');
-        echo $OUTPUT->link($link);                    
-        
+        echo $OUTPUT->link($link);
+
         echo '</p>';
 
         if ($CFG->enableajax) {
@@ -194,4 +194,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

@@ -1595,4 +1595,3 @@ function calendar_user_can_add_event() {
     calendar_get_allowed_types($allowed);
     return (bool)($allowed->user || $allowed->groups || $allowed->courses || $allowed->site);
 }
-?>

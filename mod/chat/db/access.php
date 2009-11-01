@@ -100,4 +100,4 @@ $mod_chat_capabilities = array(
 
 );
 
-?>
+

@@ -1,15 +1,15 @@
 <?php
 
 /** jsupdated.php - notes by Martin Langhoff <martin@catalyst.net.nz>
- ** 
+ **
  ** This is an alternative version of jsupdate.php that acts
  ** as a long-running daemon. It will feed/stall/feed JS updates
  ** to the client. From the module configuration select "Stream"
  ** updates.
- ** 
- ** The client connection is not forever though. Once we reach 
- ** CHAT_MAX_CLIENT_UPDATES, it will force the client to re-fetch it. 
- ** 
+ **
+ ** The client connection is not forever though. Once we reach
+ ** CHAT_MAX_CLIENT_UPDATES, it will force the client to re-fetch it.
+ **
  ** This buys us all the benefits that chatd has, minus the setup,
  ** as we are using apache to do the daemon handling.
  **
@@ -117,10 +117,10 @@ foreach ($CFG->stylesheets as $stylesheet) {
 
     // Ensure the HTML head makes it out there
     echo $CHAT_DUMMY_DATA;
-    @ob_end_flush();   
+    @ob_end_flush();
 
-    for ($n=0; $n <= CHAT_MAX_CLIENT_UPDATES; $n++) { 
-        
+    for ($n=0; $n <= CHAT_MAX_CLIENT_UPDATES; $n++) {
+
         // ping first so we can later shortcut as needed.
         $chatuser->lastping = time();
         $DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
@@ -139,7 +139,7 @@ foreach ($CFG->stylesheets as $stylesheet) {
         }
 
         $timenow    = time();
-                
+
         $params = array('groupid'=>$chatuser->groupid, 'lastid'=>$chat_lastid, 'lasttime'=>$chat_lasttime, 'chatid'=>$chatuser->chatid);
         $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 
@@ -152,11 +152,11 @@ foreach ($CFG->stylesheets as $stylesheet) {
             }
             $newcriteria = "timestamp > :lasttime";
         }
-        
+
         $messages = $DB->get_records_select("chat_messages_current",
                                        "chatid = :chatid AND $newcriteria $groupselect", $params,
                                        "timestamp ASC");
-        
+
         if ($messages) {
             $num = count($messages);
         } else {
@@ -169,7 +169,7 @@ foreach ($CFG->stylesheets as $stylesheet) {
         }
 
         print '<script type="text/javascript">' . "\n";
-        print "//<![CDATA[\n\n"; 
+        print "//<![CDATA[\n\n";
 
         $chat_newrow = ($chat_lastrow + $num) % 2;
 
@@ -178,7 +178,7 @@ foreach ($CFG->stylesheets as $stylesheet) {
         if (($chat_lasttime != $chat_newlasttime) and $messages) {
 
             $beep         = false;
-            $refreshusers = false; 
+            $refreshusers = false;
             foreach ($messages as $message) {
                 $chat_lastrow = ($chat_lastrow + 1) % 2;
                 $formatmessage = chat_format_message($message, $chatuser->course, $USER, $chat_lastrow);
@@ -197,7 +197,7 @@ foreach ($CFG->stylesheets as $stylesheet) {
             $chat_lasttime = $message->timestamp;
             $chat_lastid   = $message->id;
         }
-                
+
         if ($refreshusers) {
             echo "if (parent.users.document.anchors[0] != null) {" .
                 "parent.users.location.href = parent.users.document.anchors[0].href;}\n";
@@ -229,12 +229,12 @@ EOD;
         print $CHAT_DUMMY_DATA;
         @ob_end_flush();
         sleep($CFG->chat_refresh_room);
-    } // here ends the for() loop 
+    } // here ends the for() loop
 
     // here & should be written & :-D
-    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$chat_sid&chat_lasttime=$chat_lasttime&chat_lastrow=$chat_newrow&chat_lastid=$chat_lastid"; 
+    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$chat_sid&chat_lasttime=$chat_lasttime&chat_lastrow=$chat_newrow&chat_lastid=$chat_lastid";
     print '<script type="text/javascript">' . "\n";
-    print "//<![CDATA[ \n\n"; 
+    print "//<![CDATA[ \n\n";
     print "location.href = '$refreshurl';\n";
     print "//]]>\n";
     print '</script>' . "\n\n";

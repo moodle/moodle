@@ -80,4 +80,4 @@ $mod_assignment_capabilities = array(
     ),
 );
 
-?>
+

@@ -39,7 +39,7 @@ DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 
 /**
  * Standard base class for all assignment submodules (assignment types).
- * 
+ *
  * @package   mod-assignment
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -764,14 +764,14 @@ class assignment_base {
             $url = new moodle_url('/mod/assignment/submissions.php', array(
                     'id' => $this->cm->id,
                     'userid' => $submission->userid,
-                    'mode' => 'single', 
+                    'mode' => 'single',
                     'offset' => (optional_param('offset', '', PARAM_INT)-1)));
-                        
+
             $link = html_link::make($url, $buttontext);
             $link->add_action(new popup_action('click', $link->url, 'grade'.$submission->userid, array('height' => 450, 'width' => 700)));
             $link->title = $buttontext;
-            $button = $OUTPUT->link($link);                    
-            
+            $button = $OUTPUT->link($link);
+
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
 
@@ -1358,7 +1358,7 @@ class assignment_base {
                 $link = html_link::make($popup_url, $buttontext);
                 $link->add_action(new popup_action('click', $link->url, 'grade'.$auser->id, array('height' => 600, 'width' => 700)));
                 $link->title = $buttontext;
-                $button = $OUTPUT->link($link);                    
+                $button = $OUTPUT->link($link);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
@@ -2544,7 +2544,7 @@ function assignment_get_participants($assignmentid) {
  */
 function assignment_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
-    
+
     if (!$assignment = $DB->get_record('assignment', array('id'=>$cminfo->instance))) {
         return false;
     }
@@ -3077,9 +3077,9 @@ function assignment_types() {
         $types[$name] = get_string('type'.$name, 'assignment');
 
         // ugly hack to support pluggable assignment type titles..
-        if ($types[$name] == '[[type'.$name.']]') { 
+        if ($types[$name] == '[[type'.$name.']]') {
             $types[$name] = get_string('type'.$name, 'assignment_'.$name);
-        } 
+        }
     }
     asort($types);
     return $types;
@@ -3130,13 +3130,13 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strreviewed = get_string('reviewed','assignment');
 
 
-    // NOTE: we do all possible database work here *outside* of the loop to ensure this scales 
+    // NOTE: we do all possible database work here *outside* of the loop to ensure this scales
     //
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
-    
+
     // build up and array of unmarked submissions indexed by assigment id/ userid
     // for use where the user has grading rights on assigment
-    $rs = $DB->get_recordset_sql("SELECT id, assignment, userid 
+    $rs = $DB->get_recordset_sql("SELECT id, assignment, userid
                             FROM {assignment_submissions}
                             WHERE teacher = 0 AND timemarked = 0
                             AND assignment $sqlassignmentids", $assignmentidparams);
@@ -3151,7 +3151,7 @@ function assignment_print_overview($courses, &$htmlarray) {
     // get all user submissions, indexed by assigment id
     $mysubmissions = $DB->get_records_sql("SELECT assignment, timemarked, teacher, grade
                                       FROM {assignment_submissions}
-                                      WHERE userid = ? AND 
+                                      WHERE userid = ? AND
                                       assignment $sqlassignmentids", array_merge(array($USER->id), $assignmentidparams));
 
     foreach ($assignments as $assignment) {

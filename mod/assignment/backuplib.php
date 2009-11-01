@@ -1,15 +1,15 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //assignment mods
 
     //This is the "graphical" structure of the assignment mod:
     //
     //                     assignment
-    //                    (CL,pk->id)             
+    //                    (CL,pk->id)
     //                        |
     //                        |
     //                        |
-    //                 assignment_submisions 
+    //                 assignment_submisions
     //           (UL,pk->id, fk->assignment,files)
     //
     // Meaning: pk->primary key field of the table
@@ -37,16 +37,16 @@
                 }
             }
         }
-        return $status;  
+        return $status;
     }
 
     function assignment_backup_one_mod($bf,$preferences,$assignment) {
         global $CFG, $DB;
-    
+
         if (is_numeric($assignment)) {
             $assignment = $DB->get_record('assignment', array('id'=>$assignment));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -107,19 +107,19 @@
                 //Start submission
                 $status =fwrite ($bf,start_tag("SUBMISSION",5,true));
                 //Print submission contents
-                fwrite ($bf,full_tag("ID",6,false,$ass_sub->id));       
-                fwrite ($bf,full_tag("USERID",6,false,$ass_sub->userid));       
-                fwrite ($bf,full_tag("TIMECREATED",6,false,$ass_sub->timecreated));       
-                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$ass_sub->timemodified));       
-                fwrite ($bf,full_tag("NUMFILES",6,false,$ass_sub->numfiles));       
-                fwrite ($bf,full_tag("DATA1",6,false,$ass_sub->data1));       
-                fwrite ($bf,full_tag("DATA2",6,false,$ass_sub->data2));       
-                fwrite ($bf,full_tag("GRADE",6,false,$ass_sub->grade));       
-                fwrite ($bf,full_tag("SUBMISSIONCOMMENT",6,false,$ass_sub->submissioncomment));       
-                fwrite ($bf,full_tag("FORMAT",6,false,$ass_sub->format));       
-                fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));       
-                fwrite ($bf,full_tag("TIMEMARKED",6,false,$ass_sub->timemarked));       
-                fwrite ($bf,full_tag("MAILED",6,false,$ass_sub->mailed));       
+                fwrite ($bf,full_tag("ID",6,false,$ass_sub->id));
+                fwrite ($bf,full_tag("USERID",6,false,$ass_sub->userid));
+                fwrite ($bf,full_tag("TIMECREATED",6,false,$ass_sub->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$ass_sub->timemodified));
+                fwrite ($bf,full_tag("NUMFILES",6,false,$ass_sub->numfiles));
+                fwrite ($bf,full_tag("DATA1",6,false,$ass_sub->data1));
+                fwrite ($bf,full_tag("DATA2",6,false,$ass_sub->data2));
+                fwrite ($bf,full_tag("GRADE",6,false,$ass_sub->grade));
+                fwrite ($bf,full_tag("SUBMISSIONCOMMENT",6,false,$ass_sub->submissioncomment));
+                fwrite ($bf,full_tag("FORMAT",6,false,$ass_sub->format));
+                fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));
+                fwrite ($bf,full_tag("TIMEMARKED",6,false,$ass_sub->timemarked));
+                fwrite ($bf,full_tag("MAILED",6,false,$ass_sub->mailed));
 
                 $class = 'assignment_' . $assignment->assignmenttype;
                 require_once($CFG->dirroot . '/mod/assignment/lib.php');
@@ -138,7 +138,7 @@
     //and files are user info's level
     function backup_assignment_files($bf,$preferences) {
         global $CFG, $DB;
-       
+
         $status = true;
 
         //First we check to moddata exists and create it as necessary
@@ -155,11 +155,11 @@
 
         return $status;
 
-    } 
+    }
 
     function backup_assignment_files_instance($bf,$preferences,$instanceid) {
         global $CFG, $DB;
-       
+
         $status = true;
 
         //First we check to moddata exists and create it as necessary
@@ -177,7 +177,7 @@
 
         return $status;
 
-    } 
+    }
 
     //Return an array of info (name,value)
     function assignment_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
@@ -199,7 +199,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             $info[1][0] = get_string("submissions","assignment");
-            if ($ids = assignment_submission_ids_by_course ($course)) { 
+            if ($ids = assignment_submission_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
@@ -243,7 +243,7 @@
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
-    //Returns an array of assignments id 
+    //Returns an array of assignments id
     function assignment_ids ($course) {
         global $CFG, $DB;
 
@@ -251,7 +251,7 @@
                                         FROM {assignment} a
                                        WHERE a.course = ?", array($course));
     }
-    
+
     //Returns an array of assignment_submissions id
     function assignment_submission_ids_by_course ($course) {
         global $CFG, $DB;
@@ -271,4 +271,4 @@
                                         FROM {assignment_submissions} s
                                        WHERE s.assignment = ?", array($instanceid));
     }
-?>
+

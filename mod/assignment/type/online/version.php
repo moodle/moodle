@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Code fragment to define the module version etc.
@@ -8,4 +8,4 @@
 $plugin->version   = 2005042900;
 $plugin->requires  = 2007101000;
 
-?>
+

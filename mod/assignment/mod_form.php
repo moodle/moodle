@@ -63,7 +63,7 @@ class mod_assignment_mod_form extends moodleform_mod {
         // hack to support pluggable assignment type titles
         if ($typetitle === '[[type'.$type.']]') {
             $typetitle  = get_string('type'.$type, 'assignment_'.$type);
-        } 
+        }
 
         $mform->addElement('header', 'typedesc', $typetitle);
 

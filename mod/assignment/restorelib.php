@@ -1,15 +1,15 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //assignment mods
 
     //This is the "graphical" structure of the assignment mod:
     //
     //                     assignment
-    //                    (CL,pk->id)             
+    //                    (CL,pk->id)
     //                        |
     //                        |
     //                        |
-    //                 assignment_submisions 
+    //                 assignment_submisions
     //           (UL,pk->id, fk->assignment,files)
     //
     // Meaning: pk->primary key field of the table
@@ -64,9 +64,9 @@
 
             //We have to recode the grade field if it is <0 (scale)
             if ($assignment->grade < 0) {
-                $scale = backup_getid($restore->backup_unique_code,"scale",abs($assignment->grade));        
+                $scale = backup_getid($restore->backup_unique_code,"scale",abs($assignment->grade));
                 if ($scale) {
-                    $assignment->grade = -($scale->new_id);       
+                    $assignment->grade = -($scale->new_id);
                 }
             }
 
@@ -94,7 +94,7 @@
             //The structure is equal to the db, so insert the assignment
             $newid = $DB->insert_record ("assignment",$assignment);
 
-            //Do some output     
+            //Do some output
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("modulename","assignment")." \"".format_string($assignment->name,true)."\"</li>";
             }
@@ -112,7 +112,7 @@
                 call_user_func(array($class, 'restore_one_mod'), $info, $restore, $assignment);
 
                 //Now check if want to restore user data and do it.
-                if (restore_userdata_selected($restore,'assignment',$mod->id)) { 
+                if (restore_userdata_selected($restore,'assignment',$mod->id)) {
                     //Restore assignmet_submissions
                     $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore) && $status;
                     $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore, $assignment) && $status;
@@ -164,7 +164,7 @@
                 $submission->submissioncomment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
             } else {
                 $submission->submissioncomment = backup_todb($sub_info['#']['SUBMISSIONCOMMENT']['0']['#']);
-            }  
+            }
             $submission->format = backup_todb($sub_info['#']['FORMAT']['0']['#']);
             $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);
             $submission->timemarked = backup_todb($sub_info['#']['TIMEMARKED']['0']['#']);
@@ -180,7 +180,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$submission->teacher);
             if ($user) {
                 $submission->teacher = $user->new_id;
-            } 
+            }
 
             //The structure is equal to the db, so insert the assignment_submission
             $newid = $DB->insert_record ("assignment_submissions",$submission);
@@ -202,7 +202,7 @@
                              $newid);
 
                 //Now copy moddata associated files
-                $status = assignment_restore_files ($old_assignment_id, $new_assignment_id, 
+                $status = assignment_restore_files ($old_assignment_id, $new_assignment_id,
                                                     $olduserid, $submission->userid, $restore);
 
                 $submission->id = $newid;
@@ -219,7 +219,7 @@
     }
 
     //This function copies the assignment related info from backup temp dir to course moddata folder,
-    //creating it if needed and recoding everything (assignment id and user id) 
+    //creating it if needed and recoding everything (assignment id and user id)
     function assignment_restore_files ($oldassid, $newassid, $olduserid, $newuserid, $restore) {
 
         global $CFG;
@@ -237,7 +237,7 @@
 
         //Now, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
-   
+
         //Check it exists and create it
         $status = check_dir_exists($moddata_path,true);
 
@@ -266,9 +266,9 @@
             //Now this user id
             $user_assignment_path = $this_assignment_path."/".$newuserid;
             //And now, copy temp_path to user_assignment_path
-            $status = backup_copy_file($temp_path, $user_assignment_path); 
+            $status = backup_copy_file($temp_path, $user_assignment_path);
         }
-       
+
         return $status;
     }
 
@@ -277,13 +277,13 @@
     //assignment_decode_content_links_caller() function in each module
     //in the restore process
     function assignment_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of assignments
-                
+
         $searchstring='/\$@(ASSIGNMENTINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -300,7 +300,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/assignment/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/assignment/index.php?id='.$old_id,$result);
                 }
@@ -420,9 +420,9 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function assignment_restore_logs($restore,$log) {
-                    
+
         $status = false;
-                    
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -486,7 +486,7 @@
             break;
         case "update grades":
             if ($log->cmid) {
-                //Extract the assignment id from the url field                             
+                //Extract the assignment id from the url field
                 $assid = substr(strrchr($log->url,"="),1);
                 //Get the new_id of the module (to recode the info field)
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$assid);
@@ -508,4 +508,4 @@
         }
         return $status;
     }
-?>
+

@@ -213,11 +213,11 @@ YAHOO.moodle.chat.append_msg = function(key, msg, row) {
     list.appendChild(item);
     if (!row) {
         var anim = new YAHOO.util.ColorAnim(item.id, YAHOO.moodle.chat.oddmsg_cfg);
-        //anim.animate(); 
+        //anim.animate();
     }
     if (msg.mymessage) {
         //var anim = new YAHOO.util.ColorAnim(item.id, YAHOO.moodle.chat.mymsg_cfg);
-        //anim.animate(); 
+        //anim.animate();
     }
 }
 

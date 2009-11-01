@@ -197,7 +197,3 @@ echo '</td>';
 echo '</tr></table>';
 
 echo $OUTPUT->footer();
-
-
-
-?>

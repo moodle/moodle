@@ -55,7 +55,7 @@ if ($chat_lasttime == 0) { //display some previous messages
 
 $timenow    = time();
 
-$params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'lasttime'=>$chat_lasttime); 
+$params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'lasttime'=>$chat_lasttime);
 
 $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 

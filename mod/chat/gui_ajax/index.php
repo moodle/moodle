@@ -53,8 +53,8 @@ if (!$chat_sid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
 }
 
 $str_title = format_string($course->shortname) . ": ".format_string($chat->name,true).$groupname;
-$str_send  = get_string('send', 'chat'); 
-$str_themes = get_string('themes'); 
+$str_send  = get_string('send', 'chat');
+$str_themes = get_string('themes');
 
 $PAGE->set_generaltype('popup');
 $PAGE->set_title('Chat');
@@ -132,4 +132,4 @@ echo <<<DIVS
 <div id="chat-notify"></div>
 DIVS;
 echo $OUTPUT->footer();
-?>
+

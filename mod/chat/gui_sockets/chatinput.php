@@ -31,7 +31,7 @@ echo $OUTPUT->header();
         <input type="text" name="chat_message" id="chat_message" size="60" value="" />
         <?php echo $OUTPUT->help_icon(moodle_help_icon::make("chatting", get_string("helpchatting", "chat"), "chat", true)); ?>
     </form>
-    
+
     <form action="<?php echo "http://$CFG->chat_serverhost:$CFG->chat_serverport/"; ?>" method="get" target="empty" id="sendform">
         <input type="hidden" name="win" value="message" />
         <input type="hidden" name="chat_message" value="" />

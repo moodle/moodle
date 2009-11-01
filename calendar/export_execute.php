@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('../config.php');
 //require_once($CFG->dirroot.'/course/lib.php');
@@ -168,5 +168,3 @@ header('Content-length: '.strlen($serialized));
 header('Content-type: text/calendar');
 
 echo $serialized;
-
-?>

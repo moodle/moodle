@@ -1,15 +1,15 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //chat mods
 
     //This is the "graphical" structure of the chat mod:
     //
     //                       chat
-    //                    (CL,pk->id)             
+    //                    (CL,pk->id)
     //                        |
     //                        |
     //                        |
-    //                    chat_messages 
+    //                    chat_messages
     //                (UL,pk->id, fk->chatid)
     //
     // Meaning: pk->primary key field of the table
@@ -31,7 +31,7 @@
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
 
         if ($data) {
-            //Now get completed xmlized object   
+            //Now get completed xmlized object
             $info = $data->info;
 
             //traverse_xmlize($info);                                                                     //Debug
@@ -54,7 +54,7 @@
             //The structure is equal to the db, so insert the chat
             $newid = $DB->insert_record ("chat",$chat);
 
-            //Do some output     
+            //Do some output
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("modulename","chat")." \"".format_string($chat->name,true)."\"</li>";
             }
@@ -85,7 +85,7 @@
 
         $status = true;
 
-        //Get the messages array 
+        //Get the messages array
         $messages = $info['MOD']['#']['MESSAGES']['0']['#']['MESSAGE'];
 
         //Iterate over messages
@@ -142,13 +142,13 @@
     //chat_decode_content_links_caller() function in each module
     //in the restore process
     function chat_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of chats
-                
+
         $searchstring='/\$@(CHATINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -165,7 +165,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/chat/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/chat/index.php?id='.$old_id,$result);
                 }
@@ -208,7 +208,7 @@
     function chat_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         if ($chats = $DB->get_records('chat', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each chat->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
@@ -321,4 +321,4 @@
         }
         return $status;
     }
-?>
+

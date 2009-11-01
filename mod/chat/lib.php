@@ -539,9 +539,9 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
         $groupingjoin = '';
     }
 
-    return $DB->get_records_sql("SELECT 
-        DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt 
-        FROM {chat_users} c JOIN {user} u ON u.id = c.userid $groupingjoin 
+    return $DB->get_records_sql("SELECT
+        DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
+        FROM {chat_users} c JOIN {user} u ON u.id = c.userid $groupingjoin
         WHERE c.chatid = :chatid $groupselect
         ORDER BY c.firstping ASC", $params);
 }
@@ -563,7 +563,7 @@ function chat_get_latest_message($chatid, $groupid=0) {
         $groupselect = "";
     }
 
-    $sql = "SELECT * 
+    $sql = "SELECT *
         FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
         ORDER BY timestamp DESC";
 
@@ -1302,7 +1302,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
             || ($this->participated
                 && has_capability('mod/chat:exportparticipatedsession', $context));
     }
-    
+
     /**
      * @todo Document this function
      */
@@ -1381,7 +1381,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
         }
 
         $links = array();
-        
+
         if (!empty($USER->screenreader)) {
             $links[] = html_link::make(new moodle_url($target.'gui_basic/index.php', $params), $strenterchat);
         } else {

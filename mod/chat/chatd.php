@@ -17,7 +17,7 @@ define('CHAT_SIDEKICK_MESSAGE',     0x22);
 define('CHAT_SIDEKICK_BEEP',        0x23);
 
 $phpversion = phpversion();
-echo 'Moodle chat daemon v1.0 on PHP '.$phpversion." (\$Id$)\n\n";
+echo 'Moodle chat daemon v1.0 on PHP '.$phpversion."\n\n";
 
 /// Set up all the variables we need   /////////////////////////////////////
 
@@ -1071,4 +1071,4 @@ while(true) {
 @socket_shutdown($DAEMON->listen_socket, 0);
 die("\n\n-- terminated --\n");
 
-?>
+

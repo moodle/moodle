@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 $settings->add(new admin_setting_heading('chat_method_heading', get_string('generalconfig', 'chat'),
                    get_string('explaingeneralconfig', 'chat')));
@@ -44,4 +44,4 @@ $settings->add(new admin_setting_configtext('chat_serverport', get_string('serve
 $settings->add(new admin_setting_configtext('chat_servermax', get_string('servermax', 'chat'),
                    get_string('configservermax', 'chat'), 100, PARAM_INT));
 
-?>
+

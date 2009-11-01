@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the assignment module
@@ -161,4 +161,4 @@ function xmldb_assignment_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

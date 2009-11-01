@@ -4,7 +4,7 @@
 // all.php
 //
 // Displays a complete list of online assignments
-// for the course. Rather like what happened in 
+// for the course. Rather like what happened in
 // the old Journal activity.
 // Howard Miller 2008
 // See MDL-14045
@@ -31,7 +31,7 @@ $context = get_context_instance(CONTEXT_COURSE,$course->id);
 require_capability('mod/assignment:view',$context);
 
 // various strings
-$str = new stdClass; 
+$str = new stdClass;
 $str->assignments = get_string("modulenameplural", "assignment");
 $str->duedate = get_string('duedate','assignment');
 $str->duedateno = get_string('duedateno','assignment');

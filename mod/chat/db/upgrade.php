@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the chat module
@@ -87,4 +87,4 @@ function xmldb_chat_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

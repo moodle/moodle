@@ -124,4 +124,3 @@ if ($CFG->chat_refresh_userlist < 15) {
 
 exit; // no further output
 
-?>
