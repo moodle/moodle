@@ -40,7 +40,7 @@ define ('DEBUG_DEVELOPER', 38911);
 
 /**
  * Simple class. It is usually used instead of stdClass because it looks
- * more familiar to Java develpers ;-) Do not use for type checking of
+ * more familiar to Java developers ;-) Do not use for type checking of
  * function parameters.
  *
  * @package   moodlecore
@@ -138,7 +138,7 @@ class invalid_parameter_exception extends moodle_exception {
 }
 
 /**
- * An exception that indicates something really weird happended. For example,
+ * An exception that indicates something really weird happened. For example,
  * if you do switch ($context->contextlevel), and have one case for each
  * CONTEXT_... constant. You might throw an invalid_state_exception in the
  * default case, to just in case something really weird is going on, and
@@ -160,7 +160,7 @@ class invalid_state_exception extends moodle_exception {
 }
 
 /**
- * Default exception handler, uncought exceptions are equivalent to error() in 1.9 and earlier
+ * Default exception handler, uncaught exceptions are equivalent to error() in 1.9 and earlier
  *
  * @param Exception $ex
  * @return void -does not return. Terminates execution!
@@ -833,7 +833,7 @@ function init_eaccelerator() {
  * when any method is called on that object, we initialise $OUTPUT, and pass the call on.
  *
  * Note that this class is used before lib/outputlib.php has been loaded, so we
- * must be careful referring to classes/funtions from there, they may not be
+ * must be careful referring to classes/functions from there, they may not be
  * defined yet, and we must avoid fatal errors.
  *
  * @copyright 2009 Tim Hunt
@@ -861,7 +861,7 @@ class bootstrap_renderer {
 
         $recursing = false;
         if ($method == 'notification') {
-            // Catch infinite recursion cuased by debugging output during print_header.
+            // Catch infinite recursion caused by debugging output during print_header.
             $backtrace = debug_backtrace();
             array_shift($backtrace);
             array_shift($backtrace);
@@ -888,7 +888,7 @@ class bootstrap_renderer {
     }
 
     /**
-     * Returns nicely formated error message in a div box.
+     * Returns nicely formatted error message in a div box.
      * @return string
      */
     public static function early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
@@ -917,10 +917,10 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
         // In the name of protocol correctness, monitoring and performance
-        // profiling, set the appropriate error headers for machine comsumption
+        // profiling, set the appropriate error headers for machine consumption
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             // Avoid it with cron.php. Note that we assume it's HTTP/1.x
-            // The 503 ode here means our Moodle does not work at all, the error happended too early
+            // The 503 ode here means our Moodle does not work at all, the error happened too early
             @header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
         }
 
