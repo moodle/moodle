@@ -1,4 +1,4 @@
-<?php /// $Id$
+<?php
       /// Create "blog" forums in each course and copy blog entries from these courses' participants in these forums
 
 require_once('../config.php');

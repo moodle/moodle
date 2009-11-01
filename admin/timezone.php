@@ -7,7 +7,7 @@
     if (!is_numeric($zone)) {
          //not a path, but it looks like it anyway
          $zone = clean_param($zone, PARAM_PATH);
-    }    
+    }
 
     require_login();
 
@@ -23,7 +23,7 @@
     $PAGE->set_heading($strtimezone);
     $PAGE->navbar->add($strtimezone);
     echo $OUTPUT->header();
-    
+
     echo $OUTPUT->heading("");
 
     if (data_submitted() and !empty($zone) and confirm_sesskey()) {

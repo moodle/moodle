@@ -13,7 +13,7 @@ $tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid=
 $tabs[] = new tabobject('mnetthemes', 'mnet_themes.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetthemes, $strmnetthemes, false);
 if ($mnet_peer->id != $CFG->mnet_all_hosts_id) {
     $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
-} 
+}
 
 print_tabs(array($tabs), 'mnetthemes');
 
@@ -69,12 +69,12 @@ print_tabs(array($tabs), 'mnetthemes');
             $readme =  '<li>'.
             $link = html_link::make($CFG->themewww .'/'. $theme .'/README.html', $strinfo);
             $link->add_action(new popup_action('click', $link->url, $theme, array('height' => 400, 'width' => 500)));
-            echo $OUTPUT->link($link);                    
+            echo $OUTPUT->link($link);
         } else if (file_exists($CFG->themedir.'/'.$theme.'/README.txt')) {
             $readme =  '<li>'.
             $link = html_link::make($CFG->themewww .'/'. $theme .'/README.txt', $strinfo);
             $link->add_action(new popup_action('click', $link->url, $theme, array('height' => 400, 'width' => 500)));
-            echo $OUTPUT->link($link);                    
+            echo $OUTPUT->link($link);
         }
         if (file_exists("$theme/screenshot.png")) {
             $screenshotpath = "$theme/screenshot.png";

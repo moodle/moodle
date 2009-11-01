@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
 
     // Allows the admin to configure blocks (hide/show, delete and configure)
 
@@ -212,4 +212,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

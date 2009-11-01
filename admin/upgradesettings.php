@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // detects settings that were added during an upgrade, displays a screen for the admin to
 // modify them, and then processes modifications
@@ -68,4 +68,4 @@ echo '</form>';
 
 echo $OUTPUT->footer();
 
-?>
+

@@ -62,8 +62,8 @@
 /// Handle the 'updatecomponent' action
     if ($action == 'updatecomponent' && confirm_sesskey()) {
     /// Create component installer and execute it
-        if ($cd = new component_installer('http://download.moodle.org', 
-                                          'environment', 
+        if ($cd = new component_installer('http://download.moodle.org',
+                                          'environment',
                                           'environment.zip')) {
             $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
             switch ($status) {

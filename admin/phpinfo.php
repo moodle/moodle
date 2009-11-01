@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php
        // phpinfo.php - shows phpinfo for the current server
 
     require_once("../config.php");
@@ -30,4 +30,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

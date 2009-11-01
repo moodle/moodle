@@ -9,7 +9,7 @@
 /// version of PHP compiled for CGI.
 ///
 /// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
-/// or   php /web/moodle/admin/cron.php 
+/// or   php /web/moodle/admin/cron.php
     set_time_limit(0);
     $starttime = microtime();
 
@@ -41,7 +41,7 @@
 
 /// check if execution allowed
     if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
-        if (!empty($CFG->cronclionly)) { 
+        if (!empty($CFG->cronclionly)) {
             // This script can only be run via the cli.
             print_error('cronerrorclionly', 'admin');
             exit;
@@ -51,7 +51,7 @@
             $pass = optional_param('password', '', PARAM_RAW);
             if($pass != $CFG->cronremotepassword) {
                 // wrong password.
-                print_error('cronerrorpassword', 'admin'); 
+                print_error('cronerrorpassword', 'admin');
                 exit;
             }
         }
@@ -132,7 +132,7 @@
             if (file_exists($blockfile)) {
                 require_once($blockfile);
                 $classname = 'block_'.$block->name;
-                $blockobj = new $classname; 
+                $blockobj = new $classname;
                 if (method_exists($blockobj,'cron')) {
                     mtrace("Processing cron function for ".$block->name.'....','');
                     if ($blockobj->cron()) {
@@ -177,7 +177,7 @@
         }
     }
     mtrace("Finished quiz reports");
-    
+
     mtrace('Starting admin reports');
     // Admin reports do not have a database table that lists them. Instead a
     // report includes cron.php with function report_reportname_cron() if it wishes
@@ -254,7 +254,7 @@
     }
 
 /// Run all core cron jobs, but not every time since they aren't too important.
-/// These don't have a timer to reduce load, so we'll use a random number 
+/// These don't have a timer to reduce load, so we'll use a random number
 /// to randomly choose the percentage of times we should run these jobs.
 
     srand ((double) microtime() * 10000000);
@@ -367,21 +367,21 @@
         mtrace('Synchronised metacourses');
 
         //
-        // generate new password emails for users 
+        // generate new password emails for users
         //
         mtrace('checking for create_password');
         if ($DB->count_records('user_preferences', array('name'=>'create_password', 'value'=>'1'))) {
             mtrace('creating passwords for new users');
-            $newusers = $DB->get_records_sql("SELECT u.id as id, u.email, u.firstname, 
+            $newusers = $DB->get_records_sql("SELECT u.id as id, u.email, u.firstname,
                                                      u.lastname, u.username,
-                                                     p.id as prefid 
-                                                FROM {user} u 
+                                                     p.id as prefid
+                                                FROM {user} u
                                                 JOIN {user_preferences} p ON u.id=p.userid
                                                WHERE p.name='create_password' AND p.value='1' AND u.email !='' ");
 
             foreach ($newusers as $newuserid => $newuser) {
                 $newuser->emailstop = 0; // send email regardless
-                // email user                               
+                // email user
                 if (setnew_password_and_mail($newuser)) {
                     // remove user pref
                     $DB->delete_records('user_preferences', array('id'=>$newuser->prefid));
@@ -390,20 +390,20 @@
                 }
             }
         }
-        
+
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot.'/tag/lib.php');
             tag_cron();
             mtrace ('Executed tag cron');
         }
-        
+
         // Accesslib stuff
         cleanup_contexts();
         mtrace ('Cleaned up contexts');
         gc_cache_flags();
         mtrace ('Cleaned cache flags');
         // If you suspect that the context paths are somehow corrupt
-        // replace the line below with: build_context_path(true); 
+        // replace the line below with: build_context_path(true);
         build_context_path();
         mtrace ('Built context paths');
 
@@ -418,8 +418,8 @@
         @set_time_limit(0);
         @raise_memory_limit("192M");
         if (function_exists('apache_child_terminate')) {
-            // if we are running from Apache, give httpd a hint that 
-            // it can recycle the process after it's done. Apache's 
+            // if we are running from Apache, give httpd a hint that
+            // it can recycle the process after it's done. Apache's
             // memory management is truly awful but we can help it.
             @apache_child_terminate();
         }
@@ -431,7 +431,7 @@
             include_once("$CFG->dirroot/backup/backuplib.php");
             include_once("$CFG->dirroot/backup/lib.php");
             mtrace("Running backups if required...");
-    
+
             if (! schedule_backup_cron()) {
                 mtrace("ERROR: Something went wrong while performing backup tasks!!!");
             } else {
@@ -507,51 +507,51 @@
 
     // run gradebook import/export/report cron
     if ($gradeimports = get_plugin_list('gradeimport')) {
-        foreach ($gradeimports as $gradeimport => $plugindir) {           
+        foreach ($gradeimports as $gradeimport => $plugindir) {
             if (file_exists($plugindir.'/lib.php')) {
                 require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_import_'.$gradeimport.'_cron';                                    
+                $cron_function = 'grade_import_'.$gradeimport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook import function $cron_function ...", '');
-                    $cron_function;  
+                    $cron_function;
                 }
             }
-        }      
+        }
     }
 
     if ($gradeexports = get_plugin_list('gradeexport')) {
-        foreach ($gradeexports as $gradeexport => $plugindir) {           
+        foreach ($gradeexports as $gradeexport => $plugindir) {
             if (file_exists($plugindir.'/lib.php')) {
                 require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_export_'.$gradeexport.'_cron';                                    
+                $cron_function = 'grade_export_'.$gradeexport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook export function $cron_function ...", '');
-                    $cron_function;  
+                    $cron_function;
                 }
             }
         }
     }
 
     if ($gradereports = get_plugin_list('gradereport')) {
-        foreach ($gradereports as $gradereport => $plugindir) {           
+        foreach ($gradereports as $gradereport => $plugindir) {
             if (file_exists($plugindir.'/lib.php')) {
                 require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_report_'.$gradereport.'_cron';                                    
+                $cron_function = 'grade_report_'.$gradereport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook report function $cron_function ...", '');
-                    $cron_function;  
+                    $cron_function;
                 }
             }
         }
     }
-    
+
     // Run external blog cron if needed
     if ($CFG->useexternalblogs) {
         require_once($CFG->dirroot . '/blog/lib.php');
         mtrace("Fetching external blog entries...", '');
         $sql = "timefetched < ? - ? OR timefetched = 0";
         $externalblogs = $DB->get_records_select('blog_external', $sql, array(mktime(), $CFG->externalblogcrontime));
-        
+
         foreach ($external_blogs as $eb) {
             blog_sync_external_entries($eb);
         }
@@ -584,7 +584,7 @@
     mtrace("Cron script completed correctly");
 
     $difftime = microtime_diff($starttime, microtime());
-    mtrace("Execution took ".$difftime." seconds"); 
+    mtrace("Execution took ".$difftime." seconds");
 
 /// finish the IE hack
     if (check_browser_version('MSIE')) {

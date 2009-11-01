@@ -24,7 +24,7 @@ echo $OUTPUT->box_start();
 <input type="hidden" name="step" value="<?php echo $mnet_peer->nextstep; ?>" />
 <input type="hidden" name="hostid" value="<?php echo ($mnet_peer->id)?  $mnet_peer->id : '0' ; ?>" />
 <table cellpadding="9" cellspacing="0" >
-<?php 
+<?php
     foreach($myservices as $name => $versions) {
     $version = current($versions);
 ?>
@@ -40,7 +40,7 @@ echo $OUTPUT->box_start();
             } else {
                 $versionstring = '';
             }
-    
+
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
@@ -48,29 +48,29 @@ echo $OUTPUT->box_start();
     <input type="hidden" name="publish[<?php echo $version['serviceid']; ?>]" value="0" />
 <?php } else { ?>
     <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/>
-<?php 
+<?php
             print_string('publish','mnet');
-            echo $versionstring; 
-            if (!empty($version['hostsubscribes'])) { 
-                echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; 
+            echo $versionstring;
+            if (!empty($version['hostsubscribes'])) {
+                echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> ';
             }
-            if (!empty($version['allhosts_publish'])) { 
+            if (!empty($version['allhosts_publish'])) {
                 print_string("enabled_for_all",'mnet',!empty($version['I_publish']));
-            } 
+            }
             echo '<br />';
 } ?>
     <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked="checked" ': '' ; ?>/>
-<?php 
+<?php
             print_string('subscribe','mnet');
-            echo $versionstring; 
-            if (!empty($version['hostpublishes'])) { 
+            echo $versionstring;
+            if (!empty($version['hostpublishes'])) {
                 echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> ';
-            } 
+            }
             if (!empty($version['allhosts_subscribe'])) {
                 print_string("enabled_for_all",'mnet',!empty($version['I_subscribe']));
             }
-            
-            echo '<br />';  
+
+            echo '<br />';
             $breakstring = '. . . . . . . . . . . . . . . . . . . . . . . . <br>';
         } // end foreach
 ?>

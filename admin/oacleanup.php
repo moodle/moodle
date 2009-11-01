@@ -77,7 +77,7 @@ function online_assignment_cleanup($output=false) {
                               FROM  {course_modules} cm, {assignment} a
                              WHERE cm.id = ? AND cm.module = ? AND
                                    cm.instance = a.id AND a.assignmenttype = 'online'";
-                    $params = array($instance, $aid); 
+                    $params = array($instance, $aid);
 
                     /// if record exists then we need to move instance to it's correct section
                     if ($DB->record_exists_sql($sql, $params)) {

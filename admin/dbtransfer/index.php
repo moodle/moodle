@@ -19,7 +19,7 @@ if ($data = $form->get_data()) {
         throw new dbtransfer_exception('notargetconectexception', null, "$CFG->wwwroot/$CFG->admin/dbtransfer/");
     }
     if ($targetdb->get_tables()) {
-        throw new dbtransfer_exception('targetdatabasenotempty', null, "$CFG->wwwroot/$CFG->admin/dbtransfer/"); 
+        throw new dbtransfer_exception('targetdatabasenotempty', null, "$CFG->wwwroot/$CFG->admin/dbtransfer/");
     }
 
     // Start output.

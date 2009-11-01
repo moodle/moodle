@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
 // Allows the admin to manage question types.
 
     require_once(dirname(__FILE__) . '/../config.php');
@@ -286,4 +286,4 @@ function icon_html($action, $qtypename, $icon, $alt, $tip) {
     $html .= '</div></form>';
     return $html;
 }
-?>
+

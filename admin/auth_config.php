@@ -136,7 +136,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             $fieldname = get_string('webpage');
         } else {
             $fieldname = get_string($fieldname);
-        } 
+        }
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
 

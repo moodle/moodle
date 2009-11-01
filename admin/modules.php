@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
       // Allows the admin to manage activity modules
 
     require_once('../config.php');
@@ -180,4 +180,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

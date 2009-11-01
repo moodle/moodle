@@ -61,7 +61,7 @@ $PAGE->set_focuscontrol($focus);
 if (empty($SITE->fullname)) {
     $PAGE->set_title($settingspage->visiblename);
     $PAGE->set_heading($settingspage->visiblename);
-    
+
     echo $OUTPUT->header();
     echo $OUTPUT->box(get_string('configintrosite', 'admin'));
 

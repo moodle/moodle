@@ -42,4 +42,4 @@
         echo $OUTPUT->footer();
     }
 
-?>
+

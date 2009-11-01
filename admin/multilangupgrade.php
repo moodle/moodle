@@ -1,4 +1,4 @@
-<?php /// $Id$
+<?php
       /// Search and replace strings throughout all texts in the whole database
 
 require_once('../config.php');
@@ -115,4 +115,4 @@ function multilangupgrade_impl($langblock) {
     }
     return $return;
 }
-?>
+

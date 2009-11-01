@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // searches for admin settings
 
@@ -62,4 +62,4 @@ echo '</form>';
 
 echo $OUTPUT->footer();
 
-?>
+

@@ -1020,4 +1020,4 @@ function uu_allowed_roles($shortname=false) {
 
     return $choices;
 }
-?>
+

@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php
 
 // block.php - allows admin to edit all local configuration variables for a block
 
@@ -73,4 +73,4 @@
     echo '</form>';
     echo $OUTPUT->footer();
 
-?>
+

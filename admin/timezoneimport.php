@@ -1,12 +1,12 @@
 <?php
 
     // Automatic update of Timezones from a new source
-    
+
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
-    
+
     admin_externalpage_setup('timezoneimport');
 
     $ok = optional_param('ok', 0, PARAM_BOOL);

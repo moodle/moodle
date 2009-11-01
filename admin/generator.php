@@ -75,7 +75,7 @@ class generator {
         global $CFG;
 
         $this->starttime = time()+microtime();
-        
+
         $arguments = array(
              array('short'=>'u', 'long'=>'username',
                    'help' => 'Your moodle username', 'type'=>'STRING', 'default' => ''),

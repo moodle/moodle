@@ -1,4 +1,4 @@
-<?php /// $Id$
+<?php
       /// Search and replace strings throughout all texts in the whole database
 
 require_once('../config.php');
@@ -59,4 +59,4 @@ echo $OUTPUT->continue_button('index.php');
 
 echo $OUTPUT->footer();
 
-?>
+

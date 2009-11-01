@@ -533,7 +533,7 @@ class problem_000013 extends problem_base {
     }
     function exists() {
         global $DB;
-        $positionexpr = $DB->sql_position($DB->sql_concat("','", "q.id", "','"), 
+        $positionexpr = $DB->sql_position($DB->sql_concat("','", "q.id", "','"),
                 $DB->sql_concat("','", "qma.sequence", "','"));
         return $DB->record_exists_sql("
                 SELECT * FROM {question} q

@@ -120,7 +120,7 @@
     echo '<input type="hidden" name="savesettings" value="1" />';
     echo '<fieldset>';
     echo '<div class="form-item clearfix" id="admin-sendcoursewelcomemessage">';
-    
+
     echo '<div class="form-label"><label for = "menusendcoursewelcomemessage">' . get_string('sendcoursewelcomemessage', 'admin');
     echo '<span class="form-shortname">sendcoursewelcomemessage</span>';
     echo '</label></div>';

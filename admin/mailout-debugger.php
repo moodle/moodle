@@ -22,7 +22,7 @@
    * - Run your admin/cron.php
    *
    * - Read /tmp/moodle-mailout.log
-   *   
+   *
    *
    * This script will create logfiles in /tmp/ or in $TMPDIR if set.
    * On windows, use php -r 'print sys_get_temp_dir()' to see where the file is saved.

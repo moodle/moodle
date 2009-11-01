@@ -86,7 +86,7 @@ function notify_admins($user,$subject,$a) {
         $eventdata->fullmessage       = $body;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			
+        $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
     }
 }

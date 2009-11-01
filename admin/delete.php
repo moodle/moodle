@@ -22,7 +22,7 @@
 
     if (empty($sure)) {
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey());
-        
+
         $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'));
         $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
         echo $OUTPUT->confirm('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', $formcontinue, $formcancel);
@@ -34,8 +34,8 @@
         $optionsyes = array('sure'=>'yes', 'sesskey'=>sesskey(), 'reallysure'=>'yes');
         $formcontinue = html_form::make_button('delete.php', $optionsyes, get_string('yes'));
         $formcancel = html_form::make_button('index.php', null, get_string('no'), 'get');
-        echo $OUTPUT->confirm('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. 
-                $deletedir .' (this includes all user images, and any other course files that have been created) ?', 
+        echo $OUTPUT->confirm('Are you REALLY REALLY completely sure you want to delete everything inside the directory '.
+                $deletedir .' (this includes all user images, and any other course files that have been created) ?',
                 $formcontinue, $formcancel);
         echo $OUTPUT->footer();
         exit;

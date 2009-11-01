@@ -111,4 +111,4 @@ if (!empty($return)) {
     redirect($baseurl);
 }
 echo $OUTPUT->footer();
-?>
+

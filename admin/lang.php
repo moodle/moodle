@@ -841,7 +841,7 @@
                 if ($preview_url) {
                     $link = html_link::make($preview_url, get_string('preview'));
                     $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);                    
+                    echo $OUTPUT->link($link);
                 }
                 echo '</fieldset>';
             }
@@ -861,7 +861,7 @@
                 if ($preview_url) {
                     $link = html_link::make($preview_url, get_string('preview'));
                     $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);                    
+                    echo $OUTPUT->link($link);
                 }
                 echo '</fieldset>';
             }
@@ -885,7 +885,7 @@
                 if ($preview_url) {
                     $link = html_link::make($preview_url, get_string('preview'));
                     $link->add_action(new popup_action('click', $link->url));
-                    echo $OUTPUT->link($link);                    
+                    echo $OUTPUT->link($link);
                 }
                 echo '</fieldset>';
             }

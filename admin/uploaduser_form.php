@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once $CFG->libdir.'/formslib.php';
 
 class admin_uploaduser_form1 extends moodleform {
@@ -335,4 +335,4 @@ class admin_uploaduser_form2 extends moodleform {
         return $errors;
     }
 }
-?>
+

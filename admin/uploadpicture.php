@@ -28,8 +28,8 @@ require_once('uploadpicture_form.php');
 
 define ('PIX_FILE_UPDATED', 0);
 define ('PIX_FILE_ERROR',   1);
-define ('PIX_FILE_SKIPPED', 2);    
-    
+define ('PIX_FILE_SKIPPED', 2);
+
 admin_externalpage_setup('uploadpictures');
 
 require_login();
@@ -76,12 +76,12 @@ if ($formdata = $mform->get_data()) {
         if (function_exists('apache_child_terminate')) {
             @apache_child_terminate();
         }
-        
+
         // Create a unique temporary directory, to process the zip file
         // contents.
         $zipodir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
         $dstfile = $zipodir.'/images.zip';
-        
+
         if (!$mform->save_file('userfile', $dstfile, true)) {
             echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
@@ -93,12 +93,12 @@ if ($formdata = $mform->get_data()) {
                 // We don't need the zip file any longer, so delete it to make
                 // it easier to process the rest of the files inside the directory.
                 @unlink($dstfile);
-                
+
                 $results = array ('errors' => 0,'updated' => 0);
 
                 process_directory($zipdir, $userfields[$userfield], $overwritepicture, $results);
 
-            
+
                 // Finally remove the temporary directory with all the user images and print some stats.
                 remove_dir($zipdir);
                 echo $OUTPUT->notification(get_string('usersupdated', 'admin') . ": " . $results['updated']);
@@ -195,7 +195,7 @@ function process_directory ($dir, $userfield, $overwrite, &$results) {
  */
 function process_file ($file, $userfield, $overwrite) {
     global $DB, $OUTPUT;
-    
+
     // Add additional checks on the filenames, as they are user
     // controlled and we don't want to open any security holes.
     $path_parts = pathinfo(cleardoubleslashes($file));
@@ -247,7 +247,7 @@ function process_file ($file, $userfield, $overwrite) {
  *                picture file to.
  * @param string $originalfile the full path of the picture file.
  *
- * @return bool 
+ * @return bool
  */
 function my_save_profile_image($id, $originalfile) {
     $destination = create_profile_image_destination($id, 'user');

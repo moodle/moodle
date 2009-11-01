@@ -119,7 +119,7 @@
     // create the user filter form
     $ufiltering = new user_filtering();
     admin_externalpage_print_header();
-    
+
     // Carry on with the user listing
 
     $columns = array("firstname", "lastname", "email", "city", "country", "lastaccess");
@@ -164,7 +164,7 @@
 
     $alphabet = explode(',', get_string('alphabet'));
     $strall = get_string('all');
-    
+
     $baseurl = new moodle_url('user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($usercount, $page, $perpage, $baseurl));
 
@@ -210,7 +210,7 @@
             ($CFG->fullnamedisplay == 'firstname') or
             ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
             $fullnamedisplay = "$firstname / $lastname";
-        } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname') 
+        } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname')
             $fullnamedisplay = "$lastname / $firstname";
         }
 

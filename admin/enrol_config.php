@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php
        // enrol_config.php - allows admin to edit all enrollment variables
        //                    Yes, enrol is correct English spelling.
 
@@ -67,4 +67,4 @@
     echo $OUTPUT->footer();
 
     exit;
-?>
+
