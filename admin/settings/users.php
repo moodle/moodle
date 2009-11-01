@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "users" category
 
@@ -30,7 +30,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configcheckbox('verifychangedemail', get_string('verifychangedemail', 'admin'), get_string('configverifychangedemail', 'admin'), 1));
-    
+
     $temp->add(new admin_setting_configtext('recaptchapublickey', get_string('recaptchapublickey', 'admin'), get_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('recaptchaprivatekey', get_string('recaptchaprivatekey', 'admin'), get_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
     $ADMIN->add('authsettings', $temp);
@@ -112,7 +112,7 @@ if ($hassiteconfig
                 $defaultguestid = reset($guestroles);
                 $defaultguestid = $defaultguestid->id;
             }
-            
+
             // we must not use assignable roles here:
             //   1/ unsetting roles as assignable for admin might bork the settings!
             //   2/ default user role should not be assignable anyway
@@ -179,5 +179,3 @@ if ($hassiteconfig
     $ADMIN->add('roles', new admin_externalpage('checkpermissions', get_string('checkglobalpermissions', 'role'), "$CFG->wwwroot/$CFG->admin/roles/check.php?contextid=".$systemcontext->id, array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:manage')));
 
 } // end of speedup
-
-?>

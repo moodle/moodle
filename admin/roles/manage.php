@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -279,4 +279,3 @@ function get_spacer() {
     global $OUTPUT;
     return '<img src="' . $OUTPUT->old_icon_url('spacer') . '" class="iconsmall" alt="" /> ';
 }
-?>

@@ -190,4 +190,4 @@
     }
 
     echo $OUTPUT->footer();
-?>
+

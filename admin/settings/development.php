@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // * Miscellaneous settings
 
@@ -41,5 +41,3 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
 
 } // end of speedup
-
-?>

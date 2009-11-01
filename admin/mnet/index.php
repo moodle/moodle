@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP
 
     // Allows the admin to configure mnet stuff
 
@@ -51,8 +51,8 @@
             exit;
         } else {
             // We're deleting
-            
-            
+
+
             if (!isset($SESSION->mnet_confirm_delete_key)) {
                 // fail - you're being attacked?
             }
@@ -132,4 +132,3 @@
 
 <?php
 echo $OUTPUT->footer();
-?>

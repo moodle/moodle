@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "grades" section
 

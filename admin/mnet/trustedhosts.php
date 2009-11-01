@@ -16,7 +16,7 @@
         admin_externalpage_print_header();
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
-    
+
     $site = get_site();
 
     $trusted_hosts = '';//array();
@@ -61,4 +61,3 @@
     }
 
     include('./trustedhosts.html');
-?>

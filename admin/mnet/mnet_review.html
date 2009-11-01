@@ -58,7 +58,7 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0) {
 }
 ?>
     <td valign="top">
-        <?php 
+        <?php
         if (empty($mnet_peer->public_key)) {
             print_string('nopubkey', 'mnet');
         }
@@ -130,7 +130,7 @@ if (!empty($credentials)) {
 ?>
 <tr>
     <td align="right" valign="top"><?php print_string('certdetails', 'mnet'); ?>:</td>
-    <td valign="top"><pre style="margin: 0px; border: 0px;"><?php 
+    <td valign="top"><pre style="margin: 0px; border: 0px;"><?php
         foreach($credentials['subject'] as $key => $credential) {
             if (is_scalar($credential)) {
                 echo str_pad($key, 16, " ", STR_PAD_LEFT).': '.$credential."\n";

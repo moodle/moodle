@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "server" category
 
@@ -278,5 +278,3 @@ if ($dbfamily === 'mysql') {
 }
 
 } // end of speedup
-
-?>

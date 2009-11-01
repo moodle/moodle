@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 /*
  * Please note that is file is always loaded last - it means that you can inject entries into other categories too.

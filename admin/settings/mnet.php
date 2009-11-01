@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "mnet" category
 
@@ -23,5 +23,3 @@ $ADMIN->add('mnet', new admin_externalpage('trustedhosts', get_string('trustedho
                                            'moodle/site:config'));
 
 } // end of speedup
-
-?>

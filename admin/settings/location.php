@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
@@ -21,5 +21,3 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('location', new admin_externalpage('timezoneimport', get_string('updatetimezones', 'admin'), "$CFG->wwwroot/$CFG->admin/timezoneimport.php"));
 
 } // end of speedup
-
-?>

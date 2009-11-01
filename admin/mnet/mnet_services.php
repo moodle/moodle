@@ -57,7 +57,7 @@
                 $host2service = new stdClass();
                 $host2service->hostid = $_POST['hostid'];
                 $host2service->serviceid = $key;
-                
+
                 $host2service->publish = $publish;
                 $host2service->subscribe = $subscribe;
 
@@ -178,4 +178,3 @@
     }
 
     include('./mnet_services.html');
-?>

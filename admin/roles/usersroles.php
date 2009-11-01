@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -219,4 +219,3 @@ function print_report_tree($contextid, $contexts, $systemcontext, $fullname) {
         echo '</ul>';
     }
 }
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This is the first file read by the lib/adminlib.php script
 // We use it to create the categories in correct order,
@@ -11,7 +11,7 @@ $hassiteconfig = has_capability('moodle/site:config', $systemcontext);
 $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('notifications'), "$CFG->wwwroot/$CFG->admin/index.php"));
 
 // Show the annoying registration button if registration hasn't been done or is 6 months old (15552000 seconds) MDL-17429
-if (empty($CFG->registered) || ($CFG->registered < (time() - 15552000))) { 
+if (empty($CFG->registered) || ($CFG->registered < (time() - 15552000))) {
     $ADMIN->add('root', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/register.php"));
 }
 
@@ -42,5 +42,3 @@ $ADMIN->add('root', new admin_category('unsupported', get_string('unsupported', 
 
 // hidden search script
 $ADMIN->add('root', new admin_externalpage('search', get_string('searchresults'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:config', true));
-
-?>

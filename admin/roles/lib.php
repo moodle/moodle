@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -1507,4 +1507,3 @@ function roles_get_potential_user_selector($context, $name, $options) {
     return $potentialuserselector;
 }
 
-?>

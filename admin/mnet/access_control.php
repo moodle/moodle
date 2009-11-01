@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // Allows the admin to control user logins from remote moodles.
 
@@ -236,5 +236,3 @@ foreach ($formerror as $error) {
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
-
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines everything related to frontpage
 
@@ -26,14 +26,14 @@ if (!during_initial_install()) { //do not use during installation
         $temp->add(new admin_setting_special_frontpagedesc());
         $temp->add(new admin_setting_courselist_frontpage(false)); // non-loggedin version of the setting (that's what the parameter is for :) )
         $temp->add(new admin_setting_courselist_frontpage(true)); // loggedin version of the setting
-        
+
         $options = array();
         $options[] = get_string('unlimited');
         for ($i=1; $i<100; $i++) {
             $options[$i] = $i;
         }
         $temp->add(new admin_setting_configselect('maxcategorydepth', get_string('configsitemaxcategorydepth','admin'), get_string('configsitemaxcategorydepthhelp','admin'), 0, $options));
-        
+
         $temp->add(new admin_setting_sitesetcheckbox('numsections', get_string('sitesection'), get_string('sitesectionhelp','admin'), 1));
         $temp->add(new admin_setting_sitesetselect('newsitems', get_string('newsitemsnumber'), '', 3,
              array('0' => '0',
@@ -82,4 +82,3 @@ if (!during_initial_install()) { //do not use during installation
         $ADMIN->add('frontpage', new admin_externalpage('sitefiles', get_string('sitefiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
     }
 }
-?>

@@ -7,7 +7,7 @@
  * @author Christophe Herreman
  * @since 05/01/2005
  * @version $id$
- * 
+ *
  * Special contributions by Allessandro Crugnola and Ted Milker
  */
 
@@ -18,7 +18,7 @@ if (!defined('T_ML_COMMENT')) {
 }
 
 /**
- * Return string from start of haystack to first occurance of needle, or whole 
+ * Return string from start of haystack to first occurance of needle, or whole
  * haystack, if needle does not occur
  *
  * @access public
@@ -72,10 +72,10 @@ class MethodTable
         {
             return false;
         }
-        
+
         $source = file_get_contents($sourcePath);
         $tokens = (array)token_get_all($source);
-        
+
         $waitingForOpenParenthesis = false;
         $waitingForFunction = false;
         $waitingForClassName = false;
@@ -113,7 +113,7 @@ class MethodTable
                     {
                         $lastComment = '';
                         $openBraces--;
-                        
+
                         if($openBraces == 0)
                         {
                             break;
@@ -139,26 +139,26 @@ class MethodTable
                             $classMethods[] = array("name" => $lastFunction,
                                                "comment" => $lastFunctionComment,
                                                "args" => $argBuffer);
-                            
+
                             $bufferingArgs = false;
                             $argBuffer = "";
                             $lastFunction = "";
                             $lastFunctionComment = "";
                         }
                     }
-                    
+
                 }
            } else {
                // token array
                list($id, $text) = $token;
-                
+
                 if($bufferingArgs)
                 {
-                    $argBuffer .= $text;                    
+                    $argBuffer .= $text;
                 }
-               switch ($id) 
+               switch ($id)
                {
-                    
+
                    case T_COMMENT:
                    case T_ML_COMMENT: // we've defined this
                    case T_DOC_COMMENT: // and this
@@ -178,7 +178,7 @@ class MethodTable
                             $waitingForOpenParenthesis = true;
                             $lastFunction = $text;
                             $lastFunctionComment = $lastComment;
-                            $lastComment = "";              
+                            $lastComment = "";
                         }
                         if($waitingForClassName)
                         {
@@ -197,12 +197,12 @@ class MethodTable
                 }
             }
         }
-        
+
         foreach ($classMethods as $key => $value) {
             $methodSignature = $value['args'];
             $methodName = $value['name'];
             $methodComment = $value['comment'];
-            
+
             $description = MethodTable::getMethodDescription($methodComment) . " " . MethodTable::getMethodCommentAttribute($methodComment, "desc");
             $description = trim($description);
             $access = MethodTable::getMethodCommentAttributeFirstWord($methodComment, "access");
@@ -212,7 +212,7 @@ class MethodTable
             $pagesize = MethodTable::getMethodCommentAttributeFirstWord($methodComment, "pagesize");
             $params = MethodTable::getMethodCommentArguments($methodComment);
 
-                        
+
             //description, arguments, access, [roles, [instance, [returns, [pagesize]]]]
             $methodTable[$methodName] = array();
             //$methodTable[$methodName]["signature"] = $methodSignature; //debug purposes
@@ -225,14 +225,14 @@ class MethodTable
             if($returns != "") $methodTable[$methodName]["returns"] = $returns;
             if($pagesize != "") $methodTable[$methodName]["pagesize"] = $pagesize;
         }
-        
+
         return $methodTable;
-        
+
     }
-    
+
     /**
-     * 
-     */   
+     *
+     */
     function getMethodCommentServices($comment)
     {
         $pieces = explode('@service', $comment);
@@ -248,10 +248,10 @@ class MethodTable
         }
         return $args;
     }
-    
-    
+
+
     /**
-     * 
+     *
      */
     function getMethodCommentArguments($comment)
     {
@@ -269,7 +269,7 @@ class MethodTable
         return $args;
     }
 
-    
+
     /**
      * Returns the description from the comment.
      * The description is(are) the first line(s) in the comment.
@@ -282,8 +282,8 @@ class MethodTable
         $comment = MethodTable::cleanComment(strrstr($comment, "@"));
         return trim($comment);
     }
-    
-    
+
+
     /**
      * Returns the value of a comment attribute.
      *
@@ -302,7 +302,7 @@ class MethodTable
         }
         return "";
     }
-    
+
     /**
      * Returns the value of a comment attribute.
      *
@@ -326,7 +326,7 @@ class MethodTable
         }
         return "";
     }
-    
+
     /**
      * Returns the value of a comment attribute.
      *
@@ -354,7 +354,7 @@ class MethodTable
         }
         return $result;
     }
-    
+
     function getMethodCommentAttributeFirstWord($comment, $attribute){
         $pieces = strstrafter($comment, '@' . $attribute);
         if($pieces !== FALSE)
@@ -364,7 +364,7 @@ class MethodTable
         }
         return "";
     }
-    
+
     /**
      * Returns an array with the arguments of a method.
      *
@@ -380,10 +380,10 @@ class MethodTable
             //clean the arguments before returning them
             $result = MethodTable::cleanArguments(explode(",", $methodSignature), $commentParams);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Cleans the function or method's return value.
      *
@@ -394,7 +394,7 @@ class MethodTable
     function cleanReturnValue($value){
         $result = array();
         $value  = trim($value);
-        
+
         list($result['type'], $result['description']) = explode(' ', $value, 2);
 
         $result['type'] = MethodTable::standardizeType($result['type']);
@@ -415,12 +415,12 @@ class MethodTable
         if('str'  == $type || 'string'  == $type) return 'string';
         if('int'  == $type || 'integer' == $type) return 'int';
         if('bool' == $type || 'boolean' == $type) return 'boolean';
-        
+
         // Note that object is not a valid XMLRPC type
         if('object' == $type || 'class' == $type) return 'object';
         if('float'  == $type || 'dbl'   == $type || 'double' == $type || 'flt' == $type) return 'double';
 
-        // Note that null is not a valid XMLRPC type. The null type can have 
+        // Note that null is not a valid XMLRPC type. The null type can have
         // only one value - null.
         if('null'   == $type) return 'null';
 
@@ -429,12 +429,12 @@ class MethodTable
         if('array'  == $type || 'arr'    == $type) return 'array';
         if('assoc'  == $type || 'struct' == $type) return 'struct';
 
-        // Note that this is not a valid XMLRPC type. As references cannot be 
+        // Note that this is not a valid XMLRPC type. As references cannot be
         // serialized or exported, there is no way this could be XML-RPCed.
         if('reference' == $type || 'ref' == $type) return 'reference';
         return 'string';
     }
-    
+
     /**
      * Cleans the arguments array.
      * This method removes all whitespaces and the leading "$" sign from each argument
@@ -448,7 +448,7 @@ class MethodTable
         $result = array();
 
         if(!is_array($args)) return array();
- 
+
         foreach($args as $index => $arg){
             $arg = strrstr(str_replace(array('$','&$'), array('','&'), $arg), '=');
             if(!isset($commentParams[$index]))
@@ -459,12 +459,12 @@ class MethodTable
             {
                 $start = trim($arg);
                 $end = trim(str_replace('$', '', $commentParams[$index]));
-                
-                // Suppress Notice of 'Undefined offset' with @ 
+
+                // Suppress Notice of 'Undefined offset' with @
                 @list($word0, $word1, $tail) = preg_split("/[\s]+/", $end, 3);
                 $word0 = strtolower($word0);
                 $word1 = strtolower($word1);
-                
+
                 $wordBase0 = preg_replace('/^[&$]+/','',$word0);
                 $wordBase1 = preg_replace('/^[&$]+/','',$word1);
                 $startBase = strtolower(preg_replace('/^[&$]+/','',$start));
@@ -496,7 +496,7 @@ class MethodTable
                     $type = 'double';
                 } elseif($type == 'null') {
                     // Note that this is not a valid XMLRPC type
-                    // The null type can have only one value - null. Why would 
+                    // The null type can have only one value - null. Why would
                     // that be an argument to a function? Just in case:
                     $type = 'null';
                 } elseif($type == 'mixed') {
@@ -521,8 +521,8 @@ class MethodTable
 
         return $result;
     }
-    
-    
+
+
     /**
      * Cleans the comment string by removing all comment start and end characters.
      *
@@ -549,7 +549,7 @@ class MethodTable
 
         foreach($methodTable as $methodName=>$methodProps){
             $result .= "\n\t\"" . $methodName . "\" => array(";
-            
+
             foreach($methodProps as $key=>$value){
                 $result .= "\n\t\t\"" . $key . "\" => ";
 
@@ -568,16 +568,15 @@ class MethodTable
 
                 $result .= ",";
             }
-            
+
             $result = substr($result, 0, -1);
             $result .= "\n\t),";
         }
-        
+
         $result = substr($result, 0, -1);
         $result = "\$this->methodTable = array(" . $result;
         $result .= "\n);";
-            
+
         return $result;
     }
 }
-?>

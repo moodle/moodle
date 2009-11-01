@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?PHP
 
 // Allows the admin to configure other Moodle hosts info
 
@@ -69,7 +69,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     } else {
 
         $mnet_peer = new mnet_peer();
-    
+
         if (!empty($form->id)) {
             $form->id = clean_param($form->id, PARAM_INT);
             $mnet_peer->set_id($form->id);
@@ -90,11 +90,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             $form->name = clean_param($form->name, PARAM_NOTAGS);
             $mnet_peer->set_name($form->name);
         }
-    
+
         if (isset($form->deleted) && ($form->deleted == '0' || $form->deleted == '1')) {
             $mnet_peer->deleted = $form->deleted;
         }
-    
+
         if (isset($form->public_key)) {
             $form->public_key = clean_param($form->public_key, PARAM_PEM);
             if (empty($form->public_key)) {
@@ -150,27 +150,27 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         include('./mnet_review_allhosts.html');
     }
 } else {
-    $hosts = $DB->get_records_sql('  SELECT 
-                                    h.id, 
-                                    h.wwwroot, 
-                                    h.ip_address, 
-                                    h.name, 
-                                    h.public_key, 
-                                    h.public_key_expires, 
-                                    h.transport, 
-                                    h.portno, 
-                                    h.last_connect_time, 
-                                    h.last_log_id, 
-                                    h.applicationid, 
-                                    a.name as app_name, 
-                                    a.display_name as app_display_name, 
+    $hosts = $DB->get_records_sql('  SELECT
+                                    h.id,
+                                    h.wwwroot,
+                                    h.ip_address,
+                                    h.name,
+                                    h.public_key,
+                                    h.public_key_expires,
+                                    h.transport,
+                                    h.portno,
+                                    h.last_connect_time,
+                                    h.last_log_id,
+                                    h.applicationid,
+                                    a.name as app_name,
+                                    a.display_name as app_display_name,
                                     a.xmlrpc_server_url
-                                FROM  
-                                    {mnet_host} h,  
-                                    {mnet_application} a  
-                                WHERE 
-                                    h.id <> ? AND  
-                                    h.deleted = 0 AND  
+                                FROM
+                                    {mnet_host} h,
+                                    {mnet_application} a
+                                WHERE
+                                    h.id <> ? AND
+                                    h.deleted = 0 AND
                                     h.applicationid=a.id',
                         array($CFG->mnet_localhost_id));;
 
@@ -178,4 +178,4 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     $applications = $DB->get_records('mnet_application');
     include('./peers.html');
 }
-?>
+

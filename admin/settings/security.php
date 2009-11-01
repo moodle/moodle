@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
@@ -116,5 +116,3 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('security', $temp);
 
 } // end of speedup
-
-

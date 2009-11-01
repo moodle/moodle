@@ -278,4 +278,3 @@ if ($userid && $capability != 'moodle/site:doanything' && !$userhascapability &&
 }
 echo $OUTPUT->close_window_button();
 echo $OUTPUT->footer();
-?>

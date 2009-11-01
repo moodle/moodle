@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "appearance" category
 
@@ -25,5 +25,3 @@ if ($hassiteconfig
     $ADMIN->add('language', new admin_externalpage('multilangupgrade', get_string('multilangupgrade', 'admin'), $CFG->wwwroot.'/'.$CFG->admin.'/multilangupgrade.php', 'moodle/site:config', !empty($CFG->filter_multilang_converted)));
 
 } // end of speedup
-
-?>

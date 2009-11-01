@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // This file defines settingpages and externalpages under the "courses" category
 
@@ -172,5 +172,3 @@ if ($hassiteconfig
     $ADMIN->add('courses', $temp);
 
 } // end of speedup
-
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -237,5 +237,3 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
 
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
-
-?>
