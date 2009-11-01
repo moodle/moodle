@@ -220,7 +220,7 @@ init_performance_info();
 // Put $OUTPUT in place, so errors can be displayed.
 $OUTPUT = new bootstrap_renderer();
 
-// set handler for uncought exceptions - equivalent to print_error() call
+// set handler for uncaught exceptions - equivalent to print_error() call
 set_exception_handler('default_exception_handler');
 
 // If there are any errors in the standard libraries we want to know!
@@ -463,8 +463,8 @@ if (!file_exists($CFG->dataroot .'/cache')) {
 @ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
 
 // Location of standard files
-$CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
-$CFG->moddata     = 'moddata';
+$CFG->wordlist = $CFG->libdir .'/wordlist.txt';
+$CFG->moddata  = 'moddata';
 
 // Create the $PAGE global.
 if (!empty($CFG->moodlepageclass)) {
@@ -570,7 +570,7 @@ if (empty($CFG->lang)) {
 // We used to call moodle_setlocale() and theme_setup() here, even though they
 // would be called again from require_login or $PAGE->set_course. As an experiment
 // I am going to try removing those calls. With luck it will help us find and
-// fix a few bugs where scripts do not initialise thigns properly, wihtout causing
+// fix a few bugs where scripts do not initialise things properly, without causing
 // too much grief.
 
 if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
@@ -589,7 +589,7 @@ if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
     }
 }
 
-// Apache log intergration. In apache conf file one can use ${MOODULEUSER}n in
+// Apache log integration. In apache conf file one can use ${MOODULEUSER}n in
 // LogFormat to get the current logged in username in moodle.
 if ($USER && function_exists('apache_note')
     && !empty($CFG->apacheloguser) && isset($USER->username)) {
