@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 // Defines message providers (types of messages being sent)              //
@@ -39,4 +39,4 @@ $messageproviders = array (
 );
 
 
-?>
+

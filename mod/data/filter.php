@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //
     // This function provides automatic linking to data contents of text
     // fields where these fields have autolink enabled.
@@ -65,4 +65,4 @@
         return  filter_phrases($text, $contentlist);  // Look for all these links in the text
     }
 
-?>
+

@@ -791,7 +791,7 @@ function choice_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the choice.
- * 
+ *
  * @param object $mform form passed by reference
  */
 function choice_reset_course_form_definition(&$mform) {

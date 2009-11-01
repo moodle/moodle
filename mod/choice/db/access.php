@@ -79,4 +79,4 @@ $mod_choice_capabilities = array(
     )
 );
 
-?>
+

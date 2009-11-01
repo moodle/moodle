@@ -116,4 +116,3 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
     echo $OUTPUT->footer();
 }
 
-?>

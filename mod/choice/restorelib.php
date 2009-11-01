@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //choice mods
 
@@ -498,4 +498,4 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
         }
         return $status;
     }
-?>
+

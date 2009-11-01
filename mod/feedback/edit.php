@@ -420,4 +420,3 @@ function feedback_edit_print_default_form_values($id, $tab) {
     echo '<input type="hidden" name="id" value="'.$id.'" />';
     echo '<input type="hidden" name="do_show" value="'.$tab.'" />';
 }
-?>

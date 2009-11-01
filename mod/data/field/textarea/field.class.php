@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -62,16 +62,16 @@ class data_field_textarea extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-    
-    
+
+
     function display_search_field($value = '') {
-        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
+        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';
     }
-    
+
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     function generate_sql($tablealias, $value) {
         global $DB;
 
@@ -82,7 +82,7 @@ class data_field_textarea extends data_field_base {
         $name = "df_picture_$i";
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content $ILIKE :$name) ", array($name=>"%$value%"));
     }
-    
+
     function gen_textarea($usehtmleditor, $text='') {
         return print_textarea($usehtmleditor, $this->field->param3, $this->field->param2,
                               '', '', 'field_'.$this->field->id, $text, '', true, 'field_' . $this->field->id);
@@ -115,4 +115,4 @@ class data_field_textarea extends data_field_base {
         }
     }
 }
-?>
+

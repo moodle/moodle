@@ -3853,7 +3853,7 @@ function forum_print_ratings($postid, $scale, $aggregatetype, $link=true, $ratin
 
             $link = html_link::make("/mod/forum/report.php?id=$postid", $agg);
             $link->add_action(new popup_action('click', $link->url, 'ratings', array('height' => 400, 'width' => 600)));
-            $strratings .= $OUTPUT->link($link);                    
+            $strratings .= $OUTPUT->link($link);
         } else {
             $strratings .= "$agg ";
         }
@@ -4436,9 +4436,9 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args, $forcedo
     if (!$cm = get_coursemodule_from_instance('forum', $cminfo->instance, $course->id)) {
         return false;
     }
-    
+
     require_course_login($course, true, $cm);
-    
+
     if (!$post = $DB->get_record('forum_posts', array('id'=>$postid))) {
         return false;
     }
@@ -6758,7 +6758,7 @@ function forum_tp_get_discussion_read_records($userid, $discussionid) {
 
 /**
  * If its an old post, do nothing. If the record exists, the maintenance will clear it up later.
- * 
+ *
  * @return bool
  */
 function forum_tp_mark_post_read($userid, $post, $forumid) {
@@ -7188,7 +7188,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
 
     // if possible, avoid expensive
     // queries
-    if (empty($CFG->forum_trackreadposts)) {    
+    if (empty($CFG->forum_trackreadposts)) {
         return false;
     }
 
@@ -8250,7 +8250,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
 
     $limit = 5;
-    
+
     $discussions = forum_get_discussions($cm,"d.timemodified DESC", false, -1, $limit);
     $discussioncount = forum_get_discussions_count($cm);
     if (!is_array($discussions) || count($discussions)==0) {
@@ -8354,7 +8354,7 @@ function forum_extend_settings_navigation($settingsnav, $module=null) {
                 $url = new moodle_url($CFG->wwwroot.'/mod/forum/subscribers.php', array('id'=>$forumobject->id));
                 $forum->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
             }
-            
+
             if (forum_is_forcesubscribed($forumobject) || ($forumobject->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !has_capability('mod/forum:managesubscriptions', $PAGE->cm->context))) {
                 // Do nothing
             } else {

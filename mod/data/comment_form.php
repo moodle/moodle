@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once $CFG->libdir.'/formslib.php';
 
@@ -33,4 +33,3 @@ class mod_data_comment_form extends moodleform {
 
     }
 }
-?>

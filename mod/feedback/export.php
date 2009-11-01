@@ -12,7 +12,7 @@ require_once("../../config.php");
 require_once("lib.php");
 
 // get parameters
-$id = required_param('id', PARAM_INT); 
+$id = required_param('id', PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 
 $url = new moodle_url($CFG->wwwroot.'/mod/feedback/export.php', array('id'=>$id));
@@ -109,4 +109,3 @@ function feedback_send_xml_data($data, $filename) {
     @header('Content-Disposition: attachment; filename='.$filename);
     print($data);
 }
-?>

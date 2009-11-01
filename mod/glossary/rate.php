@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?php
 
 //  Collect ratings, store them, then return to where we came from
 
@@ -112,4 +112,4 @@
         print_error('invalidaccess');
     }
 
-?>
+

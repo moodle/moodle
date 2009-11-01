@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 function glossary_filter($courseid, $text) {
     global $CFG, $DB;
@@ -16,7 +16,7 @@ function glossary_filter($courseid, $text) {
     if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
         $conceptlist = array();
         $nothingtodo = false;
-    } 
+    }
     $cachedcourseid = (int)$courseid;
 
     if ($nothingtodo === true) {
@@ -43,7 +43,7 @@ function glossary_filter($courseid, $text) {
 
     /// Make a list of glossary IDs for searching
         $glossarylist = implode(',', array_keys($glossaries));
-   
+
 
     /// Pull out all the raw data from the database for entries, categories and aliases
         $entries = $DB->get_records_select('glossary_entries',
@@ -137,13 +137,13 @@ function glossary_filter($courseid, $text) {
             }
 
 
-            $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>', 
+            $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>',
                                               $concept->casesensitive, $concept->fullmatch);
         }
 
         $conceptlist = filter_remove_duplicates($conceptlist);
     }
-    
+
     global $GLOSSARY_EXCLUDECONCEPTS;
     if(!empty($GLOSSARY_EXCLUDECONCEPTS)) {
         $reducedconceptlist=array();
@@ -173,4 +173,4 @@ function glossary_sort_entries_by_length ($entry0, $entry1) {
 }
 
 
-?>
+

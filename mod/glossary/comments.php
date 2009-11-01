@@ -75,4 +75,3 @@ if ($comments = $DB->get_records("glossary_comments", array("entryid"=>$entry->i
 
 echo $OUTPUT->footer();
 
-?>

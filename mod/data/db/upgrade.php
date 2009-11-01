@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the data module
@@ -183,4 +183,4 @@ function xmldb_data_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

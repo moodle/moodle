@@ -120,4 +120,3 @@ if (!data_submitted() or !$confirm or !confirm_sesskey()) {
     redirect ($returnurl);
 }
 
-?>

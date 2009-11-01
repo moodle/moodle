@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -213,4 +213,4 @@ class data_field_latlong extends data_field_base {
 
 }
 
-?>
+

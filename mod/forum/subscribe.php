@@ -112,4 +112,3 @@ if (forum_is_subscribed($user->id, $forum->id)) {
     }
 }
 
-?>

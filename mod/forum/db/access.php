@@ -311,4 +311,4 @@ $mod_forum_capabilities = array(
         )
     ),
 );
-?>
+

@@ -375,4 +375,3 @@ if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
 /// Finish the page
 echo $OUTPUT->footer();
 
-?>

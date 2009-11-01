@@ -255,4 +255,4 @@ function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\
     return $rows;
 }
 
-?>
+

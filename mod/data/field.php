@@ -361,4 +361,3 @@ if (($mode == 'new') && (!empty($newtype)) && confirm_sesskey()) {          /// 
 /// Finish the page
 echo $OUTPUT->footer();
 
-?>

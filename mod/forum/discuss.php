@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 //  Displays a post, and all the posts below it.
 //  If no post is given, displays all posts in a discussion
@@ -253,4 +253,4 @@
     echo $OUTPUT->footer();
 
 
-?>
+

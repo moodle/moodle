@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * prints the form to confirm use template
 *
@@ -16,7 +16,7 @@ class mod_feedback_use_templ_form extends moodleform {
 
         //headline
         $mform->addElement('header', 'general', '');
-        
+
         // visible elements
         $mform->addElement('radio', 'deleteolditems', get_string('delete_old_items', 'feedback'), '', 1);
         $mform->addElement('radio', 'deleteolditems', get_string('append_new_items', 'feedback'), '', 0);
@@ -38,4 +38,4 @@ class mod_feedback_use_templ_form extends moodleform {
 
     }
 }
-?>
+

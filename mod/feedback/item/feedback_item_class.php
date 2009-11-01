@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php
 
 class feedback_item_base {
     var $type;
@@ -17,10 +17,10 @@ class feedback_item_base {
     function __construct() {
         $this->feedback_item_base();
     }
-    
+
     /**
      * prints the item-related sequenz on the edit-item form
-     * 
+     *
      * @param $item the db-object from feedback_item
      * @param $usehtmleditor defines whether the editor should be shown or not
      */
@@ -96,8 +96,8 @@ class feedback_item_base {
 class feedback_item_pagebreak extends feedback_item_base {
     var $type = "pagebreak";
     function init() {
-    
+
     }
 }
 
-?>
+

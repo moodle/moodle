@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //feedback mods
 
@@ -41,16 +41,16 @@
             }
          }
       }
-      return $status;  
+      return $status;
    }
 
    function feedback_backup_one_mod($bf,$preferences,$feedback) {
       global $CFG, $DB;
-    
+
       if (is_numeric($feedback)) {
          $feedback = $DB->get_record('feedback', array('id'=>$feedback));
       }
-      
+
       $status = true;
       fwrite ($bf,start_tag("MOD",3,true));
       //Print feedback data
@@ -69,15 +69,15 @@
       fwrite ($bf,full_tag("TIMEOPEN",4,false,$feedback->timeopen));
       fwrite ($bf,full_tag("TIMECLOSE",4,false,$feedback->timeclose));
       fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$feedback->timemodified));
-       
+
       //backup the items of each feedback
       feedback_backup_data($bf, $preferences, $feedback->id);
-       
+
       //End mod
       $status =fwrite ($bf,end_tag("MOD",3,true));
       return $status;
    }
-   
+
    function feedback_backup_data($bf, $preferences, $feedbackid) {
       global $CFG, $DB;
 
@@ -102,7 +102,7 @@
             fwrite ($bf,full_tag("HASVALUE",6,false,$feedbackitem->hasvalue));
             fwrite ($bf,full_tag("POSITION",6,false,$feedbackitem->position));
             fwrite ($bf,full_tag("REQUIRED",6,false,$feedbackitem->required));
-            
+
             if ($backup_userdata) {
                //backup the values of items
                $feedbackvalues = $DB->get_records('feedback_value', array('item'=>$feedbackitem->id));
@@ -128,7 +128,7 @@
          }
          $status =fwrite ($bf,end_tag("ITEMS",4,true));
       }
-      
+
       if($backup_userdata) {
          //backup of feedback-completeds
          $feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$feedbackid));
@@ -144,13 +144,13 @@
                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$feedbackcompleted->timemodified));
                fwrite ($bf,full_tag("RANDOMRESPONSE",6,false,$feedbackcompleted->random_response));
                fwrite ($bf,full_tag("ANONYMOUSRESPONSE",6,false,$feedbackcompleted->anonymous_response));
-               
+
                //End completed
                $status =fwrite ($bf,end_tag("COMPLETED",5,true));
             }
             $status =fwrite ($bf,end_tag("COMPLETEDS",4,true));
          }
-         
+
          //backup of tracking-data
          $feedbacktrackings = $DB->get_records('feedback_tracking', array('feedback'=>$feedbackid));
          if($feedbacktrackings) {
@@ -163,13 +163,13 @@
                fwrite ($bf,full_tag("USERID",6,false,$feedbacktracking->userid));
                fwrite ($bf,full_tag("FEEDBACK",6,false,$feedbacktracking->feedback));
                fwrite ($bf,full_tag("COMPLETED",6,false,$feedbacktracking->completed));
-               
+
                //End completed
                $status =fwrite ($bf,end_tag("TRACKING",5,true));
             }
             $status =fwrite ($bf,end_tag("TRACKINGS",4,true));
          }
-         
+
       }
 
    }
@@ -194,7 +194,7 @@
             fwrite ($bf,full_tag("HASVALUE",7,false,$templateitem->hasvalue));
             fwrite ($bf,full_tag("POSITION",7,false,$templateitem->position));
             fwrite ($bf,full_tag("REQUIRED",7,false,$templateitem->required));
-            
+
             //End item
             $status =fwrite ($bf,end_tag("ITEM",6,true));
          }
@@ -217,14 +217,14 @@
       //First the course data
       $info[0][0] = get_string("modulenameplural","feedback");
       $info[0][1] = feedback_count($course);
-      
+
       //Now, if requested, the user_data
-      
+
       if ($user_data) {
          $info[1][0] = get_string('ready_feedbacks','feedback');
          $info[1][1] = feedback_completed_count($course);
       }
-      
+
       return $info;
    }
 
@@ -253,13 +253,13 @@
 ///////////////////////////////////////////////////////////////
 //// INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
-   //Returns an array of feedbacks ids 
+   //Returns an array of feedbacks ids
    function feedback_count ($course) {
       global $DB;
 
       return $DB->count_records('feedback', array('course'=>$course));
    }
-   
+
    function feedback_completed_count($course) {
       global $DB;
 
@@ -273,5 +273,5 @@
       }
       return $count;
    }
-   
-?>
+
+

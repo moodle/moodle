@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the forum module
@@ -267,4 +267,4 @@ function xmldb_forum_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

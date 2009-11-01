@@ -130,7 +130,7 @@ if ( $hook >0 ) {
 
                 <table border="0" width="100">
                     <tr>
-                        <td align="right" style="width:50%">                
+                        <td align="right" style="width:50%">
                         <form id="form" method="post" action="editcategories.php">
                         <div>
                         <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
@@ -201,7 +201,7 @@ if ( $action ) {
         </tr>
         <tr><td style="width:100%" colspan="2">
 
-        
+
 
 <?php
     $categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary->id), "name ASC");
@@ -227,7 +227,7 @@ if ( $action ) {
              </tr>
 
              <?php
-          
+
           }
         echo '</table>';
      }
@@ -259,5 +259,5 @@ if ( $action ) {
 
 </form>
 
-<?php 
+<?php
 echo $OUTPUT->footer();

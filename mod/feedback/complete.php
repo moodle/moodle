@@ -439,4 +439,3 @@ if($feedback_can_submit) {
 
 echo $OUTPUT->footer();
 
-?>

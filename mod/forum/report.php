@@ -91,4 +91,3 @@ if (!$ratings = forum_get_ratings($post->id, $sqlsort)) {
 echo $OUTPUT->close_window_button();
 echo $OUTPUT->footer();
 
-?>

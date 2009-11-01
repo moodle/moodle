@@ -17,7 +17,7 @@ Requirements
 ------------
 Moodle 1.9 or later
 
-Installation 
+Installation
 ------------
    The zip-archive includes the same directory hierarchy as moodle
    So you only have to copy the files to the correspondent place.

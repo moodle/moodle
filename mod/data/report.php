@@ -87,4 +87,3 @@ if (!$ratings = data_get_ratings($record->id, $sqlsort)) {
 
 echo $OUTPUT->close_window_button();
 echo $OUTPUT->footer();
-?>

@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 
@@ -70,4 +70,4 @@ $settings->add(new admin_setting_configcheckbox('forum_logblocked', get_string('
 $settings->add(new admin_setting_configcheckbox('forum_ajaxrating', get_string('ajaxrating', 'forum'),
                    get_string('configajaxrating', 'forum'), 0));
 
-?>
+

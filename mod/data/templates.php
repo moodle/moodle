@@ -298,4 +298,3 @@ echo '</form>';
 
 /// Finish the page
 echo $OUTPUT->footer();
-?>

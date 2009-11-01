@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Code fragment to define the module version etc.
@@ -9,4 +9,4 @@ $module->version  = 2009042001;
 $module->requires = 2009041700;  // Requires this Moodle version
 $module->cron     = 0;
 
-?>
+

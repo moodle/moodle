@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -52,21 +52,21 @@ class data_field_date extends data_field_base {
 
         return $str;
     }
-    
+
     //Enable the following three functions once core API issues have been addressed.
     function display_search_field($value=0) {
         return false;
         //return print_date_selector('f_'.$this->field->id.'_d', 'f_'.$this->field->id.'_m', 'f_'.$this->field->id.'_y', $value, true);
     }
-    
+
     function generate_sql($tablealias, $value) {
         return array(' 1=1 ', array());
-        //return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        //return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ";
     }
-    
+
     function parse_search_field() {
         return '';
-       /* 
+       /*
         $day   = optional_param('f_'.$this->field->id.'_d', 0, PARAM_INT);
         $month = optional_param('f_'.$this->field->id.'_m', 0, PARAM_INT);
         $year  = optional_param('f_'.$this->field->id.'_y', 0, PARAM_INT);
@@ -119,4 +119,4 @@ class data_field_date extends data_field_base {
 
 }
 
-?>
+

@@ -126,4 +126,3 @@ switch ($formdata['exporttype']) {
 }
 
 die();
-?>

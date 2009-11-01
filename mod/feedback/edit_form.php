@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * prints the forms to choose an item-typ to create items and to choose a template to use
 *
@@ -24,7 +24,7 @@ class feedback_edit_add_question_form extends moodleform {
             // $feedback_names_options[$fn] = get_string($fn,'feedback');
         // }
         $feedback_names_options = feedback_load_feedback_items_options();
-        
+
         $attributes = 'onChange="this.form.submit()"';
         $mform->addElement('select', 'typ', '', $feedback_names_options, $attributes);
 
@@ -41,13 +41,13 @@ class feedback_edit_add_question_form extends moodleform {
 
 class feedback_edit_use_template_form extends moodleform {
     var $feedbackdata;
-    
+
     function definition() {
         $this->feedbackdata = new object();
         //this function can not be called, because not all data are available at this time
         //I use set_form_elements instead
     }
-    
+
     //this function set the data used in set_form_elements()
     //in this form the only value have to set is course
     //eg: array('course' => $course)
@@ -58,20 +58,20 @@ class feedback_edit_use_template_form extends moodleform {
             }
         }
     }
-    
+
     //here the elements will be set
     //this function have to be called manually
     //the advantage is that the data are already set
     function set_form_elements(){
         $mform =& $this->_form;
-        
+
         $elementgroup = array();
         //headline
         $mform->addElement('header', '', get_string('using_templates', 'feedback'));
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-        
+
         // visible elements
         $templates_options = array();
         if($templates = feedback_get_template_list($this->feedbackdata->course)){//get the templates
@@ -87,21 +87,21 @@ class feedback_edit_use_template_form extends moodleform {
             $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'feedback'));
         }
         $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
-        
+
     //-------------------------------------------------------------------------------
     }
 }
 
 class feedback_edit_create_template_form extends moodleform {
     var $feedbackdata;
-    
+
     function definition() {
     }
-    
+
     function data_preprocessing(&$default_values){
         $default_values['templatename'] = '';
     }
-    
+
     function set_feedbackdata($data) {
         if(is_array($data)) {
             foreach($data as $key => $val) {
@@ -109,7 +109,7 @@ class feedback_edit_create_template_form extends moodleform {
             }
         }
     }
-    
+
     function set_form_elements(){
         $mform =& $this->_form;
         $capabilities = $this->feedbackdata->capabilities;
@@ -124,23 +124,23 @@ class feedback_edit_create_template_form extends moodleform {
 
         //headline
         $mform->addElement('header', '', get_string('creating_templates', 'feedback'));
-        
+
         // visible elements
         $elementgroup = array();
-        
+
         $elementgroup[] =& $mform->createElement('static', 'templatenamelabel', get_string('name', 'feedback'));
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
         if($capabilities->createpublictemplate) {
             $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
         }
-        
+
         // buttons
         $elementgroup[] =& $mform->createElement('submit', 'create_template', get_string('save_as_new_template', 'feedback'));
         $mform->addGroup($elementgroup, 'elementgroup', get_string('name', 'feedback'), array(' '), false);
-        
+
         $mform->setType('templatename', PARAM_TEXT);
-        
+
 //-------------------------------------------------------------------------------
     }
 }
-?>
+

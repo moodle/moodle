@@ -134,7 +134,7 @@ switch ($action) {
         $optionsyes = array('fullname' => $userid.'/'.$shortname,
                          'action' => 'delete',
                          'd' => $data->id);
-                         
+
         $optionsno = array('d' => $data->id);
         echo $OUTPUT->confirm($strwarning, new moodle_url('preset.php', $optionsyes), new moodle_url('preset.php', $optionsno));
         echo $OUTPUT->footer();
@@ -546,4 +546,4 @@ function data_presets_export($course, $cm, $data) {
     return $exportfile;
 }
 
-?>
+

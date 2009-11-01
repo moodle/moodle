@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -234,4 +234,4 @@ class data_field_multimenu extends data_field_base {
         return false;
     }
 }
-?>
+

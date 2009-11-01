@@ -13,7 +13,7 @@ require_once("lib.php");
 require_once('easy_excel.php');
 
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
-$coursefilter = optional_param('coursefilter', '0', PARAM_INT);    
+$coursefilter = optional_param('coursefilter', '0', PARAM_INT);
 
 $url = new moodle_url($CFG->wwwroot.'/mod/feedback/analysis_to_excel.php', array('id'=>$id));
 if ($coursefilter !== '0') {
@@ -164,10 +164,10 @@ if(is_array($completeds)){
 
 $workbook->close();
 exit;
-////////////////////////////////////////////////////////////////////////////////    
-////////////////////////////////////////////////////////////////////////////////    
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //functions
-////////////////////////////////////////////////////////////////////////////////    
+////////////////////////////////////////////////////////////////////////////////
 
 
 function feedback_excelprint_detailed_head(&$worksheet, $items, $rowOffset) {
@@ -266,4 +266,3 @@ function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $ro
     }
     return $rowOffset + 1;
 }
-?>

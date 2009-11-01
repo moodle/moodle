@@ -253,4 +253,3 @@ if ($typ!='label') {
 
 echo $OUTPUT->footer();
 
-?>

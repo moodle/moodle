@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 defined('FEEDBACK_INCLUDE_TEST') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 

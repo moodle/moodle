@@ -417,4 +417,3 @@ if ($learningforums) {
 
 echo $OUTPUT->footer();
 
-?>

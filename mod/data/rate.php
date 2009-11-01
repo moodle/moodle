@@ -104,4 +104,3 @@ if (!empty($_SERVER['HTTP_REFERER'])) {
     }
 }
 
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -72,18 +72,18 @@ class data_field_checkbox extends data_field_base {
                 $options[$key] = $key;  //Build following indicies from the sql.
             }
         }
-        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value)); 
+        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $value));
     }
-    
+
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     function generate_sql($tablealias, $value) {
         static $i=0;
         $i++;
         $name = "df_checkbox_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value)); 
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
     }
 
     function update_content($recordid, $value, $name='') {
@@ -133,4 +133,4 @@ class data_field_checkbox extends data_field_base {
         return $str;
     }
 }
-?>
+

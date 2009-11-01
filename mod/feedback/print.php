@@ -97,4 +97,3 @@ echo $OUTPUT->continue_button('view.php?id='.$id);
 
 echo $OUTPUT->footer();
 
-?>

@@ -406,4 +406,3 @@ function forum_menu_list($course)  {
     return $menu;
 }
 
-?>

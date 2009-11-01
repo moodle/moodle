@@ -136,4 +136,4 @@ class mod_choice_mod_form extends moodleform_mod {
     }
 
 }
-?>
+

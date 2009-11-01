@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -76,13 +76,13 @@ class data_field_number extends data_field_base {
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     // need to cast?
     function generate_sql($tablealias, $value) {
         static $i=0;
         $i++;
         $name = "df_number_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value)); 
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
     }
 
     function get_sort_sql($fieldname) {
@@ -102,4 +102,4 @@ class data_field_number extends data_field_base {
 
 }
 
-?>
+

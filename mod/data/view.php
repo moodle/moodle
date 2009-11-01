@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -296,7 +296,7 @@
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($buttons);
     echo $OUTPUT->header();
-    
+
 /// Check to see if groups are being used here
     $returnurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
     groups_print_activity_menu($cm, $returnurl);
@@ -682,4 +682,4 @@
     $completion->set_module_viewed($cm);
 
     echo $OUTPUT->footer();
-?>
+

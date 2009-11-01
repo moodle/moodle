@@ -164,4 +164,3 @@ echo $OUTPUT->header();
 data_print_comments($data, $record, $page, $mform);
 echo $OUTPUT->footer();
 
-?>

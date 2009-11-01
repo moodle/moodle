@@ -154,4 +154,3 @@ $response['status']  = 'Ok';
 $response['message'] = $rateinfo;
 echo json_encode($response);
 
-?>

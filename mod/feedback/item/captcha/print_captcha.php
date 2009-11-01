@@ -114,4 +114,4 @@ function get_random_color($val1 = 0, $val2 = 255) {
     return rand($min, $max);
 }
 
-?> 
+

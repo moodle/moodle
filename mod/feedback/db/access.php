@@ -46,7 +46,7 @@ $mod_feedback_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/feedback:complete' => array(
 
         'riskbitmask' => RISK_SPAM,
@@ -60,7 +60,7 @@ $mod_feedback_capabilities = array(
             'admin' => CAP_PREVENT
         )
     ),
-    
+
     'mod/feedback:viewanalysepage' => array(
 
         'riskbitmask' => RISK_PERSONAL,
@@ -74,7 +74,7 @@ $mod_feedback_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/feedback:deletesubmissions' => array(
 
         'captype' => 'write',
@@ -141,7 +141,7 @@ $mod_feedback_capabilities = array(
     ),
 
     'mod/feedback:viewreports' => array(
-    
+
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'read',
@@ -154,7 +154,7 @@ $mod_feedback_capabilities = array(
     ),
 
     'mod/feedback:receivemail' => array(
-    
+
         'riskbitmask' => RISK_PERSONAL,
 
         'captype' => 'read',
@@ -168,4 +168,4 @@ $mod_feedback_capabilities = array(
 
 );
 
-?>
+

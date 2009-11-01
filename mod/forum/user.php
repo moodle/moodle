@@ -111,7 +111,7 @@ if ($course->id == SITEID) {
 // Get the posts.
 if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage,
             $totalcount, $extrasql)) {
-    
+
     $baseurl = new moodle_url('user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode, 'perpage' => $perpage));
     echo $OUTPUT->paging_bar(moodle_paging_bar::make($totalcount, $page, $perpage, $baseurl));
 
@@ -191,4 +191,3 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
 echo '</div>';
 echo $OUTPUT->footer();
 
-?>

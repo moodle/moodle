@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //forum mods
 
@@ -567,4 +567,4 @@
                                        p.discussion = s.id AND
                                        r.post = p.id", array($instanceid));
     }
-?>
+

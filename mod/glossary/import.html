@@ -5,12 +5,12 @@
         <?php
            echo '(';
            print_string("maxsize", "", display_size(get_max_upload_file_size($CFG->maxbytes, $course->maxbytes)));
-           echo ') '; 
-           echo $OUTPUT->help_icon(moodle_help_icon::make("filetoimport", get_string("filetoimport", "glossary"), "glossary")); 
+           echo ') ';
+           echo $OUTPUT->help_icon(moodle_help_icon::make("filetoimport", get_string("filetoimport", "glossary"), "glossary"));
         ?>
     </b></td>
     <td style="width:70%">
-    <?php 
+    <?php
        require_once($CFG->dirroot.'/lib/uploadlib.php');
        upload_print_form_fragment(1,array('file'),null,false,null,0,0);
     ?>
@@ -26,7 +26,7 @@
         <option value="new"><?php print_string("newglossary","glossary") ?></option>
         </select> <?php echo $OUTPUT->help_icon(moodle_help_icon::make("destination", get_string("destination", "glossary"), "glossary")) ?></td>
         <td style="width:25%" align="right"><?php print_string("importcategories","glossary") ?>:</td>
-        <td style="width:25%"><input type="checkbox" name="catsincl" value="1" alt="<?php print_string("importcategories","glossary") ?>" /> 
+        <td style="width:25%"><input type="checkbox" name="catsincl" value="1" alt="<?php print_string("importcategories","glossary") ?>" />
             <?php echo $OUTPUT->help_icon(moodle_help_icon::make("importcategories", get_string("importcategories", "glossary"), "glossary")) ?>
         </td>
       </tr>
@@ -48,4 +48,4 @@
 <input type="hidden" name="id" value="<?php p($id) ?>" />
 <input type="hidden" name="step" value="1" />
 </div>
-</form> 
+</form>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * prints the form to confirm delete a completed
 *
@@ -16,7 +16,7 @@ class mod_feedback_delete_completed_form extends moodleform {
 
         //headline
         //$mform->addElement('header', 'general', '');
-        
+
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -33,4 +33,4 @@ class mod_feedback_delete_completed_form extends moodleform {
 
     }
 }
-?>
+

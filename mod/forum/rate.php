@@ -107,4 +107,3 @@ if ($data = data_submitted()) {
     print_error('invalidaccess', 'forum');
 }
 
-?>

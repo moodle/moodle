@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->dirroot.'/mod/glossary/lib.php');
 

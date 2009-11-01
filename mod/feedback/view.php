@@ -205,4 +205,3 @@ echo "</p>";
 
 echo $OUTPUT->footer();
 
-?>

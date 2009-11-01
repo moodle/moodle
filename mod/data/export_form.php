@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden!');
@@ -72,4 +72,4 @@ class mod_data_export_form extends moodleform {
 
 }
 
-?>
+

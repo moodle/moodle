@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -38,7 +38,7 @@
     $row = array();
 
     $row[] = new tabobject('list', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id, get_string('list','data'));
-    
+
     if (isset($record)) {
         $row[] = new tabobject('single', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id, get_string('single','data'));
     } else {
@@ -55,7 +55,7 @@
         }
         if (has_capability(DATA_CAP_EXPORT, $context)) {
             // The capability required to Export database records is centrally defined in 'lib.php'
-            // and should be weaker than those required to edit Templates, Fields and Presets. 
+            // and should be weaker than those required to edit Templates, Fields and Presets.
             $row[] = new tabobject('export', $CFG->wwwroot.'/mod/data/export.php?d='.$data->id,
                          get_string('export', 'data'));
         }
@@ -105,4 +105,4 @@
 // Print out the tabs and continue!
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
-?>
+

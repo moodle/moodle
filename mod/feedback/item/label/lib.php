@@ -1,22 +1,22 @@
-<?PHP  // $Id$
+<?php
 defined('FEEDBACK_INCLUDE_TEST') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_label extends feedback_item_base {
     var $type = "label";
     function init() {
-    
+
     }
-    
+
     function show_edit($item) {
         global $CFG;
-        
+
         require_once('label_form.php');
-        
+
         $item_form = new feedback_label_form();
-        
+
         $item->presentation = isset($item->presentation) ? $item->presentation : '';
-        
+
         $item_form->area->setValue($item->presentation);
         return $item_form;
     }

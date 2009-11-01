@@ -17,7 +17,7 @@ require_once 'Spreadsheet/Excel/Writer.php';
 class EasyWorkbook extends Spreadsheet_Excel_Writer {
     function &addWorksheet($name = ''){
         global $CFG;
-        
+
         $index      = count($this->_worksheets);
         $sheetname = $this->_sheetname;
 
@@ -69,7 +69,7 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
     function set_workbook(&$workbook) {
         $this->m_workbook =& $workbook;
     }
-    
+
     function write($row, $col, $token)
     {
         parent::write($row, $col, $token, $this->m_format);
@@ -95,7 +95,7 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
         parent::writeUrl($row, $col, $url, $string, $this->m_format);
     }
 
-    /** 
+    /**
      *  Setz das aktuelle Format, dass zum Schreiben verwendet wird
      *  Der Formatstring setzt sich aus den folgenden Buchstaben mit folgender Bedeutung zusammen.
      *  <f> = Fett
@@ -130,7 +130,7 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
         if((count($this->m_formatbox) > 0) AND array_key_exists($signature, $this->m_formatbox)) {
             $this->m_format = $this->m_formatbox[$signature];
         }else {
-        
+
             $this->m_format = &$this->m_workbook->addFormat();
             if($textWrap)
             {
@@ -219,7 +219,7 @@ class EasyWorksheet extends Spreadsheet_Excel_Writer_Worksheet {
             }
 
             $this->m_format->setSize($size);
-            
+
             //save the format with its signature
             $this->m_formatbox[$signature] = $this->m_format;
         }
@@ -231,11 +231,11 @@ function feedback_convert_to_win($text) {
     static $textlib;
     static $newwincharset;
     static $oldcharset;
-    
+
     if(!isset($textlib)) {
         $textlib = textlib_get_instance();
     }
-    
+
     if(!isset($newwincharset)) {
         if(!isset($CFG->latinexcelexport) || !$CFG->latinexcelexport) {
             $newwincharset = 'UTF-16LE';
@@ -246,16 +246,16 @@ function feedback_convert_to_win($text) {
             }
         }
     }
-    
+
     if(!isset($oldcharset)) {
         $oldcharset = get_string('thischarset');
     }
-    
+
     //converting <br /> into newline
     $newtext = str_ireplace('<br />', "\n", $text);
     $newtext = str_ireplace('<br>', "\n", $newtext);
-    
+
     return $textlib->convert($newtext, $oldcharset, $newwincharset);
 }
 
-?>
+

@@ -536,7 +536,7 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
 
 /**
  * Delete grade item for given glossary
- * 
+ *
  * @global object
  * @param object $glossary object
  */
@@ -1356,7 +1356,7 @@ function glossary_pluginfile($course, $cminfo, $context, $filearea, $args, $forc
         }
 
         require_course_login($course, true, $cm);
-        
+
         if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
             return false;
         }
@@ -1550,7 +1550,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
      echo '</b></td>';
      echo '<td align="center" style="width:20%">';
-    
+
      $select = html_select::make_popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat", 'hook', $menu, "catmenu", $selected);
      $select->nothinglabel = false;
      echo $OUTPUT->select($select);
@@ -2206,7 +2206,7 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
  * @param int $entryid
  * @param array $scale
  */
-function glossary_print_ratings_mean($entryid, $scale) { 
+function glossary_print_ratings_mean($entryid, $scale) {
     global $OUTPUT;
     static $strrate;
 
@@ -2221,7 +2221,7 @@ function glossary_print_ratings_mean($entryid, $scale) {
         echo "$strratings: ";
         $link = html_link::make("/mod/glossary/report.php?id=$entryid", $mean);
         $link->add_action(new popup_action('click', $link->url, "ratings"));
-        echo $OUTPUT->link($link);                    
+        echo $OUTPUT->link($link);
     }
 }
 
@@ -2358,7 +2358,7 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
  * @param int $page page currently selected (0 based)
  * @param int $perpage number of records per page
  * @param string $baseurl url to link in each page, the string 'page=XX' will be added automatically.
- * 
+ *
  * @param int $maxpageallowed Optional maximum number of page allowed.
  * @param int $maxdisplay Optional maximum number of page links to show in the bar
  * @param string $separator Optional string to be used between pages in the bar

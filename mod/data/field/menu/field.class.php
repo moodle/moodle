@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -45,7 +45,7 @@ class data_field_menu extends data_field_base {
                 $options[$option] = $option;
             }
         }
-        
+
 
         $select = html_select::make($options, 'field_'.$this->field->id, $content, get_string('menuchoose', 'data'));
         $select->nothingvalue = '';
@@ -57,7 +57,7 @@ class data_field_menu extends data_field_base {
 
         return $str;
     }
-    
+
     function display_search_field($content = '') {
         global $CFG, $DB, $OUTPUT;
 
@@ -88,7 +88,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $content, '&nbsp;'));    
+        return $OUTPUT->select(html_select::make($options, 'f_'.$this->field->id, $content, '&nbsp;'));
     }
 
      function parse_search_field() {
@@ -99,9 +99,9 @@ class data_field_menu extends data_field_base {
         static $i=0;
         $i++;
         $name = "df_menu_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value)); 
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
     }
 
 }
 
-?>
+

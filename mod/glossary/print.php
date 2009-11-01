@@ -203,4 +203,3 @@ if ( $allentries ) {
 }
 
 echo $OUTPUT->footer();
-?>

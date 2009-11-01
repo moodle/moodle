@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //feedback mods
 
@@ -25,27 +25,27 @@
     //             message->text of each feedback_posting
     //
     //-----------------------------------------------------------
-     
+
     define('FEEDBACK_MULTICHOICERESTORE_TYPE_SEP', '>>>>>');
 
     function feedback_restore_mods($mod,$restore) {
         global $CFG, $DB;
-        
+
         // $allValues = array();
         // $allTrackings = array();
 
         $status = true;
         $restore_userdata = restore_userdata_selected($restore,'feedback',$mod->id);
-        
+
         //Get record from backup_ids
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
         if ($data) {
-            //Now get completed xmlized object    
+            //Now get completed xmlized object
             $info = $data->info;
-            
+
             //check of older backupversion of feedback
             $version = intval(backup_todb($info['MOD']['#']['VERSION']['0']['#']));
-            
+
             //Now, build the feedback record structure
             $feedback->course = $restore->course_id;
             $feedback->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
@@ -63,7 +63,7 @@
 
             //The structure is equal to the db, so insert the feedback
             $newid = $DB->insert_record ("feedback",$feedback);
-            
+
             //create events
             // the open-event
             if($feedback->timeopen > 0) {
@@ -83,10 +83,10 @@
                 } else {
                   $event->timeduration = 0;
                 }
-            
+
                 add_event($event);
             }
-        
+
             // the close-event
             if($feedback->timeclose > 0) {
                 $event = NULL;
@@ -101,11 +101,11 @@
                 $event->timestart    = $feedback->timeclose;
                 $event->visible      = instance_is_visible('feedback', $feedback);
                 $event->timeduration = 0;
-            
+
                 add_event($event);
              }
 
-            //Do some output      
+            //Do some output
             echo "<ul><li>".get_string("modulename","feedback")." \"".$feedback->name."\"<br />";
             backup_flush(300);
 
@@ -221,14 +221,14 @@
                                     $tracking->userid = $user->new_id;
                                 }
                             }
-                            
+
                             //save the tracking
                             $newtrackingid = $DB->insert_record('feedback_tracking', $tracking);
                             $tracking->id = $newtrackingid;
                             // $allTrackings[] = $tracking;
                         }
                     }
-                    
+
                     //restore completeds
                     if(isset($info['MOD']['#']['COMPLETEDS']['0']['#']['COMPLETED'])) {
                         $completeds = $info['MOD']['#']['COMPLETEDS']['0']['#']['COMPLETED'];
@@ -252,10 +252,10 @@
                             }
                             //later this have to be changed
                             $oldcompletedid = backup_todb($completed_info['#']['ID']['0']['#']);
-                            
+
                             //save the completed
                             $newcompletedid = $DB->insert_record('feedback_completed', $completed);
-                            
+
                             //the newcompletedid have to be changed at every values
                             $tochangevals = $DB->get_records('feedback_value', array('tmp_completed'=>$oldcompletedid));
                             if($tochangevals) {
@@ -265,7 +265,7 @@
                                     $DB->update_record('feedback_value', $tmpVal);
                                 }
                             }
-                        
+
                             //the newcompletedid have to be changed at every tracking
                             $tochangetracks = $DB->get_records('feedback_tracking', array('completed'=>$oldcompletedid));
                             if($tochangetracks) {
@@ -278,16 +278,16 @@
                         }
                     }
                 }
-                
+
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype, $mod->id, $newid);
             } else {
                 $status = false;
             }
 
-            //Finalize ul          
+            //Finalize ul
             echo "</ul>";
-      
+
         } else {
             $status = false;
         }
@@ -300,7 +300,7 @@
     function feedback_restore_logs($restore,$log) {
 
         $status = false;
-        
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -392,4 +392,4 @@
         return $status;
     }
 
-?>
+

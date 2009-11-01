@@ -123,4 +123,3 @@ if(is_array($templateitems)){
 
 echo $OUTPUT->footer();
 
-?>

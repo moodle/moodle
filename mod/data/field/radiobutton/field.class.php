@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -61,7 +61,7 @@ class data_field_radiobutton extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-    
+
      function display_search_field($value = '') {
         global $CFG, $DB, $OUTPUT;
         $temp = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
@@ -78,13 +78,13 @@ class data_field_radiobutton extends data_field_base {
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     function generate_sql($tablealias, $value) {
         static $i=0;
         $i++;
         $name = "df_number_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value)); 
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
     }
 
 }
-?>
+

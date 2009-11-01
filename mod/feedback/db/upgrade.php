@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the feedback module
@@ -280,4 +280,4 @@ function xmldb_feedback_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

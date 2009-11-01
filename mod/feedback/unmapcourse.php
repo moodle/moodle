@@ -49,4 +49,3 @@ if ($DB->delete_records('feedback_sitecourse_map', array('id'=>$cmapid))) {
     print_error('cannotunmap', 'feedback');
 }
 
-?>

@@ -230,7 +230,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $PAGE->set_title(format_string($glossary->name));
     $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'glossary'));
     echo $OUTPUT->header();
-    
+
 /// print original glossary entry for any comment action (add, update, delete)
     glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
 }

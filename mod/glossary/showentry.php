@@ -83,4 +83,3 @@ echo $OUTPUT->close_window_button();
 /// Show one reduced footer
 echo $OUTPUT->footer();
 
-?>

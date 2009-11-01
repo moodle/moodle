@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //glossary mods
 
@@ -935,4 +935,4 @@
         }
         return $status;
     }
-?>
+

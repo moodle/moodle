@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * deletes an item of the feedback
 *
@@ -79,4 +79,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

@@ -88,4 +88,3 @@ if ($mark == 'read') {
 
 redirect($returnto);
 
-?>

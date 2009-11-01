@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //choice mods
 
@@ -246,4 +246,4 @@
                                  FROM {choice_answers} s
                                  WHERE s.choiceid = ?", array($instanceid));
     }
-?>
+

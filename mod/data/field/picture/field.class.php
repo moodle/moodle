@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -249,4 +249,4 @@ class data_field_picture extends data_field_base {
     }
 }
 
-?>
+

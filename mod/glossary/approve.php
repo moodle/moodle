@@ -48,4 +48,3 @@ add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&a
 redirect("view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook",get_string("entryapproved","glossary"),1);
 die;
 
-?>

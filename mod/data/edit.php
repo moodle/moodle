@@ -369,4 +369,3 @@ foreach ($fields as $eachfield) {
 }
 
 echo $OUTPUT->footer();
-?>

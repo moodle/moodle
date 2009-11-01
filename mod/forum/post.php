@@ -817,4 +817,3 @@ $mform_post->display();
 
 echo $OUTPUT->footer();
 
-?>

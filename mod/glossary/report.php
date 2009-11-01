@@ -91,4 +91,3 @@ if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
 echo $OUTPUT->close_window_button();
 echo $OUTPUT->footer();
 
-?>
