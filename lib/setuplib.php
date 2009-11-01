@@ -166,7 +166,7 @@ class invalid_state_exception extends moodle_exception {
  * @return void -does not return. Terminates execution!
  */
 function default_exception_handler($ex) {
-    global $CFG, $DB, $OUTPUT, $SCRIPT;
+    global $DB, $OUTPUT;
 
     if ($DB) {
         // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
@@ -174,21 +174,13 @@ function default_exception_handler($ex) {
     }
 
     // detect active db transactions, rollback and log as error
-    if ($DB && $DB->is_transaction_started()) {
-        error_log('Database transaction aborted by exception in ' . $CFG->dirroot . $SCRIPT);
-        try {
-            // note: transaction blocks should never change current $_SESSION
-            $DB->rollback_sql();
-        } catch (Exception $ignored) {
-            // default exception handler MUST not throw any exceptions!!
-        }
-    }
+    abort_all_db_transactions();
 
     $info = get_exception_info($ex);
 
     if (debugging('', DEBUG_MINIMAL)) {
         $logerrmsg = "Default exception handler: ".$info->message.' Debug: '.$info->debuginfo."\n".format_backtrace($info->backtrace, true);
-        error_log($logerrmsg, 0);
+        error_log($logerrmsg);
     }
 
     if (is_early_init($info->backtrace)) {
@@ -207,6 +199,25 @@ function default_exception_handler($ex) {
     }
 
     exit(1); // General error code
+}
+
+/**
+ * Unconditionally abort all database transactions, this function
+ * should be called from exception handlers only.
+ * @return void
+ */
+function abort_all_db_transactions() {
+    global $CFG, $DB, $SCRIPT;
+
+    if ($DB && $DB->is_transaction_started()) {
+        error_log('Database transaction aborted automatically in ' . $CFG->dirroot . $SCRIPT);
+        try {
+            // note: transaction blocks should never change current $_SESSION
+            $DB->rollback_sql();
+        } catch (Exception $ignored) {
+            // default exception handler MUST not throw any exceptions!!
+        }
+    }
 }
 
 /**
