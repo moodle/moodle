@@ -2,7 +2,6 @@
 /**
  *  Action for adding a branch table.  Prints an HTML form.
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

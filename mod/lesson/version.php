@@ -3,7 +3,6 @@
  * Code fragment to define the version of lesson
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

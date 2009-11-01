@@ -2,7 +2,6 @@
 /**
  * jjg7:8/9/2004
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

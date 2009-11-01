@@ -2,7 +2,6 @@
 /**
  * Action that displays an interface for moving a page
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

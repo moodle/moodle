@@ -2,7 +2,6 @@
 /**
  * Provides the interface for grading essay questions
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

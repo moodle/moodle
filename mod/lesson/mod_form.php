@@ -3,7 +3,6 @@
  * Form to define a new instance of lesson or edit an instance.
  * It is used from /course/modedit.php.
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

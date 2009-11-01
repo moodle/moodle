@@ -2,7 +2,6 @@
 /**
  * Action for processing the form in editpage action and saves the page
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/

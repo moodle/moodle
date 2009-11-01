@@ -2,7 +2,6 @@
 /**
  * This page prints a particular instance of lesson
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
