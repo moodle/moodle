@@ -5,7 +5,6 @@
  *
  * Helps an admin to clean up spam in Moodle
  *
- * @version $Id$
  * @authors Dongsheng Cai, Martin Dougiamas, Amr Hourani
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
