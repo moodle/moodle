@@ -300,7 +300,7 @@ function slasharguments($texexp, $md5) {
           </form> <br /> <br />
        <center>
           <iframe name="inlineframe" align="middle" width="80%" height="200">
-          &lt;p&gt;Something is wrong...&lt;/p&gt; 
+          &lt;p&gt;Something is wrong...&lt;/p&gt;
           </iframe>
        </center> <br />
 <hr />
@@ -340,7 +340,7 @@ C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
 http://www.forkosh.com/mimetex.zip</a>, or looking for an appropriate
 binary at <a href="http://moodle.org/download/mimetex/">
 http://moodle.org/download/mimetex/</a>. You may then also need to
-edit your moodle/filter/algebra/pix.php file to add 
+edit your moodle/filter/algebra/pix.php file to add
 <br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
 in the switch (PHP_OS) statement. Windows users may have a problem properly
 unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>

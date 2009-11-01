@@ -6,7 +6,6 @@ require_once($CFG->libdir.'/boxlib.php');
  * This is a subclass of repository class
  *
  * @author Dongsheng Cai
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class repository_boxnet extends repository {
@@ -32,7 +31,7 @@ class repository_boxnet extends repository {
         if(!empty($options['username']) && !empty($options['password']) && !empty($options['ticket']) ) {
             $this->box = new boxclient($this->api_key);
             try {
-                $SESSION->$sess_name = $this->box->getAuthToken($options['ticket'], 
+                $SESSION->$sess_name = $this->box->getAuthToken($options['ticket'],
                     $options['username'], $options['password']);
             } catch (repository_exception $e) {
                 throw $e;
@@ -149,7 +148,7 @@ class repository_boxnet extends repository {
             $fileicon  = $tree['thumbnail'];
             foreach ($filenames as $n=>$v){
                 if(strstr(strtolower($v), strtolower($search_text)) !== false) {
-                    $list[] = array('title'=>$v, 
+                    $list[] = array('title'=>$v,
                             'size'=>$filesizes[$n],
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
@@ -199,7 +198,7 @@ class repository_boxnet extends repository {
             $user_field->type  = 'text';
             $user_field->name  = 'boxusername';
             $user_field->value = $ret->username;
-            
+
             $passwd_field->label = get_string('password', 'repository_boxnet').': ';
             $passwd_field->id    = 'box_password';
             $passwd_field->type  = 'password';
@@ -244,4 +243,4 @@ class repository_boxnet extends repository {
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
     }
 }
-?>
+

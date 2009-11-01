@@ -1,6 +1,6 @@
-<?PHP // $Id$
-      // This class looks for email addresses in Moodle text and 
-      // hides them using the Moodle obfuscate_text function. 
+<?php
+      // This class looks for email addresses in Moodle text and
+      // hides them using the Moodle obfuscate_text function.
       // Original code by Mike Churchward
 
 class emailprotect_filter extends moodle_text_filter {
@@ -36,4 +36,4 @@ function alter_mailto($matches) {
     return obfuscate_mailto($matches[2], $matches[4]);
 }
 
-?>
+

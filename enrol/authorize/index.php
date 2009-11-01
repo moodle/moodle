@@ -50,4 +50,4 @@
     else {
         authorize_print_order($orderid);
     }
-?>
+

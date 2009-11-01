@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /// The Web service script that is called from the filepicker front end
 

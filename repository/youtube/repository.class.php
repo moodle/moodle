@@ -3,7 +3,6 @@
  * repository_youtube class
  *
  * @author Dongsheng Cai <dongsheng@moodle.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -52,7 +51,7 @@ class repository_youtube extends repository {
                 'date'=>'',
                 'source'=>$source
             );
-        } 
+        }
         return $list;
     }
 

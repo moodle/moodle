@@ -75,13 +75,13 @@ foreach($roles as $role) {
 
 // autocreate
 if (!isset($frm->enrol_ldap_autocreate)) {
-    $frm->enrol_ldap_autocreate = false;   
+    $frm->enrol_ldap_autocreate = false;
 }
 if (!isset($frm->enrol_ldap_category)) {
-    $frm->enrol_ldap_category = 1;   
+    $frm->enrol_ldap_category = 1;
 }
 if (!isset($frm->enrol_ldap_template)) {
-    $frm->enrol_ldap_template = '';   
+    $frm->enrol_ldap_template = '';
 }
 
 ?>
@@ -109,7 +109,7 @@ if (!isset($frm->enrol_ldap_template)) {
        $versions[2] = "2";
        $versions[3] = "3";
        echo $OUTPUT->select(html_select::make($versions, "enrol_ldap_version", $frm->enrol_ldap_version, false));
-        if (isset($err["enrol_ldap_version"])) echo $OUTPUT->error_text($err["enrol_ldap_version"]); 
+        if (isset($err["enrol_ldap_version"])) echo $OUTPUT->error_text($err["enrol_ldap_version"]);
     ?>
     </td>
     <td>
@@ -219,9 +219,9 @@ if (!isset($frm->enrol_ldap_template)) {
             </tr>
 <?php foreach ($roles as $role) { ?>
             <tr>
-                <td><?php echo htmlspecialchars($role->name, ENT_COMPAT, 'UTF-8'); ?></td> 
-                <td><input type="text" size="30" name="enrol_ldap_contexts_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_contexts_role'.$role->id}); ?>" /></td> 
-                <td><input type="text" size="30" name="enrol_ldap_memberattribute_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_memberattribute_role'.$role->id}); ?>" /></td> 
+                <td><?php echo htmlspecialchars($role->name, ENT_COMPAT, 'UTF-8'); ?></td>
+                <td><input type="text" size="30" name="enrol_ldap_contexts_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_contexts_role'.$role->id}); ?>" /></td>
+                <td><input type="text" size="30" name="enrol_ldap_memberattribute_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_memberattribute_role'.$role->id}); ?>" /></td>
             </tr>
 <?php } ?>
         </table>
@@ -262,7 +262,7 @@ if (!isset($frm->enrol_ldap_template)) {
             <?php  print_string("no")  ?></option>
         <option value="1" <?php echo ($frm->enrol_ldap_course_idnumber_editlock ? 'selected="selected"' : '') ?> >
             <?php  print_string("yes") ?></option>
-    </select></div>  
+    </select></div>
     </td><td>
     <?php  print_string("enrol_ldap_course_idnumber","enrol_ldap") ?>
     </td>
@@ -320,7 +320,7 @@ if (!isset($frm->enrol_ldap_template)) {
 <tr>
         <td align="right">enrol_ldap_course_summary:</td>
         <td>
-    <input name="enrol_ldap_course_summary" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_summary?>"/>    
+    <input name="enrol_ldap_course_summary" type="text" size="30" value="<?php echo $frm->enrol_ldap_course_summary?>"/>
     <?php  if (isset($err["enrol_ldap_course_summary"])) echo $OUTPUT->error_text($err["enrol_ldap_course_summary"]); ?>
     <div style="text-align:right;margin-left:auto;margin-right:0">
     <?php  print_string("enrol_ldap_updatelocal", "enrol_ldap") ?>
@@ -352,7 +352,7 @@ if (!isset($frm->enrol_ldap_template)) {
     <td>
     <?php
        echo $OUTPUT->select(html_select::make(array('0'=>'no','1'=>'yes'), "enrol_ldap_autocreate", $frm->enrol_ldap_autocreate, false));
-           if (isset($err["enrol_ldap_autocreate"])) echo $OUTPUT->error_text($err["enrol_ldap_autocreate"]); 
+           if (isset($err["enrol_ldap_autocreate"])) echo $OUTPUT->error_text($err["enrol_ldap_autocreate"]);
     ?>
     </td>
     <td>
@@ -367,7 +367,7 @@ if (!isset($frm->enrol_ldap_template)) {
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
            echo $OUTPUT->select(html_select::make($displaylist, "enrol_ldap_category", $frm->enrol_ldap_category, false));
-           
+
     ?>
     <?php  if (isset($err["enrol_ldap_category"])) echo $OUTPUT->error_text($err["enrol_ldap_category"]); ?>
     </td><td>

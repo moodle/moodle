@@ -22,17 +22,17 @@
 .ygtvlph { background: url(../pix/y/lph.gif) 0 0 no-repeat; width:34px; height:22px; cursor:pointer }
 /* Loading icon */
 .ygtvloading { background: url(../pix/y/loading.gif) 0 0 no-repeat; width:16px; height:22px; }
-/* the style for the empty cells that are used for rendering the depth 
+/* the style for the empty cells that are used for rendering the depth
  * of the node */
 .ygtvdepthcell { background: url(../pix/y/vline.gif) 0 0 no-repeat; width:17px; height:22px; }
 .ygtvblankdepthcell { width:17px; height:22px; }
 /* the style of the div around each node */
-.ygtvitem { }  
+.ygtvitem { }
 .ygtvitem  table{ margin-bottom:0; }
-.ygtvitem  td { border:none;padding:0; } 
+.ygtvitem  td { border:none;padding:0; }
 /* the style of the div around each node's collection of children */
-.ygtvchildren { }  
-* html .ygtvchildren { height:1%; }  
+.ygtvchildren { }
+* html .ygtvchildren { height:1%; }
 /* the style of the text label in ygTextNode */
 .ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover { margin-left:2px; text-decoration: none; }
 

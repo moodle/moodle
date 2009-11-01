@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 
@@ -276,7 +276,7 @@ function sync_enrolments($role = null) {
             continue;
         }
 
-        // slurp results into an array       
+        // slurp results into an array
         while ($crs_obj = (object)$crs->FetchRow()) {
             $crs_obj = (object)array_change_key_case((array)$crs_obj , CASE_LOWER);
             array_push($extenrolments, $crs_obj->{strtolower($CFG->enrol_remoteuserfield)});
@@ -675,4 +675,4 @@ function role_fields($enroldb, $role) {
 
 } // end of class
 
-?>
+

@@ -8,12 +8,12 @@ TO DO:
 
 - Support for enrolling using multiple files? At present only one filename
      is supported. Some systems may wish/need to do multiple. This may be tricky
-     since multiple filepaths may be too long for a single moodle config 
+     since multiple filepaths may be too long for a single moodle config
      variable (255 chars max)
 
 - Process group's "relationship"?
 
-- Activate <photo> handling, dependent upon acceptance of 
+- Activate <photo> handling, dependent upon acceptance of
      modification to Moodle's gdlib.php
 
 
@@ -22,7 +22,7 @@ DONE:
 
 v0.6:
 
-- Reduce processing from two passes to one pass (dependent on <membership> tags 
+- Reduce processing from two passes to one pass (dependent on <membership> tags
      coming after any person/group tags to which they refer)
 
 - The log data should NOT contain any personal information! NO STUDENT NAMES

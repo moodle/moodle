@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
@@ -902,4 +902,4 @@ class enrolment_plugin_authorize
         $rs->close();
     }
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->dirroot.'/filter/tex/lib.php');
 
@@ -42,4 +42,4 @@ foreach ($items as $item) {
     $item->set_updatedcallback('filter_tex_updatedcallback');
     $settings->add($item);
 }
-?>
+

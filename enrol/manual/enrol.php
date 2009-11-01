@@ -1,4 +1,4 @@
-<?php   /// $Id$
+<?php
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -329,7 +329,7 @@ function cron() {
                             $eventdata->fullmessage       = $strexpirynotifystudentsemail;
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
-                            $eventdata->smallmessage      = '';			    
+                            $eventdata->smallmessage      = '';			
                             events_trigger('message_send', $eventdata);
                         }
                     }
@@ -354,7 +354,7 @@ function cron() {
                         $eventdata->fullmessage       = $strexpirynotifyemail;
                         $eventdata->fullmessageformat = FORMAT_PLAIN;
                         $eventdata->fullmessagehtml   = '';
-                        $eventdata->smallmessage      = '';			    
+                        $eventdata->smallmessage      = '';			
                         events_trigger('message_send', $eventdata);
                     }
                 }
@@ -455,4 +455,4 @@ function print_enrolmentkeyfrom($course) {
 
 } /// end of class
 
-?>
+

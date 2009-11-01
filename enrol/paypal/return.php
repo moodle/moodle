@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require("../../config.php");
     require_once("$CFG->dirroot/enrol/paypal/enrol.php");
@@ -24,7 +24,7 @@
     } else {
         $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
     }
-    
+
     if (has_capability('moodle/course:view', $context)) {
         redirect($destination, get_string('paymentthanks', '', $course->fullname));
 
@@ -34,4 +34,4 @@
         notice(get_string('paymentsorry', '', get_string('defaultcourseteacher')), $destination);
     }
 
-?>
+

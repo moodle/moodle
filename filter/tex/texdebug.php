@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // This function fetches math. images from the data directory
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
       // and uses mimeTeX to create the image file
@@ -301,7 +301,7 @@
           </form> <br /> <br />
        <center>
           <iframe name="inlineframe" align="middle" width="80%" height="200">
-          &lt;p&gt;Something is wrong...&lt;/p&gt; 
+          &lt;p&gt;Something is wrong...&lt;/p&gt;
           </iframe>
        </center> <br />
 <hr />
@@ -316,7 +316,7 @@ tag.  The filter/tex/pix.php script then searches the database to find an
 appropriate gif image file for that expression and to create one if it doesn't exist.
 It will then use either the LaTex/Ghostscript renderer (using external executables
 on your system) or the bundled Mimetex executable. The full Latex/Ghostscript
-renderer produces better results and is tried first. 
+renderer produces better results and is tried first.
 Here are a few common things that can go wrong and some suggestions on how
 you might try to fix them.</p>
 <ol>
@@ -324,27 +324,27 @@ you might try to fix them.</p>
 process this expression. Then the database entry for that expression contains
 a bad TeX expression in the rawtext field (usually blank). You can fix this
 by clicking on &quot;Delete DB Entry&quot;</li>
-<li>The TeX to gif image conversion process does not work. 
+<li>The TeX to gif image conversion process does not work.
 If paths are specified in the filter configuation screen for the three
 executables these will be tried first. Note that they still must be correctly
-installed and have the correct permissions. In particular make sure that you 
+installed and have the correct permissions. In particular make sure that you
 have all the packages installed (e.g., on Debian/Ubuntu you need to install
 the 'tetex-extra' package). Running the 'show command execution' test should
 give a big clue.
-If this fails or is not available, the Mimetex executable is tried. If this 
+If this fails or is not available, the Mimetex executable is tried. If this
 fails a likely cause is that the mimetex binary you are using is
 incompatible with your operating system. You can try compiling it from the
 C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
 http://www.forkosh.com/mimetex.zip</a>, or looking for an appropriate
 binary at <a href="http://moodle.org/download/mimetex/">
 http://moodle.org/download/mimetex/</a>. You may then also need to
-edit your moodle/filter/tex/pix.php file to add 
+edit your moodle/filter/tex/pix.php file to add
 <br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
 in the switch (PHP_OS) statement. Windows users may have a problem properly
 unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
 433152 bytes in size. If not, download a fresh copy from
 <a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
-http://moodle.org/download/mimetex/windows/mimetex.exe</a>. 
+http://moodle.org/download/mimetex/windows/mimetex.exe</a>.
 Another possible problem which may affect
 both Unix and Windows servers is that the web server doesn't have execute permission
 on the mimetex binary. In that case change permissions accordingly</li>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once("$CFG->libdir/simpletest/testportfoliolib.php");
 require_once("$CFG->dirroot/portfolio/type/boxnet/lib.php");
 require_once("$CFG->dirroot/$CFG->admin/generator.php");
@@ -56,4 +56,4 @@ class testPortfolioPluginBoxnet extends portfoliolib_test {
         $this->assertTrue($this->plugin->send_package());
     }
 }
-?>
+

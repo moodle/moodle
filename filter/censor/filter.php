@@ -1,22 +1,22 @@
-<?php // $id$
+<?php
 //////////////////////////////////////////////////////////////
 //  Censorship filtering
-// 
+//
 //  This very simple example of a Text Filter will parse
 //  printed text, blacking out words perceived to be bad
-//  
+//
 //  The list of words is in the lang/xx/moodle.php
 //
 //////////////////////////////////////////////////////////////
 
-/// This is the filtering class. It accepts the courseid and 
+/// This is the filtering class. It accepts the courseid and
 /// options to be filtered (In HTML form).
 class censor_filter extends moodle_text_filter {
     private function _canseecensor() {
         $cansee = false;
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         if (has_capability('moodle/site:doanything', $context)) {
-            $cansee = true; 
+            $cansee = true;
         }
         return $cansee;
     }
@@ -59,4 +59,4 @@ class censor_filter extends moodle_text_filter {
     }
 }
 
-?>
+

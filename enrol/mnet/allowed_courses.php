@@ -124,7 +124,7 @@ if ($courses = $DB->get_records('course', null, 'shortname', 'id, shortname')) {
 echo $OUTPUT->box_start();
 
 ?>
- <div class="allowedcoursesdiv"> 
+ <div class="allowedcoursesdiv">
   <form id="allowedcoursesform" method="post">
     <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
 <?php

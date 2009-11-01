@@ -66,7 +66,7 @@ class enrolment_plugin_mnet {
      ***
      ***/
     function mnet_publishes() {
-        
+
         $enrol = array();
         $enrol['name']        = 'mnet_enrol'; // Name & Description go in lang file
         $enrol['apiversion']  = 1;
@@ -102,7 +102,7 @@ class enrolment_plugin_mnet {
                 co.cost,
                 co.currency,
                 co.defaultrole AS defaultroleid,
-                r.name         AS defaultrolename 
+                r.name         AS defaultrolename
             FROM
                 {course_categories} ca
             JOIN
@@ -225,7 +225,7 @@ class enrolment_plugin_mnet {
     }
 
     /**
-     * 
+     *
      */
     function user_enrolments($userid) {
         return array();
@@ -236,7 +236,7 @@ class enrolment_plugin_mnet {
      *
      * @param   int     $courseid   The Course ID
      * @param   string  $roles      Comma-separated list of role shortnames
-     * @return  array               Array of usernames who are homed on the 
+     * @return  array               Array of usernames who are homed on the
      *                              client machine
      */
     function course_enrolments($courseid, $roles = '') {
@@ -272,15 +272,15 @@ class enrolment_plugin_mnet {
             // $default_role = get_default_course_role($course); ???
             $sql .= " AND
                     a.roleid in ('".str_replace(',',  "', '",  $roles)."')";
-        } 
+        }
 
         $enrolments = $DB->get_records_sql($sql);
 
         $returnarray = array();
         foreach($enrolments as $user) {
-            $returnarray[$user->username] = array('enrol' => $user->enrol, 
-                                                  'timemodified' => $user->timemodified, 
-                                                  'shortname' => $user->shortname, 
+            $returnarray[$user->username] = array('enrol' => $user->enrol,
+                                                  'timemodified' => $user->timemodified,
+                                                  'shortname' => $user->shortname,
                                                   'username' => $user->username,
                                                   'name' => $user->name);
         }
@@ -385,10 +385,10 @@ class enrolment_plugin_mnet {
         global $CFG, $DB;
 
         $sql = "
-            SELECT DISTINCT 
-                h.id, 
+            SELECT DISTINCT
+                h.id,
                 h.name
-            FROM 
+            FROM
                 {mnet_host} h,
                 {mnet_host2service} h2s,
                 {mnet_service} s
@@ -443,7 +443,7 @@ class enrolment_plugin_mnet {
                 $course = &$courses[$n];
 
                 // add/update cached data in mnet_enrol_courses
-                // sanitise data 
+                // sanitise data
                 $course = (object)$course;
                 $course->remoteid        = (int)$course->remoteid;
                 $course->hostid          = $mnethostid;
@@ -592,4 +592,4 @@ class enrolment_plugin_mnet {
 
 } // end of class
 
-?>
+

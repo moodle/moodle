@@ -3,7 +3,6 @@
  * repository_upload class
  * A subclass of repository, which is used to upload file
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -72,4 +71,4 @@ class repository_upload extends repository {
         return get_string('repositoryname', 'repository_upload');
     }
 }
-?>
+

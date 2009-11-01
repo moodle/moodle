@@ -1,4 +1,4 @@
-<?php //  $Id$
+<?php
 
 if (!isset($frm->enrol_cost)) $frm->enrol_cost = '5';
 if (!isset($frm->enrol_currency)) $frm->enrol_currency = 'USD';
@@ -64,7 +64,7 @@ if (!isset($frm->acceptechecktypes)) {
 
 <tr valign="top">
     <td align="right">enrol_currency:</td>
-    <td><?php 
+    <td><?php
         $select = html_select::make(get_list_of_currencies(), "enrol_currency", $frm->enrol_currency, false);
         $select->nothingvalue = '';
         echo $OUTPUT->select($select);

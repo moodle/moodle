@@ -8,7 +8,7 @@ class repository_wikimedia extends repository {
     }
     public function get_listing($path = '', $page = '') {
         global $OUTPUT;
-        $client = new wikimedia; 
+        $client = new wikimedia;
         $result = $client->search_images($this->keyword);
         $list = array();
         $list['list'] = array();
@@ -24,7 +24,7 @@ class repository_wikimedia extends repository {
         }
         return $list;
     }
-    // login 
+    // login
     public function check_login() {
         return !empty($this->keyword);
     }
@@ -52,7 +52,7 @@ class repository_wikimedia extends repository {
         $search_result['list'] = array();
         return $search_result;
     }
-    // when logout button on file picker is clicked, this function will be 
+    // when logout button on file picker is clicked, this function will be
     // called.
     public function logout() {
         return true;

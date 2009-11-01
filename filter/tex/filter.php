@@ -68,10 +68,10 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         $tex = str_replace('"','&quot;',$tex);
         $tex = str_replace("\'",'&#39;',$tex);
         // Note that we retain the title tag as TeX format rather than using
-        // the alt text, even if supplied. The alt text is intended for blind 
-        // users (to provide a text equivalent to the equation) while the title 
-        // is there as a convenience for sighted users who want to see the TeX 
-        // code. 
+        // the alt text, even if supplied. The alt text is intended for blind
+        // users (to provide a text equivalent to the equation) while the title
+        // is there as a convenience for sighted users who want to see the TeX
+        // code.
         $title = "title=\"$tex\"";
     }
 
@@ -172,4 +172,4 @@ class tex_filter extends moodle_text_filter {
     }
 }
 
-?>
+

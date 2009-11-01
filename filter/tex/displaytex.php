@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // This script displays tex source code.
 
     require_once('../../config.php');

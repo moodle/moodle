@@ -3,13 +3,13 @@
 <tr valign="top">
     <td align="right">enrol_manual_keyholderrole:</td>
     <td>
-    <?php 
+    <?php
         $roles = get_all_roles();
         $rolenames = array();
         foreach ($roles as $id=>$role) {
             $rolenames[$id]=$role->name;
         }
-        echo $OUTPUT->select(html_select::make($rolenames, 'enrol_manual_keyholderrole', $frm->enrol_manual_keyholderrole)); 
+        echo $OUTPUT->select(html_select::make($rolenames, 'enrol_manual_keyholderrole', $frm->enrol_manual_keyholderrole));
     ?>
     </td>
     <td>

@@ -3,7 +3,6 @@
  * repository_url class
  * A subclass of repository, which is used to download a file from a specific url
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -139,4 +138,4 @@ EOD;
         return get_string('repositoryname', 'repository_url');;
     }
 }
-?>
+

@@ -4,7 +4,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 /**
- * repository_client is a javascript class, it contains several static 
+ * repository_client is a javascript class, it contains several static
  * methods you can call it directly without creating an instance.
  * If you are going to create a file picker, you need create an instance
  * repo = new repository_client();
@@ -173,7 +173,7 @@ var repository_client = (function(){
             var container = new YAHOO.util.Element('repo-list-'+this.client_id);
             container.set('innerHTML', '');
             container.on('contentReady', function() {
-                this.init_search();    
+                this.init_search();
                 for(var i in repository_listing[this.client_id]) {
                     var repo = repository_listing[this.client_id][i];
                     var support = false;
@@ -265,7 +265,7 @@ repository_client.req = function(client_id, id, path, page) {
 
 repository_client.req_cb = {
     success: function(o){
-         var data = repository_client.parse_json(o.responseText, 'req_cb');    
+         var data = repository_client.parse_json(o.responseText, 'req_cb');
          var repo = repository_client.fp[data.client_id];
          repo.viewbar.set('disabled', false);
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
@@ -370,7 +370,7 @@ repository_client.print_login = function(id, data) {
                 str += '<td align="left">';
                 for(var item in list) {
                     str +='<input type="'+login[k].type+'"'+' name="'+login[k].name+'"'+
-                        field_id+' value="'+list[item]+'" />'+labels[item]+'<br />'; 
+                        field_id+' value="'+list[item]+'" />'+labels[item]+'<br />';
                 }
                 str += '</td>';
             }else{
@@ -494,7 +494,7 @@ repository_client.view_as_list = function(client_id, data) {
         // from viewfiles
         list = repository_client.fp[client_id].fs.list;
     }else{
-        // from callback 
+        // from callback
         list = data;
     }
     var panel = new YAHOO.util.Element('panel-'+client_id);
@@ -507,7 +507,7 @@ repository_client.view_as_list = function(client_id, data) {
     tree.dynload = function (node, fnLoadComplete) {
         var callback = {
             success: function(o) {
-                 var json = repository_client.parse_json(o.responseText, 'dynload');    
+                 var json = repository_client.parse_json(o.responseText, 'dynload');
                  for(k in json.list) {
                      repository_client.buildtree(json.client_id, json.list[k], node);
                  }
@@ -590,7 +590,7 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     if (repository_client.files[client_id] == undefined) {
         repository_client.files[client_id] = 0;
     }
-    if (repository_client.files[client_id] >= repository_client.fp[client_id].maxfiles && 
+    if (repository_client.files[client_id] >= repository_client.fp[client_id].maxfiles &&
             repository_client.fp[client_id].maxfiles != -1)
     {
         alert('Only '+repository_client.fp[client_id].maxfiles+' files are allowed!');
@@ -800,7 +800,7 @@ repository_client.view_as_icons = function(client_id, data) {
             delbtn.innerHTML = "[X]";
             delbtn.id = 'del-id-'+String(count);
             el.appendChild(delbtn);
-            delbtn.itemid=fp.itemid; 
+            delbtn.itemid=fp.itemid;
             delbtn.client_id=client_id;
             delbtn.title=list[k].title;
             delbtn.repo_id=fp.fs.repo_id;
@@ -852,7 +852,7 @@ repository_client.view_as_icons = function(client_id, data) {
                 this.on('click', function(){
                     this.folder.fireEvent('click');
                 });
-            });    
+            });
             el_title.folder = folder;
         } else {
             var el_title = new YAHOO.util.Element(title.id);
@@ -866,7 +866,7 @@ repository_client.view_as_icons = function(client_id, data) {
                 el_title.repo_id = file.repo_id = list[k].repo_id;
             }else{
                 el_title.repo_id = file.repo_id = '';
-            }     
+            }
             file.on('contentReady', function() {
                 this.on('click', function() {
                     repository_client.select_file(this.filename, this.value, this.icon, client_id, this.repo_id);
@@ -1015,7 +1015,7 @@ repository_client.download = function(client_id, repo_id) {
 }
 repository_client.download_cb = {
     success: function(o) {
-         var data = repository_client.parse_json(o.responseText, 'download_cb');    
+         var data = repository_client.parse_json(o.responseText, 'download_cb');
          var panel = new YAHOO.util.Element('panel-'+data.client_id);
          if(data && data.e) {
              panel.get('element').innerHTML = data.e;
@@ -1109,7 +1109,7 @@ repository_client.upload = function(client_id) {
 }
 repository_client.upload_cb = {
 upload: function(o) {
-        var ret = repository_client.parse_json(o.responseText, 'upload');    
+        var ret = repository_client.parse_json(o.responseText, 'upload');
         client_id = ret.client_id;
         if(ret && ret.e) {
             var panel = new YAHOO.util.Element('panel-'+client_id);

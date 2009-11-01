@@ -3,7 +3,6 @@
  * Picasa Repository Plugin
  *
  * @author Dan Poltawski <talktodan@gmail.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -44,17 +43,17 @@ class repository_picasa extends repository {
         return false;
     }
 
-    public function print_login(){ 
+    public function print_login(){
         global $CFG;
         $returnurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$this->id;
         $authurl = google_authsub::login_url($returnurl, google_picasa::REALM);
         if($this->options['ajax']){
-            $ret = array(); 
-            $popup_btn = new stdclass; 
-            $popup_btn->type = 'popup'; 
+            $ret = array();
+            $popup_btn = new stdclass;
+            $popup_btn->type = 'popup';
             $popup_btn->url = $authurl;
-            $ret['login'] = array($popup_btn); 
-            return $ret; 
+            $ret['login'] = array($popup_btn);
+            return $ret;
         } else {
             echo '<a target="_blank" href="'.$authurl.'">Login</a>';
         }

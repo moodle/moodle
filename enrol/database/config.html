@@ -11,7 +11,7 @@
 <tr>
     <td align="right">enrol_dbtype:</td>
     <td>
-    <?php  
+    <?php
        $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mssql_n", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
        foreach ($dbtypes as $dbtype) {
            $dboptions[$dbtype] = $dbtype;
@@ -23,7 +23,7 @@
        $select->nothingvalue = '';
        echo $OUTPUT->select($select);
     ?>
-      
+
     </td>
     <td>
     <?php  print_string("dbtype","enrol_database") ?>
@@ -33,10 +33,10 @@
 <tr>
     <td align="right">enrol_dbhost:</td>
     <td>
-    <?php 
+    <?php
         if (!isset($frm->enrol_dbhost)) {
             $frm->enrol_dbhost = '';
-        } 
+        }
     ?>
         <input size="15" type="text" name="enrol_dbhost" value="<?php p($frm->enrol_dbhost) ?>" />
     </td>
@@ -161,9 +161,9 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         $assignableroles = get_assignable_roles($sitecontext);
         $assignableroles = array('' => get_string('default')) + $assignableroles;
-    
+
         echo $OUTPUT->select(html_select::make($assignableroles, 'enrol_db_defaultcourseroleid', $frm->enrol_db_defaultcourseroleid, false));
-        if (isset($err['enrol_db_defaultcourseroleid'])) echo $OUTPUT->error_text($err['enrol_db_defaultcourseroleid']); 
+        if (isset($err['enrol_db_defaultcourseroleid'])) echo $OUTPUT->error_text($err['enrol_db_defaultcourseroleid']);
     ?>
     </td>
     <td>
@@ -181,7 +181,7 @@
     <td>
     <?php
        echo $OUTPUT->select(html_select::make($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, false));
-           if (isset($err["enrol_db_autocreate"])) echo $OUTPUT->error_text($err["enrol_db_autocreate"]); 
+           if (isset($err["enrol_db_autocreate"])) echo $OUTPUT->error_text($err["enrol_db_autocreate"]);
     ?>
     </td>
     <td>
@@ -197,7 +197,7 @@
            $parentlist = array();
            make_categories_list($displaylist, $parentlist);
            echo $OUTPUT->select(html_select::make($displaylist, "enrol_db_category", $frm->enrol_db_category, false));
-           
+
     ?>
     <?php  if (isset($err["enrol_db_category"])) echo $OUTPUT->error_text($err["enrol_db_category"]); ?>
     </td><td>

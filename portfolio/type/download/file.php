@@ -37,4 +37,4 @@ echo '<div id="redirect">
 
 echo $OUTPUT->footer();
 
-?>
+

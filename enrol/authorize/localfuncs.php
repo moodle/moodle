@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once($CFG->libdir.'/eventslib.php');
 
@@ -261,4 +261,4 @@ function authorize_verify_account()
     return $ret;
 }
 
-?>
+

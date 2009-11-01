@@ -1,9 +1,8 @@
-<?php 
+<?php
 /**
  * Picasa Portfolio Plugin
  *
  * @author Dan Poltawski <talktodan@gmail.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -22,7 +21,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
 
     public function prepare_package() {
         // we send the files as they are, no prep required
-        return true; 
+        return true;
     }
 	
     public function get_continue_url(){
@@ -90,7 +89,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
 }
 
 /**
- * Registers to the user_deleted event to revoke any 
+ * Registers to the user_deleted event to revoke any
  * subauth tokens we have from them
  *
  * @param $user user object
@@ -111,5 +110,5 @@ function portfolio_picasa_user_deleted($user){
         }
     }
 
-    return true; 
+    return true;
 }

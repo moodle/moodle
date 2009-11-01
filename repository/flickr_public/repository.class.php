@@ -6,7 +6,6 @@
  * access photos in this public account
  *
  * @author Dongsheng Cai <dongsheng@moodle.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -266,7 +265,7 @@ class repository_flickr_public extends repository {
 
         if (!empty($SESSION->{$this->sess_tag})         // use tag to search
             or !empty($SESSION->{$this->sess_text})     // use keyword to search
-            or !empty($this->nsid)/*use pre-defined accound*/) {                   
+            or !empty($this->nsid)/*use pre-defined accound*/) {
             $photos = $this->flickr->photos_search(array(
                 'tags'=>$SESSION->{$this->sess_tag},
                 'page'=>$page,
@@ -336,7 +335,7 @@ class repository_flickr_public extends repository {
                     // append author id
                     // $p['title'] .= '-'.$p['owner'];
                     // append file extension
-                    $p['title'] .= $format; 
+                    $p['title'] .= $format;
                 }
                 $ret['list'][] = array('title'=>$p['title'], 'source'=>$p['id'],
                     'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),

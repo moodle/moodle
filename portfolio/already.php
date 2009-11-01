@@ -79,4 +79,4 @@ if (count($table->data) > 0) {
 
 echo $OUTPUT->footer();
 
-?>
+

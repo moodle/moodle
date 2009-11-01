@@ -379,7 +379,7 @@ function cron() {
         }else{
             $msg .= "Logging is currently not active.";
         }
-        
+
         $eventdata = new object();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = get_admin();
@@ -388,7 +388,7 @@ function cron() {
         $eventdata->fullmessage       = $msg;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			    
+        $eventdata->smallmessage      = '';			
         events_trigger('message_send', $eventdata);
 
         $this->log_line('Notification email sent to administrator.');
@@ -876,4 +876,4 @@ function load_role_mappings() {
 
 } // end of class
 
-?>
+

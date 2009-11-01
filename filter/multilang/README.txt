@@ -1,8 +1,6 @@
-$Id$
-
 To Install it:
     - Enable if from "Administration/Filters".
-  
+
 To Use it:
     - Create your contents in multiple languages.
     - Enclose every language content between:
@@ -36,7 +34,7 @@ One example in action:
         Hola!
         This text is common for every language because it's out from any lang block.
         Bye!
-    
+
 
 Ciao, Eloy :-)
 stronk7@moodle.org

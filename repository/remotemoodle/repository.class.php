@@ -4,7 +4,6 @@
  * This plugin allowed to connect a retrieve a file from another Moodle site
  * This is a subclass of repository class
  * @author Jerome Mouneyrac
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -322,4 +321,4 @@ class repository_remotemoodle extends repository {
         return array('peer');
     }
 }
-?>
+

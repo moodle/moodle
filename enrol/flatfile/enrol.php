@@ -10,7 +10,7 @@ require_once($CFG->libdir.'/eventslib.php');
 
 class enrolment_plugin_flatfile {
 
-    var $log;    
+    var $log;
 
 /// Override the base config_form() function
 function config_form($frm) {
@@ -20,7 +20,7 @@ function config_form($frm) {
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
             $frm->$var = '';
-        } 
+        }
     }
 
     $roles = $DB->get_records('role', null, '', 'id, name, shortname');
@@ -34,8 +34,8 @@ function config_form($frm) {
             isset($ffconfig->{"map_{$record->shortname}"}) ? $ffconfig->{"map_{$record->shortname}"} : $record->shortname
         );
     }
-    
-    include ("$CFG->dirroot/enrol/flatfile/config.html");    
+
+    include ("$CFG->dirroot/enrol/flatfile/config.html");
 }
 
 
@@ -102,17 +102,17 @@ function get_access_icons($course) {
         }
 
         if ( file_exists($filename) ) {
-            
+
             $this->log  = userdate(time()) . "\n";
             $this->log .= "Flatfile enrol cron found file: $filename\n\n";
 
             if (($fh = fopen($filename, "r")) != false) {
 
                 list($roles, $rolemap) = $this->get_roles();
-                
+
                 $line = 0;
                 while (!feof($fh)) {
-                
+
                     $line++;
                     $fields = explode( ",", str_replace( "\r", "", fgets($fh) ) );
 
@@ -124,15 +124,15 @@ function get_access_icons($course) {
                         }
                         continue;
                     }
-                    
+
 
                     $fields[0] = trim(strtolower($fields[0]));
                     $fields[1] = trim(strtolower($fields[1]));
                     $fields[2] = trim($fields[2]);
                     $fields[3] = trim($fields[3]);
-                    
+
                     $this->log .= "$line: $fields[0] $fields[1] $fields[2] $fields[3] ";
-                    
+
                     if (!empty($fields[5])) {
                         $fields[4] = (int)trim($fields[4]);
                         $fields[5] = (int)trim($fields[5]);
@@ -140,7 +140,7 @@ function get_access_icons($course) {
                     } else {
                         $fields[4] = 0;
                         $fields[5] = 0;
-                    } 
+                    }
 
                     $this->log .= ":";
 
@@ -185,16 +185,16 @@ function get_access_icons($course) {
 
                     // Create/resurrect a context object
                     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                    
+
                     if ($fields[0] == 'add') {
                         role_assign($roleid, $user->id, null, $context->id, $fields[4], $fields[5], 0, 'flatfile');
                     } else {
                         role_unassign($roleid, $user->id, null, $context->id);
                     }
-                    
+
 
                     if ( empty($elog) and ($fields[0] == "add") ) {
-   
+
                         if ($fields[1] == "student") {
 
                             if ($teachers = get_users_by_capability($context, 'moodle/course:update', 'u.*,ra.hidden', 'ra.sortorder ASC')) {
@@ -213,11 +213,11 @@ function get_access_icons($course) {
                             $teacher = get_admin();
                         }
 
-                        
+
                         if (!empty($CFG->enrol_mailstudents)) {
                             $a->coursename = "$course->fullname";
                             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
-                            
+
                             $eventdata = new object();
                             $eventdata->modulename        = 'moodle';
                             $eventdata->userfrom          = $teacher;
@@ -233,11 +233,11 @@ function get_access_icons($course) {
                         if (!empty($CFG->enrol_mailteachers) && $teachers) {
 
                             foreach($teachers as $teacher) {
-                            
+
                                 if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
                                     $a->course = "$course->fullname";
                                     $a->user = fullname($user);
-                                    
+
                                     $eventdata = new object();
                                     $eventdata->modulename        = 'moodle';
                                     $eventdata->userfrom          = $user;
@@ -246,7 +246,7 @@ function get_access_icons($course) {
                                     $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
                                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                                     $eventdata->fullmessagehtml   = '';
-                                    $eventdata->smallmessage      = '';			    
+                                    $eventdata->smallmessage      = '';			
                                     events_trigger('message_send', $eventdata);
                                 }
                             }
@@ -323,4 +323,4 @@ function get_access_icons($course) {
 
 } // end of class
 
-?>
+

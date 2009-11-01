@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_mp3', get_string('mediapluginmp3','admin'), '', 1));
 
@@ -24,4 +24,4 @@ $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_youtu
 
 $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_img', get_string('mediapluginimg','admin'), '', 1));
 
-?>
+

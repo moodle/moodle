@@ -3,7 +3,6 @@
  * repository_webdav class
  *
  * @author Dongsheng Cai
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 

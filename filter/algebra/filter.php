@@ -233,4 +233,4 @@ class algebra_filter extends moodle_text_filter {
     }
 }
 
-?>
+

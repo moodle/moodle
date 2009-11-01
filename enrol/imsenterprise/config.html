@@ -24,7 +24,7 @@
         <input type="checkbox" value="1" name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    
+
     </td>
 </tr>
 
@@ -58,7 +58,7 @@
         <input type="checkbox" value="1" name="enrol_fixcaseusernames" <?php if ($frm->enrol_fixcaseusernames) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    
+
     </td>
 </tr>
 
@@ -68,7 +68,7 @@
         <input type="checkbox" value="1" name="enrol_fixcasepersonalnames" <?php if ($frm->enrol_fixcasepersonalnames) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    
+
     </td>
 </tr>
 
@@ -78,7 +78,7 @@
         <input type="checkbox" value="1" name="enrol_imssourcedidfallback" <?php if ($frm->enrol_imssourcedidfallback) echo "checked=\"checked\"" ?> />
     </td>
     <td>
-    <?php echo $OUTPUT->help_icon(moodle_help_icon::make('sourceddidfallback', 'More detail about this option', 'enrol/imsenterprise')); ?>    
+    <?php echo $OUTPUT->help_icon(moodle_help_icon::make('sourceddidfallback', 'More detail about this option', 'enrol/imsenterprise')); ?>
     </td>
 </tr>
 <!--
@@ -114,10 +114,10 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
     <td align="right">&quot;<?php echo $imsrolename ?>&quot;&nbsp;(<?php echo $imsrolenum ?>):</td>
     <td>
     <?php
-        
+
         $configref = "enrol_imse_imsrolemap" . $imsrolenum;
-        
-        echo $OUTPUT->select(html_select::make($assignableroles, 'enrol_imse_imsrolemap'.$imsrolenum, 
+
+        echo $OUTPUT->select(html_select::make($assignableroles, 'enrol_imse_imsrolemap'.$imsrolenum,
            strlen($frm->$configref) ? $frm->$configref : $this->determine_default_rolemapping($imsrolenum), false));
     ?>
     </td>

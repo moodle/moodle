@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>     
-<enterprise> 
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<enterprise>
   <properties lang="EN"><!-- c -->
     <datasource>sits:vision</datasource>
     <datetime>28/Oct/2005</datetime>

@@ -28,4 +28,4 @@ if (!$landed = optional_param('landed', false, PARAM_BOOL)) {
     $exporter->get('instance')->send_intent();
     redirect($CFG->wwwroot . '/portfolio/add.php?postcontrol=1&id=' . $exporter->get('id'));
 }
-?>
+

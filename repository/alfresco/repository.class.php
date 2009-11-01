@@ -2,7 +2,6 @@
 /**
  * repository_alfresco class
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -51,7 +50,7 @@ class repository_alfresco extends repository {
             $user_field->id    = 'alfresco_username';
             $user_field->type  = 'text';
             $user_field->name  = 'al_username';
-            
+
             $passwd_field->label = get_string('password', 'repository_alfresco').': ';
             $passwd_field->id    = 'alfresco_password';
             $passwd_field->type  = 'password';
@@ -203,4 +202,4 @@ class repository_alfresco extends repository {
         }
     }
 }
-?>
+

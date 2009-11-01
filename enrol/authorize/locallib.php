@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
@@ -67,7 +67,7 @@ function authorize_print_orders($courseid, $userid) {
         AN_STATUS_REVIEWFAILED => $authstrs->reviewfailed,
         AN_STATUS_TEST => $authstrs->tested
     );
-    
+
     $popupmenu .= $OUTPUT->select(html_select::make_popup_form($baseurl.'&course='.$courseid, 'status', $statusmenu, 'statusmenu', $status));
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
@@ -682,4 +682,4 @@ function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=fa
     }
     return $ret;
 }
-?>
+

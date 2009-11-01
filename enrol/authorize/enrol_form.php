@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -74,13 +74,13 @@ class enrol_authorize_form extends moodleform
             $mform->setType('ccexpireyyyy', PARAM_INT);
             $mform->setDefault('ccexpiremm', '');
             $mform->setDefault('ccexpireyyyy', '');
-            
+
             $creditcardsmenu = array('' => get_string('choose')) + get_list_of_creditcards();
             $mform->addElement('select', 'cctype', get_string('cctype', 'enrol_authorize'), $creditcardsmenu);
             $mform->setType('cctype', PARAM_ALPHA);
             $mform->addRule('cctype', get_string('missingcctype', 'enrol_authorize'), 'required', null, 'client');
             $mform->setDefault('cctype', '');
-            
+
             $mform->addElement('text', 'cvv', get_string('ccvv', 'enrol_authorize'), 'size="4"');
             $mform->setHelpButton('cvv', array('authorize/cvv',get_string('ccvv', 'enrol_authorize'),'enrol'), true);
             $mform->setType('cvv', PARAM_ALPHANUM);
@@ -95,7 +95,7 @@ class enrol_authorize_form extends moodleform
                 $ccauthgrp[] = &$mform->createElement('text', 'ccauthcode', '', 'size="8"');
                 $mform->addGroup($ccauthgrp, 'ccauthgrp', get_string('authcode', 'enrol_authorize'), '&nbsp;', false);
                 $mform->setHelpButton('ccauthgrp', array('authorize/authcode',get_string('authcode', 'enrol_authorize'),'enrol'), true);
-                
+
                 $ccauthgrprules = array();
                 $ccauthgrprules['ccauthcode'][] = array(get_string('missingccauthcode', 'enrol_authorize'), 'numeric', null, 'client');
                 $mform->addGroupRule('ccauthgrp', $ccauthgrprules);
@@ -345,4 +345,4 @@ class enrol_authorize_form extends moodleform
     }
 
 }
-?>
+

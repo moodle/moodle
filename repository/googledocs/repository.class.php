@@ -3,7 +3,6 @@
  * Google Docs Plugin
  *
  * @author Dan Poltawski <talktodan@gmail.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -44,16 +43,16 @@ class repository_googledocs extends repository {
         return false;
     }
 
-    public function print_login($ajax = true){ 
+    public function print_login($ajax = true){
         global $CFG;
         if($ajax){
-            $ret = array(); 
-            $popup_btn = new stdclass; 
-            $popup_btn->type = 'popup'; 
+            $ret = array();
+            $popup_btn = new stdclass;
+            $popup_btn->type = 'popup';
             $returnurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$this->id;
             $popup_btn->url = google_authsub::login_url($returnurl, google_docs::REALM);
-            $ret['login'] = array($popup_btn); 
-            return $ret; 
+            $ret['login'] = array($popup_btn);
+            return $ret;
         }
     }
 

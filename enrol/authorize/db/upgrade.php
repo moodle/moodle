@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the authorize enrol plugin
@@ -97,4 +97,4 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

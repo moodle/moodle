@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /**
 * Listens for Instant Payment Notification from PayPal
@@ -98,7 +98,7 @@
                 die;
             }
 
-            // If currency is incorrectly set then someone maybe trying to cheat the system 
+            // If currency is incorrectly set then someone maybe trying to cheat the system
 
             if ($data->mc_currency != $course->currency) {
                 email_paypal_error_to_admin("Currency does not match course settings, received: ".addslashes($data->mc_currency), $data);
@@ -193,7 +193,7 @@
                 if (!empty($CFG->enrol_mailstudents)) {
                     $a->coursename = $course->fullname;
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
-                    
+
                     $eventdata = new object();
                     $eventdata->modulename        = 'moodle';
                     $eventdata->userfrom          = $teacher;
@@ -204,13 +204,13 @@
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';
                     events_trigger('message_send', $eventdata);
-                    
+
                 }
 
                 if (!empty($CFG->enrol_mailteachers)) {
                     $a->course = $course->fullname;
                     $a->user = fullname($user);
-                    
+
                     $eventdata = new object();
                     $eventdata->modulename        = 'moodle';
                     $eventdata->userfrom          = $user;
@@ -219,15 +219,15 @@
                     $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';
-                    $eventdata->smallmessage      = '';			    
-                    events_trigger('message_send', $eventdata); 
+                    $eventdata->smallmessage      = '';			
+                    events_trigger('message_send', $eventdata);
                 }
 
                 if (!empty($CFG->enrol_mailadmins)) {
                     $a->course = $course->fullname;
                     $a->user = fullname($user);
                     $admins = get_admins();
-                    foreach ($admins as $admin) {                        
+                    foreach ($admins as $admin) {
                         $eventdata = new object();
                         $eventdata->modulename        = 'moodle';
                         $eventdata->userfrom          = $user;
@@ -280,4 +280,4 @@ function message_paypal_error_to_admin($subject, $data) {
     events_trigger('message_send', $eventdata);
 }
 
-?>
+

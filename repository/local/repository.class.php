@@ -3,7 +3,6 @@
  * repository_local class
  * This is a subclass of repository class
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -160,4 +159,4 @@ class repository_local extends repository {
         return get_string('repositoryname', 'repository_local');;
     }
 }
-?>
+

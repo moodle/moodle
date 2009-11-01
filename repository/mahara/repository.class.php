@@ -88,7 +88,7 @@ class repository_mahara extends repository {
 
         //set session
         $SESSION->loginmahara = true;
-       
+
         $ret = array();
         $popup_btn = new stdclass;
         $popup_btn->type = 'popup';
@@ -176,7 +176,7 @@ class repository_mahara extends repository {
         } else {
              $client->add_param($search);
         }
-       
+
         ///call the method and manage host error
         if (!$client->send($mnet_peer)) {
             $message =" ";
@@ -219,7 +219,7 @@ class repository_mahara extends repository {
                 $list[] = array( 'title'=>$file['title'], 'date'=>$file['mtime'], 'source'=>$file['id'], 'thumbnail' => $thumbnail);
             }
         }
-       
+
 
         $filepickerlisting = array(
             'path' => $newpath,
@@ -343,4 +343,4 @@ class repository_mahara extends repository {
         return array('peer');
     }
 }
-?>
+

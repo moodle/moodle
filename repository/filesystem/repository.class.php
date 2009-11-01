@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * repository_filesystem class

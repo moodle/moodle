@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once('S3.php');
 
 class repository_s3 extends repository {
@@ -63,7 +63,7 @@ class repository_s3 extends repository {
         $this->s->getObject($bucket, $filename, $path);
         return $path;
     }
-    // login 
+    // login
     public function check_login() {
         return true;
     }

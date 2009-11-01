@@ -354,4 +354,4 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
 require_once($CFG->dirroot.'/portfolio/type/download/lib.php');
 
@@ -19,4 +19,4 @@ class testPortfolioPluginDownload extends portfoliolib_test {
     }
 
 }
-?>
+

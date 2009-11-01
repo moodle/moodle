@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -88,4 +88,3 @@ abstract class filter_local_settings_form extends moodleform {
         }
     }
 }
-?>

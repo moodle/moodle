@@ -27,8 +27,8 @@ class moodle_image {
         case 'image/png':
             $this->image = imagecreatefrompng($this->imagepath);
             break;
-        case 'image/gif': 
-            $this->image = imagecreatefromgif($this->imagepath); 
+        case 'image/gif':
+            $this->image = imagecreatefromgif($this->imagepath);
             break;
         default:
             break;
@@ -114,7 +114,7 @@ class moodle_image {
         case 'image/png':
             return imagepng($this->image, $imagepath);
             break;
-        case 'image/gif': 
+        case 'image/gif':
             return imagegif($this->image, $imagepath);
             break;
         default:

@@ -1,8 +1,8 @@
-<?php // $Id$
+<?php
     // latex.php
     // render TeX stuff using latex - this will not work on all platforms
-    // or configurations. Only works on Linux and Mac with appropriate 
-    // software installed. 
+    // or configurations. Only works on Linux and Mac with appropriate
+    // software installed.
     // Much of this inspired/copied from Benjamin Zeiss' work
 
     class latex {
@@ -16,8 +16,8 @@
          * Other platforms could/should be added
          */
         function latex() {
-            global $CFG; 
-            
+            global $CFG;
+
             // construct directory structure
             $this->temp_dir = $CFG->dataroot . "/temp/latex";
             if (!file_exists("$CFG->dataroot/temp")) {
@@ -30,7 +30,7 @@
         }
 
         /**
-         * Accessor function for support_platform field. 
+         * Accessor function for support_platform field.
          * @return boolean value of supported_platform
          */
         function supported() {
@@ -49,7 +49,7 @@
             $formula = tex_sanitize_formula($formula);
 
             // $fontsize don't affects to formula's size. $density can change size
-            $doc =  "\\documentclass[{$fontsize}pt]{article}\n"; 
+            $doc =  "\\documentclass[{$fontsize}pt]{article}\n";
             $doc .=  $CFG->filter_tex_latexpreamble;
             $doc .= "\\pagestyle{empty}\n";
             $doc .= "\\begin{document}\n";
@@ -63,7 +63,7 @@
             return $doc;
         }
 
-        /** 
+        /**
          * execute an external command, with optional logging
          * @param string $command command to execute
          * @param file $log valid open file handle - log info will be written to this file
@@ -92,9 +92,9 @@
          * @return bool true if successful
          */
         function render( $formula, $filename, $fontsize=12, $density=240, $background='', $log=null ) {
-            
+
             global $CFG;
-  
+
             // quick check - will this work?
             if (empty($CFG->filter_tex_pathlatex)) {
                 return false;
@@ -118,7 +118,7 @@
             chdir( $this->temp_dir );
             if ($this->execute($command, $log)) { // It allways False on Windows
 //                return false;
-            } 
+            }
 
             // run dvips (.dvi to .ps)
             $command = "{$CFG->filter_tex_pathdvips} -E $dvi -o $ps";
@@ -158,4 +158,4 @@
     }
 
 
-?>
+

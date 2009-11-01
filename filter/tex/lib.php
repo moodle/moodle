@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 function tex_filter_get_executable($debug=false) {
     global $CFG;
@@ -86,4 +86,4 @@ function filter_tex_updatedcallback($name) {
     $DB->delete_records('cache_filters', array('filter'=>'algebra'));
 }
 
-?>
+

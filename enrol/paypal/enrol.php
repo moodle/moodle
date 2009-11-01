@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
        // Implements all the main code for the PayPal plugin
 
 require_once("$CFG->dirroot/enrol/enrol.class.php");
@@ -218,4 +218,4 @@ function print_enrolmentkeyfrom($course) {
 
 } // end of class definition
 
-?>
+

@@ -3,7 +3,6 @@
  * repository_draft class
  * This is a subclass of repository class
  *
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class repository_draft extends repository {
@@ -102,4 +101,4 @@ class repository_draft extends repository {
         return get_string('repositoryname', 'repository_draft');;
     }
 }
-?>
+

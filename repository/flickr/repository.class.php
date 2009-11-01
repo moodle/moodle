@@ -4,7 +4,6 @@
  * This plugin is used to access user's private flickr repository
  *
  * @author Dongsheng Cai <dongsheng@moodle.com>
- * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -169,7 +168,7 @@ class repository_flickr extends repository {
                 $format = '.'.$format;
                 // append extensions to the files
                 if (substr($p['title'], strlen($p['title'])-strlen($format)) != $format) {
-                    $p['title'] .= $format; 
+                    $p['title'] .= $format;
                 }
                 $ret['list'][] = array('title'=>$p['title'],'source'=>$p['id'],
                     'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),

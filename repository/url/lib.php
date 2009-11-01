@@ -678,7 +678,7 @@ function extract_css_urls( $text )
 	// @import "..."
 	foreach ( $matches[3] as $match )
 		if ( !empty($match) )
-			$urls['import'][] = 
+			$urls['import'][] =
 				preg_replace( '/\\\\(.)/u', '\\1', $match );
 
 	// @import url(...)
@@ -686,7 +686,7 @@ function extract_css_urls( $text )
 	// @import url("...")
 	foreach ( $matches[7] as $match )
 		if ( !empty($match) )
-			$urls['import'][] = 
+			$urls['import'][] =
 				preg_replace( '/\\\\(.)/u', '\\1', $match );
 
 	// url(...)
@@ -694,7 +694,7 @@ function extract_css_urls( $text )
 	// url("...")
 	foreach ( $matches[11] as $match )
 		if ( !empty($match) )
-			$urls['property'][] = 
+			$urls['property'][] =
 				preg_replace( '/\\\\(.)/u', '\\1', $match );
 
 	return $urls;

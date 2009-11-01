@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 $enrol_authorize_capabilities = array(
 
@@ -22,4 +22,4 @@ $enrol_authorize_capabilities = array(
 
 );
 
-?>
+

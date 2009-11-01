@@ -35,7 +35,7 @@
           while (childNode = elm.childNodes[z++])
               HTML += childNode[outerHTML];
 
-          // create a 'dummy' element 
+          // create a 'dummy' element
           dummy = doc.createElement('i');
           // inject it next to `elm`,
           elm[parentNode].insertBefore(dummy, elm);

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //This function provides automatic linking to
     //activities when its name (title) is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
@@ -18,7 +18,7 @@ class activitynames_filter extends moodle_text_filter {
         // Initialise/invalidate our trivial cache if dealing with a different course
         if (!isset($this->cachedcourseid) || $this->cachedcourseid !== (int)$this->courseid) {
             $this->activitylist = null;
-        } 
+        }
         $this->cachedcourseid = (int)$this->courseid;
 
         /// It may be cached
@@ -47,7 +47,7 @@ class activitynames_filter extends moodle_text_filter {
                 usort($modinfo, 'comparemodulenamesbylength');
 
                 foreach ($modinfo as $activity) {
-                    //Exclude labels, hidden activities and activities for group members only 
+                    //Exclude labels, hidden activities and activities for group members only
                     if ($activity->mod != "label" and $activity->visible and empty($activity->groupmembersonly)) {
                         $title = s(trim(strip_tags(urldecode($activity->name))));
                         $currentname = trim(urldecode($activity->name));
@@ -82,4 +82,4 @@ function comparemodulenamesbylength($a, $b)  {
     }
     return (strlen($a->name) < strlen($b->name)) ? 1 : -1;
 }
-?>
+

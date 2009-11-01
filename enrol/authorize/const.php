@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**#@+
  * Authorize.net payment methods.
@@ -89,4 +89,4 @@ define('AN_ERROR',      3);
 define('AN_REVIEW',     4);
 /**#@-*/
 
-?>
+

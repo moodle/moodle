@@ -231,7 +231,7 @@ function authorize_process_csv($filename)
 /// Send email to admin
     if (!empty($ignoredlines)) {
         $admin = get_admin();
-        
+
         $eventdata = new object();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $admin;
@@ -240,7 +240,7 @@ function authorize_process_csv($filename)
         $eventdata->fullmessage       = $ignoredlines;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			    
+        $eventdata->smallmessage      = '';			
         events_trigger('message_send', $eventdata);
     }
 
@@ -253,4 +253,4 @@ function authorize_process_csv($filename)
     notice("<b>Done...</b><br />Imported: $imported<br />Updated: $updated<br />Ignored: $ignored");
 }
 
-?>
+
