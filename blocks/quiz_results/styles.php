@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.block_quiz_results table.grades .number, 
+.block_quiz_results table.grades .number,
 .block_quiz_results table.grades .grade {
     text-align: right;
     width: 10%;

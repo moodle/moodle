@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_calendar_upcoming extends block_base {
     function init() {
@@ -37,7 +37,7 @@ class block_calendar_upcoming extends block_base {
                 $this->content->footer .= '<br /><a href="'.$CFG->wwwroot.
                                           '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.
                                            get_string('newevent', 'calendar').'</a>...';
-            } 
+            }
             if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
                 // the list of courses it will be grabbing events from.
@@ -59,12 +59,12 @@ class block_calendar_upcoming extends block_base {
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
 
         calendar_set_filters($courses, $group, $user, $filtercourse, $groupeventsfrom, false);
-        $events = calendar_get_upcoming($courses, $group, $user, 
-                                        get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), 
+        $events = calendar_get_upcoming($courses, $group, $user,
+                                        get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS),
                                         get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
 
-        if (!empty($this->instance)) { 
-            $this->content->text = calendar_get_sideblock_upcoming($events, 
+        if (!empty($this->instance)) {
+            $this->content->text = calendar_get_sideblock_upcoming($events,
                                    'view.php?view=day&amp;course='.$courseshown.'&amp;');
         }
 
@@ -77,4 +77,4 @@ class block_calendar_upcoming extends block_base {
     }
 }
 
-?>
+

@@ -7,7 +7,7 @@ admin_tree = {
     openalt: null,
 
     init: function(numdivs, expandnodes, openimg, closedimg, openalt, closedalt) {
-        // Store the information we were passed in. 
+        // Store the information we were passed in.
         admin_tree.openimg = openimg;
         admin_tree.closedimg = closedimg;
         admin_tree.openalt = openalt;

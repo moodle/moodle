@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_news_items extends block_base {
     function init() {
@@ -57,7 +57,7 @@ class block_news_items extends block_base {
 
         /// Get all the recent discussions we're allowed to see
 
-            if (! $discussions = forum_get_discussions($cm, 'p.modified DESC', false, 
+            if (! $discussions = forum_get_discussions($cm, 'p.modified DESC', false,
                                                        $currentgroup, $this->page->course->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
@@ -116,4 +116,4 @@ class block_news_items extends block_base {
     }
 }
 
-?>
+

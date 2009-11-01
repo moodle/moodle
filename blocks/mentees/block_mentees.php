@@ -33,10 +33,10 @@ class block_mentees extends block_base {
                                                          AND ra.contextid = c.id
                                                          AND c.instanceid = u.id
                                                          AND c.contextlevel = ".CONTEXT_USER, array($USER->id))) {
-                                           
+
             $this->content->text = '<ul>';
             foreach ($usercontexts as $usercontext) {
-                $this->content->text .= '<li><a href="'.$CFG->wwwroot.'/user/view.php?id='.$usercontext->instanceid.'&amp;course=1">'.fullname($usercontext).'</a></li>';                
+                $this->content->text .= '<li><a href="'.$CFG->wwwroot.'/user/view.php?id='.$usercontext->instanceid.'&amp;course=1">'.fullname($usercontext).'</a></li>';
             }
             $this->content->text .= '</ul>';
         }
@@ -46,4 +46,4 @@ class block_mentees extends block_base {
         return $this->content;
     }
 }
-?>
+

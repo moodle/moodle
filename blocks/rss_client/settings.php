@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $settings->add(new admin_setting_configtext('block_rss_client_num_entries', get_string('numentries', 'block_rss_client'),
                    get_string('clientnumentries', 'block_rss_client'), 5, PARAM_INT));

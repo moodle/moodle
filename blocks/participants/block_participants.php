@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_participants extends block_list {
     function init() {
@@ -49,4 +49,4 @@ class block_participants extends block_list {
 
 }
 
-?>
+

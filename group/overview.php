@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Print an overview of groupings & group membership
  *
@@ -208,4 +208,3 @@ foreach ($members as $gpgid=>$groupdata) {
 }
 
 echo $OUTPUT->footer();
-?>

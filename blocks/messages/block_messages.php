@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_messages extends block_base {
     function init() {
@@ -14,7 +14,7 @@ class block_messages extends block_base {
             if ($this->page->user_is_editing()) {
                 $this->content->text = get_string('disabled', 'message');
             }
-            return $this->content; 
+            return $this->content;
         }
 
         if ($this->content !== NULL) {
@@ -33,7 +33,7 @@ class block_messages extends block_base {
 
         $users = $DB->get_records_sql("SELECT m.useridfrom AS id, COUNT(m.useridfrom) AS count,
                                               u.firstname, u.lastname, u.picture, u.imagealt, u.lastaccess
-                                         FROM {user} u, {message} m 
+                                         FROM {user} u, {message} m
                                         WHERE m.useridto = ? AND u.id = m.useridfrom
                                      GROUP BY m.useridfrom, u.firstname,u.lastname,u.picture,u.lastaccess,u.imagealt", array($USER->id));
 
@@ -50,15 +50,15 @@ class block_messages extends block_base {
                 $this->content->text .= '<div class="message"><a href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="this.target=\'message_'.$user->id.'\'; return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img class="iconsmall" src="'.$OUTPUT->old_icon_url('t/message') . '" alt="" />&nbsp;'.$user->count.'</a>';
                 $this->content->text .= '</div></li>';
             }
-            $this->content->text .= '</ul>'; 
+            $this->content->text .= '</ul>';
         } else {
             $this->content->text .= '<div class="info">';
             $this->content->text .= get_string('nomessages', 'message');
-            $this->content->text .= '</div>'; 
+            $this->content->text .= '</div>';
         }
 
         return $this->content;
     }
 }
 
-?>
+

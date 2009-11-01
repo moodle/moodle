@@ -1,9 +1,9 @@
-<?PHP //$Id$
+<?php
 
 class block_login extends block_base {
     function init() {
         $this->title = get_string('login');
-        $this->version = 2007101509; 
+        $this->version = 2007101509;
     }
 
     function applicable_formats() {
@@ -26,7 +26,7 @@ class block_login extends block_base {
             // in unencrypted connection...
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
-        
+
         if (!empty($CFG->registerauth)) {
             $authplugin = get_auth_plugin($CFG->registerauth);
             if ($authplugin->can_signup()) {
@@ -67,4 +67,4 @@ class block_login extends block_base {
     }
 }
 
-?>
+

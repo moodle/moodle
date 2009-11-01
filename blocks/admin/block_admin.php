@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class block_admin extends block_list {
     function init() {
@@ -217,4 +217,4 @@ class block_admin extends block_list {
     }
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -166,4 +166,4 @@ class block_tag_youtube extends block_base {
         return $text;
     }
 }
-?>
+

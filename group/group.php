@@ -126,4 +126,3 @@ if ($id) {
 echo '</div>';
 $editform->display();
 echo $OUTPUT->footer();
-?>

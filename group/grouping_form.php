@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -50,4 +50,3 @@ class grouping_form extends moodleform {
     }
 
 }
-?>

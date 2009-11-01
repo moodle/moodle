@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_section_links extends block_base {
 
@@ -112,4 +112,4 @@ class block_section_links extends block_base {
     }
 }
 
-?>
+

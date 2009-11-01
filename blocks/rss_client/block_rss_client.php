@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // This file is part of Moodle - http://moodle.org/
 //
@@ -285,7 +285,7 @@
     }
 
     /**
-     * cron - goes through all feeds and retrieves them with the cache 
+     * cron - goes through all feeds and retrieves them with the cache
      * duration set to 0 in order to force the retrieval of the item and
      * refresh the cache
      *
@@ -312,7 +312,7 @@
             @set_time_limit(60);
 
             $feed =  new moodle_simplepie();
-            // set timeout for longer than normal to be agressive at 
+            // set timeout for longer than normal to be agressive at
             // fetching feeds if possible..
             $feed->set_timeout(40);
             $feed->set_cache_duration(0);
@@ -338,4 +338,4 @@
     }
 }
 
-?>
+

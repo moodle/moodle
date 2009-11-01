@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -75,5 +75,3 @@ class group_form extends moodleform {
         return $this->_upload_manager;
     }
 }
-
-?>

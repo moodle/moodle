@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_tags extends block_base {
     function init() {
@@ -322,4 +322,4 @@ EOT;
         return $this->content;
     }
 }
-?>
+

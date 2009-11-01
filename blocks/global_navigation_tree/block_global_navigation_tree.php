@@ -152,7 +152,7 @@ class block_global_navigation_tree extends block_tree {
         $this->page->requires->js_function_call('setup_new_navtree', array($this->id))->on_dom_ready();
         // Grab the items to display
         $this->content->items = array($this->page->navigation);
-        
+
         $reloadicon = new moodle_action_icon();
         $reloadicon->link->url = $this->page->url;
         $reloadicon->link->url->param('regenerate','navigation');
@@ -161,10 +161,10 @@ class block_global_navigation_tree extends block_tree {
         $reloadicon->alt = get_string('reload');
         $reloadicon->title = get_string('reload');
         $this->content->footer .= $OUTPUT->action_icon($reloadicon);
-        
+
         if (empty($this->config->enablesidebarpopout) || $this->config->enablesidebarpopout == 'yes') {
             user_preference_allow_ajax_update('nav_in_tab_panel_globalnav'.block_global_navigation_tree::$navcount, PARAM_INT);
-            
+
             $moveicon = new moodle_action_icon();
             $moveicon->link->add_classes('moveto customcommand requiresjs');
             $moveicon->link->url = $this->page->url;

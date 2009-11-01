@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class block_activity_modules extends block_list {
     function init() {
@@ -67,4 +67,4 @@ class block_activity_modules extends block_list {
     }
 }
 
-?>
+

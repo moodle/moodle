@@ -718,5 +718,3 @@ function groups_calculate_role_people($rs, $context) {
     // Return list of roles containing their users
     return $roles;
 }
-
-?>

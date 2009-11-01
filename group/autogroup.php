@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Create and allocate users go groups
  *
@@ -250,4 +250,3 @@ if($preview !== '') {
 }
 
 echo $OUTPUT->footer();
-?>

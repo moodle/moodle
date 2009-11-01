@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class block_social_activities extends block_list {
     function init(){
@@ -165,4 +165,4 @@ class block_social_activities extends block_list {
     }
 }
 
-?>
+

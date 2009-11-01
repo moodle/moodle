@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_calendar_month extends block_base {
     function init() {
@@ -16,18 +16,18 @@ class block_calendar_month extends block_base {
         $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
 
         require_once($CFG->dirroot.'/calendar/lib.php');
-        
+
         if ($this->content !== NULL) {
             return $this->content;
         }
         // Reset the session variables
         calendar_session_vars($this->page->course);
-        
+
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
 
-        // [pj] To me it looks like this if would never be needed, but Penny added it 
+        // [pj] To me it looks like this if would never be needed, but Penny added it
         // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
         // It definitely needs SOME comment here!
         $courseshown = $this->page->course->id;
@@ -73,9 +73,9 @@ class block_calendar_month extends block_base {
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
             $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $this->page->course).'</div>';
-            
+
         }
-        
+
         // MDL-9059, unset this so that it doesn't stay in session
         if (!empty($courseset)) {
             unset($SESSION->cal_courses_shown[$this->page->course->id]);
@@ -85,4 +85,4 @@ class block_calendar_month extends block_base {
     }
 }
 
-?>
+

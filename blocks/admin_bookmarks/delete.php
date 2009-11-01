@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require('../../config.php');
 
@@ -46,4 +46,4 @@ if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey(
     die;
 }
 
-?>
+

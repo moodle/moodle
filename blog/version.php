@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /////////////////////////////////////////////////////////////////////////////////
 ///  Code fragment to define the version of the blog module
@@ -7,4 +7,4 @@
 
 $blog_version  = 2009070600;  // The current version of blog module (Date: YYYYMMDDXX)
 $module->cron     = 1800;           // Period for cron to check this module (secs)
-?>
+

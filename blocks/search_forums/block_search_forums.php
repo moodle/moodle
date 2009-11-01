@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_search_forums extends block_base {
     function init() {
@@ -28,13 +28,13 @@ class block_search_forums extends block_base {
         //Accessibility: replaced <input value=" />" type="submit"> with configurable text/'silent' character.
         // Theme config, $CFG->block_search_button = get_arrow_right() .'<span class="accesshide">'.get_string('search').'</span>';
         $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go');
-        
+
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline"><fieldset class="invisiblefieldset">';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->page->course->id.'" />';  // course
         $this->content->text .= '<label class="accesshide" for="searchform_search">'.$search.'</label>'.
                                 '<input id="searchform_search" name="search" type="text" size="16" />';
-        $this->content->text .= '<button id="searchform_button" type="submit" title="'.$search.'">'.$button.'</button><br />'; 
+        $this->content->text .= '<button id="searchform_button" type="submit" title="'.$search.'">'.$button.'</button><br />';
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->page->course->id.'">'.$advancedsearch.'</a>';
         $this->content->text .= $OUTPUT->help_icon(moodle_help_icon::make('search', $advancedsearch));
         $this->content->text .= '</fieldset></form></div>';
@@ -47,4 +47,4 @@ class block_search_forums extends block_base {
     }
 }
 
-?>
+

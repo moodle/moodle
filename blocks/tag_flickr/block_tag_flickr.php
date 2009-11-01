@@ -1,4 +1,4 @@
-<?php // $id$
+<?php
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -161,4 +161,4 @@ class block_tag_flickr extends block_base {
     }
 }
 
-?>
+

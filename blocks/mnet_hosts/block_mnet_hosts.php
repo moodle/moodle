@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_mnet_hosts extends block_list {
     function init() {
@@ -44,13 +44,13 @@ class block_mnet_hosts extends block_list {
         // TODO: Test this query - it's appropriate? It works?
         // get the hosts and whether we are doing SSO with them
         $sql = "
-             SELECT DISTINCT 
-                 h.id, 
+             SELECT DISTINCT
+                 h.id,
                  h.name,
                  h.wwwroot,
                  a.name as application,
                  a.display_name
-             FROM 
+             FROM
                  {mnet_host} h,
                  {mnet_application} a,
                  {mnet_host2service} h2s_IDP,
@@ -100,4 +100,4 @@ class block_mnet_hosts extends block_list {
     }
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 class block_admin_tree extends block_base {
 
@@ -71,7 +71,7 @@ class block_admin_tree extends block_base {
                     if (admin_critical_warnings_present()) {
                         $class .= ' criticalnotification';
                     }
-                } 
+                }
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }

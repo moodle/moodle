@@ -75,4 +75,3 @@ if ($confirm && data_submitted()) {
     echo $OUTPUT->confirm($message, $formcontinue, $formcancel);
     echo $OUTPUT->footer();
 }
-?>

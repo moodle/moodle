@@ -57,4 +57,4 @@ $block_rss_client_capabilities = array(
 
 );
 
-?>
+

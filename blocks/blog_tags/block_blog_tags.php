@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 define('BLOGDEFAULTTIMEWITHIN', 90);
 define('BLOGDEFAULTNUMBEROFTAGS', 20);
@@ -67,9 +67,9 @@ class block_blog_tags extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        /// Get a list of tags 
+        /// Get a list of tags
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
-        
+
         $blogheaders = blog_get_headers();
 
         // admins should be able to read all tags
@@ -149,7 +149,7 @@ class block_blog_tags extends block_base {
                         } else if (!empty($blogheaders['filters']['course'])) {
                             $blogurl->param('courseid', $blogheaders['filters']['course']);
                         }
-                        
+
                     break;
                 }
 
@@ -184,4 +184,4 @@ function blog_tags_sort($a, $b) {
     }
 }
 
-?>
+

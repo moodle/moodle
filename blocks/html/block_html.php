@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class block_html extends block_base {
 
@@ -62,10 +62,10 @@ class block_html extends block_base {
 
     /**
      * This function makes all the necessary calls to {@link restore_decode_content_links_worker()}
-     * function in order to decode contents of this block from the backup 
-     * format to destination site/course in order to mantain inter-activities 
-     * working in the backup/restore process. 
-     * 
+     * function in order to decode contents of this block from the backup
+     * format to destination site/course in order to mantain inter-activities
+     * working in the backup/restore process.
+     *
      * This is called from {@link restore_decode_content_links()} function in the restore process.
      *
      * NOTE: There is no block instance when this method is called.
@@ -81,7 +81,7 @@ class block_html extends block_base {
             $sql = "SELECT bi.*
                       FROM {block_instance} bi
                            JOIN {block} b ON b.id = bi.blockid
-                     WHERE b.name = 'html' AND bi.id IN ($restored_blocks)"; 
+                     WHERE b.name = 'html' AND bi.id IN ($restored_blocks)";
 
             if ($instances = $DB->get_records_sql($sql)) {
                 foreach ($instances as $instance) {
@@ -96,4 +96,4 @@ class block_html extends block_base {
         return true;
     }
 }
-?>
+

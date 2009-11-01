@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -133,5 +133,3 @@ class autogroup_form extends moodleform {
         return $errors;
     }
 }
-
-?>

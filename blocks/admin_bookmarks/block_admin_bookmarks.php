@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 // seems to work...
 // maybe I should add some pretty icons?
@@ -77,4 +77,4 @@ class block_admin_bookmarks extends block_base {
     }
 }
 
-?>
+

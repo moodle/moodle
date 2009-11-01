@@ -303,5 +303,3 @@ function groups_param_action($prefix = 'act_') {
     ///if (debugging()) echo 'Debug: '.$action;
     return $action;
 }
-
-?>

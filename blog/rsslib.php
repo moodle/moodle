@@ -162,4 +162,3 @@ function blog_rss_save_file($type, $id, $tagid=0, $contents='') {
     return $status;
 }
 
-?>

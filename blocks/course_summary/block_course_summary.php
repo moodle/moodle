@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_course_summary extends block_base {
     function init() {
@@ -50,4 +50,4 @@ class block_course_summary extends block_base {
 
 }
 
-?>
+

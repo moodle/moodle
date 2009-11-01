@@ -1,4 +1,4 @@
-<?php   //$Id$
+<?php
 
 class block_site_main_menu extends block_list {
     function init() {
@@ -156,4 +156,4 @@ class block_site_main_menu extends block_list {
     }
 }
 
-?>
+

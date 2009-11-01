@@ -105,5 +105,3 @@ echo $OUTPUT->button(html_form::make_button('grouping.php', array('courseid'=>$c
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
-
-?>

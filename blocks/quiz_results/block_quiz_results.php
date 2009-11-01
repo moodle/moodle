@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 define('B_QUIZRESULTS_NAME_FORMAT_FULL', 1);
 define('B_QUIZRESULTS_NAME_FORMAT_ID',   2);
@@ -437,4 +437,4 @@ class block_quiz_results extends block_base {
     }
 }
 
-?>
+

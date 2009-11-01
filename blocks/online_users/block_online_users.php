@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 /**
  * This block needs to be reworked.
@@ -142,7 +142,7 @@ class block_online_users extends block_base {
                 $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage
                 $userpic = moodle_user_picture::make($user, $this->page->course->id);
                 $userpic->size = 16;
-                
+
                 if ($user->username == 'guest') {
                     $this->content->text .= '<div class="user">'.$OUTPUT->user_picture($userpic);
                     $this->content->text .= get_string('guestuser').'</div>';
@@ -167,4 +167,4 @@ class block_online_users extends block_base {
     }
 }
 
-?>
+

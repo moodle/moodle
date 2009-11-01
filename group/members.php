@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Add/remove members from group.
  *
@@ -129,4 +129,3 @@ check_theme_arrows();
 
 <?php
     echo $OUTPUT->footer();
-?>

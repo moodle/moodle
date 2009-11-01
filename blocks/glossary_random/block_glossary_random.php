@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 define('BGR_RANDOMLY',     '0');
 define('BGR_LASTMODIFIED', '1');
@@ -83,7 +83,7 @@ class block_glossary_random extends block_base {
                     $text = '';
                 } else {
                     $text = "<h3>".format_string($entry->concept,true)."</h3>";
-                }  
+                }
 
                 $options = new object;
                 $options->trusted = $entry->definitiontrust;
@@ -157,8 +157,8 @@ class block_glossary_random extends block_base {
                 .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
             } else {
                 $this->content->footer = '';
-            }     
-            
+            }
+
             $this->content->footer .= '<a href="'.$CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id
                 .'" title="'.$this->config->viewglossary.'">'.$this->config->viewglossary.'</a>';
 
@@ -190,4 +190,4 @@ class block_glossary_random extends block_base {
     }
 
 }
-?>
+

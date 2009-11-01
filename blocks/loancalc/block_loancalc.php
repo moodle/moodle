@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 class block_loancalc extends block_base {
 
@@ -12,7 +12,7 @@ class block_loancalc extends block_base {
         global $CFG, $OUTPUT;
 
         $calc = $OUTPUT->old_icon_url('i/calc');
-        
+
         $this->content->text = '
         <script type="text/javascript">
        // <![CDATA[
@@ -172,14 +172,14 @@ function comp(v) { // general entry point for all cases
                 <tr>
                     <td><input name="LOANTERM" id="LOANTERM" size="17" /></td>
                     <td><a href="JavaScript:comp(\'np\');"><img src="'.$calc.'" alt="calculate" /></a></td>
-                </tr>    
+                </tr>
                 <tr>
                     <td colspan="2">'.get_string('interestrate','block_loancalc').'</td>
                 </tr>
                 <tr>
                     <td><input name="LOANINTRATE" id="LOANINTRATE" size="17" /></td>
                     <td></td>
-                </tr>    
+                </tr>
                 <tr>
                     <td colspan="2">'.get_string('repaymentfreq','block_loancalc').'</td>
                 </tr>
@@ -200,4 +200,4 @@ function comp(v) { // general entry point for all cases
 
     }
 }
-?>
+

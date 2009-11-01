@@ -285,4 +285,3 @@ class group_external_test extends UnitTestCase {
     }
 */
 }
-?>

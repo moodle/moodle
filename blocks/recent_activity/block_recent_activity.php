@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 class block_recent_activity extends block_base {
     function init() {
@@ -33,4 +33,4 @@ class block_recent_activity extends block_base {
         return array('all' => true, 'my' => false, 'tag' => false);
     }
 }
-?>
+

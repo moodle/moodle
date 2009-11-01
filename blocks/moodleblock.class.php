@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -106,7 +106,7 @@ class block_base {
      */
     var $config        = NULL;
 
-    /** 
+    /**
      * How often the cronjob should run, 0 if not at all.
      * @var int $cron
      */
@@ -130,25 +130,25 @@ class block_base {
     function __construct() {
         $this->block_base();
     }
-    
+
     /**
      * Function that can be overridden to do extra cleanup before
      * the database tables are deleted. (Called once per block, not per instance!)
      */
     function before_delete() {
     }
-    
+
     /**
      * Function that can be overridden to do extra setup after a block instance has been
      * restored from backup. For example, it may need to alter any dates that the block
-     * stores, if the $restore->course_startdateoffset is set.  
+     * stores, if the $restore->course_startdateoffset is set.
      */
     function after_restore($restore) {
     }
 
     /**
      * Enable custom instance data section in backup and restore.
-     * 
+     *
      * If return true, then {@link instance_backup()} and
      * {@link instance_restore()} will be called during
      * backup/restore routines.
@@ -160,11 +160,11 @@ class block_base {
     }
 
     /**
-     * Allows the block class to have a backup routine.  Handy 
-     * when the block has its own tables that have foreign keys to 
+     * Allows the block class to have a backup routine.  Handy
+     * when the block has its own tables that have foreign keys to
      * other tables (example: user table).
-     * 
-     * Note: at the time of writing this comment, the indent level 
+     *
+     * Note: at the time of writing this comment, the indent level
      * for the {@link full_tag()} should start at 5.
      *
      * @param resource $bf Backup File
@@ -177,10 +177,10 @@ class block_base {
 
     /**
      * Allows the block class to restore its backup routine.
-     * 
-     * Should not return false if data is empty 
+     *
+     * Should not return false if data is empty
      * because old backups would not contain block instance backup data.
-     * 
+     *
      * @param object $restore Standard restore object
      * @param object $data Object from backup_getid for this block instance
      * @return boolean
@@ -214,10 +214,10 @@ class block_base {
 
     /**
      * This function makes all the necessary calls to {@link restore_decode_content_links_worker()}
-     * function in order to decode contents of this block from the backup 
-     * format to destination site/course in order to mantain inter-activities 
-     * working in the backup/restore process. 
-     * 
+     * function in order to decode contents of this block from the backup
+     * format to destination site/course in order to mantain inter-activities
+     * working in the backup/restore process.
+     *
      * This is called from {@link restore_decode_content_links()} function in the restore process.
      *
      * NOTE: There is no block instance when this method is called.
@@ -277,7 +277,7 @@ class block_base {
     /**
      * Returns the class $title var value.
      *
-     * Intentionally doesn't check if a title is set. 
+     * Intentionally doesn't check if a title is set.
      * This is already done in {@link _self_test()}
      *
      * @return string $this->title
@@ -290,7 +290,7 @@ class block_base {
     /**
      * Returns the class $content_type var value.
      *
-     * Intentionally doesn't check if content_type is set. 
+     * Intentionally doesn't check if content_type is set.
      * This is already done in {@link _self_test()}
      *
      * @return string $this->content_type
@@ -303,7 +303,7 @@ class block_base {
     /**
      * Returns the class $version var value.
      *
-     * Intentionally doesn't check if a version is set. 
+     * Intentionally doesn't check if a version is set.
      * This is already done in {@link _self_test()}
      *
      * @return string $this->version
@@ -433,7 +433,7 @@ class block_base {
      *
      * @return boolean
      */
-     
+
     function _self_test() {
         // Tests if this block has been implemented correctly.
         // Also, $errors isn't used right now
@@ -448,7 +448,7 @@ class block_base {
             $errors[] = 'invalid_content_type';
             $correct = false;
         }
-        //following selftest was not working when roles&capabilities were used from block 
+        //following selftest was not working when roles&capabilities were used from block
 /*        if ($this->get_content() === NULL) {
             $errors[] = 'content_not_set';
             $correct = false;
@@ -495,7 +495,7 @@ class block_base {
         }
         return true;
     }
-    
+
     /**
      * Which page types this block may appear on.
      *
@@ -511,7 +511,7 @@ class block_base {
         // Default case: the block can be used in courses and site index, but not in activities
         return array('all' => true, 'mod' => false, 'tag' => false);
     }
-    
+
 
     /**
      * Default return is false - header will be shown
@@ -542,14 +542,14 @@ class block_base {
      */
     function html_attributes() {
         return array(
-            'id' => 'inst' . $this->instance->id, 
+            'id' => 'inst' . $this->instance->id,
             'class' => 'block_' . $this->name()
         );
     }
 
     /**
      * Set up a particular instance of this class given data from the block_insances
-     * table and the current page. (See {@link block_manager::load_blocks()}.) 
+     * table and the current page. (See {@link block_manager::load_blocks()}.)
      *
      * @param stdClass $instance data from block_insances, block_positions, etc.
      * @param moodle_page $the page this block is on.
@@ -731,7 +731,7 @@ class block_base {
     /** @callback callback functions for comments api */
     public static function comment_template($options) {
         $ret = <<<EOD
-<div class="comment-userpicture">___picture___</div> 
+<div class="comment-userpicture">___picture___</div>
 <div class="comment-content">
     ___name___ - <span>___time___</span>
     <div>___content___</div>
@@ -787,13 +787,13 @@ class block_list extends block_base {
 
 /**
  * Specialized class for displaying a tree menu.
- * 
+ *
  * The {@link get_content()} method involves setting the content of
  * <code>$this->content->items</code> with an array of {@link tree_item}
  * objects (these are the top-level nodes). The {@link tree_item::children}
  * property may contain more tree_item objects, and so on. The tree_item class
  * itself is abstract and not intended for use, use one of it's subclasses.
- * 
+ *
  * Unlike {@link block_list}, the icons are specified as part of the items,
  * not in a separate array.
  *
@@ -802,17 +802,17 @@ class block_list extends block_base {
  * @internal this extends block_list so we get is_empty() for free
  */
 class block_tree extends block_list {
-    
+
     /**
      * @var int specifies the manner in which contents should be added to this
      * block type. In this case <code>$this->content->items</code> is used with
      * {@link tree_item}s.
      */
     public $content_type = BLOCK_TYPE_TREE;
-    
+
     /**
      * Make the formatted HTML ouput.
-     * 
+     *
      * Also adds the required javascript call to the page output.
      *
      * @param moodle_core_renderer $output

@@ -118,5 +118,3 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($strheading);
 $editform->display();
 echo $OUTPUT->footer();
-
-?>
