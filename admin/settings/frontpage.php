@@ -2,7 +2,7 @@
 
 // This file defines everything related to frontpage
 
-if (get_site()) { //do not use during installation
+if (!empty($CFG->version)) { //do not use during installation
     $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
 
     if ($hassiteconfig or has_any_capability(array(

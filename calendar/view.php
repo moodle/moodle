@@ -50,9 +50,7 @@ $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 
-if(!$site = get_site()) {
-    redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
-}
+$site = get_site();
 
 $url = new moodle_url($CFG->wwwroot.'/calendar/view.php');
 if ($courseid !== 0) {

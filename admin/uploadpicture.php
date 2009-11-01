@@ -36,9 +36,7 @@ require_login();
 
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 
-if (!$site = get_site()) {
-    print_error('cannotfindsite', 'error');
-}
+$site = get_site();
 
 if (!$adminuser = get_admin()) {
     print_error('noadmins', 'error');

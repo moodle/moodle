@@ -19,9 +19,7 @@
 httpsrequired();
 
 /// Define variables used in page
-    if (!$site = get_site()) {
-        print_error('nosite');
-    }
+    $site = get_site();
 
     if (empty($CFG->langmenu)) {
         $langmenu = "";

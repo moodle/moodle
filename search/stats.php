@@ -37,9 +37,7 @@ require_once($CFG->dirroot.'/search/lib.php');
 
     $indexinfo = new IndexInfo();
 
-    if (!$site = get_site()) {
-        redirect($CFG->wwwroot.'index.php');
-    }
+    $site = get_site();
 
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('statistics', 'search');

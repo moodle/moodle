@@ -13,17 +13,12 @@
 
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
+    $site = get_site();
 
     if (!extension_loaded('openssl')) {
         admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('requiresopenssl', 'mnet');
-    }
-
-    if (!$site = get_site()) {
-        admin_externalpage_print_header();
-        set_config('mnet_dispatcher_mode', 'off');
-        print_error('nosite');
     }
 
     if (!function_exists('curl_init') ) {

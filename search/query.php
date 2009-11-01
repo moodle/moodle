@@ -158,9 +158,7 @@
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8_CaseInsensitive());
     $sq = new SearchQuery($query_string, $page_number, 10, false);
 
-    if (!$site = get_site()) {
-        redirect("index.php");
-    }
+    $site = get_site();
 
     $strsearch = get_string('search', 'search');
     $strquery  = get_string('enteryoursearchquery', 'search');

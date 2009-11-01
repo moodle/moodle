@@ -11,9 +11,7 @@
 
     admin_externalpage_setup('adminregistration');
 
-    if (!$site = get_site()) {
-        redirect("index.php");
-    }
+    $site = get_site();
 
     if (!$admin = get_admin()) {
         print_error('noadmins', 'error');

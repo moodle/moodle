@@ -17,10 +17,7 @@
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
     
-    if (!$site = get_site()) {
-        admin_externalpage_print_header();
-        print_error('nosite', '', '', NULL, true);
-    }
+    $site = get_site();
 
     $trusted_hosts = '';//array();
     $old_trusted_hosts = get_config('mnet', 'mnet_trusted_hosts');

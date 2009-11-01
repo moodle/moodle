@@ -67,7 +67,6 @@ $string['cannotfindgroup'] = 'Unable to find group';
 $string['cannotfindhelp'] = 'Cannot find \"$a\" language help files';
 $string['cannotfindinfo'] = 'Cannot find info for: \"$a\"';
 $string['cannotfindlang'] = 'Cannot find \"$a\" language pack!';
-$string['cannotfindsite'] = 'Cannot find site-level course';
 $string['cannotfindteacher'] = 'Cannot find teacher';
 $string['cannotfinduser'] = 'Cannot find user named \"$a\"';
 $string['cannotgetblock'] = 'Could not retrieve blocks from the database';

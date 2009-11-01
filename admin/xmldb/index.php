@@ -51,9 +51,7 @@
     }
 
 /// Some previous checks
-    if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
-    }
+    $site = get_site();
 
     require_login();
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));

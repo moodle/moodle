@@ -174,9 +174,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
     $status = true;
     $result = "";
 
-    if (!$site = get_site()) {
-        $status = false;
-    }
+    $site = get_site();
 
     if ($status) {
 

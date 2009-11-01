@@ -19,9 +19,7 @@ if ($id) {
         print_error('invalidcourseid');
     }
 } else {
-    if (! $course = get_site()) {
-        print_error('nosite');
-    }
+    $course = get_site();
 }
 
 require_course_login($course);

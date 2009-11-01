@@ -18,10 +18,7 @@ if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet');
 }
 
-if (!$site = get_site()) {
-    admin_externalpage_print_header();
-    print_error('nosite', 'error');
-}
+$site = get_site();
 
 if (!function_exists('curl_init') ) {
     admin_externalpage_print_header();

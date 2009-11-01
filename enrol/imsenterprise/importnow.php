@@ -3,9 +3,7 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-if (!$site = get_site()) {
-    redirect("index.php");
-}
+$site = get_site();
 
 /// get language strings
 $str = get_strings(array('enrolments', 'users', 'administration', 'settings'));

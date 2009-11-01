@@ -46,8 +46,7 @@
     }
     $PAGE->set_url($url);
 
-    //Check login
-    require_login();
+    $site = get_site();
 
 /// With method=manual, we come from the FileManager so we delete all the backup/restore/import session structures
     if ($method == 'manual') {
@@ -93,9 +92,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("cannotfindsite");
-    }
+    $site = get_site();
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
     backup_required_functions();

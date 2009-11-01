@@ -8,10 +8,7 @@
 
     require_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM));
 
-    //Check site
-    if (!$site = get_site()) {
-        print_error("cannotfindsite");
-    }
+    $site = get_site();
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
     backup_required_functions();

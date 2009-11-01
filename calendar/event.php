@@ -77,9 +77,7 @@ if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 
 
 $focus = '';
 
-if(!$site = get_site()) {
-    redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
-}
+$site = get_site();
 
 $strcalendar = get_string('calendar', 'calendar');
 

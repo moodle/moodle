@@ -25,9 +25,7 @@ $url = new moodle_url($CFG->wwwroot.'/auth/mnet/jump.php', array('token'=>$token
 if ($wantsremoteurl !== false) $url->param('remoteurl', $wantsremoteurl);
 $PAGE->set_url($url);
 
-if (!$site = get_site()) {
-    print_error('mnet_session_prohibited', 'mnet', '', '');
-}
+$site = get_site();
 
 if (!is_enabled_auth('mnet')) {
     print_error('mnetdisable');

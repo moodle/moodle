@@ -85,9 +85,7 @@ if (empty($CFG->enablecalendarexport)) {
     die('no export');
 }
 
-if(!$site = get_site()) {
-    redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
-}
+$site = get_site();
 
 // Initialize the session variables
 calendar_session_vars();

@@ -55,9 +55,7 @@
     }
     $PAGE->set_url($url);
 
-    if (! $site = get_site()) {
-        redirect("$CFG->wwwroot/$CFG->admin/index.php");
-    }
+    $site = get_site();
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("invalidcourseid");
