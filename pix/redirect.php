@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
 If you're using custompix in your theme, but you don't want to have to copy every pix from /pix into /theme/yourtheme/pix, use this as a 404 handler.

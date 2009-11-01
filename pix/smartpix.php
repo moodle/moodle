@@ -278,4 +278,3 @@ fclose($handle);
 //    $lifetime = $CFG->filelifetime;
 //}
 //send_file($file,preg_replace('|^.*/|','',$file),$lifetime);
-?>
