@@ -711,4 +711,3 @@ class cc2moodle {
         return $code;
     }
 }
-?>

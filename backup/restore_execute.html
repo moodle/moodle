@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This page receives the required info and executes the restore
     //with the parameters suplied. Whe finished, delete temporary
     //data from backup_tables and temp directory
@@ -47,7 +47,7 @@
             if (empty($to)) {
                 print_error("cannotuseadminadminorteacher", '', $loginurl);
             } else {
-                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to)) 
+                if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $to))
                     && !has_capability('moodle/site:import',  get_context_instance(CONTEXT_COURSE, $to))) {
                     print_error("cannotuseadminadminorteacher", '', $loginurl);
                 }
@@ -74,8 +74,8 @@
         echo $OUTPUT->box(get_string("restorefinished"));
     } else {
         echo $OUTPUT->box(get_string("importdatafinished"));
-        $file = $CFG->dataroot . '/' 
-            . $SESSION->import_preferences->backup_course 
+        $file = $CFG->dataroot . '/'
+            . $SESSION->import_preferences->backup_course
             . '/backupdata/' . $SESSION->import_preferences->backup_name;
         if (is_readable($file)) {
             unlink($file);
@@ -86,5 +86,3 @@
         unset($SESSION->restore);
     }
     echo $OUTPUT->continue_button("$CFG->wwwroot/course/view.php?id=".$restore->course_id);
-
-?>

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
     //This page receive all the restore_form data. Then, if existing course
     //has been selected, shows a list of courses to select one.
@@ -56,7 +56,7 @@
 
     // check for session objects
     if (empty($info) or empty($course_header)) {
-      print_error('sessionmissing', 'debug', '', 
+      print_error('sessionmissing', 'debug', '',
               'info and course_header');
     }
 
@@ -375,4 +375,3 @@
         print_error('error');
     }
 
-?>

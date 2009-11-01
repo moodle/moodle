@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 // This file facilitates the conversion of a Blackboard course export
 // into a Moodle course export.  It assumes an unzipped directory and makes in-place alterations.
 
@@ -6,7 +6,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 // Ziba Scott <ziba@linuxbox.com> 10-25-04
 require_once($CFG->dirroot.'/backup/bb/xsl_emulate_xslt.inc');
-  
+
 function get_subdirs($directory){
     $opendirectory = opendir( $directory );
     while(false !== ($filename = readdir($opendirectory))) {
@@ -62,7 +62,7 @@ function blackboard_convert($dir){
 
 
         // Process the Blackboard XML files with the chosen XSL file.
-        // The imsmanifest contains all the XML files and their relationships. 
+        // The imsmanifest contains all the XML files and their relationships.
         // The XSL processor will open them as needed.
         $xsltproc = xslt_create();
         if (!xslt_process($xsltproc, 'imsmanifest.xml', "$dir/$xslt_file", "$dir/moodle.xml")) {
@@ -95,7 +95,7 @@ function blackboard_convert($dir){
  * then checks to see if the name is a hex - if so, it translates/renames correctly.
  *
  * @param string $subdir - the directory to parse.
- * 
+ *
  */
 function rename_hexfiles($subdir) {
     //this bit of code grabs all files in the directory, and if they start with ! or @, performs the name conversion
@@ -120,4 +120,3 @@ function rename_hexfiles($subdir) {
         closedir($handle);
     }
 }
-?>

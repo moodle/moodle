@@ -1,15 +1,15 @@
-<?php  // $Id$
+<?php
     //This page copies th zip to the temp directory,
     //unzip it, check that it is a valid backup file
     //inform about its contents and fill all the necesary
     //variables to continue with the restore.
 
     //Checks we have the file variable
-    if (!isset($file)) {         
+    if (!isset($file)) {
         print_error('nofile');
     }
 
-    //Check login   
+    //Check login
     require_login();
 
     $loginurl = get_login_url();
@@ -40,9 +40,7 @@
         define('RESTORE_SILENTLY',true);
     }
     $status = restore_precheck($id,$file,$errorstr);
- 
+
     if (!$status) {
         print_error("pleasereport");
     }
-
-?>

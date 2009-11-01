@@ -101,4 +101,3 @@ class resource extends entities {
         return str_replace($find_tags, $replace_values, $sheet_mod_resource);
     }
 }
-?>

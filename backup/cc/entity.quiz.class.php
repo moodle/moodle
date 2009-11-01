@@ -955,4 +955,3 @@ class quiz extends entities {
 
     }
 }
-?>

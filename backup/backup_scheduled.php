@@ -1,7 +1,7 @@
-<?php //$Id$
+<?php
     //This file contains all the code needed to execute scheduled backups
-    
-require_once($CFG->libdir.'/eventslib.php');    
+
+require_once($CFG->libdir.'/eventslib.php');
 
 //This function is executed via moodle cron
 //It prepares all the info and execute backups as necessary
@@ -855,5 +855,3 @@ function schedule_backup_course_delete_old_files($preferences,$starttime=0) {
     }
     return $status;
 }
-
-?>

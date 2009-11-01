@@ -1,7 +1,7 @@
-<?php //$Id$
+<?php
     //This page prints the backup todo list to see everything
 
-    //Check login   
+    //Check login
     require_login();
 
     $loginurl = get_login_url();
@@ -39,7 +39,7 @@
     if (empty($to)) {
         //Start the main table
         echo "<table cellpadding=\"5\">";
-        
+
         //Now print the Backup Name tr
         echo "<tr>";
         echo "<td align=\"right\"><b>";
@@ -47,11 +47,11 @@
         echo "</b></td><td>";
         echo $preferences->backup_name;
         echo "</td></tr>";
-        
+
         //Start the main tr, where all the backup progress is done
         echo "<tr>";
         echo "<td colspan=\"2\">";
-        
+
         //Start the main ul
         echo "<ul>";
     }
@@ -67,7 +67,7 @@
 
     //End the main table
     echo "</table>";
-    
+
     if (!$status) {
         print_error('error', 'error', "$CFG->wwwroot/course/view.php?id=$course->id");
     }
@@ -76,7 +76,7 @@
         //Print final message
         echo $OUTPUT->box(get_string("backupfinished"));
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        echo $OUTPUT->continue_button("$CFG->wwwroot/files/index.php?contextid=".$context->id."&filearea=course_backup&itemid=0");    
+        echo $OUTPUT->continue_button("$CFG->wwwroot/files/index.php?contextid=".$context->id."&filearea=course_backup&itemid=0");
     } else {
         echo $OUTPUT->box(get_string('importdataexported'));
         if (!empty($preferences->backup_destination)) {

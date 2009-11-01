@@ -267,4 +267,3 @@ class entities {
         return $text;
     }
 }
-?>

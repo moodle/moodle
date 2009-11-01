@@ -125,4 +125,3 @@ class forum extends entities {
         return '';
     }
 }
-?>

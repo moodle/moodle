@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This script is used to configure and execute the backup proccess.
 
     //Define some globals for all the script
@@ -134,4 +134,3 @@
 
     //Print footer
     echo $OUTPUT->footer();
-?>

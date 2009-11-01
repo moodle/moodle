@@ -139,4 +139,3 @@ function detect_cc_format ($xml_file) {
     }
 
 }
-?>

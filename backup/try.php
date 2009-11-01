@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?PHP
     require_once ("../config.php");
     require_once ("backup_scheduled.php");
     require_once ("lib.php");
@@ -38,4 +38,3 @@
             echo "End course ". format_string($course->fullname)." FAIL\n\n";
         }
     }
-?>

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This script is used to configure and execute the restore proccess.
 
     //Define some globals for all the script
@@ -186,5 +186,3 @@
 
     //Print footer
     echo $OUTPUT->footer();
-
-?>

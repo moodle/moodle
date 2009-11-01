@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility plus some constants
 
@@ -289,7 +289,7 @@
         if (!is_dir($to_file)) {
             //echo "<br />Creating ".$to_file;                                //Debug
             umask(0000);
-            $status = mkdir($to_file,$CFG->directorypermissions); 
+            $status = mkdir($to_file,$CFG->directorypermissions);
         }
         $dir = opendir($from_file);
         while (false !== ($file=readdir($dir))) {
@@ -387,7 +387,7 @@
         $status = true;
         $status2 = true;
 
-        $status = $DB->get_record("backup_ids", array("backup_code"=>$backup_unique_code, 
+        $status = $DB->get_record("backup_ids", array("backup_code"=>$backup_unique_code,
                                   "table_name"=>$table, "old_id"=>$old_id));
 
         //If info field = "infile", get file contents
@@ -404,8 +404,8 @@
         } else {
             //Only if status (record exists)
             if (!empty($status->info)) {
-                if ($status->info === 'needed') { 
-                    // TODO: ugly hack - fix before 1.9.1 
+                if ($status->info === 'needed') {
+                    // TODO: ugly hack - fix before 1.9.1
                     debugging('Incorrect string "needed" in $status->info, please fix the code (table:'.$table.'; old_id:'.$old_id.').', DEBUG_DEVELOPER);
                 } else {
                     ////First strip slashes
@@ -753,7 +753,7 @@
         backup_add_static_preferences($preferences);
         return $preferences;
     }
-    function add_to_backup_log($starttime,$courseid,$message, $backuptype) { 
+    function add_to_backup_log($starttime,$courseid,$message, $backuptype) {
         global $DB;
         $log = new object();
         $log->courseid = $courseid;
@@ -764,5 +764,3 @@
         $DB->insert_record('backup_log', $log);
     }
 
-
-?>

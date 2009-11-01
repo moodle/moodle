@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
@@ -950,7 +950,7 @@
     function backup_blog($bf, $blogid, $level) {
         global $DB;
         $blog = $DB->get_record('post', array('module'=>'blog', 'id'=>$blogid));
-    
+
                 /// start blog
         fwrite($bf, start_tag("BLOG",$level,true));
                 /// blog body
@@ -989,12 +989,12 @@
             /// End BLOG_TAGS tag
                 fwrite ($bf,end_tag("BLOG_TAGS",$level+1,true));
             }
-        } 
+        }
         /// end blog
         fwrite($bf, end_tag("BLOG",$level,true));
     }
-    
-    
+
+
 
     /**
      * Prints course's blocks info (table block_instance)
@@ -1167,7 +1167,7 @@
         $status = true;
 
         $first_record = true;
-        
+
         $course=$DB->get_record('course',array('id'=>$preferences->backup_course));
         if(!$course) {
             return false;
@@ -1245,7 +1245,7 @@
                // write completion data if enabled and user data enabled
                require_once($CFG->libdir.'/completionlib.php');
                $completion=new completion_info($course);
-               if($completion->is_enabled($course_module) && 
+               if($completion->is_enabled($course_module) &&
                    backup_userdata_selected($preferences,$moduletype,$course_module->instance)) {
                    fwrite ($bf,start_tag("COMPLETIONDATA",6,true));
 
@@ -1267,7 +1267,7 @@
 
                // Write availability data if enabled
                require_once($CFG->libdir.'/conditionlib.php');
-               if(!empty($CFG->enableavailability)) {                   
+               if(!empty($CFG->enableavailability)) {
                    fwrite ($bf,start_tag("AVAILABILITYDATA",6,true));
                    // Get all availability restrictions for this activity
                    $data=$DB->get_records('course_modules_availability',
@@ -1281,7 +1281,7 @@
                        fwrite ($bf,full_tag("GRADEITEMID",8,false,$availability->gradeitemid));
                        fwrite ($bf,full_tag("GRADEMIN",8,false,$availability->grademin));
                        fwrite ($bf,full_tag("GRADEMAX",8,false,$availability->grademax));
-                       fwrite ($bf,end_tag("AVAILABILITY",7,true));                       
+                       fwrite ($bf,end_tag("AVAILABILITY",7,true));
                    }
                    fwrite ($bf,end_tag("AVAILABILITYDATA",6,true));
                }
@@ -1299,7 +1299,7 @@
 
         return $status;
     }
-    
+
     //Print users to xml
     //Only users previously calculated in backup_ids will output
     //
@@ -3583,5 +3583,3 @@
         $preferences->backup_version = $CFG->backup_version;
         $preferences->backup_release = $CFG->backup_release;
     }
-
-?>
