@@ -266,7 +266,7 @@ function coursetag_get_jscript($coursetagdivs = '') {
  */
 function coursetag_get_jscript_links($coursetagslinks) {
     global $PAGE;
-    
+
     if (!empty($coursetagslinks)) {
         foreach ($coursetagslinks as $a) {
             $PAGE->requires->js_function_call('add_tag_footer_link', array('coursetagslinks', $a['title'], $a['onclick'], $a['text']))->on_dom_ready();
@@ -656,5 +656,3 @@ function coursetag_get_official_keywords($courseid, $asarray=false) {
     return $returnstr;
 }
 */
-
-?>

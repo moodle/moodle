@@ -39,5 +39,3 @@ if ($courseid > 0) {
 }
 
 redirect($myurl);
-
-?>

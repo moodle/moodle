@@ -188,4 +188,3 @@ EOT2;
     }
 
 echo $OUTPUT->footer();
-?>

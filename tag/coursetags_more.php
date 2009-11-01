@@ -198,4 +198,3 @@ $outstr = '
 echo $outstr;
 
 echo $OUTPUT->footer();
-?>

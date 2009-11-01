@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('lib.php');
 
@@ -385,6 +385,3 @@ function tag_print_user_list($userlist, $return=false) {
         echo $output;
     }
 }
-
-
-?>

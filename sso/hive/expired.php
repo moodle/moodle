@@ -45,4 +45,3 @@
 <br />
 <?php
     echo $OUTPUT->close_window_button();
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('../config.php');
 require_once($CFG->libdir.'/tablelib.php');
@@ -53,7 +53,7 @@ switch($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
-        
+
         $str_tagschecked = implode(', ', tag_get_name($tagschecked));
         tag_delete($tagschecked);
         $notice = $str_tagschecked.' --  '.get_string('deleted','tag');
@@ -96,7 +96,7 @@ switch($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             break;
         }
-        
+
         $tags_names_changed = array();
         foreach ($tagschecked as $tag_id) {
             if ($newnames[$tag_id] != '') {
@@ -276,5 +276,3 @@ if ($perpage == SHOW_ALL_PAGE_SIZE) {
 echo '<br/>';
 
 echo $OUTPUT->footer();
-
-?>

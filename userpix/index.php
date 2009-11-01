@@ -38,5 +38,3 @@
     }
 
     echo $OUTPUT->footer();
-
-?>

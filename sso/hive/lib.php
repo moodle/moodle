@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
        // Logs into Hive from HarvestRoad and stores session ID in Moodle session
        // Martin Dougiamas, Moodle
        //
@@ -75,5 +75,3 @@ function sso_user_login($username, $password) {
 
     return false;  // No cookie found
 }
-
-?>

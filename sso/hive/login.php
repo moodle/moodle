@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
        // login.php - action of the login form put up by expired.php.
 
     require('../../config.php');
@@ -18,5 +18,3 @@
     } else {
         redirect($CFG->wwwroot.'/sso/hive/expired.php');
     }
-
-?>

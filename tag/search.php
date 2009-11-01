@@ -53,5 +53,3 @@ tag_print_cloud(150);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
-
-?>

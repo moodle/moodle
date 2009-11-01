@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * Moodle tag library
@@ -1032,5 +1032,3 @@ function tag_unset_flag($tagids) {
     $timemodified = time();
     return $DB->execute("UPDATE {tag} SET flag = 0, timemodified = ? WHERE id IN ($tagids)", array($timemodified));
 }
-
-?>

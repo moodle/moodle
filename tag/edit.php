@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('../config.php');
 require_once('lib.php');
@@ -99,21 +99,21 @@ if ($tagnew = $tagform->get_data()) {
                 print_error('errorupdatingrecord', 'tag');
             }
         }
-        
+
         //log tag changes activity
         //if tag name exist from form, renaming is allow.  record log action as rename
-        //otherwise, record log action as update       
+        //otherwise, record log action as update
         if (isset($tagnew->name) && ($tag->name != $tagnew->name)){
             add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name . '->'. $tagnew->name);
 
-        } elseif ($tag->description != $tagnew->description) {  
+        } elseif ($tag->description != $tagnew->description) {
             add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name);
         }
-        
+
         //updated related tags
         tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
         //print_object($tagnew); die();
-    
+
         redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
     }
 }
@@ -135,5 +135,3 @@ if (ajaxenabled()) {
     $PAGE->requires->js_function_call('init_tag_autocomplete')->on_dom_ready();
 }
 echo $OUTPUT->footer();
-
-?>

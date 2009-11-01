@@ -16,7 +16,7 @@ class tag_edit_form extends moodleform {
         $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-            $mform->addElement('text', 'rawname', get_string('name', 'tag'), 
+            $mform->addElement('text', 'rawname', get_string('name', 'tag'),
                     'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
         }
 
@@ -25,7 +25,7 @@ class tag_edit_form extends moodleform {
         $mform->addElement('format', 'descriptionformat', get_string('format'));
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-           $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag')); 
+           $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));
         }
 
         $mform->addElement('html', '<br/><div id="relatedtags-autocomplete-container">');
@@ -39,5 +39,3 @@ class tag_edit_form extends moodleform {
     }
 
 }
-
-?>

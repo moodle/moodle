@@ -16,5 +16,3 @@ if ($similar_tags = tag_autocomplete($query)) {
         echo $tag->name . "\t" . tag_display_name($tag) . "\n";
     }
 }
-
-?>
