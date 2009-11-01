@@ -1034,4 +1034,4 @@ class view_table_php extends XMLDBAction {
     }
 
 }
-?>
+

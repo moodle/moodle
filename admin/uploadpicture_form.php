@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     require_once $CFG->libdir.'/formslib.php';
 
     class admin_uploadpicture_form extends moodleform {
@@ -25,4 +25,4 @@
             $this->add_action_buttons(false, get_string('uploadpictures', 'admin'));
         }
     }
-?>
+

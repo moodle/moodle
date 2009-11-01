@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -105,4 +105,4 @@ class edit_statement_save extends XMLDBAction {
         return $result;
     }
 }
-?>
+

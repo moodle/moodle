@@ -58,7 +58,7 @@ class service_user_selector extends user_selector_base {
         global $DB;
         //by default wherecondition retrieves all users except the deleted, not
         //confirmed and guest
-        list($wherecondition, $params) = $this->search_sql($search, 'u'); 
+        list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params[] = $this->serviceid;
 
 

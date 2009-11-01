@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -103,4 +103,4 @@ class generate_documentation extends XMLDBAction {
         return $result;
     }
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -161,4 +161,3 @@ class check_bigints extends XMLDBCheckAction {
         return $r;
     }
 }
-?>

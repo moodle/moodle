@@ -247,4 +247,3 @@ class XMLDBAction {
         return $result;
     }
 }
-?>

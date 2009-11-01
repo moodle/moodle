@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -137,4 +137,4 @@ class move_updown_statement extends XMLDBAction {
         return $result;
     }
 }
-?>
+

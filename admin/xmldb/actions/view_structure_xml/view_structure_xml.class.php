@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -110,4 +110,4 @@ class view_structure_xml extends XMLDBAction {
         return $result;
     }
 }
-?>
+

@@ -87,7 +87,7 @@ abstract class capability_table_base {
         echo '<tr><th class="name" align="left" scope="col">' . get_string('capability','role') . '</th>';
         $this->add_header_cells();
         echo "</tr>\n</thead>\n<tbody>\n";
-        
+
     /// Loop over capabilities.
         $contextlevel = 0;
         $component = '';
@@ -137,7 +137,7 @@ abstract class capability_table_base {
         echo '<tr class="rolecapheading header"><td colspan="' . (1 + $this->num_extra_columns()) . '" class="header"><strong>' .
                 get_component_string($capability->component, $capability->contextlevel) .
                 '</strong></td></tr>';
-        
+
     }
 
     /** For subclasses to override, output header cells, after the initial capability one. */
@@ -256,7 +256,7 @@ class explain_capability_table extends capability_table_base {
         $link = html_link::make($this->baseurl . $capability->name, $this->strexplanation);
         $link->add_action(new popup_action('click', $link->url, 'hascapabilityexplanation', array('height' => 600, 'width' => 600)));
         $link->title = get_string($tooltip, 'role', $a);
-        echo $OUTPUT->link($link);                    
+        echo $OUTPUT->link($link);
 
         echo '</td>';
     }
@@ -415,18 +415,18 @@ abstract class capability_table_with_risks extends capability_table_base {
     /**
      * Print a risk icon, as a link to the Risks page on Moodle Docs.
      *
-     * @param string $type the type of risk, will be one of the keys from the 
+     * @param string $type the type of risk, will be one of the keys from the
      *      get_all_risks array. Must start with 'risk'.
      */
     function get_risk_icon($type) {
         global $OUTPUT;
         if (!isset($this->riskicons[$type])) {
             $iconurl = $OUTPUT->old_icon_url('i/' . str_replace('risk', 'risk_', $type));
-            
+
             $link = html_link::make($this->risksurl, '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />');
             $link->add_action(new popup_action('click', $link->url, 'docspopup'));
             $link->title = get_string($type, 'admin');
-            
+
             $this->riskicons[$type] = $OUTPUT->link($link);
         }
         return $this->riskicons[$type];
@@ -611,7 +611,7 @@ class define_role_table_advanced extends capability_table_with_risks {
                     assign_capability($cap, CAP_ALLOW, $this->role->id, $this->context->id);
                 } else {
                     unassign_capability($cap, $this->role->id);
-                } 
+                }
             }
         }
 
@@ -633,7 +633,7 @@ class define_role_table_advanced extends capability_table_with_risks {
     protected function get_shortname_field($id) {
         return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->shortname) . '" />';
     }
-    
+
     protected function get_description_field($id) {
         return print_textarea(true, 10, 50, 50, 10, 'description', $this->role->description, 0, true);
     }
@@ -819,7 +819,7 @@ class view_role_definition_table extends define_role_table_advanced {
         }
         echo '<td class="' . $permname . '">' . $this->strperms[$permname] . '<span class="note">' .
                 $default . '</span></td>';
-        
+
     }
 }
 
@@ -976,7 +976,7 @@ abstract class role_assign_user_selector_base extends user_selector_base {
  *
  * In this case we replicate part of get_users_by_capability() get the users
  * with moodle/course:view (or moodle/site:doanything). We can't use
- * get_users_by_capability() becuase 
+ * get_users_by_capability() becuase
  *   1) get_users_by_capability() does not deal with searching by name
  *   2) exceptions array can be potentially large for large courses
  */
@@ -1080,7 +1080,7 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
         $fields      = 'SELECT ' . $this->required_fields_sql('');
         $countfields = 'SELECT COUNT(1)';
 
-        $sql = " FROM {user} 
+        $sql = " FROM {user}
                 WHERE $wherecondition
                       AND id NOT IN (
                          SELECT u.id
@@ -1341,7 +1341,7 @@ abstract class role_allow_role_page {
 
     /**
      * @return object a $table structure that can be passed to print_table, containing
-     * one cell for each checkbox. 
+     * one cell for each checkbox.
      */
     public function get_table() {
         $table = new html_table();

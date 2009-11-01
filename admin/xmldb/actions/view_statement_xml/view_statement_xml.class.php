@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -123,4 +123,4 @@ class view_statement_xml extends XMLDBAction {
         return $result;
     }
 }
-?>
+

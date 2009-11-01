@@ -162,4 +162,4 @@ class edit_table_save extends XMLDBAction {
         return $result;
     }
 }
-?>
+

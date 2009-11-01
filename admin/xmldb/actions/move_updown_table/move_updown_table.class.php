@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -137,4 +137,4 @@ class move_updown_table extends XMLDBAction {
         return $result;
     }
 }
-?>
+

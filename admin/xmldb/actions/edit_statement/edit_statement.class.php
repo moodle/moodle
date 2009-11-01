@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -180,4 +180,4 @@ class edit_statement extends XMLDBAction {
         return $result;
     }
 }
-?>
+

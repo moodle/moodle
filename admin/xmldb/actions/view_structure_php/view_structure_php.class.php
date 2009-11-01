@@ -312,4 +312,4 @@ class view_structure_php extends XMLDBAction {
     }
 
 }
-?>
+

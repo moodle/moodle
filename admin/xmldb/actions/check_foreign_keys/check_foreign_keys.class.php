@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -162,4 +162,3 @@ class check_foreign_keys extends XMLDBCheckAction {
         return $r;
     }
 }
-?>

@@ -354,4 +354,4 @@ class edit_table extends XMLDBAction {
         return $result;
     }
 }
-?>
+

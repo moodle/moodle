@@ -258,4 +258,4 @@ function my_save_profile_image($id, $originalfile) {
     return process_profile_image($originalfile, $destination);
 }
 
-?>
+

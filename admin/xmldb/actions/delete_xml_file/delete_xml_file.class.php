@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -108,4 +108,4 @@ class delete_xml_file extends XMLDBAction {
         return $result;
     }
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -151,4 +151,4 @@ class edit_sentence extends XMLDBAction {
         return $result;
     }
 }
-?>
+

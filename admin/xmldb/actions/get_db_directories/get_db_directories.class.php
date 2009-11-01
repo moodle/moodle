@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -89,4 +89,4 @@ class get_db_directories extends XMLDBAction {
         return true;
     }
 }
-?>
+

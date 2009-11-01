@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -105,4 +105,4 @@ class create_xml_file extends XMLDBAction {
         return $result;
     }
 }
-?>
+

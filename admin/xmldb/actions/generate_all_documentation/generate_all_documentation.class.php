@@ -121,4 +121,4 @@ class generate_all_documentation extends XMLDBAction {
         return $result;
     }
 }
-?>
+

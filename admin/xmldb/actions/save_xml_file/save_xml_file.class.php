@@ -123,4 +123,4 @@ class save_xml_file extends XMLDBAction {
         return $result;
     }
 }
-?>
+

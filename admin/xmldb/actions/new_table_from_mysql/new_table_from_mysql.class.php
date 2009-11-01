@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -184,4 +184,4 @@ class new_table_from_mysql extends XMLDBAction {
         return $result;
     }
 }
-?>
+

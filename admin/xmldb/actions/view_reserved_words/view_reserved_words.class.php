@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -128,4 +128,4 @@ class view_reserved_words extends XMLDBAction {
         return $result;
     }
 }
-?>
+

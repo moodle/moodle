@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -223,4 +223,4 @@ class edit_index_save extends XMLDBAction {
         return $result;
     }
 }
-?>
+

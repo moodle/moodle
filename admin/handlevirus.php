@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /** This expects the output from a command like
  * clamscan -r --infected --no-summary <files> 2>&1 | php -d error_log=/path/to/log thisfile.php 
  * also it's important that the output of clamscan prints the FULL PATH to each infected file, so use absolute paths for area to scan
@@ -141,4 +141,4 @@ function validate_line($line) {
     return $file;
 }
 
-?>
+

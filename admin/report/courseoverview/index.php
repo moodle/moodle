@@ -51,15 +51,15 @@
     $table = new html_table();
     $table->width = '*';
     $table->align = array('left','left','left','left','left','left');
-    
+
     $select = html_select::make($reportoptions,'report',$report, false);
     $select->nothingvalue = '';
     $reporttypemenu = $OUTPUT->select($select);
-    
+
     $select = html_select::make($timeoptions,'time',$time, false);
     $select->nothingvalue = '';
     $timeoptionsmenu = $OUTPUT->select($select);
-    
+
     $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                            get_string('statstimeperiod'),$timeoptionsmenu,
                            '<input type="text" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',

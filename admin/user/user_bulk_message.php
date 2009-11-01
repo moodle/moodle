@@ -58,7 +58,7 @@ if ($msgform->is_cancelled()) {
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview');
-    
+
     $formcontinue = html_form::make_button('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg), get_string('yes'));
     $formcancel = html_form::make_button('user_bulk.php', $optionsno, get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
     // Automatic update of Timezones from a new source
     
@@ -123,4 +123,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

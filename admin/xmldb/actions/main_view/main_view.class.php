@@ -333,4 +333,4 @@ class main_view extends XMLDBAction {
         return $result;
     }
 }
-?>
+

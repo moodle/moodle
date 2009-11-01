@@ -89,7 +89,7 @@
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
                 $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
-                
+
                 $formcontinue = html_form::make_button($baseurl, array('confirm' => 1, 'msg' => $msg), get_string('yes'));
                 $formcancel = html_form::make_button($baseurl, $optionsno, get_string('no'), 'get');
                 echo $OUTPUT->confirm(get_string('deleterolesure', 'role', $a), $formcontinue, $formcancel);
@@ -255,7 +255,7 @@
         if (isset($undeletableroles[$role->id])) {
             $row[3] .= get_spacer();
         } else {
-            $row[3] .= get_action_icon($baseurl . '?action=delete&amp;roleid=' . $role->id, 
+            $row[3] .= get_action_icon($baseurl . '?action=delete&amp;roleid=' . $role->id,
                   'delete', $strdelete, get_string('deletexrole', 'role', $role->localname));
         }
 

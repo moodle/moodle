@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -114,4 +114,4 @@ class revert_changes extends XMLDBAction {
         return $result;
     }
 }
-?>
+

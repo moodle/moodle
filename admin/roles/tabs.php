@@ -72,7 +72,7 @@ if ($currenttab != 'update') {
             if (empty($title)) {
                 $title = "$SITE->shortname: $category->name";
             }
-            
+
             $PAGE->navbar->add($strcategories, new moodle_url($CFG->wwwroot.'/course/index.php'), navigation_node::TYPE_SETTING);
             $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id)), navigation_node::TYPE_SETTING);
             $PAGE->set_title($title);
@@ -107,7 +107,7 @@ if ($currenttab != 'update') {
             require_login($course);
 
             $PAGE->navigation->add(get_string('roles'));
-            
+
             if (empty($title)) {
                 $title = get_string("editinga", "moodle", $fullmodulename);
             }

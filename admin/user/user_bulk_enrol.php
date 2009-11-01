@@ -13,7 +13,7 @@ admin_externalpage_setup('userbulk');
 require_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM));
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 //If no users selected then return to user_bulk.php
-if (empty($SESSION->bulk_users)) { 
+if (empty($SESSION->bulk_users)) {
     redirect($return);
 }
 $users = $SESSION->bulk_users; //Get users to display
@@ -71,7 +71,7 @@ foreach ($columns as $column) {
 if(!empty($processed)) {
     //Process data form here
     $total = count($courses) * count($users);
-  
+
     for ( $i = 0; $i < $total; $i++ )
     {
         $param = "selected".$i;
@@ -100,14 +100,14 @@ if(!empty($processed)) {
     redirect($return, get_string('changessaved'));
 }
 
-//Form beginning  
+//Form beginning
 echo '<form id="multienrol" name="multienrol" method="post" action="user_bulk_enrol.php">';
 echo '<input type="hidden" name="processed" value="yes" />';
 $count = 0;
-foreach($users as $user) 
+foreach($users as $user)
 {
     $temparray = array (
-        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>'   
+        '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>'
     );
     $mycourses = get_my_courses($user->id);
     foreach($courses as $acourse)

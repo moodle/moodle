@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -95,4 +95,4 @@ class load_xml_files extends XMLDBAction {
         return $result;
     }
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -156,4 +156,3 @@ class check_defaults extends XMLDBCheckAction {
         return $r;
     }
 }
-?>

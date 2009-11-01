@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -166,4 +166,3 @@ class check_indexes extends XMLDBCheckAction {
         return $r;
     }
 }
-?>

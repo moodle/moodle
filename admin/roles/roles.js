@@ -1,4 +1,4 @@
-/* This class filters the rows of a table like the one on the define or 
+/* This class filters the rows of a table like the one on the define or
 override roles pages. It adds a search box just above the table, and if
 content is typed into that box, it hides any rows in the table where the
 capability name does not contain that text. */

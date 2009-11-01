@@ -63,7 +63,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
          $userstoremove = $alloweduserselector->get_selected_users();
             if (!empty($userstoremove)) {
 
-                foreach ($userstoremove as $removeuser) {             
+                foreach ($userstoremove as $removeuser) {
                     $DB->delete_records('external_services_users', array('externalserviceid' => $id, 'userid' => $removeuser->id));
                     add_to_log(1, 'core', 'assign', $CFG->admin.'/webservice/service_users.php?id='.$id, 'remove', '', $removeuser->id);
                 }
@@ -88,7 +88,7 @@ $alloweduserselector = new service_user_selector('removeselect', array('servicei
       </td>
       <td id="buttonscell">
           <div id="addcontrols">
-              <input name="add" id="add" type="submit" value="<?php echo $THEME->larrow.'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />  
+              <input name="add" id="add" type="submit" value="<?php echo $THEME->larrow.'&nbsp;'.get_string('add'); ?>" title="<?php print_string('add'); ?>" /><br />
           </div>
 
           <div id="removecontrols">
@@ -146,7 +146,7 @@ $sql = " SELECT u.id as id, esu.id as serviceuserid, u.email as email, u.firstna
 $allowedusers = $DB->get_records_sql($sql, array($id));
 if (!empty($allowedusers)) {
     echo $OUTPUT->box_start('generalbox', 'alloweduserlist');
-   
+
     echo "<label><strong>".get_string('serviceuserssettings', 'webservice').":</strong></label>";
     echo "<br/><br/><span style=\"font-size:85%\">"; //reduce font of the user settings
     foreach($allowedusers as $user) {
@@ -199,7 +199,7 @@ if (!empty($allowedusers)) {
         //TO IMPLEMENT : assign the required capability (if needed)
         $contents .=  "<div class=\"fitem\"><div class=\"fitemtitle\"><label>".get_string('addrequiredcapability','webservice')." </label></div><div class=\"felement fcheckbox\">";
         $checkbox = new html_select_option();
-        $checkbox->value = $user->id; 
+        $checkbox->value = $user->id;
         $checkbox->selected = false;
         $checkbox->text = ' ';
         $checkbox->label->text = ' ';
@@ -207,7 +207,7 @@ if (!empty($allowedusers)) {
         $contents .= $OUTPUT->checkbox($checkbox, 'addcap')."</div></div>";
         $contents .= "</div>";
         echo $OUTPUT->form($form, $contents);
-        
+
         echo print_collapsible_region_end(true);
 
 

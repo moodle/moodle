@@ -282,4 +282,4 @@ class edit_xml_file extends XMLDBAction {
         return $result;
     }
 }
-?>
+
