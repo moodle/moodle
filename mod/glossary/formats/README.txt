@@ -1,3 +1,5 @@
+$Id$
+
 GLOSSARY FORMAT PLUGINS
 -----------------------
 
