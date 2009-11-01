@@ -2250,13 +2250,7 @@ function get_system_context($cache=true) {
         return $ACCESSLIB_PRIVATE->systemcontext;
     }
     try {
-        // TODO: can not use get_record() because we do not know if query failed :-(
-        //       switch to get_record() later
-        $contextarr = $DB->get_records('context', array('contextlevel'=>CONTEXT_SYSTEM));
-        if ($contextarr === false) {
-            return null;
-        }
-        $context = $contextarr ? reset($contextarr) : null;
+        $context = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM));
     } catch (dml_exception $e) {
         //table does not exist yet, sorry
         return null;
