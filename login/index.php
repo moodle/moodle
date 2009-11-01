@@ -61,9 +61,7 @@ httpsrequired();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 
 /// Define variables used in page
-if (!$site = get_site()) {
-    print_error('siteisnotdefined', 'debug');
-}
+$site = get_site();
 
 if (empty($CFG->langmenu)) {
     $langmenu = "";

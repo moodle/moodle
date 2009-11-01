@@ -36,9 +36,7 @@ $moveto   = optional_param('moveto',-1,PARAM_INT);
 $moveup   = optional_param('moveup',0,PARAM_INT);
 $movedown = optional_param('movedown',0,PARAM_INT);
 
-if (!$site = get_site()) {
-    print_error('siteisnotdefined', 'debug');
-}
+$site = get_site();
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 

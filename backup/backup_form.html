@@ -24,9 +24,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
 
     //Checks for the required files/functions to backup every mod
     //And check if there is data about it

@@ -8,9 +8,7 @@ httpsrequired();
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php'));
 
 /// Define variables used in page
-if (!$site = get_site()) {
-    print_error("siteisnotdefined");
-}
+$site = get_site();
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
 if (!in_array('ldap',$authsequence,true)) {
@@ -39,7 +37,3 @@ $msg = '<p>'.get_string('ntlmsso_attempting','auth_ldap').'</p>'
     . ' src="' . $CFG->wwwroot . '/auth/ldap/ntlmsso_magic.php?sesskey='
     . $sesskey . '" />';
 redirect($CFG->wwwroot . '/auth/ldap/ntlmsso_finish.php', $msg, 3);
-
-
-
-?>

@@ -405,9 +405,7 @@ function get_users_confirmed() {
 /**
  * Returns $course object of the top-level site.
  *
- * @global object
- * @global object
- * @return bool|object A {@link $COURSE} object for the site
+ * @return object A {@link $COURSE} object for the site, exception if not found
  */
 function get_site() {
     global $SITE, $DB;
@@ -419,7 +417,9 @@ function get_site() {
     if ($course = $DB->get_record('course', array('category'=>0))) {
         return $course;
     } else {
-        return false;
+        // course table exists, but the site is not there,
+        // unfortunately there is no automatic way to recover
+        throw new moodle_exception('nosite', 'error');
     }
 }
 

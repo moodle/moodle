@@ -14,10 +14,8 @@
         print_error('cannotdeletecourse');
     }
 
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
-
+    $site = get_site();
+    
     $strdeletecourse = get_string("deletecourse");
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");

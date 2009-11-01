@@ -24,9 +24,7 @@
 
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
 
     $preferences = new StdClass;
     backup_fetch_prefs_from_request($preferences,$count,$course);

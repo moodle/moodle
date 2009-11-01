@@ -212,9 +212,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
 
     // Non-cached - get accessinfo
     if (isset($USER->access)) {

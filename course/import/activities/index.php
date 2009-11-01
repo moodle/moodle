@@ -56,9 +56,7 @@ if (! ($course = $DB->get_record("course", array("id"=>$id)))) {
     print_error("invalidcourseid");
 }
 
-if (!$site = get_site()){
-    print_error("siteisnotdefined", 'debug');
-}
+$site = get_site();
 
 require_login($course->id);
 $tocontext = get_context_instance(CONTEXT_COURSE, $id);

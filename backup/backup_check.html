@@ -31,9 +31,7 @@
 
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }

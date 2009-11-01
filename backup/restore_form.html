@@ -39,9 +39,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
 
     //Checks for the required files/functions to restore every mod
     $count = 0;

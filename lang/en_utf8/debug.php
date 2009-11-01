@@ -31,7 +31,6 @@ $string['modulenotexist'] = '$a module doesn\'t exist';
 $string['phpvaroff'] = 'The PHP server variable \'$a->name\' should be Off - $a->link';
 $string['phpvaron'] = 'The PHP server variable \'$a->name\' is not turned On - $a->link';
 $string['sessionmissing'] = '$a object missing from session';
-$string['siteisnotdefined'] = 'Site is not defined!';
 $string['sqlrelyonobsoletetable'] = 'This SQL relies on obsolete table(s): $a!  Your code must be fixed by a developer.';
 $string['withoutversion'] = 'Main version.php file is missing, not readable or broken.';
 $string['xmlizeunavailable'] = 'xmlize functions are not available';

@@ -8,9 +8,7 @@ httpsrequired();
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/auth/ldap/ntlmsso_finish.php'));
 
 /// Define variables used in page
-if (!$site = get_site()) {
-    print_error("siteisnotdefined", 'debug');
-}
+$site = get_site();
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
 if (!in_array('ldap',$authsequence,true)) {
@@ -36,4 +34,3 @@ if (!$authplugin->ntlmsso_finish()) {
     redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1', 
              get_string('ntlmsso_failed','auth_ldap'), 3);
 }
-?>

@@ -60,9 +60,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
     $errorstr = '';
 
     $status = restore_execute($restore,$info,$course_header,$errorstr);

@@ -17,10 +17,8 @@
     $moveto = optional_param('moveto', 0, PARAM_INT);
     $resort = optional_param('resort', 0, PARAM_BOOL);
 
-    if (!$site = get_site()) {
-        print_error('siteisnotdefined', 'debug');
-    }
-
+    $site = get_site();
+    
     if (empty($id)) {
         print_error("unknowcategory");
     }

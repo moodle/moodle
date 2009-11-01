@@ -33,9 +33,7 @@
     }
 
     //Check site
-    if (!$site = get_site()) {
-        print_error("siteisnotdefined", 'debug');
-    }
+    $site = get_site();
 
     $errorstr = '';
     if (!empty($SESSION->restore->importing)) {
