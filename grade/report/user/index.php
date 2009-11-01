@@ -150,4 +150,4 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
 
 echo $OUTPUT->footer();
 
-?>
+

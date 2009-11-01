@@ -52,7 +52,7 @@ if ($keys = $DB->get_records_select('user_private_key', "script='grade/import' A
         $line[0] = format_string($key->value);
         $line[1] = $key->iprestriction;
         $line[2] = empty($key->validuntil) ? get_string('always') : userdate($key->validuntil);
-        
+
         $icon = new moodle_action_icon();
         $icon->link->url = new moodle_url('key.php', array('id' => $key->id));
         $icon->image->add_class('iconsmall');
@@ -88,4 +88,4 @@ echo $OUTPUT->button(html_form::make_button('key.php', array('courseid'=>$course
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
-?>
+

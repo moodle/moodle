@@ -35,4 +35,4 @@ require_capability('gradeexport/ods:publish', $context);
 // use the same page parameters as export.php and append &key=sdhakjsahdksahdkjsahksadjksahdkjsadhksa
 require 'export.php';
 
-?>
+

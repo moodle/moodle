@@ -39,4 +39,4 @@ $gradeexport_xls_capabilities = array(
 
 );
 
-?>
+

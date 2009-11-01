@@ -146,4 +146,4 @@ class edit_outcome_form extends moodleform {
 
 }
 
-?>
+

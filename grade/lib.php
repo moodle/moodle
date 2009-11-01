@@ -854,7 +854,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     }
 
     $PAGE->navbar->add($stractive_plugin);
-    
+
     $title = ': ' . $stractive_plugin;
     if (empty($plugin_info[$active_type]->id) || !empty($plugin_info[$active_type]->parent)) {
         $title = ': ' . $stractive_type . ': ' . $stractive_plugin;

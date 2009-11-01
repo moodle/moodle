@@ -241,4 +241,4 @@ function grade_report_overview_settings_definition(&$mform) {
     $mform->setHelpButton('report_overview_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
 }
 
-?>
+

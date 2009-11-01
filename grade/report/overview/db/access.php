@@ -29,4 +29,4 @@ $gradereport_overview_capabilities = array(
 
 );
 
-?>
+

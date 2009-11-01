@@ -288,7 +288,7 @@ abstract class grade_export {
     public function print_continue() {
         global $CFG, $OUTPUT;
 
-        $params = $this->get_export_params(); 
+        $params = $this->get_export_params();
 
         echo $OUTPUT->heading(get_string('export', 'grades'));
 
@@ -383,4 +383,4 @@ class grade_export_update_buffer {
         $this->flush(0);
     }
 }
-?>
+

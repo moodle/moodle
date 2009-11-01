@@ -210,4 +210,4 @@ function get_grade_tree(&$gtree, $element, $current_itemid=null, $errors=null) {
     return $return_string;
 }
 
-?>
+

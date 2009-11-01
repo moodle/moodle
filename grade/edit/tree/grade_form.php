@@ -206,4 +206,4 @@ class edit_grade_form extends moodleform {
     }
 }
 
-?>
+

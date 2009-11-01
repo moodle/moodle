@@ -29,4 +29,4 @@ $gradereport_grader_capabilities = array(
     )
 );
 
-?>
+

@@ -193,4 +193,4 @@ echo $OUTPUT->container('tooltip panel', '', 'hiddentooltiproot');
 if ($report->get_pref('enableajax')) {
     require_once 'ajax.php';
 }
-echo $OUTPUT->footer(); 
+echo $OUTPUT->footer();

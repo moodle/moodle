@@ -243,4 +243,4 @@ class edit_outcomeitem_form extends moodleform {
     }
 
 }
-?>
+

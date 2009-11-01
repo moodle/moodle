@@ -25,4 +25,4 @@ $options = array(0 => get_string('shownohidden', 'grades'),
                  2 => get_string('showallhidden', 'grades'));
 $settings->add(new admin_setting_configselect('grade_report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), get_string('configshowhiddenitems', 'grades'), 1, $options));
 
-?>
+

@@ -103,4 +103,4 @@ class grade_export_xls extends grade_export {
     }
 }
 
-?>
+

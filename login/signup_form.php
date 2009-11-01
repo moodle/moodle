@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -155,5 +155,3 @@ class login_signup_form extends moodleform {
 
     }
 }
-
-?>

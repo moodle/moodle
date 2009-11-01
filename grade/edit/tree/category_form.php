@@ -465,4 +465,4 @@ class edit_category_form extends moodleform {
     }
 }
 
-?>
+

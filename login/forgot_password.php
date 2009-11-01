@@ -161,5 +161,3 @@ echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxw
 $mform->display();
 
 echo $OUTPUT->footer();
-
-?>

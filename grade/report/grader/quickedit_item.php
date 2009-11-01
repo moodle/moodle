@@ -114,4 +114,4 @@ if (!empty($studentsperpage) && $studentsperpage >= 20) {
 }
 
 echo $OUTPUT->footer();
-?>
+

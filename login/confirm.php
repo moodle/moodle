@@ -78,5 +78,3 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
 }
 
 redirect("$CFG->wwwroot/");
-
-?>

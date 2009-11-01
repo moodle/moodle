@@ -196,4 +196,4 @@ function import_cleanup($importcode) {
     $DB->delete_records('grade_import_newitem', array('importcode' => $importcode, 'importer' => $USER->id));
 }
 
-?>
+

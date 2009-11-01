@@ -338,4 +338,4 @@ function grade_get_gradable_activities($courseid, $modulename='') {
 
     return $DB->get_records_sql($sql, $params);
 }
-?>
+

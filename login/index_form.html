@@ -65,7 +65,7 @@ if ($show_instructions) {
     <div class="signuppanel">
       <h2><?php print_string("firsttime") ?></h2>
       <div class="subcontent">
-<?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons 
+<?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons
               print_string("loginstepsnone");
           } else if ($CFG->registerauth == 'email') {
               if (!empty($CFG->auth_instructions)) {

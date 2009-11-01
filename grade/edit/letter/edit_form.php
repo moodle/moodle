@@ -80,4 +80,4 @@ class edit_letter_form extends moodleform {
 
 }
 
-?>
+

@@ -39,4 +39,4 @@ $gradeexport_ods_capabilities = array(
 
 );
 
-?>
+

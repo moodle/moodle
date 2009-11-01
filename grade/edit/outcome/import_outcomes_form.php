@@ -49,4 +49,4 @@ class import_outcomes_form extends moodleform {
     }
 }
 
-?>
+

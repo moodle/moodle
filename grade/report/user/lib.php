@@ -485,4 +485,4 @@ function grade_report_user_profilereport($course, $user) {
     }
 }
 
-?>
+

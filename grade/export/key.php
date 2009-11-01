@@ -21,7 +21,7 @@
  * @package   moodlecore
  * @copyright 2008 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */ 
+ */
 
 require_once('../../config.php');
 require_once('key_form.php');
@@ -130,4 +130,4 @@ echo $OUTPUT->header();
 
 $editform->display();
 echo $OUTPUT->footer();
-?>
+

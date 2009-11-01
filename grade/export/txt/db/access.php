@@ -39,4 +39,4 @@ $gradeexport_txt_capabilities = array(
 
 );
 
-?>
+

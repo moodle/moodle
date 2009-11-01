@@ -141,5 +141,3 @@ if (get_user_preferences('auth_forcepasswordchange')) {
 }
 $mform->display();
 echo $OUTPUT->footer();
-
-?>

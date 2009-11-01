@@ -48,4 +48,4 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
 $export = new grade_export_txt($course, $groupid, $itemids, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $separator);
 $export->print_grades();
 
-?>
+

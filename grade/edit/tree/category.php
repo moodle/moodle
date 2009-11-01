@@ -129,7 +129,7 @@ if ($mform->is_cancelled()) {
     if (!isset($itemdata->aggregationcoef)) {
         $itemdata->aggregationcoef = 0;
     }
-    
+
     if (!isset($itemdata->gradepass) || $itemdata->gradepass == '') {
         $itemdata->gradepass = 0;
     }
@@ -140,7 +140,7 @@ if ($mform->is_cancelled()) {
 
     if (!isset($itemdata->grademin) || $itemdata->grademin == '') {
         $itemdata->grademin = 0;
-    } 
+    }
 
     $hidden      = empty($itemdata->hidden) ? 0: $itemdata->hidden;
     $hiddenuntil = empty($itemdata->hiddenuntil) ? 0: $itemdata->hiddenuntil;

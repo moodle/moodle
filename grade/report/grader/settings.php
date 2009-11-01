@@ -103,4 +103,4 @@ $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints'
                                                  '5' => '5')));
 
 
-?>
+

@@ -72,4 +72,4 @@ $table->data  = $data;
 $table->tablealign  = 'center';
 echo $OUTPUT->table($table);
 
-echo $OUTPUT->footer(); 
+echo $OUTPUT->footer();

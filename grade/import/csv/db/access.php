@@ -27,4 +27,4 @@ $gradeimport_csv_capabilities = array(
     )
 );
 
-?>
+

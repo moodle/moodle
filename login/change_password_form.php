@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once $CFG->libdir.'/formslib.php';
 
@@ -76,4 +76,3 @@ class login_change_password_form extends moodleform {
         return $errors;
     }
 }
-?>

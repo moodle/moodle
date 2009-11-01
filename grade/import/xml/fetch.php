@@ -35,4 +35,4 @@ require_capability('gradeimport/xml:publish', $context);
 // use the same page parameters as import.php and append &key=sdhakjsahdksahdkjsahksadjksahdkjsadhksa
 require 'import.php';
 
-?>
+

@@ -46,7 +46,7 @@ $currentgroup = groups_get_course_group($course, true);
 if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/site:accessallgroups', $context)) {
     echo $OUTPUT->heading(get_string("notingroup"));
     echo $OUTPUT->footer();
-    die;    
+    die;
 }
 
 // process post information
@@ -68,4 +68,4 @@ echo '<div class="clearer"></div>';
 $mform->display();
 
 echo $OUTPUT->footer();
-?>
+

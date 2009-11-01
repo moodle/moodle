@@ -18,4 +18,4 @@
 $plugin->version  = 2007072500;
 $plugin->requires = 2007101000;
 
-?>
+

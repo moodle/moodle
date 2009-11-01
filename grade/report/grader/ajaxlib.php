@@ -518,4 +518,4 @@ class grade_report_grader_ajax extends grade_report_grader {
         return json_encode($decimals);
     }
 }
-?>
+

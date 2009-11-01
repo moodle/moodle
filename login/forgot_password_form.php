@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once $CFG->libdir.'/formslib.php';
 
@@ -15,9 +15,9 @@ class login_forgot_password_form extends moodleform {
 
         $submitlabel = get_string('search');
         $mform->addElement('submit', 'submitbutton', $submitlabel);
-        
+
         $mform->addElement('header', '', get_string('searchbyemail'), '');
-        
+
         $mform->addElement('text', 'email', get_string('email'));
         $mform->setType('email', PARAM_RAW);
 
@@ -67,5 +67,3 @@ class login_forgot_password_form extends moodleform {
     }
 
 }
-
-?>

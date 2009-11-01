@@ -143,4 +143,4 @@ class edit_scale_form extends moodleform {
     }
 }
 
-?>
+

@@ -52,7 +52,7 @@ class grade_import_form extends moodleform {
 
         if (!empty($features['verbosescales'])) {
             $options = array(1=>get_string('yes'), 0=>get_string('no'));
-            $mform->addElement('select', 'verbosescales', get_string('verbosescales', 'grades'), $options); 
+            $mform->addElement('select', 'verbosescales', get_string('verbosescales', 'grades'), $options);
         }
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);

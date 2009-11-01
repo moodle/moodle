@@ -133,4 +133,4 @@ check_theme_arrows();
 require('course_form.html');
 
 echo $OUTPUT->footer();
-?>
+

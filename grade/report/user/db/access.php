@@ -30,4 +30,4 @@ $gradereport_user_capabilities = array(
     ),
 );
 
-?>
+

@@ -204,4 +204,4 @@ class grader_report_preferences_form extends moodleform {
         return parent::validation($data, $files);
     }
 }
-?>
+

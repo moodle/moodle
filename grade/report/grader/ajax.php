@@ -70,7 +70,7 @@ YAHOO.grader_report.tooltip = function(e, dataObj) {
 YAHOO.grader_report.saveField = function(editedEl) {
     var gr = YAHOO.grader_report;
     var idData = gr.getIdData(editedEl.id);
-    
+
     if (idData.type == 'value') { // Text input
         var newVal = editedEl.firstChild.value;
     } else if (idData.type == 'feedback') { // Textarea
@@ -78,7 +78,7 @@ YAHOO.grader_report.saveField = function(editedEl) {
     } else if (idData.type == 'scale') { // Select
         var newVal = editedEl.options[editedEl.selectedIndex].value;
     }
-    
+
     // Don't save if the new value is the same as the old
     if (gr.el_being_edited.value == newVal || (gr.el_being_edited.value == gr.straddfeedback && newVal == '')) {
         YAHOO.log("saveField: Field unchanged, not saving. (" + newVal + ")", "info");
@@ -86,10 +86,10 @@ YAHOO.grader_report.saveField = function(editedEl) {
     }
 
     YAHOO.log("saveField: Old value: " + gr.el_being_edited.value + ", new value: " + newVal + ". Saving field...", "info");
-    
-    var postData = "id=" + gr.courseid + "&userid=" + idData.userId + "&itemid=" + idData.itemId + 
+
+    var postData = "id=" + gr.courseid + "&userid=" + idData.userId + "&itemid=" + idData.itemId +
                    "&action=update&newvalue=" + newVal + "&type=" + idData.type;
-    
+
     var handleSuccess = function(o) {
         try {
             var queryResult = YAHOO.lang.JSON.parse(o.responseText);
@@ -107,7 +107,7 @@ YAHOO.grader_report.saveField = function(editedEl) {
                 }
             } else if (idData.type == 'feedback') {
                 editedEl.innerHTML = gr.truncateText(queryResult.gradevalue);
-                
+
                 YAHOO.util.Event.addListener(editedEl.id, 'mouseover', gr.tooltip, {text: queryResult.gradevalue}, true);
                 YAHOO.util.Event.addListener(editedEl.id, 'mouseout', nd); // See overlib doc for reference
                 gr.feedbacks[idData.userId][idData.itemId] = queryResult.gradevalue;
@@ -118,7 +118,7 @@ YAHOO.grader_report.saveField = function(editedEl) {
             YAHOO.util.Dom.addClass(editedEl, "editable");
 
             // TODO "highlight" the updated element using animation of color (yellow fade-out)
-            
+
             // Update the row's final grade values
             gr.updateRow(gr.getIdData(editedEl.id).userId, queryResult.row);
         } else {
@@ -132,7 +132,7 @@ YAHOO.grader_report.saveField = function(editedEl) {
     var handleFailure = function(o) {
         YAHOO.log("saveField: Failure to call the ajax callbacks page!", "error");
     }
-    
+
     var uri = gr.wwwroot + '/grade/report/grader/ajax_callbacks.php';
     var callback = {success: handleSuccess, failure: handleFailure};
     var conn = YAHOO.util.Connect.asyncRequest("post", uri, callback, postData);
@@ -158,12 +158,12 @@ YAHOO.grader_report.displayMessage = function(result, message, elToHighlight) {
     YAHOO.util.Dom.removeClass(messageDiv, 'success');
     YAHOO.util.Dom.removeClass(messageDiv, 'error');
     YAHOO.util.Dom.removeClass(messageDiv, 'notice');
-    
+
     var attributes = {backgroundColor: { to: '#00F0F0'} };
-    
+
     // Add result class
     YAHOO.util.Dom.addClass(messageDiv, result);
-    
+
     messageDiv.innerHTML = message;
 
     // Highlight given element
@@ -183,7 +183,7 @@ YAHOO.grader_report.updateRow = function(userId, row) {
 
     // Send update request and update the row
     YAHOO.log("updateRow: Updating row..." + row, "info");
-    
+
     for (var i in row) {
         if (row[i].finalgrade != null) {
             // Build id string
@@ -198,7 +198,7 @@ YAHOO.grader_report.updateRow = function(userId, row) {
             idString += row[i].userid + "-i" + row[i].itemid;
 
             var elementToUpdate = document.getElementById(idString);
-            
+
             if (undefined == elementToUpdate) {
                 YAHOO.log("updateRow: Element with id " + idString + " does not exist!", "error");
             } else {
@@ -207,7 +207,7 @@ YAHOO.grader_report.updateRow = function(userId, row) {
                 } else {
                     elementToUpdate.innerHTML = gradevalue;
                 }
-                
+
                 // Add overridden class where it applies, and remove it where it does not
                 // TODO fix the code below, it doesn't currently work. See ajax_callbacks.php for the code building the JSON data
                 if (row[i].overridden > 0) {
@@ -223,15 +223,15 @@ YAHOO.grader_report.updateRow = function(userId, row) {
 };
 
 /**
- * Given a gradevalue or gradefeedback <a> element, 
+ * Given a gradevalue or gradefeedback <a> element,
  * @param object element A DOM element
  */
 YAHOO.grader_report.openField = function(element) {
-    YAHOO.log("openField: Moving to next item: " + element.id, "info"); 
-    var gr = YAHOO.grader_report; 
+    YAHOO.log("openField: Moving to next item: " + element.id, "info");
+    var gr = YAHOO.grader_report;
     var idData = gr.getIdData(element.id);
     element.inputId = element.id + "_input";
-    
+
     // If field is in error, empty it before editing
     if (YAHOO.util.Dom.hasClass(element, 'error')) {
         if (idData.type == 'feedback') {
@@ -239,7 +239,7 @@ YAHOO.grader_report.openField = function(element) {
         } else if (idData.type == 'value') {
             element.value = '';
         }
-        
+
         YAHOO.util.Dom.removeClass(element, 'error');
     }
 
@@ -259,19 +259,19 @@ YAHOO.grader_report.openField = function(element) {
         }
 
         element.innerHTML = '<textarea id="' + element.inputId + '" name="' + idData.type + '">' + displayValue + '</textarea>';
-        setTimeout(function() {element.firstChild.focus(); }, 0); 
+        setTimeout(function() {element.firstChild.focus(); }, 0);
     } else if (idData.type == 'value') {
         var original = element.innerHTML.toString(); // Removes reference to original
-        element.innerHTML = '<input onfocus="this.select()" id="' + element.inputId + '" type="text" name="' + 
+        element.innerHTML = '<input onfocus="this.select()" id="' + element.inputId + '" type="text" name="' +
                             idData.type + '" value="' + gr.roundValue(original, idData.itemId) + '" />';
-        setTimeout(function() {element.firstChild.focus(); }, 0); 
+        setTimeout(function() {element.firstChild.focus(); }, 0);
     } else if (idData.type == 'scale') {
         var original = element.options[element.selectedIndex].value;
-        setTimeout(function() {element.focus(); }, 0); 
+        setTimeout(function() {element.focus(); }, 0);
     }
-    
+
     YAHOO.util.Dom.removeClass(element, "editable");
-    
+
     // Save the element and its original value
     gr.el_being_edited = {elementId: element.id, value: original, tabIndex: tabIndex};
     YAHOO.log("openField: el_being_edited saved as: " + gr.el_being_edited.value, "info");
@@ -294,7 +294,7 @@ YAHOO.grader_report.closeField = function(element, forcecancel) {
     if (idData.type == 'feedback') {
         var newValue = element.firstChild.value;
         var originalValue = gr.feedbacks[idData.userId][idData.itemId];
-        
+
         if (!forcecancel && originalValue == newValue) {
             YAHOO.log("closeField: originalValue == newvalue, forcing a cancel", "info");
             forcecancel = true;
@@ -303,16 +303,16 @@ YAHOO.grader_report.closeField = function(element, forcecancel) {
     } else if (idData.type == 'value') {
         var originalValue = gr.el_being_edited.value;
         var newValue = element.firstChild.value;
-    } 
-    
+    }
+
     YAHOO.util.Dom.addClass(element, "editable");
-    
+
     // No need to change HTML for select element
     if (idData.type == 'scale') {
         gr.el_being_edited = null;
         return;
     }
-    
+
     if (forcecancel || ((newValue == '' && idData.type == 'feedback') && idData.type != 'scale')) {
         // Replace the input by the original value as plain text
         element.innerHTML = gr.truncateText(originalValue);
@@ -320,7 +320,7 @@ YAHOO.grader_report.closeField = function(element, forcecancel) {
     } else {
         // For numeric grades, round off to item decimal points
         if (idData.type == 'value') {
-            element.innerHTML = gr.roundValue(newValue, idData.itemId); 
+            element.innerHTML = gr.roundValue(newValue, idData.itemId);
         } else if (idData.type == 'feedback') {
             element.innerHTML = newValue;
         }
@@ -340,10 +340,10 @@ YAHOO.grader_report.truncateText = function(text) {
     var gr = YAHOO.grader_report;
     var returnString = '';
 
-    returnString = text.substring(0, gr.feedback_trunc_length); 
-    
+    returnString = text.substring(0, gr.feedback_trunc_length);
+
     // Add ... if the string was truncated
-    if (returnString.length < text.length) { 
+    if (returnString.length < text.length) {
         returnString += '...';
     }
 
@@ -376,7 +376,7 @@ YAHOO.grader_report.roundValue = function(value, itemId) {
         }
     }
 
-    return gradevalue; 
+    return gradevalue;
 };
 
 /**
@@ -390,14 +390,14 @@ YAHOO.grader_report.getField = function(origin_element, direction) {
     // get all 'editable' elements
     var haystack = YAHOO.util.Dom.getElementsByClassName('editable');
     var wrapElement = null;
-    
+
     var feedbackModifier = 1;
     var upDownOffset = 1;
     var idData = gr.getIdData(origin_element.id);
 
     if (gr.showquickfeedback) {
         feedbackModifier = 2;
-        
+
         if (idData.type == 'value' || idData.type == 'scale') {
             upDownOffset = gr.studentsperpage;
         }
@@ -407,25 +407,25 @@ YAHOO.grader_report.getField = function(origin_element, direction) {
     if (direction == 'next') {
         var wrapValue = 1;
         var needle = origin_element.tabIndex + 1;
-    
+
     } else if (direction == 'previous') {
         var wrapValue = haystack.length;
         var needle = origin_element.tabIndex - 1;
-    
+
     } else if (direction == 'right') {
         var needle = origin_element.tabIndex + gr.studentsperpage * feedbackModifier;
         var wrapValue = null; // TODO implement wrapping when moving right
-    
+
     } else if (direction == 'left') {
         var needle = origin_element.tabIndex - gr.studentsperpage * feedbackModifier;
         var wrapValue = null; // TODO implement wrapping when moving left
-    
+
     } else if (direction == 'up') {
-        
+
         // Jump up from value to feedback: origin + (studentsperpage - 1)
         if (idData.type == 'value' || idData.type == 'scale') {
             var upDownOffset = gr.studentsperpage - 1;
-        
+
         // Jump up from feedback to value: origin - studentsperpage
         } else if (idData.type == 'feedback') {
             var upDownOffset = -(gr.studentsperpage);
@@ -433,7 +433,7 @@ YAHOO.grader_report.getField = function(origin_element, direction) {
 
         var needle = origin_element.tabIndex + upDownOffset;
         var wrapValue = haystack.length;
-    
+
     } else if (direction == 'down') {
         // Jump down from value to feedback: origin + studentsperpage
         if (idData.type == 'value' || idData.type == 'scale') {
@@ -442,10 +442,10 @@ YAHOO.grader_report.getField = function(origin_element, direction) {
         // Jump down from feedback to value: origin - (studentsperpage - 1)
         } else if (idData.type == 'feedback') {
             var upDownOffset = -(gr.studentsperpage - 1);
-        }    
+        }
         var needle = origin_element.tabIndex + upDownOffset;
         var wrapValue = 1;
-    }  
+    }
 
     for (var i = 0; i < haystack.length; i++) {
         if (haystack[i].tabIndex == wrapValue) {
@@ -454,7 +454,7 @@ YAHOO.grader_report.getField = function(origin_element, direction) {
 
         if (haystack[i].tabIndex == needle) {
             return haystack[i];
-        } 
+        }
     }
 
     // If we haven't returned yet, it means we have reached the end of tabindices: return the wrap element
@@ -472,27 +472,27 @@ YAHOO.grader_report.init = function() {
     // Handle Key presses: Tab and Enter
     this.keyHandler = function(e) {
         var charCode = YAHOO.util.Event.getCharCode(e);
-        
+
         YAHOO.log("init: Key pressed (" + charCode + "). el_being_edited = " + gr.el_being_edited, "info");
         // Handle keys if editing
         if (gr.el_being_edited !== null) {
             var editedEl = document.getElementById(gr.el_being_edited.elementId);
             var idData = gr.getIdData(editedEl.id);
-            
+
             // Handle Tab and Shift-Tab for navigation forward/backward
             if (charCode == 9) {
                 gr.saveField(editedEl);
                 gr.closeField(editedEl, false);
 
                 if (e.shiftKey) {
-                    var fieldToOpen = gr.getField(editedEl, 'previous'); 
+                    var fieldToOpen = gr.getField(editedEl, 'previous');
                 } else {
-                    var fieldToOpen = gr.getField(editedEl, 'next'); 
+                    var fieldToOpen = gr.getField(editedEl, 'next');
                 }
-                
+
                 gr.openField(fieldToOpen);
             }
-            
+
             // Handle Enter key press
             if (charCode == 13 && idData.type != 'feedback') { // textareas need [enter]
                 // Locate element being edited
@@ -503,42 +503,42 @@ YAHOO.grader_report.init = function() {
 
             // Handle ctrl-arrows
             var arrows = { 37: "left", 38: "up", 39: "right", 40: "down" };
-            
+
             if (e.ctrlKey && (charCode == 37 || charCode == 38 || charCode == 39 || charCode == 40)) {
                 gr.saveField(editedEl);
                 gr.closeField(editedEl, false);
-                
+
                 var fieldToOpen = gr.getField(editedEl, arrows[charCode]);
                 gr.openField(fieldToOpen);
             }
         }
     }
-    
+
     // Handle mouse clicks
     this.clickHandler = function(e) {
         var clickTargetElement = YAHOO.util.Event.getTarget(e);
 
-        
+
         // Handle a click while a grade value or feedback is being edited
         if (gr.el_being_edited !== null) {
             // idData represents the element being edited, not the clicked element
             var idData = gr.getIdData(gr.el_being_edited.elementId);
-            
-            if (idData.type != 'scale') { 
+
+            if (idData.type != 'scale') {
                 // If clicking in a cell being edited, no action
                 // parentNode is the original a to which the element was added as a Child node
                 if (gr.el_being_edited.elementId == clickTargetElement.parentNode.id) {
                     YAHOO.log("init: Clicked within the edited element, no action.", "info");
                     return false;
                 }
-                
+
                 // Otherwise, we CANCEL the current edit
                 var originalTarget = document.getElementById(gr.el_being_edited.elementId);
                 YAHOO.log("init: Clicked out of the edited element, cancelling edit.", "info");
                 gr.closeField(originalTarget, true);
-            
+
             } else if (idData.type == 'scale' && gr.el_being_edited.elementId == clickTargetElement.id) {
-                
+
                 // An option has been selected, update the element
                 gr.saveField(clickTargetElement);
                 // Then open the element to save the new value in el_being_edited
@@ -550,7 +550,7 @@ YAHOO.grader_report.init = function() {
         while (clickTargetElement.id != 'grade-report-grader-index') {
             anchor_re = /(gradevalue|gradefeedback|gradescale)(.*) editable/;
             anchor_matches = anchor_re.exec(clickTargetElement.className);
-            
+
             // YAHOO.log("className = " + clickTargetElement.className, "info");
             var nodeName = clickTargetElement.nodeName.toLowerCase();
 
@@ -558,7 +558,7 @@ YAHOO.grader_report.init = function() {
                 gr.openField(clickTargetElement);
                 break;
 
-            // If clicked anywhere else in the cell, default to editing the grade, not the feedback    
+            // If clicked anywhere else in the cell, default to editing the grade, not the feedback
             } else if (clickTargetElement.nodeName.toLowerCase() == "td" && clickTargetElement.id.match(/gradecell/)) {
                 anchors = YAHOO.util.Dom.getElementsByClassName("editable", "a", clickTargetElement);
                 if (anchors.length > 0) {

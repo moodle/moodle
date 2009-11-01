@@ -94,4 +94,4 @@ class grade_import_form extends moodleform {
         return $err;
     }
 }
-?>
+

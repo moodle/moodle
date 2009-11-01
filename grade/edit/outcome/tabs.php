@@ -35,4 +35,4 @@
     print_tabs($tabs, $currenttab);
     echo '</div>';
 
-?>
+

@@ -1557,4 +1557,4 @@ class grade_report_grader extends grade_report {
         return $arrows;
     }
 }
-?>
+

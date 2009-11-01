@@ -56,7 +56,7 @@ if (has_capability('moodle/grade:viewall', $systemcontext)) {
 } else if ($userid == $USER->id and has_capability('moodle/grade:viewall', $context)) {
     //ok - can view any own grades
     $access = true;
-    
+
 } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
     //ok - can view own course grades
     $access = true;

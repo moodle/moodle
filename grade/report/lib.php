@@ -331,4 +331,4 @@ abstract class grade_report {
         return $html;
     }
 }
-?>
+

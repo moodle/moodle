@@ -1245,4 +1245,4 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         return false;
     }
 }
-?>
+

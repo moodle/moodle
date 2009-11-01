@@ -32,4 +32,4 @@
     echo '<div class="gradedisplay">';
     print_tabs($tabs, $currenttab);
     echo '</div>';
-?>
+

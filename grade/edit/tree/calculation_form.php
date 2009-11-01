@@ -93,4 +93,4 @@ class edit_calculation_form extends moodleform {
     }
 
 }
-?>
+

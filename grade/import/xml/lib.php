@@ -120,4 +120,4 @@ function import_xml_grades($text, $course, &$error) {
         return false;
     }
 }
-?>
+
