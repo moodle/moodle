@@ -23,7 +23,7 @@
 
 Local customisations directory
 ==============================
-This directory is the recommended place for local customisations. 
+This directory is the recommended place for local customisations.
 
 Wherever possible, customisations should be written using one of the
 standard plug-in points like modules, blocks, auth plugins, themes, etc.
@@ -94,7 +94,7 @@ $ADMIN->add('tweaks', new admin_externalpage('nicehackery', 'Tweak something',
 Custom event handlers
 ---------------------
 Events intended primarily for communication "core --> plugins". (It should not
-be use in opposite direction!) In theory it could be also used for 
+be use in opposite direction!) In theory it could be also used for
 "plugin --> plugin" communication too. The list of core events is documented
 in lib/db/events.php
 
@@ -103,7 +103,7 @@ sample files
 $handlers = array (
     'user_deleted' => array (
          'handlerfile'      => '/local/nicehack/lib.php',
-         'handlerfunction'  => 'nicehack_userdeleted_handler', 
+         'handlerfunction'  => 'nicehack_userdeleted_handler',
          'schedule'         => 'instant'
      ),
 );

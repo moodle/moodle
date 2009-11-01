@@ -17,7 +17,7 @@ function init_tag_autocomplete() {
     document.getElementById('id_relatedtags').style.width = '30%';
     myAutoComp.allowBrowserAutocomplete = false;
     myAutoComp.maxResultsDisplayed = 20;
-    myAutoComp.delimChar = [","," "]; 
+    myAutoComp.delimChar = [","," "];
     myAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
         return (sResultMatch);
     };

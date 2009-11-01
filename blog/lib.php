@@ -316,7 +316,7 @@ function blog_get_headers() {
     $blogurl = new moodle_url($CFG->wwwroot . '/blog/index.php');
 
     // If the title is not yet set, it's likely that the context isn't set either, so skip this part
-    $pagetitle = $PAGE->title; 
+    $pagetitle = $PAGE->title;
     if (!empty($pagetitle)) {
         $contexturl = blog_get_context_url();
 

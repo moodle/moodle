@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,14 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * This class abstracts eaccelerator/turckmmcache
  * API to provide
- * 
+ *
  * - get()
  * - set()
  * - delete()
@@ -26,7 +26,7 @@
  * - releaseforfill()
  *
  * Note: do NOT store booleans here. For compatibility with
- * memcached, a false value is indistinguisable from a 
+ * memcached, a false value is indistinguisable from a
  * "not found in cache" response.
  *
  * @copyright Martin Langhoff <martin@catalyst.net.nz>
@@ -105,38 +105,38 @@ class eaccelerator {
             return false;
         }
         return unserialize($rec);
-    } 
-    
+    }
+
     /**
      * @todo Document this function
      *
      * @param string $key
      * @return mixed
-     */    
+     */
     function delete($key) {
         $fn = $this->mode . '_rm';
         return $fn($this->prefix . $key);
     }
 
     /**
-     * In the simple case, this function will 
+     * In the simple case, this function will
      * get the cached value if available. If the entry
      * is not cached, it will try to get an exclusive
      * lock that announces that this process will
      * populate the cache.
      *
      * If we fail to get the lock -- this means another
-     * process is doing it. 
+     * process is doing it.
      * so we wait (block) for a few microseconds while we wait for
      * the cache to be filled or the lock to timeout.
-     * 
+     *
      * If you get a false from this call, you _must_
      * populate the cache ASAP or indicate that
      * you won't by calling releaseforfill().
      *
-     * This technique forces serialisation and so helps deal 
-     * with thundering herd scenarios where a lot of clients 
-     * ask the for the same idempotent (and costly) operation. 
+     * This technique forces serialisation and so helps deal
+     * with thundering herd scenarios where a lot of clients
+     * ask the for the same idempotent (and costly) operation.
      * The implementation is based on suggestions in this message
      * http://marc.theaimsgroup.com/?l=git&m=116562052506776&w=2
      *
@@ -146,7 +146,7 @@ class eaccelerator {
     function getforfill ($key) {
         $get    = $this->mode . '_get';
         $lock   = $this->mode . '_lock';
-        
+
         $rec = $get($this->prefix . $key);
         if (!is_null($rec)) {
             return unserialize($rec);
@@ -170,7 +170,7 @@ class eaccelerator {
     }
 
     /**
-     * Release the exclusive lock obtained by 
+     * Release the exclusive lock obtained by
      * getforfill(). See getforfill()
      * for more details.
      *

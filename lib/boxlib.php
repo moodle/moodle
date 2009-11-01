@@ -56,13 +56,13 @@ class boxclient {
         } else {
             $this->debug = false;
         }
-    } 
+    }
     /**
      * Setup for Functions
      *
      * @param string $method
      * @param array $params
-     * @return array 
+     * @return array
      */
     function makeRequest($method, $params = array()) {
         $this->_clearErrors();
@@ -88,7 +88,7 @@ class boxclient {
     }
     /**
      * @param array $params
-     * @return array 
+     * @return array
      */
     function getTicket($params = array()) {
         $params['api_key'] = $this->api_key;
@@ -217,7 +217,7 @@ class boxclient {
                     $tmp = array('title'=>(string)$file->attributes()->file_name,
                         'size'=>display_size((int)$file->attributes()->size),
                         'thumbnail'=>$thumbnail,
-                        'date'=>userdate((int)$file->attributes()->updated), 
+                        'date'=>userdate((int)$file->attributes()->updated),
                         'source'=>'http://box.net/api/1.0/download/'
                             .$this->auth_token.'/'.(string)$file->attributes()->id,
                         'url'=>(string)$file->attributes()->shared_link);
@@ -333,7 +333,7 @@ class boxclient {
         return $ret_array;
     }
 
-    /** 
+    /**
      * Upload a File
      * @param array $params the file MUST be present in key 'file' and be a moodle stored_file object.
      * @return array|bool Array or false

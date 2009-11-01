@@ -4,29 +4,29 @@ Moodle Trademark License
 
 The name Moodle™ is a registered trademark of the Moodle Trust.
 
-A key part of the business model that allows us to produce and 
-distribute Moodle as completely Free open source software is that 
-we restrict the commercial use of the Moodle trademark to those 
+A key part of the business model that allows us to produce and
+distribute Moodle as completely Free open source software is that
+we restrict the commercial use of the Moodle trademark to those
 who have contracted to support Moodle development (Moodle Partners).
 
-If you are intending to use the name (and/or logo) to advertise 
-generic Moodle™ services (eg Moodle Hosting, Moodle Support, 
-Moodle Certification, Moodle Training, Moodle Consulting, 
-Moodle Customisation, Moodle Courseware Development, Moodle 
-Theme design, Moodle Integrations, Moodle Installations, etc) 
-or as the name of a software package, then you must seek 
-direct permission in writing from the Moodle Trust via the 
-moodle.com helpdesk, in accordance with normal trademark 
+If you are intending to use the name (and/or logo) to advertise
+generic Moodle™ services (eg Moodle Hosting, Moodle Support,
+Moodle Certification, Moodle Training, Moodle Consulting,
+Moodle Customisation, Moodle Courseware Development, Moodle
+Theme design, Moodle Integrations, Moodle Installations, etc)
+or as the name of a software package, then you must seek
+direct permission in writing from the Moodle Trust via the
+moodle.com helpdesk, in accordance with normal trademark
 restrictions.
 
-There are no restrictions on how you use the name in other 
-contexts (for example, if you use Moodle just to provide 
-courses then you can use the name freely to refer to it.) 
+There are no restrictions on how you use the name in other
+contexts (for example, if you use Moodle just to provide
+courses then you can use the name freely to refer to it.)
 
-If you aren't sure of a particular case, please ask us via 
-http://moodle.com/helpdesk: we'll be happy to either provide 
-you with official permission in writing or help you fix 
-your wording. 
+If you aren't sure of a particular case, please ask us via
+http://moodle.com/helpdesk: we'll be happy to either provide
+you with official permission in writing or help you fix
+your wording.
 
 Martin Dougiamas
 Executive Director

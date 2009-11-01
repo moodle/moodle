@@ -119,7 +119,7 @@ function groups_remove_member($grouporid, $userorid) {
 function groups_create_group($data, $editform=false) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
-    
+
     //check that courseid exists
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
 
@@ -413,7 +413,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 
 /**
  * Obtains a list of the possible roles that group members might come from,
- * on a course. Generally this includes all the roles who would have 
+ * on a course. Generally this includes all the roles who would have
  * course:view on that course, except the doanything roles.
  * @param object $context Context of course
  * @return Array of role ID integers, or false if error/none.
@@ -450,7 +450,7 @@ function groups_get_possible_roles($context) {
         return $validroleids;
     } else {
         return false;  // No need to continue, since no roles have this capability set
-    }    
+    }
 }
 
 
@@ -579,7 +579,7 @@ function groups_unassign_grouping($groupingid, $groupid) {
 
 /**
  * Lists users in a group based on their role on the course.
- * Returns false if there's an error or there are no users in the group. 
+ * Returns false if there's an error or there are no users in the group.
  * Otherwise returns an array of role ID => role data, where role data includes:
  * (role) $id, $shortname, $name
  * $users: array of objects for each user which include the specified fields
@@ -600,7 +600,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
     global $CFG, $DB;
 
     // Retrieve information about all users and their roles on the course or
-    // parent ('related') contexts 
+    // parent ('related') contexts
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     if ($extrawheretest) {
@@ -611,7 +611,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
                    u.id AS userid, $fields
               FROM {groups_members} gm
               JOIN {user} u ON u.id = gm.userid
-              JOIN {role_assignments} ra ON ra.userid = u.id 
+              JOIN {role_assignments} ra ON ra.userid = u.id
               JOIN {role} r ON r.id = ra.roleid
              WHERE gm.groupid=?
                    AND ra.contextid ".get_related_contexts_string($context).
@@ -630,7 +630,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
  *
  * @param object $rs The record set (may be false)
  * @param int $contextid ID of course context
- * @return array As described in groups_get_members_by_role 
+ * @return array As described in groups_get_members_by_role
  */
 function groups_calculate_role_people($rs, $context) {
     global $CFG, $DB;

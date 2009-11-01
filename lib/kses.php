@@ -470,7 +470,7 @@ function kses_bad_protocol($string, $allowed_protocols)
 ###############################################################################
 {
   $string = kses_no_null($string);
-  $string = preg_replace('/([^\xc3-\xcf])\xad+/', '\\1', $string); # deals with Opera "feature" -- moodle utf8 fix 
+  $string = preg_replace('/([^\xc3-\xcf])\xad+/', '\\1', $string); # deals with Opera "feature" -- moodle utf8 fix
   $string2 = $string.'a';
 
   while ($string != $string2)

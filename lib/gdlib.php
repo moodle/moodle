@@ -1,7 +1,7 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/ 
-// 
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -30,14 +30,14 @@
  * @global object
  * @param object $dst_img
  * @param object $src_img
- * @param int $dst_x 
- * @param int $dst_y 
- * @param int $src_x 
- * @param int $src_y 
- * @param int $dst_w 
- * @param int $dst_h 
- * @param int $src_w 
- * @param int $src_h 
+ * @param int $dst_x
+ * @param int $dst_y
+ * @param int $src_x
+ * @param int $src_y
+ * @param int $dst_w
+ * @param int $dst_h
+ * @param int $src_w
+ * @param int $src_h
  * @return bool
  * @todo Finish documenting this function
  */
@@ -124,7 +124,7 @@ function create_profile_image_destination($id, $dir='user') {
             return false;
         }
     }
-    
+
     if ($dir == 'user') {
         $destination = make_user_directory($id, true);
     } else {

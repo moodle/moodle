@@ -86,7 +86,7 @@ function post_comment(cid) {
                         backgroundColor: { to: '#FFE390' }
                     };
                     var anim = new YAHOO.util.ColorAnim(ids[i], attributes);
-                    anim.animate(); 
+                    anim.animate();
                 }
             }
         }
@@ -102,7 +102,7 @@ function post_comment(cid) {
             backgroundColor: { from: '#FFE390', to:'#FFFFFF' }
         };
         var anim = new YAHOO.util.ColorAnim('dlg-content-'+cid, attributes);
-        anim.animate(); 
+        anim.animate();
     }
 }
 function delete_comment(client_id, comment_id) {
@@ -128,11 +128,11 @@ function delete_comment(client_id, comment_id) {
                 height:{to:0}
             };
             var anim = new YAHOO.util.Anim(htmlid, attributes, 1, YAHOO.util.Easing.easeOut);
-            anim.onComplete.subscribe(this.remove_dom, [], this); 
-            anim.animate(); 
+            anim.onComplete.subscribe(this.remove_dom, [], this);
+            anim.animate();
         },
         remove_dom: function() {
-            this.el.parentNode.removeChild(this.el); 
+            this.el.parentNode.removeChild(this.el);
         }
     }
     var trans = YAHOO.util.Connect.asyncRequest('POST',

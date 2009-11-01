@@ -39,7 +39,7 @@ class webservice_soap_server extends webservice_zend_server {
         ini_set('soap.wsdl_cache_enabled', '0');
         require_once 'Zend/Soap/Server.php';
         require_once 'Zend/Soap/AutoDiscover.php';
-        
+
         if (optional_param('wsdl', 0, PARAM_BOOL)) {
             parent::__construct($simple, 'Zend_Soap_AutoDiscover');
         } else {
@@ -114,7 +114,7 @@ class webservice_soap_server extends webservice_zend_server {
         } else {
             $info = 'Unknown error';
         }
-        
+
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 <SOAP-ENV:Body><SOAP-ENV:Fault>

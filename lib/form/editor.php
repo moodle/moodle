@@ -189,7 +189,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
                 $str .= $PAGE->requires->js_function_call('destroy_item', array("{$id}_filemanager"))->asap();
             }
         } else {
-            // should disable file picker 
+            // should disable file picker
             $str .= 'No file allowed';
         }
 

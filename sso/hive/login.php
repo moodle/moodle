@@ -7,11 +7,11 @@
 
     require_login();
 
-    // get the login data 
+    // get the login data
     $frm = data_submitted();
 
     // log back into Hive
-    if (sso_user_login($frm->username, $frm->password)) {  
+    if (sso_user_login($frm->username, $frm->password)) {
 
         /// reopen Hive
         redirect($CFG->wwwroot.'/mod/resource/type/repository/hive/openlitebrowse.php');

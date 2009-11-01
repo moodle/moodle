@@ -1,13 +1,13 @@
-<?php 
+<?php
 // Outputs pictures from theme or core pix folder. Only used if $CFG->smartpix is
 // turned on.
 
 $matches=array(); // Reusable array variable for preg_match
- 
+
 // This does NOT use config.php. This is because doing that makes database requests
 // which cause this to take longer (I benchmarked this at 16ms, 256ms with config.php)
 // A version using normal Moodle functions is included in comment at end in case we
-// want to switch to it in future. 
+// want to switch to it in future.
 
 function error($text,$notfound=false) {
     header($notfound ? 'HTTP/1.0 404 Not Found' : 'HTTP/1.0 500 Internal Server Error');
@@ -44,7 +44,7 @@ function strip_querystring($url) {
         return $url;
     }
 }
- 
+
 // get query string
 function get_query($name) {
     if (!empty($_SERVER['REQUEST_URI'])) {
@@ -57,7 +57,7 @@ function get_query($name) {
 }
 // Nicked from weblib then cutdown
 /**
- * Extracts file argument either from file parameter or PATH_INFO. 
+ * Extracts file argument either from file parameter or PATH_INFO.
  * @param string $scriptname name of the calling script
  * @return string file path (only safe characters)
  */
@@ -84,10 +84,10 @@ function get_file_argument_limited($scriptname) {
     if (!empty($arr[1])) {
         return makesafe(rawurldecode(strip_querystring($arr[1])));
     }
-    
+
     error('Unexpected PHP set up. Turn off the smartpix config option.');
-} 
- 
+}
+
 // We do need to get dirroot from config.php
 if(!$config=@file_get_contents(dirname(__FILE__).'/../config.php')) {
     error("Can't open config.php");
@@ -138,17 +138,17 @@ if(file_exists($possibility="$dirroot/theme/$theme/pix/$path")) {
     $file=$possibility;
 } else {
     // Is there a parent theme?
-    while(true) {        
+    while(true) {
         require("$dirroot/theme/$theme/config.php"); // Sets up $THEME
         if(!$THEME->parent) {
             break;
-        }        
+        }
         $theme=$THEME->parent;
         if(file_exists($possibility="$dirroot/theme/$theme/pix/$path")) {
             $file=$possibility;
             // Found in parent theme
             break;
-        }    
+        }
     }
     if(!$file) {
         if(preg_match('|^mod/|',$path)) {
@@ -176,11 +176,11 @@ if($ifmodifiedsince && strtotime($ifmodifiedsince)>=$filedate) {
 }
 header('Last-Modified: '.gmdate('D, d M Y H:i:s',$filedate).' GMT');
 
-// As I'm not loading config table from DB, this is hardcoded here; expiry 
+// As I'm not loading config table from DB, this is hardcoded here; expiry
 // 4 hours, unless the hacky file reduceimagecache.dat exists in dataroot
 if(file_exists($reducefile=$dataroot.'/reduceimagecache.dat')) {
     $lifetime=file_read_contents($reducefile);
-} else {   
+} else {
     $lifetime=4*60*60;
 }
 
@@ -198,7 +198,7 @@ fpassthru($handle);
 fclose($handle);
 
 // Slower Moodle-style version follows:
- 
+
 //// Outputs pictures from theme or core pix folder. Only used if $CFG->smartpix is
 //// turned on.
 //
@@ -208,7 +208,7 @@ fclose($handle);
 //global $CFG;
 //
 //$matches=array(); // Reusable array variable for preg_match
-// 
+//
 //// Split path - starts with theme name, then actual image path inside pix
 //$path=get_file_argument('smartpix.php');
 //$match=array();
@@ -237,17 +237,17 @@ fclose($handle);
 //    $file=$possibility;
 //} else {
 //    // Is there a parent theme?
-//    while(true) {        
+//    while(true) {
 //        require("$CFG->dirroot/theme/$theme/config.php"); // Sets up $THEME
 //        if(!$THEME->parent) {
 //            break;
-//        }        
+//        }
 //        $theme=$THEME->parent;
 //        if(file_exists($possibility="$CFG->dirroot/theme/$theme/pix/$path")) {
 //            $file=$possibility;
 //            // Found in parent theme
 //            break;
-//        }    
+//        }
 //    }
 //    if(!$file) {
 //        if(preg_match('|^mod/|',$path)) {

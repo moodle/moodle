@@ -11,7 +11,7 @@
     // It's a security risk to carry that in $SESSION so we put up login form.
     $PAGE->set_url(new moodle_url($CFG->wwwroot.'/sso/hive/expired.php'));
     echo $OUTPUT->header();
-    echo $OUTPUT->notification('Your session has expired. Please log in again.'); 
+    echo $OUTPUT->notification('Your session has expired. Please log in again.');
 ?>
       <form action="login.php" method="post" id="login">
         <table border="0" align="center">

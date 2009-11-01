@@ -3678,7 +3678,7 @@ function build_navigation($extranavlinks, $cm = null) {
             }
         }
     }
-    
+
     return(array('newnav' => true, 'navlinks' => array()));
 }
 

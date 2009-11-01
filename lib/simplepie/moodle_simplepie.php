@@ -48,11 +48,11 @@ require_once($CFG->libdir.'/simplepie/simplepie.inc');
  */
 class moodle_simplepie extends SimplePie
 {
-    /** 
+    /**
      * Constructor - creates an instance of the SimplePie class
      * with Moodle defaults.
      *
-     * @param string $feedurl optional URL of the feed 
+     * @param string $feedurl optional URL of the feed
      */
     function __construct($feedurl = null) {
 
@@ -91,7 +91,7 @@ class moodle_simplepie extends SimplePie
     }
 
     /**
-     * Reset RSS cache 
+     * Reset RSS cache
      *
      * @return boolean success if cache clear or didn't exist
      */
@@ -124,7 +124,7 @@ class moodle_simplepie_file extends SimplePie_File
         $this->method = SIMPLEPIE_FILE_SOURCE_REMOTE | SIMPLEPIE_FILE_SOURCE_CURL;
 
         $curl = new curl();
-        $curl->setopt( array( 
+        $curl->setopt( array(
                 'CURLOPT_HEADER' => true,
                 'CURLOPT_TIMEOUT' => $timeout,
                 'CURLOPT_CONNECTTIMEOUT' => $timeout ));

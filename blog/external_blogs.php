@@ -45,7 +45,7 @@ if ($delete && confirm_sesskey()) {
     if ($externalbloguserid == $USER->id) {
         $DB->delete_records('blog_external', array('id' => $delete));
         $message = get_string('externalblogdeleted', 'blog');
-    } 
+    }
 }
 
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));

@@ -197,7 +197,7 @@ if ($groups) {
                 $selectedname = $groupname;
             }
         }
-        
+
         echo "<option value=\"{$group->id}\"$select title=\"$groupname\">$groupname</option>\n";
     }
 } else {

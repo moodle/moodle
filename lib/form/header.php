@@ -18,7 +18,7 @@ class MoodleQuickForm_header extends HTML_QuickForm_header
     function MoodleQuickForm_header($elementName = null, $text = null) {
         parent::HTML_QuickForm_header($elementName, $text);
     }
-    
+
     // {{{ accept()
 
    /**

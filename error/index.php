@@ -6,7 +6,7 @@
     if ($form = data_submitted()) { // form submitted, do not check referer (original page unknown)!
 
     /// Only deal with real users
-        if (!isloggedin()) { 
+        if (!isloggedin()) {
             redirect($CFG->wwwroot);
         }
 
@@ -32,7 +32,7 @@
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
-        
+
         redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         exit;
     }
@@ -41,7 +41,7 @@
     $redirecturl = empty($_SERVER['REDIRECT_URL']) ? '' : $_SERVER['REDIRECT_URL'];
     $httpreferer = empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER'];
     $requesturi  = empty($_SERVER['REQUEST_URI'])  ? '' : $_SERVER['REQUEST_URI'];
-    
+
     header("HTTP/1.0 404 Not Found");
     header("Status: 404 Not Found");
 

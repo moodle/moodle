@@ -11,7 +11,7 @@ class comment_manager {
 
     /**
      * Return comments by pages
-     * @param int $page 
+     * @param int $page
      * @return mixed
      */
     function get_comments($page) {
@@ -22,7 +22,7 @@ class comment_manager {
         } else {
             $start = $page*$this->perpage;
         }
-        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, u.username, u.firstname, u.lastname, c.timecreated 
+        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, u.username, u.firstname, u.lastname, c.timecreated
             FROM {comments} c, {user} u
             WHERE u.id=c.userid ORDER BY c.timecreated ASC";
 
@@ -75,7 +75,7 @@ class comment_manager {
 
     /**
      * Print comments
-     * @param int $page 
+     * @param int $page
      */
     function print_comments($page=0) {
         global $CFG, $OUTPUT, $DB;
@@ -100,14 +100,14 @@ class comment_manager {
                 $action .= "<a target='_blank' href='{$url}'>".get_string('commentincontext').'</a>';
             }
             $table->data[] = array($checkbox, $c->username, $c->content, $action);
-        } 
+        }
         echo $OUTPUT->table($table);
         echo $OUTPUT->paging_bar(moodle_paging_bar::make($count, $page, $this->perpage, $CFG->wwwroot.'/comment/index.php'));
     }
 
     /**
      * delete a comment
-     * @param int $commentid 
+     * @param int $commentid
      */
     public function delete_comment($commentid) {
         global $DB;
@@ -118,7 +118,7 @@ class comment_manager {
     }
     /**
      * delete comments
-     * @param int $commentid 
+     * @param int $commentid
      */
     public function delete_comments($list) {
         global $DB;

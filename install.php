@@ -158,7 +158,7 @@ require_once($CFG->libdir.'/componentlib.class.php');
     ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
     //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
     ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
-    
+
 require('version.php');
 $CFG->target_release = $release;
 

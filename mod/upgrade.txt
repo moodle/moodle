@@ -14,7 +14,7 @@ required changes in code:
 * rewrite trusstext support - new db table columns needed
 * migrade all module features from mod_edit.php form to lib.php/modulename_supports() function
 * implement new gradebook support (legacy 1.8.x grading not supported anymore)
-* migrate custom resource module subtypes into separate modules 
+* migrate custom resource module subtypes into separate modules
 
 optional - no changes needed in older code:
 * portfolio support

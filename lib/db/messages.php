@@ -29,7 +29,7 @@
 $messageproviders = array (
 
 /// Notices that an admin might be interested in
-    'notices' => array ( 
+    'notices' => array (
          'capability'  => 'moodle/site:config'
     ),
 
@@ -40,5 +40,5 @@ $messageproviders = array (
 
     'instantmessage' => array (
     ),
-    
+
 );

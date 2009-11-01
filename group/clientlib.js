@@ -1,6 +1,6 @@
 /**
  * Client-side JavaScript for group management interface.
- * @author vy-shane AT moodle.com 
+ * @author vy-shane AT moodle.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
@@ -144,7 +144,7 @@ UpdatableMembersCombo.prototype.refreshMembers = function () {
     if(singleSelection) {
         createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
     }
- 
+
     // Update the label.
     var spanEl = document.getElementById("thegroup");
     if (singleSelection) {
@@ -160,7 +160,7 @@ UpdatableMembersCombo.prototype.refreshMembers = function () {
             selectEl.removeChild(selectEl.firstChild);
         }
     }
-    
+
     document.getElementById("showaddmembersform").disabled = !singleSelection;
     document.getElementById("showeditgroupsettingsform").disabled = !singleSelection;
     document.getElementById("deletegroup").disabled = selectionCount == 0;

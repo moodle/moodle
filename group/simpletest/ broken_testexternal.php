@@ -237,11 +237,11 @@ class group_external_test extends UnitTestCase {
     }
 
     function test_add_group_members3() {
-        //the user is not a participant  
+        //the user is not a participant
         $params = array(array("groupid" => $this->group->id, "userid" => $this->userid5));
         $this->expectException(new moodle_exception('userisnotaparticipant'));
         $result = group_external::add_groupmembers($params);
-       
+
     }
 
     function test_get_groupmembers() {
@@ -249,7 +249,7 @@ class group_external_test extends UnitTestCase {
         $groups = group_external::get_groupmembers($params);
         $this->assertEqual(sizeof($groups), 2);
         $this->assertEqual(sizeof($groups[0]['members']), 2);
-        $this->assertEqual(sizeof($groups[1]['members']), 1);      
+        $this->assertEqual(sizeof($groups[1]['members']), 1);
     }
 
     function test_delete_group_members() {

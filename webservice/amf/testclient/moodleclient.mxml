@@ -42,19 +42,19 @@
 
         public function initApp():void{
             moodleWebServices = new RemoteObject();
-            var cs:ChannelSet = new ChannelSet(); 
+            var cs:ChannelSet = new ChannelSet();
             cs.addChannel(new AMFChannel("myAmf", Application.application.parameters.amfurl));
-            moodleWebServices.destination = "Dest"; 
+            moodleWebServices.destination = "Dest";
             moodleWebServices.channelSet = cs;
             moodleWebServices.showBusyCursor = true;
 
             moodleWebServices.get_users.addEventListener('result', handleReturnGetUsers);
             moodleWebServices.update_users.addEventListener('result', handleReturn);
             moodleWebServices.create_users.addEventListener('result', handleReturn);
-             
+
             moodleWebServices.addEventListener('fault', handleFault);
             moodleWebServices.addEventListener('result', handleReturn);
-            
+
             print_props('Application.application.parameters.amfurl', Application.application.parameters.amfurl);
             print_props('moodleWebServices', moodleWebServices);
             getUsers('');
@@ -106,7 +106,7 @@
         import mx.events.DataGridEvent;
         private function itemEditEndEvent(event:DataGridEvent):void {
             print_props('event:DataGridEvent', event);
-            var newData:String= 
+            var newData:String=
                     TextInput(event.currentTarget.itemEditorInstance).text;
             if (newData!=userlist.editedItemRenderer.data[event.dataField])
             {
@@ -123,38 +123,38 @@
 
          var invalid:Boolean = false;
          vResult = usernameValidator.validate();
-         if (vResult.type==ValidationResultEvent.INVALID) 
+         if (vResult.type==ValidationResultEvent.INVALID)
              invalid=true;
          vResult = passwordValidator.validate();
-         if (vResult.type==ValidationResultEvent.INVALID) 
+         if (vResult.type==ValidationResultEvent.INVALID)
              invalid=true;
          vResult = firstnameValidator.validate();
-         if (vResult.type==ValidationResultEvent.INVALID) 
+         if (vResult.type==ValidationResultEvent.INVALID)
              invalid=true;
          vResult = lastnameValidator.validate();
-         if (vResult.type==ValidationResultEvent.INVALID) 
+         if (vResult.type==ValidationResultEvent.INVALID)
              invalid=true;
          vResult = emailValidator.validate();
-         if (vResult.type==ValidationResultEvent.INVALID) 
+         if (vResult.type==ValidationResultEvent.INVALID)
              invalid=true;
          if (invalid){
             return;
          }
          var itemToAdd:Object=
             {status:'to insert',
-             username : username.text, 
-             idnumber : idnumber.text, 
-             firstname : firstname.text, 
-             lastname : lastname.text, 
-             email : email.text, 
-             password : password.text, 
-             auth : auth.text, 
-             confirmed : confirmed.text, 
-             timezone : timezone.text, 
-             country : country.text, 
-             emailstop : emailstop.text, 
-             theme : theme.text, 
-             lang : lang.text, 
+             username : username.text,
+             idnumber : idnumber.text,
+             firstname : firstname.text,
+             lastname : lastname.text,
+             email : email.text,
+             password : password.text,
+             auth : auth.text,
+             confirmed : confirmed.text,
+             timezone : timezone.text,
+             country : country.text,
+             emailstop : emailstop.text,
+             theme : theme.text,
+             lang : lang.text,
              mailformat : mailformat.text};
          if (initDG==null){
             initData(new Array(itemToAdd))
@@ -206,8 +206,8 @@ The text area below displays some debug messages.
 
 
 
-   <mx:DataGrid id ="userlist" itemEditEnd="itemEditEndEvent(event);" editable="true" width="100%" height="400" 
-      dataProvider="{initDG}" > 
+   <mx:DataGrid id ="userlist" itemEditEnd="itemEditEndEvent(event);" editable="true" width="100%" height="400"
+      dataProvider="{initDG}" >
 
       <mx:columns>
 
@@ -233,7 +233,7 @@ The text area below displays some debug messages.
 <mx:Button id="button_update_users" label="Call update_users" click="updateUsers();true;"/>
 <mx:Button id="button_create_users" label="Call create_users" click="createUsers();true;"/>
 </mx:HBox>
- 
+
 
 </mx:VBox>
 <mx:Form width="500" defaultButton="{create_users}" label="Add A User">

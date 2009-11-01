@@ -13,7 +13,7 @@ Each of these modules contains a number of expected components:
   icon.gif: a 16x16 icon for the module
 
   db/install.xml: an SQL dump of all the required db tables and data
- 
+
   index.php: a page to list all instances in a course
 
   view.php: a page to view a particular instance
@@ -37,6 +37,6 @@ Each of these modules contains a number of expected components:
 
 
 If you are a developer and interested in developing new Modules see:
-  
+
    Moodle Documentation:  http://moodle.org/doc
    Moodle Community:      http://moodle.org/community

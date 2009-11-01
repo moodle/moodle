@@ -9,7 +9,7 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-$query = optional_param('query', '', PARAM_RAW);  
+$query = optional_param('query', '', PARAM_RAW);
 
 if ($similar_tags = tag_autocomplete($query)) {
     foreach ($similar_tags as $tag) {

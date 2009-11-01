@@ -24,7 +24,7 @@ define('NO_MOODLE_COOKIES', true); // session not used here
     $lifetime = 3600;  // Seconds for files to remain in caches - 1 hour
 
     // this is a big one big hack - NO_MOODLE_COOKIES is not compatible with capabilities MDL-7243
-    // it should be replaced once we get to codes in urls 
+    // it should be replaced once we get to codes in urls
 
     $relativepath = get_file_argument();
 
@@ -79,7 +79,7 @@ define('NO_MOODLE_COOKIES', true); // session not used here
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $isuser = has_capability('moodle/course:view', $context, $userid);
     }
-    
+
     //Check for "security" if !course->guest or course->password
     if ($course->id != SITEID) {
         if ((!$course->guest || $course->password) && (!$isuser)) {

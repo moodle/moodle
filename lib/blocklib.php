@@ -1273,7 +1273,7 @@ class block_manager {
             }
             $this->reposition_block($block->instance->id, $newregion, $newweight);
         }
-        
+
         $this->page->ensure_param_not_in_url('bui_moveid');
         $this->page->ensure_param_not_in_url('bui_newregion');
         $this->page->ensure_param_not_in_url('bui_newweight');

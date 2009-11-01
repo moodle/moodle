@@ -1,4 +1,4 @@
-YAHOO.util.Event.onDOMReady(init); 
+YAHOO.util.Event.onDOMReady(init);
 function init() {
     var select_all = document.getElementById('comment_select_all');
     select_all.onclick = function() {
@@ -37,7 +37,7 @@ function delete_comments() {
     }
     var data = {
         'commentids': list,
-        'sesskey': moodle_cfg.sesskey 
+        'sesskey': moodle_cfg.sesskey
     }
     var trans = YAHOO.util.Connect.asyncRequest('POST',
         url+'?action=delete', cb, build_querystring(data));
