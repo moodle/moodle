@@ -485,17 +485,8 @@ class '.$classname.' {
      * @return void does not return
      */
     public function exception_handler($ex) {
-        global $CFG, $DB, $SCRIPT;
-
         // detect active db transactions, rollback and log as error
-        if ($DB->is_transaction_started()) {
-            error_log('Database transaction aborted by exception in ' . $CFG->dirroot . $SCRIPT);
-            try {
-                // note: transaction blocks should never change current $_SESSION
-                $DB->rollback_sql();
-            } catch (Exception $ignored) {
-            }
-        }
+        abort_all_db_transactions();
 
         // some hacks might need a cleanup hook
         $this->session_cleanup($ex);
@@ -631,17 +622,8 @@ abstract class webservice_base_server extends webservice_server {
      * @return void does not return
      */
     public function exception_handler($ex) {
-        global $CFG, $DB, $SCRIPT;
-
         // detect active db transactions, rollback and log as error
-        if ($DB->is_transaction_started()) {
-            error_log('Database transaction aborted by exception in ' . $CFG->dirroot . $SCRIPT);
-            try {
-                // note: transaction blocks should never change current $_SESSION
-                $DB->rollback_sql();
-            } catch (Exception $ignored) {
-            }
-        }
+        abort_all_db_transactions();
 
         // some hacks might need a cleanup hook
         $this->session_cleanup($ex);
