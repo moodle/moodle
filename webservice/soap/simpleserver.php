@@ -23,19 +23,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require('../../config.php');
 require_once("$CFG->dirroot/webservice/soap/locallib.php");
 
-//ob_start();
-
-//TODO: for now disable all mess in xml
-/*
-ini_set('display_errors', '0');
-ini_set('log_errors', '1');
-$CFG->debugdisplay = false;
-*/
 if (!webservice_protocol_is_enabled('soap')) {
     die;
 }

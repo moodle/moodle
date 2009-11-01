@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require('../../config.php');
@@ -32,7 +34,7 @@ if (!webservice_protocol_is_enabled('xmlrpc')) {
     die;
 }
 
-$server = new webservice_xmlrpc_server(true);
+$server = new webservice_xmlrpc_server(false);
 $server->run();
 die;
 
