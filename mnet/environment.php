@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Info about the local environment, wrt RPC
  *
@@ -97,7 +97,7 @@ class mnet_environment {
                 array_unshift($openssl_history, $this->keypair);
             }
 
-            // 2. How many old keys do we want to keep? Use array_slice to get 
+            // 2. How many old keys do we want to keep? Use array_slice to get
             // rid of any we don't want
             $openssl_generations = $DB->get_field('config_plugins', 'value', array('plugin'=>'mnet', 'name'=>'openssl_generations'));
             if(empty($openssl_generations)) {
@@ -166,5 +166,3 @@ class mnet_environment {
         return $this->keypair['publickey'];
     }
 }
-
-?>

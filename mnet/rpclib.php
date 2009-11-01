@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Some dummy functions to test XML-RPC with
  */
@@ -59,16 +59,16 @@ class testClass {
         $this->first = 'last';
         $this->last  = 'first';
     }
-    
+
     function augment_first($newval) {
         $this->first = $this->first.$newval;
         return $this->first;
     }
-    
+
     function augment_first_RPC_OK() {
         return true;
     }
-    
+
     function mnet_concatenate_strings_RPC_OK() {
         return true;
     }
@@ -76,5 +76,3 @@ class testClass {
         return $string1.$string2.$string3;
     }
 }
-
-?>

@@ -31,5 +31,4 @@ $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fu
 echo $OUTPUT->header();
 echo "<div id='messages'></div>";
 echo $OUTPUT->footer();
-    
-?>
+

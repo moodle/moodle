@@ -27,9 +27,8 @@
  * Jabber message processor - send a given message by jabber
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package 
+ * @package
  */
 
 
@@ -43,7 +42,7 @@ require_once($CFG->dirroot.'/message/output/lib.php');
 require_once($CFG->libdir.'/jabber/XMPP/XMPP.php');
 
 class message_output_jabber extends message_output {
-    
+
     /**
      * Processes the message (sends using jabber).
      * @param object $message the message to be sent
@@ -51,7 +50,7 @@ class message_output_jabber extends message_output {
      */
     function send_message($message){
         global $DB;
-        
+
         if (!$userfrom = $DB->get_record('user', array('id' => $message->useridfrom))) {
             return false;
         }
@@ -74,11 +73,11 @@ class message_output_jabber extends message_output {
         } catch(XMPPHP_Exception $e) {
             return false;
         }
-        
+
         return true;
     }
 
-    /** 
+    /**
      * Creates necessary fields in the messaging config form.
      * @param object $mform preferences form class
      */
@@ -89,15 +88,15 @@ class message_output_jabber extends message_output {
     /**
      * Parses the form submited data and saves it into preferences array.
      * @param object $mform preferences form class
-     * @param array $preferences preferences array 
+     * @param array $preferences preferences array
      */
     function process_form($form, &$preferences){
         $preferences['message_processor_jabber_jabberid'] = $form->jabber_jabberid;
     }
 
     /**
-     * Loads the config data from database to put on the form (initial load) 
-     * @param array $preferences preferences array 
+     * Loads the config data from database to put on the form (initial load)
+     * @param array $preferences preferences array
      * @param int $userid the user id
      */
     function load_data(&$preferences, $userid){
@@ -107,7 +106,7 @@ class message_output_jabber extends message_output {
 }
 
 /*
- * 
+ *
  *         $f = fopen('/tmp/event_jabberx', 'a+');
         fwrite($f, date('l dS \of F Y h:i:s A')."\n");
         fwrite($f, "from: $message->userfromid\n");
@@ -128,4 +127,4 @@ $a = new message_output_jabber();
 
 $a->send_message($savemessage);
 * */
-?>
+

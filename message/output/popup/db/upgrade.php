@@ -27,9 +27,8 @@
  * Upgrade code for popup message processor
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package 
+ * @package
  */
 
 function xmldb_message_popup_upgrade($oldversion) {
@@ -52,4 +51,4 @@ function xmldb_message_popup_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

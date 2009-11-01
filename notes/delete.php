@@ -71,4 +71,3 @@ if (data_submitted() && confirm_sesskey()) {
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);
     echo $OUTPUT->footer();
 }
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * An object to represent lots of information about an RPC-peer machine
  *
@@ -240,12 +240,12 @@ class mnet_peer {
         return false;
     }
 
-    /** 
+    /**
      * Load information from db about an mnet peer into this object's properties
-     * 
+     *
      * @param string $wwwroot - address of peer whose details we want to load
      * @return bool - indication of success or failure
-     */ 
+     */
     function set_wwwroot($wwwroot) {
         global $CFG, $DB;
 
@@ -285,7 +285,7 @@ class mnet_peer {
     /**
      * Several methods can be used to get an 'mnet_host' record. They all then
      * send it to this private method to populate this object's attributes.
-     * 
+     *
      * @param   object  $hostinfo   A database record from the mnet_host table
      * @return  void
      */
@@ -312,5 +312,3 @@ class mnet_peer {
         return $this->public_key_ref;
     }
 }
-
-?>

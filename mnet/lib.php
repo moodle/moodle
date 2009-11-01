@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Library functions for mnet
  *
@@ -105,7 +105,7 @@ function mnet_get_public_key($uri, $application=null) {
     $curlerrno = curl_errno($ch);
     if ($curlerrno!=0) {
         debugging("Request for $uri failed with curl error $curlerrno");
-    } 
+    }
 
     // check HTTP error code
     $info =  curl_getinfo($ch);
@@ -653,5 +653,3 @@ function mnet_get_app_jumppath ($applicationid) {
     }
     return $appjumppaths[$applicationid];
 }
-
-?>

@@ -91,4 +91,3 @@ $PAGE->requires->js_function_call('refresh_page', Array(($wait*1000), "refresh.p
 
 echo $OUTPUT->footer();
 
-?>

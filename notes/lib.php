@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * Library of functions and constants for notes
@@ -281,4 +281,3 @@ function note_delete_all($courseid) {
 
     return $DB->delete_records('post', array('module'=>'notes', 'courseid'=>$courseid));
 }
-?>

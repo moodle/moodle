@@ -308,4 +308,3 @@ class mnet_encxml_parser {
         return true;
     }
 }
-?>

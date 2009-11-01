@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Print this server's public key and exit
  *
@@ -18,4 +18,3 @@ if ($CFG->mnet_dispatcher_mode === 'off') {
 header("Content-type: text/plain");
 $keypair = mnet_get_keypair();
 echo $keypair['certificate'];
-?>

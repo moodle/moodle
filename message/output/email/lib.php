@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -27,9 +27,8 @@
  * Email message processor - lib file
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package 
+ * @package
  */
 
 /**

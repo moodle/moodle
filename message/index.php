@@ -102,21 +102,21 @@ if ($tab == 'contacts') {
 $PAGE->set_generaltype('popup');
 $PAGE->set_title(get_string('messages', 'message').' - '.format_string($SITE->fullname));
 echo $OUTPUT->header();
-echo '<table cellspacing="2" cellpadding="2" border="0" width="95%" class="boxaligncenter">';  
+echo '<table cellspacing="2" cellpadding="2" border="0" width="95%" class="boxaligncenter">';
 echo '<tr>';
 
 /// Print out the tabs
 echo '<td>';
 $tabrow = array();
-$tabrow[] = new tabobject('contacts', $CFG->wwwroot.'/message/index.php?tab=contacts', 
+$tabrow[] = new tabobject('contacts', $CFG->wwwroot.'/message/index.php?tab=contacts',
                            get_string('contacts', 'message'));
-$tabrow[] = new tabobject('search', $CFG->wwwroot.'/message/index.php?tab=search', 
+$tabrow[] = new tabobject('search', $CFG->wwwroot.'/message/index.php?tab=search',
                            get_string('search', 'message'));
-$tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings', 
+$tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings',
                            get_string('settings', 'message'));
 $tabrows = array($tabrow);
 
-print_tabs($tabrows, $tab); 
+print_tabs($tabrows, $tab);
 
 echo '</td>';
 
@@ -135,4 +135,3 @@ if (function_exists($tabprintfunction)) {
 echo '</td> </tr> </table>';
 echo $OUTPUT->footer();
 
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * A service browser for remote Moodles
  *
@@ -102,7 +102,7 @@ if (!empty($_GET['hostid']) && array_key_exists($_GET['hostid'], $hosts)) {
         $mnet_request->set_method('system/listMethods');
         $mnet_request->send($mnet_peer);
         $methods = $mnet_request->response;
-    
+
         echo '<hr /><br /><h3>Methods '.$host->wwwroot .'</h3><table><th>Method</th><th colspan="2">Options</th>';
         foreach ($methods as $id => $method) {
             echo '<tr><td>'.$method.'</td><td> <a href="testclient.php?hostid='.$host->id.'&method='.$id.'&show=sig">Inspect</a></td></tr>'."\n";

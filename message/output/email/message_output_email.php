@@ -27,9 +27,8 @@
  * Email message processor - send a given message by email
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package 
+ * @package
  */
 require_once($CFG->dirroot.'/message/output/lib.php');
 
@@ -57,7 +56,7 @@ class message_output_email extends message_output {
             $message->fullmessagehtml)
         ){
             /// Move the entry to the other table
-            $message->timeread = time();            
+            $message->timeread = time();
             $messageid = $message->id;
             unset($message->id);
 
@@ -78,11 +77,11 @@ class message_output_email extends message_output {
         return true;
     }
 
-    /** 
+    /**
      * Creates necessary fields in the messaging config form.
      * @param object $mform preferences form class
      */
-    function config_form($preferences){ 
+    function config_form($preferences){
         global $USER;
         $string = get_string('email').': <input size="30" name="email_email" value="'.$preferences->email_email.'" />';
         if (empty($preferences->email_email)) {
@@ -94,15 +93,15 @@ class message_output_email extends message_output {
     /**
      * Parses the form submited data and saves it into preferences array.
      * @param object $mform preferences form class
-     * @param array $preferences preferences array 
+     * @param array $preferences preferences array
      */
     function process_form($form, &$preferences){
         $preferences['message_processor_email_email'] = $form->email_email;
     }
 
     /**
-     * Loads the config data from database to put on the form (initial load) 
-     * @param array $preferences preferences array 
+     * Loads the config data from database to put on the form (initial load)
+     * @param array $preferences preferences array
      * @param int $userid the user id
      */
     function load_data(&$preferences, $userid){

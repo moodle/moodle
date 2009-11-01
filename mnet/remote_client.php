@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * An object to represent lots of information about an RPC-peer machine
  *
@@ -91,4 +91,3 @@ class mnet_remote_client extends mnet_peer {
         return false;
     }
 }
-?>

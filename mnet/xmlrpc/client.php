@@ -355,4 +355,3 @@ class mnet_xmlrpc_client {
         return $httprequest;
     }
 }
-?>

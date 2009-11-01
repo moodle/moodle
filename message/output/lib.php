@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -27,15 +27,14 @@
  * Base message output class
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package 
+ * @package
  */
 
 /**
  * Base message output class
  */
-abstract class message_output {        
+abstract class message_output {
     public abstract function send_message($message);
     public abstract function process_form($form, &$preferences);
     public abstract function load_data(&$preferences, $userid);
@@ -43,4 +42,4 @@ abstract class message_output {
 }
 
 
-?>
+

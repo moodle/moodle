@@ -59,14 +59,14 @@ function message_print_contacts() {
     $strangers       = array();
 
 
-    // get all in our contactlist who are not blocked in our contact list 
+    // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
-    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
+    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
                           u.imagealt, u.lastaccess, count(m.id) as messagecount
                      FROM {message_contacts} mc
                      JOIN {user} u ON u.id = mc.contactid
                      LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = ?
-                    WHERE mc.userid = ? AND mc.blocked = 0 
+                    WHERE mc.userid = ? AND mc.blocked = 0
                  GROUP BY u.id, u.firstname, u.lastname, u.picture,
                           u.imagealt, u.lastaccess
                  ORDER BY u.firstname ASC";
@@ -88,12 +88,12 @@ function message_print_contacts() {
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
-    $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
+    $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture,
                            u.imagealt, u.lastaccess, count(m.id) as messagecount
                       FROM {message} m
                       JOIN {user} u  ON u.id = m.useridfrom
                       LEFT OUTER JOIN {message_contacts} mc ON mc.contactid = m.useridfrom AND mc.userid = m.useridto
-                     WHERE mc.id IS NULL AND m.useridto = ? 
+                     WHERE mc.id IS NULL AND m.useridto = ?
                   GROUP BY u.id, u.firstname, u.lastname, u.picture,
                            u.imagealt, u.lastaccess
                   ORDER BY u.firstname ASC";
@@ -532,7 +532,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
     $userpic = moodle_user_picture::make($USER, SITEID);
     $userpic->size = 20;
     $userpic->link = true;
-    
+
     if ($user === false) {
         echo $OUTPUT->user_picture($userpic);
     } else {
@@ -584,7 +584,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 
     $command = $linktype.'contact';
     $string  = $str->{$command};
-    $alttext = $text ? '' : $string; 
+    $alttext = $text ? '' : $string;
     $text = $text ? '&nbsp;'.$string : '';
 
     switch ($linktype) {
@@ -712,7 +712,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
         return $DB->get_records_sql("SELECT $fields
                                        FROM {user} u
                                        LEFT JOIN {message_contacts} mc
-                                            ON mc.contactid = u.id AND mc.userid = ? 
+                                            ON mc.contactid = u.id AND mc.userid = ?
                                       WHERE $select
                                             AND ($fullname $LIKE ?)
                                             $except
@@ -728,7 +728,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
-                                              ON mc.contactid = u.id AND mc.userid = ? 
+                                              ON mc.contactid = u.id AND mc.userid = ?
                                         WHERE $select
                                               AND ra.contextid $contextlists
                                               AND ($fullname $LIKE ?)
@@ -1011,7 +1011,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
     global $CFG, $SITE, $USER, $DB;
-    
+
     $eventdata = new object();
     $eventdata->component        = 'message';
     $eventdata->name             = 'instantmessage';
@@ -1045,7 +1045,7 @@ function message_get_participants() {
 }
 
 /**
- * Print a row of contactlist displaying user picture, messages waiting and 
+ * Print a row of contactlist displaying user picture, messages waiting and
  * block links etc
  * @param $contact contact object containing all fields required for $OUTPUT->user_picture()
  * @param $incontactlist is the user a contact of ours?
@@ -1078,7 +1078,7 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo $OUTPUT->user_picture($userpic);
     echo '</td>';
     echo '<td class="contact">';
-    
+
     $popupoptions = array(
             'height' => 500,
             'width' => 500,
@@ -1126,7 +1126,7 @@ function message_move_userfrom_unread2read($userid) {
 
 function message_get_popup_messages($destuserid, $fromuserid=NULL){
     global $DB;
-    
+
     $processor = $DB->get_record('message_processors', array('name' => 'popup'));
 
     $messagesproc = $DB->get_records('message_working', array('processorid'=>$processor->id), 'id ASC');
@@ -1144,7 +1144,7 @@ function message_get_popup_messages($destuserid, $fromuserid=NULL){
             $message->timeread = time();
             $messageid = $message->id;
             unset($message->id);
-        
+
             //delete what we've processed and check if can move message
             $DB->delete_records('message_working', array('id' => $msgp->id));
             if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){

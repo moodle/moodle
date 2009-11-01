@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     // this is the 'my moodle' page
 
@@ -69,12 +69,12 @@
     if (isset($CFG->mycoursesperpage)) {
         $courses_limit = $CFG->mycoursesperpage;
     }
-    
+
     $morecourses = false;
     if ($courses_limit > 0) {
         $courses_limit = $courses_limit + 1;
     }
-    
+
     $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', '*', false, $courses_limit);
     $site = get_site();
     $course = $site; //just in case we need the old global $course hack
@@ -111,4 +111,3 @@
 
     echo $OUTPUT->footer();
 
-?>

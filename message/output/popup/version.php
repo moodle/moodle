@@ -27,7 +27,6 @@
  * Popup processor version information
  *
  * @author Luis Rodrigues
- * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package
  */
@@ -35,4 +34,4 @@
 $plugin->version  = 2008072401;
 $plugin->requires = 2008072401;
 
-?>
+

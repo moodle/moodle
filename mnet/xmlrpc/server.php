@@ -299,7 +299,7 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
  * Translate XML-RPC's strange function call syntax into a more straightforward
  * PHP-friendly alternative. This dummy function will be called by the
  * dispatcher, and can be used to call a method on an object, or just a function
- * 
+ *
  * The methodName argument (eg. mnet/testlib/mnet_concatenate_strings)
  * is ignored.
  *
@@ -312,7 +312,7 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
  */
 function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     global $MNET_REMOTE_CLIENT;
-    
+
     if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
         return @call_user_method_array($functionname, $MNET_REMOTE_CLIENT->object_to_call, $argsarray);
     } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
@@ -535,7 +535,7 @@ function mnet_server_dispatch($payload) {
                     // Filename doesn't end in 'php'; possible attack?
                     // Generate error response - unable to locate function
                     exit(mnet_server_fault(7012, 'nosuchfunction'));
-                } 
+                }
 
                 // The call stack holds the path to any include file
                 $includefile = $CFG->dirroot.'/'.$filename;
@@ -588,7 +588,7 @@ function mnet_system($method, $params, $hostinfo) {
                     {mnet_rpc} rpc
                 WHERE
                     s2r.rpcid = rpc.id AND
-                    h2s.serviceid = s2r.serviceid AND 
+                    h2s.serviceid = s2r.serviceid AND
                     h2s.hostid in ('.$id_list .') AND
                     h2s.publish =\'1\'
                 ORDER BY
@@ -610,7 +610,7 @@ function mnet_system($method, $params, $hostinfo) {
                     {mnet_rpc} rpc
                 WHERE
                     s2r.rpcid = rpc.id AND
-                    h2s.serviceid = s2r.serviceid AND 
+                    h2s.serviceid = s2r.serviceid AND
                     h2s.hostid in ('.$id_list .') AND
                     h2s.publish =\'1\' AND
                     svc.id = h2s.serviceid AND
@@ -641,7 +641,7 @@ function mnet_system($method, $params, $hostinfo) {
             WHERE
                 rpc.xmlrpc_path = ? AND
                 s2r.rpcid = rpc.id AND
-                h2s.serviceid = s2r.serviceid AND 
+                h2s.serviceid = s2r.serviceid AND
                 h2s.publish =\'1\' AND
                 h2s.hostid in ('.$id_list .')';
         $params = array($params[0]);
@@ -672,7 +672,7 @@ function mnet_system($method, $params, $hostinfo) {
                 rpc.xmlrpc_path = ? AND
                 s2r.rpcid = rpc.id AND
                 h2s.publish =\'1\' AND
-                h2s.serviceid = s2r.serviceid AND 
+                h2s.serviceid = s2r.serviceid AND
                 h2s.hostid in ('.$id_list .')';
         $params = array($params[0]);
 
@@ -705,20 +705,20 @@ function mnet_system($method, $params, $hostinfo) {
 
         if (is_array($result)) {
             foreach($result as $service) {
-                $services[] = array('name' => $service->name, 
-                                    'apiversion' => $service->apiversion, 
-                                    'publish' => $service->publish, 
+                $services[] = array('name' => $service->name,
+                                    'apiversion' => $service->apiversion,
+                                    'publish' => $service->publish,
                                     'subscribe' => $service->subscribe);
             }
         }
 
         return $services;
-    }  
+    }
     exit(mnet_server_fault(7019, 'nosuchfunction'));
 }
 
 /**
- * Initialize the object (if necessary), execute the method or function, and 
+ * Initialize the object (if necessary), execute the method or function, and
  * return the response
  *
  * @param  string  $includefile    The file that contains the object definition
@@ -785,7 +785,7 @@ function mnet_server_invoke_method($includefile, $methodname, $method, $payload,
  * Accepts a public key from a new remote host and returns the public key for
  * this host. If 'register all hosts' is turned on, it will bootstrap a record
  * for the remote host in the mnet_host table (if it's not already there)
- * 
+ *
  * @param  string  $function      XML-RPC requires this but we don't... discard!
  * @param  array   $params        Array of parameters
  *                                $params[0] is the remote wwwroot
@@ -806,5 +806,3 @@ function mnet_keyswap($function, $params) {
     }
     return $MNET->public_key;
 }
-
-?>

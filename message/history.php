@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package message
  */
-      
+
 require('../config.php');
 require('lib.php');
 
@@ -131,4 +131,3 @@ if ($messages = message_get_history($user1, $user2)) {
 
 echo $OUTPUT->footer();
 
-?>

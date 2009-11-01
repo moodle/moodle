@@ -45,7 +45,7 @@ if (!$course = $DB->get_record('course', array('id' => $course))) {
 if ($course->id != SITEID) {
     require_login($course);
 
-} else { 
+} else {
     if (!isloggedin()) {
         if (empty($SESSION->wantsurl)) {
             $SESSION->wantsurl = $CFG->httpswwwroot.'/message/edit.php';
@@ -132,7 +132,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
 }
 
-/// Load preferences 
+/// Load preferences
 $preferences = new object();
 
 /// Get providers preferences
@@ -153,7 +153,7 @@ foreach ( $providers as $providerid => $provider){
 
 /// For every processors put its options on the form (need to get function from processor's lib.php)
 $processors = $DB->get_records('message_processors');
-foreach ( $processors as $processorid => $processor){    
+foreach ( $processors as $processorid => $processor){
     $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
     if ( is_readable($processorfile) ) {
         include_once( $processorfile );
@@ -172,7 +172,7 @@ $streditmymessage = get_string('editmymessage', 'message');
 $strparticipants  = get_string('participants');
 $userfullname     = fullname($user, true);
 
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || 
+if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
     has_capability('moodle/site:viewparticipants', $systemcontext)) {
     $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/message/index.php', array('id'=>$course->id)));
 }
@@ -267,4 +267,3 @@ echo "</form>";
 
 echo $OUTPUT->footer();
 
-?>

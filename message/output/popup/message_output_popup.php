@@ -28,17 +28,17 @@ require_once($CFG->dirroot.'/message/output/lib.php');
 
 class message_output_popup extends message_output{
 
-    /** 
+    /**
      * Process the popup message.
-     * The popup doesn't send data only saves in the database for later use, 
-     * the popup_interface.php takes the message from the message table into 
+     * The popup doesn't send data only saves in the database for later use,
+     * the popup_interface.php takes the message from the message table into
      * the message_read.
      * @param object $message the message to be sent
      * @return true if ok, false if error
      */
     public function send_message($message) {
         global $DB;
-        
+
         //put the process record into db
         $processor = $DB->get_record('message_processors', array('name'=>'popup'));
         $procmessage = new object();
@@ -50,7 +50,7 @@ class message_output_popup extends message_output{
         //should only save this message for later delivery
         return true;
     }
-    
+
     function config_form($preferences) {
         return '<table>'.
                '<tr><td align="right">'.get_string('showmessagewindow', 'message').':</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>'.
@@ -59,7 +59,7 @@ class message_output_popup extends message_output{
                '<tr><td align="right">'.get_string('noframesjs', 'message').':</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>'.
                '</table>';
     }
-    
+
     public function process_form($form, &$preferences) {
         $preferences['message_showmessagewindow'] = $form->showmessagewindow?1:0;
         $preferences['message_blocknoncontacts']  = $form->blocknoncontacts?1:0;

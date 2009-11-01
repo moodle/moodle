@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -31,4 +31,3 @@ class note_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
     }
 }
-?>

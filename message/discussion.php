@@ -84,7 +84,7 @@
               scrolling="yes" marginwidth="10" marginheight="10" frameborder="0" />
        <frame src="refresh.php?id=<?php p($user->id)?>&amp;name=<?php echo urlencode(fullname($user)) ?>"  name="refresh"
               scrolling="no"  marginwidth="0" marginheight="0" frameborder="0" />
-       
+
        <frame src="send.php?id=<?php p($user->id)?>"     name="send"
               scrolling="no"  marginwidth="2" marginheight="2" frameborder="0" />
      </frameset>
@@ -233,7 +233,7 @@
     $options = new object();
     $options->para = false;
     $options->newlines = true;
-    
+
     $params = array('uid1'=>$USER->id ,'userid1'=>$userid, 'start1'=>$start, 'uid2'=>$USER->id ,'userid2'=>$userid, 'start2'=>$start);
     if ($newonly) {
         $lastsql1 = " AND timecreated > :last1";
@@ -249,7 +249,7 @@
     if ($messages = $DB->get_records_select('message_read', "(useridto = :uid1 AND useridfrom = :userid1 AND timeread > :start1 $lastsql1) OR (useridto = :userid2 AND useridfrom = :uid2 AND timeread > :start2 $lastsql2)", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
-            
+
             if ($message->useridfrom == $USER->id) {
                 $fullname = $mefullname;
             } else {
@@ -277,7 +277,7 @@
     if ($messages = $DB->get_records_select('message', "useridto = :userid1 AND useridfrom = :uid1 $lastsql1", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
-            
+
             if ($message->fullmessageformat == FORMAT_HTML){
                 $printmessage = format_text($message->fullmessagehtml, $message->fullmessageformat, $options, 0);
             } else{
@@ -296,11 +296,11 @@
         }
     }
     /*Get still to be read message, use message/lib.php funtion*/
-    $messages = message_get_popup_messages($USER->id, $userid); 
+    $messages = message_get_popup_messages($USER->id, $userid);
     if ($messages) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
-            
+
             if ($message->fullmessageformat == FORMAT_HTML){
                 $printmessage = format_text($message->fullmessagehtml, $message->fullmessageformat, $options, 0);
             } else{
@@ -316,7 +316,7 @@
                 $sortkey = $message->timecreated."$i";
             }
             $allmessages[$sortkey] = $printmessage;
-            
+
             if ($message->timecreated < $start) {
                 $start = $message->timecreated; // move start back so that we see all current history
             }
