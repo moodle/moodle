@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Displays the top level category or all courses
       // In editing mode, allows the admin to edit a category,
       // and rearrange courses
@@ -18,7 +18,7 @@
     $resort = optional_param('resort', 0, PARAM_BOOL);
 
     $site = get_site();
-    
+
     if (empty($id)) {
         print_error("unknowcategory");
     }
@@ -163,7 +163,7 @@
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
         admin_externalpage_print_header();
-    } else {        
+    } else {
         $PAGE->set_title("$site->shortname: $category->name");
         $PAGE->set_heading("$site->fullname: $strcourses");
         $PAGE->set_button(print_course_search('', true, 'navbar'));
@@ -409,7 +409,7 @@
                     $link = html_link::make("/course/info.php?id=$acourse->id", '<img alt="'.get_string('info').'" class="icon" src="'.$OUTPUT->old_icon_url('i/info') . '" />');
                     $link->add_action(new popup_action('click', $link->url, 'courseinfo'));
                     $link->title = $strsummary;
-                    echo $OUTPUT->link($link);                    
+                    echo $OUTPUT->link($link);
                 }
                 echo "</td>";
             }

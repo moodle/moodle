@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Admin-only code to delete a course utterly
 
     require_once(dirname(__FILE__) . '/../config.php');
@@ -15,7 +15,7 @@
     }
 
     $site = get_site();
-    
+
     $strdeletecourse = get_string("deletecourse");
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");
@@ -74,4 +74,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+
