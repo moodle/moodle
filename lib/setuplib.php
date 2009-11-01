@@ -168,11 +168,6 @@ class invalid_state_exception extends moodle_exception {
 function default_exception_handler($ex) {
     global $DB, $OUTPUT;
 
-    if ($DB) {
-        // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
-        $DB->set_debug(0);
-    }
-
     // detect active db transactions, rollback and log as error
     abort_all_db_transactions();
 
@@ -187,6 +182,10 @@ function default_exception_handler($ex) {
         echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
     } else {
         try {
+            if ($DB) {
+                // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
+                $DB->set_debug(0);
+            }
             echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
         } catch (Exception $out_ex) {
             // default exception handler MUST not throw any exceptions!!
