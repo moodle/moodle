@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for adding an end of cluster page
  *
@@ -10,16 +10,16 @@
 
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
-        
+
     $timenow = time();
-    
+
     // the new page is not the first page (end of cluster always comes after an existing page)
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error('cannotfindpages', 'lesson');
     }
-    
+
     // could put code in here to check if the user really can insert an end of cluster
-    
+
     $newpage = new stdClass;
     $newpage->lessonid = $lesson->id;
     $newpage->prevpageid = $pageid;

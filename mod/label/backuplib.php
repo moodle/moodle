@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //label mods
 
@@ -20,7 +20,7 @@
     function label_backup_mods($bf,$preferences) {
         global $CFG, $DB;
 
-        $status = true; 
+        $status = true;
 
         ////Iterate over label table
         if ($labels = $DB->get_records ("label","course", array($preferences->backup_course=>"id"))) {
@@ -32,14 +32,14 @@
         }
         return $status;
     }
-   
+
     function label_backup_one_mod($bf,$preferences,$label) {
         global $CFG, $DB;
-    
+
         if (is_numeric($label)) {
             $label = $DB->get_record('label', array('id'=>$label));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -67,12 +67,12 @@
             }
             return $info;
         }
-        
+
          //First the course data
          $info[0][0] = get_string("modulenameplural","label");
          $info[0][1] = $DB->count_records("label", array("course"=>$course));
          return $info;
-    } 
+    }
 
     ////Return an array of info (name,value)
     function label_check_backup_mods_instances($instance,$backup_unique_code) {
@@ -82,4 +82,4 @@
         return $info;
     }
 
-?>
+

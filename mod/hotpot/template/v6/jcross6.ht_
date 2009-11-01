@@ -5,7 +5,7 @@
 
 [strDublinCoreMetadata]
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <title>
 [strPlainTitle]
@@ -120,7 +120,7 @@
 <button id="CheckButton1" class="FuncButton" onmouseover="FuncBtnOver(this)" onfocus="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onblur="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="CheckAnswers()">&nbsp;[strCheckCaption]&nbsp;</button>
 
  -->
- 
+
 <table class="CrosswordGrid">
 <tbody>
 

@@ -5,7 +5,7 @@
 
 [strDublinCoreMetadata]
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <title>
 [strPlainTitle]
@@ -61,9 +61,9 @@
 
 </script>
 
-</head> 
+</head>
 
-<body onload="TimerStartUp()" id="TheBody" [inclScorm1.2]onunload="CheckLMSFinish()"[/inclScorm1.2]> 
+<body onload="TimerStartUp()" id="TheBody" [inclScorm1.2]onunload="CheckLMSFinish()"[/inclScorm1.2]>
 <!-- BeginTopNavButtons -->
 
 [inclNavButtons]

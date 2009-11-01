@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
 * Sets up the tabs used by the lesson pages for teachers.
 *
@@ -29,7 +29,7 @@
 
 /// user attempt count for reports link hover (completed attempts - much faster)
     $attemptscount = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->id));
-    
+
     $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('edit', 'lesson'), get_string('edit', 'moodle', format_string($lesson->name)));
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports2', 'lesson', $attemptscount));
@@ -61,7 +61,7 @@
         /// sub tabs for edit view (collapsed and expanded aka full)
             $inactive[] = 'edit';
             $activated[] = 'edit';
-            
+
             $row    = array();
             $row[]  = new tabobject('collapsed', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=collapsed", get_string('collapsed', 'lesson'));
             $row[]  = new tabobject('full', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id&amp;mode=full", get_string('full', 'lesson'));
@@ -71,4 +71,4 @@
 
     print_tabs($tabs, $currenttab, $inactive, $activated);
 
-?>
+

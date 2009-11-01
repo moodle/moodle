@@ -1,10 +1,10 @@
-<?php //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //label mods
 
-    //This is the "graphical" structure of the label mod:   
+    //This is the "graphical" structure of the label mod:
     //
-    //                       label 
+    //                       label
     //                    (CL,pk->id)
     //
     // Meaning: pk->primary key field of the table
@@ -31,17 +31,17 @@
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
-          
+
             //Now, build the LABEL record structure
             $label->course = $restore->course_id;
             $label->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $label->intro = backup_todb($info['MOD']['#']['CONTENT']['0']['#']);
             $label->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
- 
+
             //The structure is equal to the db, so insert the label
             $newid = $DB->insert_record ("label",$label);
 
-            //Do some output     
+            //Do some output
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("modulename","label")." \"".format_string($label->name,true)."\"</li>";
             }
@@ -51,7 +51,7 @@
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-   
+
             } else {
                 $status = false;
             }
@@ -102,9 +102,9 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function label_restore_logs($restore,$log) {
-                    
+
         $status = false;
-                    
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -141,4 +141,4 @@
         }
         return $status;
     }
-?>
+

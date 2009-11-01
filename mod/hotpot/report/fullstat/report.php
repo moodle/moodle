@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// Overview report just displays a big table of all the attempts
 class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
@@ -39,9 +39,9 @@ class hotpot_report extends hotpot_default_report {
 		}
 		// headings for name, attempt number, score/grade and penalties
 		$table->head = array(
-			get_string("name"), 
+			get_string("name"),
 			hotpot_grade_heading($hotpot, $options),
-			get_string('attempt', 'quiz'), 
+			get_string('attempt', 'quiz'),
 		);
 		$table->align = array('left', 'center', 'center');
 		$table->size = array(150, 80, 10);
@@ -50,8 +50,8 @@ class hotpot_report extends hotpot_default_report {
 		// question headings
 		$this->add_question_headings($questions, $table, 'left', 0, false, 2);
 		// penalties (not always needed) and raw score
-		array_push($table->head, 
-			get_string('penalties', 'hotpot'), 
+		array_push($table->head,
+			get_string('penalties', 'hotpot'),
 			get_string('score', 'quiz')
 		);
 		array_push($table->align, 'center', 'center');
@@ -82,7 +82,7 @@ class hotpot_report extends hotpot_default_report {
 				}
 				$cells = array ($name, $grade, $attemptnumber);
 				// $name and $grade are only printed on first line per user
-				$name = $blank; 
+				$name = $blank;
 				$grade = $blank;
 				$start_col = count($cells);
 				foreach ($questionids as $col => $id) {
@@ -446,4 +446,4 @@ return <<<SHOWHIDE_SET
 SHOWHIDE_SET
 ;
 }
-?>
+

@@ -26,4 +26,4 @@
         redirect('view.php?id='.$cm->id);
     }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Provides the interface for grading essay questions
  *
@@ -16,7 +16,7 @@
     $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
-    
+
     require_login($course->id, false, $cm);
 
     $url = new moodle_url($CFG->wwwroot.'/mod/lesson/essay.php', array('id'=>$id));
@@ -27,9 +27,9 @@
     $PAGE->navbar->add(get_string('manualgrading','lesson'));
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     require_capability('mod/lesson:edit', $context);
-    
+
 /// Handle any preprocessing before header is printed - based on $mode
     switch ($mode) {
         case 'display':  // Default view - get the necessary data
@@ -43,7 +43,7 @@
                     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
                         $params["groupinid"] = $cm->groupingid;
                         $sql = "SELECT DISTINCT u.*
-                                FROM {lesson_attempts} a 
+                                FROM {lesson_attempts} a
                                     INNER JOIN {user} u ON u.id = a.userid
                                     INNER JOIN {groups_members} gm ON gm.userid = u.id
                                     INNER JOIN {groupings_groups} gg ON gm.groupid = :groupinid
@@ -72,7 +72,7 @@
             break;
         case 'grade':  // Grading form - get the necessary data
             confirm_sesskey();
-            
+
             $attemptid = required_param('attemptid', PARAM_INT);
 
             if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
@@ -93,9 +93,9 @@
                 if (optional_param('cancel', 0, PARAM_RAW)) {
                     redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
                 }
-                
+
                 $attemptid = required_param('attemptid', PARAM_INT);
-                
+
                 if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
                     print_error('cannotfindattempt', 'lesson');
                 }
@@ -120,18 +120,18 @@
                 $attempt->useranswer = serialize($essayinfo);
 
                 $DB->update_record('lesson_attempts', $attempt);
-                
+
                 // Get grade information
                 $grade = current($grades);
                 $gradeinfo = lesson_grade($lesson, $attempt->retry, $attempt->userid);
-                
+
                 // Set and update
                 $updategrade->id = $grade->id;
                 $updategrade->grade = $gradeinfo->grade;
                 $DB->update_record('lesson_grades', $updategrade);
                 // Log it
                 add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
-                
+
                 lesson_set_message(get_string('changessaved'), 'notifysuccess');
 
                 // update central gradebook
@@ -144,7 +144,7 @@
             break;
         case 'email': // Sending an email(s) to a single user or all
             confirm_sesskey();
-            
+
             // Get our users (could be singular)
             if ($userid = optional_param('userid', 0, PARAM_INT)) {
                 $queryadd = " AND userid = :userid";
@@ -186,19 +186,19 @@
             }
             $options = new stdClass;
             $options->noclean = true;
-            
+
             foreach ($attempts as $attempt) {
                 $essayinfo = unserialize($attempt->useranswer);
                 if ($essayinfo->graded and !$essayinfo->sent) {
                     // Holds values for the essayemailsubject string for the email message
                     $a = new stdClass;
-                    
+
                     // Set the grade
                     $params = array ("lessonid" => $lesson->id, "userid" => $attempt->userid);
                     $grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid and userid = :userid", $params, 'completed', '*', $attempt->retry, 1);
                     $grade  = current($grades);
                     $a->newgrade = $grade->grade;
-                    
+
                     // Set the points
                     if ($lesson->custom) {
                         $a->earned = $essayinfo->score;
@@ -219,7 +219,7 @@
 
                     // Subject
                     $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
-                    
+
                     $eventdata = new object();
                     $eventdata->modulename       = 'lesson';
                     $eventdata->userfrom         = $USER;
@@ -244,25 +244,25 @@
             redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             break;
     }
-    
+
     // Log it
     add_to_log($course->id, 'lesson', 'view grade', "essay.php?id=$cm->id", get_string('manualgrading', 'lesson'), $cm->id);
-    
+
     lesson_print_header($cm, $course, $lesson, 'essay');
-    
+
     switch ($mode) {
         case 'display':
             // Expects $user, $essayattempts and $pages to be set already
-        
+
             // Group all the essays by userid
             $studentessays = array();
             foreach ($essayattempts as $essay) {
                 // Not very nice :) but basically
-                //   this organizes the essays so we know how many 
+                //   this organizes the essays so we know how many
                 //   times a student answered an essay per try and per page
-                $studentessays[$essay->userid][$essay->pageid][$essay->retry][] = $essay;            
+                $studentessays[$essay->userid][$essay->pageid][$essay->retry][] = $essay;
             }
-            
+
             // Setup table
             $table = new html_table();
             $table->head = array(get_string('name'), get_string('essays', 'lesson'), get_string('email', 'lesson'));
@@ -297,10 +297,10 @@
                         } else {
                             $essay = end($try);
                         }
-                        
+
                         // Start processing the attempt
                         $essayinfo = unserialize($essay->useranswer);
-                        
+
                         // Different colors for all the states of an essay (graded, if sent, not graded)
                         if (!$essayinfo->graded) {
                             $class = ' class="graded"';
@@ -322,7 +322,7 @@
             $emailalllink = "<a href=\"$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id&amp;mode=email&amp;sesskey=".sesskey().'">'.get_string('emailallgradedessays', 'lesson').'</a>';
 
             $table->data[] = array(' ', ' ', $emailalllink);
-            
+
             echo $OUTPUT->table($table);
             break;
         case 'grade':
@@ -334,7 +334,7 @@
                   <input type="hidden" name="id" value="'.$cm->id.'" />
                   <input type="hidden" name="mode" value="update" />
                   <input type="hidden" name="attemptid" value="'.$attemptid.'" />
-                  <input type="hidden" name="sesskey" value="'.sesskey().'" />';    
+                  <input type="hidden" name="sesskey" value="'.sesskey().'" />';
 
             // All tables will have these settings
             $originaltable = new html_table();
@@ -352,10 +352,10 @@
             $table->data[] = array(format_text($page->contents, FORMAT_MOODLE, $options));
 
             echo $OUTPUT->table($table);
-            
+
             // Now the user's answer
             $essayinfo = unserialize($attempt->useranswer);
-            
+
             $table = clone($originaltable);
             $table = new html_table();
             $table->head = array(get_string('studentresponse', 'lesson', fullname($user, true)));
@@ -389,6 +389,6 @@
                   </div>';
             break;
     }
-    
+
     echo $OUTPUT->footer();
-?>
+

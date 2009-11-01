@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for adding an end of branch page
  *
@@ -10,7 +10,7 @@
 
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
-    
+
     $timenow = time();
 
     // the new page is not the first page (end of branch always comes after an existing page)
@@ -51,11 +51,11 @@
         $newanswer->timecreated = $timenow;
         $newanswer->jumpto = $btpageid;
         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
-        
+
         lesson_set_message(get_string('addedanendofbranch', 'lesson'), 'notifysuccess');
     } else {
         lesson_set_message(get_string('nobranchtablefound', 'lesson'));
     }
-    
+
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-?>
+

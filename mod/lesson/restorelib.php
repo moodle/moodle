@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 /**
  * This php script contains all the stuff to restore lesson mods
  *
@@ -7,7 +7,7 @@
  * @package lesson
  **/
 
-    //This is the "graphical" structure of the lesson mod: 
+    //This is the "graphical" structure of the lesson mod:
     //
     //          lesson_default                  lesson ----------------------------|--------------------------|--------------------------|
     //     (UL, pk->id,fk->courseid)         (CL,pk->id)                           |                          |                          |
@@ -64,7 +64,7 @@
             $lesson->practice = backup_todb($info['MOD']['#']['PRACTICE']['0']['#']);
             $lesson->modattempts = backup_todb($info['MOD']['#']['MODATTEMPTS']['0']['#']);
             $lesson->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
-            $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);            
+            $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $lesson->dependency = isset($info['MOD']['#']['DEPENDENCY']['0']['#'])?backup_todb($info['MOD']['#']['DEPENDENCY']['0']['#']):'';
             $lesson->conditions = isset($info['MOD']['#']['CONDITIONS']['0']['#'])?backup_todb($info['MOD']['#']['CONDITIONS']['0']['#']):'';
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
@@ -133,7 +133,7 @@
                     if (!$lessondefault) {
                         $status = lesson_default_restore_mods($info,$restore);
                     }
-                    
+
                 }
             } else {
                 $status = false;
@@ -201,7 +201,7 @@
                 backup_putid($restore->backup_unique_code,"lesson_pages", $oldid, $newid);
                 //We have to restore the lesson_answers table now (a page level table)
                 $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore,$userdata);
-                
+
                 //Need to update useranswer field (which has answer id's in it)
                 //for matching and multi-answer multi-choice questions
                 if ($userdata) { // first check to see if we even have to do this
@@ -228,8 +228,8 @@
                             }
                         }
                     }
-                }        
-                
+                }
+
                 // backup branch table info for branch tables.
                 if ($status && $userdata) {
                     if (!lesson_branch_restore($lessonid,$newid,$page_info,$restore)) {
@@ -326,7 +326,7 @@
                 if ($newid) {
                     // need to store the id so we can update the useranswer
                     // field in attempts.  This is done in the lesson_pages_restore_mods
-                    backup_putid($restore->backup_unique_code,"lesson_answers", $oldid, $newid);                                 
+                    backup_putid($restore->backup_unique_code,"lesson_answers", $oldid, $newid);
 
                     if ($userdata) {
                         //We have to restore the lesson_attempts table now (a answers level table)
@@ -450,9 +450,9 @@
 
         return $status;
     }
-    
-    
-    
+
+
+
     //This function restores the lesson_branch
     function lesson_branch_restore($lessonid, $pageid, $info, $restore) {
         global $CFG, $DB;
@@ -588,7 +588,7 @@
                 if ($user) {
                     $highscore->userid = $user->new_id;
                 }
-                
+
                 //The structure is equal to the db, so insert the lesson_grade
                 $newid = $DB->insert_record ("lesson_high_scores",$highscore);
 
@@ -611,7 +611,7 @@
 
         return $status;
     }
-    
+
     //This function restores the lesson_default
     function lesson_default_restore_mods($info, $restore) {
         global $CFG, $DB;
@@ -665,12 +665,12 @@
 
                 //The structure is equal to the db, so insert the lesson_grade
                 $newid = $DB->insert_record ("lesson_default",$default);
-                
+
                 if ($newid) {
                     backup_putid($restore->backup_unique_code,'lesson_default',
                                  $restore->course_id, $newid);
                 }
-                
+
                 //Do some output
                 if (($i+1) % 50 == 0) {
                     if (!defined('RESTORE_SILENTLY')) {
@@ -697,11 +697,11 @@
     //in the restore process
     function lesson_decode_content_links ($content,$restore) {
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of lessons
-                
+
         $searchstring='/\$@(LESSONINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -718,7 +718,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/lesson/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/lesson/index.php?id='.$old_id,$result);
                 }
@@ -761,7 +761,7 @@
     function lesson_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         //Process every lesson PAGE in the course
         if ($pages = $DB->get_records_sql("SELECT p.id, p.contents
                                              FROM {lesson_pages} p,
@@ -889,4 +889,4 @@
         }
         return $status;
     }
-?>
+

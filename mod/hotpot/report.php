@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+<?php
 
 // This script uses installed report plugins to print quiz reports
 
@@ -15,7 +15,7 @@
         }
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
-        }    
+        }
         if (! $hotpot = $DB->get_record("hotpot", array("id"=>$cm->instance))) {
             print_error('invalidhotpotid', 'hotpot');
         }
@@ -221,8 +221,8 @@
     $fields = 'a.*, u.firstname, u.lastname, u.picture';
     if ($mode=='click') {
         $fields .= ', u.idnumber';
-    } else { 
-        // overview, simple and detailed reports 
+    } else {
+        // overview, simple and detailed reports
         // get last attempt record in clickreport series
         $ids = array();
         foreach ($cr_attempts as $cr_attempt) {
@@ -394,7 +394,7 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
             }
             if (count($ids)) {
                 list($ids, $idparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'crid0');
-                $params = array_merge($params, $idparams); 
+                $params = array_merge($params, $idparams);
                 $select = "hotpot=:hotpotid AND clickreportid $ids";
             }
             break;
@@ -421,14 +421,14 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
 }
 
 //////////////////////////////////////////////
-/// functions to print the report headings and 
+/// functions to print the report headings and
 /// report selector menus
 
 function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     global $OUTPUT;
     $strmodulenameplural = get_string("modulenameplural", "hotpot");
     $strmodulename  = get_string("modulename", "hotpot");
-    
+
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
         if ($mode=='overview' || $mode=='simplestat' || $mode=='fullstat') {
@@ -446,10 +446,10 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'hotpot'));
     echo $OUTPUT->header();
-    
+
     $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-        echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+        echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">'
             . get_string('seeallcoursegrades', 'grades') . '</a></div>';
     }
     echo $OUTPUT->heading($hotpot->name);
@@ -492,9 +492,9 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
 
     // get users who have ever atetmpted this HotPot
     $users = $DB->get_records_sql("
-        SELECT 
+        SELECT
             u.id, u.firstname, u.lastname
-        FROM 
+        FROM
             {user} u,
             {hotpot_attempts} ha
         WHERE
@@ -665,4 +665,4 @@ function hotpot_get_users_by_capability(&$modulecontext, $capability) {
     }
     return $users[$capability];
 }
-?>
+

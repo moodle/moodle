@@ -1,7 +1,7 @@
 <?php  // $Id: lesson.php, v 1.0 25 Jan 2004
 /**
  * Handles lesson actions
- * 
+ *
  * ACTIONS handled are:
  *    addbranchtable
  *    addendofbranch
@@ -23,10 +23,10 @@
 
     require("../../config.php");
     require("locallib.php");
-    
+
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $action = required_param('action', PARAM_ALPHA);   // Action
-    
+
     list($cm, $course, $lesson) = lesson_get_basics($id);
 
     require_login($course->id, false, $cm);
@@ -36,10 +36,10 @@
     $PAGE->navbar->add(get_string($action, 'lesson'));
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
 /// Set up some general variables
     $usehtmleditor = can_use_html_editor();
-    
+
 /// Process the action
     switch ($action) {
         case 'addbranchtable':
@@ -64,5 +64,5 @@
     }
 
     echo $OUTPUT->footer();
- 
-?>
+
+

@@ -1,6 +1,6 @@
-<?php  //$Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the lesson module
 //
 // Sometimes, changes between versions involve
@@ -56,4 +56,4 @@ function xmldb_lesson_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

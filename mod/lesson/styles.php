@@ -1,7 +1,7 @@
 /***
  *** General styles (scope: all of lesson)
  ***/
- 
+
 .mod-lesson .contents {
     text-align: left;
 }
@@ -102,9 +102,9 @@
  ***/
 
 /* NOTE: background color, height and width are set in the lesson settings */
-.mod-lesson .slideshow {  
+.mod-lesson .slideshow {
     overflow: auto;
-    padding-right: 16px; /* for the benefit of macIE5 only */ 
+    padding-right: 16px; /* for the benefit of macIE5 only */
     /* \ commented backslash hack - recover from macIE5 workarounds, it will ignore the following rule */
     padding-right: 0;
     padding: 15px;
@@ -157,7 +157,7 @@
 }
 
 .mod-lesson .lessonbutton a:link,
-.mod-lesson .lessonbutton a:visited, 
+.mod-lesson .lessonbutton a:visited,
 .mod-lesson .lessonbutton a:hover {
     color: #000;
     text-decoration: none;
@@ -213,7 +213,7 @@
     */
     background-color: green;
     padding: 0px;
-    margin: 0px;    
+    margin: 0px;
 }
 
 .mod-lesson .progress_bar_todo {

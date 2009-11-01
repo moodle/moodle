@@ -186,4 +186,4 @@ $mod_glossary_capabilities = array(
 
 );
 
-?>
+

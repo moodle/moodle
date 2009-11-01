@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for processing page answers by users
  *
@@ -789,4 +789,4 @@
     lesson_print_header($cm, $course, $lesson, 'view', true, $page->id);
 
     include(dirname(__FILE__).'/continue.html');
-?>
+

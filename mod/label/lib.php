@@ -180,7 +180,7 @@ function label_get_types() {
 
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
- * 
+ *
  * @param object $data the data submitted from the reset course.
  * @return array status array
  */

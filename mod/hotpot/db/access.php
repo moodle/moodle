@@ -79,4 +79,4 @@ $mod_hotpot_capabilities = array(
 
 );
 
-?>
+

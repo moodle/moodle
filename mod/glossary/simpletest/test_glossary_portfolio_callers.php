@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
 require_once("$CFG->dirroot/mod/glossary/lib.php");
 require_once("$CFG->dirroot/$CFG->admin/generator.php");
@@ -58,4 +58,4 @@ class testGlossaryPortfolioCallers extends portfoliolib_test {
         parent::test_caller_with_plugins();
     }
 }
-?>
+

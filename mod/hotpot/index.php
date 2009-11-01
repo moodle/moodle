@@ -63,7 +63,7 @@
                 // do nothing (user is not diplaying this section)
             } else {
                 $hotpots[$hotpot_instance->id] = $hotpot_instance;
-            } 
+            }
         }
     }
     if (empty($hotpots)) {
@@ -190,9 +190,9 @@
         if ($concat_field) {
             $records = $DB->get_records_sql("
                 SELECT $concat_field, COUNT(*), hotpot, name
-                FROM {hotpot_questions} 
+                FROM {hotpot_questions}
                 WHERE hotpot IN ($hotpotids)
-                GROUP BY hotpot, name 
+                GROUP BY hotpot, name
                 HAVING COUNT(*) >1
             ");
             if ($records) {
@@ -264,31 +264,31 @@
     }
 
     switch ($course->format) {
-        case 'weeks' : 
+        case 'weeks' :
             $title = get_string("week");
             break;
-        case 'topics' : 
+        case 'topics' :
             $title = get_string("topic");
             break;
-        default : 
+        default :
             $title = '';
             break;
     }
     if ($title) {
-        array_push($table->head, $title); 
+        array_push($table->head, $title);
         array_push($table->align, "center");
     }
     if (has_capability('moodle/course:manageactivities', $coursecontext)) {
         array_push($table->head, $strupdate);
         array_push($table->align, "center");
     }
-    array_push($table->head, 
-        get_string("name"), 
-        get_string("quizcloses", "quiz"), 
-        get_string("bestgrade", "quiz"), 
+    array_push($table->head,
+        get_string("name"),
+        get_string("quizcloses", "quiz"),
+        get_string("bestgrade", "quiz"),
         get_string("attempts", "quiz")
     );
-    array_push($table->align, 
+    array_push($table->align,
         "left", "left", "center", "left"
     );
     if (has_capability('mod/hotpot:grade', $coursecontext)) {
@@ -330,7 +330,7 @@
             $bestscore = "&nbsp;";
 
         } else {
-          
+
             $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
             // report number of attempts and users
             $report = get_string("viewallreports","quiz", $totals[$hotpot->id]->attemptcount);
@@ -402,4 +402,4 @@
 
     // Finish the page
     echo $OUTPUT->footer();
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for deleting a page
  *
@@ -56,4 +56,4 @@
     }
     lesson_set_message(get_string('deletedpage', 'lesson').': '.format_string($thispage->title, true), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-?>
+

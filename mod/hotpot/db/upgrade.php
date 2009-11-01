@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to the hotpot module
 //
@@ -30,4 +30,4 @@ function xmldb_hotpot_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

@@ -63,14 +63,14 @@
     }
 
     if (is_url($lesson->mediafile)) {
-        $fullurl = $lesson->mediafile;        
+        $fullurl = $lesson->mediafile;
     } else {
         $fullurl = get_file_url($course->id .'/'. $lesson->mediafile);
     }
 
     // find the correct type and print it out
     if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
-    
+
         if (!empty($THEME->resource_mp3player_colors)) {
             $c = $THEME->resource_mp3player_colors;   // You can set this up in your theme/xxx/config.php
         } else {
@@ -98,7 +98,7 @@
         echo '</div>';
 
     } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
-    
+
         echo "<div class=\"lessonmediafilecontrol\"><p>";
         echo '<object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         echo '        codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
@@ -123,7 +123,7 @@
         echo "</p></div>";
 
     } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
-    
+
         echo "<div class=\"lessonmediafilecontrol\"><p>";
         echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
@@ -141,13 +141,13 @@
         echo '</embed>';
         echo '</object>';
         echo "</p></div>";
-    
+
     //} else if ($mimetype == "application/x-shockwave-flash") {   // It's a flash file
-    
+
     //    print_error('noflash');
-    
+
     } else if ($mimetype == "audio/x-pn-realaudio") {   // It's a realmedia file
-        
+
         echo '<object id="rvocx" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="600" height="50">';
         echo "<param name=\"src\" value=\"$fullurl\">";
         echo '<param name="console" value="video">';  // not sure what the console param should equal
@@ -194,9 +194,9 @@
         echo $OUTPUT->notification(get_string('clicktodownload', 'lesson'));
         echo "<a href=\"$fullurl\">".format_string($filename).'</a>';
         echo "</p></div>";
-        
+
     }
-    
+
     function is_url($test_url) {
         // the following is barrowed from resource code.  Thanks!
         if (strpos($test_url, '://')) {     // eg http:// https:// ftp://  etc
@@ -213,6 +213,6 @@
        echo $OUTPUT->close_window_button();
        echo '</div>';
     }
-    
+
     echo $OUTPUT->footer();
-?>
+

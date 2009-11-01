@@ -330,7 +330,7 @@ function ShowAnswers(QNum){
 //Display feedback
 	ShowMessage(Ans);
 	
-//Set the score for this question to 0 if no 
+//Set the score for this question to 0 if no
 	if (State[QNum][0] < 1){
 		State[QNum][0] = 0;
 	}

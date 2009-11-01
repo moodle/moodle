@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// Overview report: displays a big table of all the attempts
 class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
@@ -29,9 +29,9 @@ class hotpot_report extends hotpot_default_report {
 			$table->size[] = 10;
 		}
 		// name, grade and attempt number
-		array_push($table->head, 
+		array_push($table->head,
 			get_string("name"),
-			hotpot_grade_heading($hotpot, $options), 
+			hotpot_grade_heading($hotpot, $options),
 			get_string("attempt", "quiz")
 		);
 		array_push($table->align, "left", "center", "center");
@@ -39,8 +39,8 @@ class hotpot_report extends hotpot_default_report {
 		// question headings
 		$this->add_question_headings($questions, $table);
 		// penalties and raw score
-		array_push($table->head, 
-			get_string('penalties', 'hotpot'), 
+		array_push($table->head,
+			get_string('penalties', 'hotpot'),
 			get_string('score', 'quiz')
 		);
 		array_push($table->align, "center", "center");
@@ -200,4 +200,4 @@ class hotpot_report extends hotpot_default_report {
 		$tables[] = &$table;
 	}
 } // end class
-?>
+

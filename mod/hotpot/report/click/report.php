@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// Overview report just displays a big table of all the attempts
 class hotpot_report extends hotpot_default_report {
 	function display(&$hotpot, &$cm, &$course, &$users, &$attempts, &$questions, &$options) {
@@ -338,7 +338,7 @@ class hotpot_report extends hotpot_default_report {
 				if (!function_exists('clean_getstring_data')) { // Moodle 1.4 (and less)
 					$reportpercentscore = str_replace('%', '%%', $reportpercentscore);
 				}
-				array_push($table->head, 
+				array_push($table->head,
 					get_string('reportthisclick', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportsofar', 'hotpot', get_string('reportquestionstried', 'hotpot')),
 					get_string('reportthisclick', 'hotpot', get_string('reportright', 'hotpot')),
@@ -426,7 +426,7 @@ class hotpot_report extends hotpot_default_report {
 		$records = $DB->get_records_sql_menu("
 			SELECT userid, MIN(time) AS logouttime
 			FROM {log}
-			WHERE userid=? AND action='logout' AND time>? 
+			WHERE userid=? AND action='logout' AND time>?
 			GROUP BY userid
 		", array($attempt->userid, $attempt->cr_timefinish));
 		if (empty($records)) {
@@ -539,4 +539,4 @@ class hotpot_report extends hotpot_default_report {
 		}
 	}
 } // end class
-?>
+

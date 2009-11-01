@@ -282,11 +282,11 @@ function hotpot_update_events($hotpot) {
         $event->timeduration = ($hotpot->timeclose - $hotpot->timeopen);
 
         if ($event->timeduration > HOTPOT_MAX_EVENT_LENGTH) {  /// Long durations create two events
-    
+
             $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
             $event->timeduration  = 0;
             add_event($event);
-    
+
             $event->timestart    = $hotpot->timeclose;
             $event->eventtype    = 'close';
             $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
@@ -866,7 +866,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
     if ($rawmods = $DB->get_records_sql($query, $params)) {
 
         // cache $isteacher setting
-        
+
         $isteacher = has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_COURSE, $course->id));
 
         $explodesection = array();
@@ -1137,7 +1137,7 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
         foreach ($records as $id => $record){
             if ($cm = get_coursemodule_from_instance('hotpot', $record->id, $course->id)) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                
+
                 if (has_capability('mod/hotpot:viewreport', $context)) {
                     $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$id";
                     $name = '&nbsp;<a href="'.$href.'">'.$record->name.'</a>';
@@ -1549,7 +1549,7 @@ function hotpot_get_participants($hotpotid) {
  * it it has support for grading and scales. Commented code should be
  * modified if necessary. See forum, glossary or journal modules
  * as reference.
- * 
+ *
  * @param int $hotpotid
  * @param int $scaleid
  * @return bool
@@ -1609,7 +1609,7 @@ function hotpot_add_attempt($hotpotid) {
             $attempt->status = HOTPOT_STATUS_ABANDONED;
             $DB->update_record('hotpot_attempts', $attempt);
         }
-    }    
+    }
 
     // create and add new attempt record
     $attempt = new stdClass();
@@ -2750,7 +2750,7 @@ function hotpot_string_ids($field_value) {
 /**
  * @global object
  * @param string $str
- * @return int|string 
+ * @return int|string
  */
 function hotpot_string_id($str) {
     global $DB;
@@ -2968,7 +2968,7 @@ function hotpot_reset_userdata($data) {
 
 /**
  * Called by course/reset.php
- * 
+ *
  * @param $mform form passed by reference
  */
 function hotpot_reset_course_form_definition(&$mform) {

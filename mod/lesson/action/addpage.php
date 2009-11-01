@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  *  Action for adding a question page.  Prints an HTML form.
  *
@@ -9,7 +9,7 @@
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
     $qtype = optional_param('qtype', LESSON_MULTICHOICE, PARAM_INT);
-    
+
     // set of jump array
     $jump = array();
     $jump[0] = get_string("thispage", "lesson");
@@ -24,9 +24,9 @@
         $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
     }
     if (!optional_param('firstpage', 0, PARAM_INT)) {
-        $linkadd = "";      
+        $linkadd = "";
         $apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0));
-        
+
         while (true) {
             if ($apageid) {
                 $title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
@@ -58,7 +58,7 @@
       <?php
         echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
         echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
-        lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype, 
+        lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype,
                           "lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=".$pageid.$linkadd);
 
         if ( $qtype == LESSON_SHORTANSWER || $qtype == LESSON_MULTICHOICE ) {  // only display this option for Multichoice and shortanswer
@@ -131,7 +131,7 @@
                     echo "<tr><td><b>".get_string("wrongresponse", "lesson").":</b><br />\n";
                     print_textarea(false, 6, 70, 630, 300, "answer[$i]");
                     echo "</td></tr>\n";
-                } else {                                                
+                } else {
                     echo "<tr><td><b>".get_string("answer", "lesson")." $icorrected:</b><br />\n";
                     print_textarea(false, 6, 70, 630, 300, "answer[$i]");
                     echo "</td></tr>\n";

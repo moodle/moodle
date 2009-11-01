@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
     global $CFG, $USER, $DB, $OUTPUT;
@@ -11,11 +11,11 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
     if ($entry) {
         echo '<table class="glossarypost fullwithauthor" cellspacing="0">';
         echo '<tr valign="top">';
-        
+
         echo '<td class="picture">';
         echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
         echo '</td>';
-        
+
         echo '<th class="entryheader">';
 
         echo '<div class="concept">';
@@ -47,7 +47,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo '<tr valign="top">';
         echo '<td class="left">&nbsp;</td>';
         echo '<td colspan="2" class="entrylowersection">';
-        
+
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
         echo ' ';
         echo '</td></tr>';
@@ -72,4 +72,4 @@ function glossary_print_entry_fullwithauthor($course, $cm, $glossary, $entry, $m
 
 }
 
-?>
+

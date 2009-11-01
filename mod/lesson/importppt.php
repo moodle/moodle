@@ -4,9 +4,9 @@
  * This is a very rough importer for powerpoint slides
  * Export a powerpoint presentation with powerpoint as html pages
  * Do it with office 2002 (I think?) and no special settings
- * Then zip the directory with all of the html pages 
+ * Then zip the directory with all of the html pages
  * and the zip file is what you want to upload
- * 
+ *
  * The script supports book and lesson.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -25,7 +25,7 @@
         $url->param('pageid', $pageid);
     }
     $PAGE->set_url($url);
-    
+
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
         print_error('invalidcoursemodule');
     }
@@ -33,7 +33,7 @@
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
-    
+
     // allows for adaption for multiple modules
     if(! $modname = $DB->get_field('modules', 'name', array('id' => $cm->module))) {
         print_error('invalidmoduleid', '', '', $cm->module);
@@ -65,16 +65,16 @@
             echo $OUTPUT->notification(get_string("uploadnofilefound") );
 
         } else {  // Valid file is found
-            
+
             if ($rawpages = readdata($_FILES, $course->id, $modname)) {  // first try to reall all of the data in
                 $pageobjects = extract_data($rawpages, $course->id, $mod->name, $modname); // parse all the html files into objects
                 clean_temp(); // all done with files so dump em
-                                
-                $mod_create_objects = $modname.'_create_objects';  
-                $mod_save_objects = $modname.'_save_objects'; 
-                
+
+                $mod_create_objects = $modname.'_create_objects';
+                $mod_save_objects = $modname.'_save_objects';
+
                 $objects = $mod_create_objects($pageobjects, $mod->id);  // function to preps the data to be sent to DB
-                
+
                 if(! $mod_save_objects($objects, $mod->id, $pageid)) {  // sends it to DB
                     print_error('cannotsavedata');
                 }
@@ -116,7 +116,7 @@
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->footer();
-    
+
 // START OF FUNCTIONS
 
 function readdata($file, $courseid, $modname) {
@@ -127,13 +127,13 @@ function readdata($file, $courseid, $modname) {
     global $CFG;
 
     // create an upload directory in temp
-    make_upload_directory('temp/'.$modname);   
+    make_upload_directory('temp/'.$modname);
 
     $base = $CFG->dataroot."/temp/$modname/";
 
     $zipfile = $_FILES["newfile"]["name"];
     $tempzipfile = $_FILES["newfile"]["tmp_name"];
-    
+
     // create our directory
     $path_parts = pathinfo($zipfile);
     $dirname = substr($zipfile, 0, strpos($zipfile, '.'.$path_parts['extension'])); // take off the extension
@@ -146,14 +146,14 @@ function readdata($file, $courseid, $modname) {
 
     // unzip it!
     unzip_file($base.$zipfile, $base, false);
-    
+
     $base = $base.$dirname;  // update the base
-    
+
     // this is the file where we get the names of the files for the slides (in the correct order too)
     $outline = $base.'/outline.htm';
-    
+
     $pages = array();
-    
+
     if (file_exists($outline) and is_readable($outline)) {
         $outlinecontents = file_get_contents($outline);
         $filenames = array();
@@ -167,9 +167,9 @@ function readdata($file, $courseid, $modname) {
             } else {
                 return false;
             }
-        }        
+        }
     } else {
-        // cannot find the outline, so grab all files that start with slide        
+        // cannot find the outline, so grab all files that start with slide
         $dh  = opendir($base);
         while (false !== ($file = readdir($dh))) {  // read throug the directory
            if ('slide' == substr($file, 0, 5)) {  // check for name (may want to check extension later)
@@ -184,31 +184,31 @@ function readdata($file, $courseid, $modname) {
 
         ksort($pages);  // order them by file name
     }
-    
+
     if (empty($pages)) {
         return false;
     }
-    
+
     return $pages;
 }
 
 function extract_data($pages, $courseid, $lessonname, $modname) {
     // this function attempts to extract the content out of the slides
     // the slides are ugly broken xml.  and the xml is broken... yeah...
-    
+
     global $CFG;
     global $matches;
 
     $extratedpages = array();
-    
+
     // directory for images
-    make_upload_directory($courseid.'/moddata/'.$modname, false);  // we store our images in a subfolder in here 
-    
+    make_upload_directory($courseid.'/moddata/'.$modname, false);  // we store our images in a subfolder in here
+
     $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/'.$modname;
-    
+
     require_once($CFG->libdir .'/filelib.php');
     $imagelink = get_file_url($courseid.'/moddata/'.$modname);
-    
+
     // try to make a unique subfolder to store the images
     $lessonname = str_replace(' ', '_', $lessonname); // get rid of spaces
     $i = 0;
@@ -222,12 +222,12 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         }
         $i++;
     }
-    
+
     foreach ($pages as $file => $content) {
         // to make life easier on our preg_match_alls, we strip out all tags except
         // for div and img (where our content is).  We want div because sometimes we
         // can identify the content in the div based on the div's class
-        
+
         $tags = '<div><img>'; // should also allow <b><i>
         $string = strip_tags($content,$tags);
         //echo s($string);
@@ -240,7 +240,7 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         //(<([\w]+)[^>]*>)([^<\\2>]*)(<\/\\2>)  original pattern
         //(<(div+)[^>]*>)[^(<div*)](<\/div>) work in progress
 
-        $path_parts = pathinfo($file);      
+        $path_parts = pathinfo($file);
         $file = substr($path_parts['basename'], 0, strpos($path_parts['basename'], '.')); // get rid of the extension
 
         $imgs = array();
@@ -257,7 +257,7 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         // this foreach keeps the style intact.  Found it doesn't help much.  But if you want back uncomment
         // this foreach and uncomment the line with the comment imgstyle in it.  Also need to comment out
         // the $page->images[]... line in the next foreach
-        /*foreach ($imgs[1] as $img) { 
+        /*foreach ($imgs[1] as $img) {
             $page->images[] = '<img '.str_replace('src="', "src=\"$imagelink/", $img).' />';
         }*/
         foreach ($imgs[2] as $img) {
@@ -265,9 +265,9 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
             $page->images[] = "<img src=\"$imagelink/$img\" title=\"$img\" />";  // comment out this line if you are using the above foreach loop
         }
         for($i = 0; $i < count($matches[1]); $i++) { // go through all of our div matches
-    
-            $class = isolate_class($matches[1][$i]); // first step in isolating the class      
-        
+
+            $class = isolate_class($matches[1][$i]); // first step in isolating the class
+
             // check for any static classes
             switch ($class) {
                 case 'T':  // class T is used for Titles
@@ -293,8 +293,8 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         }
         /*if (count($page->contents) == 0) {  // didnt find anything, grab everything
                                             // potential to pull in a lot of crap
-            for($i = 0; $i < count($matches[1]); $i++) {        
-                //if($class = isolate_class($matches[1][$i])) { 
+            for($i = 0; $i < count($matches[1]); $i++) {
+                //if($class = isolate_class($matches[1][$i])) {
                     //if ($class == 'O') {
                         if ($matches[3][$i] != '&#13;') {  // odd crap generated... sigh
                             if (substr($matches[3][$i], 0, 1) == ':') {  // check for leading :    ... hate MS ...
@@ -309,9 +309,9 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
         }*/
         // add the page to the array;
         $extratedpages[] = $page;
-        
+
     } // end $pages foreach loop
-    
+
     return $extratedpages;
 }
 
@@ -320,9 +320,9 @@ A recursive function to build a html list
 */
 function build_list($list, &$i, $depth) {
     global $matches; // not sure why I global this...
-    
+
     while($i < count($matches[1])) {
-    
+
         $class = isolate_class($matches[1][$i]);
 
         if (strstr($class, 'B')) {  // make sure we are still working with bullet classes
@@ -359,11 +359,11 @@ function build_list($list, &$i, $depth) {
     // end the list and return it
     $list .= '</ul>';
     return $list;
-    
+
 }
 
 /**
-Given an html tag, this function will 
+Given an html tag, this function will
 */
 function isolate_class($string) {
     if($class = strstr($string, 'class=')) { // first step in isolating the class
@@ -386,15 +386,15 @@ This function strips off the random chars that ppt puts infront of bullet lists
 */
 function ppt_clean_text($string) {
     $chop = 1; // default: just a single char infront of the content
-    
+
     // look for any other crazy things that may be infront of the content
     if (strstr($string, '&lt;') and strpos($string, '&lt;') == 0) {  // look for the &lt; in the sting and make sure it is in the front
         $chop = 4;  // increase the $chop
     }
     // may need to add more later....
-    
+
     $string = substr($string, $chop);
-    
+
     if ($string != '&#13;') {
         return $string;
     } else {
@@ -409,7 +409,7 @@ function clean_temp() {
     global $CFG;
     // this function is broken, use it to clean up later
     // should only clean up what we made as well because someone else could be importing ppt as well
-    //delDirContents($CFG->dataroot.'/temp/lesson');    
+    //delDirContents($CFG->dataroot.'/temp/lesson');
 }
 
 /**
@@ -419,7 +419,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
 
     $branchtables = array();
     $branchtable = new stdClass;
-    
+
     // all pages have this info
     $page->lessonid = $lessonid;
     $page->prevpageid = 0;
@@ -430,7 +430,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $page->display = 1;
     $page->timecreated = time();
     $page->timemodified = 0;
-    
+
     // all answers are the same
     $answer->lessonid = $lessonid;
     $answer->jumpto = LESSON_NEXTPAGE;
@@ -446,14 +446,14 @@ function lesson_create_objects($pageobjects, $lessonid) {
 
     $answer->jumpto = LESSON_PREVIOUSPAGE;
     $answer->answer = "Previous";
-    
+
     $answers[] = clone($answer);
-    
+
     $branchtable->answers = $answers;
-    
+
     $i = 1;
-    
-    foreach ($pageobjects as $pageobject) {     
+
+    foreach ($pageobjects as $pageobject) {
         $temp = prep_page($pageobject, $i);  // makes our title and contents
         $page->title = $temp->title;
         $page->contents = $temp->contents;
@@ -473,7 +473,7 @@ function book_create_objects($pageobjects, $bookid) {
 
     $chapters = array();
     $chapter = new stdClass;
-    
+
     // same for all chapters
     $chapter->bookid = $bookid;
     $chapter->pagenum = $DB->count_records('book_chapters', array('bookid'=>$bookid))+1;
@@ -481,14 +481,14 @@ function book_create_objects($pageobjects, $bookid) {
     $chapter->timemodified = time();
     $chapter->subchapter = 0;
 
-    $i = 1; 
+    $i = 1;
     foreach ($pageobjects as $pageobject) {
         $page = prep_page($pageobject, $i);  // get title and contents
         $chapter->importsrc = $pageobject->source; // add the source
         $chapter->title = $page->title;
         $chapter->content = $page->contents;
-        $chapters[] = $chapter; 
-        
+        $chapters[] = $chapter;
+
         // increment our page number and our counter
         $chapter->pagenum = $chapter->pagenum + 1;
         $i++;
@@ -504,17 +504,17 @@ function prep_page($pageobject, $count) {
     if ($pageobject->title == '') {
         $page->title = "Page $count";  // no title set so make a generic one
     } else {
-        $page->title = $pageobject->title;      
+        $page->title = $pageobject->title;
     }
-    
+
     $page->contents = '';
-    
+
     // nab all the images first
     foreach ($pageobject->images as $image) {
         $image = str_replace("\n", '', $image);
         $image = str_replace("\r", '', $image);
         $image = str_replace("'", '"', $image);  // imgstyle
-                    
+
         $page->contents .= $image;
     }
     // go through the contents array and put <p> tags around each element and strip out \n which I have found to be uneccessary
@@ -533,7 +533,7 @@ function prep_page($pageobject, $count) {
 */
 function lesson_save_objects($branchtables, $lessonid, $after) {
     global $DB;
-    
+
     // first set up the prevpageid and nextpageid
     if ($after == 0) { // adding it to the top of the lesson
         $prevpageid = 0;
@@ -546,16 +546,16 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         $prevpageid = $after;
         $nextpageid = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $after));
     }
-    
+
     foreach ($branchtables as $branchtable) {
-        
+
         // set the doubly linked list
         $branchtable->page->nextpageid = $nextpageid;
         $branchtable->page->prevpageid = $prevpageid;
-        
+
         // insert the page
         $id = $DB->insert_record('lesson_pages', $branchtable->page);
-    
+
         // update the link of the page previous to the one we just updated
         if ($prevpageid != 0) {  // if not the first page
             $DB->set_field("lesson_pages", "nextpageid", $id, array("id" => $prevpageid));
@@ -566,15 +566,15 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
             $answer->pageid = $id;
             $DB->insert_record('lesson_answers', $answer);
         }
-        
+
         $prevpageid = $id;
     }
-    
+
     // all done with inserts.  Now check to update our last page (this is when we import between two lesson pages)
     if ($nextpageid != 0) {  // if the next page is not the end of lesson
         $DB->set_field("lesson_pages", "prevpageid", $id, array("id" => $nextpageid));
     }
-    
+
     return true;
 }
 
@@ -583,7 +583,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
 */
 function book_save_objects($chapters, $bookid, $pageid='0') {
     global $DB;
-    
+
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
         $chapter->id = $DB->insert_record('book_chapters', $chapter);
@@ -591,4 +591,4 @@ function book_save_objects($chapters, $bookid, $pageid='0') {
     return true;
 }
 
-?>
+

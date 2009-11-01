@@ -142,7 +142,7 @@ function GetGuessSequence(){
 }
 
 function CompDrags(a,b){
-	return a.GetL() - b.GetL(); 
+	return a.GetL() - b.GetL();
 }
 
 function FindSegment(SegID){
@@ -233,7 +233,7 @@ function CheckAnswer(CheckType){
 					LongestCorrect[k] = TempCorrect[k];
 				}
 				HintToReturn = TempHint;
-			} 
+			}
 		}	
 	}
 	if (WhichCorrect > -1){
@@ -304,7 +304,7 @@ function CheckAnswer(CheckType){
 		Locked = true;
 		Finished = true;
 		setTimeout('Finish()', SubmissionTimeout);
-		WriteToInstructions(YourScoreIs + ' ' + Score + '%.'); 
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
 	}
 	
 [inclScorm1.2]
@@ -329,18 +329,18 @@ var Answers = new Array();
 function doDrag(e) {
 	if (CurrDrag == -1) {return};
 	if (C.ie){var Ev = window.event}else{var Ev = e}
-	var difX = Ev.clientX-window.lastX; 
-	var difY = Ev.clientY-window.lastY; 
-	var newX = Cds[CurrDrag].GetL()+difX; 
-	var newY = Cds[CurrDrag].GetT()+difY; 
-	Cds[CurrDrag].SetL(newX); 
+	var difX = Ev.clientX-window.lastX;
+	var difY = Ev.clientY-window.lastY;
+	var newX = Cds[CurrDrag].GetL()+difX;
+	var newY = Cds[CurrDrag].GetT()+difY;
+	Cds[CurrDrag].SetL(newX);
 	Cds[CurrDrag].SetT(newY);
-	window.lastX = Ev.clientX; 
-	window.lastY = Ev.clientY; 
+	window.lastX = Ev.clientX;
+	window.lastY = Ev.clientY;
 	return false;
-} 
+}
 
-function beginDrag(e, DragNum) { 
+function beginDrag(e, DragNum) {
 	CurrDrag = DragNum;
 	if (C.ie){
 		var Ev = window.event;
@@ -349,25 +349,25 @@ function beginDrag(e, DragNum) {
 	}
 	else{
 		var Ev = e;
-		window.onmousemove=doDrag; 
+		window.onmousemove=doDrag;
 		window.onmouseup=endDrag;
-	} 
+	}
 	Cds[CurrDrag].SwapColours();
 	topZ++;
 	Cds[CurrDrag].css.zIndex = topZ;
-	window.lastX=Ev.clientX; 
+	window.lastX=Ev.clientX;
 	window.lastY=Ev.clientY;
-	return true;  
-} 
+	return true;
+}
 
-function endDrag(e) { 
+function endDrag(e) {
 	if (CurrDrag == -1) {return};
 	Cds[CurrDrag].SwapColours();
 	if (C.ie){document.onmousemove=null}else{window.onmousemove=null;}
 	onEndDrag();	
 	CurrDrag = -1;
 	return true;
-} 
+}
 
 function onEndDrag(){
 //Snap to lines

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Form to define a new instance of lesson or edit an instance.
  * It is used from /course/modedit.php.
@@ -339,4 +339,4 @@ class mod_lesson_mod_form extends moodleform_mod {
         return $errors;
     }
 }
-?>
+

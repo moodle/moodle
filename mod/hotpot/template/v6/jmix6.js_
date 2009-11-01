@@ -227,7 +227,7 @@ function CheckAnswer(CheckType){
 					LongestCorrect[k] = TempCorrect[k];
 				}
 				HintToReturn = TempHint;
-			} 
+			}
 		}	
 	}
 	if (WhichCorrect > -1){
@@ -311,7 +311,7 @@ function CheckAnswer(CheckType){
 		Locked = true;
 		Finished = true;
 		setTimeout('Finish()', SubmissionTimeout);
-		WriteToInstructions(YourScoreIs + ' ' + Score + '%.'); 
+		WriteToInstructions(YourScoreIs + ' ' + Score + '%.');
 	}
 [inclScorm1.2]
 	if (AllDone == true){

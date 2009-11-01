@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action that displays an interface for moving a page
  *
@@ -6,11 +6,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-   
+
     $pageid = required_param('pageid', PARAM_INT);
     $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
     echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)));
-   
+
     $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
     if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
         print_error('cannotfindfirstpage', 'lesson');
@@ -38,4 +38,4 @@
         }
     }
     echo "</table>\n";
-?>
+

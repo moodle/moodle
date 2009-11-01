@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //quiz mods
     //-----------------------------------------------------------
@@ -344,4 +344,4 @@
         $search = "/($base)([a-z]+).php\?([a-z]+)\=([0-9]+)/";
         return preg_replace($search, '$@HOTPOT*$2*$3*$4@$', $content);
     }
-?>
+

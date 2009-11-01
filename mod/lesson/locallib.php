@@ -10,7 +10,7 @@
 
 /**
 * Next page -> any page not seen before
-*/    
+*/
 if (!defined("LESSON_UNSEENPAGE")) {
     define("LESSON_UNSEENPAGE", 1); // Next page -> any page not seen before
 }
@@ -75,7 +75,7 @@ if (!defined("LESSON_CLUSTERJUMP")) {
 }
 /**
  * Undefined
- */    
+ */
 if (!defined("LESSON_UNDEFINED")) {
     define("LESSON_UNDEFINED", -99);
 }
@@ -87,7 +87,7 @@ if (!defined("LESSON_UNDEFINED")) {
  */
 if (!defined("LESSON_SHORTANSWER")) {
     define("LESSON_SHORTANSWER",   "1");
-}        
+}
 /**
  * True/False question type
  */
@@ -97,7 +97,7 @@ if (!defined("LESSON_TRUEFALSE")) {
 /**
  * Multichoice question type
  *
- * If you change the value of this then you need 
+ * If you change the value of this then you need
  * to change it in restorelib.php as well.
  */
 if (!defined("LESSON_MULTICHOICE")) {
@@ -113,7 +113,7 @@ if (!defined("LESSON_RANDOM")) {
  * Matching question type
  *
  * If you change the value of this then you need
- * to change it in restorelib.php, in mysql.php 
+ * to change it in restorelib.php, in mysql.php
  * and postgres7.php as well.
  */
 if (!defined("LESSON_MATCHING")) {
@@ -209,7 +209,7 @@ if (!defined("LESSON_RESPONSE_EDITOR")) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-/// Any other lesson functions go here.  Each of them must have a name that 
+/// Any other lesson functions go here.  Each of them must have a name that
 /// starts with lesson_
 
 /**
@@ -285,7 +285,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
 }
 
 /**
- * Returns course module, course and module instance given 
+ * Returns course module, course and module instance given
  * either the course module ID or a lesson module ID.
  *
  * @param int $cmid Course Module ID
@@ -294,7 +294,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '', $extraedit
  **/
 function lesson_get_basics($cmid = 0, $lessonid = 0) {
     global $DB;
-    
+
     if ($cmid) {
         if (!$cm = get_coursemodule_from_id('lesson', $cmid)) {
             print_error('invalidcoursemodule');
@@ -318,7 +318,7 @@ function lesson_get_basics($cmid = 0, $lessonid = 0) {
     } else {
         print_error('invalidid', 'lesson');
     }
-    
+
     return array($cm, $course, $lesson);
 }
 
@@ -334,13 +334,13 @@ function lesson_get_basics($cmid = 0, $lessonid = 0) {
  **/
 function lesson_set_message($message, $class="notifyproblem", $align='center') {
     global $SESSION;
-    
+
     if (empty($SESSION->lesson_messages) or !is_array($SESSION->lesson_messages)) {
         $SESSION->lesson_messages = array();
     }
-    
+
     $SESSION->lesson_messages[] = array($message, $class, $align);
-    
+
     return true;
 }
 
@@ -356,19 +356,19 @@ function lesson_set_message($message, $class="notifyproblem", $align='center') {
  **/
 function lesson_print_messages() {
     global $SESSION, $OUTPUT;
-    
+
     if (empty($SESSION->lesson_messages)) {
         // No messages to print
         return true;
     }
-    
+
     foreach($SESSION->lesson_messages as $message) {
         echo $OUTPUT->notification($message[0], $message[1], $message[2]);
     }
-    
+
     // Reset
     unset($SESSION->lesson_messages);
-    
+
     return true;
 }
 
@@ -400,7 +400,7 @@ function lesson_print_submit_link($name, $form, $align = 'center', $class='stand
     $output = "<div class=\"lessonbutton $class\" $align>\n";
     $output .= "<input type=\"submit\" value=\"$name\" $align $id />";
     $output .= "</div>\n";
-    
+
     if ($return) {
         return $output;
     } else {
@@ -424,7 +424,7 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
     $timeleft = $timeleft - ($hours * 3600);
     $minutes = floor($timeleft/60);
     $secs = $timeleft - ($minutes * 60);
-    
+
     if ($minutes < 10) {
         $minutes = "0$minutes";
     }
@@ -435,9 +435,9 @@ function lesson_print_time_remaining($starttime, $maxtime, $return = false) {
     $output[] = $hours;
     $output[] = $minutes;
     $output[] = $secs;
-    
+
     $output = implode(':', $output);
-    
+
     if ($return) {
         return $output;
     } else {
@@ -472,7 +472,7 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
         }
         $actions[] = "<a title=\"".get_string('update')."\" href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=editpage&amp;pageid=$page->id\">
                       <img src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" alt=\"".get_string('update')."\" /></a>\n";
-        
+
         $actions[] = "<a title=\"".get_string('preview')."\" href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">
                       <img src=\"" . $OUTPUT->old_icon_url('t/preview') . "\" class=\"iconsmall\" alt=\"".get_string('preview')."\" /></a>\n";
 
@@ -518,33 +518,33 @@ function lesson_print_page_actions($cmid, $page, $printmove, $printaddpage = fal
  **/
 function lesson_print_add_links($cmid, $prevpageid, $return = false) {
     global $CFG;
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    
+
     $links = '';
     if (has_capability('mod/lesson:edit', $context)) {
         $links = array();
         $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/import.php?id=$cmid&amp;pageid=$prevpageid\">".
                     get_string('importquestions', 'lesson').'</a>';
-        
+
         $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addcluster&amp;pageid=$prevpageid\">".
                     get_string('addcluster', 'lesson').'</a>';
-        
+
         if ($prevpageid != 0) {
             $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addendofcluster&amp;pageid=$prevpageid\">".
                         get_string('addendofcluster', 'lesson').'</a>';
         }
         $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=addbranchtable&amp;pageid=$prevpageid\">".
                     get_string('addabranchtable', 'lesson').'</a>';
-        
+
         if ($prevpageid != 0) {
             $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;sesskey=".sesskey()."&amp;action=addendofbranch&amp;pageid=$prevpageid\">".
                         get_string('addanendofbranch', 'lesson').'</a>';
         }
-        
+
         $links[] = "<a href=\"$CFG->wwwroot/mod/lesson/lesson.php?id=$cmid&amp;action=addpage&amp;pageid=$prevpageid\">".
                     get_string('addaquestionpagehere', 'lesson').'</a>';
-        
+
         $links = implode(" | \n", $links);
         $links = "\n<div class=\"addlinks\">\n$links\n</div>\n";
     }
@@ -575,7 +575,7 @@ function lesson_get_qtype_name($qtype) {
         case LESSON_NUMERICAL :
             return $LESSON_QUESTION_TYPE[$qtype];
             break;
-        case LESSON_BRANCHTABLE :    
+        case LESSON_BRANCHTABLE :
             return get_string("branchtable", "lesson");
             break;
         case LESSON_ENDOFBRANCH :
@@ -601,7 +601,7 @@ function lesson_get_qtype_name($qtype) {
  **/
 function lesson_get_jump_name($jumpto) {
     global $DB;
-    
+
     if ($jumpto == 0) {
         $jumptitle = get_string('thispage', 'lesson');
     } elseif ($jumpto == LESSON_NEXTPAGE) {
@@ -623,7 +623,7 @@ function lesson_get_jump_name($jumpto) {
             $jumptitle = '<strong>'.get_string('notdefined', 'lesson').'</strong>';
         }
     }
-    
+
     return format_string($jumptitle,true);
 }
 
@@ -633,20 +633,20 @@ function lesson_get_jump_name($jumpto) {
  *
  * This is only used when IMPORTING questions and is only called
  * from format.php
- * Lifted from mod/quiz/lib.php - 
+ * Lifted from mod/quiz/lib.php -
  *    1. all reference to oldanswers removed
  *    2. all reference to quiz_multichoice table removed
  *    3. In SHORTANSWER questions usecase is store in the qoption field
  *    4. In NUMERIC questions store the range as two answers
  *    5. TRUEFALSE options are ignored
  *    6. For MULTICHOICE questions with more than one answer the qoption field is true
- * 
+ *
  * @param opject $question Contains question data like question, type and answers.
  * @return object Returns $result->error or $result->notice.
  **/
 function lesson_save_question_options($question) {
     global $DB;
-    
+
     $timenow = time();
     switch ($question->qtype) {
         case LESSON_SHORTANSWER:
@@ -689,8 +689,8 @@ function lesson_save_question_options($question) {
             $answers = array();
             $maxfraction = -1;
 
-            
-            // for each answer store the pair of min and max values even if they are the same 
+
+            // for each answer store the pair of min and max values even if they are the same
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
                     $answer = new stdClass;
@@ -705,7 +705,7 @@ function lesson_save_question_options($question) {
                     // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
-                    
+
                     $answers[] = $answer->id;
                     if ($question->fraction[$key] > $maxfraction) {
                         $maxfraction = $question->fraction[$key];
@@ -738,7 +738,7 @@ function lesson_save_question_options($question) {
             }
             $true->id = $DB->insert_record("lesson_answers", $answer);
 
-            // the lie    
+            // the lie
             $answer = new stdClass;
             $answer->lessonid   = $question->lessonid;
             $answer->pageid = $question->id;
@@ -786,7 +786,7 @@ function lesson_save_question_options($question) {
                     $answer->response = $question->feedback[$key];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
                     // for Sanity checks
-                    if ($question->fraction[$key] > 0) {                 
+                    if ($question->fraction[$key] > 0) {
                         $totalfraction += $question->fraction[$key];
                     }
                     if ($question->fraction[$key] > $maxfraction) {
@@ -826,7 +826,7 @@ function lesson_save_question_options($question) {
                     $answer->pageid   = $question->id;
                     $answer->timecreated   = $timenow;
                     $answer->answer = $questiontext;
-                    $answer->response   = $answertext; 
+                    $answer->response   = $answertext;
                     if ($i == 0) {
                         // first answer contains the correct answer jump
                         $answer->jumpto = LESSON_NEXTPAGE;
@@ -915,14 +915,14 @@ function lesson_save_question_options($question) {
  *
  * returns true if jumpto page is (logically) after the pageid page or
  * if the jumpto value is a special value.  Returns false in all other cases.
- * 
+ *
  * @param int $pageid Id of the page from which you are jumping from.
  * @param int $jumpto The jumpto number.
  * @return boolean True or false after a series of tests.
  **/
 function lesson_iscorrect($pageid, $jumpto) {
     global $DB;
-    
+
     // first test the special values
     if (!$jumpto) {
         // same page
@@ -964,7 +964,7 @@ function lesson_iscorrect($pageid, $jumpto) {
  **/
 function lesson_display_branch_jumps($lessonid, $pageid) {
     global $DB;
-    
+
     if($pageid == 0) {
         // first page
         return false;
@@ -979,22 +979,22 @@ function lesson_display_branch_jumps($lessonid, $pageid) {
     if ($lessonpages[$pageid]->qtype == LESSON_BRANCHTABLE) {
         return true;
     }
-    
+
     return lesson_is_page_in_branch($lessonpages, $pageid);
 }
 
 /**
  * Checks to see if a page is a cluster page or is
- * a page that is enclosed by a cluster page and an end of cluster or end of lesson 
+ * a page that is enclosed by a cluster page and an end of cluster or end of lesson
  * May call this function: {@link lesson_is_page_in_cluster()}
- * 
+ *
  * @param int $lesson Id of the lesson to which the page belongs.
  * @param int $pageid Id of the page.
  * @return boolean True or false.
  **/
 function lesson_display_cluster_jump($lesson, $pageid) {
     global $DB;
-    
+
     if($pageid == 0) {
         // first page
         return false;
@@ -1009,16 +1009,16 @@ function lesson_display_cluster_jump($lesson, $pageid) {
     if ($lessonpages[$pageid]->qtype == LESSON_CLUSTER) {
         return true;
     }
-    
+
     return lesson_is_page_in_cluster($lessonpages, $pageid);
 
 }
 
 /**
- * Checks to see if a LESSON_CLUSTERJUMP or 
+ * Checks to see if a LESSON_CLUSTERJUMP or
  * a LESSON_UNSEENBRANCHPAGE is used in a lesson.
  *
- * This function is only executed when a teacher is 
+ * This function is only executed when a teacher is
  * checking the navigation for a lesson.
  *
  * @param int $lesson Id of the lesson that is to be checked.
@@ -1026,7 +1026,7 @@ function lesson_display_cluster_jump($lesson, $pageid) {
  **/
 function lesson_display_teacher_warning($lesson) {
     global $DB;
-    
+
     // get all of the lesson answers
     $params = array ("lessonid" => $lesson);
     if (!$lessonanswers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", $params)) {
@@ -1039,7 +1039,7 @@ function lesson_display_teacher_warning($lesson) {
             return true;
         }
     }
-    
+
     // if no answers use either of the two jumps
     return false;
 }
@@ -1051,9 +1051,9 @@ function lesson_display_teacher_warning($lesson) {
  * This will select a page randomly
  * and the page selected will be inbetween a cluster page and end of cluter or end of lesson
  * and the page selected will be a page that has not been viewed already
- * and if any pages are within a branch table or end of branch then only 1 page within 
+ * and if any pages are within a branch table or end of branch then only 1 page within
  * the branch table or end of branch will be randomly selected (sub clustering).
- * 
+ *
  * @param int $lessonid Id of the lesson.
  * @param int $userid Id of the user.
  * @param int $pageid Id of the current page from which we are jumping from.
@@ -1061,7 +1061,7 @@ function lesson_display_teacher_warning($lesson) {
  **/
 function lesson_cluster_jump($lessonid, $userid, $pageid) {
     global $DB;
-    
+
     // get the number of retakes
     if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lessonid, "userid"=>$userid))) {
         $retakes = 0;
@@ -1090,7 +1090,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     }
 
     $pageid = $lessonpages[$pageid]->nextpageid; // move down from the cluster page
-    
+
     $clusterpages = array();
     while (true) {  // now load all the pages into the cluster that are not already inside of a branch table.
         if ($lessonpages[$pageid]->qtype == LESSON_ENDOFCLUSTER) {
@@ -1130,7 +1130,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
             if ($flag && count($branchpages) > 0) {
                 // add branch table
                 $unseen[] = $clusterpage;
-            }        
+            }
         } else {
             // add any other type of page that has not already been viewed
             if (!array_key_exists($clusterpage->id, $seenpages)) {
@@ -1144,7 +1144,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     } else {
         return $exitjump; // seen all there is to see, leave the cluster
     }
-    
+
     if ($nextpage->qtype == LESSON_BRANCHTABLE) { // if branch table, then pick a random page inside of it
         $branchpages = lesson_pages_in_branch($lessonpages, $nextpage->id);
         return $branchpages[rand(0, count($branchpages)-1)]->id;
@@ -1155,7 +1155,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
 
 /**
  * Returns pages that are within a branch table and another branch table, end of branch or end of lesson
- * 
+ *
  * @param array $lessonpages An array of lesson page objects.
  * @param int $branchid The id of the branch table that we would like the containing pages for.
  * @return array An array of lesson page objects.
@@ -1163,8 +1163,8 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
 function lesson_pages_in_branch($lessonpages, $branchid) {
     $pageid = $lessonpages[$branchid]->nextpageid;  // move to the first page after the branch table
     $pagesinbranch = array();
-    
-    while (true) { 
+
+    while (true) {
         if ($pageid == 0) { // EOL
             break;
         } elseif ($lessonpages[$pageid]->qtype == LESSON_BRANCHTABLE) {
@@ -1175,13 +1175,13 @@ function lesson_pages_in_branch($lessonpages, $branchid) {
         $pagesinbranch[] = $lessonpages[$pageid];
         $pageid = $lessonpages[$pageid]->nextpageid;
     }
-    
+
     return $pagesinbranch;
 }
 
 /**
  * Interprets the LESSON_UNSEENBRANCHPAGE jump.
- * 
+ *
  * will return the pageid of a random unseen page that is within a branch
  *
  * @see lesson_pages_in_branch()
@@ -1192,7 +1192,7 @@ function lesson_pages_in_branch($lessonpages, $branchid) {
  **/
 function lesson_unseen_question_jump($lesson, $user, $pageid) {
     global $DB;
-    
+
     // get the number of retakes
     if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson, "userid"=>$user))) {
         $retakes = 0;
@@ -1212,7 +1212,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
     if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error('cannotfindpages', 'lesson');
     }
-    
+
     if ($pageid == LESSON_UNSEENBRANCHPAGE) {  // this only happens when a student leaves in the middle of an unseen question within a branch series
         $pageid = $seenpages[0];  // just change the pageid to the last page viewed inside the branch table
     }
@@ -1224,12 +1224,12 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
         }
         $pageid = $lessonpages[$pageid]->prevpageid;
     }
-    
+
     $pagesinbranch = lesson_pages_in_branch($lessonpages, $pageid);
-    
+
     // this foreach loop stores all the pages that are within the branch table but are not in the $seenpages array
     $unseen = array();
-    foreach($pagesinbranch as $page) {    
+    foreach($pagesinbranch as $page) {
         if (!in_array($page->id, $seenpages)) {
             $unseen[] = $page->id;
         }
@@ -1262,7 +1262,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
  **/
 function lesson_unseen_branch_jump($lessonid, $userid) {
     global $DB;
-    
+
     if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lessonid, "userid"=>$userid))) {
         $retakes = 0;
     }
@@ -1277,10 +1277,10 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
     if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error('cannotfindpages', 'lesson');
     }
-    
+
     // this loads all the viewed branch tables into $seen untill it finds the branch table with the flag
     // which is the branch table that starts the unseenbranch function
-    $seen = array();    
+    $seen = array();
     foreach ($seenbranches as $seenbranch) {
         if (!$seenbranch->flag) {
             $seen[$seenbranch->pageid] = $seenbranch->pageid;
@@ -1314,14 +1314,14 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
 
 /**
  * Handles the random jump between a branch table and end of branch or end of lesson (LESSON_RANDOMPAGE).
- * 
+ *
  * @param int $lessonid Lesson id.
  * @param int $pageid The id of the page that we are jumping from (?)
  * @return int The pageid of a random page that is within a branch table
  **/
 function lesson_random_question_jump($lessonid, $pageid) {
     global $DB;
-    
+
     // get the lesson pages
     $params = array ("lessonid" => $lessonid);
     if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
@@ -1337,9 +1337,9 @@ function lesson_random_question_jump($lessonid, $pageid) {
         $pageid = $lessonpages[$pageid]->prevpageid;
     }
 
-    // get the pages within the branch    
+    // get the pages within the branch
     $pagesinbranch = lesson_pages_in_branch($lessonpages, $pageid);
-    
+
     if(count($pagesinbranch) == 0) {
         // there are no pages inside the branch, so return the next page
         return $lessonpages[$pageid]->nextpageid;
@@ -1350,7 +1350,7 @@ function lesson_random_question_jump($lessonid, $pageid) {
 
 /**
  * Check to see if a page is below a branch table (logically).
- * 
+ *
  * Will return true if a branch table is found logically above the page.
  * Will return false if an end of branch, cluster or the beginning
  * of the lesson is found before a branch table.
@@ -1362,7 +1362,7 @@ function lesson_random_question_jump($lessonid, $pageid) {
 function lesson_is_page_in_branch($pages, $pageid) {
     $pageid = $pages[$pageid]->prevpageid; // move up one
 
-    // go up the pages till branch table    
+    // go up the pages till branch table
     while (true) {
         if ($pageid == 0) {  // ran into the beginning of the lesson
             return false;
@@ -1380,7 +1380,7 @@ function lesson_is_page_in_branch($pages, $pageid) {
 
 /**
  * Check to see if a page is below a cluster page (logically).
- * 
+ *
  * Will return true if a cluster is found logically above the page.
  * Will return false if an end of cluster or the beginning
  * of the lesson is found before a cluster page.
@@ -1392,7 +1392,7 @@ function lesson_is_page_in_branch($pages, $pageid) {
 function lesson_is_page_in_cluster($pages, $pageid) {
     $pageid = $pages[$pageid]->prevpageid; // move up one
 
-    // go up the pages till branch table    
+    // go up the pages till branch table
     while (true) {
         if ($pageid == 0) {  // ran into the beginning of the lesson
             return false;
@@ -1419,13 +1419,13 @@ function lesson_is_page_in_cluster($pages, $pageid) {
                     nmanual => number of manually graded questions
                     manualpoints => point value for manually graded questions }
  */
-function lesson_grade($lesson, $ntries, $userid = 0) {  
+function lesson_grade($lesson, $ntries, $userid = 0) {
     global $USER, $DB;
 
     if (empty($userid)) {
         $userid = $USER->id;
     }
-    
+
     // Zero out everything
     $ncorrect     = 0;
     $nviewed      = 0;
@@ -1438,25 +1438,25 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
     $earned       = 0;
 
     $params = array ("lessonid" => $lesson->id, "userid" => $userid, "retry" => $ntries);
-    if ($useranswers = $DB->get_records_select("lesson_attempts",  "lessonid = :lessonid AND 
+    if ($useranswers = $DB->get_records_select("lesson_attempts",  "lessonid = :lessonid AND
             userid = :userid AND retry = :retry", $params, "timeseen")) {
         // group each try with its page
         $attemptset = array();
         foreach ($useranswers as $useranswer) {
-            $attemptset[$useranswer->pageid][] = $useranswer;                                
+            $attemptset[$useranswer->pageid][] = $useranswer;
         }
-        
+
         // Drop all attempts that go beyond max attempts for the lesson
         foreach ($attemptset as $key => $set) {
             $attemptset[$key] = array_slice($set, 0, $lesson->maxattempts);
         }
-        
+
         // get only the pages and their answers that the user answered
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         $parameters["lessonid"] = $lesson->id;
         $pages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid AND id $usql", $parameters);
         $answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid AND pageid $usql", $parameters);
-        
+
         // Number of pages answered
         $nquestions = count($pages);
 
@@ -1486,7 +1486,7 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
             // Number of times answered
             $nviewed += count($attempts);
         }
-        
+
         if ($lesson->custom) {
             $bestscores = array();
             // Find the highest possible score per page to get our total
@@ -1508,11 +1508,11 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
             }
         }
     }
-    
+
     if ($total) { // not zero
         $thegrade = round(100 * $earned / $total, 5);
     }
-    
+
     // Build the grade information object
     $gradeinfo               = new stdClass;
     $gradeinfo->nquestions   = $nquestions;
@@ -1522,14 +1522,14 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
     $gradeinfo->grade        = $thegrade;
     $gradeinfo->nmanual      = $nmanual;
     $gradeinfo->manualpoints = $manualpoints;
-    
+
     return $gradeinfo;
 }
 
 /**
  * Prints the on going message to the user.
  *
- * With custom grading On, displays points 
+ * With custom grading On, displays points
  * earned out of total points possible thus far.
  * With custom grading Off, displays number of correct
  * answers out of total attempted.
@@ -1551,7 +1551,7 @@ function lesson_print_ongoing_score($lesson) {
             $ntries--;
         }
         $gradeinfo = lesson_grade($lesson, $ntries);
-        
+
         $a = new stdClass;
         if ($lesson->custom) {
             $a->score = $gradeinfo->earned;
@@ -1567,7 +1567,7 @@ function lesson_print_ongoing_score($lesson) {
 
 /**
  * Prints tabs for the editing and adding pages.  Each tab is a question type.
- *  
+ *
  * @param array $qtypes The question types array (may not need to pass this because it is defined in this file)
  * @param string $selected Current selected tab
  * @param string $link The base href value of the link for the tab
@@ -1608,7 +1608,7 @@ function lesson_print_progress_bar($lesson, $course) {
     if (!$lesson->progressbar) {
         return false;
     }
-    
+
     // catch teachers
     if (has_capability('mod/lesson:manage', $context)) {
         echo $OUTPUT->notification(get_string('progressbarteacherwarning2', 'lesson'));
@@ -1626,14 +1626,14 @@ function lesson_print_progress_bar($lesson, $course) {
                 }
             }
         }
-    
+
         // current attempt number
         if (!$ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id))) {
             $ntries = 0;  // may not be necessary
         }
-    
+
         $viewedpageids = array();
-    
+
         // collect all of the correctly answered questions
         $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries);
         if ($viewedpages = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry AND correct = 1", $params, 'timeseen DESC', 'pageid, id')) {
@@ -1650,19 +1650,19 @@ function lesson_print_progress_bar($lesson, $course) {
         //      Pages found inside of Clusters
         // Do not filter out Cluster Page(s) because we count a cluster as one.
         // By keeping the cluster page, we get our 1
-        $validpages = array(); 
+        $validpages = array();
         while ($pageid != 0) {
             if ($pages[$pageid]->qtype == LESSON_CLUSTER) {
                 $clusterpageid = $pageid; // copy it
                 $validpages[$clusterpageid] = 1;  // add the cluster page as a valid page
                 $pageid = $pages[$pageid]->nextpageid;  // get next page
-            
+
                 // now, remove all necessary viewed paged ids from the viewedpageids array.
                 while ($pages[$pageid]->qtype != LESSON_ENDOFCLUSTER and $pageid != 0) {
                     if (in_array($pageid, $viewedpageids)) {
                         unset($viewedpageids[array_search($pageid, $viewedpageids)]);  // remove it
                         // since the user did see one page in the cluster, add the cluster pageid to the viewedpageids
-                        if (!in_array($clusterpageid, $viewedpageids)) { 
+                        if (!in_array($clusterpageid, $viewedpageids)) {
                             $viewedpageids[] = $clusterpageid;
                         }
                     }
@@ -1676,10 +1676,10 @@ function lesson_print_progress_bar($lesson, $course) {
                 $validpages[$pageid] = 1;
                 $pageid = $pages[$pageid]->nextpageid;
             }
-        }    
-    
+        }
+
         // progress calculation as a percent
-        $progress = round(count($viewedpageids)/count($validpages), 2) * 100; 
+        $progress = round(count($viewedpageids)/count($validpages), 2) * 100;
     } else {
         $progress = 100;
     }
@@ -1696,7 +1696,7 @@ function lesson_print_progress_bar($lesson, $course) {
     echo '</td>';
     echo '</tr></table>';
     echo '</div>';
-    
+
     return true;
 }
 
@@ -1710,7 +1710,7 @@ function lesson_print_progress_bar($lesson, $course) {
  **/
 function lesson_displayleftif($lesson) {
     global $CFG, $USER, $DB;
-    
+
     if (!empty($lesson->displayleftif)) {
         // get the current user's max grade for this lesson
         $params = array ("userid" => $USER->id, "lessonid" => $lesson->id);
@@ -1722,13 +1722,13 @@ function lesson_displayleftif($lesson) {
             return 0; // no grades
         }
     }
-    
+
     // if we get to here, keep the original state of displayleft lesson setting
     return $lesson->displayleft;
 }
 
 /**
- * 
+ *
  * @param $cm
  * @param $lesson
  * @param $page
@@ -1756,7 +1756,7 @@ function lesson_add_pretend_blocks($page, $cm, $lesson, $timer = null) {
 }
 
 /**
- * If there is a media file associated with this 
+ * If there is a media file associated with this
  * lesson, return a block_contents that displays it.
  *
  * @param int $cmid Course Module ID for this lesson
@@ -1776,8 +1776,8 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
     $link = html_link::make($url, get_string('mediafilepopup', 'lesson'));
     $link->add_action(new popup_action('click', $link->url, $name, $options));
     $link->title = get_string('mediafilepopup', 'lesson');
-    $content .= $OUTPUT->link($link);                    
-    
+    $content .= $OUTPUT->link($link);
+
     $content .= $OUTPUT->help_icon(moodle_help_icon::make("mediafilestudent", get_string("mediafile", "lesson"), "lesson"));
 
     $bc = new block_contents();
@@ -1852,12 +1852,12 @@ function lesson_menu_block_contents($cmid, $lesson) {
 
         // Only process branch tables with display turned on
         if ($page->qtype == LESSON_BRANCHTABLE and $page->display) {
-            if ($page->id == $currentpageid) { 
+            if ($page->id == $currentpageid) {
                 $content .= '<li class="selected">'.format_string($page->title,true)."</li>\n";
             } else {
                 $content .= "<li class=\"notselected\"><a href=\"$CFG->wwwroot/mod/lesson/view.php?id=$cmid&amp;pageid=$page->id\">".format_string($page->title,true)."</a></li>\n";
             }
-            
+
         }
         $pageid = $page->nextpageid;
     }

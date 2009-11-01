@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for processing the form from addpage action and inserts the page.
  *
@@ -14,7 +14,7 @@
     }
 
     $timenow = time();
-    
+
     $form = data_submitted();
     $newpage = new stdClass;
     $newanswer = new stdClass;
@@ -78,7 +78,7 @@
                 $newpage->display = clean_param($form->display, PARAM_INT);
             } else {
                 $newpage->display = 0;
-            }                
+            }
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = $newpage->title;
@@ -104,7 +104,7 @@
                 $newpage->display = clean_param($form->display, PARAM_INT);
             } else {
                 $newpage->display = 0;
-            }                
+            }
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = $newpage->title;
@@ -162,7 +162,7 @@
             }
         }
     }
-    
+
     lesson_set_message(get_string('insertedpage', 'lesson').': '.format_string($newpage->title, true), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-?>
+

@@ -239,7 +239,7 @@ if ($tab == GLOSSARY_APPROVAL_VIEW) {
     $PAGE->navbar->add($strwaitingapproval);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strwaitingapproval);
-} else { /// Print standard header    
+} else { /// Print standard header
     echo $OUTPUT->header();
 }
 
@@ -526,4 +526,3 @@ echo $OUTPUT->footer();
 $completion=new completion_info($course);
 $completion->set_module_viewed($cm);
 
-?>

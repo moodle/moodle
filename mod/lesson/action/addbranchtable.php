@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  *  Action for adding a branch table.  Prints an HTML form.
  *
@@ -9,7 +9,7 @@
 
     // first get the preceeding page
     $pageid = required_param('pageid', PARAM_INT);
-    
+
     // set of jump array
     $jump = array();
     $jump[0] = get_string("thispage", "lesson");

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page prints a particular instance of lesson
  *
@@ -1022,4 +1022,4 @@
 /// Mark as viewed
     $completion=new completion_info($course);
     $completion->set_module_viewed($cm);
-?>
+

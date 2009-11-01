@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for adding a cluster page
  *
@@ -11,9 +11,9 @@
     // first get the preceeding page
     // if $pageid = 0, then we are inserting a new page at the beginning of the lesson
     $pageid = required_param('pageid', PARAM_INT);
-        
+
     $timenow = time();
-    
+
     if ($pageid == 0) {
         if (!$page = $DB->get_record("lesson_pages", array("prevpageid" => 0, "lessonid" => $lesson->id))) {
             print_error('cannotfindpagerecord', 'lesson');
@@ -40,10 +40,10 @@
     if ($pageid != 0) {
         $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid));
     }
-    
+
     if ($pageid == 0) {
         $page->nextpageid = $page->id;
-    }        
+    }
     if ($page->nextpageid) {
         // the new page is not the last page
         $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid));
@@ -57,4 +57,4 @@
     $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
     lesson_set_message(get_string('addedcluster', 'lesson'), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-?>
+

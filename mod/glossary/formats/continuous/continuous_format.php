@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=false) {
 
@@ -15,7 +15,7 @@ function glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode='
     glossary_print_entry_definition($entry, $glossary, $cm);
     $entry->alias = '';
     echo '</td></tr>';
-   
+
     echo '<tr valign="top"><td class="entrylowersection">';
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
     echo '</td>';
@@ -34,7 +34,7 @@ function glossary_print_entry_continuous($course, $cm, $glossary, $entry, $mode=
 
     //Call to view function (without icons, ratings and aliases) and return its result
     return glossary_show_entry_continuous($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
-    
+
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
 
@@ -34,4 +34,4 @@ function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode=
     return glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
 }
 
-?>
+

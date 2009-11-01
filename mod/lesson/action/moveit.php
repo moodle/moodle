@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for actually moving the page (database changes)
  *
@@ -19,7 +19,7 @@
     if (!$after) {
         // the moved page is the new first page
         $newfirstpageid = $pageid;
-        // reset $after so that is points to the last page 
+        // reset $after so that is points to the last page
         // (when the pages are in a ring this will in effect be the first page)
         if ($page->nextpageid) {
             if (!$after = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "nextpageid" => 0))) {
@@ -39,8 +39,8 @@
         }
     }
     // the rest is all unconditional...
-    
-    // second step. join pages into a ring 
+
+    // second step. join pages into a ring
     if (!$firstpageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
         print_error("Moveit: firstpageid not found");
     }
@@ -67,7 +67,7 @@
     if (!$DB->set_field("lesson_pages", "prevpageid", $prevpageid, array("id" => $nextpageid))) {
         print_error("Moveit: unable to update link");
     }
-    
+
     // fourth step. insert page to be moved in new place...
     if (!$nextpageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $after))) {
         print_error("Movit: nextpageid not found");
@@ -85,7 +85,7 @@
     if (!$DB->set_field("lesson_pages", "nextpageid", $nextpageid, array("id" => $pageid))) {
         print_error("Moveit: unable to update link");
     }
-    
+
     // fifth step. break the ring
     if (!$newlastpageid = $DB->get_field("lesson_pages", "prevpageid", array("id" => $newfirstpageid))) {
         print_error("Moveit: newlastpageid not found");
@@ -98,4 +98,4 @@
     }
     lesson_set_message(get_string('movedpage', 'lesson'), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
-?>
+

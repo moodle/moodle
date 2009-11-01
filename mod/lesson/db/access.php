@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Capability definitions for the lesson module.
  *

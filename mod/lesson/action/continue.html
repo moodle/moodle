@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * HTML template for continue.php
  *
@@ -8,9 +8,9 @@
 ?>
 
 <?php if ($lesson->displayleft) { // Skip navigation anchor ?>
-        
+
         <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
-        
+
 <?php } ?>
 
 <?php
@@ -27,7 +27,7 @@
             <form id="endoflesson" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">
             <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
             <input type="hidden" name="pageid" value="<?php echo LESSON_EOL; ?>" />
-    
+
             <p align="center">
                 <?php print_string("savechangesandeol", "lesson") ?>
             </p>
@@ -40,22 +40,22 @@
             <p align="center">
                 <?php print_string("continuetoanswer", "lesson") ?>
             </p>
-    
+
             </form>
 <?php } ?>
 
 <?php if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) { // Review button back ?>
-    
+
             <form id="reviewback" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">
             <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
             <input type="hidden" name="pageid" value="<?php echo $pageid; ?>" />
-    
+
             <p>
                 <?php lesson_print_submit_link(get_string('reviewquestionback', 'lesson'), 'reviewback'); ?>
             </p>
-    
+
             </form>
-            
+
 <?php } ?>
 
             <form id="pageform" method ="post" action="<?php echo $CFG->wwwroot ?>/mod/lesson/view.php">

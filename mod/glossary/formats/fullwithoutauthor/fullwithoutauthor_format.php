@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
     global $CFG, $USER;
@@ -34,7 +34,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="2" class="entrylowersection">';
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
-        
+
         echo ' ';
         echo '</td></tr>';
         echo "</table>\n";
@@ -58,4 +58,4 @@ function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry,
 
 }
 
-?>
+

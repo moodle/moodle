@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * jjg7:8/9/2004
  *
@@ -10,7 +10,7 @@
 function removedoublecr($filename) {
 // This function will adjust a file in roughly Aiken style by replacing extra newlines with <br/> tags
 // so that instructors can have newlines wherever they like as long as the overall format is in Aiken
-    
+
     $filearray = file($filename);
     /// Check for Macintosh OS line returns (ie file on one line), and fix
     if (preg_match("/\r/", $filearray[0]) AND !preg_match("/\n/", $filearray[0])) {
@@ -18,7 +18,7 @@ function removedoublecr($filename) {
     } else {
         $outfile = $filearray;
     }
-    
+
     foreach ($outfile as $line) {
         // remove leading and trailing whitespace
         trim($line);
@@ -46,18 +46,18 @@ function removedoublecr($filename) {
         }
     }
     // output modified file to original
-    if ( is_writable($filename) ) { 
+    if ( is_writable($filename) ) {
 
-        if (! $handle =fopen ($filename ,'w' )) { 
+        if (! $handle =fopen ($filename ,'w' )) {
             echo "Cannot open file ($filename)" ;
-            exit; 
-        } 
+            exit;
+        }
         foreach ($outarray as $outline) {
             fwrite($handle, $outline);
         }
         fclose($handle);
-    } 
-    else { 
+    }
+    else {
         // file not writeable
     }
 }
@@ -74,17 +74,17 @@ function importmodifiedaikenstyle($filename) {
         $line = trim($line);
         // add a space at the end, quick hack to make sure words from different lines don't run together
         $line = $line. ' ';
-        
+
         // ignore lines less than 2 characters
         if (strlen($line) < 2) {
             continue;
         }
 
-        
+
         // see if we have the answer line
         if ($line[0] =='*') {
             if ($line[0] == '*') {
-                $answer_found = 1;                    
+                $answer_found = 1;
                 $line[0]="\t";
                 $line = ltrim($line);
                 $answer = $line[0];
@@ -100,11 +100,11 @@ function importmodifiedaikenstyle($filename) {
                 $outlines[$cur_pos] = $outlines[$cur_pos]."\n";
             }
 
-        
+
             $responses = 1;
             // make character uppercase
             $line[0]=strtoupper($line[0]);
-            
+
             // make entry followed by '.'
             $line[1]='.';
         }
@@ -131,13 +131,13 @@ function importmodifiedaikenstyle($filename) {
                     $np = 0;
                     // this probably could be done cleaner... it escapes me at the moment
                     while ($line[$np] == '0' OR $line[$np] == '1' OR $line[$np] == '2'
-                            OR $line[$np] == '3' OR $line[$np] == '4'  OR $line[$np] == '5' 
+                            OR $line[$np] == '3' OR $line[$np] == '4'  OR $line[$np] == '5'
                             OR $line[$np] == '6'  OR $line[$np] == '7' OR $line[$np] == '8'
                             OR $line[$np] == '9' ) {
                         $np++;
                     }
                     // grab everything after '###.'
-                    $line = substr($line, $np+1, strlen($line));                    
+                    $line = substr($line, $np+1, strlen($line));
 
                     if ($responses AND $answer_found) {
                         $responses = 0;
@@ -165,21 +165,21 @@ function importmodifiedaikenstyle($filename) {
     // output the last answer
     $answer = strtoupper($answer);
     $outlines[] = "ANSWER: $answer\n\n";
-    
+
     // output modified file to original
-    if ( is_writable($filename) ) { 
-        if (! $handle =fopen ($filename ,'w' )) { 
+    if ( is_writable($filename) ) {
+        if (! $handle =fopen ($filename ,'w' )) {
             echo "Cannot open file ($filename)" ;
-            exit; 
+            exit;
         }
         foreach ($outlines as $outline) {
             fwrite($handle, $outline);
         }
         fclose($handle);
         return true;
-    } 
-    else { 
+    }
+    else {
         return false;
     }
-}    
-?>
+}
+

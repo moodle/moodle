@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Displays the lesson statistics.
  *
@@ -21,7 +21,7 @@
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
         $params["groupid"] = $cm->groupingid;
         $sql = "SELECT DISTINCT u.*
-                FROM {lesson_attempts} a 
+                FROM {lesson_attempts} a
                     INNER JOIN {user} u ON u.id = a.userid
                     INNER JOIN {groups_members} gm ON gm.userid = u.id
                     INNER JOIN {groupings_groups} gg ON gm.groupid = :groupid
@@ -35,11 +35,11 @@
                       u.id = a.userid
                 ORDER BY u.lastname";
     }
-    
+
     if (! $students = $DB->get_records_sql($sql, $params)) {
         $nothingtodisplay = true;
     }
-    
+
 // make sure people are where they should be
     require_login($course->id, false, $cm);
 
@@ -57,8 +57,8 @@
     require_capability('mod/lesson:manage', $context);
 
 /// Process any form data before fetching attempts, grades and times
-    if (has_capability('mod/lesson:edit', $context) and 
-        $form = data_submitted() and 
+    if (has_capability('mod/lesson:edit', $context) and
+        $form = data_submitted() and
         confirm_sesskey()) {
     /// Cycle through array of userids with nested arrays of tries
         if (!empty($form->attempts)) {
@@ -70,31 +70,31 @@
                 //      So, the modifier makes sure that the submitted try refers to the current try in the
                 //      database - hope this all makes sense :)
                 $modifier = 0;
-            
+
                 foreach ($tries as $try => $junk) {
                     $try -= $modifier;
-                
+
                 /// Clean up the timer table
                 $params = array ("userid" => $userid, "lessonid" => $lesson->id);
-                    $timeid = $DB->get_field_sql("SELECT id FROM {lesson_timer} 
-                                             WHERE userid = :userid AND lessonid = :lessonid 
+                    $timeid = $DB->get_field_sql("SELECT id FROM {lesson_timer}
+                                             WHERE userid = :userid AND lessonid = :lessonid
                                              ORDER BY starttime", $params, $try, 1);
-                
+
                     $DB->delete_records('lesson_timer', array('id' => $timeid));
-            
+
                 /// Remove the grade from the grades and high_scores tables
-                    $gradeid = $DB->get_field_sql("SELECT id FROM {lesson_grades} 
-                                              WHERE userid = :userid AND lessonid = :lessonid 
+                    $gradeid = $DB->get_field_sql("SELECT id FROM {lesson_grades}
+                                              WHERE userid = :userid AND lessonid = :lessonid
                                               ORDER BY completed", $params, $try, 1);
-                
+
                     $DB->delete_records('lesson_grades', array('id' => $gradeid));
                     $DB->delete_records('lesson_high_scores', array('gradeid' => $gradeid, 'lessonid' => $lesson->id, 'userid' => $userid));
-            
+
                 /// Remove attempts and update the retry number
                     $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
                     $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
-            
-                /// Remove seen branches and update the retry number    
+
+                /// Remove seen branches and update the retry number
                     $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
                     $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
 
@@ -115,16 +115,16 @@
     if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
         $grades = array();
     }
-    
+
     if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
         $times = array();
     }
 
     lesson_print_header($cm, $course, $lesson, $action);
-    
+
     $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-        echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+        echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">'
             . get_string('seeallcoursegrades', 'grades') . '</a></div>';
     }
 
@@ -226,7 +226,7 @@
                     } else {
                         $temp = '';
                     }
-                    
+
                     $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
                     if ($try["grade"] !== NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
@@ -281,22 +281,22 @@
                    <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
         }
         echo $OUTPUT->table($table);
-        
+
         if (has_capability('mod/lesson:edit', $context)) {
             echo '<br /><table width="90%" align="center"><tr><td>'.
                  '<a href="javascript: checkall();">'.get_string('selectall').'</a> / '.
                  '<a href="javascript: checknone();">'.get_string('deselectall').'</a> ';
-             
+
             $select = new html_select();
             $select->options = array('delete' => get_string('deleteselected'));
             $select->name = 'attemptaction';
             $select->selectedvalue = 0;
             $select->add_action('change', 'submit_form_by_id', array('id' => 'theform'));
-            echo $OUTPUT->select($select); 
-        
+            echo $OUTPUT->select($select);
+
             echo '</td></tr></table></form>';
         }
-        
+
         // some stat calculations
         if ($numofattempts == 0) {
             $avescore = get_string("notcompleted", "lesson");
@@ -484,9 +484,9 @@
             $answerpage = new stdClass;
             $data ='';
             $answerdata = new stdClass;
-            
+
             $answerpage->title = format_string($page->title);
-            
+
             $options = new stdClass;
             $options->noclean = true;
             $answerpage->contents = format_text($page->contents, FORMAT_MOODLE, $options);
@@ -540,7 +540,7 @@
                 $answerdata->score = NULL;
                 $answerdata->response = NULL;
             } elseif ($useranswers = $DB->get_records_select("lesson_attempts",
-                                                         "lessonid = :lessonid AND userid = :userid AND retry = :retry AND pageid = :pageid", 
+                                                         "lessonid = :lessonid AND userid = :userid AND retry = :retry AND pageid = :pageid",
                                                          array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $try, "pageid" => $page->id), "timeseen")) {
                 // get the user's answer for this page
                 // need to find the right one
@@ -841,14 +841,14 @@
 
         if (!empty($userid)) {
             // if looking at a students try, print out some basic stats at the top
-            
+
                 // print out users name
                 //$headingobject->lastname = $students[$userid]->lastname;
                 //$headingobject->firstname = $students[$userid]->firstname;
                 //$headingobject->attempt = $try + 1;
                 //print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
             echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1));
-            
+
             $table->head = array();
             $table->align = array("right", "left");
             $table->class = 'generaltable userinfotable';
@@ -875,9 +875,9 @@
                 $table->data[] = array(get_string("notcompleted", "lesson"));
             } else {
                 $user = $students[$userid];
-                
+
                 $gradeinfo = lesson_grade($lesson, $try, $user->id);
-                
+
                 $table->data[] = array(get_string('name').':', $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id)).fullname($user, true));
                 $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
                 $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
@@ -885,7 +885,7 @@
                 $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
             }
             echo $OUTPUT->table($table);
-            
+
             // Don't want this class for later tables
             $table->set_classes();
             echo "<br />";
@@ -937,4 +937,4 @@
 /// Finish the page
     echo $OUTPUT->footer();
 
-?>
+

@@ -9,4 +9,4 @@ $PAGE->set_url(new moodle_url($CFG->wwwroot.'/mod/label/index.php', array('id'=>
 
 redirect("$CFG->wwwroot/course/view.php?id=$id");
 
-?>
+

@@ -1,15 +1,15 @@
-<?PHP  // $Id$ 
+<?PHP  // $Id$
 
 ////////////////////////////////////////////////////////////////////
 /// Default class for report plugins
-///                                                            
-/// Doesn't do anything on it's own -- it needs to be extended.   
-/// This class displays quiz reports.  Because it is called from 
+///
+/// Doesn't do anything on it's own -- it needs to be extended.
+/// This class displays quiz reports.  Because it is called from
 /// within /mod/quiz/report.php you can assume that the page header
 /// and footer are taken care of.
-/// 
-/// This file can refer to itself as report.php to pass variables 
-/// to itself - all these will also be globally available.  You must 
+///
+/// This file can refer to itself as report.php to pass variables
+/// to itself - all these will also be globally available.  You must
 /// pass "id=$cm->id" or q=$quiz->id", and "mode=reportname".
 ////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@
 
 class hotpot_default_report {
 
-    function display($hotpot, $cm, $course, $users, $attempts, $questions, $options) {   
+    function display($hotpot, $cm, $course, $users, $attempts, $questions, $options) {
         /// This function just displays the report
         // it is replaced by the "display" functions in the scripts in the "report" folder
         return true;
@@ -68,7 +68,7 @@ class hotpot_default_report {
 
             // add $value to answers array, if it was not there
             if ($i==$i_max) {
-                $table->legend[$q]['answers'][$i] = $value; 
+                $table->legend[$q]['answers'][$i] = $value;
             }
 
             // convert $value to alphabetic index (A, B ... AA, AB ...)
@@ -98,12 +98,12 @@ class hotpot_default_report {
             foreach($table->legend as $q=>$question) {
 
                 $legend->stat[] = array(
-                    get_string('questionshort', 'hotpot', $q+1), 
+                    get_string('questionshort', 'hotpot', $q+1),
                     $question['name']
                 );
                 foreach($question['answers'] as $a=>$answer) {
                     $legend->stat[] = array(
-                        $this->dec_to_ALPHA($a), 
+                        $this->dec_to_ALPHA($a),
                         $answer
                     );
                 }
@@ -324,7 +324,7 @@ class hotpot_default_report {
 
     function print_report_finish(&$course, &$hotpot, &$options) {
         switch ($options['reportformat']) {
-            case 'txt' : 
+            case 'txt' :
                 // do nothing
                 break;
             case 'xls':
@@ -454,7 +454,7 @@ class hotpot_default_report {
                     $col = 0; // column index
                     while ($col<$table->colspan && isset($cells[$i])) {
                         if (empty($skipcol[$col])) {
-                            $cell = &$cells[$i++]; 
+                            $cell = &$cells[$i++];
                             $td = $table->td[$col];
                             if (is_object($cell)) {
                                 $text = $cell->text;
@@ -551,7 +551,7 @@ class hotpot_default_report {
     }
     function print_text_start(&$course, &$hotpot, &$options) {
         $downloadfilename = clean_filename("$course->shortname $hotpot->name.txt");
-        header("Content-Type: application/download\n"); 
+        header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=$downloadfilename");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
@@ -663,7 +663,7 @@ class hotpot_default_report {
             $this->print_excel_stat($wb, $ws, $table, $row, $options);
             $this->print_excel_foot($wb, $ws, $table, $row, $options);
         }
-    
+
         // close the workbook (and send it to the browser)
         $wb->close();
     }
@@ -684,8 +684,8 @@ class hotpot_default_report {
     function print_excel_head(&$wb, &$ws, &$table, &$row, &$options) {
         // define format properties
         $properties = array(
-            'bold'=>1, 
-            'align'=>'center', 
+            'bold'=>1,
+            'align'=>'center',
             'v_align'=>'bottom',
             'text_wrap'=>1
         );
@@ -851,4 +851,4 @@ class hotpot_default_report {
     }
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file keeps track of upgrades to
 // the glossary module
@@ -208,4 +208,4 @@ function xmldb_glossary_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

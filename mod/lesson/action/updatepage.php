@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Action for processing the form in editpage action and saves the page
  *
@@ -7,7 +7,7 @@
  * @package lesson
  **/
     confirm_sesskey();
-    
+
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
 
     $timenow = time();
@@ -15,7 +15,7 @@
 
     $page = new stdClass;
     $page->id = clean_param($form->pageid, PARAM_INT);
-    
+
     // check to see if the cancel button was pushed
     if (optional_param('cancel', '', PARAM_ALPHA)) {
         if ($redirect == 'navigation') {
@@ -46,7 +46,7 @@
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
     $page->contents = trim($form->contents);
     $page->title = $page->title;
-    
+
     $DB->update_record("lesson_pages", $page);
     if ($page->qtype == LESSON_ENDOFBRANCH || $page->qtype == LESSON_ESSAY || $page->qtype == LESSON_CLUSTER || $page->qtype == LESSON_ENDOFCLUSTER) {
         // there's just a single answer with a jump
@@ -67,7 +67,7 @@
                     $DB->delete_records("lesson_answers", array("id" => $answer->id));
                 }
             }
-        }        
+        }
         $DB->update_record("lesson_answers", $oldanswer);
     } else {
         // it's an "ordinary" page
@@ -141,13 +141,13 @@
                         }
                         if (!isset($form->responseeditor[$i])) {
                             $form->responseeditor[$i] = 0;
-                        }                        
+                        }
                         $oldanswer->flags = $form->answereditor[$i] * LESSON_ANSWER_EDITOR +
                                             $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
                         $DB->update_record("lesson_answers", $oldanswer);
-                    }                        
+                    }
                 } elseif (!empty($form->answerid[$i])) {
                     // need to delete blanked out answer
                     $DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)));
@@ -159,7 +159,7 @@
     if ($form->redisplay) {
         redirect("$CFG->wwwroot/mod/lesson/lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
     }
-    
+
     lesson_set_message(get_string('updatedpage', 'lesson').': '.format_string($page->title, true), 'notifysuccess');
     if ($redirect == 'navigation') {
         // takes us back to viewing the page
@@ -167,4 +167,4 @@
     } else {
         redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
     }
-?>
+

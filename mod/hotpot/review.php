@@ -36,7 +36,7 @@
     }
 
     require_login($course, true, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {
@@ -107,10 +107,10 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
                 $value = hotpot_format_status($attempt);
                 break;
             case 'timerecorded':
-                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish); 
+                $value = empty($attempt->timefinish) ? '-' : userdate($attempt->timefinish);
                 break;
             case 'timetaken':
-                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart); 
+                $value = empty($attempt->timefinish) ? '-' : format_time($attempt->timefinish - $attempt->timestart);
                 break;
             default:
                 $value = isset($attempt->$field) ? $attempt->$field : NULL;
@@ -252,4 +252,4 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
     print "</table>\n";
     echo $OUTPUT->box_end();
 }
-?>
+

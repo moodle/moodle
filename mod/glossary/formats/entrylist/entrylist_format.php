@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
     global $USER;
@@ -60,4 +60,4 @@ function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='
     return $return;
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 // This file replaces:
 //   * STATEMENTS section in db/install.xml
@@ -12,6 +12,6 @@ function xmldb_hotpot_install() {
     $DB->set_field('modules', 'visible', 0, array('name'=>'hotpot'));
 
 /// Install logging support here
-    
+
 
 }

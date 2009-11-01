@@ -1,11 +1,11 @@
-<?php  // $Id$
+<?php
     if (!isset($sortorder)) {
         $sortorder = '';
-    }    
+    }
     if (!isset($sortkey)) {
         $sortkey = '';
     }
-    
+
     //make sure variables are properly cleaned
     $sortkey   = clean_param($sortkey, PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
     $sortorder = clean_param($sortorder, PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
@@ -21,19 +21,19 @@
     }
 
 
-    $browserow[] = new tabobject(GLOSSARY_STANDARD_VIEW, 
+    $browserow[] = new tabobject(GLOSSARY_STANDARD_VIEW,
                                  $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=letter',
                                  get_string('standardview', 'glossary'));
 
-    $browserow[] = new tabobject(GLOSSARY_CATEGORY_VIEW, 
-                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=cat', 
+    $browserow[] = new tabobject(GLOSSARY_CATEGORY_VIEW,
+                                 $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=cat',
                                  get_string('categoryview', 'glossary'));
 
-    $browserow[] = new tabobject(GLOSSARY_DATE_VIEW, 
+    $browserow[] = new tabobject(GLOSSARY_DATE_VIEW,
                                  $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=date',
                                  get_string('dateview', 'glossary'));
 
-    $browserow[] = new tabobject(GLOSSARY_AUTHOR_VIEW, 
+    $browserow[] = new tabobject(GLOSSARY_AUTHOR_VIEW,
                                  $CFG->wwwroot.'/mod/glossary/view.php?id='.$id.'&amp;mode=author',
                                  get_string('authorview', 'glossary'));
 
@@ -62,12 +62,12 @@
   <div class="entrybox">
 
 <?php
- 
+
     if (!isset($category)) {
         $category = "";
     }
 
-    
+
     switch ($tab) {
         case GLOSSARY_CATEGORY_VIEW:
             glossary_print_categories_menu($cm, $glossary, $hook, $category);
@@ -103,8 +103,8 @@
             glossary_print_alphabet_menu($cm, $glossary, "letter", $hook, $sortkey, $sortorder);
             if ($mode == 'search' and $hook) {
                 echo "<h3>$strsearch: $hook</h3>";
-            } 
+            }
         break;
-    } 
+    }
     echo '<hr />';
 ?>

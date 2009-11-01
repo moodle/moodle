@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  *  Action for editing a page.  Prints an HTML form.
  *
@@ -6,11 +6,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
- 
+
     // get the page
     $pageid = required_param('pageid', PARAM_INT);
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
-    
+
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error('cannotfindpages', 'lesson');
     }
@@ -58,8 +58,8 @@
     <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
     <input type="hidden" name="action" value="updatepage" />
     <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
-    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />        
-    <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />        
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+    <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />
     <input type="hidden" name="redisplay" value="0" />
     <center>
        <?php
@@ -67,7 +67,7 @@
             case LESSON_MULTICHOICE :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
                 echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
-                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
+                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype,
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('multianswer', 'lesson').":</label></b> \n";
@@ -82,7 +82,7 @@
             case LESSON_SHORTANSWER :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
                 echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
-                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
+                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype,
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 echo "<p><b><label for=\"qoption\">".get_string('casesensitive', 'lesson').":</label></b> \n";
@@ -100,7 +100,7 @@
             case LESSON_NUMERICAL :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
                 echo $OUTPUT->help_icon(moodle_help_icon::make("questiontypes", get_string("questiontype", "lesson"), "lesson"))."<br />";
-                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
+                lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype,
                                   "lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id",
                                   "getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();");
                 break;
@@ -133,7 +133,7 @@
                 echo "<input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
             } else {
                 echo "<input name=\"display\" type=\"checkbox\" value=\"1\" />";
-            }                
+            }
             echo get_string("displayinleftmenu", "lesson")."\n";
             echo "</center></td></tr>\n";
             echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
@@ -141,18 +141,18 @@
         case LESSON_CLUSTER :
             echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("clustertitle", "lesson")."</b> \n";
-            break;                
+            break;
         case LESSON_ENDOFCLUSTER :
             echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("endofclustertitle", "lesson")."</b> \n";
-            break;                            
+            break;
         case LESSON_ENDOFBRANCH :
             echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\" />\n";
             echo "<tr><td><b>".get_string("endofbranch", "lesson")."</b> \n";
             break;
         default :
             echo "<tr><td>";
-        break;             
+        break;
     }
 
     echo "</td></tr>\n";
@@ -200,7 +200,7 @@
                         echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('answer', 'lesson')." $ncorrected:</label></b>\n";
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
-                                "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />"; 
+                                "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" checked=\"checked\" />";
                             echo $OUTPUT->help_icon(moodle_help_icon::make("useeditor", get_string("useeditor", "lesson"), "lesson"));
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -232,7 +232,7 @@
                 case LESSON_TRUEFALSE:
                 case LESSON_MULTICHOICE:
                 case LESSON_SHORTANSWER:
-                case LESSON_NUMERICAL:                    
+                case LESSON_NUMERICAL:
                     echo "<tr><td><b><label for=\"edit-answer[$n]\">".get_string('answer', 'lesson')." $nplus1:</label></b>\n";
                     if ($flags & LESSON_ANSWER_EDITOR and $page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
@@ -341,7 +341,7 @@
             $n++;
             if ($page->qtype == LESSON_ESSAY) {
                 break; // only one answer for essays
-            }                
+            }
         }
     }
     if ($page->qtype != LESSON_ENDOFBRANCH && $page->qtype != LESSON_CLUSTER && $page->qtype != LESSON_ENDOFCLUSTER) {
@@ -465,7 +465,7 @@
     // close table and form
     ?>
     </table><br />
-    <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
+    <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>"
         onclick="getElementById('editpage').redisplay.value=1;getElementById('editpage').submit();" />
     <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
     <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />

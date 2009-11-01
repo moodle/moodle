@@ -68,7 +68,7 @@
         } else if ($hotpot->subnet && !address_in_subnet(getremoteaddr(), $hotpot->subnet)) {
             $error = get_string("subneterror", "quiz");
         // check number of attempts
-        } else if ($hotpot->attempts && $hotpot->attempts <= $DB->count_records_select('hotpot_attempts', 'hotpot=? AND userid=?', array($hotpot->id, $USER->id), 'COUNT(DISTINCT clickreportid)')) { 
+        } else if ($hotpot->attempts && $hotpot->attempts <= $DB->count_records_select('hotpot_attempts', 'hotpot=? AND userid=?', array($hotpot->id, $USER->id), 'COUNT(DISTINCT clickreportid)')) {
             $error = get_string("nomoreattempts", "quiz");
         // get password
         } else if ($hotpot->password && empty($hppassword)) {
@@ -484,4 +484,4 @@ function hotpot_feedback_teachers(&$course, &$hotpot) {
     }
     return $teacherdetails;
 }
-?>
+

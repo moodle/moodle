@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 /**
  * Lesson's backup routine
  *
@@ -6,10 +6,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    //This is the "graphical" structure of the lesson mod: 
+    //This is the "graphical" structure of the lesson mod:
     //
     //          lesson_default                  lesson ----------------------------|--------------------------|--------------------------|
-    //     (UL, pk->id,fk->courseid)         (CL,pk->id)                           |                          |                          | 
+    //     (UL, pk->id,fk->courseid)         (CL,pk->id)                           |                          |                          |
     //                                             |                               |                          |                          |
     //                                             |                         lesson_grades              lesson_high_scores         lesson_timer
     //                                             |                  (UL, pk->id,fk->lessonid)    (UL, pk->id,fk->lessonid)   (UL, pk->id,fk->lessonid)
@@ -53,17 +53,17 @@
                 }
             }
         }
-        return $status;  
+        return $status;
     }
 
     function lesson_backup_one_mod($bf,$preferences,$lesson) {
 
         global $CFG, $DB;
-    
+
         if (is_numeric($lesson)) {
             $lesson = $DB->get_record('lesson',array ('id' => $lesson));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -248,11 +248,11 @@
                 //Start Attempt
                 $status =fwrite ($bf,start_tag("ATTEMPT",9,true));
                 //Print attempt contents
-                fwrite ($bf,full_tag("USERID",10,false,$attempt->userid));       
-                fwrite ($bf,full_tag("RETRY",10,false,$attempt->retry));       
-                fwrite ($bf,full_tag("CORRECT",10,false,$attempt->correct));     
+                fwrite ($bf,full_tag("USERID",10,false,$attempt->userid));
+                fwrite ($bf,full_tag("RETRY",10,false,$attempt->retry));
+                fwrite ($bf,full_tag("CORRECT",10,false,$attempt->correct));
                 fwrite ($bf,full_tag("USERANSWER",10,false,$attempt->useranswer));
-                fwrite ($bf,full_tag("TIMESEEN",10,false,$attempt->timeseen));       
+                fwrite ($bf,full_tag("TIMESEEN",10,false,$attempt->timeseen));
                 //End attempt
                 $status =fwrite ($bf,end_tag("ATTEMPT",9,true));
             }
@@ -355,7 +355,7 @@
         }
         return $status;
     }
-    
+
     // backup lesson_high_score contents (executed from backup_lesson_mods)
     function backup_lesson_high_scores($bf, $preferences, $lessonid) {
         global $CFG, $DB;
@@ -384,7 +384,7 @@
         }
         return $status;
     }
-    
+
     // backup lesson_default contents (executed from backup_lesson_mods)
     function backup_lesson_default ($bf,$preferences) {
         global $CFG, $DB;
@@ -395,7 +395,7 @@
         $default = $DB->get_record("lesson_default", array("course" => $preferences->backup_course));
         if ($default) {
             //Start mod
-            $status =fwrite ($bf,start_tag("DEFAULTS",4,true));            
+            $status =fwrite ($bf,start_tag("DEFAULTS",4,true));
             //Print default data
             fwrite ($bf,full_tag("PRACTICE",5,false,$default->practice));
             fwrite ($bf,full_tag("MODATTEMPTS",5,false,$default->modattempts));
@@ -430,9 +430,9 @@
             fwrite ($bf,full_tag("MAXHIGHSCORES",5,false,$default->maxhighscores));
             $status =fwrite ($bf,end_tag("DEFAULTS",4,true));
         }
-        return $status;  
+        return $status;
     }
-    
+
     //Return an array of info (name,value)
     function lesson_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
         if (!empty($instances) && is_array($instances) && count($instances)) {
@@ -453,7 +453,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             $info[1][0] = get_string("attempts","lesson");
-            if ($ids = lesson_attempts_ids_by_course ($course)) { 
+            if ($ids = lesson_attempts_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
@@ -471,7 +471,7 @@
         //Now, if requested, the user_data
         if (!empty($instance->userdata)) {
             $info[$instance->id.'1'][0] = get_string("attempts","lesson");
-            if ($ids = lesson_attempts_ids_by_instance ($instance->id)) { 
+            if ($ids = lesson_attempts_ids_by_instance ($instance->id)) {
                 $info[$instance->id.'1'][1] = count($ids);
             } else {
                 $info[$instance->id.'1'][1] = 0;
@@ -501,7 +501,7 @@
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
-    //Returns an array of lesson id 
+    //Returns an array of lesson id
     function lesson_ids ($course) {
 
         global $CFG, $DB;
@@ -511,7 +511,7 @@
                                  FROM {lesson} l
                                  WHERE l.course = :course", $params);
     }
-    
+
     //Returns an array of lesson_submissions id
     function lesson_attempts_ids_by_course ($course) {
 
@@ -535,4 +535,4 @@
                                  FROM {lesson_attempts} a
                                  WHERE a.lessonid = :lessonid", $params);
     }
-?>
+

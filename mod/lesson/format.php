@@ -1,6 +1,6 @@
-<?php  // $Id$ 
+<?php  // $Id$
 /**
- * format.php  - Default format class for file imports/exports. Doesn't do 
+ * format.php  - Default format class for file imports/exports. Doesn't do
  * everything on it's own -- it needs to be extended.
  *
  * @version $Id$
@@ -32,7 +32,7 @@ class qformat_default {
 
     function importprocess($filename, $lesson, $pageid) {
         global $DB, $OUTPUT;
-        
+
     /// Processes a given file.  There's probably little need to change this
         $timenow = time();
 
@@ -45,7 +45,7 @@ class qformat_default {
             echo $OUTPUT->notification("There are no questions in this file!");
             return false;
         }
-        
+
         echo $OUTPUT->notification(get_string('importcount', 'lesson', sizeof($questions)));
 
         $count = 0;
@@ -118,7 +118,7 @@ class qformat_default {
                     // reset $pageid and put the page ID in $question, used in save_question_option()
                     $pageid = $newpageid;
                     $question->id = $newpageid;
-                    
+
                     $this->questionids[] = $question->id;
 
                     // Now to save all the answers and type-specific options
@@ -141,7 +141,7 @@ class qformat_default {
                 default :
                     echo $OUTPUT->notification(get_string('unsupportedqtype', 'lesson', $question->qtype));
             }
- 
+
         }
         return true;
     }
@@ -164,11 +164,11 @@ class qformat_default {
     }
 
     function readquestions($lines) {
-    /// Parses an array of lines into an array of questions, 
-    /// where each item is a question object as defined by 
-    /// readquestion().   Questions are defined as anything 
+    /// Parses an array of lines into an array of questions,
+    /// where each item is a question object as defined by
+    /// readquestion().   Questions are defined as anything
     /// between blank lines.
-     
+
         $questions = array();
         $currentquestion = array();
 
@@ -197,8 +197,8 @@ class qformat_default {
 
 
     function readquestion($lines) {
-    /// Given an array of lines known to define a question in 
-    /// this format, this function converts it into a question 
+    /// Given an array of lines known to define a question in
+    /// this format, this function converts it into a question
     /// object suitable for processing and insertion into Moodle.
 
         echo "<p>This flash question format has not yet been completed!</p>";
@@ -210,7 +210,7 @@ class qformat_default {
     // returns an "empty" question
     // Somewhere to specify question parameters that are not handled
     // by import but are required db fields.
-    // This should not be overridden. 
+    // This should not be overridden.
         global $CFG;
 
         $question = new stdClass();
@@ -228,13 +228,13 @@ class qformat_default {
         $question->length = 1;
         $question->qoption = 0;
         $question->layout = 1;
-        
+
         return $question;
     }
 
     function importpostprocess() {
     /// Does any post-processing that may be desired
-    /// Argument is a simple array of question ids that 
+    /// Argument is a simple array of question ids that
     /// have just been added.
 
         return true;
@@ -242,4 +242,4 @@ class qformat_default {
 
 }
 
-?>
+

@@ -1,14 +1,14 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
     global $CFG, $USER, $DB, $OUTPUT;
-    
+
 
     $user = $DB->get_record('user', array('id'=>$entry->userid));
     $strby = get_string('writtenby', 'glossary');
 
     if ($entry) {
-    
+
         echo '<table class="glossarypost TEMPLATE">';
         echo '<tr>';
         echo '<td class="entryheader">';
@@ -32,7 +32,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //Comments: Configuration not supported
         echo get_string('lastedited').': '. userdate($entry->timemodified) . '<br /></span>';
 
-        //Use this function to show the approval button. It'll be shown if necessary       
+        //Use this function to show the approval button. It'll be shown if necessary
         //Comments: You can configure this parameters:
         //----Define where to show the approval button
         $approvalalign = 'right'; //Values: left, center and right (default right)
@@ -50,7 +50,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this function to show the attachment. It'll be showed if necessary
         //Comments: You can configure this parameters:
-        //----Define how to show the attachment 
+        //----Define how to show the attachment
         $attachmentformat = 'html'; //Values: html (link) and NULL (inline image if possible) (default NULL)
         //----Define where to show the attachment
         $attachmentalign = 'right'; //Values: left, center and right (default right)
@@ -74,7 +74,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //Line separator not normally needed now.
         //echo "<br />\n";
 
-        //Use this function to show the definition 
+        //Use this function to show the definition
         //Comments: Configuration not supported
         glossary_print_entry_definition($entry, $glossary, $cm);
 
@@ -93,11 +93,11 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //    use it only if you are really sure!
         //$printicons = false;
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
-        
+
         echo '</td>';
         echo '</tr>';
         echo "</table>\n";
-    } else {    
+    } else {
         echo '<div style="text-align:center">';
         print_string('noentry', 'glossary');
         echo '</div>';
@@ -119,4 +119,4 @@ function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode=''
 
 }
 
-?>
+

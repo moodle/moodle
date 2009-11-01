@@ -42,26 +42,26 @@
             testlength =  parseInt(clocksettings.testlength);
         }
     }
-   
-    difference = javatime - servertime;    
+
+    difference = javatime - servertime;
     starttime = starttime + difference;
 
-    var dn = ""; 
+    var dn = "";
     var old = "";
 
-    if (document.all||document.getElementById) { 
-        document.write('<span id="LiveClockIE" style="width:'+mywidth+'px;"></span>'); 
-    } else if (document.layers) { 
+    if (document.all||document.getElementById) {
+        document.write('<span id="LiveClockIE" style="width:'+mywidth+'px;"></span>');
+    } else if (document.layers) {
         document.write('<ilayer id="ClockPosNS"><layer width="'+mywidth+'" id="LiveClockNS"></layer></ilayer>');
-    } else { 
+    } else {
         old = "true"; show_clock();
     }
-    
+
     /*function leave() {  // feable attempt to run a script when someone leaves a timed test early, failed so far
         window.onunload = window.open('http://www.google.com','','toolbar=no,menubar=no,location=no,height=500,width=500');
     }
     leave();*/
-    
+
     function show_clock() {
 
         //show clock in NS 4
@@ -72,7 +72,7 @@
         currentDate = new Date();
         current = currentDate.getTime();
         current = Math.floor(current/1000);
-        
+
         if (current > starttime + testlength) {
             myclock = '';
             myclock += '<font style="color:'+myfont_color+'; font-family:'+myfont_face+'; font-size:'+myfont_size+'pt;">';
@@ -84,8 +84,8 @@
             hours = Math.floor(timeleft/3600);
             timeleft = timeleft - (hours * 3600);
             minutes = Math.floor(timeleft/60);
-            secs = timeleft - (minutes * 60);           
-            
+            secs = timeleft - (minutes * 60);
+
             if (secs < 10) {
                 secs = "0"+secs;
             }
@@ -97,7 +97,7 @@
             myclock += hours+":"+minutes+":"+secs;
             myclock += '</font>';
         }
-        
+
         if (old == "true") {
             document.write(myclock);
             old = "die"; return;

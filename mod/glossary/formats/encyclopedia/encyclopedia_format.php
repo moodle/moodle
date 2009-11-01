@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1,$ratings=NULL, $aliases=true) {
     global $CFG, $USER, $DB, $OUTPUT;
@@ -12,9 +12,9 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '<table class="glossarypost encyclopedia" cellspacing="0">';
         echo '<tr valign="top">';
         echo '<td class="left picture">';
-        
+
         echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
-    
+
         echo '</td>';
         echo '<th class="entryheader">';
         echo '<div class="concept">';
@@ -28,11 +28,11 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
 
         echo '</th>';
-        
+
         echo '<td class="entryapproval">';
         glossary_print_entry_approval($cm, $entry, $mode);
         echo '</td>';
-        
+
         echo '</tr>';
 
         echo '<tr valign="top">';
@@ -57,16 +57,16 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
             $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
             echo ' ';
         }
-        
+
         echo '</td></tr>';
         echo "</table>\n";
-        
+
     } else {
         echo '<div style="text-align:center">';
         print_string('noentry', 'glossary');
         echo '</div>';
     }
-    
+
     return $return;
 }
 
@@ -78,9 +78,9 @@ function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mod
     $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
-    
+
     return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
 
 }
 
-?>
+
