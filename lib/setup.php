@@ -324,25 +324,26 @@ if (function_exists('register_shutdown_function')) {
 // Defining the site
 try {
     $SITE = get_site();
-} catch (dml_read_exception $e) {
-    $SITE = null;
-}
-
-if ($SITE) {
     /**
      * If $SITE global from {@link get_site()} is set then SITEID to $SITE->id, otherwise set to 1.
      */
     define('SITEID', $SITE->id);
-    // And the 'default' course
-    $COURSE = clone($SITE);   // For now.  This will usually get reset later in require_login() etc.
-} else {
-    /**
-     * @ignore
-     */
-    define('SITEID', 1);
-    // And the 'default' course
-    $COURSE = new object;  // no site created yet
-    $COURSE->id = 1;
+    // And the 'default' course - this will usually get reset later in require_login() etc.
+    $COURSE = clone($SITE);
+} catch (dml_read_exception $e) {
+    $SITE = null;
+    if (empty($CFG->version)) {
+        // we are just installing
+        /**
+         * @ignore
+         */
+        define('SITEID', 1);
+        // And the 'default' course
+        $COURSE = new object();  // no site created yet
+        $COURSE->id = 1;
+    } else {
+        throw $e;
+    }
 }
 
 // define SYSCONTEXTID in config.php if you want to save some queries (after install or upgrade!)
