@@ -49,4 +49,4 @@ if ($wantsremoteurl) {
 }
 redirect($CFG->wwwroot . $wantsurl);
 
-?>
+

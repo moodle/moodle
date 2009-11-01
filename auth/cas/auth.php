@@ -122,7 +122,7 @@ class auth_plugin_cas extends auth_plugin_base {
 			$frm->password="guest";
 			return;
 	  }		
-	 
+	
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS", '', PARAM_RAW);
           if ($authCAS=="NOCAS")
@@ -443,7 +443,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      */
     function ldap_connect($binddn='',$bindpwd='') {
         // Cache ldap connections (they are expensive to set up
-        // and can drain the TCP/IP ressources on the server if we 
+        // and can drain the TCP/IP ressources on the server if we
         // are syncing a lot of users (as we try to open a new connection
         // to get the user details). This is the least invasive way
         // to reuse existing connections without greater code surgery.
@@ -488,7 +488,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             if ($bindresult) {
                 // Set the connection counter so we can call PHP's ldap_close()
                 // when we call $this->ldap_close() for the last 'open' connection.
-                $this->ldapconns = 1;  
+                $this->ldapconns = 1;
                 $this->ldapconnection = $connresult;
                 return $connresult;
             }
@@ -695,7 +695,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         // find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable (but how often do we mass delete?)
         if (!empty($this->config->removeuser)) {
-            $sql = "SELECT u.id, u.username, u.email, u.auth 
+            $sql = "SELECT u.id, u.username, u.email, u.auth
                       FROM {user} u
                       LEFT JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = ?)
                      WHERE u.auth='cas'
@@ -1139,4 +1139,4 @@ if (!empty($this->config->attrcreators)) {
         return $text;
     }
 }
-?>
+

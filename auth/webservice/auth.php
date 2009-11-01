@@ -146,11 +146,11 @@ class auth_plugin_webservice extends auth_plugin_base {
 
    /**
      * Confirm the new user as registered. This should normally not be used,
-     * but it may be necessary if the user auth_method is changed to manual 
+     * but it may be necessary if the user auth_method is changed to manual
      * before the user is confirmed.
      */
     function user_confirm($username, $confirmsecret = null) {
-        return AUTH_CONFIRM_ERROR;      
+        return AUTH_CONFIRM_ERROR;
     }
 
 }

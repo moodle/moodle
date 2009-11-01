@@ -121,10 +121,10 @@ class auth_plugin_manual extends auth_plugin_base {
 
    /**
      * Confirm the new user as registered. This should normally not be used,
-     * but it may be necessary if the user auth_method is changed to manual 
+     * but it may be necessary if the user auth_method is changed to manual
      * before the user is confirmed.
      */
-    function user_confirm($username, $confirmsecret = null) {      
+    function user_confirm($username, $confirmsecret = null) {
         global $DB;
 
         $user = get_complete_user_data('username', $username);
@@ -132,7 +132,7 @@ class auth_plugin_manual extends auth_plugin_base {
         if (!empty($user)) {
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
-            } else { 
+            } else {
                 if (!$DB->set_field("user", "confirmed", 1, array("id"=>$user->id))) {
                     return AUTH_CONFIRM_FAIL;
                 }
@@ -148,4 +148,4 @@ class auth_plugin_manual extends auth_plugin_base {
 
 }
 
-?>
+

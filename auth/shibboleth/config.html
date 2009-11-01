@@ -47,7 +47,7 @@
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_integrated_wayf", "auth_shibboleth") ?>:</td>
     <td>
-        <input name="alt_login" type="checkbox" <?php 
+        <input name="alt_login" type="checkbox" <?php
         if ( isset($config->alt_login) and $config->alt_login == 'on' ){
                 echo 'checked="checked"';
             }
@@ -60,7 +60,7 @@
     <td align="right"><?php print_string("auth_shib_idp_list", "auth_shibboleth") ?>:</td>
     <td>
         <textarea name="organization_selection" rows="10" cols="30" style="overflow: auto; white-space: nowrap;"
-><?php 
+><?php
         if (!isset($config->organization_selection)){
             echo  'urn:mace:organization1:providerID, Example Organization 1
 https://another.idp-id.com/shibboleth, Other Example Organization, /Shibboleth.sso/DS/SWITCHaai
@@ -84,7 +84,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_logout_url", "auth_shibboleth") ?>:</td>
     <td>
-        <input name="logout_handler" type="text" size="30" value="<?php 
+        <input name="logout_handler" type="text" size="30" value="<?php
         if ( isset($config->logout_handler) and !empty($config->logout_handler)){
             echo $config->logout_handler;
         }
@@ -96,7 +96,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_logout_return_url", "auth_shibboleth") ?>:</td>
     <td>
-        <input name="logout_return_url" type="text" size="30" value="<?php 
+        <input name="logout_return_url" type="text" size="30" value="<?php
         if ( isset($config->logout_return_url) and !empty($config->logout_return_url)){
             echo $config->logout_return_url;
         }
@@ -108,7 +108,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 <tr valign="top">
     <td align="right"><?php print_string("auth_shib_auth_method", "auth_shibboleth") ?>:</td>
     <td>
-        <input name="login_name" type="text" size="30" value="<?php 
+        <input name="login_name" type="text" size="30" value="<?php
         if ( isset($config->login_name) and !empty($config->login_name)){
             echo htmlentities($config->login_name);
         } else {

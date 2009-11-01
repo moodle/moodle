@@ -628,7 +628,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable (but how often do we mass delete?)
         if (!empty($this->config->removeuser)) {
-            $sql = "SELECT u.id, u.username, u.email, u.auth 
+            $sql = "SELECT u.id, u.username, u.email, u.auth
                       FROM {user} u
                       LEFT JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = ?)
                      WHERE u.auth='ldap'
@@ -1518,7 +1518,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function ldap_connect($binddn='',$bindpwd='') {
         // Cache ldap connections (they are expensive to set up
-        // and can drain the TCP/IP ressources on the server if we 
+        // and can drain the TCP/IP ressources on the server if we
         // are syncing a lot of users (as we try to open a new connection
         // to get the user details). This is the least invasive way
         // to reuse existing connections without greater code surgery.
@@ -1575,7 +1575,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             if ($bindresult) {
 		// Set the connection counter so we can call PHP's ldap_close()
 		// when we call $this->ldap_close() for the last 'open' connection.
-                $this->ldapconns = 1;  
+                $this->ldapconns = 1;
                 $this->ldapconnection = $connresult;
                 return $connresult;
             }
@@ -1799,7 +1799,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // HTTPS is potentially required
         httpsrequired();
- 
+
         if (($_SERVER['REQUEST_METHOD'] === 'GET'         // Only on initial GET of loginpage
                 || ($_SERVER['REQUEST_METHOD'] === 'POST'
                    && (get_referer() != strip_querystring(qualified_me()))))
@@ -1834,7 +1834,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
             }
         }
- 
+
         // No NTLM SSO, Use the normal login page instead.
 
         // If $SESSION->wantsurl is empty and we have a 'Referer:' header, the login
@@ -1852,9 +1852,9 @@ class auth_plugin_ldap extends auth_plugin_base {
 
     /**
      * To be called from a page running under NTLM's
-     * "Integrated Windows Authentication". 
+     * "Integrated Windows Authentication".
      *
-     * If successful, it will set a special "cookie" (not an HTTP cookie!) 
+     * If successful, it will set a special "cookie" (not an HTTP cookie!)
      * in cache_flags under the "auth/ldap/ntlmsess" "plugin" and return true.
      * The "cookie" will be picked up by ntlmsso_finish() to complete the
      * process.
@@ -1862,7 +1862,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * On failure it will return false for the caller to display an appropriate
      * error message (probably saying that Integrated Windows Auth isn't enabled!)
      *
-     * NOTE that this code will execute under the OS user credentials, 
+     * NOTE that this code will execute under the OS user credentials,
      * so we MUST avoid dealing with files -- such as session files.
      * (The caller should define('NO_MOODLE_COOKIES', true) before including config.php)
      *
@@ -1886,13 +1886,13 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
     /**
-     * Find the session set by ntlmsso_magic(), validate it and 
+     * Find the session set by ntlmsso_magic(), validate it and
      * call authenticate_user_login() to authenticate the user through
      * the auth machinery.
-     * 
+     *
      * It is complemented by a similar check in user_login().
-     * 
-     * If it succeeds, it never returns. 
+     *
+     * If it succeeds, it never returns.
      *
      */
     function ntlmsso_finish() {
@@ -1932,7 +1932,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
         // Should never reach here.
         return false;
-    }    
+    }
 
     /**
      * Sync roles for this user
@@ -2236,4 +2236,4 @@ class auth_plugin_ldap extends auth_plugin_base {
 
 }
 
-?>
+

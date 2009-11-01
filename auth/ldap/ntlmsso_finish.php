@@ -31,6 +31,6 @@ if (!$authplugin->ntlmsso_finish()) {
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);
     echo $OUTPUT->header();
-    redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1', 
+    redirect($CFG->httpswwwroot . '/login/index.php?authldap_skipntlmsso=1',
              get_string('ntlmsso_failed','auth_ldap'), 3);
 }

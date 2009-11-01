@@ -46,4 +46,4 @@ if (empty($url)) {
 }
 redirect($url);
 
-?>
+

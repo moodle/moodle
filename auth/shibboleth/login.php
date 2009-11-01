@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once($CFG->dirroot."/auth/shibboleth/auth.php");
-    
+
     //initialize variables
     $errormsg = '';
 
@@ -37,7 +37,7 @@ httpsrequired();
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
 
-    if (get_moodle_cookie() == '') {   
+    if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies
     }
 
@@ -49,13 +49,13 @@ httpsrequired();
 
     // Set SAML domain cookie
     $config = get_config('auth/shibboleth');
-    
+
 
     $IdPs = get_idp_list($config->organization_selection);
     if (isset($_POST['idp']) && isset($IdPs[$_POST['idp']])){
         $selectedIdP = $_POST['idp'];
         set_saml_cookie($selectedIdP);
-        
+
         // Redirect to SessionInitiator with entityID as argument
         if (isset($IdPs[$selectedIdP][1]) && !empty($IdPs[$selectedIdP][1])){
             // For Shibbolet 1.x Service Providers
@@ -83,9 +83,9 @@ httpsrequired();
     $PAGE->set_heading($site->fullname);
     $PAGE->set_focuscontrol('idp');
     $PAGE->set_headingmenu('<div class="langmenu">'.$langmenu.'</div>');
-    
+
     echo $OUTPUT->header();
     include("index_form.html");
     echo $OUTPUT->footer();
 
-?>
+

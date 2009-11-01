@@ -121,4 +121,4 @@ class auth_plugin_none extends auth_plugin_base {
 
 }
 
-?>
+

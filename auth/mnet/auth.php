@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  * @author Martin Dougiamas
@@ -874,7 +874,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             unset($logEntryObj->username);
 
             $logEntryObj = $this->trim_logline($logEntryObj);
-            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);           
+            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);
 
             if ($insertok) {
                 $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
@@ -1349,5 +1349,3 @@ class auth_plugin_mnet extends auth_plugin_base {
 
 
 }
-
-?>

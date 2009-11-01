@@ -10,8 +10,8 @@ if ($show_instructions) {
 <div class="loginbox clearfix <?php echo $columns ?>">
   <div class="loginpanel">
     <!--<h2><?php print_string("returningtosite") ?></h2>-->
-    
-    <h2><?php 
+
+    <h2><?php
         if (isset($config->login_name) && !empty($config->login_name)){
             echo $config->login_name;
         } else {
@@ -31,7 +31,7 @@ if ($show_instructions) {
           <div class="guestsub">
           <p><?php print_string("auth_shibboleth_select_organization", "auth_shibboleth"); ?></p>
             <form action="login.php" method="post" id="guestlogin">
-            <select name="idp"> 
+            <select name="idp">
                 <option value="-" ><?php print_string("auth_shibboleth_select_member", "auth_shibboleth"); ?></option>
                 <?php
                     print_idp_list();
@@ -39,7 +39,7 @@ if ($show_instructions) {
             </select><p><input type="submit" value="<?php print_string("select"); ?>" accesskey="s" /></p>
             </form>
             <p>
-            <?php 
+            <?php
                 print_string("auth_shibboleth_contact_administrator", "auth_shibboleth");
                 echo '<a href="mailto:'.get_admin()->email.'"> Moodle Administrator</a>.';
             ?>
@@ -70,7 +70,7 @@ if ($show_instructions) {
     <div class="signuppanel">
       <h2><?php print_string("firsttime") ?></h2>
       <div class="subcontent">
-<?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons 
+<?php     if (is_enabled_auth('none')) { // instructions override the rest for security reasons
               print_string("loginstepsnone");
           } else if ($CFG->registerauth == 'email') {
               if (!empty($CFG->auth_instructions)) {

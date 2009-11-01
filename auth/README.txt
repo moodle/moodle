@@ -120,7 +120,7 @@ They contain the same functions that were previously in each plugin's lib.php fi
 but refactored to become class methods, and tweaked to reference the plugin's instantiated
 config to get at the settings, rather than the global $CFG variable.
 
-When creating new plugins you can either extend the abstract auth_plugin_base class 
+When creating new plugins you can either extend the abstract auth_plugin_base class
 (defined in lib/authlib.php) or create a new one and implement all methods from
 auth_plugin_base.
 

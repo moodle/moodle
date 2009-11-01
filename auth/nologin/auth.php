@@ -74,4 +74,4 @@ class auth_plugin_nologin extends auth_plugin_base {
 
 }
 
-?>
+

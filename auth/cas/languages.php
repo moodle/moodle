@@ -1,7 +1,5 @@
 <?PHP
 
-// version $Id$
-
 // List of CAS langages.
 
 // You can add langages in /CAS/langage.
@@ -13,5 +11,3 @@ $CASLANGUAGES = array (
 "english" => "English",
 
 "french" => "French");
-
-?>

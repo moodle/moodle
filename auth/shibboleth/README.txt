@@ -21,9 +21,9 @@ Changes:
             attributes on request of Markus Hagman
 - 11. 2007: Integrated WAYF Service in Moodle
 - 12. 2008: Shibboleth 2.x and Single Logout support added
-- 1.  2008: Added logout hook and moved Shibboleth config strings to utf8 auth 
+- 1.  2008: Added logout hook and moved Shibboleth config strings to utf8 auth
             language files.
-- 3.  2009: Added various improvements and bug fixes reported by Ina Müller from
+- 3.  2009: Added various improvements and bug fixes reported by Ina Mï¿½ller from
             university Tuebingen and Peter Ellis of University of Washington
 - 4.  2009: Added another requirement for logout regarding the call back script
 - 6.  2009: Changed handler URL when integrated Discovery Service is used
@@ -47,9 +47,9 @@ Moodle Configuration with Dual login
    with something that fits your needs, e.g. 'require affiliation student'.
 
    For IIS you have protect the auth/shibboleth directory directly in the
-   RequestMap of the Shibboleth configuration file (shibboleth.xml or 
-   shibboleth2.xml). 
-   
+   RequestMap of the Shibboleth configuration file (shibboleth.xml or
+   shibboleth2.xml).
+
 --
 <Path name="moodle" requireSession="false" >
    <Path name="auth/shibboleth/index.php" requireSession="true" >
@@ -57,14 +57,14 @@ Moodle Configuration with Dual login
           ...
       </AccessControl>
    </Path>
-</Path> 
+</Path>
 --
-   
+
    Also see:
    https://spaces.internet2.edu/display/SHIB2/NativeSPRequestMapper and
    https://spaces.internet2.edu/display/SHIB2/NativeSPAccessControl
 
-2. As Moodle admin, go to the 'Administrations >> Users >> Authentication' and 
+2. As Moodle admin, go to the 'Administrations >> Users >> Authentication' and
    click on the the 'Shibboleth' settings.
 
 3. Fill in the fields of the form. The fields 'Username', 'First name',
@@ -79,37 +79,37 @@ Moodle Configuration with Dual login
    #############################################################################
    Shibboleth Attributes needed by Moodle:
    For Moodle to work properly Shibboleth should at least provide the attribute
-   that is used as username in Moodle. It has to be unique for all Shibboleth 
+   that is used as username in Moodle. It has to be unique for all Shibboleth
    Be aware that Moodle converts the username to lowercase. So, the overall
    behaviour of the username will be case-insensitive.
-   All attributes used for moodle must obey a certain length, otherwise Moodle 
-   cuts off the ends. Consult the Moodle documentation for further information 
+   All attributes used for moodle must obey a certain length, otherwise Moodle
+   cuts off the ends. Consult the Moodle documentation for further information
    on the maximum lengths for each field in the user profile.
    #############################################################################
 
 4.a  If you want Shibboleth as your only authentication method with an external
-     Where Are You From (WAYF) Service , set the 'Alternate Login URL' in the 
-     'Common settings' in 'Administrations >> Users >> Authentication Options' 
-     to the the URL of the file 'moodle/auth/shibboleth/index.php'. 
+     Where Are You From (WAYF) Service , set the 'Alternate Login URL' in the
+     'Common settings' in 'Administrations >> Users >> Authentication Options'
+     to the the URL of the file 'moodle/auth/shibboleth/index.php'.
      This will enforce Shibboleth login.
 
 4.b If you want to use the Moodle integrated WAYF service, you have to activate it
-    in the Moodle Shibboleth authentication settings by checking the 
-    'Moodle WAYF Service' checkbox and providing a list of entity IDs in the 
-    'Identity Providers' textarea together with a name and an optional 
-    SessionInitiator URL, which usually is an absolute or relative URL pointing 
-    to the same host. If no SessionInitiator URL is given, the default one 
-    '/Shibboleth.sso' (only works for Shibboleth 1.3.x) will be used. For 
+    in the Moodle Shibboleth authentication settings by checking the
+    'Moodle WAYF Service' checkbox and providing a list of entity IDs in the
+    'Identity Providers' textarea together with a name and an optional
+    SessionInitiator URL, which usually is an absolute or relative URL pointing
+    to the same host. If no SessionInitiator URL is given, the default one
+    '/Shibboleth.sso' (only works for Shibboleth 1.3.x) will be used. For
     Shibboleth 2.x you have to add '/Shibboleth.sso/DS' as a SessionInitiator.
     Also see https://spaces.internet2.edu/display/SHIB/SessionInitiator
     and https://spaces.internet2.edu/display/SHIB2/NativeSPSessionInitiator
 
     Important Note: If you upgraded from a previous version of Moodle and now
                     want to use the integrated WAYF, you have to make sure that
-                    in step 1 only the index.php script in 
-                    moodle/auth/shibboleth/ is protected but *not* the other 
+                    in step 1 only the index.php script in
+                    moodle/auth/shibboleth/ is protected but *not* the other
                     scripts and especially not the login.php script.
-    
+
     If you were using the integrated WAYF alread with Shibboleth 1.3, it could
     be that the integrated WAYF is not working anymore after you updated Moodle.
     The reason is that the implicitly set default SessionInitiator changed in
@@ -120,12 +120,12 @@ Moodle Configuration with Dual login
 
 5.  Save the changes for the 'Shibboleth settings'.
 
-    Important Note: If you went for 4.b (integrated WAYF service), saving the 
+    Important Note: If you went for 4.b (integrated WAYF service), saving the
                     settings will overwrite the Moodle Alternate Login URL
                     using the Moodle web root URL.
 
 6.  If you want to use Shibboleth in addition to another authentication method
-    not using the integrated WAYF service from 4.b, change the 'Instructions' in 
+    not using the integrated WAYF service from 4.b, change the 'Instructions' in
     'Administrations >> Users >> Manage authentication' to contain a link to the
      moodle/auth/shibboleth/index.php file which is protected by
      Shibboleth (see step 1.) and causes the Shibboleth login procedure to start.
@@ -144,7 +144,7 @@ Shibboleth-protected page /auth/shibboleth/index.php. If Shibboleth is the only
 authentication method (see 4.a), this happens automatically when a user selects
 his home organization in the Moodle WAYF service or if the alternate login URL
 is configured to be the protected /auth/shibboleth/index.php
-Otherwise, the user has to click on the link on the dual login page you 
+Otherwise, the user has to click on the link on the dual login page you
 provided in step 5.b.
 
 Moodle basically checks whether the Shibboleth attribute that you mapped
@@ -169,11 +169,11 @@ authentication method unless they have two accounts in Moodle.
 Shibboleth dual login with custom login page
 --------------------------------------------------------------------------------
 You can create a dual login page that better fits your needs. For this
-to work, you have to set up the two authentication methods (e.g. 'Manual 
+to work, you have to set up the two authentication methods (e.g. 'Manual
 Accounts' and 'Shibboleth') and specify an alternate login link to your own dual
 login page. On that page you basically need a link to the Shibboleth-protected
 page ('/auth/shibboleth/index.php') for the Shibboleth login and a
-form that sends 'username' and 'password' to moodle/login/index.php. Set this 
+form that sends 'username' and 'password' to moodle/login/index.php. Set this
 web page then als alternate login page.
 Consult the Moodle documentation for further instructions and requirements.
 
@@ -209,16 +209,16 @@ Example file:
     if ($_SERVER[$this->config->field_map_address] != '')
     {
         // $address contains something like 'SWITCH$Limmatquai 138$CH-8021 Zurich'
-        // We want to split this up to get: 
+        // We want to split this up to get:
         // institution, street, zipcode, city and country
         $address = $_SERVER[$this->config->field_map_address];
         list($institution, $street, $zip_city) = split('\$', $address);
         ereg(' (.+)',$zip_city, $regs);
         $city = $regs[1];
-        
+
         ereg('(.+)-',$zip_city, $regs);
         $country = $regs[1];
-        
+
         $result["address"] = $street;
         $result["city"] = $city;
         $result["country"] = $country;
@@ -233,32 +233,32 @@ Example file:
 How to upgrade your Service Provider to 2.x
 -------------------------------------------------------------------------------
 
-In case your upgrade your Service Provider 1.3.x to 2.x, be aware of the fact 
-that in version 2.0 the default behaviour regarding attribute propagation 
+In case your upgrade your Service Provider 1.3.x to 2.x, be aware of the fact
+that in version 2.0 the default behaviour regarding attribute propagation
 changed.
 While the Service Provider 1.3.x published the Shibboleth attributes to the
-web server environment as HTTP Request headers, the Service Provider 2.x 
+web server environment as HTTP Request headers, the Service Provider 2.x
 publishes attributes as environment variables, which increases the security for
 some platforms.
 However, this change has the effect that the attribute names change.
-E.g. while the surname attribute was published as 'HTTP_SHIB_PERSON_SURNAME' 
+E.g. while the surname attribute was published as 'HTTP_SHIB_PERSON_SURNAME'
 with 1.3.x, this attribute will be available in $_SERVER['Shib-Person-surname']
-or depending on your /etc/shibboleth/attribute-map.xml file just as 
+or depending on your /etc/shibboleth/attribute-map.xml file just as
 $_SERVER['sn'].
 Because Moodle needs to know what Shibboleth attributes it shall map onto which
 Moodle user profile field, one has to make sure the mapping is updated as well
 after the Service Provider upgrade.
 
 ********************************************************************************
-Because you risk locking yourself out of Moodle it is strongly 
+Because you risk locking yourself out of Moodle it is strongly
 recommended to use the following approach when upgrading the Service Provider:
-1. Enable manual authentication before the upgrade. 
-2. Make sure that you have at least one manual account with administration 
+1. Enable manual authentication before the upgrade.
+2. Make sure that you have at least one manual account with administration
    privileges working before upgrading your Service Provider to 2.x.
-3. After the SP upgrade, use this account to log into Moodle and adapt the 
-   attribute mapping in 'Site Administration -> Users -> Shibboleth' to reflect 
+3. After the SP upgrade, use this account to log into Moodle and adapt the
+   attribute mapping in 'Site Administration -> Users -> Shibboleth' to reflect
    the changed attribute names.
-   You find the attribute names in the file /etc/shibboleth/attribute-map.xml 
+   You find the attribute names in the file /etc/shibboleth/attribute-map.xml
    listed as the 'id' value of an attribute definition.
 4. If you are using the integrated WAYF, you may have to set the third parameter
    of each entry to '/Shibboleth.sso/DS'
@@ -268,8 +268,8 @@ recommended to use the following approach when upgrading the Service Provider:
 
 How to add logout support
 --------------------------------------------------------------------------------
-In order make Moodle support Shibboleth logout, one has to make the Shibboleth 
-Service Provider (SP) aware of the Moodle logout capability. Only then the SP 
+In order make Moodle support Shibboleth logout, one has to make the Shibboleth
+Service Provider (SP) aware of the Moodle logout capability. Only then the SP
 can trigger Moodle's front or back channel logout handler.
 
 To make the SP aware of the Moodle logout, you have to add the following to the
@@ -277,17 +277,17 @@ Shibboleth main configuration file shibboleth2.xml (usually in /etc/shibboleth/)
 just before the <MetadataProvider> element.
 
 --
-<Notify 
+<Notify
 	Channel="back"
 	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
 --
 
-Then restart the Shibboleth daemon and check the log file for errors. If there 
-were no errors, you can test the logout feature by accessing Moodle, 
+Then restart the Shibboleth daemon and check the log file for errors. If there
+were no errors, you can test the logout feature by accessing Moodle,
 authenticating via Shibboleth and the access the URL:
-#YOUR_MOODLE_HOSTNAME#/Shibboleth.sso/Logout (assuming you have a standard 
+#YOUR_MOODLE_HOSTNAME#/Shibboleth.sso/Logout (assuming you have a standard
 Shibboleth installation). If everything worked well, you should see a Shibboleth
-page saying that you were successfully logged out and if you go back to Moodle 
+page saying that you were successfully logged out and if you go back to Moodle
 you also should be logged out from Moodle.
 
 Requirements:
@@ -318,14 +318,14 @@ As of October 2009, the Shibboleth Identity Provider 2.1.4 does not yet support
 Single Logout (SLO). Therefore, the single logout feature cannot be used yet
 in a Shibboleth only setup but there may be other SAML2 products that could
 be used as Identity Provider, e.g. SimpleSAML PHP.
-One of the reasons why SLO isn't supported yet is because there aren't many 
-applications yet that were adapted to support front and back channel 
-logout. Hopefully, the Moodle logout helps to motivate the developers to 
+One of the reasons why SLO isn't supported yet is because there aren't many
+applications yet that were adapted to support front and back channel
+logout. Hopefully, the Moodle logout helps to motivate the developers to
 implement SLO. On the other hand, the easiest and safest way to log out
 still is to tell users to quit their web browsers :)
 
-Also see https://spaces.internet2.edu/display/SHIB2/SLOIssues and 
-https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator for some 
+Also see https://spaces.internet2.edu/display/SHIB2/SLOIssues and
+https://spaces.internet2.edu/display/SHIB2/NativeSPLogoutInitiator for some
 background information on this topic.
 
 --------------------------------------------------------------------------------

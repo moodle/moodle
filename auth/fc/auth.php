@@ -236,4 +236,4 @@ class auth_plugin_fc extends auth_plugin_base {
 
 }
 
-?>
+

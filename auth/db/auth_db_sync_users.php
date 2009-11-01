@@ -43,4 +43,3 @@ if (!is_enabled_auth('db')) {
 $dbauth = get_auth_plugin('db');
 $dbauth->sync_users(true);
 
-?>

@@ -76,13 +76,13 @@ class auth_plugin_email extends auth_plugin_base {
     function user_signup($user, $notify=true) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
-        
+
         $user->password = hash_internal_user_password($user->password);
 
         if (! ($user->id = $DB->insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert','auth_email');
         }
-        
+
         /// Save any custom profile field information
         profile_save_data($user);
 
@@ -201,15 +201,15 @@ class auth_plugin_email extends auth_plugin_base {
      */
     function process_config($config) {
         // set to defaults if undefined
-        if (!isset($config->recaptcha)) { 
-            $config->recaptcha = false; 
+        if (!isset($config->recaptcha)) {
+            $config->recaptcha = false;
         }
-        
+
         // save settings
         set_config('recaptcha', $config->recaptcha, 'auth/email');
         return true;
     }
-    
+
     /**
      * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
      * @return bool
@@ -221,4 +221,4 @@ class auth_plugin_email extends auth_plugin_base {
 
 }
 
-?>
+

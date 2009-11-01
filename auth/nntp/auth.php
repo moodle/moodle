@@ -120,4 +120,4 @@ class auth_plugin_nntp extends auth_plugin_base {
 
 }
 
-?>
+
