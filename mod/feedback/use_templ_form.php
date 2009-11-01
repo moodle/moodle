@@ -2,7 +2,6 @@
 /**
 * prints the form to confirm use template
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback

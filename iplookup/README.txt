@@ -21,5 +21,3 @@ marker.gif
   custom made in Inkscape
 
 Petr Skoda (skodak), January 2008  
-
-$Id$

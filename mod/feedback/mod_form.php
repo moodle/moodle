@@ -2,7 +2,6 @@
 /**
 * print the form to add or edit a feedback-instance
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback

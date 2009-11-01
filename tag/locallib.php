@@ -5,7 +5,6 @@ require_once('lib.php');
 /**
  * locallib.php - moodle tag local library - output functions
  *
- * @version: $Id$
  * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  *

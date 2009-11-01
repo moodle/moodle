@@ -2,7 +2,6 @@
 /**
 * prints the form to choose the group you want to analyse
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback

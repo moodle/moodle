@@ -28,7 +28,6 @@
  *
  * Tag set will create tags that need to be created.
  *
- * @version: $Id$
  * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  * @subpackage tag

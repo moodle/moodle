@@ -1,6 +1,3 @@
-README      $Id$
-------
-
 QUICK INSTALL
 =============
 

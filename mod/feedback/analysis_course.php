@@ -3,7 +3,6 @@
 /**
 * shows an analysed view of a feedback on the mainsite
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback

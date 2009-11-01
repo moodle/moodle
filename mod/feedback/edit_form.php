@@ -2,7 +2,6 @@
 /**
 * prints the forms to choose an item-typ to create items and to choose a template to use
 *
-* @version $Id$
 * @author Andreas Grabs
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package feedback
