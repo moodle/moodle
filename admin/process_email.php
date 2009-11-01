@@ -1,5 +1,5 @@
 #!/usr/bin/php -f
-<?php // $Id$
+<?php
 
 //error_reporting(0);
 //ini_set('display_errors',0);
@@ -77,4 +77,4 @@ fclose($fd);
 
 
 
-?>
+

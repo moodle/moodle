@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 if (!isset($CFG)) {
 
@@ -153,4 +153,4 @@ function online_assignment_cleanup($output=false) {
     echo '</center>';
 }
 
-?>
+

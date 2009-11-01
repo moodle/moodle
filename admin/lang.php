@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
     /**
     * Display the admin/language menu and process strings translation.
     *
@@ -1382,4 +1382,4 @@ function lang_help_save_file($helproot, $file, $content) {
 }
 
 
-?>
+

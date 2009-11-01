@@ -174,4 +174,4 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
     }
 }
 
-?>
+

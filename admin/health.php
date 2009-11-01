@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     ob_start(); //for whitespace test
     require_once('../config.php');
@@ -815,4 +815,4 @@ TODO:
 
 */
 
-?>
+

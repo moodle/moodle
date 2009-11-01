@@ -1,6 +1,6 @@
 <?php
 /** This expects the output from a command like
- * clamscan -r --infected --no-summary <files> 2>&1 | php -d error_log=/path/to/log thisfile.php 
+ * clamscan -r --infected --no-summary <files> 2>&1 | php -d error_log=/path/to/log thisfile.php
  * also it's important that the output of clamscan prints the FULL PATH to each infected file, so use absolute paths for area to scan
  * also it should be run as root, or whatever the webserver runs as so that it has the right permissions in the quarantine dir etc.
  * php -d error_log=/path/to/log thisfile.php will override the default error log for php cli, which is stderr, so if you want this script to just print stuff out, use php thisfile.php instead.
@@ -36,7 +36,7 @@ while(!feof($fd)) {
     }
     $action = clam_handle_infected_file($file,$log->userid,true);
     clam_replace_infected_file($file);
-    
+
     $user = $DB->get_record("user", array("id"=>$log->userid));
     $course = $DB->get_record("course", array("id"=>$log->course));
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
@@ -86,13 +86,13 @@ function notify_admins($user,$subject,$a) {
         $eventdata->fullmessage       = $body;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			    
+        $eventdata->smallmessage      = '';			
         events_trigger('message_send', $eventdata);
     }
 }
 
 function notify_admins_unknown($file,$a) {
-    
+
     global $site;
 
     $admins = get_admins();

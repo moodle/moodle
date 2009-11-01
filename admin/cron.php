@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /// This script looks through all the module directories for cron.php files
 /// and runs them.  These files can contain cleanup functions, email functions
@@ -591,4 +591,4 @@
         echo "</xmp>";
     }
 
-?>
+

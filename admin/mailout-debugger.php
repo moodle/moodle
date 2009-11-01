@@ -74,4 +74,4 @@ function mdie($msg='', $errorcode=1) {
     exit($errorcode);
 }
 
-?>
+

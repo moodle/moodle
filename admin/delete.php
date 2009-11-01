@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
 
 // Deletes the moodledata directory, COMPLETELY!!
 // BE VERY CAREFUL USING THIS!
@@ -83,4 +83,4 @@ function delete_subdirectories($rootdir) {
     closedir($dir);
 }
 
-?>
+
