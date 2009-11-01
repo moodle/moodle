@@ -126,5 +126,3 @@
         }
     }
     echo $OUTPUT->footer();
-
-?>

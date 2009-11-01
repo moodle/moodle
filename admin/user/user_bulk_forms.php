@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/datalib.php');
@@ -108,4 +108,3 @@ class user_bulk_form extends moodleform {
         $renderer->setGroupElementTemplate($template, 'usersgrp');
     }
 }
-?>

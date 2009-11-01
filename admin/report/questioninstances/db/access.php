@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -35,5 +35,3 @@ $report_questioninstances_capabilities = array(
         'clonepermissionsfrom' => 'moodle/site:config',
     )
 );
-
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
 * script for bulk user multy enrol operations
 */

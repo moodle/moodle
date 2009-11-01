@@ -126,5 +126,3 @@ class service_user_selector extends user_selector_base {
         return $options;
     }
 }
-
-?>

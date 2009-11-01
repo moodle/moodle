@@ -149,5 +149,3 @@ if (is_null($path) || !$codecoverage) {
 
 // Footer.
 echo $OUTPUT->footer();
-
-?>

@@ -227,4 +227,3 @@ class ExHtmlReporter extends HtmlReporter {
         return get_string($identifier, 'simpletest', $a);
     }
 }
-?>

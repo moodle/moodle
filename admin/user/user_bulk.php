@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -82,5 +82,3 @@ $user_bulk_form->display();
 $action_form->display();
 
 echo $OUTPUT->footer();
-
-?>

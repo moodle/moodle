@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -38,5 +38,3 @@ $report_courseoverview_capabilities = array(
         'clonepermissionsfrom' => 'moodle/site:viewreports',
     )
 );
-
-?>

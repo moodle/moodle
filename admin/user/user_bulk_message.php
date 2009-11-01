@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/message/lib.php');
@@ -69,4 +69,3 @@ if ($msgform->is_cancelled()) {
 admin_externalpage_print_header();
 $msgform->display();
 echo $OUTPUT->footer();
-?>

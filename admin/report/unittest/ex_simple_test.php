@@ -213,4 +213,3 @@ class BadAutoGroupTest extends BadTest { }
 class AutoGroupTestNotice extends Notice { }
 
 class FindFileNotice extends Notice { }
-?>

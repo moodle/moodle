@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -36,5 +36,3 @@ $report_unittest_capabilities = array(
         'clonepermissionsfrom' => 'moodle/site:config',
     )
 );
-
-?>

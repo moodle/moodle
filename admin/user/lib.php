@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->dirroot.'/user/filters/lib.php');
 
@@ -48,6 +48,3 @@ function get_selection_data($ufiltering) {
 
     return $userlist;
 }
-
-
-?>

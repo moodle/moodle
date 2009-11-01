@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -79,4 +79,3 @@ echo $OUTPUT->table($table);
 echo $OUTPUT->continue_button($return);
 
 echo $OUTPUT->footer();
-?>

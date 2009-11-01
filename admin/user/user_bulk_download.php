@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 /**
 * script for downloading of user lists
 */
@@ -179,5 +179,3 @@ function user_download_csv($fields) {
     }
     die;
 }
-
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * For a given capability, show what permission it has for every role, and
  * everywhere that it is overridden.
@@ -223,5 +223,3 @@ function print_report_tree($contextid, $contexts, $allroles) {
         echo '</ul>';
     }
 }
-
-?>

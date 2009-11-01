@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 /**
 * script for bulk user delete operations
 */
@@ -50,4 +50,3 @@ if ($confirm and confirm_sesskey()) {
 }
 
 echo $OUTPUT->footer();
-?>

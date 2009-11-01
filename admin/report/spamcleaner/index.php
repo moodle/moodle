@@ -290,5 +290,3 @@ function print_spamcleaner_javascript()  {
 }
 
 echo $OUTPUT->footer();
-
-?>

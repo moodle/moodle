@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -17,4 +17,3 @@ class user_message_form extends moodleform {
         $this->add_action_buttons();
     }
 }
-?>

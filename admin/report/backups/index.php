@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // index.php - scheduled backup logs
 
     require_once('../../../config.php');
@@ -131,4 +131,3 @@
 
     echo $OUTPUT->footer();
 
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Run database functional tests.
  * @package SimpleTestEx
@@ -148,5 +148,3 @@ if (!data_submitted() || !$codecoverage) {
 
 // Footer.
 echo $OUTPUT->footer();
-
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * For a given question type, list the number of
  *
@@ -129,4 +129,3 @@ if ($requestedqtype) {
 
 // Footer.
 echo $OUTPUT->footer();
-?>

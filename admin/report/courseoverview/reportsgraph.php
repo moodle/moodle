@@ -55,5 +55,3 @@
     $graph->y_format['bar1'] = array('colour' => 'blue','bar' => 'fill','legend' => $param->{$param->graphline});
 
     $graph->draw_stack();
-
-?>
