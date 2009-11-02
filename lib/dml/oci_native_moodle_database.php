@@ -41,8 +41,7 @@ class oci_native_moodle_database extends moodle_database {
     private $temptables; // Control existing temptables (oci_native_moodle_temptables object)
 
     private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
-    private $commit_status = OCI_COMMIT_ON_SUCCESS; // Autocommit ON by default. Switching to OFF (OCI_DEFAULT)
-                                                    // when playing with transactions
+    private $commit_status = null;   // default value initialised in connect method, we need the driver to be present
 
     private $last_error_reporting; // To handle oci driver default verbosity
     private $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming
@@ -168,6 +167,12 @@ class oci_native_moodle_database extends moodle_database {
         if ($driverstatus !== true) {
             throw new dml_exception('dbdriverproblem', $driverstatus);
         }
+
+        // Autocommit ON by default.
+        // Switching to OFF (OCI_DEFAULT), when playing with transactions
+        // please note this thing is not defined if oracle driver not present in PHP
+        // which means it can not be used as default value of object property!
+        $this->commit_status = OCI_COMMIT_ON_SUCCESS;
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
         unset($this->dboptions['dbsocket']);
