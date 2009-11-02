@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     // check to see if the cancel button was pushed
     if (optional_param('cancel', '', PARAM_ALPHA)) {

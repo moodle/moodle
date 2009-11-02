@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     require_once($CFG->dirroot.'/mod/lesson/pagelib.php');
     require_once($CFG->libdir.'/blocklib.php');
