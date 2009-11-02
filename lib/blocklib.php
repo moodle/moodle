@@ -959,7 +959,7 @@ class block_manager {
             return false;
         }
 
-        confirm_sesskey();
+        require_sesskey();
 
         if (!$this->page->user_can_edit_blocks()) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
@@ -987,7 +987,7 @@ class block_manager {
             return false;
         }
 
-        confirm_sesskey();
+        require_sesskey();
 
         $block = $this->page->blocks->find_instance($blockid);
 
@@ -1016,7 +1016,7 @@ class block_manager {
             return false;
         }
 
-        confirm_sesskey();
+        require_sesskey();
 
         $block = $this->page->blocks->find_instance($blockid);
 
@@ -1046,7 +1046,7 @@ class block_manager {
             return false;
         }
 
-        confirm_sesskey();
+        require_sesskey();
         require_once($CFG->dirroot . '/blocks/edit_form.php');
 
         $block = $this->find_instance($blockid);
@@ -1169,7 +1169,7 @@ class block_manager {
             return false;
         }
 
-        confirm_sesskey();
+        require_sesskey();
 
         $block = $this->find_instance($blockid);
 
