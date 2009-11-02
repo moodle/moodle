@@ -47,7 +47,7 @@
 
     $streditingcategories = get_string('editcategories', 'quiz');
     if ($param->left || $param->right || $param->moveup || $param->movedown|| $param->moveupcontext || $param->movedowncontext){
-        confirm_sesskey();
+        require_sesskey();
         foreach ($qcobject->editlists as $list){
             //processing of these actions is handled in the method where appropriate and page redirects.
             $list->process_actions($param->left, $param->right, $param->moveup, $param->movedown,
