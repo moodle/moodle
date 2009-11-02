@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
 

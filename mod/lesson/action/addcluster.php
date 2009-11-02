@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     // first get the preceeding page
     // if $pageid = 0, then we are inserting a new page at the beginning of the lesson

@@ -70,7 +70,7 @@
             }
             break;
         case 'grade':  // Grading form - get the necessary data
-            confirm_sesskey();
+            require_sesskey();
 
             $attemptid = required_param('attemptid', PARAM_INT);
 
@@ -142,7 +142,7 @@
             }
             break;
         case 'email': // Sending an email(s) to a single user or all
-            confirm_sesskey();
+            require_sesskey();
 
             // Get our users (could be singular)
             if ($userid = optional_param('userid', 0, PARAM_INT)) {

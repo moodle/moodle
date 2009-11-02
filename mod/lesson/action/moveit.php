@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     $pageid = required_param('pageid', PARAM_INT); //  page to move
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
