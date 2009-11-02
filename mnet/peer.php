@@ -99,42 +99,22 @@ class mnet_peer {
     }
 
     /*
-     * Process request to delete mnet peer
-     * This includes deleting current sessions, and rpc2host records.
-     * If the peer has been actively used, we mark the peer as deleted,
-     * otherwise it is actually deleted
+     * Delete mnet peer
+     * the peer is marked as deleted in the database
+     * we delete current sessions.
      * @return bool - success
      */
     function delete() {
         global $DB;
-        $markasdeleted = false;
 
         if ($this->deleted) {
             return true;
         }
 
-        // If users have sso'd from this mnet peer, need to retain the peer info
-        $numusers = $DB->count_records('user', array('mnethostid'=>$this->id));
-        if ($numusers > 0) {
-            $markasdeleted = true;
-        }
-
-        //If there are items in the log, need to retain peer info
-        $numactions = $DB->count_records('mnet_log', array('hostid'=>$this->id));
-        if ($numactions > 0) {
-            $markasdeleted = true;
-        }
-
-        $obj = $DB->delete_records('mnet_rpc2host', array('host_id'=>$this->id));
-
         $this->delete_all_sessions();
 
-        if ($markasdeleted) {
-            $this->deleted = 1;
-            return $this->commit();
-        } else {
-            return $DB->delete_records('mnet_host', array("id"=>$this->id));
-        }
+        $this->deleted = 1;
+        return $this->commit();
     }
 
     function count_live_sessions() {
