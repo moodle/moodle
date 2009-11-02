@@ -90,7 +90,10 @@
             uninstall_plugin('mod', $delete);
             $a->module = $strmodulename;
             $a->directory = "$CFG->dirroot/mod/$delete";
-            notice(get_string("moduledeletefiles", "", $a), "modules.php");
+            echo $OUTPUT->notification(get_string("moduledeletefiles", "", $a), 'notifysuccess');
+            echo $OUTPUT->continue_button("modules.php");
+            echo $OUTPUT->footer();
+            exit;
         }
     }
 
