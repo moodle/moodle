@@ -115,7 +115,7 @@ class quiz_report extends quiz_default_report {
         echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
         if ($data = data_submitted()) {  // post data submitted, process it
-            confirm_sesskey();
+            require_sesskey();
 
             // now go through all of the responses and save them.
             $allok = true;
