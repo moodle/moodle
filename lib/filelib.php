@@ -600,7 +600,7 @@ function file_get_draft_area_files($draftitemid, $filepath = '/') {
 function file_get_submitted_draft_itemid($elname) {
     $param = optional_param($elname, 0, PARAM_INT);
     if ($param) {
-        confirm_sesskey();
+        require_sesskey();
     }
     if (is_array($param)) {
         if (!empty($param['itemid'])) {
