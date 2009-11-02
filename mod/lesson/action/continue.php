@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-    confirm_sesskey();
+    require_sesskey();
 
     // left menu code
     // check to see if the user can see the left menu
