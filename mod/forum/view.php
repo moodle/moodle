@@ -72,6 +72,12 @@
 
 
 /// Print header.
+    /// Add ajax-related libs for ratings if required  MDL-20119
+    $PAGE->requires->yui_lib('event');
+    $PAGE->requires->yui_lib('connection');
+    $PAGE->requires->yui_lib('json');
+    $PAGE->requires->js('mod/forum/rate_ajax.js');
+
     $PAGE->set_title(format_string($forum->name));
     $PAGE->set_heading(format_string($course->fullname));
     echo $OUTPUT->header();
