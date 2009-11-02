@@ -1831,6 +1831,16 @@ function confirm_sesskey($sesskey=NULL) {
 }
 
 /**
+ * Check the session key using {@link confirm_sesskey()},
+ * and cause a fatal error if it does not match.
+ */
+function require_sesskey() {
+    if (!confirm_sesskey()) {
+        print_error('invalidsesskey');
+    }
+}
+
+/**
  * Setup all global $CFG course variables, set locale and also themes
  * This function can be used on pages that do not require login instead of require_login()
  *
