@@ -70,5 +70,8 @@ class repository_upload extends repository {
     public function get_name(){
         return get_string('repositoryname', 'repository_upload');
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
+    }
 }
 

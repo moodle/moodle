@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
 /// The Web service script that is called from the filepicker front end
 
@@ -104,7 +104,7 @@
         require_once($CFG->dirroot.'/repository/'.$type.'/repository.class.php');
         $classname = 'repository_' . $type;
         try {
-            $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'client_id'=>$client_id));
+            $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type, 'client_id'=>$client_id));
         } catch (repository_exception $e){
             $err->e = $e->getMessage();
             die(json_encode($err));
@@ -200,41 +200,34 @@ EOD;
             break;
         case 'download':
             try {
-                // $file is the specific information of file, such as url, or meta information
-                // $title is the file name in file pool
-                // $itemid and $save_path will be used by local plugin only
-                if ($env == 'texturl') {
-                    $CFG->repositoryuseexternallink = true;
+                if ($env == 'url' /* TODO: or request_external_url by user */) {
+                    if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $file)) {
+                        die(json_encode(array('type'=>'link', 'client_id'=>$client_id,
+                            'url'=>$file, 'id'=>$file, 'file'=>$file)));
+                    } else {
+                        $err->e = get_string('invalidurl');
+                        die(json_encode($err));
+                    }
                 }
-                $filepath = $repo->get_file($file, $title, $itemid, $save_path);
-                if ($filepath === false) {
-                    $err->e = get_string('cannotdownload', 'repository');
-                    die(json_encode($err));
-                }
-                if (empty($itemid)) {
-                    $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
-                }
-                if (is_array($filepath)) {
-                    // file api don't have real file path, so we need more file api specific info for "local" plugin
-                    // only used by local plugin
-                    $fileinfo = $filepath;
+                // we have two special repoisitory type need to deal with
+                if ($repo->options['type'] == 'local' or $repo->options['type'] == 'draft') {
+                    $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
                     $info = array();
                     $info['client_id'] = $client_id;
                     $info['file'] = $fileinfo['title'];
                     $info['id'] = $itemid;
                     $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
-                    echo json_encode($info);
-                } else if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $filepath)) {
-                    // process external link
-                    $url = $filepath;
-                    echo json_encode(array('type'=>'link', 'client_id'=>$client_id, 'url'=>$url, 'id'=>$url, 'file'=>$url));
-                } else {
-                    // used by most repository plugins
-                    // move downloaded file to file pool
-                    $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
-                    $info['client_id'] = $client_id;
-                    echo json_encode($info);
+                    die(json_encode($info));
                 }
+
+                $filepath = $repo->get_file($file, $title, $itemid, $save_path);
+                if ($filepath === false) {
+                    $err->e = get_string('cannotdownload', 'repository');
+                    die(json_encode($err));
+                }
+                $info = repository::move_to_filepool($filepath, $title, $itemid, $save_path);
+                $info['client_id'] = $client_id;
+                echo json_encode($info);
             } catch (repository_exception $e){
                 $err->e = $e->getMessage();
                 die(json_encode($err));

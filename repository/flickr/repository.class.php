@@ -286,4 +286,7 @@ class repository_flickr extends repository {
     public function supported_filetypes() {
         return array('web_image');
     }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
 }

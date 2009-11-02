@@ -142,4 +142,7 @@ class repository_filesystem extends repository {
         }
         $mform->addElement('static', null, '',  get_string('information','repository_filesystem'));
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
+    }
 }

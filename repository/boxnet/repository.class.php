@@ -242,5 +242,8 @@ class repository_boxnet extends repository {
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL | FILE_EXTERNAL;
+    }
 }
 

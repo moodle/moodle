@@ -102,10 +102,13 @@ class repository_googledocs extends repository {
         $gdocs->download_file($url, $fp);
 
         return $path;
-     }
+    }
 
-     public function supported_filetypes() {
-        return array('document');
-     }
+    public function supported_filetypes() {
+       return array('document');
+    }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
+    }
 }
 //Icon from: http://www.iconspedia.com/icon/google-2706.html

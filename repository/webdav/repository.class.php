@@ -144,4 +144,7 @@ class repository_webdav extends repository {
         $mform->addElement('text', 'webdav_user', get_string('webdav_user', 'repository_webdav'), array('size' => '40'));
         $mform->addElement('text', 'webdav_password', get_string('webdav_password', 'repository_webdav'), array('size' => '40'));
     }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
 }

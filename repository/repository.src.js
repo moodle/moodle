@@ -10,18 +10,32 @@
  * repo = new repository_client();
  */
 
-var id2clientid = {};
-var id2itemid   = {};
+if (!MOODLE) {
+    var MOODLE = {};
+}
+if (!MOODLE.repository) {
+    MOODLE.repository = {};
+}
 
-var repository_listing = {};
-var cached_client_id = {};
-var file_extensions = {};
+MOODLE.repository.listing = {};
+MOODLE.repository.extensions = {};
+MOODLE.repository.cache = {};
+MOODLE.repository.cache.client_id = {};
+
 /* when selected a file, filename will be cached in this varible */
 var new_filename = '';
 // will be used by login form
 var cached_id;
 var cached_repo_id;
-// repository_client has static functions
+var id2clientid = {};
+var id2itemid   = {};
+
+/**
+ * repository_client is a javascript class, it contains several static 
+ * methods you can call it directly without creating an instance.
+ * If you are going to create a file picker, you need create an instance
+ * repo = new repository_client();
+ */
 var repository_client = (function(){
     // private static field
     var version = '2.0';
@@ -51,6 +65,9 @@ var repository_client = (function(){
             el.className = 'file-picker';
             this.client_id = client_id;
             document.body.appendChild(el);
+
+            MOODLE.repository.api = moodle_cfg.wwwroot+'/repository/repository_ajax.php';
+
             this.filepicker = new YAHOO.widget.Panel('file-picker-' + client_id, {
                 draggable: true,
                 close: true,
@@ -134,7 +151,7 @@ var repository_client = (function(){
                 params['client_id']=this.client_id;
                 repository_client.loading(this.client_id, 'load');
                 var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    moodle_cfg.wwwroot+'/repository/ws.php?action=gsearch', this.search_cb, repository_client.postdata(params));
+                    MOODLE.repository.api+'?action=gsearch', this.search_cb, repository_client.postdata(params));
             }
             search_btn.on('contentReady', function() {
                 search_btn.on('click', this.fnSearch, this.input_keyword);
@@ -173,9 +190,9 @@ var repository_client = (function(){
             var container = new YAHOO.util.Element('repo-list-'+this.client_id);
             container.set('innerHTML', '');
             container.on('contentReady', function() {
-                this.init_search();
-                for(var i in repository_listing[this.client_id]) {
-                    var repo = repository_listing[this.client_id][i];
+                this.init_search();    
+                for(var i in MOODLE.repository.listing[this.client_id]) {
+                    var repo = MOODLE.repository.listing[this.client_id][i];
                     var support = false;
                     if(this.env=='editor' && this.accepted_types != '*'){
                         if(repo.supported_types!='*'){
@@ -210,7 +227,7 @@ var repository_client = (function(){
                             var client_id = result[1];
                             var repo_id = result[2];
                             // high light currect selected repository
-                            for(var cc in repository_listing[client_id]){
+                            for(var cc in MOODLE.repository.listing[client_id]){
                                 var tmp_id = 'repo-call-'+client_id+'-'+ cc;
                                 var el = document.getElementById(tmp_id);
                                 if(el){
@@ -260,7 +277,7 @@ repository_client.req = function(client_id, id, path, page) {
         params['page']=page;
     }
     params['accepted_types'] = r.accepted_types;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', moodle_cfg.wwwroot+'/repository/ws.php?action=list', this.req_cb, this.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', MOODLE.repository.api+'?action=list', this.req_cb, this.postdata(params));
 }
 
 repository_client.req_cb = {
@@ -319,7 +336,7 @@ repository_client.req_search_results = function(client_id, id, path, page) {
         params['page']=page;
     }
     params['accepted_types'] = r.accepted_types;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', moodle_cfg.wwwroot+'/repository/ws.php?action=search', this.req_cb, this.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', MOODLE.repository.api+'?action=search', this.req_cb, this.postdata(params));
 }
 
 repository_client.print_login = function(id, data) {
@@ -421,7 +438,7 @@ repository_client.login = function(id, repo_id) {
     params['accepted_types'] = this.fp[id].accepted_types;
     this.loading(id, 'load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-            moodle_cfg.wwwroot+'/repository/ws.php?action=sign', this.req_cb, this.postdata(params));
+            MOODLE.repository.api+'?action=sign', this.req_cb, this.postdata(params));
 }
 repository_client.login_keypress = function(evt,action) {
     evt = (evt) ? evt : ((window.event) ? window.event : "")
@@ -465,7 +482,7 @@ repository_client.search = function(id, repo_id) {
     params['accepted_types'] = this.fp[id].accepted_types;
     this.loading(id, 'load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-            moodle_cfg.wwwroot+'/repository/ws.php?action=search', this.req_cb, this.postdata(params));
+            MOODLE.repository.api+'?action=search', this.req_cb, this.postdata(params));
 }
 repository_client.loading = function(id, type, name) {
     var panel = new YAHOO.util.Element('panel-'+id);
@@ -529,7 +546,7 @@ repository_client.view_as_list = function(client_id, data) {
         params['client_id']=node.client_id;
         params['accepted_types']=fp.accepted_types;
         var trans = YAHOO.util.Connect.asyncRequest('POST',
-                moodle_cfg.wwwroot+'/repository/ws.php?action=list',callback,repository_client.postdata(params));
+                MOODLE.repository.api+'?action=list',callback,repository_client.postdata(params));
     }
     tree.dynload.client_id = client_id;
     if(fp.fs.dynload) {
@@ -811,7 +828,7 @@ repository_client.view_as_icons = function(client_id, data) {
                     params['itemid'] = this.itemid;
                     params['title'] = this.title;
                     var trans = YAHOO.util.Connect.asyncRequest('POST',
-                        moodle_cfg.wwwroot+'/repository/ws.php?action=delete',
+                        MOODLE.repository.api+'?action=delete',
                         this,
                         repository_client.postdata(params)
                         );
@@ -842,7 +859,7 @@ repository_client.view_as_icons = function(client_id, data) {
                         params['client_id'] = client_id;
                         repository_client.loading(client_id, 'load');
                         var trans = YAHOO.util.Connect.asyncRequest('POST',
-                                moodle_cfg.wwwroot+'/repository/ws.php?action=list', repository_client.req_cb, repository_client.postdata(params));
+                                MOODLE.repository.api+'?action=list', repository_client.req_cb, repository_client.postdata(params));
                     }else{
                         repository_client.view_as_icons(client_id, this.fs);
                     }
@@ -931,7 +948,7 @@ repository_client.print_footer = function(client_id) {
             params['client_id']=client_id;
             repository_client.loading(client_id, 'load');
             var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    moodle_cfg.wwwroot+'/repository/ws.php?action=ccache', repository_client.req_cb, repository_client.postdata(params));
+                    MOODLE.repository.api+'?action=ccache', repository_client.req_cb, repository_client.postdata(params));
         }
     }
     if(fs.manage) {
@@ -977,17 +994,17 @@ repository_client.postdata = function(obj) {
 
 repository_client.popup = function(client_id, url) {
     window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
-    cached_client_id = client_id;
+    MOODLE.repository.cache.client_id = client_id;
     return true;
 }
 function repository_callback(id) {
-    repository_client.req(cached_client_id, id, '');
+    repository_client.req(MOODLE.repository.cache.client_id, id, '');
 }
 repository_client.logout = function(client_id, repo_id) {
     var params = [];
     params['repo_id'] = repo_id;
     params['client_id'] = client_id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', moodle_cfg.wwwroot+'/repository/ws.php?action=logout',
+    var trans = YAHOO.util.Connect.asyncRequest('POST', MOODLE.repository.api+'?action=logout',
             repository_client.req_cb, repository_client.postdata(params));
 }
 repository_client.download = function(client_id, repo_id) {
@@ -1009,7 +1026,7 @@ repository_client.download = function(client_id, repo_id) {
     params['repo_id']=repo_id;
     params['client_id']=client_id;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-            moodle_cfg.wwwroot+'/repository/ws.php?action=download',
+            MOODLE.repository.api+'?action=download',
             repository_client.download_cb,
             repository_client.postdata(params));
 }
@@ -1096,7 +1113,7 @@ repository_client.upload = function(client_id) {
         YAHOO.util.Connect.setForm(aform, true, true);
 
         var trans = YAHOO.util.Connect.asyncRequest('POST',
-                moodle_cfg.wwwroot+'/repository/ws.php?action=upload&itemid='+fp.itemid
+                MOODLE.repository.api+'?action=upload&itemid='+fp.itemid
                     +'&sesskey='+moodle_cfg.sesskey
                     +'&ctx_id='+fp_config.contextid
                     +'&savepath='+fp.savepath
@@ -1138,7 +1155,7 @@ repository_client.search_form = function(client_id, id) {
     params['ctx_id']=fp_config.contextid;
     params['repo_id']=id;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-            moodle_cfg.wwwroot+'/repository/ws.php?action=searchform',
+            MOODLE.repository.api+'?action=searchform',
             repository_client.search_form_cb,
             repository_client.postdata(params));
 }
@@ -1155,13 +1172,13 @@ success: function(o) {
      el.id = 'fp-search-dlg';
      var dlg_title = document.createElement('DIV');
      dlg_title.className = 'hd';
-     dlg_title.innerHTML = fp_lang.searching+"\"" + repository_listing[data.client_id][fp.fs.repo_id].name + '"';
+     dlg_title.innerHTML = fp_lang.searching+"\"" + MOODLE.repository.listing[data.client_id][fp.fs.repo_id].name + '"';
      var dlg_body = document.createElement('DIV');
      dlg_body.className = 'bd';
      var sform = document.createElement('FORM');
      sform.method = 'POST';
      sform.id = "fp-search-form";
-     sform.action = moodle_cfg.wwwroot+'/repository/ws.php?action=search';
+     sform.action = MOODLE.repository.api+'?action=search';
      sform.innerHTML = data['form'];
      dlg_body.appendChild(sform);
      el.appendChild(dlg_title);
@@ -1173,7 +1190,7 @@ success: function(o) {
          repository_client.loading(client_id, 'load');
          YAHOO.util.Connect.setForm('fp-search-form', false, false);
          this.cancel();
-         var url = moodle_cfg.wwwroot+'/repository/ws.php?action=search&env='+dlg_handler.env
+         var url = MOODLE.repository.api+'?action=search&env='+dlg_handler.env
                 +'&client_id='+client_id;
          var trans = YAHOO.util.Connect.asyncRequest('POST', url,
              repository_client.req_cb);
@@ -1245,9 +1262,9 @@ function open_filepicker(id, params) {
     }
     if(params.filetype) {
         if(params.filetype == 'image') {
-            r.accepted_types = file_extensions.image;
+            r.accepted_types = MOODLE.repository.extensions.image;
         } else if(params.filetype == 'video' || params.filetype== 'media') {
-            r.accepted_types = file_extensions.media;
+            r.accepted_types = MOODLE.repository.extensions.media;
         } else if(params.filetype == 'file') {
             r.accepted_types = '*';
         }

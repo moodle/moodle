@@ -81,4 +81,7 @@ class repository_s3 extends repository {
         $mform->addRule('secret_key', $strrequired, 'required', null, 'client');
         return true;
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
+    }
 }

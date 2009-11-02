@@ -97,6 +97,9 @@ class repository_picasa extends repository {
     public function supported_filetypes() {
         return array('web_image');
     }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
 }
 
 // Icon for this plugin retrieved from http://www.iconspedia.com/icon/picasa-2711.html

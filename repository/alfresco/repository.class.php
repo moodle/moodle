@@ -201,5 +201,8 @@ class repository_alfresco extends repository {
             return true;
         }
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL | FILE_EXTERNAL;
+    }
 }
 

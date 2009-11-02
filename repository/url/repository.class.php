@@ -137,5 +137,8 @@ EOD;
     public function get_name(){
         return get_string('repositoryname', 'repository_url');;
     }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
 }
 

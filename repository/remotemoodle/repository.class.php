@@ -320,5 +320,8 @@ class repository_remotemoodle extends repository {
         ///the administrator just need to set a peer
         return array('peer');
     }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
+    }
 }
 

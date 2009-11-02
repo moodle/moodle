@@ -82,7 +82,7 @@ class repository_draft extends repository {
      * @param string $itemid
      * @return string the location of the file
      */
-    public function get_file($fid, $title = '', $itemid = '') {
+    public function move_to_draft($fid, $title = '', $itemid = '') {
         global $USER;
         $ret = array();
         $browser = get_file_browser();
@@ -99,6 +99,9 @@ class repository_draft extends repository {
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_draft');;
+    }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
     }
 }
 

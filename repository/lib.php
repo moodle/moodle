@@ -40,6 +40,11 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
+
+define('FILE_EXTERNAL', 1);
+define('FILE_INTERNAL', 2);
+
+
 // File picker javascript code
 
 /**
@@ -398,7 +403,7 @@ class repository_type {
         global $DB;
 
         //delete all instances of this type
-        $instances = repository::get_instances(array(),null,false,$this->_typename);
+        $instances = repository::get_instances(array(), null, false, $this->_typename);
         foreach ($instances as $instance) {
             $instance->delete();
         }
@@ -444,6 +449,7 @@ abstract class repository {
     public $context;
     public $options;
     public $readonly;
+    public $returntypes;
 
     /**
      * Return a type for a given type name.
@@ -569,7 +575,7 @@ abstract class repository {
      * @param string $type a type name to retrieve
      * @return array repository instances
      */
-    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returnvalue = '*') {
+    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returntypes = 3) {
         global $DB, $CFG, $USER;
 
         $params = array();
@@ -637,13 +643,12 @@ abstract class repository {
                         }
                     }
                 }
-                if ($returnvalue !== '*' and $repository->supported_return_value() !== '*') {
-                    $tmp = $repository->supported_return_value();
-                    if ($tmp != $returnvalue) {
-                        if ($returnvalue == 'link' && $repository->supported_external_link()) {
-                        } else {
-                            $is_supported = false;
-                        }
+                if ($returntypes !== 3 and $repository->supported_returntypes() !== 3) {
+                    $type = $repository->supported_returntypes();
+                    if ($type & $returntypes) {
+                        //
+                    } else {
+                        $is_supported = false;
                     }
                 }
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
@@ -1014,7 +1019,7 @@ abstract class repository {
         //instances of a type, even if this type is not visible. In course/user context we
         //want to display only visible instances, but for every type types. The repository::get_instances()
         //third parameter displays only visible type.
-        $instances = repository::get_instances(array($context),null,!$admin,$typename);
+        $instances = repository::get_instances(array($context), null, !$admin, $typename);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
 
@@ -1111,6 +1116,7 @@ abstract class repository {
             $this->options[$n] = $v;
         }
         $this->name = $this->get_name();
+        $this->returntypes = $this->supported_returntypes();
         $this->super_called = true;
     }
 
@@ -1148,15 +1154,11 @@ abstract class repository {
      */
     public function get_file($url, $filename = '') {
         global $CFG;
-        if (!empty($CFG->repositoryuseexternallink) && $this->supported_external_link()) {
-            return $url;
-        } else {
-            $path = $this->prepare_file($filename);
-            $fp = fopen($path, 'w');
-            $c = new curl;
-            $c->download(array(array('url'=>$url, 'file'=>$fp)));
-            return $path;
-        }
+        $path = $this->prepare_file($filename);
+        $fp = fopen($path, 'w');
+        $c = new curl;
+        $c->download(array(array('url'=>$url, 'file'=>$fp)));
+        return $path;
     }
 
     /**
@@ -1214,17 +1216,8 @@ abstract class repository {
      * does it return a file url or a item_id
      * @return string
      */
-    public function supported_return_value() {
-        // return 'link';
-        // return 'ref_id';
-        return 'ref_id';
-    }
-    /**
-     * does it return a file url or a item_id
-     * @return string
-     */
-    public function supported_external_link() {
-        return false;
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
     }
 
     /**
@@ -1781,10 +1774,10 @@ function repository_head_setup() {
  * @param object $context the context
  * @param string $id unique id for every file picker
  * @param string $accepted_filetypes
- * @param string $returnvalue the return value of file picker
+ * @param string $returntypes the return value of file picker
  * @return array
  */
-function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returnvalue = '*') {
+function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returntypes = 3) {
     global $CFG, $USER, $PAGE, $OUTPUT;
 
     $ft = new file_type_to_ext();
@@ -1856,8 +1849,8 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
 <script type="text/javascript">
 var fp_lang = $lang;
 var fp_config = $options;
-file_extensions.image = $image_file_ext;
-file_extensions.media = $video_file_ext;
+MOODLE.repository.extensions.image = $image_file_ext;
+MOODLE.repository.extensions.media = $video_file_ext;
 </script>
 EOD;
 
@@ -1872,17 +1865,17 @@ EOD;
     if (is_array($accepted_filetypes) && in_array('*', $accepted_filetypes)) {
         $accepted_filetypes = '*';
     }
-    $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returnvalue);
+    $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returntypes);
 
     // print repository instances listing
     $js .= <<<EOD
 <script type="text/javascript">
-repository_listing['$id'] = [];
+MOODLE.repository.listing['$id'] = [];
 EOD;
     foreach ($repos as $repo) {
         $meta = $repo->get_meta();
         $js .= "\r\n";
-        $js .= 'repository_listing[\''.$id.'\']['.$meta->id.']='.json_encode($meta).';';
+        $js .= 'MOODLE.repository.listing[\''.$id.'\']['.$meta->id.']='.json_encode($meta).';';
         $js .= "\n";
     }
     $js .= "\r\n";

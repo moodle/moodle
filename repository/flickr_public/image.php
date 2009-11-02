@@ -33,9 +33,6 @@ class moodle_image {
         default:
             break;
 		}
-        if (empty($this->image)) {
-            throw new moodle_exception('invalidimage');
-        }
 		$this->width  = imagesx($this->image);
 		$this->height = imagesy($this->image);
 	}
@@ -103,10 +100,7 @@ class moodle_image {
 		return $this;
 	}
 
-	function saveas($imagepath='') {
-        if (empty($imagepath)) {
-            $imagepath = $this->imagepath;
-        }
+	function saveas($imagepath) {
 		switch($this->info['mime']) {
         case 'image/jpeg':
             return imagejpeg($this->image, $imagepath);

@@ -55,9 +55,6 @@ class repository_youtube extends repository {
         return $list;
     }
 
-    public function get_file($url, $title) {
-        return $url;
-    }
     public function global_search() {
         return false;
     }
@@ -80,10 +77,10 @@ class repository_youtube extends repository {
         $ret['login_btn_action'] = 'search';
         return $ret;
     }
-    public function supported_return_value() {
-        return 'link';
-    }
     public function supported_filetypes() {
         return array('web_video');
+    }
+    public function supported_returntypes() {
+        return FILE_EXTERNAL;
     }
 }

@@ -128,7 +128,7 @@ class repository_local extends repository {
      * @return array The metainfo of file
      * @see curl package
      */
-    public function get_file($encoded, $title = '', $itemid = '', $save_path = '/') {
+    public function move_to_draft($encoded, $title = '', $itemid = '', $save_path = '/') {
         global $USER, $DB;
         $ret = array();
 
@@ -157,6 +157,9 @@ class repository_local extends repository {
      */
     public function get_name(){
         return get_string('repositoryname', 'repository_local');;
+    }
+    public function supported_returntypes() {
+        return FILE_INTERNAL;
     }
 }
 

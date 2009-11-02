@@ -383,9 +383,13 @@ class repository_flickr_public extends repository {
         $c->download(array(array('url'=>$url, 'file'=>$fp)));
 
         $watermark = get_config('flickr_public', 'watermark');
-        if (!empty($watermark)) {
+        if ($watermark === 'on') {
             $img = new moodle_image($path);
-            $img->watermark($url, array(10,10), array('ttf'=>true, 'fontsize'=>9))->saveas($path);
+            $pathinfo = pathinfo($path);
+            $newpath = $pathinfo['dirname'] . '/wm_' . $pathinfo['basename'];
+            $img->watermark($url, array(10,10), array('ttf'=>true, 'fontsize'=>9))->saveas($newpath);
+            unlink($path);
+            $path = $newpath;
         }
         return $path;
     }
@@ -450,5 +454,8 @@ class repository_flickr_public extends repository {
     }
     public function supported_filetypes() {
         return array('web_image');
+    }
+    public function supported_returntypes() {
+        return (FILE_INTERNAL | FILE_EXTERNAL);
     }
 }
