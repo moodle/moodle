@@ -293,6 +293,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
         // First, print details about events that start today
         foreach ($events as $event) {
 
+            $event = new calendar_event($event);
             $event->calendarcourseid = $courseid;
 
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
@@ -336,7 +337,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
     $display = new stdClass;
-    $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+    $display->minwday = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
     $display->maxwday = $display->minwday + 6;
 
     if(!empty($m) && !empty($y)) {
@@ -389,6 +390,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     $events = calendar_get_events(usertime($display->tstart), usertime($display->tend), $users, $groups, $courses);
     if (!empty($events)) {
         foreach($events as $eventid => $event) {
+            $event = new calendar_event($event);
             if (!empty($event->modulename)) {
                 $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
                 if (!groups_course_module_visible($cm)) {
@@ -617,6 +619,9 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
         echo '<div class="eventlist">';
         foreach ($events as $event) {
+            // Convert to calendar_event object so that we transform description
+            // accordingly
+            $event = new calendar_event($event);
             $event->calendarcourseid = $courseid;
             calendar_print_event($event);
         }

@@ -102,13 +102,61 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
         }
 
         send_stored_file($file, 10*60, 0, true); // download MUST be forced - security!
+    } else if ($filearea === 'calendar_event_description') { // CONTEXT_SYSTEM
+
+        // All events here are public the one requirement is that we respect forcelogin
+        if ($CFG->forcelogin) {
+            require_login();
+        }
+
+        $fullpath = $context->id.$filearea.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
 
     } else {
         send_file_not_found();
     }
 
-
 } else if ($context->contextlevel == CONTEXT_USER) {
+
+    if ($filearea === 'calendar_event_description') { // CONTEXT_USER
+
+        // Must be logged in, if they are not then they obviously can't be this user
+        require_login();
+        
+        // Don't want guests here, potentially saves a DB call
+        if (isguestuser()) {
+            send_file_not_found();
+        }
+
+        // Get the event if from the args array
+        $eventid = array_shift($args);
+        if ((int)$eventid <= 0) {
+            send_file_not_found();
+        }
+
+        // Load the event from the database
+        $event = $DB->get_record('event', array('id'=>(int)$eventid));
+        // Check that we got an event and that it's userid is that of the user
+        if (!$event || $event->userid !== $USER->id) {
+            send_file_not_found();
+        }
+
+        // Get the file and serve if succesfull
+        $fullpath = $context->id.$filearea.$eventid.'/'.implode('/', $args);
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
+    }
+
     send_file_not_found();
 
 
@@ -166,6 +214,50 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
+
+    } else if ($filearea === 'calendar_event_description') { // CONTEXT_COURSE
+
+        // This is for content used in course and group events
+
+        // Respect forcelogin and require login unless this is the site.... it probably
+        // should NEVER be the site
+        if ($CFG->forcelogin || $course->id !== SITEID) {
+            require_login($course);
+        }
+
+        // Must be able to at least view the course
+        if (!has_capability('moodle/course:view', $context)) {
+            send_file_not_found();
+        }
+
+        // Get the event id
+        $eventid = array_shift($args);
+        if ((int)$eventid <= 0) {
+            send_file_not_found();
+        }
+
+        // Load the event from the database we need to check whether it is
+        // a) valid
+        // b) a group event
+        // Group events use the course context (there is no group context)
+        $event = $DB->get_record('event', array('id'=>(int)$eventid));
+        if (!$event || $event->userid !== $USER->id) {
+            send_file_not_found();
+        }
+
+        // If its a group event require either membership of manage groups capability
+        if ($event->eventtype === 'group' && !has_capability('moodle/course:managegroups', $context) && !groups_is_member($event->groupid, $USER->id)) {
+            send_file_not_found();
+        }
+
+        // If we get this far we can serve the file
+        $fullpath = $context->id.$filearea.$eventid.'/'.implode('/', $args);
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
 
     } else if ($filearea === 'course_section') {
         if ($CFG->forcelogin) {

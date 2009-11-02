@@ -1,0 +1,136 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is part of the Calendar section Moodle
+ * It is responsible for deleting a calendar entry + optionally its repeats
+ *
+ * @copyright 2009 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package calendar
+ */
+
+require_once('../config.php');
+require_once($CFG->dirroot.'/calendar/event_form.php');
+require_once($CFG->dirroot.'/calendar/lib.php');
+require_once($CFG->dirroot.'/course/lib.php');
+
+$eventid = required_param('id', PARAM_INT);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
+$repeats = optional_param('repeats', false, PARAM_BOOL);
+$courseid = optional_param('course', 0, PARAM_INT);
+
+$PAGE->set_url(new moodle_url($CFG->wwwroot.'/calendar/delete.php', array('id'=>$eventid)));
+
+if(!$site = get_site()) {
+    redirect(new moodle_url($CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+}
+
+$event = calendar_event::load($eventid);
+
+/**
+ * We are going to be picky here, and require that any event types other than
+ * group and site be associated with a course. This means any code that is using
+ * custom event types (and there are a few) will need to associate thier event with
+ * a course
+ */
+if ($event->eventtype !== 'user' && $event->eventtype !== 'site') {
+    if ($courseid !== $event->courseid) {
+        print_error('invalidcourse');
+    }
+    require_login($event->courseid);
+} else {
+    require_login();
+}
+
+// Check the user has the required capabilities to edit an event
+if (!calendar_edit_event_allowed($event)) {
+    print_error('nopermissions');
+}
+
+// Count the repeats, do we need to consider the possibility of deleting repeats
+$event->timedurationuntil = $event->timestart + $event->timeduration;
+$event->count_repeats();
+
+// Is used several times, and sometimes with modification if required
+$viewcalendarurl = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming'));
+$viewcalendarurl->param('cal_y', date('Y', $event->timestart));
+$viewcalendarurl->param('cal_m', date('m', $event->timestart));
+
+// If confirm is set (PARAM_BOOL) then we have confirmation of initention to delete
+if ($confirm) {
+    // Confirm the session key to stop CSRF
+    if (!confirm_sesskey()) {
+        print_error('confirmsesskeybad');
+    }
+    // Delete the event and possibly repeats
+    $event->delete($repeats);
+    // If the event has an associated course then we need to include it in the redirect link
+    if (!empty($event->courseid) && $event->courseid > 0) {
+        $viewcalendarurl->param('course', $event->courseid);
+    }
+    // And redirect
+    redirect($viewcalendarurl);
+}
+
+// Prepare the page to show the confirmation form
+$title = get_string('deleteevent', 'calendar');
+$strcalendar = get_string('calendar', 'calendar');
+
+$PAGE->navbar->add($strcalendar, $viewcalendarurl);
+$PAGE->navbar->add($title);
+$PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
+$PAGE->set_heading($strcalendar);
+$PAGE->set_headingmenu(user_login_string($site));
+
+echo $OUTPUT->header();
+echo $OUTPUT->box_start('eventlist');
+
+// Delete this event button is always shown
+$deleteone = new html_form();
+$deleteone->button->text = get_string('delete');
+$deleteone->url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->id, 'confirm'=>true));
+$buttons = $OUTPUT->button($deleteone);
+
+// If there are repeated events then add a Delete Repeated button
+$repeatspan = '';
+if (!empty($event->eventrepeats) && $event->eventrepeats > 0) {
+    $deleteall = new html_form();
+    $deleteall->button->text = get_string('deleteall');
+    $deleteall->url = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->repeatid, 'confirm'=>true, 'repeats'=>true));
+    $buttons .= $OUTPUT->button($deleteall);
+    $repeatspan = '<br /><br />'.$OUTPUT->span(get_string('youcandeleteallrepeats', 'calendar'));
+}
+
+// And add the cancel button
+$cancel = new html_form();
+$cancel->button->text = get_string('cancel');
+$cancel->url = $viewcalendarurl;
+$buttons .= $OUTPUT->button($cancel);
+
+// And show the buttons and notes
+echo $OUTPUT->box_start('generalbox', 'notice');
+echo $OUTPUT->box(get_string('confirmeventdelete', 'calendar').$repeatspan);
+echo $OUTPUT->box($buttons, 'buttons');
+echo $OUTPUT->box_end();
+
+// Print the event so that people can visually confirm they have the correct event
+$event->time = calendar_format_event_time($event, time(), '', false);
+calendar_print_event($event, false);
+
+echo $OUTPUT->box_end();
+echo $OUTPUT->footer();

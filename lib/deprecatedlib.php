@@ -3709,3 +3709,94 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     return '';
 }
+
+/// CALENDAR MANAGEMENT  ////////////////////////////////////////////////////////////////
+
+
+/**
+ * Call this function to add an event to the calendar table and to call any calendar plugins
+ *
+ * @param object $event An object representing an event from the calendar table.
+ * The event will be identified by the id field. The object event should include the following:
+ *  <ul>
+ *    <li><b>$event->name</b> - Name for the event
+ *    <li><b>$event->description</b> - Description of the event (defaults to '')
+ *    <li><b>$event->format</b> - Format for the description (using formatting types defined at the top of weblib.php)
+ *    <li><b>$event->courseid</b> - The id of the course this event belongs to (0 = all courses)
+ *    <li><b>$event->groupid</b> - The id of the group this event belongs to (0 = no group)
+ *    <li><b>$event->userid</b> - The id of the user this event belongs to (0 = no user)
+ *    <li><b>$event->modulename</b> - Name of the module that creates this event
+ *    <li><b>$event->instance</b> - Instance of the module that owns this event
+ *    <li><b>$event->eventtype</b> - The type info together with the module info could
+ *             be used by calendar plugins to decide how to display event
+ *    <li><b>$event->timestart</b>- Timestamp for start of event
+ *    <li><b>$event->timeduration</b> - Duration (defaults to zero)
+ *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
+ *  </ul>
+ * @return int|false The id number of the resulting record or false if failed
+ */
+ function add_event($event) {
+    global $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $event = calendar_event::create($event);
+    if ($event !== false) {
+        return $event->id;
+    }
+    return false;
+}
+
+/**
+ * Call this function to update an event in the calendar table
+ * the event will be identified by the id field of the $event object.
+ *
+ * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
+ * @return bool Success
+ */
+function update_event($event) {
+    global $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $event = (object)$event;
+    $calendarevent = calendar_event::load($event->id);
+    return $calendarevent->update($event);
+}
+
+/**
+ * Call this function to delete the event with id $id from calendar table.
+ *
+ * @param int $id The id of an event from the 'event' table.
+ * @return bool
+ */
+function delete_event($id) {
+    global $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $event = calendar_event::load($id);
+    return $event->delete();
+}
+
+/**
+ * Call this function to hide an event in the calendar table
+ * the event will be identified by the id field of the $event object.
+ * 
+ * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
+ * @return true
+ */
+function hide_event($event) {
+    global $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $event = new calendar_event($event);
+    return $event->toggle_visibility(false);
+}
+
+/**
+ * Call this function to unhide an event in the calendar table
+ * the event will be identified by the id field of the $event object.
+ *
+ * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
+ * @return true
+ */
+function show_event($event) {
+    global $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
+    $event = new calendar_event($event);
+    return $event->toggle_visibility(true);
+}

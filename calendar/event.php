@@ -39,7 +39,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 /**
- * This file is part of the User section Moodle
+ * This file is part of the Calendar section Moodle
  *
  * @copyright 2003-2004 Jon Papaioannou (pj@moodle.org)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
@@ -47,236 +47,70 @@
  */
 
 require_once('../config.php');
+require_once($CFG->dirroot.'/calendar/event_form.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->dirroot.'/mod/forum/lib.php');
 
 require_login();
 
-$action = required_param('action', PARAM_ALPHA);
+$action = optional_param('action', 'new', PARAM_ALPHA);
 $eventid = optional_param('id', 0, PARAM_INT);
-$eventtype = optional_param('type', 'select', PARAM_ALPHA);
-$urlcourse = optional_param('course', 0, PARAM_INT);
+$courseid = optional_param('courseid', 0, PARAM_INT);
 $cal_y = optional_param('cal_y', 0, PARAM_INT);
 $cal_m = optional_param('cal_m', 0, PARAM_INT);
 $cal_d = optional_param('cal_d', 0, PARAM_INT);
 
+if ($courseid === 0) {
+    $courseid = optional_param('course', 0, PARAM_INT);
+}
+
 $url = new moodle_url($CFG->wwwroot.'/calendar/event.php', array('action'=>$action));
 if ($eventid !== 0) $url->param('id', $eventid);
-if ($eventtype !== 'select') $url->param('type', $eventtype);
-if ($urlcourse !== 0) $url->param('course', $urlcourse);
+if ($courseid !== 0) $url->param('course', $courseid);
 if ($cal_y !== 0) $url->param('cal_y', $cal_y);
 if ($cal_m !== 0) $url->param('cal_m', $cal_m);
 if ($cal_d !== 0) $url->param('cal_d', $cal_d);
 $PAGE->set_url($url);
 
-if (has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false)) {
+if ($action === 'delete' && $eventid>0) {
+    $deleteurl = new moodle_url($CFG->wwwroot.'/calendar/delete.php', array('id'=>$eventid));
+    if ($courseid > 0) {
+        $deleteurl->param('course', $courseid);
+    }
+    redirect($deleteurl);
+}
+
+$viewcalendarurl = new moodle_url(CALENDAR_URL.'view.php');
+$viewcalendarurl->params($PAGE->url->params());
+$viewcalendarurl->remove_params(array('id','action'));
+
+$now = usergetdate(time());
+
+if (isguestuser()) {
     // Guests cannot do anything with events
-    redirect(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse);
+    redirect(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$courseid)));
 }
 
 $focus = '';
 
 $site = get_site();
 
-$strcalendar = get_string('calendar', 'calendar');
-
-// Initialize the session variables
 calendar_session_vars();
 
-$now = usergetdate(time());
-
-$day = intval($now['mday']);
-$mon = intval($now['mon']);
-$yr = intval($now['year']);
-
-if ($usehtmleditor = can_use_html_editor()) {
-    $defaultformat = FORMAT_HTML;
-} else {
-    $defaultformat = FORMAT_MOODLE;
-}
-
 // If a course has been supplied in the URL, change the filters to show that one
-if($urlcourse > 0 && $DB->record_exists('course', array('id'=>$urlcourse))) {
-    require_login($urlcourse, false);
-
-    if($urlcourse == SITEID) {
+$courseexists = false;
+if ($courseid > 0) {
+    if ($courseid == SITEID) {
         // If coming from the site page, show all courses
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
         calendar_set_referring_course(0);
-    }
-    else {
+    } else if ($DB->record_exists('course', array('id'=>$courseid))) {
+        $courseexists = true;
         // Otherwise show just this one
-        $SESSION->cal_courses_shown = $urlcourse;
+        $SESSION->cal_courses_shown = $courseid;
         calendar_set_referring_course($SESSION->cal_courses_shown);
     }
 }
-
-switch($action) {
-    case 'delete':
-        $title = get_string('deleteevent', 'calendar');
-        $event = $DB->get_record('event', array('id'=>$eventid));
-        if($event === false) {
-            print_error('invalidevent');
-        }
-        if(!calendar_edit_event_allowed($event)) {
-            print_error('nopermissions');
-        }
-    break;
-
-    case 'edit':
-        $title = get_string('editevent', 'calendar');
-        $event = $DB->get_record('event', array('id'=>$eventid));
-        $repeats = optional_param('repeats', 0, PARAM_INT);
-
-        if ($event === false) {
-            print_error('invalidevent');
-        }
-        if (!calendar_edit_event_allowed($event)) {
-            print_error('nopermissions');
-        }
-
-        if($form = data_submitted()) {
-
-            $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
-
-            // To avoid double slashes
-            $form->name = $form->name;
-            $form->description = $form->description;
-
-            $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
-            if($form->duration == 1) {
-                $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
-                if($form->timeduration < 0) {
-                    $form->timeduration = 0;
-                }
-            }
-            else if($form->duration == 2) {
-                $form->timeduration = $form->minutes * MINSECS;
-            }
-            else {
-                $form->timeduration = 0;
-            }
-
-            validate_form($form, $err);
-
-            if (count($err) == 0) {
-
-                if($event->repeatid && $repeats) {
-                    // Update all
-                    if($form->timestart >= $event->timestart) {
-                        $timestartoffset = 'timestart + '.($form->timestart - $event->timestart);
-                    }
-                    else {
-                        $timestartoffset = 'timestart - '.($event->timestart - $form->timestart);
-                    }
-
-                    $sql = "UPDATE {event}
-                               SET name = ?,
-                                   description = ?,
-                                   timestart = ?,
-                                   timeduration = ?,
-                                   timemodified = ?
-                             WHERE repeatid = ?";
-                    $params = array($form->name, $form->description, $timestartoffset, $form->timeduration, time(), $event->repeatid);
-
-                    $DB->execute($sql, $params);
-
-                    /// Log the event update.
-                    add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);
-                }
-
-                else {
-                    // Update this
-                    $form->timemodified = time();
-                    $DB->update_record('event', $form);
-
-                    /// Log the event update.
-                    add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
-                }
-
-                // OK, now redirect to day view
-                redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
-            }
-            else {
-                foreach ($err as $key => $value) {
-                    $focus = 'form.'.$key;
-                }
-            }
-        }
-    break;
-
-    case 'new':
-        $title = get_string('newevent', 'calendar');
-        $form = data_submitted();
-        if(!empty($form) && !empty($form->name)) {
-
-            $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
-
-            $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
-            if($form->duration == 1) {
-                $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
-                if($form->timeduration < 0) {
-                    $form->timeduration = 0;
-                }
-            }
-            else if ($form->duration == 2) {
-                $form->timeduration = $form->minutes * MINSECS;
-            }
-            else {
-                $form->timeduration = 0;
-            }
-            if(!calendar_add_event_allowed($form)) {
-                print_error('nopermissions');
-            }
-            validate_form($form, $err);
-            if (count($err) == 0) {
-                $form->timemodified = time();
-
-                /// Get the event id for the log record.
-                $eventid = $DB->insert_record('event', $form);
-
-                /// Use the event id as the repeatid to link repeat entries together
-                if ($form->repeat) {
-                    $form->repeatid = $form->id = $eventid;
-                    $DB->update_record('event', $form);         // update the row, to set its repeatid
-                }
-
-                /// Log the event entry.
-                add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
-
-                if ($form->repeat) {
-                    for($i = 1; $i < $form->repeats; $i++) {
-                        // What's the DST offset for the previous repeat?
-                        $dst_offset_prev = dst_offset_on($form->timestart);
-
-                        $form->timestart += WEEKSECS;
-
-                        // If the offset has changed in the meantime, update this repeat accordingly
-                        $form->timestart += $dst_offset_prev - dst_offset_on($form->timestart);
-
-                        /// Get the event id for the log record.
-                        $eventid = $DB->insert_record('event', $form);
-
-                        /// Log the event entry.
-                        add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
-                    }
-                }
-                // OK, now redirect to day view
-                redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
-            }
-            else {
-                foreach ($err as $key => $value) {
-                    $focus = 'form.'.$key;
-                }
-            }
-        }
-    break;
-    default: // no action
-        $title='';
-    break;
-}
-
 
 if (!empty($SESSION->cal_course_referer)) {
     // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
@@ -284,376 +118,137 @@ if (!empty($SESSION->cal_course_referer)) {
 } else {
     $course = $site;
 }
+
 require_login($course, false);
 
-$link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;',
-                               $now['mday'], $now['mon'], $now['year']);
+$strcalendar = get_string('calendar', 'calendar');
+$link = clone($viewcalendarurl);
+$link->param('view', 'upcoming');
+
+$formoptions = new stdClass;
+
+if ($eventid !== 0) {
+    $title = get_string('editevent', 'calendar');
+    $event = calendar_event::load($eventid);
+    if (!calendar_edit_event_allowed($event)) {
+        print_error('nopermissions');
+                }
+    $event->action = $action;
+    $event->course = $courseid;
+    $event->timedurationuntil = $event->timestart + $event->timeduration;
+    $event->count_repeats();
+
+    if (!calendar_add_event_allowed($event)) {
+        print_error('nopermissions');
+        }
+            } else {
+    $title = get_string('newevent', 'calendar');
+    calendar_get_allowed_types($formoptions->eventtypes, $USER->id);
+    $event = new calendar_event();
+    $event->action = $action;
+    $event->course = $courseid;
+    $event->timeduration = 0;
+    if ($formoptions->eventtypes->courses) {
+        if ($courseexists) {
+            $event->courseid = $courseid;
+            $event->eventtype = 'course';
+        } else {
+            unset($formoptions->eventtypes->courses);
+            unset($formoptions->eventtypes->groups);
+        }
+        }
+
+        if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
+        $event->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
+    } else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
+            if($cal_y == $now['year'] && $cal_m == $now['mon']) {
+            $event->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
+        } else {
+            $event->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
+            }
+            }
+
+    if (!calendar_add_event_allowed($event)) {
+        print_error('nopermissions');
+        }
+        }
+
+$properties = $event->properties(true);
+$formoptions->event = $event;
+$formoptions->hasduration = ($event->timeduration > 0);
+$mform = new event_form(null, $formoptions);
+$mform->set_data($properties);
+$data = $mform->get_data();
+if ($data) {
+    if ($data->duration == 1) {
+        $data->timeduration = $data->timedurationuntil- $data->timestart;
+    } else if ($data->duration == 2) {
+        $data->timeduration = $data->timedurationminutes * MINSECS;
+    } else {
+        $data->timeduration = 0;
+        }
+
+    $event->update($data);
+    $eventurl = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'day'));
+    if (!empty($event->courseid)) {
+        $eventurl->param('course', $event->courseid);
+                }
+    $eventurl->param('cal_d', date('j', $event->timestart));
+    $eventurl->param('cal_m', date('n', $event->timestart));
+    $eventurl->param('cal_y', date('Y', $event->timestart));
+    $eventurl->set_anchor('event_'.$event->id);
+    redirect($eventurl);
+                }
 
 $PAGE->requires->yui_lib('animation');
 $PAGE->requires->js('calendar/calendar.js');
 
-$PAGE->navbar->add($strcalendar, new moodle_url($link));
+$PAGE->navbar->add($strcalendar, $link);
 $PAGE->navbar->add($title);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
 $PAGE->set_heading($strcalendar);
 $PAGE->set_headingmenu(user_login_string($site));
-$PAGE->set_focuscontrol('eventform.name');
 
 echo $OUTPUT->header();
 
+
 echo '<table id="calendar">';
 echo '<tr><td class="maincalendar">';
-
-switch ($action) {
-    case 'delete':
-        $confirm = optional_param('confirm', 0, PARAM_INT);
-        $repeats = optional_param('repeats', 0, PARAM_INT);
-        if ($confirm) {
-            // Kill it and redirect to day view
-            if(($event = $DB->get_record('event', array('id'=>$eventid))) !== false) {
-
-                if ($event->repeatid && $repeats) {
-                    $DB->delete_records('event', array('repeatid'=>$event->repeatid));
-                    add_to_log($event->courseid, 'calendar', 'delete all', '', $event->name);
-                } else {
-                    $DB->delete_records('event', array('id'=>$eventid));
-                    add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
-                }
-            }
-
-            echo '</td></tr></table>';
-            redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
-
-        }
-        else {
-            $eventtime = usergetdate($event->timestart);
-            $m = $eventtime['mon'];
-            $d = $eventtime['mday'];
-            $y = $eventtime['year'];
-
-            if ($event->repeatid) {
-                $repeatcount = $DB->count_records('event', array('repeatid'=>$event->repeatid));
-            } else {
-                $repeatcount = 0;
-            }
-
-            // Display confirmation form
-            echo '<div class="header">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
-            echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
-            if($repeatcount > 1) {
-                echo '<p>'.get_string('youcandeleteallrepeats', 'calendar', $repeatcount).'</p>';
-            }
-            echo '<div class="eventlist">';
-            $event->time = calendar_format_event_time($event, time(), '', false);
-            calendar_print_event($event);
-            echo '</div>';
-            include('event_delete.html');
-        }
-    break;
-
-    case 'edit':
-        if(empty($form)) {
-            $form->name = $event->name;
-            $form->courseid = $event->courseid; // Not to update, but for date validation
-            $form->description = $event->description;
-            $form->timestart = $event->timestart;
-            $form->timeduration = $event->timeduration;
-            $form->id = $event->id;
-            $form->format = $defaultformat;
-            if($event->timeduration > HOURSECS) {
-                // More than one hour, so default to normal duration mode
-                $form->duration = 1;
-                $form->minutes = '';
-            }
-            else if($event->timeduration) {
-                // Up to one hour, "minutes" mode probably is better here
-                $form->duration = 2;
-                $form->minutes = $event->timeduration / MINSECS;
-            }
-            else {
-                // No duration
-                $form->duration = 0;
-                $form->minutes = '';
-            }
-        }
-
-        if (!empty($form->courseid)) {
-            // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
-            $course = $DB->get_record('course', array('id'=>$form->courseid));
-        } else {
-            $course = $site;
-        }
-
-        if ($event->repeatid) {
-            $repeatcount = $DB->count_records('event', array('repeatid'=>$event->repeatid));
-            $repeatcount = $fetch->repeatcount;
-        } else {
-            $repeatcount = 0;
-        }
-
-        echo '<div class="header">'.get_string('editevent', 'calendar').'</div>';
-        include('event_edit.html');
-    break;
-
-    case 'new':
-        if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
-            $form->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
-        }
-        else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
-            if($cal_y == $now['year'] && $cal_m == $now['mon']) {
-                $form->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
-            }
-            else {
-                $form->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
-            }
-        }
-        if(!isset($form->timestart) or $form->timestart < 0) {
-            $form->timestart = time();
-        }
-
-        calendar_get_allowed_types($allowed);
-        if(!$allowed->groups && !$allowed->courses && !$allowed->site) {
-            // Take the shortcut
-            $eventtype = 'user';
-        }
-
-        $header = '';
-
-        switch($eventtype) {
-            case 'user':
-                $form->name = '';
-                $form->description = '';
-                $form->courseid = 0;
-                $form->groupid = 0;
-                $form->userid = $USER->id;
-                $form->modulename = '';
-                $form->eventtype = '';
-                $form->instance = 0;
-                $form->timeduration = 0;
-                $form->duration = 0;
-                $form->repeat = 0;
-                $form->repeats = '';
-                $form->minutes = '';
-                $form->type = 'user';
-                $header = get_string('typeuser', 'calendar');
-            break;
-            case 'group':
-                $groupid = optional_param('groupid', 0, PARAM_INT);
-                if (! ($group = groups_get_group($groupid))) { //TODO:check.
-                    calendar_get_allowed_types($allowed);
-                    $eventtype = 'select';
-                }
-                else {
-                    $form->name = '';
-                    $form->description = '';
-                    $form->courseid = $group->courseid;
-                    $form->groupid = $group->id;
-                    $form->userid = $USER->id;
-                    $form->modulename = '';
-                    $form->eventtype = '';
-                    $form->instance = 0;
-                    $form->timeduration = 0;
-                    $form->duration = 0;
-                    $form->repeat = 0;
-                    $form->repeats = '';
-                    $form->minutes = '';
-                    $form->type = 'group';
-                    $header = get_string('typegroup', 'calendar');
-                }
-            break;
-            case 'course':
-                $courseid = optional_param('courseid', 0, PARAM_INT);
-                if (!$DB->record_exists('course', array('id'=>$courseid))) {
-                    calendar_get_allowed_types($allowed);
-                    $eventtype = 'select';
-                }
-                else {
-                    $form->name = '';
-                    $form->description = '';
-                    $form->courseid = $courseid;
-                    $form->groupid = 0;
-                    $form->userid = $USER->id;
-                    $form->modulename = '';
-                    $form->eventtype = '';
-                    $form->instance = 0;
-                    $form->timeduration = 0;
-                    $form->duration = 0;
-                    $form->repeat = 0;
-                    $form->repeats = '';
-                    $form->minutes = '';
-                    $form->type = 'course';
-                    $header = get_string('typecourse', 'calendar');
-                }
-            break;
-            case 'site':
-                $form->name = '';
-                $form->description = '';
-                $form->courseid = SITEID;
-                $form->groupid = 0;
-                $form->userid = $USER->id;
-                $form->modulename = '';
-                $form->eventtype = '';
-                $form->instance = 0;
-                $form->timeduration = 0;
-                $form->duration = 0;
-                $form->repeat = 0;
-                $form->repeats = '';
-                $form->minutes = '';
-                $form->type = 'site';
-                $header = get_string('typesite', 'calendar');
-            break;
-            case 'select':
-            break;
-            default:
-                print_error('unsupportedevent');
-        }
-
-        $form->format = $defaultformat;
-        if(!empty($header)) {
-            $header = ' ('.$header.')';
-        }
-
-        echo '<div class="header">'.get_string('newevent', 'calendar').$header.'</div>';
-
-        if($eventtype == 'select') {
-            $courseid = optional_param('courseid', $SESSION->cal_course_referer, PARAM_INT);
-            if ($courseid == 0) { // workaround by Dan for bug #6130
-                $courseid = SITEID;
-            }
-            if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-                print_error('invalidcourse');
-            }
-
-            $groupid = groups_get_course_group($course);
-
-            echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
-            echo '<div id="selecteventtype">';
-            include('event_select.html');
-            echo '</div>';
-        }
-        else {
-            include('event_new.html');
-        }
-
-    break;
-}
+echo $OUTPUT->heading($title);
+$mform->display();
 echo '</td>';
 
-// START: Last column (3-month display)
-
-$defaultcourses = calendar_get_default_courses();
-//calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
-
-// when adding an event you can not be a guest, so I think it's reasonalbe to ignore defaultcourses
-// MDL-10353
+// when adding an event you can not be a guest, so it's reasonalbe to ignore defaultcourses MDL-10353
 calendar_set_filters($courses, $groups, $users);
-list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
-list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
+list($prevmon, $prevyr) = calendar_sub_month((int)$now['mon'], (int)$now['year']);
+list($nextmon, $nextyr) = calendar_add_month((int)$now['mon'], (int)$now['year']);
 
 echo '<td class="sidecalendar">';
-echo '<div class="sideblock">';
-echo '<div class="header"><h2>'.get_string('eventskey', 'calendar').'</h2></div>';
-echo '<div class="filters">';
-echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
-echo '</div>';
-echo '</div>';
 
-echo '<div class="sideblock">';
-echo '<div class="header"><h2>'.get_string('monthlyview', 'calendar').'</h2></div>';
-echo '<div class="minicalendarblock minicalendartop">';
-echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $prevmon, 'y' => $prevyr));
-echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $mon, 'y' => $yr));
-echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-echo '</div><div class="minicalendarblock">';
-echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $nextmon, 'y' => $nextyr));
-echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-echo '</div>';
-echo '</div>';
+$sideblock = $OUTPUT->box_start('sideblock');
+$sideblock .= $OUTPUT->box($OUTPUT->heading(get_string('eventskey', 'calendar')), 'header');
+$sideblock .= $OUTPUT->box(calendar_filter_controls('event', 'action='.$action.'&amp;id='.$event->id), 'filters content');
+$sideblock .= $OUTPUT->box_end();
+$sideblock .= $OUTPUT->box_start('sideblock');
+$sideblock .= $OUTPUT->box($OUTPUT->heading(get_string('monthlyview', 'calendar')), 'header');
+$sideblock .= $OUTPUT->box_start('content');
+$sideblock .= $OUTPUT->box_start('minicalendarblock minicalendartop');
+$sideblock .= calendar_top_controls('display', array('id' => $courseid, 'm' => $prevmon, 'y' => $prevyr));
+$sideblock .= calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
+$sideblock .= $OUTPUT->box_end();
+$sideblock .= $OUTPUT->box_start('minicalendarblock');
+$sideblock .= calendar_top_controls('display', array('id' => $courseid, 'm' => (int)$now['mon'], 'y' => (int)$now['year']));
+$sideblock .= calendar_get_mini($courses, $groups, $users, (int)$now['mon'], (int)$now['year']);
+$sideblock .= $OUTPUT->box_end();
+$sideblock .= $OUTPUT->box_start('minicalendarblock');
+$sideblock .= calendar_top_controls('display', array('id' => $courseid, 'm' => $nextmon, 'y' => $nextyr));
+$sideblock .= calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+$sideblock .= $OUTPUT->box_end();
+$sideblock .= $OUTPUT->box_end();
+$sideblock .= $OUTPUT->box_end();
+echo $sideblock;
 
-echo '</td>';
-echo '</tr></table>';
+echo '</td></tr>';
+echo '</table>';
 
 echo $OUTPUT->footer();
-
-
-function validate_form(&$form, &$err) {
-    global $DB;
-
-    $form->name = trim($form->name);
-    $form->description = trim($form->description);
-
-    if(empty($form->name)) {
-        $err['name'] = get_string('errornoeventname', 'calendar');
-    }
-/* Allow events without a description
-    if(empty($form->description)) {
-        $err['description'] = get_string('errornodescription', 'calendar');
-    }
-*/
-    if(!checkdate($form->startmon, $form->startday, $form->startyr)) {
-        $err['timestart'] = get_string('errorinvaliddate', 'calendar');
-    }
-    if($form->duration == 2 and !checkdate($form->endmon, $form->endday, $form->endyr)) {
-        $err['timeduration'] = get_string('errorinvaliddate', 'calendar');
-    }
-    if($form->duration == 2 and !($form->minutes > 0 and $form->minutes < 1000)) {
-        $err['minutes'] = get_string('errorinvalidminutes', 'calendar');
-    }
-    if (!empty($form->repeat) and !($form->repeats > 1 and $form->repeats < 100)) {
-        $err['repeats'] = get_string('errorinvalidrepeats', 'calendar');
-    }
-    if(!empty($form->courseid)) {
-        // Timestamps must be >= course startdate
-        $course = $DB->get_record('course', array('id'=>$form->courseid));
-        if($course === false) {
-            print_error('invalidcourse');
-        }
-        else if($form->timestart < $course->startdate) {
-            $err['timestart'] = get_string('errorbeforecoursestart', 'calendar');
-        }
-    }
-}
-
-function calendar_add_event_allowed($event) {
-    global $USER, $DB;
-
-    // can not be using guest account
-    if (empty($USER->id) or $USER->username == 'guest') {
-        return false;
-    }
-
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    // if user has manageentries at site level, always return true
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
-        return true;
-    }
-
-    switch ($event->type) {
-        case 'course':
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
-
-        case 'group':
-            // Allow users to add/edit group events if:
-            // 1) They have manageentries (= entries for whole course)
-            // 2) They have managegroupentries AND are in the group
-            $group = $DB->get_record('groups', array('id'=>$event->groupid));         
-            return $group && (
-                has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
-                (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
-                    && groups_is_member($event->groupid)));
-
-        case 'user':
-            if ($event->userid == $USER->id) {
-                return (has_capability('moodle/calendar:manageownentries', $sitecontext));
-            }
-            //there is no 'break;' intentionally
-
-        case 'site':
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
-
-        default:
-            return false;
-    }
-}

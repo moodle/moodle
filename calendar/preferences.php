@@ -77,7 +77,7 @@ echo $OUTPUT->heading($strpreferences);
 echo $OUTPUT->box_start('generalbox boxaligncenter');
 
 $prefs->timeformat = get_user_preferences('calendar_timeformat', '');
-$prefs->startwday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+$prefs->startwday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
 $prefs->maxevents  = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS);
 $prefs->lookahead  = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
 $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);

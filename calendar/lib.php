@@ -45,34 +45,49 @@ define('CALENDAR_DEFAULT_STARTING_WEEKDAY',   1);
 // This is a packed bitfield: day X is "weekend" if $field & (1 << X) is true
 // Default value = 65 = 64 + 1 = 2^6 + 2^0 = Saturday & Sunday
 define('CALENDAR_DEFAULT_WEEKEND',            65);
+define('CALENDAR_UPCOMING_DAYS', isset($CFG->calendar_lookahead) ? intval($CFG->calendar_lookahead) : CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD);
+define('CALENDAR_UPCOMING_MAXEVENTS', isset($CFG->calendar_maxevents) ? intval($CFG->calendar_maxevents) : CALENDAR_DEFAULT_UPCOMING_MAXEVENTS);
+define('CALENDAR_WEEKEND', isset($CFG->calendar_weekend) ? intval($CFG->calendar_weekend) : CALENDAR_DEFAULT_WEEKEND);
+define('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
+define('CALENDAR_TF_24', '%H:%M');
+define('CALENDAR_TF_12', '%I:%M %p');
 
-//TODO: fix this ehm "not nice code at all"
-
-// Fetch the correct values from admin settings/lang pack
-// If no such settings found, use the above defaults
-$firstday = isset($CFG->calendar_startwday) ? $CFG->calendar_startwday : get_string('firstdayofweek');
-if(!is_numeric($firstday)) {
-    define ('CALENDAR_STARTING_WEEKDAY', CALENDAR_DEFAULT_STARTING_WEEKDAY);
-}
-else {
-    define ('CALENDAR_STARTING_WEEKDAY', intval($firstday) % 7);
-}
-define ('CALENDAR_UPCOMING_DAYS', isset($CFG->calendar_lookahead) ? intval($CFG->calendar_lookahead) : CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD);
-define ('CALENDAR_UPCOMING_MAXEVENTS', isset($CFG->calendar_maxevents) ? intval($CFG->calendar_maxevents) : CALENDAR_DEFAULT_UPCOMING_MAXEVENTS);
-define ('CALENDAR_WEEKEND', isset($CFG->calendar_weekend) ? intval($CFG->calendar_weekend) : CALENDAR_DEFAULT_WEEKEND);
-define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
-define ('CALENDAR_TF_24', '%H:%M');
-define ('CALENDAR_TF_12', '%I:%M %p');
+/**
+ * CALENDAR_STARTING_WEEKDAY has since been deprecated please call calendar_get_starting_weekday() instead
+ * @deprecated
+ */
+define('CALENDAR_STARTING_WEEKDAY', CALENDAR_DEFAULT_STARTING_WEEKDAY);
 
 $CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
 
+/**
+ * Gets the first day of the week
+ *
+ * Used to be define('CALENDAR_STARTING_WEEKDAY', blah);
+ *
+ * @return int
+ */
+function calendar_get_starting_weekday() {
+    global $CFG;
 
+    if (isset($CFG->calendar_startwday)) {
+        $firstday = $CFG->calendar_startwday;
+    } else {
+        $firstday = get_string('firstdayofweek');
+    }
+
+    if(!is_numeric($firstday)) {
+        return CALENDAR_DEFAULT_STARTING_WEEKDAY;
+    } else {
+        return intval($firstday) % 7;
+    }
+}
 
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER, $OUTPUT;
 
     $display = new stdClass;
-    $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+    $display->minwday = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
     $display->maxwday = $display->minwday + 6;
 
     $content = '';
@@ -516,7 +531,7 @@ function calendar_add_event_metadata($event) {
     return $event;
 }
 
-function calendar_print_event($event) {
+function calendar_print_event($event, $showactions=true) {
     global $CFG, $USER, $OUTPUT;
 
     static $strftimetime;
@@ -557,7 +572,7 @@ function calendar_print_event($event) {
         echo '<td class="description">'; 
     }
     echo format_text($event->description, FORMAT_HTML);
-    if (calendar_edit_event_allowed($event)) {
+    if (calendar_edit_event_allowed($event) && $showactions) {
         echo '<div class="commands">';
         $calendarcourseid = '';
         if (!empty($event->calendarcourseid)) {
@@ -565,7 +580,7 @@ function calendar_print_event($event) {
         }
         if (empty($event->cmid)) {
             $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id.$calendarcourseid;
-            $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id.$calendarcourseid;
+            $deletelink = CALENDAR_URL.'delete.php?id='.$event->id.$calendarcourseid;
         } else {
             $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.sesskey();
             $deletelink = ''; // deleting activities directly from calendar is dangerous/confusing - see MDL-11843
@@ -1168,7 +1183,7 @@ function calendar_session_vars($course=null) {
     if(!isset($SESSION->cal_show_user)) {
         $SESSION->cal_show_user = true;
     }
-    if (isset($course)) {
+    if ($course !== null) {
         // speedup hack for calendar related blocks
         $SESSION->cal_courses_shown = array($course->id => $course);
     } else {    
@@ -1179,8 +1194,7 @@ function calendar_session_vars($course=null) {
         // as it will automatically change to the user's id when the user first logs
         // in. With !isset(), it would never do that.
         $SESSION->cal_users_shown = !empty($USER->id) ? $USER->id : false;
-    }
-    else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
+    } else if(is_numeric($SESSION->cal_users_shown) && !empty($USER->id) && $SESSION->cal_users_shown != $USER->id) {
         // Follow the white rabbit, for example if a teacher logs in as a student
         $SESSION->cal_users_shown = $USER->id;
     }
@@ -1594,4 +1608,709 @@ function calendar_get_allowed_types(&$allowed) {
 function calendar_user_can_add_event() {
     calendar_get_allowed_types($allowed);
     return (bool)($allowed->user || $allowed->groups || $allowed->courses || $allowed->site);
+}
+
+/**
+ * Check wether the current user is permitted to add events
+ *
+ * @param object $event
+ * @return bool
+ */
+function calendar_add_event_allowed($event) {
+    global $USER, $DB;
+
+    // can not be using guest account
+    if (empty($USER->id) or $USER->username == 'guest') {
+        return false;
+    }
+
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    // if user has manageentries at site level, always return true
+    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+        return true;
+    }
+
+    switch ($event->eventtype) {
+        case 'course':
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
+
+        case 'group':
+            // Allow users to add/edit group events if:
+            // 1) They have manageentries (= entries for whole course)
+            // 2) They have managegroupentries AND are in the group
+            $group = $DB->get_record('groups', array('id'=>$event->groupid));
+            return $group && (
+                has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
+                (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
+                    && groups_is_member($event->groupid)));
+
+        case 'user':
+            if ($event->userid == $USER->id) {
+                return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+            }
+            //there is no 'break;' intentionally
+
+        case 'site':
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
+
+        default:
+            return false;
+    }
+}
+
+/**
+ * A class to manage calendar events
+ *
+ * This class provides the required functionality in order to manage calendar events.
+ * It was introduced as part of Moodle 2.0 and was created in order to provide a
+ * better framework for dealing with calendar events in particular regard to file
+ * handling through the new file API
+ *
+ * @property int $id The id within the event table
+ * @property string $name The name of the event
+ * @property string $description The description of the event
+ * @property int $format The format of the description FORMAT_?
+ * @property int $courseid The course the event is associated with (0 if none)
+ * @property int $groupid The group the event is associated with (0 if none)
+ * @property int $userid The user the event is associated with (0 if none)
+ * @property int $repeatid If this is a repeated event this will be set to the
+ *                          id of the original
+ * @property string $modulename If added by a module this will be the module name
+ * @property int $instance If added by a module this will be the module instance
+ * @property string $eventtype The event type
+ * @property int $timestart The start time as a timestamp
+ * @property int $timeduration The duration of the event in seconds
+ * @property int $visible 1 if the event is visible
+ * @property int $uuid ?
+ * @property int $sequence ?
+ * @property int $timemodified The time last modified as a timestamp
+ */
+class calendar_event {
+
+    /**
+     * An object containing the event properties can be accessed via the
+     * magic __get/set methods
+     * @var array
+     */
+    protected $properties = null;
+    /**
+     * The converted event discription with file paths resolved
+     * This gets populated when someone requests description for the first time
+     * @var string
+     */
+    protected $_description = null;
+    /**
+     * The filearea to use with this event
+     * @var string
+     */
+    protected static $filearea = 'calendar_event_description';
+    /**
+     * The options to use with this description editor
+     * @var array
+     */
+    protected $editoroptions = array(
+            'subdirs'=>false,
+            'forcehttps'=>false,
+            'maxfiles'=>EDITOR_UNLIMITED_FILES,
+            'maxbytes'=>null,
+            'trusttext'=>false);
+    /**
+     * The context to use with the description editor
+     * @var object
+     */
+    protected $editorcontext = null;
+
+    /**
+     * Instantiates a new event and optionally populates its properties with the
+     * data provided
+     *
+     * @param stdClass $data Optional. An object containing the properties to for
+     *                  an event
+     */
+    public function __construct($data=null) {
+        global $CFG;
+
+        // First convert to object if it is not already (should either be object or assoc array)
+        if (!is_object($data)) {
+            $data = (object)$data;
+        }
+
+        $this->editoroptions['maxbytes'] = $CFG->maxbytes;
+
+        $data->eventrepeats = 0;
+
+        if (empty($data->id)) {
+            $data->id = null;
+        }
+
+        if (!empty($data->timeduration) && is_array($data->timeduration)) {
+            $data->timeduration = make_timestamp($data->timeduration['year'], $data->timeduration['month'], $data->timeduration['day'], $data->timeduration['hour'], $data->timeduration['minute']) - $data->timestart;
+        }
+        if (!empty($data->description) && is_array($data->description)) {
+            $data->format = $data->description['format'];
+            $data->description = $data->description['text'];
+        } else if (empty($data->description)) {
+            $data->description = '';
+        }
+
+        if (empty($data->format)) {
+            if (can_use_html_editor()) {
+                $data->format = FORMAT_HTML;
+            } else {
+                $data->format = FORMAT_MOODLE;
+            }
+        }
+
+        $this->properties = $data;
+    }
+
+    /**
+     * Magic property method
+     *
+     * Attempts to call a set_$key method if one exists otherwise falls back
+     * to simply set the property
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function __set($key, $value) {
+        if (method_exists($this, 'set_'.$key)) {
+            $this->{'set_'.$key}($value);
+        }
+        $this->properties->{$key} = $value;
+    }
+
+    /**
+     * Magic get method
+     *
+     * Attempts to call a get_$key method to return the property and ralls over
+     * to return the raw property
+     *
+     * @param str $key
+     * @return mixed
+     */
+    public function __get($key) {
+        if (method_exists($this, 'get_'.$key)) {
+            return $this->{'get_'.$key}();
+        }
+        return $this->properties->{$key};
+    }
+
+    /**
+     * Stupid PHP needs an isset magic method if you use the get magic method and
+     * still want empty calls to work.... blah ~!
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function __isset($key) {
+        return !empty($this->properties->{$key});
+    }
+
+    /**
+     * Returns an array of editoroptions for this event: Called by __get
+     * Please use $blah = $event->editoroptions;
+     * @return array
+     */
+    protected function get_editoroptions() {
+        return $this->editoroptions;
+    }
+
+    /**
+     * Returns an event description: Called by __get
+     * Please use $blah = $event->description;
+     *
+     * @return string
+     */
+    protected function get_description() {
+       global $USER;
+        if ($this->_description === null) {
+            // Check if we have already resolved the context for this event
+            if ($this->editorcontext === null) {
+                // Switch on the event type to decide upon the appropriate context
+                // to use for this event
+                switch ($this->properties->eventtype) {
+                    case 'course':
+                    case 'group':
+                        // Course and group event files are served from the course context
+                        // and there are checks in plugin.php to ensure permissions are
+                        // followed
+                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                        break;
+                    case 'user':
+                        // User context
+                        $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                        break;
+                    case 'site':
+                        // Site context
+                        $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                        break;
+                    default:
+                        // Hmmmm some modules use custom eventtype strings, if that is the
+                        // case we are going to abandon using files. Anything that uses a
+                        // custom type is being added manually through code
+                        return clean_text($this->properties->description, $this->properties->format);
+                        break;
+                }
+            }
+
+            // Work out the item id for the editor, if this is a repeated event then the files will
+            // be associated with the original
+            if (!empty($this->properties->repeatid) && $this->properties->repeatid > 0) {
+                $itemid = $this->properties->repeatid;
+            } else {
+                $itemid = $this->properties->id;
+            }
+
+            // Convert file paths in the description so that things display correctly
+            $this->_description = file_rewrite_pluginfile_urls($this->properties->description, 'pluginfile.php', $this->editorcontext->id, self::$filearea, $itemid);
+            // Clean the text so no nasties get through
+            $this->_description = clean_text($this->_description, $this->properties->format);
+        }
+        // Finally return the description
+        return $this->_description;
+    }
+
+    /**
+     * Return the number of repeat events there are in this events series
+     * 
+     * @return int
+     */
+    public function count_repeats() {
+        global $DB;
+        if (!empty($this->properties->repeatid)) {
+            $this->properties->eventrepeats = $DB->count_records('event', array('repeatid'=>$this->properties->repeatid));
+            // We don't want to count ourselves
+            $this->properties->eventrepeats--;
+        }
+        return $this->properties->eventrepeats;
+    }
+
+    /**
+     * Update or create an event within the database
+     *
+     * Pass in a object containing the event properties and this function will
+     * insert it into the database and deal with any associated files
+     *
+     * @see add_event()
+     * @see update_event()
+     *
+     * @param stdClass $data
+     */
+    public function update($data) {
+        global $CFG, $DB, $USER;
+
+        $this->properties = (object)$data;
+        $this->properties->timemodified = time();
+        $usingeditor = (!empty($this->properties->description) && is_array($this->properties->description));
+
+        if (empty($this->properties->id) || $this->properties->id < 1) {
+
+            if (!calendar_add_event_allowed($this->properties)) {
+                print_error('nopermissions');
+            }
+
+            if ($usingeditor) {
+                switch ($this->properties->eventtype) {
+                    case 'user':
+                        $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                        $this->properties->courseid = 0;
+                        $this->properties->groupid = 0;
+                        $this->properties->userid = $USER->id;
+                        break;
+                    case 'site':
+                        $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                        $this->properties->courseid = SITEID;
+                        $this->properties->groupid = 0;
+                        $this->properties->userid = $USER->id;
+                        break;
+                    case 'course':
+                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                        $this->properties->groupid = 0;
+                        $this->properties->userid = $USER->id;
+                        break;
+                    case 'group':
+                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                        $this->properties->groupid = 0;
+                        $this->properties->userid = $USER->id;
+                        break;
+                    default:
+                        // Ewww we should NEVER get here, but just incase we do lets
+                        // fail gracefully
+                        $usingeditor = false;
+                        break;
+                }
+
+                $editor = $this->properties->description;
+                $this->properties->format = $this->properties->description['format'];
+                $this->properties->description = $this->properties->description['text'];
+            }
+
+            // Insert the event into the database
+            $this->properties->id = $DB->insert_record('event', $this->properties);
+
+            if ($usingeditor) {
+                $this->properties->description = file_save_draft_area_files(
+                                                $editor['itemid'],
+                                                $this->editorcontext->id,
+                                                self::$filearea,
+                                                $this->properties->id,
+                                                $this->editoroptions,
+                                                $editor['text'],
+                                                $this->editoroptions['forcehttps']);
+
+                $DB->set_field('event', 'description', $this->properties->description, array('id'=>$this->properties->id));
+            }
+            
+            // Log the event entry.
+            add_to_log($this->properties->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+
+            $repeatedids = array();
+
+            if (!empty($this->properties->repeat)) {
+                $this->properties->repeatid = $this->properties->id;
+                $DB->set_field('event', 'repeatid', $this->properties->repeatid, array('id'=>$this->properties->id));
+
+                $eventcopy = clone($this->properties);
+                unset($eventcopy->id);
+
+                for($i = 1; $i < $eventcopy->repeats; $i++) {
+
+                    $eventcopy->timestart = ($eventcopy->timestart+WEEKSECS) + dst_offset_on($eventcopy->timestart) - dst_offset_on($eventcopy->timestart+WEEKSECS);
+
+                    // Get the event id for the log record.
+                    $eventcopyid = $DB->insert_record('event', $eventcopy);
+
+                    // If the context has been set delete all associated files
+                    if ($usingeditor) {
+                        $fs = get_file_storage();
+                        $files = $fs->get_area_files($this->editorcontext->id, self::$filearea, $this->properties->id);
+                        foreach ($files as $file) {
+                            $fs->create_file_from_storedfile(array('itemid'=>$eventcopyid), $file);
+                        }
+                    }
+
+                    $repeatedids[] = $eventcopyid;
+                    // Log the event entry.
+                    add_to_log($eventcopy->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventcopyid, $eventcopy->name);
+                }
+            }
+
+            // Hook for tracking added events
+            self::calendar_event_hook('add_event', array($this->properties, $repeatedids));
+            return true;
+        } else {
+
+            if(!calendar_edit_event_allowed($this->properties)) {
+                print_error('nopermissions');
+            }
+
+            if ($usingeditor) {
+                if ($this->editorcontext !== null) {
+                    $this->properties->description = file_save_draft_area_files(
+                                                    $this->properties->description['itemid'],
+                                                    $this->editorcontext->id,
+                                                    self::$filearea,
+                                                    $this->properties->id,
+                                                    $this->editoroptions,
+                                                    $this->properties->description['text'],
+                                                    $this->editoroptions['forcehttps']);
+                } else {
+                    $this->properties->format = $this->properties->description['format'];
+                    $this->properties->description = $this->properties->description['text'];
+                }
+            }
+
+            $event = $DB->get_record('event', array('id'=>$this->properties->id));
+
+            $updaterepeated = (!empty($this->properties->repeatid) && !empty($this->properties->repeateditall));
+
+            if ($updaterepeated) {
+                // Update all
+                if ($this->properties->timestart != $event->timestart) {
+                    $timestartoffset = $this->properties->timestart - $event->timestart;
+                    $sql = "UPDATE {event}
+                               SET name = ?,
+                                   description = ?,
+                                   timestart = timestart + ?,
+                                   timeduration = ?,
+                                   timemodified = ?
+                             WHERE repeatid = ?";
+                    $params = array($this->properties->name, $this->properties->description, $timestartoffset, $this->properties->timeduration, time(), $event->repeatid);
+                } else {
+                    $sql = "UPDATE {event} SET name = ?, description = ?, timeduration = ?, timemodified = ? WHERE repeatid = ?";
+                    $params = array($this->properties->name, $this->properties->description, $this->properties->timeduration, time(), $event->repeatid);
+                }
+                $DB->execute($sql, $params);
+
+                // Log the event update.
+                add_to_log($this->properties->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+            } else {
+                $DB->update_record('event', $this->properties);
+                add_to_log($this->properties->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
+            }
+
+            // Hook for tracking event updates
+            self::calendar_event_hook('update_event', array($this->properties, $updaterepeated));
+            return true;
+        }
+    }
+
+    /**
+     * Deletes an event and if selected an repeated events in the same series
+     *
+     * This function deletes an event, any associated events if $deleterepeated=true,
+     * and cleans up any files associated with the events.
+     *
+     * @see delete_event()
+     *
+     * @param bool $deleterepeated
+     * @return bool
+     */
+    public function delete($deleterepeated=false) {
+        global $DB, $USER, $CFG;
+
+        // If $this->properties->id is not set then something is wrong
+        if (empty($this->properties->id)) {
+            debugging('Attempting to delete an event before it has been loaded', DEBUG_DEVELOPER);
+            return false;
+        }
+
+        // Delete the event
+        $DB->delete_records('event', array('id'=>$this->properties->id));
+
+        // If the editor context hasn't already been set then set it now
+        if ($this->editorcontext === null) {
+            switch ($this->properties->eventtype) {
+                case 'course':
+                case 'group':
+                    $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                    break;
+                case 'user':
+                    $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                    break;
+                case 'site':
+                    $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                    break;
+                default:
+                    // There is a chance we can get here as some modules use there own
+                    // eventtype strings. In this case the event has been added by code
+                    // and we don't need to worry about it anyway
+                    break;
+            }
+        }
+
+        // If the context has been set delete all associated files
+        if ($this->editorcontext !== null) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($this->editorcontext->id, self::$filearea, $this->properties->id);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+        }
+
+        // Fire the event deleted hook
+        self::calendar_event_hook('delete_event', array($this->properties->id, $deleterepeated));
+
+        // If we need to delete repeated events then we will fetch them all and delete one by one
+        if ($deleterepeated && !empty($this->properties->repeatid) && $this->properties->repeatid > 0) {
+            // Get all records where the repeatid is the same as the event being removed
+            $events = $DB->get_records('event', array('repeatid'=>$this->properties->repeatid));
+            // For each of the returned events populate a calendar_event object and call delete
+            // make sure the arg passed is false as we are already deleting all repeats
+            foreach ($events as $event) {
+                $event = new calendar_event($event);
+                $event->delete(false);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Fetch all event properties
+     *
+     * This function returns all of the events properties as an object and optionally
+     * can prepare an editor for the description field at the same time. This is
+     * designed to work when the properties are going to be used to set the default
+     * values of a moodle forms form.
+     *
+     * @param bool $prepareeditor If set to true a editor is prepared for use with
+     *              the mforms editor element. (for description)
+     * @return stdClass Object containing event properties
+     */
+    public function properties($prepareeditor=false) {
+        global $USER, $CFG, $DB;
+
+        // First take a copy of the properties. We don't want to actually change the
+        // properties or we'd forever be converting back and forwards between an
+        // editor formatted description and not
+        $properties = clone($this->properties);
+        // Clean the description here
+        $properties->description = clean_text($properties->description, $properties->format);
+
+        // If set to true we need to prepare the properties for use with an editor
+        // and prepare the file area
+        if ($prepareeditor) {
+
+            // We may or may not have a property id. If we do then we need to work
+            // out the context so we can copy the existing files to the draft area
+            if (!empty($properties->id)) {
+
+                if ($properties->eventtype === 'site') {
+                    // Site context
+                    $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                } else if ($properties->eventtype === 'user') {
+                    // User context
+                    $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                } else if ($properties->eventtype === 'group' || $properties->eventtype === 'course') {
+                    // First check the course is valid
+                    $course = $DB->get_record('course', array('id'=>$properties->courseid));
+                    if (!$course) {
+                        print_error('invalidcourse');
+                    }
+                    // Course context
+                    $this->editorcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                    // We have a course and are within the course context so we had
+                    // better use the courses max bytes value
+                    $this->editoroptions['maxbytes'] = $course->maxbytes;
+                } else {
+                    // If we get here we have a custom event type as used by some
+                    // modules. In this case the event will have been added by
+                    // code and we won't need the editor
+                    $this->editoroptions['maxbytes'] = 0;
+                    $this->editoroptions['maxfiles'] = 0;
+                }
+
+                if (empty($this->editorcontext) || empty($this->editorcontext->id)) {
+                    $contextid = false;
+                } else {
+                    // Get the context id that is what we really want
+                    $contextid = $this->editorcontext->id;
+                }
+            } else {
+
+                // If we get here then this is a new event in which case we don't need a
+                // context as there is no existing files to copy to the draft area.
+                $contextid = null;
+            }
+
+            // If the contextid === false we don't support files so no preparing
+            // a draft area
+            if ($contextid !== false) {
+                // Just encase it has already been submitted
+                $draftiddescription = file_get_submitted_draft_itemid('description');
+                // Prepare the draft area, this copies existing files to the draft area as well
+                $properties->description = file_prepare_draft_area($draftiddescription, $contextid, self::$filearea, $properties->id, $this->editoroptions, $properties->description);
+            } else {
+                $draftiddescription = 0;
+            }
+            
+            // Structure the description field as the editor requires
+            $properties->description = array('text'=>$properties->description, 'format'=>$properties->format, 'itemid'=>$draftiddescription);
+        }
+
+        // Finally return the properties
+        return $properties;
+    }
+
+    /**
+     * Toggles the visibility of an event
+     *
+     * @param null|bool $force If it is left null the events visibility is flipped,
+     *                   If it is false the event is made hidden, if it is true it
+     *                   is made visible.
+     */
+    public function toggle_visibility($force=null) {
+        global $CFG, $DB;
+
+        // Set visible to the default if it is not already set
+        if (empty($this->properties->visible)) {
+            $this->properties->visible = 1;
+        }
+
+        if ($force === true || ($force !== false && $this->properties->visible == 0)) {
+            // Make this event visible
+            $this->properties->visible = 1;
+            // Fire the hook
+            self::calendar_event_hook('show_event', array($this->properties));
+        } else {
+            // Make this event hidden
+            $this->properties->visible = 0;
+            // Fire the hook
+            self::calendar_event_hook('hide_event', array($this->properties));
+        }
+
+        // Update the database to reflect this change
+        return $DB->set_field('event', 'visible', $this->properties->visible, array('id'=>$this->properties->id));
+    }
+
+    /**
+     * Attempts to call the hook for the specified action should a calendar type
+     * by set $CFG->calendar, and the appopriate function defined
+     *
+     * @static
+     * @staticvar bool $extcalendarinc Used to track the inclusion of the calendar lib
+     * @param string $action One of `update_event`, `add_event`, `delete_event`, `show_event`, `hide_event`
+     * @param array $args The args to pass to the hook, usually the event is the first element
+     * @return bool
+     */
+    public static function calendar_event_hook($action, array $args) {
+        global $CFG;
+        static $extcalendarinc;
+        if ($extcalendarinc === null) {
+            if (!empty($CFG->calendar) && file_exists($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
+                include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
+                $extcalendarinc = true;
+            } else {
+                $extcalendarinc = false;
+            }
+        }
+        if($extcalendarinc === false) {
+            return false;
+        }
+        $hook = $CFG->dirroot .'_'.$action;
+        if (function_exists($hook)) {
+            call_user_func_array($hook, $args);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns a calendar_event object when provided with an event id
+     *
+     * This function makes use of MUST_EXIST, if the event id passed in is invalid
+     * it will result in an exception being thrown
+     *
+     * @param int $id
+     * @return calendar_event|false
+     */
+    public static function load($id) {
+        global $DB;
+        $event = $DB->get_record('event', array('id'=>$id), '*', MUST_EXIST);
+        $event = new calendar_event($event);
+        return $event;
+    }
+
+    /**
+     * Creates a new event and returns a calendar_event object
+     *
+     * @param object|array $properties An object containing event properties
+     * @return calendar_event|false The event object or false if it failed
+     */
+    public static function create($properties) {
+        if (is_array($properties)) {
+            $properties = (object)$properties;
+        }
+        if (!is_object($properties)) {
+            throw new coding_exception('When creating an event properties should be either an object or an assoc array');
+        }
+        $event = new calendar_event();
+        if ($event->update($properties)) {
+            return $event;
+        } else {
+            return false;
+        }
+    }
 }

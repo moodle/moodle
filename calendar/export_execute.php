@@ -54,7 +54,7 @@ if(!empty($what) && !empty($time)) {
 
         switch($time) {
             case 'weeknow':
-                $startweekday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+                $startweekday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
                 $startmonthday = find_day_in_month($now['mday'] - 6, $startweekday, $now['mon'], $now['year']);
                 $startmonth    = $now['mon'];
                 $startyear     = $now['year'];
@@ -73,7 +73,7 @@ if(!empty($what) && !empty($time)) {
                 $timeend = make_timestamp($endyear, $endmonth, $endmonthday) - 1;
             break;
             case 'weeknext':
-                $startweekday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+                $startweekday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
                 $startmonthday = find_day_in_month($now['mday'] + 1, $startweekday, $now['mon'], $now['year']);
                 $startmonth    = $now['mon'];
                 $startyear     = $now['year'];
