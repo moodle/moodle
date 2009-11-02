@@ -738,12 +738,17 @@ function sesskey() {
 
 
 /**
- * For security purposes, this function will check that the currently
- * given sesskey (passed as a parameter to the script or this function)
- * matches that of the current user.
+ * Check the sesskey and return true of false for whether it is valid.
+ * (You might like to imagine this function is called sesskey_is_valid().)
  *
- * @param string $sesskey optionally provided sesskey
- * @return bool
+ * Every script that lets the user perform a significant action (that is,
+ * changes data in the database) should check the sesskey before doing the action.
+ * Depending on your code flow, you may want to use the {@link require_sesskey()}
+ * helper function.
+ *
+ * @param string $sesskey The sesskey value to check (optional). Normally leave this blank
+ *      and this function will do required_param('sesskey', ...).
+ * @return bool whether the sesskey sent in the request matches the one stored in the session.
  */
 function confirm_sesskey($sesskey=NULL) {
     global $USER;
@@ -757,6 +762,16 @@ function confirm_sesskey($sesskey=NULL) {
     }
 
     return (sesskey() === $sesskey);
+}
+
+/**
+ * Check the session key using {@link confirm_sesskey()},
+ * and cause a fatal error if it does not match.
+ */
+function require_sesskey() {
+    if (!confirm_sesskey()) {
+        print_error('invalidsesskey');
+    }
 }
 
 /**
