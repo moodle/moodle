@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -467,10 +467,10 @@ class string_manager_test extends UnitTestCase {
         // Exercise SUT.
         $this->assertEqual($this->stringmanager->get_list_of_countries(),
                 array('AU' => 'Aussie', 'GB' => 'Royaume-Uni'));
-        
+
         // Tear down.
         $CFG->allcountrycodes = $oldlist;
     }
 }
 
-?>
+

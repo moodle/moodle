@@ -96,4 +96,4 @@ class ContainsTagWithContents_test extends UnitTestCase {
     }
 }
 
-?>
+

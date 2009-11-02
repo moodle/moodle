@@ -10,7 +10,7 @@ if (!defined('MOODLE_INTERNAL')) {
  *   rsstest.xml: One valid rss feed.
  *   md5:  8fd047914863bf9b3a4b1514ec51c32c
  *   size: 32188
- * 
+ *
  * If networking/proxy configuration is wrong these tests will fail..
  */
 
@@ -75,7 +75,7 @@ Google will pay students US$100 for every three tasks they successfully complete
 <br />
 You can find out all the details on the <a href="http://code.google.com/p/google-highly-open-participation-moodle/">Moodle/GHOP contest site</a>.</p></p>
 EOD;
-        $this->assertEqual($itemone->get_description(), $description); 
+        $this->assertEqual($itemone->get_description(), $description);
 
 
         // TODO fix this so it uses $CFG by default

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -371,11 +371,11 @@ class moodlelib_test extends UnitTestCase {
             "tags that ...</blockquote></p></div>", shorten_text($text));
 
         $text = "some text which shouldn't &nbsp; break there";
-        $this->assertEqual("some text which shouldn't &nbsp; ...", 
+        $this->assertEqual("some text which shouldn't &nbsp; ...",
             shorten_text($text, 31));
-        $this->assertEqual("some text which shouldn't ...", 
+        $this->assertEqual("some text which shouldn't ...",
             shorten_text($text, 30));
-        
+
         // This case caused a bug up to 1.9.5
         $text = "<h3>standard 'break-out' sub groups in TGs?</h3>&nbsp;&lt;&lt;There are several";
         $this->assertEqual("<h3>standard 'break-out' sub groups in ...</h3>",
@@ -384,4 +384,4 @@ class moodlelib_test extends UnitTestCase {
 
 }
 
-?>
+

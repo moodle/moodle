@@ -66,7 +66,7 @@ class navigation_node_test extends UnitTestCase {
         $this->node->get('hiddendemo1')->get('hiddendemo2')->helpbutton = 'Here is a help button';
         $this->node->get('hiddendemo1')->get('hiddendemo3')->display = false;
     }
-    
+
     public function test___construct() {
         global $CFG;
         $node = new navigation_node($this->fakeproperties);
@@ -353,7 +353,7 @@ class global_navigation_test extends UnitTestCase {
     protected $coursesections5 = 'a:5:{i:0;O:8:"stdClass":6:{s:7:"section";s:1:"0";s:2:"id";s:2:"14";s:6:"course";s:1:"5";s:7:"summary";N;s:8:"sequence";s:3:"288";s:7:"visible";s:1:"1";}i:1;O:8:"stdClass":6:{s:7:"section";s:1:"1";s:2:"id";s:2:"97";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:2;O:8:"stdClass":6:{s:7:"section";s:1:"2";s:2:"id";s:2:"98";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:3;O:8:"stdClass":6:{s:7:"section";s:1:"3";s:2:"id";s:2:"99";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}i:4;O:8:"stdClass":6:{s:7:"section";s:1:"4";s:2:"id";s:3:"100";s:6:"course";s:1:"5";s:7:"summary";s:0:"";s:8:"sequence";N;s:7:"visible";s:1:"1";}}';
     public static $includecoverage = array('./lib/navigationlib.php');
     public static $excludecoverage = array();
-    
+
     public function setUp() {
         $this->cache = new navigation_cache('simpletest_nav');
         $this->node = new exposed_global_navigation();
@@ -509,7 +509,7 @@ class global_navigation_test extends UnitTestCase {
             $course->modinfo = $this->modinfo5;
             $courses[$i] = $course;
         }
-        
+
         $this->node->add_courses($courses);
         $this->assertIsA($this->node->get('cat3')->get(0), 'navigation_node');
         $this->assertIsA($this->node->get('cat3')->get(1), 'navigation_node');
@@ -568,7 +568,7 @@ class global_navigation_test extends UnitTestCase {
         $course->numsections = 10;
         $course->modinfo = $this->modinfo5;
         $coursechildren = $this->node->get_by_path($keys)->children;
-        
+
         $this->node->get_by_path(array('cat2', 'sub2', '5'))->children = array();
         $this->node->exposed_load_course_sections($keys, $course);
 
@@ -717,7 +717,7 @@ class limited_global_navigation_test extends UnitTestCase {
         if ($node4->get('initcall')) {
             $this->assertEqual($node4->get('initcall')->text, 'load_for_section_4');
         }
-        
+
         $node5 = clone($this->mocknode);
         $node5->initialise(navigation_node::TYPE_RESOURCE, 5);
         $this->assertFalse($node5->get('initcall'));

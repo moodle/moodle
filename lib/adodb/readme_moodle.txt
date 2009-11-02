@@ -25,5 +25,3 @@ Our changes: /// Look for "moodle" in adodb code
        we'll return to their official distro.
 
 skodak, iarenaza, moodler, stronk7
-
-$Id$

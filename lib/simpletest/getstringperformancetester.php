@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -628,4 +628,4 @@ function get_string_from_file($identifier, $langfile, $destination) {
     return $destination .'= sprintf("'. $string[$identifier] .'");';
 }
 
-?>
+

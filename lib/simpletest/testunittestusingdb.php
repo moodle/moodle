@@ -30,4 +30,4 @@ class UnitTestCaseUsingDatabase_test extends UnitTestCaseUsingDatabase {
     }
 
 }
-?>
+

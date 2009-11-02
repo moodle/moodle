@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -25,7 +25,7 @@
 
 /**
  * An array of possible user_agent strings.
- * 
+ *
  * @TODO Complete that list using http://www.pgts.com.au/pgtsj/pgtsj0208c.html
  *       OR make this test function dynamic by pulling out strings from a server somewhere,
  *       then testing each of them against the check_browser_version function.
@@ -36,7 +36,7 @@ $user_agents = array(
         '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),
         '6.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'),
         '7.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)')
-    ),  
+    ),
     'Firefox' => array(
         '1.0.6'   => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6'),
         '1.5'     => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5'),
@@ -54,4 +54,4 @@ $user_agents = array(
                         'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)')
     )
 );
-?>
+

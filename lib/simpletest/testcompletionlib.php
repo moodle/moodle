@@ -92,7 +92,7 @@ class completionlib_test extends FakeDBUnitTestCase {
     public static $includecoverage = array('lib/completionlib.php');
     var $realdb,$realcfg,$realsession,$realuser;
 
-    function setUp() {        
+    function setUp() {
         global $DB,$CFG,$SESSION,$USER;
         $this->realdb=$DB;
         $this->realcfg=$CFG;
@@ -678,4 +678,4 @@ WHERE
             completion_info::internal_get_grade_state($item,$grade));
     }
 }
-?>
+

@@ -197,7 +197,7 @@ abstract class XMLDBCheckAction extends XMLDBAction {
      * @return array an array with two elements: First, some additional progress output,
      *      for example a list (<ul>) of the things check each with an one work ok/not ok summary.
      *      Second, an array giving the details of any problems found. These arrays
-     *      for all tables will be aggregated, and then passed to 
+     *      for all tables will be aggregated, and then passed to
      */
     abstract protected function check_table(xmldb_table $xmldb_table, array $metacolumns);
 

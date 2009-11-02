@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -66,4 +66,4 @@ class repositorylib_test extends FakeDBUnitTestCase {
         }
     }
 }
-?>
+

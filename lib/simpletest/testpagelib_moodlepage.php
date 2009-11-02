@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -801,4 +801,4 @@ class moodle_page_editing_test extends UnitTestCase {
         $this->assert(new ArraysHaveSameValuesExpectation($expectedcaps), $actualcaps);
     }
 }
-?>
+

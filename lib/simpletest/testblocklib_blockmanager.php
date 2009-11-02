@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -391,4 +391,4 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $this->assertContainsBlocksOfType(array($blockname), $blocks);
     }
 }
-?>
+

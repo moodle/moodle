@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -61,21 +61,21 @@ class filelib_test extends UnitTestCaseUsingDatabase {
 
         global $DB, $CFG;
         // Insert needed capabilities
-        $DB->insert_record('capabilities', 
+        $DB->insert_record('capabilities',
             array('id' => 45, 'name' => 'moodle/course:update', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
-        $DB->insert_record('capabilities', 
+        $DB->insert_record('capabilities',
             array('id' => 14, 'name' => 'moodle/site:backup', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
-        $DB->insert_record('capabilities', 
+        $DB->insert_record('capabilities',
             array('id' => 17, 'name' => 'moodle/site:restore', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 28));
-        $DB->insert_record('capabilities', 
+        $DB->insert_record('capabilities',
             array('id' => 52, 'name' => 'moodle/course:managefiles', 'cattype' => 'write', 'contextlevel' => 50, 'component' => 'moodle', 'riskbitmask' => 4));
-        $DB->insert_record('capabilities', 
+        $DB->insert_record('capabilities',
             array('id' => 73, 'name' => 'moodle/user:editownprofile', 'cattype' => 'write', 'contextlevel' => 10, 'component' => 'moodle', 'riskbitmask' => 16));
-        
+
         // Insert system context
         $DB->insert_record('context', array('id' => 1, 'contextlevel' => 10, 'instanceid' => 0, 'path' => '/1', 'depth' => 1));
         $DB->insert_record('context', array('id' => 2, 'contextlevel' => 50, 'instanceid' => 1, 'path' => '/1/2', 'depth' => 2));
-        
+
         // Insert site course
         $DB->insert_record('course', array('category' => 0, 'sortorder' => 1, 'fullname' => 'Test site', 'shortname' => 'test', 'format' => 'site', 'modinfo' => 'a:0:{}'));
 
@@ -87,7 +87,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         assign_capability('moodle/site:doanything', CAP_ALLOW, $adminrole, $syscontext->id);
         update_capabilities('moodle');
         update_capabilities('mod_forum');
-        
+
         $contexts = $this->load_test_data('context',
                 array('contextlevel', 'instanceid', 'path', 'depth'), array(
            1 => array(40, 666, '', 2)));
@@ -102,7 +102,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
 
         $this->switch_global_user_id(1);
         accesslib_clear_all_caches_for_unit_testing();
-        
+
         // Create a coursecat
         $newcategory = new stdClass();
         $newcategory->name = 'test category';
@@ -117,9 +117,9 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         // Create a course
         $coursedata = new stdClass();
         $coursedata->category = $newcategory->id;
-        $coursedata->shortname = 'testcourse'; 
+        $coursedata->shortname = 'testcourse';
         $coursedata->fullname = 'Test Course';
-        
+
         try {
             $this->course = create_course($coursedata);
         } catch (moodle_exception $e) {
@@ -145,7 +145,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         $module->type = 'general';
         $module->forcesubscribe = 1;
         $module->format = 1;
-        $module->name = 'Test Forum'; 
+        $module->name = 'Test Forum';
         $module->module = $DB->get_field('modules', 'id', array('name' => 'forum'));
         $module->modulename = 'forum';
         $module->add = 'forum';
@@ -153,7 +153,7 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         $module->course = $this->course->id;
 
         $module->instance = forum_add_instance($module, '');
-        
+
         $this->section = get_course_section(1, $this->course->id);
         $module->section = $this->section->id;
         $module->coursemodule = add_course_module($module);
@@ -169,11 +169,11 @@ class filelib_test extends UnitTestCaseUsingDatabase {
         // Update local copy of course
         $this->course = $DB->get_record('course', array('id' => $this->course->id));
     }
-    
+
     public function teardown() {
         parent::tearDown();
     }
-    
+
     public function createFiles() {
 
     }
@@ -293,7 +293,7 @@ class test_file_info_coursecat extends filelib_test {
     public function test_get_children() {
         $children = $this->fileinfo->get_children();
         $this->assertEqual(2, count($children));
-        
+
         // Not sure but I think there should be two children: a file_info_stored object and a file_info_course object.
         $this->assertEqual('Category introduction', $children[0]->get_visible_name());
         $this->assertEqual('', $children[0]->get_url());
@@ -308,7 +308,7 @@ class test_file_info_coursecat extends filelib_test {
         $context = get_context_instance(CONTEXT_SYSTEM);
         $fis = new file_info_system(new file_browser(), $context);
         $parent = $this->fileinfo->get_parent();
-        $this->assertEqual($parent, $fis); 
+        $this->assertEqual($parent, $fis);
     }
 }
 
@@ -338,7 +338,7 @@ class test_file_info_course extends filelib_test {
         $this->assertEqual('Backups', $children[2]->get_visible_name());
         $this->assertEqual('', $children[2]->get_url());
         $this->assertEqual('file_info_stored', get_class($children[2]));
-        
+
         $this->assertEqual('Course files', $children[3]->get_visible_name());
         $this->assertEqual('', $children[3]->get_url());
         $this->assertEqual('file_info_coursefile', get_class($children[3]));
@@ -349,7 +349,7 @@ class test_file_info_course extends filelib_test {
         $context = get_context_instance(CONTEXT_COURSECAT, $this->coursecat->id);
         $fic = new file_info_coursecat(new file_browser(), $context, $this->coursecat);
         $parent = $this->fileinfo->get_parent();
-        $this->assertEqual($parent, $fic); 
+        $this->assertEqual($parent, $fic);
     }
 }
 
@@ -361,22 +361,22 @@ class test_file_info_user extends filelib_test {
         $context = get_context_instance(CONTEXT_USER, $this->user->id);
         $this->fileinfo = new file_info_user(new file_browser(), $context, $this->user);
     }
-    
+
     public function test_get_parent() {
         $context = get_context_instance(CONTEXT_SYSTEM);
         $fic = new file_info_system(new file_browser(), $context);
         $parent = $this->fileinfo->get_parent();
-        $this->assertEqual($parent, $fic); 
+        $this->assertEqual($parent, $fic);
     }
-    
+
     public function test_get_children() {
         $children = $this->fileinfo->get_children();
         $this->assertEqual(2, count($children));
-        
+
         $this->assertEqual('Personal', $children[0]->get_visible_name());
         $this->assertEqual('', $children[0]->get_url());
         $this->assertEqual('file_info_stored', get_class($children[0]));
-        
+
         $this->assertEqual('Profile', $children[1]->get_visible_name());
         $this->assertEqual('', $children[1]->get_url());
         $this->assertEqual('file_info_stored', get_class($children[1]));
@@ -397,9 +397,9 @@ class test_file_info_module extends filelib_test {
         $context = get_context_instance(CONTEXT_COURSE, $this->course->id);
         $fic = new file_info_course(new file_browser(), $context, $this->course);
         $parent = $this->fileinfo->get_parent();
-        $this->assertEqual($parent, $fic); 
+        $this->assertEqual($parent, $fic);
     }
-    
+
     public function test_get_children() {
         $children = $this->fileinfo->get_children();
         $this->assertEqual(0, count($children));

@@ -1,7 +1,5 @@
 <?php
 
-/* $Id$ */
-
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
@@ -200,4 +198,4 @@ class eventslib_test extends UnitTestCase {
 
 }
 
-?>
+

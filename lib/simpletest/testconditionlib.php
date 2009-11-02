@@ -35,7 +35,7 @@ class conditionlib_test extends FakeDBUnitTestCase {
             'showavailability'=>1,'availablefrom'=>17,'availableuntil'=>398,'course'=>64));
 
         // no ID
-        try { 
+        try {
             $test=new condition_info($cm);
             $this->fail();
         } catch(coding_exception $e) {
@@ -342,4 +342,4 @@ class conditionlib_test extends FakeDBUnitTestCase {
     }
 
 }
-?>
+

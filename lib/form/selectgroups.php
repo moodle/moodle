@@ -16,8 +16,6 @@
 // | Authors: Adam Daniel <adaniel1@eesus.jnj.com>                        |
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
-//
-// $Id$
 
 require_once('HTML/QuickForm/element.php');
 

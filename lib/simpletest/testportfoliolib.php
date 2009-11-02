@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -44,4 +44,4 @@ foreach (get_list_of_plugins('mod') as $module) {
         require_once($modtest);
     }
 }
-?>
+

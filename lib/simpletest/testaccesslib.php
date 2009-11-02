@@ -341,10 +341,10 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array(      5, 'moodle/site:doanything', SYSCONTEXTID, CAP_PREVENT),
                 array(      6,     'moodle/course:view', SYSCONTEXTID, CAP_PREVENT),
                 ));
-        
+
         $this->switch_to_test_db();
 
         $this->assert(new ArraysHaveSameValuesExpectation(array(2, 5)), array_keys(get_allowed_switchable_roles()));
     }
 }
-?>
+

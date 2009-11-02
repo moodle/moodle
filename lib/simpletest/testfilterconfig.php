@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -659,4 +659,4 @@ class filter_filter_set_applies_to_strings extends UnitTestCaseUsingDatabase {
         $this->assertTrue($CFG->filterall);
     }
 }
-?>
+

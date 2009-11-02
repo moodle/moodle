@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -52,4 +52,4 @@ class portfoliolibaddbutton_test extends FakeDBUnitTestCase {
     }
 }
 
-?>
+
