@@ -62,7 +62,7 @@
 
 /// Save the flag states, if they are being changed.
     if ($options->flags == QUESTION_FLAGSEDITABLE && optional_param('savingflags', false, PARAM_BOOL)) {
-        confirm_sesskey();
+        require_sesskey();
         $formdata = data_submitted();
 
         question_save_flags($formdata, $attemptid, $questionids);

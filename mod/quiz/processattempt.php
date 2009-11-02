@@ -44,7 +44,7 @@ if ($timeup) {
 
 /// Check login.
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
-confirm_sesskey();
+require_sesskey();
 
 /// Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
