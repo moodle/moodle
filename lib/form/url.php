@@ -58,7 +58,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         }
         $client_id = uniqid();
 
-        $repojs = repository_get_client($context, $client_id, '*', 'link');
+        $repojs = repository_get_client($context, $client_id, '*', FILE_EXTERNAL);
 
         $PAGE->requires->js('lib/form/url.js');
         $str .= $repojs;

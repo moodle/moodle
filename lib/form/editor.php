@@ -179,7 +179,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
             require_once($CFG->dirroot.'/repository/lib.php');
             $client_id = uniqid();
-            $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), '*');
+            $repojs = repository_get_client($ctx, $client_id, array('image', 'video', 'media'), (FILE_EXTERNAL | FILE_INTERNAL));
 
             $str .= $repojs;
             $str .= $PAGE->requires->js_function_call('id2_add_clientid', array($id, $client_id))->asap();

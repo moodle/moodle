@@ -15,7 +15,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
  */
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     public $_helpbutton = '';
-    protected $_options    = array('maxbytes'=>0, 'filetypes'=>'*', 'returnvalue'=>'*');
+    protected $_options    = array('maxbytes'=>0, 'filetypes'=>'*', 'returntypes'=>FILE_INTERNAL);
 
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
@@ -93,7 +93,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
             $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
         }
         $client_id = uniqid();
-        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
+        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returntypes']);
         $PAGE->requires->data_for_js('filepicker', array('maxbytes'=>$this->_options['maxbytes'],'maxfiles'=>1));
         $PAGE->requires->js('lib/form/filepicker.js');
 

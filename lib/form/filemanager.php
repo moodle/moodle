@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/lib/filelib.php');
 
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returnvalue'=>'*');
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>-1, 'filetypes'=>'*', 'returntypes'=>FILE_INTERNAL);
 
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
@@ -189,7 +189,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $client_id = uniqid();
 
         // Generate file picker
-        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returnvalue']);
+        $repojs = repository_get_client($context, $client_id, $this->_options['filetypes'], $this->_options['returntypes']);
         $result = new stdclass;
 
         $options = file_get_draft_area_files($draftitemid);
