@@ -4416,8 +4416,8 @@ function &get_mailer($action='get') {
             get_mailer('flush');
         }
 
-        include_once($CFG->libdir.'/phpmailer/class.phpmailer.php');
-        $mailer = new phpmailer();
+        include_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+        $mailer = new moodle_phpmailer();
 
         $counter = 1;
 
