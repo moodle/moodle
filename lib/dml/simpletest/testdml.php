@@ -1239,23 +1239,22 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Check empty string data causes exception in numeric types
+        // Check empty string data is stored as 0 in numeric datatypes
         $record->oneint = ''; // empty string
         $record->onenum = 0;
-        try {
-            $DB->insert_record($tablename, $record);
-            $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
+        $recid = $DB->insert_record($tablename, $record);
+        $rs = $DB->get_recordset($tablename, array('id' => $recid));
+        $record = $rs->current();
+        $rs->close();
+        $this->assertTrue(is_numeric($record->oneint) && $record->oneint == 0);
+
         $record->oneint = 0;
         $record->onenum = ''; // empty string
-        try {
-           $DB->insert_record($tablename, $record);
-           $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
+        $recid = $DB->insert_record($tablename, $record);
+        $rs = $DB->get_recordset($tablename, array('id' => $recid));
+        $record = $rs->current();
+        $rs->close();
+        $this->assertTrue(is_numeric($record->onenum) && $record->onenum == 0);
 
         // Check empty strings are set properly in string types
         $record->oneint = 0;
@@ -1468,23 +1467,18 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Check empty string data causes exception in numeric types
+        // Check empty string data is stored as 0 in numeric datatypes
         $record->oneint = ''; // empty string
         $record->onenum = 0;
-        try {
-            $DB->update_record($tablename, $record);
-            $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
+        $DB->update_record($tablename, $record);
+        $record = $DB->get_record($tablename, array('course' => 2));
+        $this->assertTrue(is_numeric($record->oneint) && $record->oneint == 0);
+
         $record->oneint = 0;
         $record->onenum = ''; // empty string
-        try {
-            $DB->update_record($tablename, $record);
-            $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
+        $DB->update_record($tablename, $record);
+        $record = $DB->get_record($tablename, array('course' => 2));
+        $this->assertTrue(is_numeric($record->onenum) && $record->onenum == 0);
 
         // Check empty strings are set properly in string types
         $record->oneint = 0;
@@ -1642,19 +1636,14 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
         }
 
-        // Check empty string data causes exception in numeric types
-        try {
-            $DB->set_field_select($tablename, 'oneint', '', 'id = ?', array(1));
-            $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
-        try {
-            $DB->set_field_select($tablename, 'onenum', '', 'id = ?', array(1));
-            $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
-        }
+        // Check empty string data is stored as 0 in numeric datatypes
+        $DB->set_field_select($tablename, 'oneint', '', 'id = ?', array(1));
+        $field = $DB->get_field($tablename, 'oneint', array('id' => 1));
+        $this->assertTrue(is_numeric($field) && $field == 0);
+
+        $DB->set_field_select($tablename, 'onenum', '', 'id = ?', array(1));
+        $field = $DB->get_field($tablename, 'onenum', array('id' => 1));
+        $this->assertTrue(is_numeric($field) && $field == 0);
 
         // Check empty strings are set properly in string types
         $DB->set_field_select($tablename, 'onechar', '', 'id = ?', array(1));
