@@ -1239,6 +1239,24 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
         }
 
+        // Check empty string data causes exception in numeric types
+        $record->oneint = ''; // empty string
+        $record->onenum = 0;
+        try {
+            $DB->insert_record($tablename, $record);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+        $record->oneint = 0;
+        $record->onenum = ''; // empty string
+        try {
+           $DB->insert_record($tablename, $record);
+           $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+
         // Check empty strings are set properly in string types
         $record->oneint = 0;
         $record->onenum = 0;
@@ -1450,6 +1468,24 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
         }
 
+        // Check empty string data causes exception in numeric types
+        $record->oneint = ''; // empty string
+        $record->onenum = 0;
+        try {
+            $DB->update_record($tablename, $record);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+        $record->oneint = 0;
+        $record->onenum = ''; // empty string
+        try {
+            $DB->update_record($tablename, $record);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+
         // Check empty strings are set properly in string types
         $record->oneint = 0;
         $record->onenum = 0;
@@ -1601,6 +1637,20 @@ class dml_test extends UnitTestCase {
         }
         try {
             $DB->set_field_select($tablename, 'onenum', 'onestring', 'id = ?', array(1));
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+
+        // Check empty string data causes exception in numeric types
+        try {
+            $DB->set_field_select($tablename, 'oneint', '', 'id = ?', array(1));
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+        try {
+            $DB->set_field_select($tablename, 'onenum', '', 'id = ?', array(1));
             $this->fail("Expecting an exception, none occurred");
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
