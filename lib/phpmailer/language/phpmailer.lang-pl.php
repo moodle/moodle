@@ -1,24 +1,25 @@
 <?php
 /**
- * PHPMailer language file.  
- * Polish Version, encoding: windows-1250
- * translated from english lang file ver. 1.72
- */
+* PHPMailer language file: refer to English translation for definitive list
+* Polish Version
+*/
 
-$PHPMAILER_LANG = array();
-
-$PHPMAILER_LANG["provide_address"] = 'Nale¿y podaæ prawid³owy adres email Odbiorcy.';
-$PHPMAILER_LANG["mailer_not_supported"] = 'Wybrana metoda wysy³ki wiadomoœci nie jest obs³ugiwana.';
-$PHPMAILER_LANG["execute"] = 'Nie mo¿na uruchomiæ: ';
-$PHPMAILER_LANG["instantiate"] = 'Nie mo¿na wywo³aæ funkcji mail(). SprawdŸ konfiguracjê serwera.';
-$PHPMAILER_LANG["authenticate"] = 'B³¹d SMTP: Nie mo¿na przeprowadziæ autentykacji.';
-$PHPMAILER_LANG["from_failed"] = 'Nastêpuj¹cy adres Nadawcy jest jest nieprawid³owy: ';
-$PHPMAILER_LANG["recipients_failed"] = 'B³¹d SMTP: Nastêpuj¹cy ' .
-                                       'odbiorcy s¹ nieprawid³owi: ';
-$PHPMAILER_LANG["data_not_accepted"] = 'B³¹d SMTP: Dane nie zosta³y przyjête.';
-$PHPMAILER_LANG["connect_host"] = 'B³¹d SMTP: Nie mo¿na po³¹czyæ siê z wybranym hostem.';
-$PHPMAILER_LANG["file_access"] = 'Brak dostêpu do pliku: ';
-$PHPMAILER_LANG["file_open"] = 'Nie mo¿na otworzyæ pliku: ';
-$PHPMAILER_LANG["encoding"] = 'Nieznany sposób kodowania znaków: ';
-
+$PHPMAILER_LANG['authenticate'] = 'BÅ‚Ä…d SMTP: Nie moÅ¼na przeprowadziÄ‡ autentykacji.';
+$PHPMAILER_LANG['connect_host'] = 'BÅ‚Ä…d SMTP: Nie moÅ¼na poÅ‚Ä…czyÄ‡ siÄ™ z wybranym hostem.';
+$PHPMAILER_LANG['data_not_accepted'] = 'BÅ‚Ä…d SMTP: Dane nie zostaÅ‚y przyjÄ™te.';
+//$PHPMAILER_LANG['empty_message']        = 'Message body empty';
+$PHPMAILER_LANG['encoding'] = 'Nieznany sposÃ³b kodowania znakÃ³w: ';
+$PHPMAILER_LANG['execute'] = 'Nie moÅ¼na uruchomiÄ‡: ';
+$PHPMAILER_LANG['file_access'] = 'Brak dostÄ™pu do pliku: ';
+$PHPMAILER_LANG['file_open'] = 'Nie moÅ¼na otworzyÄ‡ pliku: ';
+$PHPMAILER_LANG['from_failed'] = 'NastÄ™pujÄ…cy adres Nadawcy jest jest nieprawidÅ‚owy: ';
+$PHPMAILER_LANG['instantiate'] = 'Nie moÅ¼na wywoÅ‚aÄ‡ funkcji mail(). SprawdÅº konfiguracjÄ™ serwera.';
+//$PHPMAILER_LANG['invalid_email']        = 'Not sending, email address is invalid: ';
+$PHPMAILER_LANG['provide_address'] = 'NaleÅ¼y podaÄ‡ prawidÅ‚owy adres email Odbiorcy.';
+$PHPMAILER_LANG['mailer_not_supported'] = 'Wybrana metoda wysyÅ‚ki wiadomoÅ›ci nie jest obsÅ‚ugiwana.';
+$PHPMAILER_LANG['recipients_failed'] = 'BÅ‚Ä…d SMTP: NastÄ™pujÄ…cy odbiorcy sÄ… nieprawidÅ‚owi: ';
+//$PHPMAILER_LANG['signing']              = 'Signing Error: ';
+//$PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() failed.';
+//$PHPMAILER_LANG['smtp_error']           = 'SMTP server error: ';
+//$PHPMAILER_LANG['variable_set']         = 'Cannot set or reset variable: ';
 ?>
