@@ -48,7 +48,7 @@ require_capability('moodle/course:update', $context);
 
 // OK, now let's process the parameters and do stuff
 
-$req_method = ($page_action == 'DELETE') ? 'DELETE' : $_SERVER['REQUEST_METHOD'];
+$req_method = ($pageaction == 'DELETE') ? 'DELETE' : $_SERVER['REQUEST_METHOD'];
 
 switch($req_method) {
 
