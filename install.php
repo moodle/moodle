@@ -46,17 +46,27 @@ if (file_exists($configfile)) {
 // make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);
 @ini_set('display_errors', '1');
-// we need a lot of memory
-@ini_set('memory_limit', '40M');
 
 // Check that PHP is of a sufficient version
 if (version_compare(phpversion(), "5.2.0") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN not move it after installib
-    echo "Sorry, Moodle 2.0 requires PHP 5.2.8 or later (currently using version $phpversion). ";
+    echo "Sorry, Moodle 2.0 requires PHP 5.2.8 or later (currently using version $phpversion).<br />";
     echo "Please upgrade your server software or install latest Moodle 1.9.x instead.";
     die;
 }
+
+if (PHP_INT_SIZE > 4) {
+    // most probably 64bit PHP - we need a lot more memory
+    $minrequiredmemory = '70M';
+} else {
+    // 32bit PHP
+    $minrequiredmemory = '40M';
+}
+// increase or decrease available memory - we need to make sure moodle
+// installs even with low memory, otherwise developers would overlook
+// sudden increases of memory needs ;-)
+@ini_set('memory_limit', $minrequiredmemory);
 
 require dirname(__FILE__).'/lib/installlib.php';
 
@@ -141,6 +151,19 @@ $CFG->running_installer    = true;
 
 // Require all needed libs
 require_once($CFG->libdir.'/setuplib.php');
+
+// we need to make sure we have enough memory to load all libraries
+$memlimit = @ini_get('memory_limit');
+if (!empty($memlimit) and $memlimit != -1) {
+    if (get_real_size($memlimit) < get_real_size($minrequiredmemory)) {
+        // do NOT localise - lang strings would not work here and we CAN not move it to later place
+        echo "Sorry, Moodle 2.0 requires at least {$minrequiredmemory}B of PHP memory.<br />";
+        echo "Please contact server administrator to fix PHP.ini memory settings.";
+        die;
+    }
+}
+
+// Continue with lib loading
 require_once($CFG->libdir.'/textlib.class.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/outputlib.php');
