@@ -874,6 +874,8 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML fragment
      */
     public function footer() {
+        global $CFG;
+
         $output = $this->opencontainers->pop_all_but_last(true);
 
         $footer = $this->opencontainers->pop('header/footer');
