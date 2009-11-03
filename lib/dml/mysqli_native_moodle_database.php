@@ -456,6 +456,35 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Normalise values based in RDBMS dependencies (booleans, LOBs...)
+     *
+     * @param database_column_info $column column metadata corresponding with the value we are going to normalise
+     * @param mixed $value value we are going to normalise
+     * @return mixed the normalised value
+     */
+    private function normalise_value($column, $value) {
+        if (is_bool($value)) { // Always, convert boolean to int
+            $value = (int)$value;
+
+        } else if ($value === '') {
+            if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                $value = 0; // prevent '' problems in numeric fields
+            }
+        }
+        // workaround for problem with wrong enums in mysql - TODO: Out in Moodle 2.1
+        if (!empty($column->enums)) {
+            if (is_null($value) and !$column->not_null) {
+                // ok - nulls allowed
+            } else {
+                if (!in_array((string)$value, $column->enums)) {
+                    throw new dml_write_exception('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
+                }
+            }
+        }
+        return $value;
+    }
+
+    /**
      * Is db in unicode mode?
      * @return bool
      */
@@ -746,20 +775,7 @@ class mysqli_native_moodle_database extends moodle_database {
                 continue;
             }
             $column = $columns[$field];
-            if (is_bool($value)) {
-                $value = (int)$value; // prevent "false" problems
-            }
-            if (!empty($column->enums)) {
-                // workaround for problem with wrong enums in mysql
-                if (is_null($value) and !$column->not_null) {
-                    // ok - nulls allowed
-                } else {
-                    if (!in_array((string)$value, $column->enums)) {
-                        throw new dml_write_exception('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                    }
-                }
-            }
-            $cleaned[$field] = $value;
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
         return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
@@ -857,10 +873,8 @@ class mysqli_native_moodle_database extends moodle_database {
             if (!isset($columns[$field])) {
                 continue;
             }
-            if (is_bool($value)) {
-                $value = (int)$value; // prevent "false" problems
-            }
-            $cleaned[$field] = $value;
+            $column = $columns[$field];
+            $cleaned[$field] = $this->normalise_value($column, $value);
         }
 
         return $this->update_record_raw($table, $cleaned, $bulk);
@@ -886,14 +900,17 @@ class mysqli_native_moodle_database extends moodle_database {
         }
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
 
-        if (is_bool($newvalue)) {
-            $newvalue = (int)$newvalue; // prevent "false" problems
-        }
-        if (is_null($newvalue)) {
+        // Get column metadata
+        $columns = $this->get_columns($table);
+        $column = $columns[$newfield];
+
+        $normalised_value = $this->normalise_value($column, $newvalue);
+
+        if (is_null($normalised_value)) {
             $newfield = "$newfield = NULL";
         } else {
             $newfield = "$newfield = ?";
-            array_unshift($params, $newvalue);
+            array_unshift($params, $normalised_value);
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
         $rawsql = $this->emulate_bound_params($sql, $params);

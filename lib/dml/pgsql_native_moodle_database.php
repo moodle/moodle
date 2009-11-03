@@ -502,6 +502,30 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Normalise values based in RDBMS dependencies (booleans, LOBs...)
+     *
+     * @param database_column_info $column column metadata corresponding with the value we are going to normalise
+     * @param mixed $value value we are going to normalise
+     * @return mixed the normalised value
+     */
+    private function normalise_value($column, $value) {
+        if (is_bool($value)) { // Always, convert boolean to int
+            $value = (int)$value;
+
+        } else if ($column->meta_type == 'B') { // BLOB detected, we return 'blob' array instead of raw value to allow
+            if (!is_null($value)) {             // binding/executing code later to know about its nature
+                $value = array('blob' => $value);
+            }
+
+        } else if ($value === '') {
+            if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                $value = 0; // prevent '' problems in numeric fields
+            }
+        }
+        return $value;
+    }
+
+    /**
      * Is db in unicode mode?
      * @return bool
      */
@@ -777,25 +801,13 @@ class pgsql_native_moodle_database extends moodle_database {
                 continue;
             }
             $column = $columns[$field];
-            if ($column->meta_type == 'B') {
-                if (is_null($value)) {
-                    $cleaned[$field] = null;
-                } else {
-                    $blobs[$field] = $value;
-                    $cleaned[$field] = '@#BLOB#@';
-                }
-                continue;
-
-            } else if (is_bool($value)) {
-                $value = (int)$value; // prevent false '' problems
-
-            } else if ($value === '') {
-                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
-                    $value = 0; // prevent '' problems in numeric fields
-                }
+            $normalised_value = $this->normalise_value($column, $value);
+            if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
+                $cleaned[$field] = '@#BLOB#@';
+                $blobs[$field] = $normalised_value['blob'];
+            } else {
+                $cleaned[$field] = $normalised_value;
             }
-
-            $cleaned[$field] = $value;
         }
 
         if (empty($blobs)) {
@@ -913,25 +925,13 @@ class pgsql_native_moodle_database extends moodle_database {
                 continue;
             }
             $column = $columns[$field];
-            if ($column->meta_type == 'B') {
-                if (is_null($value)) {
-                    $cleaned[$field] = null;
-                } else {
-                    $blobs[$field] = $value;
-                    $cleaned[$field] = '@#BLOB#@';
-                }
-                continue;
-
-            } else if (is_bool($value)) {
-                $value = (int)$value; // prevent false '' problems
-
-            } else if ($value === '') {
-                if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
-                    $value = 0; // prevent '' problems in numeric fields
-                }
+            $normalised_value = $this->normalise_value($column, $value);
+            if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
+                $cleaned[$field] = '@#BLOB#@';
+                $blobs[$field] = $normalised_value['blob'];
+            } else {
+                $cleaned[$field] = $normalised_value;
             }
-
-            $cleaned[$field] = $value;
         }
 
         $this->update_record_raw($table, $cleaned, $bulk);
@@ -981,10 +981,11 @@ class pgsql_native_moodle_database extends moodle_database {
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
-        if ($column->meta_type == 'B' && $newvalue !== null) { /// If the column is a BLOB and the value is not null
+        $normalised_value = $this->normalise_value($column, $newvalue);
+        if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
         /// Update BYTEA and return
-            $newvalue = pg_escape_bytea($this->pgsql, $newvalue);
-            $sql = "UPDATE {$this->prefix}$table SET $newfield = '$newvalue'::bytea $select";
+            $normalised_value = pg_escape_bytea($this->pgsql, $normalised_value['blob']);
+            $sql = "UPDATE {$this->prefix}$table SET $newfield = '$normalised_value'::bytea $select";
             $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
             $result = pg_query_params($this->pgsql, $sql, $params);
             $this->query_end($result);
@@ -992,14 +993,11 @@ class pgsql_native_moodle_database extends moodle_database {
             return true;
         }
 
-        if (is_bool($newvalue)) {
-            $newvalue = (int)$newvalue; // prevent "false" problems
-        }
-        if (is_null($newvalue)) {
+        if (is_null($normalised_value)) {
             $newfield = "$newfield = NULL";
         } else {
             $newfield = "$newfield = \$".$i;
-            $params[] = $newvalue;
+            $params[] = $normalised_value;
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
