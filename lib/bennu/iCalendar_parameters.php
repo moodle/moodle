@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  *  BENNU - PHP iCalendar library
@@ -9,7 +9,6 @@
  *  See http://bennu.sourceforge.net/ for more information and downloads.
  *
  * @author Ioannis Papaioannou 
- * @version $Id$
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
@@ -236,5 +235,3 @@ class iCalendar_parameter {
     }
 
 }
-
-?>

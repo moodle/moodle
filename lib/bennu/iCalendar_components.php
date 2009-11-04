@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  *  BENNU - PHP iCalendar library
@@ -9,7 +9,6 @@
  *  See http://bennu.sourceforge.net/ for more information and downloads.
  *
  * @author Ioannis Papaioannou 
- * @version $Id$
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
 
@@ -407,4 +406,3 @@ class iCalendar_timezone extends iCalendar_component {
 // REMINDER: DTEND must be later than DTSTART for all components which support both
 // REMINDER: DUE must be later than DTSTART for all components which support both
 
-?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /**
  *  BENNU - PHP iCalendar library
@@ -56,4 +56,3 @@ class Bennu {
     }
 }
 
-?>
