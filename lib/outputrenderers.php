@@ -1664,7 +1664,7 @@ class moodle_core_renderer extends moodle_renderer_base {
             $attributes['disabled'] = 'disabled';
         }
         if ($select->tabindex) {
-            $attributes['tabindex'] = $tabindex;
+            $attributes['tabindex'] = $select->tabindex;
         }
 
         if ($select->rendertype == 'menu' && $select->listbox) {
