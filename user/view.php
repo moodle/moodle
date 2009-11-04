@@ -259,7 +259,9 @@ if ($user->description && !isset($hiddenfields['description'])) {
     if (!$has_courseid && !empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$id))) {
         echo get_string('profilenotshown', 'moodle').'<hr />';
     } else {
-        echo format_text($user->description, FORMAT_MOODLE)."<hr />";
+        
+        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user_profile', $id);
+        echo format_text($user->description, $user->descriptionformat)."<hr />";
     }
 }
 

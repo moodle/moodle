@@ -68,7 +68,7 @@ if ($courseid) {
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title, 'centre');
+echo $OUTPUT->heading($title, 2, 'centre');
 
 // Prepare data for tags
 $courselink = '';

@@ -26,7 +26,9 @@ class block_course_summary extends block_base {
         $this->content = new object();
         $options = new object();
         $options->noclean = true;    // Don't clean Javascripts etc
-        $this->content->text = format_text($this->page->course->summary, FORMAT_HTML, $options);
+        $context = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
+        $this->page->course->summary = file_rewrite_pluginfile_urls($this->page->course->summary, 'pluginfile.php', $context->id, 'course_summary', $this->page->course->id);
+        $this->content->text = format_text($this->page->course->summary, $this->page->course->summaryformat, $options);
         if ($this->page->user_is_editing()) {
             if($this->page->course->id == SITEID) {
                 $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';

@@ -175,7 +175,10 @@ foreach ($members as $gpgid=>$groupdata) {
         }
         $line = array();
         $name = format_string($groups[$gpid]->name);
-        $jsdescription = addslashes_js(trim(format_text($groups[$gpid]->description)));
+        $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'course_group_description', $gpid);
+        $options = new stdClass;
+        $options->noclean = true;
+        $jsdescription = addslashes_js(trim(format_text($description, $groups[$gpid]->descriptionformat, $options)));
         if (empty($jsdescription)) {
             $line[] = $name;
         } else {
@@ -200,7 +203,10 @@ foreach ($members as $gpgid=>$groupdata) {
             echo $OUTPUT->heading($strnotingrouping, 3);
         } else {
             echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
-            echo $OUTPUT->box(format_text($groupings[$gpgid]->description), 'generalbox boxwidthnarrow boxaligncenter');
+            $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'course_grouping_description', $gpgid);
+            $options = new stdClass;
+            $options->noclean = true;
+            echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
         }
     }
     echo $OUTPUT->table($table);

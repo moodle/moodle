@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 class profile_define_base {
 
@@ -31,7 +31,7 @@ class profile_define_base {
         $form->addRule('name', $strrequired, 'required', null, 'client');
         $form->setType('name', PARAM_MULTILANG);
 
-        $form->addElement('htmleditor', 'description', get_string('profiledescription', 'admin'));
+        $form->addElement('editor', 'description', get_string('profiledescription', 'admin'), null, null);
         $form->setHelpButton('description', array('text2', get_string('helptext')));
 
         $form->addElement('selectyesno', 'required', get_string('profilerequired', 'admin'));
@@ -174,6 +174,17 @@ class profile_define_base {
         return $data;
     }
 
+    /**
+     * Provides a method by which we can allow the default data in profile_define_*
+     * to use an editor
+     *
+     * This should return an array of editor names (which will need to be formatted/cleaned)
+     *
+     * @return array
+     */
+    function define_editors() {
+        return array();
+    }
 }
 
 
@@ -447,15 +458,35 @@ function profile_edit_category($id, $redirect) {
 }
 
 function profile_edit_field($id, $datatype, $redirect) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB, $OUTPUT, $PAGE;
 
     if (!$field = $DB->get_record('user_info_field', array('id'=>$id))) {
         $field = new object();
         $field->datatype = $datatype;
+        $field->description = '';
+        $field->descriptionformat = FORMAT_HTML;
+        $field->defaultdata = '';
+        $field->defaultdataformat = FORMAT_HTML;
     }
+
+
+    // Clean and prepare description for the editor
+    $field->description = clean_text($field->description, $field->descriptionformat);
+    $field->description = array('text'=>$field->description, 'format'=>$field->descriptionformat, 'itemid'=>0);
 
     require_once('index_field_form.php');
     $fieldform = new field_form(null, $field->datatype);
+
+    // Convert the data format for
+    if (is_array($fieldform->editors())) {
+        foreach ($fieldform->editors() as $editor) {
+            if (isset($field->$editor)) {
+                $field->$editor = clean_text($field->$editor, $field->{$editor.'format'});
+                $field->$editor = array('text'=>$field->$editor, 'format'=>$field->{$editor.'format'}, 'itemid'=>0);
+            }
+        }
+    }
+
     $fieldform->set_data($field);
 
     if ($fieldform->is_cancelled()) {
@@ -466,6 +497,30 @@ function profile_edit_field($id, $datatype, $redirect) {
             require_once($CFG->dirroot.'/user/profile/field/'.$datatype.'/define.class.php');
             $newfield = 'profile_define_'.$datatype;
             $formfield = new $newfield();
+
+            // Collect the description and format back into the proper data structure from the editor
+            // Note: This field will ALWAYS be an editor
+            $data->descriptionformat = $data->description['format'];
+            $data->description = $data->description['text'];
+
+            // Check whether the default data is an editor, this is (currently) only the
+            // textarea field type
+            if (is_array($data->defaultdata) && array_key_exists('text', $data->defaultdata)) {
+                // Collect the default data and format back into the proper data structure from the editor
+                $data->defaultdataformat = $data->defaultdata['format'];
+                $data->defaultdata = $data->defaultdata['text'];
+            }
+
+            // Convert the data format for
+            if (is_array($fieldform->editors())) {
+                foreach ($fieldform->editors() as $editor) {
+                    if (isset($field->$editor)) {
+                        $field->{$editor.'format'} = $field->{$editor}['format'];
+                        $field->$editor = $field->{$editor}['text'];
+                    }
+                }
+            }
+
             $formfield->define_save($data);
             profile_reorder_fields();
             profile_reorder_categories();
@@ -481,6 +536,7 @@ function profile_edit_field($id, $datatype, $redirect) {
         }
 
         /// Print the page
+        $PAGE->navbar->add($strheading);
         admin_externalpage_print_header();
         echo $OUTPUT->heading($strheading);
         $fieldform->display();

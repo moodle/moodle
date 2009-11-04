@@ -1,4 +1,13 @@
 <?php
+/**
+ * Create/Edit grouping form.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author N.D.Freear AT open.ac.uk
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -10,13 +19,14 @@ class grouping_form extends moodleform {
         global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;
+        $editoroptions = $this->_customdata['editoroptions'];
 
         $mform->addElement('text','name', get_string('groupingname', 'group'),'maxlength="254" size="50"');
         $mform->addRule('name', get_string('required'), 'required', null, 'server');
         $mform->setType('name', PARAM_MULTILANG);
 
-        $mform->addElement('htmleditor', 'description', get_string('groupingdescription', 'group'), array('rows'=> '15', 'course' => $COURSE->id, 'cols'=>'45'));
-        $mform->setType('description', PARAM_RAW);
+        $mform->addElement('editor', 'description_editor', get_string('groupingdescription', 'group'), null, $editoroptions);
+        $mform->setType('description_editor', PARAM_RAW);
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);

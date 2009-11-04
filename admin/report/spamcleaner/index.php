@@ -265,7 +265,11 @@ function print_user_entry($user, $keywords, $count) {
             $user->description = highlight($keyword, $user->description);
         }
 
-        $html .= '<td align="left">'.format_text($user->description, FORMAT_MOODLE).'</td>';
+        if (!isset($user->descriptionformat)) {
+            $user->descriptionformat = FORMAT_MOODLE;
+        }
+
+        $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat).'</td>';
         $html .= '<td width="100px" align="center">';
         $html .= '<button onclick="del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
         $html .= '<button onclick="ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';

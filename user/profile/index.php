@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -72,8 +72,10 @@ switch ($action) {
         //ask for confirmation
         $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
+        $strheading = get_string('profiledeletefield', 'admin');
+        $PAGE->navbar->add($strheading);
         admin_externalpage_print_header();
-        echo $OUTPUT->heading('profiledeletefield', 'admin');
+        echo $OUTPUT->heading($strheading);
         $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
         $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmfielddeletion', 'admin', $datacount), $formcontinue, $formcancel);

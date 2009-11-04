@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -9,6 +9,11 @@ class user_edit_form extends moodleform {
         global $CFG, $COURSE;
 
         $mform =& $this->_form;
+        if (is_array($this->_customdata) && array_key_exists('editoroptions', $this->_customdata)) {
+            $editoroptions = $this->_customdata['editoroptions'];
+        } else {
+            $editoroptions = null;
+        }
         //Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
         $strrequired = get_string('required');
@@ -23,10 +28,10 @@ class user_edit_form extends moodleform {
         $mform->addElement('header', 'moodle', $strgeneral);
 
         /// shared fields
-        useredit_shared_definition($mform);
+        useredit_shared_definition($mform, $editoroptions);
 
         /// extra settigs
-        $mform->addRule('description', $strrequired, 'required', null, 'client');
+        $mform->addRule('description_editor', $strrequired, 'required', null, 'client');
         if (!empty($CFG->gdversion) and !empty($CFG->disableuserimages)) {
             $mform->removeElement('deletepicture');
             $mform->removeElement('imagefile');
@@ -67,7 +72,7 @@ class user_edit_form extends moodleform {
 
             // remove description
             if (empty($user->description) && !empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid'=>$userid))) {
-                $mform->removeElement('description');
+                $mform->removeElement('description_editor');
             }
 
             // print picture

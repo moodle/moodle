@@ -24,6 +24,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/request_form.php');
 
 $PAGE->set_url(new moodle_url($CFG->wwwroot.'/course/request.php'));
@@ -39,65 +40,31 @@ if (isguestuser()) {
 if (empty($CFG->enablecourserequests)) {
     print_error('courserequestdisabled', '', $returnurl);
 }
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/course:request', $systemcontext);
+require_capability('moodle/course:request', get_context_instance(CONTEXT_SYSTEM));
 
 /// Set up the form.
-$requestform = new course_request_form($CFG->wwwroot . '/course/request.php');
+$data = course_request::prepare();
+$requestform = new course_request_form($CFG->wwwroot . '/course/request.php', compact('editoroptions'));
+$requestform->set_data($data);
 
 $strtitle = get_string('courserequest');
+$PAGE->set_title($strtitle);
+$PAGE->set_heading($strtitle);
 
 /// Standard form processing if statement.
 if ($requestform->is_cancelled()){
     redirect($returnurl);
 
-} else if ($data = $requestform->get_data()) {
-    $PAGE->set_title($strtitle);
-    $PAGE->set_heading($strtitle);
-    $PAGE->navbar->add($strtitle);
-    $PAGE->set_focuscontrol($requestform->focus());
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($strtitle);
+} else if ($data = $requestform->get_data()) {    
+    $request = course_request::create($data);
 
-/// Record the request.
-    $data->requester = $USER->id;
-    $DB->insert_record('course_request', $data);
-
-/// Notify the admin if required.
-    if ($CFG->courserequestnotify) {
-        $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
-        foreach ($users as $user) {
-            $eventdata = new object();
-            $eventdata->modulename        = 'moodle';
-            $eventdata->component         = 'course';
-            $eventdata->name              = 'courserequested';
-            $eventdata->userfrom          = $USER;
-            $eventdata->userto            = $user;
-            $eventdata->subject = get_string('courserequest');
-            $a = new object();
-            $a->link = "$CFG->wwwroot/course/pending.php";
-            $a->user = fullname($USER);
-            $eventdata->fullmessage = get_string('courserequestnotifyemail', 'admin', $a);
-            $eventdata->fullmessageformat = FORMAT_PLAIN;
-            $eventdata->fullmessagehtml   = '';
-            $eventdata->smallmessage      = '';
-            events_trigger('message_send', $eventdata);
-        }
-    }
-
-/// and redirect back to the course listing.
+    // and redirect back to the course listing.
     notice(get_string('courserequestsuccess'), $returnurl);
 }
 
-/// Show the request form.
-
-$PAGE->set_title($strtitle);
-$PAGE->set_heading($strtitle);
 $PAGE->navbar->add($strtitle);
-$PAGE->set_focuscontrol($requestform->focus());
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strtitle);
+// Show the request form.
 $requestform->display();
 echo $OUTPUT->footer();
-
-?>

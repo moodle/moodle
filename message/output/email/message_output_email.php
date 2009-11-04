@@ -68,6 +68,8 @@ class message_output_email extends message_output {
             }
         }else{
             //delete what we've processed and check if can move message
+            $messageid = $message->id;
+            unset($message->id);
             if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
                 if ($DB->insert_record('message_read', $message)) {
                     $DB->delete_records('message', array('id' => $messageid));

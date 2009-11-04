@@ -53,18 +53,20 @@ if (can_use_html_editor()) {
 
 $errorstring = '';
 
-$tagform = new tag_edit_form();
+$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false);
+$tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag_description', $tag->id);
+
+$tagform = new tag_edit_form(null, compact('editoroptions'));
 if ( $tag->tagtype == 'official' ) {
     $tag->tagtype = '1';
 } else {
     $tag->tagtype = '0';
 }
+
 $tagform->set_data($tag);
 
 // If new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
-
-    tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
 
     if (has_capability('moodle/tag:manage', $systemcontext)) {
         if (($tag->tagtype != 'default') && (!isset($tagnew->tagtype) || ($tagnew->tagtype != '1'))) {
@@ -90,6 +92,10 @@ if ($tagnew = $tagform->get_data()) {
     }
 
     if (empty($errorstring)) {    // All is OK, let's save it
+
+        $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag_description', $tag->id);
+        
+        tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
 
         $tagnew->timemodified = time();
 

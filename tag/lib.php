@@ -520,6 +520,7 @@ function tag_delete($tagids) {
     }
 
     $success = true;
+    $context = get_context_instance(CONTEXT_SYSTEM);
     foreach( $tagids as $tagid ) {
         if (is_null($tagid)) { // can happen if tag doesn't exists
             continue;
@@ -529,6 +530,12 @@ function tag_delete($tagids) {
         // is the reason for not using $DB->delete_records_select()
         if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) ) {
             $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
+            // Delete all files associated with this tag
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'tag_description', $tagid);
+            foreach ($files as $file) {
+                $file->delete();
+            }
         }
     }
 

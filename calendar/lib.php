@@ -537,6 +537,9 @@ function calendar_print_event($event, $showactions=true) {
     static $strftimetime;
 
     $event = calendar_add_event_metadata($event);
+    if (!($event instanceof calendar_event)) {
+        $event = new calendar_event($event);
+    }
     echo '<a name="event_'.$event->id.'"></a><table class="event" cellspacing="0">';
     echo '<tr><td class="picture">';
     if (!empty($event->icon)) {
@@ -571,7 +574,8 @@ function calendar_print_event($event, $showactions=true) {
     } else {
         echo '<td class="description">'; 
     }
-    echo format_text($event->description, FORMAT_HTML);
+    
+    echo $event->description;
     if (calendar_edit_event_allowed($event) && $showactions) {
         echo '<div class="commands">';
         $calendarcourseid = '';

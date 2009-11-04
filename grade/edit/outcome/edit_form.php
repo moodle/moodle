@@ -43,7 +43,7 @@ class edit_outcome_form extends moodleform {
         $mform->setHelpButton('scaleid', array('scaleid', get_string('scale'), 'grade'));
         $mform->addRule('scaleid', get_string('required'), 'required');
 
-        $mform->addElement('htmleditor', 'description', get_string('description'), array('cols'=>80, 'rows'=>20));
+        $mform->addElement('editor', 'description_editor', get_string('description'), null, $this->_customdata['editoroptions']);
 
 
         // hidden params

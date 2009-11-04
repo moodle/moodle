@@ -129,8 +129,10 @@ useredit_load_preferences($user);
 profile_load_data($user);
 
 
-//create form
-$userform = new user_edit_form();
+// Prepare the editor and create form
+$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'forcehttps'=>false);
+$user = file_prepare_standard_editor($user, 'description', $editoroptions, $personalcontext, 'user_profile', $user->id);
+$userform = new user_edit_form(null, array('editoroptions'=>$editoroptions));
 if (empty($user->country)) {
     // MDL-16308 - we must unset the value here so $CFG->country can be used as default one
     unset($user->country);
@@ -163,6 +165,7 @@ if ($usernew = $userform->get_data()) {
     $authplugin = get_auth_plugin($user->auth);
 
     $usernew->timemodified = time();
+    $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user_profile', $usernew->id);
 
     $DB->update_record('user', $usernew);
 
@@ -236,14 +239,6 @@ $streditmyprofile = get_string('editmyprofile');
 $strparticipants  = get_string('participants');
 $userfullname     = fullname($user, true);
 
-$link = null;
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $link = new moodle_url($CFG->wwwroot."/user/index.php", array('id'=>$course->id));
-}
-$PAGE->navbar->add($strparticipants, $link);
-$link = new moodle_url($CFG->wwwroot.'/user/view.php', array('id'=>$user->id, 'course'=>$course->id));
-$PAGE->navbar->add($userfullname, $link);
-$PAGE->navbar->add($streditmyprofile);
 $PAGE->set_title("$course->shortname: $streditmyprofile");
 $PAGE->set_heading($course->fullname);
 

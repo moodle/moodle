@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 /// Some constants
 
@@ -21,6 +21,7 @@ class profile_field_base {
     var $field;
     var $inputname;
     var $data;
+    var $dataformat;
 
     /**
      * Constructor method.
@@ -103,10 +104,11 @@ class profile_field_base {
             // field not present in form, probably locked and invisible - skip it
             return;
         }
-        
-        $usernew->{$this->inputname} = $this->edit_save_data_preprocess($usernew->{$this->inputname});
 
         $data = new object();
+        
+        $usernew->{$this->inputname} = $this->edit_save_data_preprocess($usernew->{$this->inputname}, $data);
+
         $data->userid  = $usernew->id;
         $data->fieldid = $this->field->id;
         $data->data    = $usernew->{$this->inputname};
@@ -175,9 +177,10 @@ class profile_field_base {
     /**
      * Hook for child classess to process the data before it gets saved in database
      * @param   mixed
+     * @param   stdClass The object that will be used to save the record
      * @return  mixed
      */
-    function edit_save_data_preprocess($data) {
+    function edit_save_data_preprocess($data, &$datarecord) {
         return $data;
     }
 
@@ -238,10 +241,12 @@ class profile_field_base {
         }
 
         if (!empty($this->field)) {
-            if ($datafield = $DB->get_field('user_info_data', 'data', array('userid'=>$this->userid, 'fieldid'=>$this->fieldid))) {
-                $this->data = $datafield;
+            if ($data = $DB->get_record('user_info_data', array('userid'=>$this->userid, 'fieldid'=>$this->fieldid), 'data, dataformat')) {
+                $this->data = $data->data;
+                $this->dataformat = $data->dataformat;
             } else {
                 $this->data = $this->field->defaultdata;
+                $this->dataformat = FORMAT_HTML;
             }
         } else {
             $this->data = NULL;

@@ -70,12 +70,12 @@ foreach($outcomes as $outcome) {
 
     $line[] = $outcome->get_name();
     $line[] = $outcome->get_shortname();
-    $line[] = $outcome->description;
+    $line[] = $outcome->get_description();
 
     $scale = $outcome->load_scale();
     $line[] = $scale->get_name();
     $line[] = $scale->compact_items();
-    $line[] = $scale->description;
+    $line[] = $scale->get_description();
 
     echo format_csv($line, ';', '"');
 }

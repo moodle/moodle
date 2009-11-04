@@ -72,7 +72,7 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
         'maildisplay', 'maildigest', 'htmleditor', 'ajax', 'autosubscribe',
         'mnethostid', 'institution', 'department', 'idnumber', 'skype',
         'msn', 'aim', 'yahoo', 'icq', 'phone1', 'phone2', 'address',
-        'url', 'description', 'oldusername', 'emailstop', 'deleted',
+        'url', 'description', 'descriptionformat', 'oldusername', 'emailstop', 'deleted',
         'password');
 
 $PRF_FIELDS = array();

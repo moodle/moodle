@@ -116,7 +116,7 @@ function groups_remove_member($grouporid, $userorid) {
  * @param object $um upload manager with group picture
  * @return id of group or false if error
  */
-function groups_create_group($data, $editform=false) {
+function groups_create_group($data, $editform=false, $editoroptions=null) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
@@ -126,6 +126,12 @@ function groups_create_group($data, $editform=false) {
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
+
+    if ($editform) {
+        $data->description = $data->description_editor['text'];
+        $data->descriptionformat = $data->description_editor['format'];
+    }
+
     $id = $DB->insert_record('groups', $data);
 
     $data->id = $id;
@@ -135,6 +141,16 @@ function groups_create_group($data, $editform=false) {
             $DB->set_field('groups', 'picture', 1, array('id'=>$id));
         }
         $data->picture = 1;
+
+        if (method_exists($editform, 'get_editor_options')) {
+            // Update description from editor with fixed files
+            $editoroptions = $editform->get_editor_options();
+            $description = new stdClass;
+            $description->id = $data->id;
+            $description->description_editor = $data->description_editor;
+            $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'course_group_description', $description->id);
+            $DB->update_record('groups', $description);
+        }
     }
 
     //trigger groups events
@@ -148,16 +164,31 @@ function groups_create_group($data, $editform=false) {
  * @param object $data grouping properties (with magic quotes)
  * @return id of grouping or false if error
  */
-function groups_create_grouping($data) {
+function groups_create_grouping($data, $editoroptions=null) {
     global $DB;
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
+
+    if ($editoroptions !== null) {
+        $data->description = $data->description_editor['text'];
+        $data->descriptionformat = $data->description_editor['format'];
+    }
+
     $id = $DB->insert_record('groupings', $data);
 
     //trigger groups events
     $data->id = $id;
+
+    if ($editoroptions !== null) {
+        $description = new stdClass;
+        $description->id = $data->id;
+        $description->description_editor = $data->description_editor;
+        $description = file_postupdate_standard_editor($description, 'description', $editoroptions, $editoroptions['context'], 'course_grouping_description', $description->id);
+        $DB->update_record('groupings', $description);
+    }
+
     events_trigger('groups_grouping_created', $data);
 
     return $id;
@@ -175,6 +206,12 @@ function groups_update_group($data, $editform=false) {
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
+
+    if ($editform && method_exists($editform, 'get_editor_options')) {
+        $editoroptions = $editform->get_editor_options();
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'course_group_description', $data->id);
+    }
+
     $DB->update_record('groups', $data);
 
     if ($editform) {
@@ -196,10 +233,13 @@ function groups_update_group($data, $editform=false) {
  * @param object $data grouping properties (with magic quotes)
  * @return boolean true or exception
  */
-function groups_update_grouping($data) {
+function groups_update_grouping($data, $editoroptions=null) {
     global $DB;
     $data->timemodified = time();
     $data->name         = trim($data->name);
+    if ($editoroptions !== null) {
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'course_grouping_description', $data->id);
+    }
     $DB->update_record('groupings', $data);
     //trigger groups events
     events_trigger('groups_grouping_updated', $data);
@@ -238,6 +278,15 @@ function groups_delete_group($grouporid) {
     delete_profile_image($groupid, 'groups');
     //group itself last
     $DB->delete_records('groups', array('id'=>$groupid));
+
+    // Delete all files associated with this group
+    $context = get_context_instace(CONTEXT_COURSE, $group->courseid);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'course_group_description', $groupid);
+    foreach ($files as $file) {
+        $file->delete();
+    }
+
     //trigger groups events
     events_trigger('groups_group_deleted', $group);
 
@@ -271,6 +320,14 @@ function groups_delete_grouping($groupingorid) {
     $DB->set_field('course_modules', 'groupingid', 0, array('groupingid'=>$groupingid));
     //group itself last
     $DB->delete_records('groupings', array('id'=>$groupingid));
+
+    $context = get_context_instace(CONTEXT_COURSE, $grouping->courseid);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'course_grouping_description', $groupingid);
+    foreach ($files as $file) {
+        $file->delete();
+    }
+
     //trigger groups events
     events_trigger('groups_grouping_deleted', $grouping);
 
@@ -329,6 +386,11 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
 
+    // Delete all files associated with groupings for this course
+    $context = get_context_instace(CONTEXT_COURSE, $courseid);
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'course_group_description');
+
     //trigger groups events
     events_trigger('groups_groupings_groups_removed', $courseid);
 
@@ -350,6 +412,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     require_once($CFG->libdir.'/gdlib.php');
 
     // delete any uses of groups
+    // Any associated files are deleted as part of groups_delete_groupings_groups
     groups_delete_groupings_groups($courseid, $showfeedback);
     groups_delete_group_members($courseid, 0, $showfeedback);
 
@@ -396,6 +459,11 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
     $DB->delete_records('groupings', array('courseid'=>$courseid));
+
+    // Delete all files associated with groupings for this course
+    $context = get_context_instace(CONTEXT_COURSE, $courseid);
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'course_grouping_description');
 
     //trigger groups events
     events_trigger('groups_groupings_deleted', $courseid);

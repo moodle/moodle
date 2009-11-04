@@ -147,9 +147,11 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
     $grade->oldgrade    = $grade->finalgrade;
     $grade->oldfeedback = $grade->feedback;
 
-    $mform->set_data($grade);
+    $grade->feedback = array('text'=>$grade->feedback, 'format'=>$grade->feedbackformat);
 
+    $mform->set_data($grade);
 } else {
+    $grade->feedback = array('text'=>'', 'format'=>FORMAT_HTML);
     $mform->set_data(array('itemid'=>$itemid, 'userid'=>$userid, 'locked'=>$grade_item->locked, 'locktime'=>$grade_item->locktime));
 }
 
@@ -158,6 +160,12 @@ if ($mform->is_cancelled()) {
 
 // form processing
 } else if ($data = $mform->get_data(false)) {
+
+    if (is_array($data->feedback)) {
+        $data->feedbackformat = $data->feedback['format'];
+        $data->feedback = $data->feedback['text'];
+    }
+
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
     // fix no grade for scales

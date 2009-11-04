@@ -36,7 +36,7 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
-
+    
 } else {
     $url->param('courseid', $courseid);
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
@@ -77,8 +77,16 @@ if ($id and $delete) {
     }
 }
 
+// Prepare the description editor: We do support files for grouping descriptions
+$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$course->maxbytes, 'trust'=>true, 'context'=>$context, 'noclean'=>true);
+if (!empty($grouping->id)) {
+    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'course_grouping_description', $grouping->id);
+} else {
+    $grouping = file_prepare_standard_editor($grouping, 'description', $editoroptions, $context, 'course_grouping_description', null);
+}
+
 /// First create the form
-$editform = new grouping_form();
+$editform = new grouping_form(null, compact('editoroptions'));
 $editform->set_data($grouping);
 
 if ($editform->is_cancelled()) {
@@ -88,10 +96,9 @@ if ($editform->is_cancelled()) {
     $success = true;
 
     if ($data->id) {
-        groups_update_grouping($data);
-
+        groups_update_grouping($data, $editoroptions);
     } else {
-        groups_create_grouping($data);
+        groups_create_grouping($data, $editoroptions);
     }
 
     redirect($returnurl);
@@ -108,7 +115,7 @@ if ($id) {
 }
 
 $PAGE->navbar->add($strparticipants, new moodle_url($CFG->wwwroot.'/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url($CFG->wwwroot.'/group/groupings.php', array('id'=>$courseid)));
+$PAGE->navbar->add($strgroupings, new moodle_url($CFG->wwwroot.'/group/groupings.php', array('id'=>$courseid)));
 $PAGE->navbar->add($strheading);
 
 /// Print header

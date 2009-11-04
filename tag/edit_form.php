@@ -20,9 +20,7 @@ class tag_edit_form extends moodleform {
                     'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
         }
 
-        $mform->addElement('htmleditor', 'description', get_string('description', 'tag'), array('rows'=>20));
-
-        $mform->addElement('format', 'descriptionformat', get_string('format'));
+        $mform->addElement('editor', 'description_editor', get_string('description', 'tag'), null, $this->_customdata['editoroptions']);
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
            $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));

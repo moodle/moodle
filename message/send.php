@@ -23,6 +23,7 @@
 
 require('../config.php');
 require('lib.php');
+require('send_form.php');
 
 require_login();
 
@@ -40,21 +41,10 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     $PAGE->set_title('send');
     $PAGE->requires->js('message/message.js');
 
-    echo $OUTPUT->header();
-
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);
-    $message  = optional_param('message', '', PARAM_CLEANHTML);
-    $format   = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 
-    $url = new moodle_url($CFG->wwwroot.'/message/send.php', array('id'=>$userid));
-    if ($message !== 0) {
-        $url->param('message', $message);
-    }
-    if ($format !== 0) {
-        $url->param('format', $format);
-    }
-    $PAGE->set_url($url);
+    $PAGE->set_url(new moodle_url($CFG->wwwroot.'/message/send.php', array('id'=>$userid)));
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
@@ -64,6 +54,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 /// Check that the user is not blocking us!!
     if ($contact = $DB->get_record('message_contacts', array('userid'=>$user->id, 'contactid'=>$USER->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('userisblockingyou', 'message'), 1);
             echo $OUTPUT->footer();
             exit;
@@ -73,22 +64,39 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 
     if (!empty($userpreferences['message_blocknoncontacts'])) {  // User is blocking non-contacts
         if (empty($contact)) {   // We are not a contact!
+            echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('userisblockingyounoncontact', 'message'), 1);
             echo $OUTPUT->footer();
             exit;
         }
     }
 
-    if ($message!='' and confirm_sesskey()) {   /// Current user has just sent a message
+    $mform = new send_form();
+    $defaultmessage = new stdClass;
+    $defaultmessage->id = $userid;
+    $defaultmessage->message = '';
+    if (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0)) {
+        $defaultmessage->messageformat = FORMAT_HTML;
+    } else {
+        $defaultmessage->messageformat = FORMAT_MOODLE;
+    }
+    $mform->set_data($defaultmessage);
+
+    echo $OUTPUT->header();
+    if ($data = $mform->get_data()) {   /// Current user has just sent a message
+
+        if (!confirm_sesskey()) {
+            print_error('invalidsesskey');
+        }
 
         /// Save it to the database...
-        $messageid = message_post_message($USER, $user, $message, $format, 'direct');
+        $messageid = message_post_message($USER, $user, $data->message, $data->messageformat, 'direct');
 
         /// Format the message as HTML
-        $options = NULL;
+        $options = new stdClass;
         $options->para = false;
         $options->newlines = true;
-        $message = format_text($message, $format, $options);
+        $message = format_text($data->message, $data->messageformat, $options);
 
         $time = userdate(time(), get_string('strftimedatetimeshort'));
         $message = '<div class="message me"><span class="author">'.fullname($USER).'</span> '.
@@ -99,33 +107,20 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
         $PAGE->requires->js_function_call('parent.messages.scroll', Array(1,5000000));
 
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
+        echo $OUTPUT->notification(get_string('mailsent', 'message'), 'notifysuccess');
+        $mform->reset_message();
     }
 
-    echo '<form id="editing" method="post" action="send.php">';
-    echo '<div class="message-form">';
-    echo '<input type="hidden" name="id" value="'.$user->id.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    $mform->display();
+    echo $OUTPUT->box_start('noframesjslink');
+    $accesslink = new html_link();
+    $accesslink->url = new moodle_url($CFG->wwwroot.'/message/discussion.php', array('id'=>$userid, 'noframesjs'=>1));
+    $accesslink->text = get_string('noframesjs', 'message');
+    $accesslink->add_action(new breakout_of_frame_action());
+    echo $OUTPUT->link($accesslink);
+    echo $OUTPUT->box_end();
 
-    $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
-    if ($usehtmleditor) {
-        echo '<div class="message-send-box">';
-        print_textarea($usehtmleditor, 5, 34, 0, 0, 'message', '', 0, false, '', 'form-textarea-simple');
-        echo '</div>';
-        echo '<input class="message-send-button" type="submit" value="'.get_string('sendmessage', 'message').'" />';
-        echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-    } else {
-        print_textarea(false, 5, 34, 0, 0, 'message', '');
-        echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
-        echo '<br /><input class="message-send-button" type="submit" value="'.get_string('sendmessage', 'message').'" />';
-    }
-    echo '</div>';
-    echo '</form>';
-    if (!empty($CFG->messagewasjustemailed)) {
-        $OUTPUT->notifcation(get_string('mailsent', 'message'), 'notifysuccess');
-    }
-    echo '<div class="noframesjslink"><a target="_parent" href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a></div>';
-
-    $PAGE->requires->js_function_call('set_focus', Array('edit-message'));
+    $PAGE->requires->js_function_call('set_focus', Array('id_message_editor'));
 
     echo $OUTPUT->footer();
 }

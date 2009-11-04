@@ -40,8 +40,8 @@ class grade_outcome extends grade_object {
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    public $required_fields = array('id', 'courseid', 'shortname', 'fullname', 'scaleid',
-                                 'description', 'timecreated', 'timemodified', 'usermodified');
+    public $required_fields = array('id', 'courseid', 'shortname', 'fullname', 'scaleid','description',
+                                 'descriptionformat', 'timecreated', 'timemodified', 'usermodified');
 
     /**
      * The course this outcome belongs to.
@@ -95,7 +95,16 @@ class grade_outcome extends grade_object {
         if (!empty($this->courseid)) {
             $DB->delete_records('grade_outcomes_courses', array('outcomeid' => $this->id, 'courseid' => $this->courseid));
         }
-        return parent::delete($source);
+        if (parent::delete($source)) {
+            $context = get_context_instace(CONTEXT_SYSTEM);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'grade_outcome', $this->id);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -258,6 +267,18 @@ class grade_outcome extends grade_object {
      */
     public function get_shortname() {
         return $this->shortname;
+    }
+
+    /**
+     * Returns the formatted grade description with URL's converted
+     * @return string
+     */
+    public function get_description() {
+        $options = new stdClass;
+        $options->noclean = true;
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $description = file_rewrite_pluginfile_urls($this->description, 'pluginfile.php', $systemcontext->id, 'grade_outcome', $this->id);
+        return format_text($description, $this->descriptionformat, $options);
     }
 
     /**

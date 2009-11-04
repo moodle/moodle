@@ -40,7 +40,7 @@ class grade_scale extends grade_object {
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    public $required_fields = array('id', 'courseid', 'userid', 'name', 'scale', 'description', 'timemodified');
+    public $required_fields = array('id', 'courseid', 'userid', 'name', 'scale', 'description', 'descriptionformat', 'timemodified');
 
     /**
      * The course this scale belongs to.
@@ -117,6 +117,25 @@ class grade_scale extends grade_object {
     public function update($source=null) {
         $this->timemodified = time();
         return parent::update($source);
+    }
+
+    /**
+     * Deletes this outcome from the database.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
+     */
+    public function delete($source=null) {
+        global $DB;
+        if (parent::delete($source)) {
+            $context = get_context_instace(CONTEXT_SYSTEM);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'grade_scale', $this->id);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -285,5 +304,17 @@ class grade_scale extends grade_object {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the formatted grade description with URL's converted
+     * @return string
+     */
+    public function get_description() {
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $options = new stdClass;
+        $options->noclean = true;
+        $description = file_rewrite_pluginfile_urls($this->description, 'pluginfile.php', $systemcontext->id, 'grade_scale', $this->id);
+        return format_text($description, $this->descriptionformat, $options);
     }
 }

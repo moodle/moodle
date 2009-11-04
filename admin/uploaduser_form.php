@@ -212,8 +212,9 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setDefault('lang', $templateuser->lang);
         $mform->setAdvanced('lang');
 
-        $mform->addElement('htmleditor', 'description', get_string('userdescription'));
-        $mform->setType('description', PARAM_CLEAN);
+        $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
+        $mform->addElement('editor', 'description', get_string('userdescription'), null, $editoroptions);
+        $mform->setType('description', PARAM_CLEANHTML);
         $mform->setHelpButton('description', array('text2', get_string('helptext')));
         $mform->setAdvanced('description');
 
@@ -333,6 +334,22 @@ class admin_uploaduser_form2 extends moodleform {
         }
 
         return $errors;
+    }
+
+    /**
+     * Used to reformat the data from the editor component
+     *
+     * @return stdClass
+     */
+    function get_data() {
+        $data = parent::get_data();
+
+        if ($data !== null) {
+            $data->descriptionformat = $data->description['format'];
+            $data->description = $data->description['text'];
+        }
+
+        return $data;
     }
 }
 

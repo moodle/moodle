@@ -227,6 +227,13 @@
 
         if (!$adminediting) {
             foreach ($courses as $course) {
+
+                if (isset($course->context)) {
+                    $coursecontext = $course->context;
+                } else {
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                }
+
                 $course->summary .= "<br /><p class=\"category\">";
                 $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
                 $course->summary .= $displaylist[$course->category];

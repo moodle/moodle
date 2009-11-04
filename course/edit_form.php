@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -12,13 +12,13 @@ class course_edit_form extends moodleform {
 
         $course   = $this->_customdata['course'];
         $category = $this->_customdata['category'];
+        $editoroptions = $this->_customdata['editoroptions'];
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $categorycontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
 
         $disable_meta = false; // basic meta course state protection; server-side security checks not needed
-
-        if (!empty($course)) {
+        if (!empty($course->id)) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             $context = $coursecontext;
 
@@ -52,7 +52,7 @@ class course_edit_form extends moodleform {
             $coursecontext = null;
             $context = $categorycontext;
         }
-
+        
 /// form definition with new course defaults
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
@@ -71,7 +71,7 @@ class course_edit_form extends moodleform {
         $mform->setDefault('category', $category->id);
         $mform->setType('category', PARAM_INT);
 
-        if ($course and !has_capability('moodle/course:changecategory', $coursecontext)) {
+        if (!empty($course->id) and !has_capability('moodle/course:changecategory', $coursecontext)) {
             $mform->hardFreeze('category');
             $mform->setConstant('category', $category->id);
         }
@@ -88,7 +88,7 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_MULTILANG);
-        if ($course and !has_capability('moodle/course:changefullname', $coursecontext)) {
+        if (!empty($course->id) and !has_capability('moodle/course:changefullname', $coursecontext)) {
             $mform->hardFreeze('fullname');
             $mform->setConstant('fullname', $course->fullname);
         }
@@ -99,7 +99,7 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
-        if ($course and !has_capability('moodle/course:changeshortname', $coursecontext)) {
+        if (!empty($course->id) and !has_capability('moodle/course:changeshortname', $coursecontext)) {
             $mform->hardFreeze('shortname');
             $mform->setConstant('shortname', $course->shortname);
         }
@@ -109,17 +109,18 @@ class course_edit_form extends moodleform {
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
         $mform->setType('idnumber', PARAM_RAW);
-        if ($course and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
+        if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {
             $mform->hardFreeze('idnumber');
             $mform->setConstants('idnumber', $course->idnumber);
         }
 
-        $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
-        $mform->setHelpButton('summary', array('text2', get_string('helptext')), true);
-        $mform->setType('summary', PARAM_RAW);
+        
+        $mform->addElement('editor','summary_editor', get_string('summary'), null, $editoroptions);
+        $mform->setHelpButton('summary_editor', array('text2', get_string('helptext')), true);
+        $mform->setType('summary_editor', PARAM_RAW);
 
-        if ($course and !has_capability('moodle/course:changesummary', $coursecontext)) {
-            $mform->hardFreeze('summary');
+        if (!empty($course->id) and !has_capability('moodle/course:changesummary', $coursecontext)) {
+            $mform->hardFreeze('summary_editor');
         }
 
         $courseformats = get_plugin_list('format');
@@ -211,7 +212,7 @@ class course_edit_form extends moodleform {
 
 
         $roles = get_assignable_roles($context);
-        if (!empty($course)) {
+        if (!empty($course->id)) {
             // add current default role, so that it is selectable even when user can not assign it
             if ($current_role = $DB->get_record('role', array('id'=>$course->defaultrole))) {
                 $roles[$current_role->id] = strip_tags(format_string($current_role->name, true));
@@ -311,7 +312,7 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'visible', get_string('availability'), $choices);
         $mform->setHelpButton('visible', array('courseavailability', get_string('availability')), true);
         $mform->setDefault('visible', $courseconfig->visible);
-        if ($course and !has_capability('moodle/course:visibility', $coursecontext)) {
+        if (!empty($course->id) and !has_capability('moodle/course:visibility', $coursecontext)) {
             $mform->hardFreeze('visible');
             $mform->setConstant('visible', $course->visible);
         }
@@ -322,7 +323,7 @@ class course_edit_form extends moodleform {
         $mform->setDefault('enrolpassword', $courseconfig->enrolpassword);
         $mform->setType('enrolpassword', PARAM_RAW);
 
-        if (empty($course) or ($course->password !== '' and $course->id != SITEID)) {
+        if (empty($course->id) or ($course->password !== '' and $course->id != SITEID)) {
             // do not require password in existing courses that do not have password yet - backwards compatibility ;-)
             if (!empty($CFG->enrol_manual_requirekey)) {
                 $mform->addRule('enrolpassword', get_string('required'), 'required', null, 'client');
@@ -339,7 +340,7 @@ class course_edit_form extends moodleform {
 
         // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
         $enrol_object = $CFG;
-        if (!empty($course)) {
+        if (!empty($course->id)) {
             $enrol_object = $course;
         }
         // If the print_entry method exists and the course enrol method isn't manual (both set or inherited from site), show cost

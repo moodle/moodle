@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 function cancel_email_update($userid) {
     unset_user_preference('newemail', $userid);
@@ -74,7 +74,7 @@ function useredit_update_interests($user, $interests) {
     tag_set('user', $user->id, $interests);
 }
 
-function useredit_shared_definition(&$mform) {
+function useredit_shared_definition(&$mform, $editoroptions = null) {
     global $CFG, $USER, $DB;
 
     $user = $DB->get_record('user', array('id' => $USER->id));
@@ -228,9 +228,9 @@ function useredit_shared_definition(&$mform) {
         $mform->setAdvanced('theme');
     }
 
-    $mform->addElement('htmleditor', 'description', get_string('userdescription'));
-    $mform->setType('description', PARAM_CLEAN);
-    $mform->setHelpButton('description', array('text2', get_string('helptext')));
+    $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
+    $mform->setType('description_editor', PARAM_CLEANHTML);
+    $mform->setHelpButton('description_editor', array('text2', get_string('helptext')));
 
     if (!empty($CFG->gdversion)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureof'));//TODO: Accessibility fix fieldset legend

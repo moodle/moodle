@@ -77,6 +77,8 @@ if ($scaleid) {
     }
 }
 
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
 if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name ASC")) {
     echo $OUTPUT->heading($strcustomscales);
 
@@ -87,6 +89,9 @@ if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name AS
     }
 
     foreach ($scales as $scale) {
+
+        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade_scale', $scale->id);
+
         $scalemenu = make_menu_from_list($scale->scale);
 
         echo $OUTPUT->box_start();
@@ -110,6 +115,9 @@ if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name AS
 if ($scales = $DB->get_records("scale", array("courseid"=>0), "name ASC")) {
     echo $OUTPUT->heading($strstandardscales);
     foreach ($scales as $scale) {
+
+        $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade_scale', $scale->id);
+
         $scalemenu = make_menu_from_list($scale->scale);
 
         echo $OUTPUT->box_start();

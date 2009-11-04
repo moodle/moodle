@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Create//edit group form.
+ *
+ * @copyright &copy; 2006 The Open University
+ * @author N.D.Freear AT open.ac.uk
+ * @author J.White AT open.ac.uk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package groups
+ */
+
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /// get url variables
@@ -10,13 +20,14 @@ class group_form extends moodleform {
         global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;
+        $editoroptions = $this->_customdata['editoroptions'];
 
         $mform->addElement('text','name', get_string('groupname', 'group'),'maxlength="254" size="50"');
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_MULTILANG);
 
-        $mform->addElement('htmleditor', 'description', get_string('groupdescription', 'group'), array('rows'=> '15', 'course' => $COURSE->id, 'cols'=>'45'));
-        $mform->setType('description', PARAM_RAW);
+        $mform->addElement('editor', 'description_editor', get_string('groupdescription', 'group'), null, $editoroptions);
+        $mform->setType('description_editor', PARAM_RAW);
 
         $mform->addElement('passwordunmask', 'enrolmentkey', get_string('enrolmentkey', 'group'), 'maxlength="254" size="24"', get_string('enrolmentkey'));
         $mform->setHelpButton('enrolmentkey', array('groupenrolmentkey', get_string('enrolmentkey', 'group')), true);
@@ -73,5 +84,9 @@ class group_form extends moodleform {
 
     function get_um() {
         return $this->_upload_manager;
+    }
+
+    function get_editor_options() {
+        return $this->_customdata['editoroptions'];
     }
 }

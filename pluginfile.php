@@ -102,6 +102,36 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
         }
 
         send_stored_file($file, 10*60, 0, true); // download MUST be forced - security!
+    } else if ($filearea === 'grade_outcome' || $filearea === 'grade_scale') { // CONTEXT_SYSTEM
+        if ($CFG->forcelogin) {
+            require_login();
+        }
+
+        $fullpath = $context->id.$filearea.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
+
+    } else if ($filearea === 'tag_description') { // CONTEXT_SYSTEM
+
+        // All tag descriptions are going to be public but we still need to respect forcelogin
+        if ($CFG->forcelogin) {
+            require_login();
+        }
+
+        $fullpath = $context->id.$filearea.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, true); // TODO: change timeout?
+
     } else if ($filearea === 'calendar_event_description') { // CONTEXT_SYSTEM
 
         // All events here are public the one requirement is that we respect forcelogin
@@ -155,6 +185,54 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
+    } else if ($filearea === 'user_profile') { // CONTEXT_USER
+
+        if ($CFG->forcelogin) {
+            require_login();
+        }
+
+        $userid = array_shift($args);
+        if ((int)$userid <= 0) {
+            send_file_not_found();
+        }
+
+        if (!empty($CFG->forceloginforprofiles)) {
+            require_login();
+            if (isguestuser()) {
+                send_file_not_found();
+            }
+
+            if ($USER->id !== $userid) {
+                $usercontext = get_context_instance(CONTEXT_USER, $userid);
+                // The browsing user is not the current user
+                if (!isteacherinanycourse() && !isteacherinanycourse($userid) && !has_capability('moodle/user:viewdetails', $usercontext)) {
+                    send_file_not_found();
+                }
+
+                $canview = false;
+                if (has_capability('moodle/user:viewdetails', $usercontext)) {
+                    $canview = true;
+                } else {
+                    $courses = get_my_courses($USER->id);
+                }
+
+                while (!$canview && count($courses) > 0) {
+                    $course = array_shift($courses);
+                    if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        $canview = true;
+                    }
+                }
+            }
+        }
+
+        $fullpath = $context->id.$filearea.$userid.'/'.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, true);
     }
 
     send_file_not_found();
@@ -214,6 +292,36 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
         session_get_instance()->write_close(); // unlock session during fileserving
         send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
+
+    } else if ($filearea === 'course_summary') {
+
+        if ($CFG->forcelogin) {
+            require_login();
+        }
+
+        $fullpath = $context->id.$filearea.implode('/', $args);
+        
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
+
+    } else if ($filearea === 'course_grade_tree_feedback') {
+
+        if ($CFG->forcelogin || $course->id !== SITEID) {
+            require_login($course);
+        }
+
+        $fullpath = $context->id.$filearea.implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload); // TODO: change timeout?
 
     } else if ($filearea === 'calendar_event_description') { // CONTEXT_COURSE
 

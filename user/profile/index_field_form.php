@@ -45,6 +45,10 @@ class field_form extends moodleform {
     function validation($data, $files) {
         return $this->field->define_validate($data, $files);
     }
+
+    function editors() {
+        return $this->field->define_editors();
+    }
 }
 
 ?>

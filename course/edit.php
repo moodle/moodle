@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Edit course settings
 
     require_once('../config.php');
@@ -24,8 +24,8 @@
         }
         require_login($course->id);
         $category = $DB->get_record('course_categories', array('id'=>$course->category));
-        require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
-
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        require_capability('moodle/course:update', $coursecontext);
     } else if ($categoryid) { // creating new course in this category
         $course = null;
         require_login();
@@ -45,7 +45,8 @@
         $PAGE->url->param('category',$categoryid);
     }
 
-/// prepare course
+    /// Prepare course and the editor
+    $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
     if (!empty($course)) {
         $allowedmods = array();
         if (!empty($course)) {
@@ -60,12 +61,15 @@
             }
             $course->allowedmods = $allowedmods;
         }
+        $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course_summary', $course->id);
+    } else {
+        $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course_summary', null);
     }
 
 /// first create the form
-    $editform = new course_edit_form('edit.php', compact('course', 'category'));
+    $editform = new course_edit_form('edit.php', compact('course', 'category', 'editoroptions'));
     // now override defaults if course already exists
-    if (!empty($course)) {
+    if (!empty($course->id)) {
         $course->enrolpassword = $course->password; // we need some other name for password field MDL-9929
         $editform->set_data($course);
     }
@@ -84,12 +88,21 @@
         //preprocess data
         $data->timemodified = time();
 
-        if (empty($course)) {
+        if (empty($course->id)) {
+            // In creating the course
             if (!$course = create_course($data)) {
                 print_error('coursenotcreated');
             }
 
+            // Get the context of the newly created course
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+            // Save the files used in the summary editor
+            $editordata = new stdClass;
+            $editordata->id = $course->id;
+            $editordata->summary_editor = $data->summary_editor;
+            $editordata = file_postupdate_standard_editor($editordata, 'summary', $editoroptions, $context, 'course_summary', $course->id);
+            $DB->update_record('course', $editordata);
 
             // assign default role to creator if not already having permission to manage course assignments
             if (!has_capability('moodle/course:view', $context) or !has_capability('moodle/role:assign', $context)) {
@@ -109,6 +122,8 @@
             }
 
         } else {
+            // Save any changes to the files used in the editor
+            $data = file_postupdate_standard_editor($data, 'summary', $editoroptions, $coursecontext, 'course_summary', $data->id);
             if (!update_course($data)) {
                 print_error('coursenotupdated');
             }
@@ -126,7 +141,7 @@
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");
 
-    if (!empty($course)) {
+    if (!empty($course->id)) {
         $PAGE->navbar->add($streditcoursesettings);
         $title = $streditcoursesettings;
         $fullname = $course->fullname;

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Page for creating or editing course category name/parent/description.
  * When called with an id parameter, edits the category with that id.
@@ -18,8 +18,10 @@ if ($id) {
         print_error('unknowcategory');
     }
     $PAGE->set_url('course/editcategory.php', array('id' => $id));
-    require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $id));
+    $categorycontext = get_context_instance(CONTEXT_COURSECAT, $id);
+    require_capability('moodle/category:manage', $categorycontext);
     $strtitle = get_string('editcategorysettings');
+    $editorcontext = $categorycontext;
 } else {
     $parent = required_param('parent', PARAM_INT);
     $PAGE->set_url('course/editcategory.php', array('parent' => $parent));
@@ -36,9 +38,13 @@ if ($id) {
     $category->parent = $parent;
     require_capability('moodle/category:manage', $context);
     $strtitle = get_string("addnewcategory");
+    $editorcontext = null;
 }
 
-$mform = new editcategory_form('editcategory.php', $category);
+$editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true);
+$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'category_description', $category->id);
+
+$mform = new editcategory_form('editcategory.php', compact('category', 'editoroptions'));
 $mform->set_data($category);
 
 if ($mform->is_cancelled()) {
@@ -52,7 +58,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $newcategory = new stdClass();
     $newcategory->name = $data->name;
-    $newcategory->description = $data->description;
+    $newcategory->description_editor = $data->description_editor;
     $newcategory->parent = $data->parent; // if $data->parent = 0, the new category will be a top-level category
 
     if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
@@ -66,17 +72,20 @@ if ($mform->is_cancelled()) {
             $parent_cat = $DB->get_record('course_categories', array('id' => $newcategory->parent));
             move_category($newcategory, $parent_cat);
         }
-        $DB->update_record('course_categories', $newcategory);
-        fix_course_sortorder();
-
     } else {
         // Create a new category.
+        $newcategory->description = $data->description_editor['text'];
         $newcategory->sortorder = 999;
         $newcategory->id = $DB->insert_record('course_categories', $newcategory);
         $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
+        $categorycontext = $newcategory->context;
         mark_context_dirty($newcategory->context->path);
-        fix_course_sortorder(); // Required to build course_categories.depth and .path.
     }
+
+    $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext, 'category_description', $newcategory->id);
+    $DB->update_record('course_categories', $newcategory);
+    fix_course_sortorder();
+
     redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
 }
 

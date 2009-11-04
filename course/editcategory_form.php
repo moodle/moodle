@@ -6,7 +6,8 @@ class editcategory_form extends moodleform {
     function definition() {
         global $CFG;
         $mform =& $this->_form;
-        $category = $this->_customdata;
+        $category = $this->_customdata['category'];
+        $editoroptions = $this->_customdata['editoroptions'];
 
         // get list of categories to use as parents, with site as the first one
         $options = array(get_string('top'));
@@ -24,15 +25,15 @@ class editcategory_form extends moodleform {
         $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
         $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));
         $mform->addRule('name', get_string('required'), 'required', null);
-        $mform->addElement('htmleditor', 'description', get_string('description'));
-        $mform->setType('description', PARAM_RAW);
+        $mform->addElement('editor', 'description_editor', get_string('description'), null, $editoroptions);
+        $mform->setType('description_editor', PARAM_RAW);
         if (!empty($CFG->allowcategorythemes)) {
             $themes=array();
             $themes[''] = get_string('forceno');
             $themes += get_list_of_themes();
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
-        $mform->setHelpButton('description', array('writing', 'richtext2'), false, 'editorhelpbutton');
+        $mform->setHelpButton('description_editor', array('writing', 'richtext2'), false, 'editorhelpbutton');
 
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);

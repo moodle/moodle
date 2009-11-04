@@ -191,7 +191,13 @@
 /// Print current category description
     if (!$editingon && $category->description) {
         echo $OUTPUT->box_start();
-        echo format_text($category->description); // for multilang filter
+        $options = new stdClass;
+        $options->noclean = true;
+        $options->para = false;
+        if (!isset($category->descriptionformat)) {
+            $category->descriptionformat = FORMAT_MOODLE;
+        }
+        echo format_text($category->description, $category->descriptionformat, $options);
         echo $OUTPUT->box_end();
     }
 

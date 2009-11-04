@@ -24,6 +24,7 @@
  */
 
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir.'/filelib.php');
 
 define('COURSE_MAX_LOG_DISPLAY', 150);          // days
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
@@ -2122,17 +2123,17 @@ function print_courses($category) {
             $category   = array_shift($categories);
             $courses    = get_courses_wmanagers($category->id,
                                                 'c.sortorder ASC',
-                                                array('password','summary','currency'));
+                                                array('password','summary','summaryformat','currency'));
         } else {
             $courses    = get_courses_wmanagers('all',
                                                 'c.sortorder ASC',
-                                                array('password','summary','currency'));
+                                                array('password','summary','summaryformat','currency'));
         }
         unset($categories);
     } else {
         $courses    = get_courses_wmanagers($category->id,
                                             'c.sortorder ASC',
-                                            array('password','summary','currency'));
+                                            array('password','summary','summaryformat','currency'));
     }
 
     if ($courses) {
@@ -2173,6 +2174,9 @@ function print_course($course, $highlightterms = '') {
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
     }
+
+    // Rewrite file URLs so that they are correct
+    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
@@ -2267,7 +2271,10 @@ function print_course($course, $highlightterms = '') {
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
-    echo highlight($highlightterms, format_text($course->summary, FORMAT_MOODLE, $options,  $course->id));
+    if (!isset($course->summaryformat)) {
+        $course->summaryformat = FORMAT_MOODLE;
+    }
+    echo highlight($highlightterms, format_text($course->summary, $course->summaryformat, $options,  $course->id));
     echo '</div>';
     echo '</div>';
 }
@@ -3589,4 +3596,406 @@ function get_course_by_shortname ($shortname) {
 function get_course_by_idnumber ($idnumber) {
     global $DB;
     return $DB->get_record('course', array('idnumber' => $idnumber));
+}
+
+/**
+ * This class pertains to course requests and contains methods associated with
+ * create, approving, and removing course requests.
+ *
+ * @copyright 2009 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ *
+ * @property-read int $id
+ * @property-read string $fullname
+ * @property-read string $shortname
+ * @property-read string $summary
+ * @property-read int $summaryformat
+ * @property-read int $summarytrust
+ * @property-read string $reason
+ * @property-read int $requester
+ * @property-read string $password
+ */
+class course_request {
+
+    /**
+     * This is the stdClass that stores the properties for the course request
+     * and is externally acccessed through the __get magic method
+     * @var stdClass
+     */
+    protected $properties;
+
+    /**
+     * An array of options for the summary editor used by course request forms.
+     * This is initially set by {@link summary_editor_options()}
+     * @var array
+     * @static
+     */
+    protected static $summaryeditoroptions;
+
+    /**
+     * The context used when working with files for the summary editor
+     * This is initially set by {@link summary_editor_context()}
+     * @var stdClass
+     * @static
+     */
+    protected static $summaryeditorcontext;
+
+    /**
+     * The string used to identify the file area for course_requests
+     * This is initially set by {@link summary_editor_context()}
+     * @var string
+     * @static
+     */
+    protected static $summaryeditorfilearea = 'course_request_summary';
+
+    /**
+     * Static function to prepare the summary editor for working with a course
+     * request.
+     *
+     * @static
+     * @param null|stdClass $data Optional, an object containing the default values
+     *                       for the form, these may be modified when preparing the
+     *                       editor so this should be called before creating the form
+     * @return stdClass An object that can be used to set the default values for
+     *                   an mforms form
+     */
+    public static function prepare($data=null) {
+        if ($data === null) {
+            $data = new stdClass;
+        }
+        $data = file_prepare_standard_editor($data, 'summary', self::summary_editor_options(), self::summary_editor_context(), self::summary_editor_filearea(), null);
+        return $data;
+    }
+
+    /**
+     * Static function to create a new course request when passed an array of properties
+     * for it.
+     *
+     * This function also handles saving any files that may have been used in the editor
+     *
+     * @static
+     * @param stdClass $data
+     * @return course_request The newly created course request
+     */
+    public static function create($data) {
+        global $USER, $DB, $CFG;
+        $data->requester = $USER->id;
+        $editorused = (!empty($data->summary_editor));
+        // Has summary_editor been set. If so we have come through with a editor and
+        // may need to save files
+        if ($editorused && empty($data->summary)) {
+            // Summary is a required field so copy the text over
+            $data->summary = $data->summary_editor['text'];
+        }
+        $data->id = $DB->insert_record('course_request', $data);
+        if ($editorused) {
+            // Save any files and then update the course with the fixed data
+            $data = file_postupdate_standard_editor($data, 'summary', self::summary_editor_options(), self::summary_editor_context(), self::summary_editor_filearea(), $data->id);
+            $DB->update_record('course_request', $data);
+        }
+        // Create a new course_request object and return it
+        $request = new course_request($data);
+
+        // Notify the admin if required.
+        if ($CFG->courserequestnotify) {
+            $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
+            
+            $a = new stdClass;
+            $a->link = "$CFG->wwwroot/course/pending.php";
+            $a->user = fullname($USER);
+            $subject = get_string('courserequest');
+            $message = get_string('courserequestnotifyemail', 'admin', $a);
+            foreach ($users as $user) {
+                $this->notify($user, $USER, 'courserequested', $subject, $message);
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * Returns an array of options to use with a summary editor
+     *
+     * @uses course_request::$summaryeditoroptions
+     * @return array An array of options to use with the editor
+     */
+    public static function summary_editor_options() {
+        global $CFG;
+        if (self::$summaryeditoroptions === null) {
+            self::$summaryeditoroptions = array('maxfiles' => 0, 'maxbytes'=>0, 'trusttext'=>true);
+        }
+        return self::$summaryeditoroptions;
+    }
+
+    /**
+     * Returns the context to use with the summary editor
+     *
+     * @uses course_request::$summaryeditorcontext
+     * @return stdClass The context to use
+     */
+    public static function summary_editor_context() {
+        return null;
+    }
+
+    /**
+     * Returns the filearea to use with the summary editor
+     *
+     * @uses course_request::$summaryeditorfilearea
+     * @return string The filearea to use with the summary editor
+     */
+    public static function summary_editor_filearea() {
+        return self::$summaryeditorfilearea;
+    }
+
+    /**
+     * Loads the properties for this course request object. Id is required and if
+     * only id is provided then we load the rest of the properties from the database
+     *
+     * @param stdClass|int $properties Either an object containing properties
+     *                      or the course_request id to load
+     */
+    public function __construct($properties) {
+        global $DB;
+        if (empty($properties->id)) {
+            if (empty($properties)) {
+                throw new coding_exception('You must provide a course request id when creating a course_request object');
+            }
+            $id = $properties;
+            $properties = new stdClass;
+            $properties->id = (int)$id;
+            unset($id);
+        }
+        if (empty($properties->requester)) {
+            if (!($this->properties = $DB->get_record('course_request', array('id' => $properties->id)))) {
+                print_error('unknowncourserequest');
+            }
+        } else {
+            $this->properties = $properties;
+        }
+        $this->properties->collision = null;
+    }
+
+    /**
+     * Returns the requested property
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function __get($key) {
+        if ($key === 'summary' && self::summary_editor_context() !== null) {
+            return file_rewrite_pluginfile_urls($this->properties->summary, 'pluginfile.php', self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
+        }
+        return $this->properties->$key;
+    }
+
+    /**
+     * Override this to ensure empty($request->blah) calls return a reliable answer...
+     *
+     * This is required because we define the __get method
+     *
+     * @param mixed $key
+     * @return bool True is it not empty, false otherwise
+     */
+    public function __isset($key) {
+        return (!empty($this->properties->$key));
+    }
+
+    /**
+     * Returns the user who requested this course
+     *
+     * Uses a static var to cache the results and cut down the number of db queries
+     *
+     * @staticvar array $requesters An array of cached users
+     * @return stdClass The user who requested the course
+     */
+    public function get_requester() {
+        global $DB;
+        static $requesters= array();
+        if (!array_key_exists($this->properties->requester, $requesters)) {
+            $requesters[$this->properties->requester] = $DB->get_record('user', array('id'=>$this->properties->requester));
+        }
+        return $requesters[$this->properties->requester];
+    }
+
+    /**
+     * Checks that the shortname used by the course does not conflict with any other
+     * courses that exist
+     *
+     * @param string|null $shortnamemark The string to append to the requests shortname
+     *                     should a conflict be found
+     * @return bool true is there is a conflict, false otherwise
+     */
+    public function check_shortname_collision($shortnamemark = '[*]') {
+        global $DB;
+
+        if ($this->properties->collision !== null) {
+            return $this->properties->collision;
+        }
+
+        if (empty($this->properties->shortname)) {
+            debugging('Attempting to check a course request shortname before it has been set', DEBUG_DEVELOPER);
+            $this->properties->collision = false;
+        } else if ($DB->record_exists('course', array('shortname' => $this->properties->shortname))) {
+            if (!empty($shortnamemark)) {
+                $this->properties->shortname .= ' '.$shortnamemark;
+            }
+            $this->properties->collision = true;
+        } else {
+            $this->properties->collision = false;
+        }
+        return $this->properties->collision;
+    }
+
+    /**
+     * This function approves the request turning it into a course
+     *
+     * This function converts the course request into a course, at the same time
+     * transfering any files used in the summary to the new course and then removing
+     * the course request and the files associated with it.
+     *
+     * @return int The id of the course that was created from this request
+     */
+    public function approve() {
+        global $CFG, $DB, $USER;
+        $category = get_course_category($CFG->defaultrequestcategory);
+        $courseconfig = get_config('moodlecourse');
+
+        // Transfer appropriate settings
+        $course = clone($this->properties);
+        unset($course->id);
+        unset($course->reason);
+        unset($course->requester);
+
+        // Set category
+        $course->category = $category->id;
+        $course->sortorder = $category->sortorder; // place as the first in category
+
+        // Set misc settings
+        $course->requested = 1;
+        if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
+            $course->restrictmodules = 1;
+        }
+
+        // Apply course default settings
+        $course->format             = $courseconfig->format;
+        $course->numsections        = $courseconfig->numsections;
+        $course->hiddensections     = $courseconfig->hiddensections;
+        $course->newsitems          = $courseconfig->newsitems;
+        $course->showgrades         = $courseconfig->showgrades;
+        $course->showreports        = $courseconfig->showreports;
+        $course->maxbytes           = $courseconfig->maxbytes;
+        $course->enrol              = $courseconfig->enrol;
+        $course->enrollable         = $courseconfig->enrollable;
+        $course->enrolperiod        = $courseconfig->enrolperiod;
+        $course->expirynotify       = $courseconfig->expirynotify;
+        $course->notifystudents     = $courseconfig->notifystudents;
+        $course->expirythreshold    = $courseconfig->expirythreshold;
+        $course->groupmode          = $courseconfig->groupmode;
+        $course->groupmodeforce     = $courseconfig->groupmodeforce;
+        $course->visible            = $courseconfig->visible;
+        $course->enrolpassword      = $courseconfig->enrolpassword;
+        $course->guest              = $courseconfig->guest;
+        $course->lang               = $courseconfig->lang;
+
+        // Insert the record
+        $course->id = $DB->insert_record('course', $course);
+        if ($course->id) {
+            $course = $DB->get_record('course', array('id' => $course->id));
+            blocks_add_default_course_blocks($course);
+            $course->context = get_context_instance(CONTEXT_COURSE, $course->id);
+            role_assign($CFG->creatornewroleid, $this->properties->requester, 0, $course->context->id); // assing teacher role
+            if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
+                // if we're all or requested we're ok.
+                $allowedmods = explode(',',$CFG->defaultallowedmodules);
+                update_restricted_mods($course, $allowedmods);
+            }
+            $this->copy_summary_files_to_course($course);
+            $this->delete();
+            fix_course_sortorder();
+
+            $user = $DB->get_record('user', array('id' => $this->properties->requester));
+            $a->name = $course->fullname;
+            $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
+            $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
+
+            return $course->id;
+        }
+        return false;
+    }
+
+    /**
+     * Reject a course request
+     *
+     * This function rejects a course request, emailing the requesting user the
+     * provided notice and then removing the request from the database
+     *
+     * @param string $notice The message to display to the user
+     */
+    public function reject($notice) {
+        global $USER;
+        $this->notify($user, $USER, 'courserequestrejected', get_string('courserejectsubject'), get_string('courserejectemail', 'moodle', $notice));
+        $this->delete();
+    }
+
+    /**
+     * Deletes the course request and any associated files
+     */
+    public function delete() {
+        global $DB;
+        $DB->delete_records('course_request', array('id' => $this->properties->id));
+        if (self::summary_editor_context() !== null) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files(self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+        }
+    }
+
+    /**
+     * This function copies all files used in the summary for the request to the
+     * summary of the course.
+     *
+     * This function copies, original files are left associated with the request
+     * and are removed only when the request is deleted
+     *
+     * @param stdClass $course An object representing the course to copy files to
+     */
+    protected function copy_summary_files_to_course($course) {
+        if (self::summary_editor_context() !== null) {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files(self::summary_editor_context()->id, self::summary_editor_filearea(), $this->properties->id);
+            foreach ($files as $file) {
+                if (!$file->is_directory()) {
+                    $filerecord = array('contextid'=>$course->context->id, 'filearea'=>'course_summary', 'itemid'=>$course->id, 'filepath'=>$file->get_filepath(), 'filename'=>$file->get_filename());
+                    $fs->create_file_from_storedfile($filerecord, $file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a message from one user to another using events_trigger
+     *
+     * @param object $touser
+     * @param object $fromuser
+     * @param string $name
+     * @param string $subject
+     * @param string $message
+     */
+    protected function notify($touser, $fromuser, $name='courserequested', $subject, $message) {
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->component         = 'course';
+        $eventdata->name              = $name;
+        $eventdata->userfrom          = $fromuser;
+        $eventdata->userto            = $touser;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $message;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        events_trigger('message_send', $eventdata);
+    }
 }

@@ -31,6 +31,11 @@ require_once 'edit_form.php';
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
+$url = new moodle_url($CFG->wwwroot.'/grade/edit/outcome/edit.php');
+if ($courseid !== 0) $url->param('courseid', $courseid);
+if ($id !== 0) $url->param('id', $id);
+$PAGE->set_url($url);
+
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $heading = null;
 
@@ -88,8 +93,15 @@ if ($id) {
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
+$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 
-$mform = new edit_outcome_form(null, array('gpr'=>$gpr));
+if (!empty($outcome_rec->id)) {
+    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade_outcome', $outcome_rec->id);
+} else {
+    $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade_outcome', null);
+}
+
+$mform = new edit_outcome_form(null, compact('gpr', 'editoroptions'));
 
 $mform->set_data($outcome_rec);
 
@@ -99,9 +111,10 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $outcome = new grade_outcome(array('id'=>$id));
     $data->usermodified = $USER->id;
-    grade_outcome::set_properties($outcome, $data);
 
     if (empty($outcome->id)) {
+        $data->description = $data->description_editor['text'];
+        grade_outcome::set_properties($outcome, $data);
         if (!has_capability('moodle/grade:manage', $systemcontext)) {
             $data->standard = 0;
         }
@@ -111,7 +124,11 @@ if ($mform->is_cancelled()) {
         }
         $outcome->insert();
 
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_outcome', $outcome->id);
+        $DB->set_field($outcome->table, 'description', $data->description, array('id'=>$outcome->id));
     } else {
+        $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $systemcontext, 'grade_outcome', $id);
+        grade_outcome::set_properties($outcome, $data);
         if (isset($data->standard)) {
             $outcome->courseid = !empty($data->standard) ? null : $courseid;
         } else {

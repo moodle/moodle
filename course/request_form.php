@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -29,7 +29,7 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package course
- *//** */
+ */
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -64,9 +64,9 @@ class course_request_form extends moodleform {
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
 
-        $mform->addElement('htmleditor', 'summary', get_string('summary'), array('rows'=>'15', 'cols'=>'50'));
-        $mform->setHelpButton('summary', array('text2', get_string('helptext')), true);
-        $mform->setType('summary', PARAM_RAW);
+        $mform->addElement('editor', 'summary_editor', get_string('summary'), null, course_request::summary_editor_options());
+        $mform->setHelpButton('summary_editor', array('text2', get_string('helptext')), true);
+        $mform->setType('summary_editor', PARAM_RAW);
 
         $mform->addElement('passwordunmask', 'password', get_string('enrolmentkey'), 'size="25"');
         $mform->setHelpButton('password', array('enrolmentkey', get_string('enrolmentkey')), true);

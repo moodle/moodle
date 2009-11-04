@@ -59,7 +59,8 @@
 
     echo $OUTPUT->box_start('generalbox info');
 
-    echo format_text($course->summary, FORMAT_MOODLE, NULL, $course->id);
+    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course_summary', $course->id);
+    echo format_text($course->summary, $course->summaryformat, NULL, $course->id);
 
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);

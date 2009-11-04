@@ -2706,6 +2706,46 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009103000);
     }
 
+    if ($result && $oldversion < 2009110400) {
+
+        // An array used to store the table name and keys of summary and trust fields
+        // to be added
+        $extendtables = array();
+        $extendtables['course'] = array('summaryformat');
+        $extendtables['course_categories'] = array('descriptionformat');
+        $extendtables['course_request'] = array('summaryformat');
+        $extendtables['grade_outcomes'] = array('descriptionformat');
+        $extendtables['groups'] = array('descriptionformat');
+        $extendtables['groupings'] = array('descriptionformat');
+        $extendtables['scale'] = array('descriptionformat');
+        $extendtables['user'] = array('descriptionformat');
+        $extendtables['user_info_field'] = array('descriptionformat', 'defaultdataformat');
+        $extendtables['user_info_data'] = array('dataformat');
+
+        foreach ($extendtables as $tablestr=>$newfields) {
+            $table = new xmldb_table($tablestr);
+            foreach ($newfields as $fieldstr) {
+                $field = new xmldb_field($fieldstr, XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+                // Check that the field doesn't already exists
+                if (!$dbman->field_exists($table, $field)) {
+                    // Add the new field
+                    $dbman->add_field($table, $field);
+                    // Update the field if the text contains the default FORMAT_MOODLE to FORMAT_HTML
+                    if (($pos = strpos($fieldstr, 'format'))>0) {
+                        upgrade_set_timeout(60*20); // this may take a little while
+                        $params = array(FORMAT_HTML, '<p%', '%<br />%', FORMAT_MOODLE);
+                        $textfield = substr($fieldstr, 0, $pos);
+                        $DB->execute('UPDATE '.$tablestr.' SET '.$fieldstr.'=? WHERE ('.$textfield.' LIKE ? OR '.$textfield.' LIKE ?) AND '.$fieldstr.'=?', $params);
+                    }
+                }
+            }
+        }
+
+        unset($extendtables);
+
+        upgrade_main_savepoint($result, 2009110400);
+    }
+
     return $result;
 }
 

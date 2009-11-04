@@ -348,7 +348,12 @@
 
                     $contentheading .= '&nbsp;' . $OUTPUT->action_icon($editgroupaction);
                 }
-                $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description);
+
+                $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'course_group_description', $group->id);
+                if (!isset($group->descriptionformat)) {
+                    $group->descriptionformat = FORMAT_MOODLE;
+                }
+                $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description, $group->descriptionformat);
                 $groupinfotable->data[] = html_table_row::make(array($picturecell, $contentcell));
                 echo $OUTPUT->table($groupinfotable);
             }

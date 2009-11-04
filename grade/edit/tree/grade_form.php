@@ -96,13 +96,10 @@ class edit_grade_form extends moodleform {
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         // Feedback format is automatically converted to html if user has enabled editor
-        $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
-            array('rows'=>'15', 'course'=>$COURSE->id, 'cols'=>'45'));
+        $feedbackoptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>true);
+        $mform->addElement('editor', 'feedback', get_string('feedback', 'grades'), null, $feedbackoptions);
         $mform->setHelpButton('feedback', array('feedback', get_string('feedback', 'grades'), 'grade'));
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
-        $mform->addElement('format', 'feedbackformat', get_string('format'));
-        $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));
-        //TODO: unfortunately we can not disable html editor for external grades when overridden off :-(
 
         // hidden params
         $mform->addElement('hidden', 'oldgrade');

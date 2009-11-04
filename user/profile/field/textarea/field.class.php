@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class profile_field_textarea extends profile_field_base {
 
@@ -7,7 +7,7 @@ class profile_field_textarea extends profile_field_base {
         $rows = $this->field->param2;
 
         /// Create the form field
-        $mform->addElement('htmleditor', $this->inputname, format_string($this->field->name), array('cols'=>$cols, 'rows'=>$rows));
+        $mform->addElement('editor', $this->inputname, format_string($this->field->name), null, null);
         $mform->setType($this->inputname, PARAM_CLEAN);
     }
 
@@ -15,6 +15,28 @@ class profile_field_textarea extends profile_field_base {
     /// included in the user object
     function is_user_object_data() {
         return false;
+    }
+
+    function edit_save_data_preprocess($data, &$datarecord) {
+        if (is_array($data)) {
+            $datarecord->dataformat = $data['format'];
+            $data = $data['text'];
+        }
+        return $data;
+    }
+
+    function edit_load_user_data(&$user) {
+        if ($this->data !== NULL) {
+            $this->data = clean_text($this->data, $this->dataformat);
+            $user->{$this->inputname} = array('text'=>$this->data, 'format'=>$this->dataformat);
+        }
+    }
+
+    /**
+     * Display the data for this field
+     */
+    function display_data() {
+        return format_text($this->data, $this->dataformat, new stdClass());
     }
 
 }

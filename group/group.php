@@ -29,7 +29,6 @@ if ($id) {
     if (!$group = $DB->get_record('groups', array('id'=>$id))) {
         print_error('invalidgroupid');
     }
-    $group->description = clean_text($group->description);
     if (empty($courseid)) {
         $courseid = $group->courseid;
 
@@ -83,8 +82,16 @@ if ($id and $delete) {
     }
 }
 
+// Prepare the description editor: We do support files for group descriptions
+$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$course->maxbytes, 'trust'=>false, 'context'=>$context, 'noclean'=>true);
+if (!empty($group->id)) {
+    $group = file_prepare_standard_editor($group, 'description', $editoroptions, $context, 'course_group_description', $group->id);
+} else {
+    $group = file_prepare_standard_editor($group, 'description', $editoroptions, $context, 'course_group_description', null);
+}
+
 /// First create the form
-$editform = new group_form();
+$editform = new group_form(null, array('editoroptions'=>$editoroptions));
 $editform->set_data($group);
 
 if ($editform->is_cancelled()) {
