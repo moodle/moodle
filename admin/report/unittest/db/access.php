@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$report_unittest_capabilities = array(
+$capabilities = array(
 
     'report/unittest:view' => array(
         'riskbitmask' => RISK_DATALOSS,

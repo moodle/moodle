@@ -1,6 +1,6 @@
 <?php
 
-$webservice_soap_capabilities = array(
+$capabilities = array(
 
     'webservice/soap:use' => array(
         'captype' => 'read', // in fact this may be considered read and write at the same time

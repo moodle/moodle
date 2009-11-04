@@ -3177,7 +3177,11 @@ function load_capability_def($component) {
     $capabilities = array();
     if (file_exists($defpath)) {
         require($defpath);
-        $capabilities = ${$component.'_capabilities'};
+        if (!empty(${$component.'_capabilities'})) {
+            // legacy capability array name
+            // since 2.0 we prefer $capabilities instead - it is easier to use and matches db/* files
+            $capabilities = ${$component.'_capabilities'};
+        }
     }
 
     return $capabilities;

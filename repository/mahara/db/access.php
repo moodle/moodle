@@ -1,6 +1,6 @@
 <?php
 
-$repository_mahara_capabilities = array(
+$capabilities = array(
 
     'repository/mahara:view' => array(
         'captype' => 'read',

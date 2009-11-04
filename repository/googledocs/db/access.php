@@ -1,6 +1,6 @@
 <?php
 
-$repository_googledocs_capabilities = array(
+$capabilities = array(
 
     'repository/googledocs:view' => array(
         'captype' => 'read',

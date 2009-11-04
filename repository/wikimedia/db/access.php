@@ -1,6 +1,6 @@
 <?php
 
-$repository_wikimedia_capabilities = array(
+$capabilities = array(
 
     'repository/wikimedia:view' => array(
         'captype' => 'read',

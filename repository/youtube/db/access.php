@@ -1,6 +1,6 @@
 <?php
 
-$repository_youtube_capabilities = array(
+$capabilities = array(
 
     'repository/youtube:view' => array(
         'captype' => 'read',

@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$report_security_capabilities = array(
+$capabilities = array(
 
     'report/security:view' => array(
         'riskbitmask' => RISK_CONFIG,

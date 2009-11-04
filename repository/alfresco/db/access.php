@@ -1,6 +1,6 @@
 <?php
 
-$repository_alfresco_capabilities = array(
+$capabilities = array(
 
     'repository/alfresco:view' => array(
         'captype' => 'read',

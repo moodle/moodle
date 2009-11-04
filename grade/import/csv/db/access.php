@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$gradeimport_csv_capabilities = array(
+$capabilities = array(
 
     'gradeimport/csv:view' => array(
         'captype' => 'write',

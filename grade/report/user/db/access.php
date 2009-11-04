@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$gradereport_user_capabilities = array(
+$capabilities = array(
 
     'gradereport/user:view' => array(
         'riskbitmask' => RISK_PERSONAL,

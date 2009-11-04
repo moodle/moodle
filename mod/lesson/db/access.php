@@ -4,7 +4,7 @@
  *
  * For naming conventions, see lib/db/access.php.
  */
-$mod_lesson_capabilities = array(
+$capabilities = array(
 
     'mod/lesson:edit' => array(
 

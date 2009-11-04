@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$report_questioninstances_capabilities = array(
+$capabilities = array(
 
     'report/questioninstances:view' => array(
         'captype' => 'read',

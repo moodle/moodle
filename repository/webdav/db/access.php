@@ -1,6 +1,6 @@
 <?php
 
-$repository_webdav_capabilities = array(
+$capabilities = array(
 
     'repository/webdav:view' => array(
         'captype' => 'read',

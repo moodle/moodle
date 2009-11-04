@@ -1,6 +1,6 @@
 <?php
 
-$repository_s3_capabilities = array(
+$capabilities = array(
 
     'repository/s3:view' => array(
         'captype' => 'read',

@@ -4,7 +4,7 @@
  *
  * For naming conventions, see lib/db/access.php.
  */
-$mod_wiki_capabilities = array(
+$capabilities = array(
 
     'mod/wiki:participate' => array(
 

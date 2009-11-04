@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$coursereport_outline_capabilities = array(
+$capabilities = array(
 
     'coursereport/outline:view' => array(
         'riskbitmask' => RISK_PERSONAL,

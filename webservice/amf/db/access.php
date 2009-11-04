@@ -1,6 +1,6 @@
 <?php
 
-$webservice_amf_capabilities = array(
+$capabilities = array(
 
     'webservice/amf:use' => array(
         'captype' => 'read', // in fact this may be considered read and write at the same time

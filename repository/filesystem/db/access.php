@@ -1,6 +1,6 @@
 <?php
 
-$repository_filesystem_capabilities = array(
+$capabilities = array(
 
     'repository/filesystem:view' => array(
         'captype' => 'read',

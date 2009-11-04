@@ -1,6 +1,6 @@
 <?php
 
-$repository_local_capabilities = array(
+$capabilities = array(
 
     'repository/local:view' => array(
         'captype' => 'read',

@@ -1,6 +1,6 @@
 <?php
 
-$repository_upload_capabilities = array(
+$capabilities = array(
 
     'repository/upload:view' => array(
         'captype' => 'read',

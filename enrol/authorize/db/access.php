@@ -1,6 +1,6 @@
 <?php
 
-$enrol_authorize_capabilities = array(
+$capabilities = array(
 
     'enrol/authorize:managepayments' => array(
         'riskbitmask' => RISK_PERSONAL,

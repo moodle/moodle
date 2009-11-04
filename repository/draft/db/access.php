@@ -1,6 +1,6 @@
 <?php
 
-$repository_draft_capabilities = array(
+$capabilities = array(
 
     'repository/draft:view' => array(
         'captype' => 'read',

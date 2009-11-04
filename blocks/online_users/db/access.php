@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$block_online_users_capabilities = array(
+$capabilities = array(
 
     'block/online_users:viewlist' => array(
 

@@ -1,6 +1,6 @@
 <?php
 
-$repository_flickr_capabilities = array(
+$capabilities = array(
 
     'repository/flickr:view' => array(
         'captype' => 'read',

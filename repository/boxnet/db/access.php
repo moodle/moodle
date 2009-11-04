@@ -1,6 +1,6 @@
 <?php
 
-$repository_boxnet_capabilities = array(
+$capabilities = array(
 
     'repository/boxnet:view' => array(
         'captype' => 'read',

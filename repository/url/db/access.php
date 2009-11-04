@@ -1,6 +1,6 @@
 <?php
 
-$repository_url_capabilities = array(
+$capabilities = array(
 
     'repository/url:view' => array(
         'captype' => 'read',

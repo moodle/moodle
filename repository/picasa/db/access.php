@@ -1,6 +1,6 @@
 <?php
 
-$repository_picasa_capabilities = array(
+$capabilities = array(
 
     'repository/picasa:view' => array(
         'captype' => 'read',

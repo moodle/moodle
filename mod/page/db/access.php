@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$mod_page_capabilities = array(
+$capabilities = array(
 /* TODO: review public portfolio API first!
     'mod/page:portfolioexport' => array(
 

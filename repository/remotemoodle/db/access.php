@@ -1,6 +1,6 @@
 <?php
 
-$repository_remotemoodle_capabilities = array(
+$capabilities = array(
 
     'repository/remotemoodle:view' => array(
         'captype' => 'read',

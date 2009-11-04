@@ -4,7 +4,7 @@
  *
  * For naming conventions, see lib/db/access.php.
  */
-$mod_quiz_capabilities = array(
+$capabilities = array(
 
     // Ability to see that the quiz exists, and the basic information
     // about it, for example the start date and time limit.

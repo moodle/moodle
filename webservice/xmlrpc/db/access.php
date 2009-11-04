@@ -1,6 +1,6 @@
 <?php
 
-$webservice_xmlrpc_capabilities = array(
+$capabilities = array(
 
     'webservice/xmlrpc:use' => array(
         'captype' => 'read', // in fact this may be considered read and write at the same time
