@@ -214,6 +214,11 @@ function sync_enrolments($type, $enrol = false) {
                                           $this->enrol_localcoursefield,
                                           $idnumber );
                 if (!is_object($course_obj)) {
+                    if (empty($CFG->enrol_ldap_autocreate)) { // autocreation not allowed
+                        print "[ENROL_LDAP] Course $idnumber does not exist, skipping\n";
+                        continue; // next foreach course
+                    }
+
                     // ok, now then let's create it!
                     print "Creating Course $idnumber...";
                     $newcourseid = $this->create_course($course, true); // we are skipping fix_course_sortorder()
