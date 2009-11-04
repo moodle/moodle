@@ -132,12 +132,12 @@ $string['downloadlanguagenotneeded'] = 'デフォルトの言語パック「 $a 
 $string['downloadlanguagesub'] = 'あなたは、言語パックをダウンロードして、この言語でインストールを継続することができます。<br /><br />もし、あなたが言語パックをダウンロードできない場合、インストールは英語で継続されます。 (インストールの完了後、さらに言語パックをダウンロードして、インストールすることができます。)';
 $string['environmenterrortodo'] = 'このバージョンのMoodleをインストールする前に、発見された動作環境の問題 (エラー) を解消してください!';
 $string['environmenthead'] = 'あなたの環境を確認しています ...';
-$string['environmentrecommendcustomcheck'] = 'このテストに不適合の場合、潜在的な問題があることを意味します。';
+$string['environmentrecommendcustomcheck'] = 'このテストに不適合の場合、潜在的な問題が存在することを意味します。';
 $string['environmentrecommendinstall'] = '最適な動作のため、インストールおよび有効化してください。';
 $string['environmentrecommendversion'] = 'バージョン $a->needed 以上を推奨します。あなたは現在 $a->current を使用しています。';
-$string['environmentrequirecustomcheck'] = 'このテストはパスする必要があります。';
+$string['environmentrequirecustomcheck'] = 'このテストには、パスする必要があります。';
 $string['environmentrequireinstall'] = '必ずインストールおよび有効化してください。';
-$string['environmentrequireversion'] = 'バージョン $a->needed 以上が必須です。あなたは現在 $a->current を使用しています。';
+$string['environmentrequireversion'] = 'バージョン $a->needed 以上が必須です。あなたは、現在 $a->current を使用しています。';
 $string['environmentsub'] = 'あなたのシステムに関する様々な要素が、システム要件に合致するか確認しています。';
 $string['environmentxmlerror'] = '環境データ ($a->error_code) の読み込み中にエラーが発生しました。';
 $string['error'] = 'エラー';
@@ -167,7 +167,7 @@ $string['globalsquoteshelp'] = '<p>Magic Quotes GPCの無効化およびRegister
 <blockquote><div>php_value register_globals Off</div></blockquote>';
 $string['globalswarning'] = '<p><strong>セキュリティ警告</strong>: Moodleを適切に動作させるため、<br />現在のPHP設定を変更する必要があります。<p/><p><code>register_globals=off</code>  の<em>設定を行って</em>ください。<p>この設定は、<code>php.ini</code>、Apache/IIS <br />設定、または <code>.htaccess</code> ファイルの編集により管理することができます。</p>';
 $string['help'] = 'ヘルプ';
-$string['iconvrecommended'] = 'より良いパフォーマンスを得るため、ICONVライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
+$string['iconvrecommended'] = 'より良いパフォーマンスを得るため、ICONVライブラリのインストールを強くお勧めします。あなたのサイトが非ラテン言語をサポートしている場合、特にお勧めします。';
 $string['info'] = '情報';
 $string['installation'] = 'インストレーション';
 $string['invalidmd5'] = '無効なmp5ファイルです。';
