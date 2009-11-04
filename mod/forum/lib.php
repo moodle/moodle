@@ -4169,7 +4169,9 @@ function forum_print_rating_menu($postid, $userid, $scale, $myrating=NULL) {
         $strrate = get_string("rate", "forum");
     }
     $scale = array(FORUM_UNSET_POST_RATING => $strrate.'...') + $scale;
-    echo $OUTPUT->select(html_select::make($scale, $postid, $myrating, false)->add_class('forumpostratingmenu'));
+    $select = html_select::make($scale, $postid, $myrating, false);
+    $select->add_class('forumpostratingmenu');
+    echo $OUTPUT->select($select);
 }
 
 /**
