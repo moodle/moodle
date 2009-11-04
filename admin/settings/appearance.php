@@ -65,6 +65,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('maxexternalblogsperuser', get_string('maxexternalblogsperuser','blog'), get_string('configmaxexternalblogsperuser', 'blog'), 1));
     $ADMIN->add('appearance', $temp);
 
+    // Navigation settings
+    $temp = new admin_settingpage('navigation', get_string('navigation'));
+    $temp->add(new admin_setting_configcheckbox('navhidecategories', get_string('navhidecategories', 'admin'), get_string('confignavhidecategories', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('navshowallcourses', get_string('navshowallcourses', 'admin'), get_string('confignavshowallcourses', 'admin'), 0));
+    $ADMIN->add('appearance', $temp);
+
 /* TODO: reimplement editor settings and preferences, editors are now full plugins ;-)
     // "htmleditor" settingpage
     $ADMIN->add('appearance', new admin_category('htmleditor', get_string('htmleditor', 'admin')));

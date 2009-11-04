@@ -540,6 +540,24 @@ class navigation_node {
     }
 
     /**
+     * Finds all nodes that have the specified type
+     *
+     * @param int $type One of navigation_node::TYPE_*
+     * @return array An array of navigation_node references for nodes of type $type
+     */
+    public function get_children_by_type($type) {
+        $nodes = array();
+        if (count($this->children)>0) {
+            foreach ($this->children as &$child) {
+                if ($child->type === $type) {
+                    $nodes[] = $child;
+                }
+            }
+        }
+        return $nodes;
+    }
+
+    /**
      * Finds all nodes (recursivily) that have the specified type, regardless of
      * assumed order or position.
      *
@@ -895,7 +913,7 @@ class global_navigation extends navigation_node {
      * @return bool Returns true
      */
     public function initialise($jsargs = null) {
-        global $PAGE, $SITE;
+        global $PAGE, $SITE, $CFG;
         if ($this->initialised || during_initial_install()) {
             return true;
         }
@@ -941,7 +959,7 @@ class global_navigation extends navigation_node {
      * This gets called by {@link initialise()} when the context is CONTEXT_USER
      */
     protected function load_for_user() {
-        global $DB, $SITE, $PAGE;
+        global $DB, $SITE, $PAGE, $CFG;
         if (!empty($PAGE->course->id)) {
             $courseid = $PAGE->course->id;
         } else {
@@ -951,6 +969,9 @@ class global_navigation extends navigation_node {
             $course = $DB->get_record('course', array('id'=>$courseid));
         }
         if (isset($course) && $course) {
+            if (!empty($CFG->navshowallcourses)) {
+                $this->load_categories();
+            }
             $this->load_for_course();
         } else {
             $this->load_categories();
@@ -968,6 +989,9 @@ class global_navigation extends navigation_node {
         global $PAGE, $CFG;
         $id = optional_param('id', null);
         if ($lookforid && $id!==null) {
+            if (!empty($CFG->navshowallcourses)) {
+                $this->load_categories();
+            }
             $this->load_categories($id);
             $depth = $this->find_child_depth($id);
         } else {
@@ -984,6 +1008,9 @@ class global_navigation extends navigation_node {
     protected function load_for_course() {
         global $PAGE, $CFG, $USER;
         $keys = array();
+        if (!empty($CFG->navshowallcourses)) {
+            $this->load_categories();
+        }
         $depth = $this->load_course_categories($keys);
         $depth += $this->load_course($keys);
         if (!$this->format_display_course_content($PAGE->course->format)) {
@@ -1182,7 +1209,7 @@ class global_navigation extends navigation_node {
      * @return int
      */
     protected function load_for_activity() {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $CFG;
         $keys = array();
 
         $sectionnum = false;
@@ -1191,6 +1218,10 @@ class global_navigation extends navigation_node {
             if (!empty($section->section)) {
                 $sectionnum = $section->section;
             }
+        }
+
+        if (!empty($CFG->navshowallcourses)) {
+            $this->load_categories();
         }
 
         $depth = $this->load_course_categories($keys);
@@ -1312,7 +1343,9 @@ class global_navigation extends navigation_node {
                 // Process this course into the nav structure
                 $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
                 if ($categoryid===null) {
-                    $category = $this->find_child($course->category);
+                    $category = $this->find_child($course->category, self::TYPE_CATEGORY);
+                } else if ($categoryid === false) {
+                    $category = $this;
                 } else {
                     $category = $this->find_child($categoryid);
                 }
@@ -1563,8 +1596,13 @@ class global_navigation extends navigation_node {
         if (is_array($categories) && count($categories)>0) {
             $categories = array_reverse($categories);
             foreach ($categories as $category) {
-                $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id, 'categoryedit'=>'on', 'sesskey'=>sesskey()));
-                $keys[] = $this->add_to_path($keys, $category->id, $category->name, $category->name, self::TYPE_CATEGORY, $url);
+                $key = $category->id.':'.self::TYPE_CATEGORY;
+                if (!$this->get_by_path(array_merge($keys, array($key)))) {
+                    $url = new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$category->id, 'categoryedit'=>'on', 'sesskey'=>sesskey()));
+                    $keys[] = $this->add_to_path($keys, $category->id, $category->name, $category->name, self::TYPE_CATEGORY, $url);
+                } else {
+                    $keys[] = $key;
+                }
             }
         }
         return count($categories);
@@ -1626,7 +1664,7 @@ class global_navigation extends navigation_node {
             $categorypathids = explode('/',trim($course->categorypath,' /'));
             // If no category has been specified limit the depth we display immediatly to
             // that of the nav var depthforwards
-            if ($categoryid===0 && count($categorypathids)>($this->depthforward+1)) {
+            if ($categoryid===0 && count($categorypathids)>($this->depthforward+1) && empty($CFG->navshowallcourses)) {
                 $categorypathids = array_slice($categorypathids, 0, ($this->depthforward+1));
             }
             $categoryids = array_merge($categoryids, $categorypathids);
@@ -1714,6 +1752,17 @@ class global_navigation extends navigation_node {
                 }
                 $this->add_category_by_path($category);
             }
+        }
+    }
+
+    public function collapse_course_categories() {
+        $categories = $this->get_children_by_type(self::TYPE_CATEGORY);
+        while (count($categories) > 0) {
+            foreach ($categories as $category) {
+                $this->children = array_merge($this->children, $category->children);
+                $this->remove_child($category->key, self::TYPE_CATEGORY);
+}
+            $categories = $this->get_children_by_type(self::TYPE_CATEGORY);
         }
     }
 }
@@ -2170,6 +2219,7 @@ class navbar extends navigation_node {
      * @return string HTML
      */
     protected function parse_branch_to_html($navarray, $firstnode=true, $moreafterthis=false) {
+        global $CFG;
         $separator = get_separator();
         $output = '';
         if ($firstnode===true) {
@@ -2189,7 +2239,7 @@ class navbar extends navigation_node {
                 return $output;
             }
             $child = false;
-            // Iterate the nodes in navarray and finde the active node
+            // Iterate the nodes in navarray and find the active node
             foreach ($navarray as $tempchild) {
                 if ($tempchild->isactive || $tempchild->contains_active_node()) {
                     $child = $tempchild;
@@ -2211,8 +2261,10 @@ class navbar extends navigation_node {
                     $oldaction = $child->action;
                     $child->action = null;
                 }
+                if (empty($CFG->navhidecategories) || $child->type !== navigation_node::TYPE_CATEGORY) {
                 // Now display the node
                 $output .= '<li>'.$separator.' '.$child->content(true).'</li>';
+                }
                 if (isset($oldaction)) {
                     $child->action = $oldaction;
                 }

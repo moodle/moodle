@@ -127,6 +127,11 @@ class block_global_navigation_tree extends block_tree {
         }
 
         // Load the my courses branch if the user has selected to
+        if (!empty($CFG->navhidecategories)) {
+            $this->page->navigation->collapse_course_categories();
+        }
+
+        // Load the my courses branch if the user has selected to
         if (!empty($this->config->showmycourses) && $this->config->showmycourses=='yes') {
             $this->showmycourses();
         }
@@ -359,7 +364,7 @@ class block_global_navigation_tree extends block_tree {
         // Add a branch labelled something like My Courses
         $mycoursesbranch = $PAGE->navigation->add(get_string('mycourses'), null,navigation_node::TYPE_CATEGORY, null, 'mycourses');
         $PAGE->navigation->add_courses($courses, $mycoursesbranch);
-
+        $PAGE->navigation->get($mycoursesbranch)->type = navigation_node::TYPE_SETTING;
         return true;
     }
 

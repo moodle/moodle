@@ -1065,6 +1065,7 @@ $string['namesocial'] = 'section';
 $string['nametopics'] = 'topic';
 $string['nameweeks'] = 'week';
 $string['nameweekscss'] = 'week';
+$string['navigation'] = 'Navigation';
 $string['needed'] = 'Needed';
 $string['never'] = 'Never';
 $string['neverdeletelogs'] = 'Never delete logs';
