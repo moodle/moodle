@@ -22,6 +22,7 @@
  * @package	XMPPHP
  * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
  * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author	 Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
  */
 
@@ -32,6 +33,7 @@
  * @package	XMPPHP
  * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
  * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author	 Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
  * @version	$Id$
  */
@@ -131,9 +133,9 @@ class XMPPHP_XMLObj {
 	 * @param string $name
 	 * @return boolean
 	 */
-	public function hasSub($name) {
+	public function hasSub($name, $ns = null) {
 		foreach($this->subs as $sub) {
-			if($sub->name == $name) return true;
+			if(($name == "*" or $sub->name == $name) and ($ns == null or $sub->ns == $ns)) return true;
 		}
 		return false;
 	}
@@ -146,8 +148,9 @@ class XMPPHP_XMLObj {
 	 * @param string $ns
 	 */
 	public function sub($name, $attrs = null, $ns = null) {
+		#TODO attrs is ignored
 		foreach($this->subs as $sub) {
-			if($sub->name == $name) {
+			if($sub->name == $name and ($ns == null or $sub->ns == $ns)) {
 				return $sub;
 			}
 		}

@@ -31,9 +31,13 @@ documentation on the website.
 
 TODO
 ================================================================================
-* Rosters (I know, a big one)
 * Documentation
-* TLS Cert Inspection (Even possible in PHP?)
 * MUC Support
-* Plugins
-* XML Masking Handlers
+
+License Exception
+===============================================================================
+Please contact Nathan Fritz for library exceptions if you would like to
+distribute XMPPHP with a non-GPL compatible license.
+
+Also, if you would like to distribute XMPPHP as part of a commercial package,
+I sell commercial licenses.

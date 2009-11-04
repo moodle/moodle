@@ -22,6 +22,7 @@
  * @package	XMPPHP
  * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
  * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author	 Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
  */
 
@@ -31,6 +32,7 @@
  * @package	XMPPHP
  * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
  * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author	 Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
  * @version	$Id$
  */
@@ -82,7 +84,7 @@ class XMPPHP_Log {
 	 */
 	public function log($msg, $runlevel = self::LEVEL_INFO) {
 		$time = time();
-		$this->data[] = array($this->runlevel, $msg, $time);
+		#$this->data[] = array($this->runlevel, $msg, $time);
 		if($this->printout and $runlevel <= $this->runlevel) {
 			$this->writeLine($msg, $runlevel, $time);
 		}
@@ -112,5 +114,6 @@ class XMPPHP_Log {
 	protected function writeLine($msg, $runlevel, $time) {
 		//echo date('Y-m-d H:i:s', $time)." [".$this->names[$runlevel]."]: ".$msg."\n";
 		echo $time." [".$this->names[$runlevel]."]: ".$msg."\n";
+		flush();
 	}
 }

@@ -22,6 +22,7 @@
  * @package	XMPPHP
  * @author	 Nathanael C. Fritz <JID: fritzy@netflint.net>
  * @author	 Stephan Wentz <JID: stephan@jabber.wentz.it>
+ * @author	 Michael Garvin <JID: gar@netflint.net>
  * @copyright  2008 Nathanael C. Fritz
  */
 
@@ -43,7 +44,9 @@ require_once "XMPP.php";
 
 		public function __construct($host, $port, $user, $password, $resource, $server = null, $printlog = false, $loglevel = null) {
 			parent::__construct($host, $port, $user, $password, $resource, $server, $printlog, $loglevel);
-
+			if(!$server) $server = $host;
+			$this->stream_start = '<stream:stream to="' . $server . '" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">';
+			$this->fulljid = "{$user}@{$server}/{$resource}";
 		}
 	
 		/**
@@ -53,8 +56,8 @@ require_once "XMPP.php";
 		 * @param string $name
 		 * @param array $attr
 		 */
-		protected function startXML($parser, $name, $attr) {
-			if($this->xml_depth == 0 and $attr['version'] != '1.0') {
+		public function startXML($parser, $name, $attr) {
+			if($this->xml_depth == 0) {
 				$this->session_id = $attr['ID'];
 				$this->authenticate();
 			}
@@ -84,7 +87,7 @@ require_once "XMPP.php";
 				print "{$this->session_id} {$this->password}\n";
 				$out = "<iq type='set' id='$id'><query xmlns='jabber:iq:auth'><username>{$this->user}</username><digest>{$hash}</digest><resource>{$this->resource}</resource></query></iq>";
 			} else {
-				$out = "<iq type='set' id='$id'><query xmlns='jabber:iq:auth'><username>{$this->user}</username><digest>{$this->password}</digest><resource>{$this->resource}</resource></query></iq>";
+				$out = "<iq type='set' id='$id'><query xmlns='jabber:iq:auth'><username>{$this->user}</username><password>{$this->password}</password><resource>{$this->resource}</resource></query></iq>";
 			}
 			$this->send($out);
 
