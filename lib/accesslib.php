@@ -2297,7 +2297,7 @@ function get_system_context($cache=true) {
  * @return bool properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
-    global $DB, $ACCESSLIB_PRIVATE;
+    global $DB, $ACCESSLIB_PRIVATE, $CFG;
 
     // do not use get_context_instance(), because the related object might not exist,
     // or the context does not exist yet and it would be created now
@@ -2318,6 +2318,11 @@ function delete_context($contextlevel, $instanceid) {
 
         blocks_delete_all_for_context($context->id);
         filter_delete_all_for_context($context->id);
+
+        // TODO: MDL-20635 Replace with a means to delete during a cron run
+        require_once($CFG->libdir.'/filelib.php');
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id);
 
         return $result;
     } else {
