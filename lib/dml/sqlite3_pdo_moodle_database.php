@@ -294,6 +294,17 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     }
 
     /**
+     * Normalise values based in RDBMS dependencies (booleans, LOBs...)
+     *
+     * @param database_column_info $column column metadata corresponding with the value we are going to normalise
+     * @param mixed $value value we are going to normalise
+     * @return mixed the normalised value
+     */
+    protected function normalise_value($column, $value) {
+        return $value;
+    }
+
+    /**
      * Returns the sql statement with clauses to append used to limit a recordset range.
      * @param string $sql the SQL statement to limit.
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).

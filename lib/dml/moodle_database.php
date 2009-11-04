@@ -745,6 +745,15 @@ abstract class moodle_database {
     public abstract function get_columns($table, $usecache=true);
 
     /**
+     * Normalise values based in RDBMS dependencies (booleans, LOBs...)
+     *
+     * @param database_column_info $column column metadata corresponding with the value we are going to normalise
+     * @param mixed $value value we are going to normalise
+     * @return mixed the normalised value
+     */
+    protected abstract function normalise_value($column, $value);
+
+    /**
      * Reset internal column details cache
      * @param string $table - empty means all, or one if name of table given
      * @return void

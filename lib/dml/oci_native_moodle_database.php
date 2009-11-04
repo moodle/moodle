@@ -638,7 +638,7 @@ class oci_native_moodle_database extends moodle_database {
      * @param mixed $value value we are going to normalise
      * @return mixed the normalised value
      */
-    private function normalise_value($column, $value) {
+    protected function normalise_value($column, $value) {
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 

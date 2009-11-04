@@ -2435,6 +2435,7 @@ class moodle_database_for_testing extends moodle_database {
     public function get_tables($usecache=true){}
     public function get_indexes($table){}
     public function get_columns($table, $usecache=true){}
+    protected function normalise_value($column, $value){}
     public function set_debug($state){}
     public function get_debug(){}
     public function set_logging($state){}
