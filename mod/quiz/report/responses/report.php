@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This script lists student attempts and responses
  *
@@ -55,7 +55,7 @@ class quiz_responses_report extends quiz_default_report {
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
-        
+
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
@@ -131,7 +131,7 @@ class quiz_responses_report extends quiz_default_report {
         $table->is_downloading($download, get_string('reportresponses','quiz_responses'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
-            
+
             // Only print headers if not asked to download data
             $PAGE->requires->css('mod/quiz/report/responses/styles.css');
             $this->print_header_and_tabs($cm, $course, $quiz, 'responses', '');
@@ -170,12 +170,12 @@ class quiz_responses_report extends quiz_default_report {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
-    
-    
+
+
             $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
             $hasfeedback = quiz_has_feedback($quiz);
-    
-    
+
+
             // Construct the SQL
             $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS concattedid, ';
             if ($qmsubselect) {
@@ -185,17 +185,17 @@ class quiz_responses_report extends quiz_default_report {
                     "   ELSE 0 " .
                     "END) AS gradedattempt, ";
             }
-            
+
             $fields .='qa.uniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
                 ' u.lastname, u.institution, u.department, u.email, u.picture, u.imagealt, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, ' .
                 'qa.layout ';
-    
+
             // This part is the same for all cases - join users and quiz_attempts tables
             $from = '{user} u ';
             $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
             $params = array('quizid' => $quiz->id);
-    
+
             if ($qmsubselect && $qmfilter){
                 $from .= ' AND '.$qmsubselect;
             }
@@ -223,23 +223,23 @@ class quiz_responses_report extends quiz_default_report {
                     $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
                     break;
             }
-    
+
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
-    
-    
-            
+
+
+
             $table->set_sql($fields, $from, $where, $params);
-            
+
             // Define table columns
             $columns = array();
             $headers = array();
-    
-    
+
+
             if (!$table->is_downloading() && $candelete) {
                 $columns[]= 'checkbox';
                 $headers[]= NULL;
             }
-    
+
             if (!$table->is_downloading() && $CFG->grade_report_showuserimage) {
                 $columns[]= 'picture';
                 $headers[]= '';
@@ -253,7 +253,7 @@ class quiz_responses_report extends quiz_default_report {
                 $columns[]= 'firstname';
                 $headers[]= get_string('firstname');
             }
-    
+
             if ($CFG->grade_report_showuseridnumber) {
                 $columns[]= 'idnumber';
                 $headers[]= get_string('idnumber');
@@ -270,14 +270,14 @@ class quiz_responses_report extends quiz_default_report {
 
                 $columns[]= 'timestart';
                 $headers[]= get_string('startedon', 'quiz');
-    
+
                 $columns[]= 'timefinish';
                 $headers[]= get_string('timecompleted','quiz');
-    
+
                 $columns[]= 'duration';
                 $headers[]= get_string('attemptduration', 'quiz');
             }
-            
+
             if ($showgrades) {
                 $columns[] = 'sumgrades';
                 $headers[] = get_string('grade', 'quiz').'/'.quiz_format_grade($quiz, $quiz->grade);
@@ -287,7 +287,7 @@ class quiz_responses_report extends quiz_default_report {
                 $columns[] = 'feedbacktext';
                 $headers[] = get_string('feedback', 'quiz');
             }
-        
+
             // we want to display responses for all questions
             foreach ($questions as $id => $question) {
                 // Ignore questions of zero length
@@ -295,36 +295,36 @@ class quiz_responses_report extends quiz_default_report {
                 $headers[] = '#'.$question->number;
                 $question->formattedname = strip_tags(format_string($question->name));
             }
-    
-    
+
+
             // Load the question type specific information
             if (!get_question_options($questions)) {
                 print_error('cannotloadoptions', 'quiz_responses');
             }
-    
+
             $table->define_columns($columns);
             $table->define_headers($headers);
             $table->sortable(true, 'concattedid');
-        
+
             // Set up the table
             $table->define_baseurl($reporturl->out(false, $displayoptions));
-        
+
             $table->collapsible(true);
-        
+
             $table->column_suppress('picture');
             $table->column_suppress('fullname');
             $table->column_suppress('idnumber');
-        
+
             $table->no_sorting('feedbacktext');
-        
+
             $table->column_class('picture', 'picture');
             $table->column_class('lastname', 'bold');
             $table->column_class('firstname', 'bold');
             $table->column_class('fullname', 'bold');
             $table->column_class('sumgrades', 'bold');
-        
+
             $table->set_attribute('id', 'attempts');
-        
+
             $table->out($pagesize, true);
         }
         return true;
@@ -333,4 +333,4 @@ class quiz_responses_report extends quiz_default_report {
 }
 
 
-?>
+

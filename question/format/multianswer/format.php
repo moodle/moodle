@@ -1,4 +1,4 @@
-<?php  // $Id$ 
+<?php
 
 ////////////////////////////////////////////////////////////////////////////
 /// MULTIANSWER FORMAT
@@ -32,7 +32,7 @@ class qformat_multianswer extends qformat_default {
 
         if (!empty($thequestion)) {
             $thequestion->name = $lines[0];
-            
+
             $questions[] = $thequestion;
         }
 
@@ -40,4 +40,4 @@ class qformat_multianswer extends qformat_default {
     }
 }
 
-?>
+

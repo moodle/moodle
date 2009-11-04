@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /////////////////
 // CALCULATED ///
@@ -174,7 +174,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 }
             }
         }
-         }   
+         }
         // Report any problems.
         //convert to calculated
         if(!empty($question->makecopy) && !empty($question->convert)) {
@@ -246,7 +246,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
 
     }
- 
+
     function comment_header($answers) {
         //$this->get_question_options($question);
         $strheader = "";
@@ -296,7 +296,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                     }else {
                         eval('$answer->answer = '.$formula.';') ;
                         $virtualqtype->get_tolerance_interval($answer);
-                    } 
+                    }
             if ($answer->min === '') {
                 // This should mean that something is wrong
                 $comment->stranswers[$key] = " $formattedanswer->answer".'<br/><br/>';
@@ -410,4 +410,4 @@ question_register_questiontype(new question_calculatedsimple_qtype());
 
 define("CALCULATEDSIMPLE",    "calculatedsimple");
 
-?>
+

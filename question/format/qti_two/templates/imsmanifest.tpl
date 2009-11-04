@@ -3,8 +3,8 @@
 	<metadata>
 		<schema>ADL SCORM</schema>
 		<schemaversion>1.2</schemaversion>
-		<lom xmlns="http://www.imsglobal.org/xsd/imsmd_v1p2" 
-     			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		<lom xmlns="http://www.imsglobal.org/xsd/imsmd_v1p2"
+     			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      			xsi:schemaLocation="http://www.imsglobal.org/xsd/imsmd_v1p2 imsmd_v1p2p2.xsd">
      		<general>
 				<title><langstring xml:lang="{$lang}">{$quiztitle}</langstring></title>

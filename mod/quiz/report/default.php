@@ -1,15 +1,15 @@
-<?php  // $Id$ 
+<?php  // $Id$
 
 ////////////////////////////////////////////////////////////////////
-/// Default class for report plugins                            
-///                                                               
-/// Doesn't do anything on it's own -- it needs to be extended.   
-/// This class displays quiz reports.  Because it is called from 
+/// Default class for report plugins
+///
+/// Doesn't do anything on it's own -- it needs to be extended.
+/// This class displays quiz reports.  Because it is called from
 /// within /mod/quiz/report.php you can assume that the page header
 /// and footer are taken care of.
-/// 
-/// This file can refer to itself as report.php to pass variables 
-/// to itself - all these will also be globally available.  You must 
+///
+/// This file can refer to itself as report.php to pass variables
+/// to itself - all these will also be globally available.  You must
 /// pass "id=$cm->id" or q=$quiz->id", and "mode=reportname".
 ////////////////////////////////////////////////////////////////////
 
@@ -30,17 +30,17 @@ class quiz_default_report {
         $PAGE->set_title(format_string($quiz->name));
         $PAGE->set_button($OUTPUT->update_module_button($cm->id, 'quiz'));
         echo $OUTPUT->header();
-    /// Print the tabs    
+    /// Print the tabs
         $currenttab = 'reports';
         $mode = $reportmode;
         require($CFG->dirroot . '/mod/quiz/tabs.php');
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-            echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">' 
+            echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">'
                 . get_string('seeallcoursegrades', 'grades') . '</a></div>';
         }
 
     }
 }
 
-?>
+

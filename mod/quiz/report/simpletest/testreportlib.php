@@ -25,21 +25,21 @@ class question_reportlib_test extends UnitTestCase {
         $object->response = '';
         $object->grade = 3;
         $datum[] = $object;
-        
+
         $indexed = quiz_report_index_by_keys($datum, array('aid','qid'));
-        
+
         $this->assertEqual($indexed[101][3]->qid, 3);
         $this->assertEqual($indexed[101][3]->aid, 101);
         $this->assertEqual($indexed[101][3]->response, '');
         $this->assertEqual($indexed[101][3]->grade, 3);
-        
+
         $indexed = quiz_report_index_by_keys($datum, array('aid','qid'), false);
-        
+
         $this->assertEqual($indexed[101][3][0]->qid, 3);
         $this->assertEqual($indexed[101][3][0]->aid, 101);
         $this->assertEqual($indexed[101][3][0]->response, '');
         $this->assertEqual($indexed[101][3][0]->grade, 3);
-        
+
     }
 }
-?>
+

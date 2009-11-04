@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * This file contains dtabase upgrade code that is called from lib/db/upgrade.php,
  * and also check methods that can be used for pre-install checks via
@@ -23,4 +23,4 @@ function question_fix_random_question_parents() {
     return $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
 }
 
-?>
+

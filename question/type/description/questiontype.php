@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -91,4 +91,4 @@ class description_qtype extends default_questiontype {
 }
 // Register this question type with questionlib.php.
 question_register_questiontype(new description_qtype());
-?>
+

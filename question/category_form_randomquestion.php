@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -35,4 +35,4 @@ class question_category_edit_form_randomquestion extends moodleform {
         $mform->setType('addonpage', PARAM_SEQUENCE);
     }
 }
-?>
+

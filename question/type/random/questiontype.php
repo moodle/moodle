@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Class for the random question type.
  *
@@ -409,7 +409,7 @@ class random_qtype extends default_questiontype {
 
         return $answer_field;
     }
-    
+
     /**
      * For random question type return empty string which means won't calculate.
      * @param object $question
@@ -429,4 +429,4 @@ class random_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new random_qtype());
 
-?>
+

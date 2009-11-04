@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -36,4 +36,4 @@ class question_category_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
     }
 }
-?>
+

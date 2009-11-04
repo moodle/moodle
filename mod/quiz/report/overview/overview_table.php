@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 class quiz_report_overview_table extends table_sql {
 
@@ -231,7 +231,7 @@ class quiz_report_overview_table extends table_sql {
                     $link = html_link::make("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id", $grade);
                     $link->add_action(new popup_action('click', $link->url, 'reviewquestion', array('height' => 450, 'width' => 650)));
                     $link->title = get_string('reviewresponsetoq', 'quiz', $question->formattedname);
-                    $linktopopup = $OUTPUT->link($link); 
+                    $linktopopup = $OUTPUT->link($link);
 
                     if (($this->questions[$questionid]->maxgrade != 0)){
                         $fractionofgrade = $stateforqinattempt->grade
@@ -331,4 +331,4 @@ class quiz_report_overview_table extends table_sql {
         }
     }
 }
-?>
+

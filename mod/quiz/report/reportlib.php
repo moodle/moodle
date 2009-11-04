@@ -119,7 +119,7 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
     list($usql, $params) = $DB->get_in_or_equal($userids);
     $params[] = $quiz->id;
     $questionavgssql = "SELECT qns.questionid, AVG(qs.grade) FROM
-                        {quiz_attempts} qa 
+                        {quiz_attempts} qa
                         LEFT JOIN {question_sessions} qns ON (qns.attemptid = qa.uniqueid)
                         LEFT JOIN {question_states} qs ON (qns.newgraded = qs.id AND qs.event IN (".QUESTION_EVENTS_GRADED."))
                         WHERE " .
@@ -135,7 +135,7 @@ function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
     $params = array($quiz->id);
     list($u_sql, $u_params) = $DB->get_in_or_equal($userids);
     list($q_sql, $q_params) = $DB->get_in_or_equal($questionids);
-    
+
     $params = array_merge($params, $u_params, $q_params);
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts,
             SUM(CASE WHEN (qs.event IN(".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts
@@ -382,4 +382,4 @@ function quiz_report_list($context){
     return $reportlist;
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function xmldb_quiz_overview_upgrade($oldversion) {
     global $CFG, $DB;
@@ -37,4 +37,4 @@ function xmldb_quiz_overview_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

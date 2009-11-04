@@ -1,8 +1,8 @@
-<?php    // $Id$ 
+<?php
 // Alton College, Hampshire, UK - Tom Flannaghan, Andrew Walker
 // Imports learnwise multiple choice quizzes (single and multiple answers)
 // currently ignores the deduct attribute for multiple answer questions
-// deductions are currently simply found by dividing the award for the incorrect 
+// deductions are currently simply found by dividing the award for the incorrect
 // answer by the total number of options
 // Based on format.php, included by ../../import.php
 /**
@@ -61,7 +61,7 @@ class qformat_learnwise extends qformat_default {
             foreach ($optionlist as $option) {
                 $correct = $this->stringbetween($option, ' correct="', '">');
                 $answer = $this->stringbetween($option, '">', '</option>');
-                $optionscorrect[$n] = $correct; 
+                $optionscorrect[$n] = $correct;
                 $optionstext[$n] = $this->unhtmlentities($answer);
                 ++$n;
             }
@@ -84,7 +84,7 @@ class qformat_learnwise extends qformat_default {
 
                 $answer = $this->stringbetween($option, '">', '</option>');
 
-                $optionscorrect[$n] = $correct; 
+                $optionscorrect[$n] = $correct;
                 $optionstext[$n] = $this->unhtmlentities($answer);
                 $optionsaward[$n] = $award;
                 ++$n;
@@ -111,13 +111,13 @@ class qformat_learnwise extends qformat_default {
             if ($optionstext[$n]) {
                 if (!isset($numcorrect)) { // single answer
                     if ($optionscorrect[$n] == 'yes') {
-                        $fraction = (int) $questionaward; 
+                        $fraction = (int) $questionaward;
                     } else {
                         $fraction = 0;
-                    } 
+                    }
                 } else { // mulitple answers
                     if ($optionscorrect[$n] == 'yes') {
-                        $fraction = $optionsaward[$n] / $totalaward; 
+                        $fraction = $optionsaward[$n] / $totalaward;
                     } else {
                         $fraction = -$optionsaward[$n] / count($optionstext);
                     }
@@ -144,8 +144,8 @@ class qformat_learnwise extends qformat_default {
         $transtable = get_html_translation_table(HTML_ENTITIES);
         $transtable = array_flip($transtable);
         return strtr($string, $transtable);
-    } 
+    }
 
 }
 
-?>
+

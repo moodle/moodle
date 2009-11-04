@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -100,4 +100,4 @@ class question_context_move_form extends moodleform {
         }
     }
 }
-?>
+

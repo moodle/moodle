@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Export quiz questions into the given category
  *
@@ -134,4 +134,4 @@
     $export_form->display();
 
     echo $OUTPUT->footer();
-?>
+

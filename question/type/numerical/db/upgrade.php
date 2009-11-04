@@ -1,6 +1,6 @@
-<?php  // $Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the numerical qtype plugin
 //
 // Sometimes, changes between versions involve
@@ -48,11 +48,11 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
-        }//else 
+        }//else
         upgrade_plugin_savepoint($result, 2009100100, 'qtype', 'numerical');
     }
 
     return $result;
 }
 
-?>
+

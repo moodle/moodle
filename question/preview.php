@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * This page displays a preview of a question
  *
@@ -250,4 +250,4 @@
     echo '</div>';
     echo '</form>';
     echo $OUTPUT->footer();
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$ 
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -54,7 +54,7 @@ class qformat_aiken extends qformat_default {
     function readquestions($lines) {
         $questions = array();
         $question = $this->defaultquestion();
-        $endchar = chr(13); 
+        $endchar = chr(13);
         foreach ($lines as $line) {
             $stp = strpos($line, $endchar, 0);
             $newlines = explode($endchar, $line);
@@ -105,4 +105,4 @@ class qformat_aiken extends qformat_default {
     }
 }
 
-?>
+

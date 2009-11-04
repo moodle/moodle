@@ -19,7 +19,7 @@
 		<div class="intreactive.choiceSimple">
 			<choiceInteraction responseIdentifier="{$questionid}" shuffle="false" maxChoices="1">
     		{section name=answer loop=$answers}
-				<simpleChoice identifier="{$answers[answer].id}">{$answers[answer].answer}                
+				<simpleChoice identifier="{$answers[answer].id}">{$answers[answer].answer}
 				{if $answers[answer].feedback != ''}
     				{if $answers[answer].answer != $correctresponse.answer}
 	   			    <feedbackInline identifier="{$answers[answer].id}" outcomeIdentifier="FEEDBACK" showHide="hide">{$answers[answer].feedback}</feedbackInline>
@@ -33,7 +33,7 @@
 	    {if $hassize == 1}
 			 <object type="{$question->mediamimetype}" data="{$question->mediaurl}" width="{$question->mediax}" height="{$question->mediay}" />
 		{else}
-			 <object type="{$question->mediamimetype}" data="{$question->mediaurl}" />     
+			 <object type="{$question->mediamimetype}" data="{$question->mediaurl}" />
 		{/if}
             </div>
 	{/if}

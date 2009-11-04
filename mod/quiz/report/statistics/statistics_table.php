@@ -1,10 +1,10 @@
-<?php  // $Id$
+<?php
 require_once($CFG->libdir.'/tablelib.php');
 
 class quiz_report_statistics_table extends flexible_table {
-    
-    var $quiz; 
-    
+
+    var $quiz;
+
     function quiz_report_statistics_table(){
         parent::flexible_table('mod-quiz-report-statistics-report');
     }
@@ -19,10 +19,10 @@ class quiz_report_statistics_table extends flexible_table {
         // Define table columns
         $columns = array();
         $headers = array();
-        
+
         $columns[]= 'number';
         $headers[]= get_string('questionnumber', 'quiz_statistics');
-        
+
         if (!$this->is_downloading()){
             $columns[]= 'icon';
             $headers[]= '';
@@ -34,29 +34,29 @@ class quiz_report_statistics_table extends flexible_table {
         }
         $columns[]= 'name';
         $headers[]= get_string('questionname', 'quiz');
-        
+
         $columns[]= 's';
         $headers[]= get_string('attempts', 'quiz_statistics');
 
         if ($s>1){
             $columns[]= 'facility';
             $headers[]= get_string('facility', 'quiz_statistics');
-            
+
             $columns[]= 'sd';
             $headers[]= get_string('standarddeviationq', 'quiz_statistics');
         }
         $columns[]= 'random_guess_score';
         $headers[]= get_string('random_guess_score', 'quiz_statistics');
-        
+
         $columns[]= 'intended_weight';
         $headers[]= get_string('intended_weight', 'quiz_statistics');
-        
+
         $columns[]= 'effective_weight';
         $headers[]= get_string('effective_weight', 'quiz_statistics');
-        
+
         $columns[]= 'discrimination_index';
         $headers[]= get_string('discrimination_index', 'quiz_statistics');
-        
+
         $columns[]= 'discriminative_efficiency';
         $headers[]= get_string('discriminative_efficiency', 'quiz_statistics');
 
@@ -119,11 +119,11 @@ class quiz_report_statistics_table extends flexible_table {
             return $question->_stats->discriminativeefficiency < 15;
         }
     }
-    
+
     function col_icon($question){
         return print_question_icon($question, true);
     }
-    
+
     function col_number($question){
         if (!$question->_stats->subquestion){
             return $question->number;
@@ -180,7 +180,7 @@ class quiz_report_statistics_table extends flexible_table {
             return $randomguessscore; // empty string returned by random question.
         }
     }
-    
+
     function col_sd($question){
         if (!is_null($question->_stats->sd) && ($question->_stats->maxgrade!=0)){
             return number_format($question->_stats->sd*100 / $question->_stats->maxgrade, 2).'%';
@@ -202,6 +202,6 @@ class quiz_report_statistics_table extends flexible_table {
             return '';
         }
     }
-    
+
 }
-?>
+

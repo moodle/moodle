@@ -26,14 +26,14 @@
 	    {if $hassize == 1}
 			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" width="{$question->mediax}" height="{$question->mediay}" />
 		{else}
-			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />     
+			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />
 		{/if}
 		</div>
 	{/if}
 		<div class="interactive.choiceMultiple">
 			<choiceInteraction responseIdentifier="{$questionid}" shuffle="{$shuffle}" maxChoices="{$maxChoices}">
     		{section name=answer loop=$answers}
-				<simpleChoice identifier="i{$answers[answer].id}">{$answers[answer].answer}                
+				<simpleChoice identifier="i{$answers[answer].id}">{$answers[answer].answer}
 				{if $answers[answer].feedback != ''}
     				{if $answers[answer].answer != $correctresponse.answer}
 	   			    <feedbackInline identifier="i{$answers[answer].id}" outcomeIdentifier="FEEDBACK" showHide="show">{$answers[answer].feedback}</feedbackInline>
@@ -44,7 +44,7 @@
 			</choiceInteraction>
 		</div>
 	</itemBody>
-	<responseProcessing> 
+	<responseProcessing>
 		{section name=answer loop=$answers}
 		<responseCondition>
 			<responseIf>

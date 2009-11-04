@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
 ////////////////////////////////////////////////////////////////////////////
 /// Hotpotatoes 5.0 and 6.0 Format
 ///
@@ -42,7 +42,7 @@ class qformat_hotpot extends qformat_default {
                 break;
             default:
                 // shouldn't happen !!
-                $courseid = 0; 
+                $courseid = 0;
         }
         require_once($CFG->libdir.'/filelib.php');
         $baseurl = get_file_url($courseid).'/';
@@ -159,7 +159,7 @@ class qformat_hotpot extends qformat_default {
                     $gap_count ++;
                     $positionkey = $q+1;
                     $question->questiontext .= '{#'.$positionkey.'}';
-        
+
                     // initialize answer settings
                     $wrapped = new stdClass();
                     $wrapped->qtype = SHORTANSWER;
@@ -170,7 +170,7 @@ class qformat_hotpot extends qformat_default {
                     $wrapped->fraction = array();
                     $wrapped->feedback = array();
                     $answers = array();
-        
+
                     // add answers
                     $a = 0;
                     while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
@@ -450,7 +450,7 @@ class qformat_hotpot extends qformat_default {
                     $a++;
                 }
                 if ($correct_answers_all_zero) {
-                    // correct answers all have score of 0%, 
+                    // correct answers all have score of 0%,
                     // so reset score for correct answers 100%
                     foreach ($correct_answers as $aa) {
                         $question->fraction[$aa] = 1;

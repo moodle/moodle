@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 // Based on default.php, included by ../import.php
 /**
@@ -283,4 +283,4 @@ class qformat_examview extends qformat_default {
 }
 // end class
 
-?>
+

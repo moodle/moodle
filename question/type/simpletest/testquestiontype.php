@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -71,4 +71,4 @@ class default_questiontype_test extends UnitTestCase {
     }
 }
 
-?>
+

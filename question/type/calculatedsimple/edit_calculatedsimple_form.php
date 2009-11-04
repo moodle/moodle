@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the calculated simplequestion type.
  *
@@ -27,26 +27,26 @@ class question_edit_calculatedsimple_form extends question_edit_form {
     public $datasetdefs;
 
     public $reload = false ;
-    
+
     public $maxnumber = -1;
 
     public $regenerate = true;
 
     public $noofitems;
-    
+
     public $outsidelimit = false ;
-    
-    public $commentanswer = array(); 
-    
+
+    public $commentanswer = array();
+
     public $answer = array();
 
     public $nonemptyanswer = array();
-    
+
     public $numbererrors = array();
 
-    public $formdata = array();      
+    public $formdata = array();
 
-     
+
 
     function question_edit_calculatedsimple_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
         global $QTYPES, $SESSION, $CFG, $DB;
@@ -60,24 +60,24 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         //so this will only set the values to the actual question database content which is not what we want
         //so this should be removed from here
         // get priority to paramdatasets
-        
+
         if  (  "1" == optional_param('reload','', PARAM_INT )) {
             $this->reload = true ;
         }else {
             $this->reload = false ;
         }
-        if(!$this->reload ){ // use database data as this is first pass 
+        if(!$this->reload ){ // use database data as this is first pass
             // question->id == 0 so no stored datasets
-            // else get datasets 
+            // else get datasets
             if ( !empty($question->id)) {
                 if (empty($question->options)) {
                     $this->get_question_options($question);
                 }
                 $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, array());
-            
+
                 if(!empty($this->datasetdefs)){
                     foreach ($this->datasetdefs as $defid => $datasetdef) {
-                        // first get the items in case their number does not correspond to itemcount        
+                        // first get the items in case their number does not correspond to itemcount
                         if (isset($datasetdef->id)) {
                             $this->datasetdefs[$defid]->items = $this->qtypeobj->get_database_dataset_items($datasetdef->id);
                             if ( $this->datasetdefs[$defid]->items != '') {
@@ -97,45 +97,45 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 foreach($this->question->options->answers as $answer){
                      $this->answer[$i] = $answer ;
                      $i++;
-                } 
+                }
                 $this->nonemptyanswer = $this->answer ;
-            }        
+            }
             $datasettoremove = false;
-            $newdatasetvalues = false ; 
-            $newdataset = false ; 
-        }else { 
+            $newdatasetvalues = false ;
+            $newdataset = false ;
+        }else {
             // handle reload to get values from the form-elements
             // answers, datasetdefs and data_items
-            // In any case the validation step will warn the user of any error in settings the values. 
-            // Verification for the specific dataset values as the other parameters 
+            // In any case the validation step will warn the user of any error in settings the values.
+            // Verification for the specific dataset values as the other parameters
             // unints, feeedback etc are handled elsewhere
             // handle request buttons :
-            //    'analyzequestion' (Identify the wild cards {x..} present in answers) 
+            //    'analyzequestion' (Identify the wild cards {x..} present in answers)
             //    'addbutton' (create new set of datatitems)
             //    'updatedatasets' is handled automatically on each reload
-            // The analyzequestion is done every time on reload  
+            // The analyzequestion is done every time on reload
             // to detect any new wild cards so that the current display reflects
             // the mandatory (i.e. in answers) datasets
             //  to implement : don't do any changes if the question is used in a quiz.
-            // If new datadef, new properties should erase items. 
-            // Most of the data 
+            // If new datadef, new properties should erase items.
+            // Most of the data
             $datasettoremove = false;
-            $newdatasetvalues = false ; 
-            $newdataset = false ; 
+            $newdatasetvalues = false ;
+            $newdataset = false ;
             $dummyform = new stdClass();
             $mandatorydatasets = array();
-            // should not test on adding a new answer 
+            // should not test on adding a new answer
             // should test if there are already olddatasets or if the 'analyzequestion' submit button has been clicked
-            if (''  != optional_param('datasetdef', '', PARAM_RAW) || ''  != optional_param('analyzequestion', '', PARAM_RAW)){ 
+            if (''  != optional_param('datasetdef', '', PARAM_RAW) || ''  != optional_param('analyzequestion', '', PARAM_RAW)){
 
-                if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer... 
-                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER); 
-                    $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER); 
-                    $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT); 
-                    $correctanswerformat = optional_param('correctanswerformat', '', PARAM_INT); 
-                    
+                if  (  $dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) { // there is always at least one answer...
+                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
+                    $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER);
+                    $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT);
+                    $correctanswerformat = optional_param('correctanswerformat', '', PARAM_INT);
+
                     foreach( $dummyform->answer as $key => $answer ) {
-                        if(trim($answer) != ''){  // just look for non-empty 
+                        if(trim($answer) != ''){  // just look for non-empty
                             $this->answer[$key]=new stdClass();
                             $this->answer[$key]->answer = $answer;
                             $this->answer[$key]->fraction = $fraction[$key];
@@ -150,12 +150,12 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 }
                 $this->datasetdefs = array();
                 // rebuild datasetdefs from old values
-                if ($olddef  = optional_param('datasetdef', '', PARAM_RAW)){ 
-                    $calcmin = optional_param('calcmin', '', PARAM_NUMBER); 
-                    $calclength = optional_param('calclength', '', PARAM_INT); 
+                if ($olddef  = optional_param('datasetdef', '', PARAM_RAW)){
+                    $calcmin = optional_param('calcmin', '', PARAM_NUMBER);
+                    $calclength = optional_param('calclength', '', PARAM_INT);
                     $calcmax = optional_param('calcmax', '', PARAM_NUMBER);
-                    $oldoptions  = optional_param('defoptions', '', PARAM_RAW); 
-                    $newdatasetvalues = false ; 
+                    $oldoptions  = optional_param('defoptions', '', PARAM_RAW);
+                    $newdatasetvalues = false ;
                     for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
                         $def = $olddef[$key] ;
                         $this->datasetdefs[$def]= new stdClass ;
@@ -172,13 +172,13 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                             $this->datasetdefs[$def]->calcmax != $regs[3] ||
                             $this->datasetdefs[$def]->calclength != $regs[4]){
                                  $newdatasetvalues = true ;
-                            }                        
+                            }
                         }
                         $this->datasetdefs[$def]->options="uniform:".$this->datasetdefs[$def]->calcmin.":".$this->datasetdefs[$def]->calcmax.":".$this->datasetdefs[$def]->calclength;
                     }
                 }// if (olddef...
-                // detect new datasets        
-            $newdataset = false ; 
+                // detect new datasets
+            $newdataset = false ;
             foreach ($mandatorydatasets as $datasetname) {
                 if (!isset($this->datasetdefs["1-0-$datasetname"])) {
                     $key = "1-0-$datasetname";
@@ -187,12 +187,12 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $this->datasetdefs[$key]->category = 0;
                     $this->datasetdefs[$key]->name = $datasetname;
                     $this->datasetdefs[$key]->options = "uniform:1.0:10.0:1";
-                    $newdataset = true ;     
+                    $newdataset = true ;
                 }else {
                     $this->datasetdefs["1-0-$datasetname"]->name = $datasetname ;
                 }
             }
-            // remove obsolete datasets        
+            // remove obsolete datasets
             $datasettoremove = false;
             foreach ($this->datasetdefs as $defkey => $datasetdef){
                 if(!isset($datasetdef->name )){
@@ -200,7 +200,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     unset($this->datasetdefs[$defkey]);
                 }
             }
-        }                    
+        }
         } // handle reload
         // create items if  $newdataset and noofitems > 0 and !$newdatasetvalues
         // eliminate any items if $newdatasetvalues
@@ -228,13 +228,13 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             $this->maxnumber = $maxnumber ;
         }else {
             // Handle reload dataset items
-            if  (  "" !=optional_param('definition')&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){              
+            if  (  "" !=optional_param('definition')&& !($datasettoremove ||$newdataset ||$newdatasetvalues )){
                 $i = 1;
-                $fromformdefinition = optional_param('definition', '', PARAM_NOTAGS); 
-                $fromformnumber = optional_param('number', '', PARAM_INT); 
-                $fromformitemid = optional_param('itemid', '', PARAM_INT); 
+                $fromformdefinition = optional_param('definition', '', PARAM_NOTAGS);
+                $fromformnumber = optional_param('number', '', PARAM_INT);
+                $fromformitemid = optional_param('itemid', '', PARAM_INT);
                 ksort($fromformdefinition);
-              
+
                 foreach($fromformdefinition as $key => $defid) {
                     $addeditem = new stdClass();
                     $addeditem->id = $fromformitemid[$i]  ;
@@ -247,7 +247,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             if (isset($addeditem->itemnumber) && $this->maxnumber < $addeditem->itemnumber){
                 $this->maxnumber = $addeditem->itemnumber;
-                if(!empty($this->datasetdefs)){                        
+                if(!empty($this->datasetdefs)){
                     foreach ($this->datasetdefs as $datasetdef) {
                             $datasetdef->itemcount = $this->maxnumber ;
                     }
@@ -304,7 +304,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $creategrades->gradeoptions, 1, 1);
 
         $QTYPES['numerical']->edit_numerical_options($mform,$this);
-        
+
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
@@ -369,7 +369,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $mform->addElement('hidden', "datasetdef[$idx]");
                     $mform->setType("datasetdef[$idx]", PARAM_RAW);
                     $mform->addElement('hidden', "defoptions[$idx]");
-                    $mform->setType("defoptions[$idx]", PARAM_RAW);                                        
+                    $mform->setType("defoptions[$idx]", PARAM_RAW);
                     $idx++;
                     $mform->addElement('static', "divider[$j]", '', '<hr />');
                     $j++;
@@ -377,7 +377,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
             //this should be done before the elements are created and stored as $this->formdata ;
             //fill out all data sets and also the fields for the next item to add.
-        /*Here we do already the values error analysis so that 
+        /*Here we do already the values error analysis so that
         * we could force all wild cards values display if there is an error in values.
         * as using a , in a number */
         $this->numbererrors = array();
@@ -404,13 +404,13 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 if (stristr($number,',')){
                                     $this->numbererrors["number[$j]"]=get_string('nocommaallowed', 'qtype_datasetdependent');
                                 $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
-                    
+
                 }else {
                                     $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_datasetdependent',$a);
                                     $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                                     //$comment->outsidelimit = false ;
                                   }
-            }else if( stristr($number,'x')){ // hexa will pass the test                
+            }else if( stristr($number,'x')){ // hexa will pass the test
                 $a = new stdClass;
                 $a->name = '{'.$datasetdef->name.'}' ;
                 $a->value = $datasetdef->items[$itemnumber]->value ;
@@ -423,7 +423,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                                             $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_datasetdependent',$a);
                                             $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                          //   $val = 1.0 ;
-                    }                    
+                    }
                             }
                             $j--;
                         }
@@ -435,11 +435,11 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                                             $this->outsidelimit=$comment->outsidelimit ;
                                         }
                                         $totalcomment='';
-        
+
                                         foreach ($this->nonemptyanswer as $key => $answer) {
                                             $totalcomment .= $comment->stranswers[$key].'<br/>';
                                         }
-        
+
                                         $this->formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
                                 }
                             }
@@ -456,7 +456,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $this->formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $this->formdata);
                 }
 
-         
+
         $addoptions = Array();
         $addoptions['1']='1';
         for ($i=10; $i<=100 ; $i+=10){
@@ -495,7 +495,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
          if( !empty($this->numbererrors) || $this->outsidelimit) {
         $mform->addElement('static', "alert", '', '<span class="error">'.get_string('useadvance', 'qtype_calculatedsimple').'</span>');
         }
-            
+
           $mform->addElement('submit', 'updatedatasets', get_string('updatewildcardvalues', 'qtype_calculatedsimple'));
           $mform->registerNoSubmitButton('updatedatasets');
           $mform->setAdvanced("updatedatasets",true);
@@ -504,7 +504,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         $j = $this->noofitems * count($this->datasetdefs);
         $k = 1 ;
         if ("" != optional_param('selectshow')){
-            $k = optional_param('selectshow', '', PARAM_INT); 
+            $k = optional_param('selectshow', '', PARAM_INT);
         }
 
         for ($i = $this->noofitems; $i >= 1 ; $i--){
@@ -512,7 +512,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ){
                 $mform->addElement('text',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
                 $mform->setAdvanced("number[$j]",true);
-                if(!empty($this->numbererrors['number['.$j.']']) ){ 
+                if(!empty($this->numbererrors['number['.$j.']']) ){
                     $mform->addElement('static', "numbercomment[$j]",'','<span class="error">'.$this->numbererrors['number['.$j.']'].'</span>');
                 $mform->setAdvanced("numbercomment[$j]",true);
               }
@@ -520,7 +520,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $mform->addElement('hidden',"number[$j]" , get_string('wildcard', 'qtype_calculatedsimple', $datasetdef->name));
               }
                 $mform->setType("number[$j]", PARAM_NUMBER);
-                
+
                 $mform->addElement('hidden', "itemid[$j]");
                 $mform->setType("itemid[$j]", PARAM_INT);
 
@@ -532,11 +532,11 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             if (!empty( $strquestionlabel) && ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors ) ) ){
              //   $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
                     $mform->addElement('static', "answercomment[$i]", "<b>".get_string('setno', 'qtype_calculatedsimple', $i)."</b>&nbsp;&nbsp;".$strquestionlabel);
-                    
+
             }
-               if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors )){             
+               if($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors )){
                 $mform->addElement('static', "divider1[$j]", '', '<hr />');
-               
+
                }
                         $k-- ;
         }
@@ -568,7 +568,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             if ($this->question->formoptions->cansaveasnew){
         $mform->addElement('header', 'additemhdr', get_string('converttocalculated', 'qtype_calculatedsimple'));
         $mform->closeHeaderBefore('additemhdr');
-                
+
                 $mform->addElement('checkbox', 'convert','' ,get_string('willconverttocalculated', 'qtype_calculatedsimple'));
                                 $mform->setDefault('convert', 0);
 
@@ -591,7 +591,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $key = 0;
                 foreach ($answer as $answer){
                     $default_values['answer['.$key.']'] = $answer->answer;
-                  //  echo "<p> $answer->fraction </p>"; 
+                  //  echo "<p> $answer->fraction </p>";
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
                     $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
@@ -645,7 +645,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             }
     //                 echo "<p>answers avant  comment <pre>";print_r($answer);echo"</pre></p>";
     //                 echo "<p>data avant  comment <pre>";print_r($data);echo"</pre></p>";
-                     
+
             if($this->noofitems != 0 ) {
                 if(!isset($question->id)) $question->id = 0 ;
             $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$this->nonemptyanswer, $data, $itemnumber);//$this->
@@ -795,12 +795,12 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         }
         if (isset($data['backtoquiz']) && ($this->noofitems==0) ){
             $errors['warning'] = get_string('warning', 'mnet');
-        } 
+        }
         if ($this->outsidelimit){
          //   if(!isset($errors['warning'])) $errors['warning']=' ';
            $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
         }
-                /*Here we use the already done the error analysis so that 
+                /*Here we use the already done the error analysis so that
         * we could force all wild cards values display if there is an error in values.
         * as using a , in a number *//*
         $numbers = $data['number'];
@@ -808,14 +808,14 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             if(! is_numeric($number)){
                 if (stristr($number,',')){
                     $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_datasetdependent');
-                }else {    
+                }else {
                     $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_datasetdependent');
                 }
             }else if( stristr($number,'x')){
                 $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_datasetdependent');
             } else if( is_nan($number)){
                 $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_datasetdependent');
-            }        
+            }
         }
         */
         if ( $this->noofitems==0  ){
@@ -825,4 +825,4 @@ class question_edit_calculatedsimple_form extends question_edit_form {
         return $errors;
     }
 }
-?>
+

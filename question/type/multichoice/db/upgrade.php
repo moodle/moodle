@@ -1,6 +1,6 @@
-<?php  // $Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the multichoice qtype plugin
 //
 // Sometimes, changes between versions involve
@@ -29,7 +29,7 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
     // This upgrade actually belongs to the random question type,
     // but that does not have a DB upgrade script. Therefore, multichoice
     // is doing it.
-    // Rename random questions to give them more helpful names. 
+    // Rename random questions to give them more helpful names.
     if ($result && $oldversion < 2008021800) {
         require_once($CFG->libdir . '/questionlib.php');
         // Get all categories containing random questions.
@@ -56,4 +56,4 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

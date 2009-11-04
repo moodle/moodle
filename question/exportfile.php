@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/filelib.php');
 
@@ -14,4 +14,4 @@
     $pathname = $CFG->dataroot . '/temp/questionexport/' . $USER->id . '/' .  $relativepath;
 
     send_temp_file($pathname, $relativepath);
-?>
+

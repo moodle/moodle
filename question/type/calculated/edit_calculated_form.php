@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the calculated question type.
  *
@@ -63,7 +63,7 @@ class question_edit_calculated_form extends question_edit_form {
         }else {
             $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
             $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
-        }        
+        }
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
@@ -74,7 +74,7 @@ class question_edit_calculated_form extends question_edit_form {
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
         array_splice($repeated, 3, 0, $addrepeated);
         if ($this->editasmultichoice == 1){
-             $repeated[1]->setLabel('...<strong>{={x}+..}</strong>...');       
+             $repeated[1]->setLabel('...<strong>{={x}+..}</strong>...');
         }else {
             $repeated[1]->setLabel(get_string('correctanswerformula', 'quiz').'=');
 
@@ -91,7 +91,7 @@ class question_edit_calculated_form extends question_edit_form {
     function definition_inner(&$mform) {
         global $QTYPES;
         $this->qtypeobj =& $QTYPES[$this->qtype()];
-      // echo code left for testing period 
+      // echo code left for testing period
       //  echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
         $mform->addElement('hidden', 'initialcategory', 1);
@@ -103,7 +103,7 @@ class question_edit_calculated_form extends question_edit_form {
                 $mform->registerNoSubmitButton($addfieldsname);
         $this->editasmultichoice =  0 ;
         if ( isset($this->question->options->multichoice) && $this->question->options->multichoice == '1'){
-            $this->editasmultichoice = 1 ;   
+            $this->editasmultichoice = 1 ;
         }else {
             if ( !isset($this->question->id ) && 1 ==  optional_param('multichoice', '', PARAM_RAW )){
                 $this->editasmultichoice = 1 ;
@@ -117,21 +117,21 @@ class question_edit_calculated_form extends question_edit_form {
                 $this->editasmultichoice = 0 ;
             }
         }
-            
+
    /*      if ( '' !=  optional_param('changetomultichoice', '', PARAM_RAW)){
-           $this->editasmultichoice = 1 ;            
+           $this->editasmultichoice = 1 ;
         }
          if ( '' !=  optional_param('changetocalculated', '', PARAM_RAW)){
-            $this->editasmultichoice = 0 ;            
+            $this->editasmultichoice = 0 ;
        }*/
 
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
-                                            
+
         if(!isset($this->question->id ) ){
             $mform->addElement('header', 'choicehdr',get_string('Choosingcreationmode', 'qtype_calculated'));
             $createoptions = Array();
-                                                    
+
             $createoptions['0']=get_string('Regularcalculated', 'qtype_calculated');
             $createoptions['1']=get_string('Multiplechoicecalculated', 'qtype_calculated');
             $addgrp1 = array();
@@ -148,11 +148,11 @@ class question_edit_calculated_form extends question_edit_form {
             $menu = array(get_string('answersingleno', 'qtype_multichoice'), get_string('answersingleyes', 'qtype_multichoice'));
             $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
             $mform->setDefault('single', 1);
-    
+
             $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
             $mform->setHelpButton('shuffleanswers', array('multichoiceshuffle', get_string('shuffleanswers','qtype_multichoice'), 'qtype_multichoice'));
             $mform->setDefault('shuffleanswers', 1);
-    
+
             $numberingoptions = $QTYPES['multichoice']->get_numbering_styles();
             $menu = array();
             foreach ($numberingoptions as $numberingoption) {
@@ -164,7 +164,7 @@ class question_edit_calculated_form extends question_edit_form {
             $mform->addElement('header', 'choicehdr', get_string('regularcalculatedquestion', 'qtype_calculated'));
             $mform->addElement('hidden','single', '1');
             $mform->setType('single', PARAM_INT);
-            
+
             $mform->addElement('hidden','shuffleanswers', '1');
             $mform->setType('shuffleanswers', PARAM_INT);
             $mform->addElement('hidden','answernumbering', 'abc');
@@ -179,7 +179,7 @@ class question_edit_calculated_form extends question_edit_form {
             $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
                 $creategrades->gradeoptions, 1, 1);
         }
-            
+
 
         $repeated = array();
         if ($this->editasmultichoice == 1){
@@ -189,22 +189,22 @@ class question_edit_calculated_form extends question_edit_form {
             $mform->setConstants(array('nounits'=>$nounits));
             for ($i=0; $i< $nounits; $i++) {
                 $mform->addElement('hidden','unit'."[$i]", optional_param('unit'."[$i]", '', PARAM_NOTAGS));
-                $mform->setType('unit'."[$i]", PARAM_NOTAGS); 
+                $mform->setType('unit'."[$i]", PARAM_NOTAGS);
                 $mform->addElement('hidden', 'multiplier'."[$i]", optional_param('multiplier'."[$i]", '', PARAM_NUMBER));
                 $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
-            }  
+            }
           $mform->addElement('hidden','unitgradingtype',optional_param('unitgradingtype', '', PARAM_INT)) ;
           $mform->addElement('hidden','unitpenalty',optional_param('unitpenalty', '', PARAM_NUMBER)) ;
           $mform->addElement('hidden','showunits',optional_param('showunits', '', PARAM_INT)) ;
-          $mform->addElement('hidden','unitsleft',optional_param('unitsleft', '', PARAM_INT)) ; 
-          $mform->addElement('hidden','instructions',optional_param('instructions', '', PARAM_RAW)) ;  
+          $mform->addElement('hidden','unitsleft',optional_param('unitsleft', '', PARAM_INT)) ;
+          $mform->addElement('hidden','instructions',optional_param('instructions', '', PARAM_RAW)) ;
 
         }else {
         $QTYPES['numerical']->edit_numerical_options($mform,$this);
-            $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));    
+            $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
             $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
             $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
-        
+
         $mform->setType('unit', PARAM_NOTAGS);
 
         $mform->setType('multiplier', PARAM_NUMBER);
@@ -339,7 +339,7 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function validation($data, $files) {
-              // echo code left for testing period 
+              // echo code left for testing period
 
               //  echo "<p>question <pre>";print_r($this->question);echo "</pre></p>";
               //  echo "<p>data <pre>";print_r($data);echo "</pre></p>";
@@ -382,7 +382,7 @@ class question_edit_calculated_form extends question_edit_form {
         if ($data['multichoice']== 1 ){
             foreach ($answers as $key => $answer){
                 $trimmedanswer = trim($answer);
-                if (($trimmedanswer!='')||$answercount==0){    
+                if (($trimmedanswer!='')||$answercount==0){
                     //verifying for errors in {=...} in answer text;
                     $qanswer = "";
                     $qanswerremaining =  $trimmedanswer ;
@@ -415,7 +415,7 @@ class question_edit_calculated_form extends question_edit_form {
                     if ($data['fraction'][$key] == 1) {
                        $maxgrade = true;
                     }
-    
+
                     $answercount++;
                 }
                 //check grades
@@ -426,14 +426,14 @@ class question_edit_calculated_form extends question_edit_form {
                     if ($data['fraction'][$key] > $maxfraction) {
                         $maxfraction = $data['fraction'][$key];
                     }
-                }        
+                }
             }
             if ($answercount==0){
                 $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
                 $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
             } elseif ($answercount==1){
                 $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-    
+
             }
 
             /// Perform sanity checks on fractional grades
@@ -471,11 +471,11 @@ class question_edit_calculated_form extends question_edit_form {
                     if ($data['fraction'][$key] == 1) {
                        $maxgrade = true;
                     }
-    
+
                     $answercount++;
                 }
                 //check grades
-    
+
                 //TODO how should grade checking work here??
                 /*if ($answer != '') {
                     if ($data['fraction'][$key] > 0) {
@@ -486,7 +486,7 @@ class question_edit_calculated_form extends question_edit_form {
                     }
                 }*/
             }
-        
+
             //grade checking :
             /// Perform sanity checks on fractional grades
             /*if ( ) {
@@ -516,7 +516,7 @@ class question_edit_calculated_form extends question_edit_form {
                         if (!is_numeric($trimmedmultiplier)){
                             $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
                         }
-    
+
                     }
                 }
             }
@@ -531,4 +531,4 @@ class question_edit_calculated_form extends question_edit_form {
         return $errors;
     }
 }
-?>
+

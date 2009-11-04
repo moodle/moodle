@@ -2,7 +2,6 @@
 /**
  * This script lists student attempts
  *
- * @version $Id$
  * @author Martin Dougiamas, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
@@ -32,7 +31,7 @@ class quiz_overview_report extends quiz_default_report {
         $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
 
         $download = optional_param('download', '', PARAM_ALPHA);
-        
+
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
         if (!$students = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','','','',false)){
@@ -54,7 +53,7 @@ class quiz_overview_report extends quiz_default_report {
             }
             $allowed = $groupstudents;
         }
-        
+
         if (empty($currentgroup)||$groupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL)){
                 if($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
@@ -129,7 +128,7 @@ class quiz_overview_report extends quiz_default_report {
         } else if ($attemptsmode === null){
             //default
             $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-        } 
+        }
         if (!$reviewoptions->scores) {
             $detailedmarks = 0;
         }
@@ -162,7 +161,7 @@ class quiz_overview_report extends quiz_default_report {
             // Only print headers if not asked to download data
             $this->print_header_and_tabs($cm, $course, $quiz, "overview");
         }
-        
+
         if ($regradeall){
             $this->regrade_all(false, $quiz, $groupstudents);
         } else if ($regradealldry){
@@ -173,14 +172,14 @@ class quiz_overview_report extends quiz_default_report {
         if ($regradeall || $regradealldry || $regradealldrydo){
             redirect($reporturl->out(false, $displayoptions, false), '', 5);
         }
-        
+
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$table->is_downloading()) {
                 groups_print_activity_menu($cm, $reporturl->out(false, $displayoptions));
             }
         }
 
-        
+
         // Print information on the number of existing attempts
         if (!$table->is_downloading()) { //do not print notices when downloading
             if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
@@ -200,14 +199,14 @@ class quiz_overview_report extends quiz_default_report {
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
         }
-        
 
-        
+
+
 
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
-    
-    
-    
+
+
+
             // Construct the SQL
             $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, ';
             if ($qmsubselect) {
@@ -217,7 +216,7 @@ class quiz_overview_report extends quiz_default_report {
                     "   ELSE 0 " .
                     "END) AS gradedattempt, ";
             }
-            
+
             $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, ' .
                 'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
@@ -226,7 +225,7 @@ class quiz_overview_report extends quiz_default_report {
             $from = '{user} u ';
             $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
             $params = array('quizid' => $quiz->id);
-    
+
             if ($qmsubselect && $qmfilter){
                 $from .= ' AND '.$qmsubselect;
             }
@@ -254,7 +253,7 @@ class quiz_overview_report extends quiz_default_report {
                     $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
                      break;
              }
-    
+
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
             $sqlobject = new object;
@@ -272,7 +271,7 @@ class quiz_overview_report extends quiz_default_report {
                 $where .= ' AND COALESCE((SELECT MAX(qqr.regraded) FROM {quiz_question_regrade} qqr WHERE qqr.attemptid = qa.uniqueid),-1) !=\'-1\'';
             }
             $table->set_sql($fields, $from, $where, $params);
-            
+
             // Define table columns
             $columns = array();
             $headers = array();
@@ -311,12 +310,12 @@ class quiz_overview_report extends quiz_default_report {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
-    
+
             if (!$table->is_downloading() && $candelete) {
                 $columns[]= 'checkbox';
                 $headers[]= NULL;
             }
-    
+
             if (!$table->is_downloading() && $CFG->grade_report_showuserimage) {
                 $columns[]= 'picture';
                 $headers[]= '';
@@ -330,21 +329,21 @@ class quiz_overview_report extends quiz_default_report {
                 $columns[]= 'firstname';
                 $headers[]= get_string('firstname');
              }
-    
+
             if ($CFG->grade_report_showuseridnumber) {
                 $columns[]= 'idnumber';
                 $headers[]= get_string('idnumber');
             }
-    
+
             $columns[]= 'timestart';
             $headers[]= get_string('startedon', 'quiz');
-    
+
             $columns[]= 'timefinish';
             $headers[]= get_string('timecompleted','quiz');
-    
+
             $columns[]= 'duration';
             $headers[]= get_string('attemptduration', 'quiz');
-    
+
             if ($detailedmarks) {
                 foreach ($questions as $id => $question) {
                     // Ignore questions of zero length
@@ -368,35 +367,35 @@ class quiz_overview_report extends quiz_default_report {
                 $columns[] = 'sumgrades';
                 $headers[] = get_string('grade', 'quiz').'/'.quiz_format_grade($quiz, $quiz->grade);
              }
-    
+
             if ($hasfeedback) {
                 $columns[] = 'feedbacktext';
                 $headers[] = get_string('feedback', 'quiz');
              }
-    
+
             $table->define_columns($columns);
             $table->define_headers($headers);
             $table->sortable(true, 'uniqueid');
-    
+
             // Set up the table
             $table->define_baseurl($reporturl->out(false, $displayoptions));
-    
+
             $table->collapsible(false);
-    
+
             $table->column_suppress('picture');
             $table->column_suppress('fullname');
             $table->column_suppress('idnumber');
-    
+
             $table->no_sorting('feedbacktext');
-    
+
             $table->column_class('picture', 'picture');
             $table->column_class('lastname', 'bold');
             $table->column_class('firstname', 'bold');
             $table->column_class('fullname', 'bold');
             $table->column_class('sumgrades', 'bold');
-    
+
             $table->set_attribute('id', 'attempts');
-    
+
             $table->out($pagesize, true);
         }
         if (!$table->is_downloading() && $showgrades) {
@@ -648,7 +647,7 @@ class quiz_overview_report extends quiz_default_report {
         list($asql, $aparams) = $DB->get_in_or_equal($attemptids);
         $where = "qa.id $asql AND ";
         $params = array_merge($params, $aparams);
-        
+
         $where .= "qa.quiz = ? AND qa.preview = 0";
         $params[] = $quiz->id;
         if (!$attempts = $DB->get_records_sql('SELECT qa.* FROM {quiz_attempts} qa WHERE '. $where, $params)) {
@@ -671,4 +670,4 @@ class quiz_overview_report extends quiz_default_report {
 }
 
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once("$CFG->dirroot/question/format/qti_two/qt_common.php");
 ////////////////////////////////////////////////////////////////////////////
@@ -917,4 +917,4 @@ function xml_entitize(&$collection) {
 
 }
 
-?>
+

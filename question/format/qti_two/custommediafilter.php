@@ -1,4 +1,4 @@
-<?php // $id$
+<?php
 
 // note: modified from the original filter/mediaplugin/filter.php
 
@@ -32,7 +32,7 @@ function custom_mediaplugin_filter($text, $width = null, $height = null) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
-    
+
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -59,7 +59,7 @@ function custom_mediaplugin_filter($text, $width = null, $height = null) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object></p>';*/
-    
+
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -116,7 +116,7 @@ function custom_mediaplugin_filter($text, $width = null, $height = null) {
         $width = 240;
         $height = 180;
     }
-    
+
     if (empty($CFG->filter_mediaplugin_ignore_mpg)) {
         $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/i';
 
@@ -126,7 +126,7 @@ function custom_mediaplugin_filter($text, $width = null, $height = null) {
         $replace .= '<param name="autoplay" value="false">';
         $replace .= '<embed src="\\2.\\3" width="' . $width . '" height="' . $height . '" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
-        
+
         $text = preg_replace($search, $replace, $text);
     }
 
@@ -139,12 +139,12 @@ function custom_mediaplugin_filter($text, $width = null, $height = null) {
         $replace .= '<param name="autoplay" value="false">';
         $replace .= '<embed src="\\2.avi" width="' . $width . '" height="' . $height . '" controller="true" autoplay="false"> </embed>';
         $replace .= '</object>&nbsp;';
-    
+
         $text = preg_replace($search, $replace, $text);
     }
     return $text;
 }
 
 
-?>
+
 

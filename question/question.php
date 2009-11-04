@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Page for editing questions using the new form library.
  *
@@ -238,7 +238,7 @@ if ($mform->is_cancelled()){
     }
 
     $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow, true);
-    // a wizardpage from multipe pages questiontype like calculated may not allow editing the question tags 
+    // a wizardpage from multipe pages questiontype like calculated may not allow editing the question tags
     if (!empty($CFG->usetags) && isset($fromform->tags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
         tag_set('question', $question->id, $fromform->tags);
@@ -305,4 +305,4 @@ if ($mform->is_cancelled()){
     $QTYPES[$question->qtype]->display_question_editing_page($mform, $question, $wizardnow);
     echo $OUTPUT->footer();
 }
-?>
+

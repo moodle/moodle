@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////
 /// missingtype ///
@@ -76,4 +76,4 @@ class question_missingtype_qtype extends default_questiontype {
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_missingtype_qtype());
 
-?>
+

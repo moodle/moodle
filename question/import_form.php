@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -20,7 +20,7 @@ class question_import_form extends moodleform {
             $radioelement->setHelpButton(array("$shortname",$fileformatname,"qformat_$shortname"));
             $radioarray[] = $radioelement;
         }
-        $mform->addGroup($radioarray,'format', '', array('<br />'), false);     
+        $mform->addGroup($radioarray,'format', '', array('<br />'), false);
         $mform->addRule('format', null, 'required', null, 'client' );
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
@@ -67,8 +67,8 @@ class question_import_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('static', 'dummy', '');
         $mform->closeHeaderBefore('dummy');
-     
-        // set a template for the format select elements   
+
+        // set a template for the format select elements
         $renderer =& $mform->defaultRenderer();
         $template = "{help} {element}\n";
         $renderer->setGroupElementTemplate($template, 'format');
@@ -83,7 +83,7 @@ class question_import_form extends moodleform {
             return  NULL;
         }
     }
-    
+
     function get_importfile_realname(){
         if ($this->is_submitted() and $this->is_validated()) {
             // return the temporary filename to process
@@ -94,4 +94,4 @@ class question_import_form extends moodleform {
         }
     }
 }
-?>
+

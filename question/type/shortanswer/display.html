@@ -10,7 +10,7 @@
   <div class="prompt">
     <?php echo get_string("answer", "quiz").': '; ?>
   </div>
-  <?php if ($question->qtype == 'numerical' || $question->qtype == 'calculated' || $question->qtype == 'calculatedsimple' ){ 
+  <?php if ($question->qtype == 'numerical' || $question->qtype == 'calculated' || $question->qtype == 'calculatedsimple' ){
         include("$CFG->dirroot/question/type/numerical/display.html");?>
 <?php }else {?>
   <div class="answer">

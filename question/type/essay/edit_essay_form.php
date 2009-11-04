@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the essay question type.
  *
@@ -45,4 +45,4 @@ class question_edit_essay_form extends question_edit_form {
         return 'essay';
     }
 }
-?>
+

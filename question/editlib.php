@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -1512,7 +1512,7 @@ class question_bank_view {
             }
             $baseurl = new moodle_url('edit.php');
             $r = $baseurl->params($this->baseurl->params());
-           
+
             echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames),
                         $baseurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
                         $baseurl);
@@ -1945,4 +1945,4 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     }
 }
 
-?>
+

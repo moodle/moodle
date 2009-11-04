@@ -17,8 +17,8 @@ require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
 
 /**
- *  This class contains the test cases for the functions in qstats.php. 
- * 
+ *  This class contains the test cases for the functions in qstats.php.
+ *
  * */
 class quiz_report_qstats_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');
@@ -36,7 +36,7 @@ class quiz_report_qstats_test extends UnitTestCase {
         $this->qstats = new qstats($questions, 22, 10045.45455);
         $this->qstats->states = $states;
         $this->qstats->process_states();
-        
+
         //values expected are taken from contrib/tools/quiz_tools/stats.xls
         $facility = array(0,0,0,0,null,null,null,41.19318182,81.36363636,71.36363636,65.45454545,65.90909091,36.36363636,59.09090909,50,59.09090909,63.63636364,45.45454545,27.27272727,50);
         $this->qstats_q_fields('facility', $facility, 100);
@@ -80,7 +80,7 @@ class quiz_report_qstats_test extends UnitTestCase {
         }
         return $items;
     }
-    
+
     function get_records_from_csv($filename){
         $filecontents = file($filename, FILE_IGNORE_NEW_LINES);
         $records = array();
@@ -105,4 +105,4 @@ class quiz_report_qstats_test extends UnitTestCase {
 
 //$test = new quiz_report_qstats_test();
 //$test->test_qstats();
-?>
+

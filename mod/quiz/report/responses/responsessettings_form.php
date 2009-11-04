@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 require_once "$CFG->libdir/formslib.php";
 class mod_quiz_report_responses_settings extends moodleform {
 
@@ -44,4 +44,3 @@ class mod_quiz_report_responses_settings extends moodleform {
         $this->add_action_buttons(false, get_string('preferencessave', 'quiz_overview'));
     }
 }
-?>

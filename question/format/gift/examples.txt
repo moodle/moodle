@@ -57,7 +57,7 @@ Matching Question. {
     =subquestion2 -> subanswer2
     =subquestion3 -> subanswer3
     }
-    
+
 Match the following countries with their corresponding capitals. {
     =Canada -> Ottawa
     =Italy  -> Rome
@@ -77,7 +77,7 @@ When was Ulysses S. Grant born? {#
     =1822:0
     =%50%1822:2}
 
-// OPTIONS 
+// OPTIONS
 
 // ===Line Comments===
 
@@ -90,7 +90,7 @@ What's 2 plus 2? {#4}
 ::Kanji Origins::Japanese characters originally
 came from what country? {=China}
 
-::Thanksgiving Date::The American holiday of Thanksgiving is 
+::Thanksgiving Date::The American holiday of Thanksgiving is
 celebrated on the {~second ~third =fourth} Thursday of November.
 
 // ===Feedback===
@@ -99,7 +99,7 @@ What's the answer to this multiple-choice question?{
 ~wrong answer#feedback comment on the wrong answer
 ~another wrong answer#feedback comment on this wrong answer
 =right answer#Very good!}
-    
+
 Who's buried in Grant's tomb?{
 =no one#excellent answer!
 =nobody#excellent answer!}
@@ -113,13 +113,13 @@ Who's buried in Grant's tomb?{
 Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}
 
 Difficult question.{~wrong answer ~%50%half credit answer =full credit answer}
-         
+
 ::Jesus' hometown::Jesus Christ was from {
     ~Jerusalem#This was an important city, but the wrong answer.
     ~%25%Bethlehem#He was born here, but not raised here.
     ~%50%Galilee#You need to be more specific.
     =Nazareth#Yes! That's right!}.
-    
+
 ::Jesus' hometown:: Jesus Christ was from {
     =Nazareth#Yes! That's right!
     =%75%Nazereth#Right, but misspelled.

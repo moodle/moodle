@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Class representing question categories
  *
@@ -513,4 +513,4 @@ class question_category_object {
 
 }
 
-?>
+

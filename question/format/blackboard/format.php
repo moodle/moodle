@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ class qformat_blackboard extends qformat_default {
   function readquestions ($lines) {
     /// Parses an array of lines into an array of questions,
     /// where each item is a question object as defined by
-    /// readquestion(). 
+    /// readquestion().
 
     $text = implode($lines, " ");
     $xml = xmlize($text, 0);
@@ -47,20 +47,20 @@ class qformat_blackboard extends qformat_default {
 // Process Essay Questions
 //----------------------------------------
 function process_essay($xml, &$questions ) {
-  
+
     if (isset($xml["POOL"]["#"]["QUESTION_ESSAY"])) {
     	$essayquestions = $xml["POOL"]["#"]["QUESTION_ESSAY"];
     }
     else {
     	return;
     }	
-    
+
     foreach ($essayquestions as $essayquestion) {
-        
+
         $question = $this->defaultquestion();
-        
+
         $question->qtype = ESSAY;	
-        
+
         // determine if the question is already escaped html
         $ishtml = $essayquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
 
@@ -68,13 +68,13 @@ function process_essay($xml, &$questions ) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($essayquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        
+
         // put name in question object
         $question->name = substr($question->questiontext, 0, 254);
         $question->answer = '';
         $question->feedback = '';
         $question->fraction = 0;
-        
+
         $questions[] = $question;
     } 	
 }
@@ -92,7 +92,7 @@ function process_tf($xml, &$questions) {
     }
 
     for ($i = 0; $i < sizeof ($tfquestions); $i++) {
-      
+
         $question = $this->defaultquestion();
 
         $question->qtype = TRUEFALSE;
@@ -250,7 +250,7 @@ function process_ma($xml, &$questions) {
                 }
 
             }
-            if ($iscorrect) { 
+            if ($iscorrect) {
                 $question->fraction[$j] = floor(100000/$correctanswercount)/100000; // strange behavior if we have more than 5 decimal places
                 $question->feedback[$j] = trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]);
             } else {
@@ -305,14 +305,14 @@ function process_fib($xml, &$questions) {
         }
         else {
             $question->feedback[0] = '';
-        }      
+        }
         if (is_array( $thisquestion["#"]["GRADABLE"][0]["#"] )) {
             $question->feedback[1] = trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]);
         }
         else {
             $question->feedback[1] = '';
-        }        
-         
+        }
+
         $questions[] = $question;
     }
 }
@@ -355,9 +355,9 @@ function process_matching($xml, &$questions) {
 
             $choice = $choices[$j]["#"]["TEXT"][0]["#"];
             $choice_id = $choices[$j]["@"]["id"];
-          
+
             $question->subanswers[] = trim($choice);
- 
+
             $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
             for ($k = 0; $k < sizeof ($correctanswers); $k++) {
 
@@ -385,13 +385,13 @@ function process_matching($xml, &$questions) {
                 }
 
             }
-           
+
         }
 
         $questions[] = $question;
-          
+
     }
 }
 
 }
-?>
+

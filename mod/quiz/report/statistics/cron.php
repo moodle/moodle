@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 function quiz_report_statistics_cron(){
     global $DB;
     if ($todelete = $DB->get_records_select_menu('quiz_statistics', 'timemodified < ?', array(time()-5*HOURSECS))){
@@ -12,4 +12,4 @@ function quiz_report_statistics_cron(){
     }
     return true;
 }
-?>
+

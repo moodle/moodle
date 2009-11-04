@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /////////////////////
 /// RANDOMSAMATCH ///
@@ -199,7 +199,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
                         echo $OUTPUT->notification("Couldn't get question options (id=$response[0])!");
                         return false;
                     }
-    
+
                     // Now we overwrite the $question->options->answers field to only
                     // *one* (the first) correct answer. This loop can be deleted to
                     // take all answers into account (i.e. put them all into the
@@ -292,14 +292,14 @@ class question_randomsamatch_qtype extends question_match_qtype {
             } else {
                 $categorylist = $question->category;
             }
-    
+
             $question->options->subquestions = $this->get_sa_candidates($categorylist);
             foreach ($question->options->subquestions as $key => $wrappedquestion) {
                 if (!$QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion)) {
                     return false;
                 }
-    
+
                 // Now we overwrite the $question->options->answers field to only
                 // *one* (the first) correct answer. This loop can be deleted to
                 // take all answers into account (i.e. put them all into the
@@ -454,4 +454,4 @@ class question_randomsamatch_qtype extends question_match_qtype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_randomsamatch_qtype());
-?>
+

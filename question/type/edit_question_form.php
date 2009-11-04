@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * A base class for question editing forms.
  *
@@ -335,4 +335,4 @@ class question_edit_form extends moodleform {
     }
 }
 
-?>
+

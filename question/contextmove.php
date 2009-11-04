@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Allows someone with appropriate permissions to move a category and associated
  * files to another context.
@@ -236,4 +236,4 @@
     }
     $contextmoveform->display();
     echo $OUTPUT->footer();
-?>
+

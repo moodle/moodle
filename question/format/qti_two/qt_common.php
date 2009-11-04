@@ -11,16 +11,16 @@
  *
  * @param int courseid
  * @return array containing filenames
- * @calledfrom type/<typename>/editquestion.php 
+ * @calledfrom type/<typename>/editquestion.php
  * @package questionbank
  * @subpackage importexport
  */
-function get_course_media_files($courseid) 
+function get_course_media_files($courseid)
 {
 // this code lifted from mod/quiz/question.php and modified
     global $CFG;
     $images = null;
-    
+
     make_upload_directory("$course->id");    // Just in case
     $coursefiles = get_directory_list("$CFG->dataroot/$courseid", $CFG->moddata);
     foreach ($coursefiles as $filename) {
@@ -29,7 +29,7 @@ function get_course_media_files($courseid)
         }
     }
     return $images;
-}    
+}
 
 /**
  * determines whether or not a file is an image, based on the file extension
@@ -94,7 +94,7 @@ function is_sizable_multimedia($file) {
  * @param string $file the filename
  * @param string $courseid the course id
  * @param string $alt to specify the alt tag
- * @return string either an image tag, or html for an embedded object 
+ * @return string either an image tag, or html for an embedded object
  */
 function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $height = 0) {
     global $CFG;
@@ -112,14 +112,14 @@ function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $h
     if (!$isimage = is_image_by_extension($file)) {
            $ismultimedia = is_multimedia_by_extension($file);
     }
-    
+
     // if there is no known width and height, try to get one
     if ($width == 0) {
          if ($isimage || is_sizable_multimedia($file)) {
-             
+
          }
-        
-    } 
+
+    }
     // create either an image link or a generic link.
     // if the moodle multimedia filter is turned on, it'll catch multimedia content in the generic link
     if (is_image_by_extension($file)) {
@@ -134,7 +134,7 @@ function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $h
 /**
  * determines the x and y size of the given file
  *
- * @param string $file the filename 
+ * @param string $file the filename
  * @return array looks like array('x'=>171, 'y'=>323), or array('x'=>0, 'y'=>0) if size can't be determined
  */
 function get_file_dimensions($file) {
@@ -146,4 +146,4 @@ function get_file_dimensions($file) {
     }
 }
 
-?>
+

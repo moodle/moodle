@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /////////////////
 /// TRUEFALSE ///
@@ -359,4 +359,4 @@ class question_truefalse_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_truefalse_qtype());
-?>
+

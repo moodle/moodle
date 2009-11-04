@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -101,4 +101,4 @@ print_choose_qtype_to_add_form($hiddenparams);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
-?>
+

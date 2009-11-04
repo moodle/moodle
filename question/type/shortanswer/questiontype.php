@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////
 /// SHORTANSWER ///
@@ -133,7 +133,7 @@ class question_shortanswer_qtype extends default_questiontype {
         if ($options->feedback) {
             $class = question_get_feedback_class(0);
             $feedbackimg = question_get_feedback_image(0);
-            //this is OK for the first answer with a good response 
+            //this is OK for the first answer with a good response
             foreach($question->options->answers as $answer) {
 
                 if ($this->test_response($question, $state, $answer)) {
@@ -322,7 +322,7 @@ class question_shortanswer_qtype extends default_questiontype {
             }
 
                 // let student know wether the answer was correct
-                $class = question_get_feedback_class($state->last_graded->raw_grade / 
+                $class = question_get_feedback_class($state->last_graded->raw_grade /
                         $question->maxgrade);
                 echo '<div class="correctness ' . $class . '">' . get_string($class, 'quiz');
                 if ($correctanswer && ($class == 'partiallycorrect' || $class == 'incorrect')) {
@@ -348,7 +348,7 @@ class question_shortanswer_qtype extends default_questiontype {
                             // A penalty was applied so display it
                             echo ' '.$grade->numerical;
                             //print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $this->raw_unitpenalty));
-                           echo ' ';      
+                           echo ' ';
                             print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
                             /* No penalty was applied even though the answer was
@@ -399,4 +399,4 @@ class question_shortanswer_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_shortanswer_qtype());
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 require_once "$CFG->libdir/formslib.php";
 class mod_quiz_report_overview_settings extends moodleform {
 
@@ -42,7 +42,7 @@ class mod_quiz_report_overview_settings extends moodleform {
         }
         if ($showattemptsgrp){
             $mform->addGroup($showattemptsgrp, null, get_string('showattempts', 'quiz_overview'), '<br />', false);
-        } 
+        }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'preferencesuser', get_string('preferencesuser', 'quiz_overview'));
 
@@ -54,4 +54,4 @@ class mod_quiz_report_overview_settings extends moodleform {
         $this->add_action_buttons(false, get_string('preferencessave', 'quiz_overview'));
     }
 }
-?>
+

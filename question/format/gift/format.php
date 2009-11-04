@@ -1,7 +1,7 @@
-<?php // $Id$
+<?php
 //
 ///////////////////////////////////////////////////////////////
-// The GIFT import filter was designed as an easy to use method 
+// The GIFT import filter was designed as an easy to use method
 // for teachers writing questions as a text file. It supports most
 // question types and the missing word format.
 //
@@ -18,15 +18,15 @@
 //     Match the following countries with their corresponding
 //     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
 //
-// Comment lines start with a double backslash (//). 
-// Optional question names are enclosed in double colon(::). 
+// Comment lines start with a double backslash (//).
+// Optional question names are enclosed in double colon(::).
 // Answer feedback is indicated with hash mark (#).
 // Percentage answer weights immediately follow the tilde (for
 // multiple choice) or equal sign (for short answer and numerical),
 // and are enclosed in percent signs (% %). See docs and examples.txt for more.
-// 
-// This filter was written through the collaboration of numerous 
-// members of the Moodle community. It was originally based on 
+//
+// This filter was written through the collaboration of numerous
+// members of the Moodle community. It was originally based on
 // the missingword format, which included code from Thomas Robb
 // and others. Paul Tsuchido Shew wrote this filter in December 2003.
 //////////////////////////////////////////////////////////////////////////
@@ -79,10 +79,10 @@ class qformat_gift extends qformat_default {
         }
         return $feedback;
     }
-    
+
     function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
-        
+
         $escapedcharacters = array("\\:",    "\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"   );  //dlnsk
         $placeholders      = array("&&058;", "&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010" );  //dlnsk
 
@@ -119,7 +119,7 @@ class qformat_gift extends qformat_default {
         $question = $this->defaultquestion();
         $comment = NULL;
         // define replaced by simple assignment, stop redefine notices
-        $gift_answerweight_regex = "/^%\-*([0-9]{1,2})\.?([0-9]*)%/";        
+        $gift_answerweight_regex = "/^%\-*([0-9]{1,2})\.?([0-9]*)%/";
 
         // REMOVED COMMENTED LINES and IMPLODE
         foreach ($lines as $key => $line) {
@@ -148,7 +148,7 @@ class qformat_gift extends qformat_default {
             $question->category = $newcategory;
             return $question;
         }
-        
+
         // QUESTION NAME parser
         if (substr($text, 0, 2) == "::") {
             $text = substr($text, 2);
@@ -209,7 +209,7 @@ class qformat_gift extends qformat_default {
             $questiontext = substr( $questiontext, $rh_brace+1 );
             if (!$questiontextformat = text_format_name( $qtformat )) {
                 $questiontext = $oldquestiontext;
-            }          
+            }
         }
         $question->questiontextformat = $questiontextformat;
         $question->questiontext = trim($this->escapedchar_post($questiontext));
@@ -245,17 +245,17 @@ class qformat_gift extends qformat_default {
         } elseif (strpos($answertext, "~") !== false)  {
             // only Multiplechoice questions contain tilde ~
             $question->qtype = MULTICHOICE;
-    
-        } elseif (strpos($answertext, "=")  !== false 
+
+        } elseif (strpos($answertext, "=")  !== false
                 && strpos($answertext, "->") !== false) {
             // only Matching contains both = and ->
             $question->qtype = MATCH;
 
         } else { // either TRUEFALSE or SHORTANSWER
-    
+
             // TRUEFALSE question check
             $truefalse_check = $answertext;
-            if (strpos($answertext,"#") > 0){ 
+            if (strpos($answertext,"#") > 0){
                 // strip comments to check for TrueFalse question
                 $truefalse_check = trim(substr($answertext, 0, strpos($answertext,"#")));
             }
@@ -288,7 +288,7 @@ class qformat_gift extends qformat_default {
                 break;
             case MULTICHOICE:
                 if (strpos($answertext,"=") === false) {
-                    $question->single = 0;   // multiple answers are enabled if no single answer is 100% correct                        
+                    $question->single = 0;   // multiple answers are enabled if no single answer is 100% correct
                 } else {
                     $question->single = 1;   // only one answer allowed (the default)
                 }
@@ -301,9 +301,9 @@ class qformat_gift extends qformat_default {
                 if (empty($answers[0])) {
                     array_shift($answers);
                 }
-    
+
                 $countanswers = count($answers);
-                
+
                 if (!$this->check_answer_count( 2,$answers,$text )) {
                     return false;
                     break;
@@ -316,10 +316,10 @@ class qformat_gift extends qformat_default {
                     if ($answer[0] == "=") {
                         $answer_weight = 1;
                         $answer = substr($answer, 1);
-    
+
                     } elseif (preg_match($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
-                    
+
                     } else {     //default, i.e., wrong anwer
                         $answer_weight = 0;
                     }
@@ -330,7 +330,7 @@ class qformat_gift extends qformat_default {
                     $question->partiallycorrectfeedback = '';
                     $question->incorrectfeedback = '';
                 }  // end foreach answer
-    
+
                 //$question->defaultgrade = 1;
                 //$question->image = "";   // No images with this format
                 return $question;
@@ -344,12 +344,12 @@ class qformat_gift extends qformat_default {
                 if (empty($answers[0])) {
                     array_shift($answers);
                 }
-    
+
                 if (!$this->check_answer_count( 2,$answers,$text )) {
                     return false;
                     break;
                 }
-    
+
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
@@ -364,10 +364,10 @@ class qformat_gift extends qformat_default {
                     $question->subanswers[$key]   = trim($this->escapedchar_post(substr($answer, $marker+2)));
 
                 }  // end foreach answer
-    
+
                 return $question;
                 break;
-            
+
             case TRUEFALSE:
                 $answer = $answertext;
                 $comment = $this->commentparser($answer); // commentparser also removes comment from $answer
@@ -388,7 +388,7 @@ class qformat_gift extends qformat_default {
 
                 return $question;
                 break;
-                
+
             case SHORTANSWER:
                 // SHORTANSWER Question
                 $answers = explode("=", $answertext);
@@ -398,7 +398,7 @@ class qformat_gift extends qformat_default {
                 if (empty($answers[0])) {
                     array_shift($answers);
                 }
-    
+
                 if (!$this->check_answer_count( 1,$answers,$text )) {
                     return false;
                     break;
@@ -443,7 +443,7 @@ class qformat_gift extends qformat_default {
                 if (empty($answers[0])) {
                     array_shift($answers);
                 }
-    
+
                 if (count($answers) == 0) {
                     // invalid question
                     $giftnonumericalanswers = get_string('giftnonumericalanswers','quiz');
@@ -479,14 +479,14 @@ class qformat_gift extends qformat_default {
                         $tol = 0;
                         $ans = trim($answer);
                     }
-    
+
                     if (!(is_numeric($ans) || $ans = '*') || !is_numeric($tol)) {
                             $errornotnumbers = get_string( 'errornotnumbers' );
                             $this->error( $errornotnumbers, $text );
                         return false;
                         break;
                     }
-                    
+
                     // store results
                     $question->answer[$key] = $ans;
                     $question->tolerance[$key] = $tol;
@@ -507,8 +507,8 @@ class qformat_gift extends qformat_default {
                     $giftnovalidquestion = get_string('giftnovalidquestion','quiz');
                     $this->error( $giftnovalidquestion, $text );
                 return false;
-                break;                
-        
+                break;
+
         } // end switch ($question->qtype)
 
     }    // end function readquestion($lines)
@@ -519,7 +519,7 @@ function repchar( $text, $format=0 ) {
     $reserved = array( '#', '=', '~', '{', '}', ':', "\n","\r");
     $escaped =  array( '\#','\=','\~','\{','\}','\:','\n',''  ); //dlnsk
 
-    $newtext = str_replace( $reserved, $escaped, $text ); 
+    $newtext = str_replace( $reserved, $escaped, $text );
     $format = 0; // turn this off for now
     if ($format) {
         $newtext = format_text( $format );
@@ -550,7 +550,7 @@ function writequestion( $question ) {
     switch($question->qtype) {
     case 'category':
         // not a real question, used to insert category switch
-        $expout .= "\$CATEGORY: $question->category\n";    
+        $expout .= "\$CATEGORY: $question->category\n";
         break;
     case DESCRIPTION:
         $expout .= '::'.$this->repchar($question->name).'::';
@@ -656,4 +656,4 @@ function writequestion( $question ) {
     return $expout;
 }
 }
-?>
+

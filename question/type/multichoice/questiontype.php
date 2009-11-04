@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * The questiontype class for the multiple choice question type.
  *
@@ -384,7 +384,7 @@ class question_multichoice_qtype extends default_questiontype {
         return $responses;
     }
 
-    
+
     function format_response($response, $format){
         return $this->format_text($response, $format);
     }
@@ -712,4 +712,4 @@ class question_multichoice_qtype extends default_questiontype {
 
 // Register this question type with the question bank.
 question_register_questiontype(new question_multichoice_qtype());
-?>
+

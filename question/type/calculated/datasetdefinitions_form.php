@@ -117,7 +117,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'category');
         $mform->setType('category', PARAM_RAW);
         $mform->setDefault('category', array('contexts' => array($this->categorycontext)));
-                  
+
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
@@ -148,4 +148,4 @@ class question_dataset_dependent_definitions_form extends moodleform {
     }
 
 }
-?>
+

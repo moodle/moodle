@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 include '../../../../config.php';
 include $CFG->dirroot."/lib/graphlib.php";
 include $CFG->dirroot."/mod/quiz/locallib.php";
@@ -47,7 +47,7 @@ $line->parameter['legend_border'] = 'black';
 $line->parameter['legend_offset'] = 4;
 
 
-$line->parameter['bar_size']    = 1; 
+$line->parameter['bar_size']    = 1;
 
 $line->parameter['zero_axis']        = 'grayEE';
 
@@ -97,8 +97,8 @@ $line->parameter['y_axis_gridlines'] = $gridlines+1;
 
 $line->parameter['y_min_left'] = $min;
 $line->parameter['y_max_left'] = $max;
-$line->parameter['y_decimal_left'] = 0; 
+$line->parameter['y_decimal_left'] = 0;
 
 
 $line->draw();
-?>
+

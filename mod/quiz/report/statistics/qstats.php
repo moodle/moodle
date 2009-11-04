@@ -4,17 +4,17 @@ class qstats{
      * @var mixed states from which to calculate stats - iteratable.
      */
     var $states;
-    
+
     var $sumofgradevariance = 0;
     var $questions;
     var $subquestions = array();
     var $randomselectors = array();
     var $responses = array();
-    
+
     function qstats($questions, $s, $sumgradesavg){
         $this->s = $s;
         $this->sumgradesavg = $sumgradesavg;
-        
+
         foreach (array_keys($questions) as $qid){
             $questions[$qid]->_stats = $this->stats_init_object();
         }
@@ -58,7 +58,7 @@ class qstats{
             print_error('errorstatisticsquestions', 'quiz_statistics');
         }
     }
-    
+
     function _initial_states_walker($state, &$stats, $positionstat = true){
         $stats->s++;
         $stats->totalgrades += $state->grade;
@@ -113,12 +113,12 @@ class qstats{
         }
     }
 
-    /** 
+    /**
      * Get the data for the individual question response analysis table.
      */
     function _process_actual_responses($question, $state){
         global $QTYPES;
-        if ($question->qtype != 'random' && 
+        if ($question->qtype != 'random' &&
                 $QTYPES[$question->qtype]->show_analysis_of_responses()){
             $restoredstate = clone($state);
             restore_question_state($question, $restoredstate);
@@ -159,7 +159,7 @@ class qstats{
         }
         //avoid divide by zero
         if ($stats->gradevariance * $stats->othergradevariance){
-            $stats->discriminationindex = 100*$stats->covariance 
+            $stats->discriminationindex = 100*$stats->covariance
                         / sqrt($stats->gradevariance * $stats->othergradevariance);
         } else {
             $stats->discriminationindex = null;
@@ -170,7 +170,7 @@ class qstats{
             $stats->discriminativeefficiency = null;
         }
     }
-    
+
     function process_states(){
         global $DB, $OUTPUT;
         set_time_limit(0);
@@ -276,7 +276,7 @@ class qstats{
             }
         }
     }
-    
+
     function process_responses(){
         foreach ($this->states as $state){
             if ($this->questions[$state->question]->qtype == 'random'){
@@ -296,4 +296,4 @@ class qstats{
         return $this->sumofgradevariance;
     }
 }
-?>
+

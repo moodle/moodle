@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Page for moving questions
  *
@@ -237,4 +237,4 @@ if (count($urls)){
 }
 $contextmoveform->display();
 echo $OUTPUT->footer();
-?>
+

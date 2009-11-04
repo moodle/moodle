@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Unit tests for (some of) question/type/shortanswer/questiontype.php.
  *
@@ -264,4 +264,4 @@ class question_shortanswer_qtype_test extends UnitTestCase {
     }
 }
 
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////
 /// MULTIANSWER /// (Embedded - cloze)
@@ -22,7 +22,7 @@ class embedded_cloze_qtype extends default_questiontype {
     function name() {
         return 'multianswer';
     }
-    
+
     function has_wildcards_in_responses($question, $subqid) {
         global $QTYPES, $OUTPUT;
         foreach ($question->options->questions as $subq){
@@ -54,9 +54,9 @@ class embedded_cloze_qtype extends default_questiontype {
         $sequence = array_flip(explode(',', $sequence));
         array_walk($sequence, create_function('&$val', '$val++;'));
         //If a question is lost, the corresponding index is null
-        // so this null convention is used to test $question->options->questions 
+        // so this null convention is used to test $question->options->questions
         // before using the values.
-        // first all possible questions from sequence are nulled 
+        // first all possible questions from sequence are nulled
         // then filled with the data if available in  $wrappedquestions
         $nbvaliquestion = 0 ;
         foreach($sequence as $seq){
@@ -133,7 +133,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
                     $wrapped, $question->course);
             $sequence[] = $wrapped->id;
-            if ($previousid != 0 && $previousid != $wrapped->id ) { 
+            if ($previousid != 0 && $previousid != $wrapped->id ) {
                 // for some reasons a new question has been created
                 // so delete the old one
                 delete_question($previousid) ;
@@ -507,7 +507,7 @@ class embedded_cloze_qtype extends default_questiontype {
                             $a->id   = $question->name_prefix . $mcanswer->id;
                             $a->class = '';
                             $a->feedbackimg = '';
-        
+
                     // Print the control
                     $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$mcanswer->id\" />";
                 if ($options->correct_responses && $mcanswer->fraction > 0) {
@@ -520,18 +520,18 @@ class embedded_cloze_qtype extends default_questiontype {
                         $a->feedbackimg = question_get_feedback_image($mcanswer->fraction, $chosen && $options->feedback);
                     }
                 }
-    
+
                 // Print the answer text: no automatic numbering
 
                 $a->text =format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
-    
+
                 // Print feedback if feedback is on
                 if (($options->feedback || $options->correct_responses) && ($checked )) { //|| $options->readonly
                     $a->feedback = format_text($mcanswer->feedback, true, $formatoptions, $cmoptions->course);
                 } else {
                     $a->feedback = '';
                 }
-    
+
                     $anss[] = clone($a);
                 }
                 ?>
@@ -557,7 +557,7 @@ class embedded_cloze_qtype extends default_questiontype {
                   </table>
                   <?php }else  if ($wrapped->options->layout == 2 ){
                     ?>
-           
+
                   <table class="answer">
                       <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
                     <?php $row = 1; foreach ($anss as $answer) { ?>
@@ -576,16 +576,16 @@ class embedded_cloze_qtype extends default_questiontype {
                     <?php } ?>
                       </tr>
                   </table>
-                  <?php }  
-                        
+                  <?php }
+
                     }else {
                         echo "no valid layout";
                     }
-                    
+
                     break;
                 default:
                     $a = new stdClass;
-                    $a->type = $wrapped->qtype ; 
+                    $a->type = $wrapped->qtype ;
                     $a->sub = $positionkey;
                     print_error('unknownquestiontypeofsubquestion', 'qtype_multianswer','',$a);
                     break;
@@ -654,7 +654,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         return $responses;
     }
-    
+
     /**
      * @param object $question
      * @return mixed either a integer score out of 1 that the average random

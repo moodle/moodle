@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Allows a teacher to create, edit and delete categories
  *
@@ -132,4 +132,4 @@
         $qcobject->display_user_interface();
     }
     echo $OUTPUT->footer();
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 define ('QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY', 150);
 
 class quiz_report_responses_table extends table_sql {
@@ -149,10 +149,10 @@ class quiz_report_responses_table extends table_sql {
             } else {
                 return '-';
             }
-            
+
             $question = $this->questions[$questionid];
             restore_question_state($question, $stateforqinattempt);
-            
+
             if (!$this->is_downloading() || $this->is_downloading() == 'xhtml'){
                 $formathtml = true;
             } else {
@@ -182,7 +182,7 @@ class quiz_report_responses_table extends table_sql {
                 } else {
                     return '';
                 }
-                
+
             } else {
                 return $summary;
             }
@@ -241,4 +241,4 @@ class quiz_report_responses_table extends table_sql {
         }
     }
 }
-?>
+

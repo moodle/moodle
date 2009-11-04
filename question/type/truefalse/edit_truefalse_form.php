@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 require_once($CFG->dirroot.'/question/type/edit_question_form.php');
 /**
  * Defines the editing form for the thruefalse question type.
@@ -50,4 +50,3 @@ class question_edit_truefalse_form extends question_edit_form {
         return 'truefalse';
     }
 }
-?>

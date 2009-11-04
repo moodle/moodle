@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Question bank backup code.
  *
@@ -531,4 +531,4 @@
         }
         return $status;
     }
-?>
+

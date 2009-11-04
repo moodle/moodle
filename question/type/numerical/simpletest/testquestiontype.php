@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Unit tests for (some of) question/type/numerical/questiontype.php.
  *
@@ -149,4 +149,4 @@ class question_numerical_qtype_test extends UnitTestCase {
 //    }
 }
 
-?>
+

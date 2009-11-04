@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * The default questiontype class.
  *
@@ -1816,4 +1816,4 @@ class default_questiontype {
         return array($form, $question);
     }
 }
-?>
+

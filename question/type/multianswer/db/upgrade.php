@@ -1,6 +1,6 @@
-<?php  // $Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the multianswer qtype plugin
 //
 // Sometimes, changes between versions involve
@@ -61,4 +61,4 @@ function question_multianswer_fix_subquestion_parents_and_categories() {
     }
     return $result;
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the description question type.
  *
@@ -31,4 +31,3 @@ class question_edit_description_form extends question_edit_form {
         return 'description';
     }
 }
-?>

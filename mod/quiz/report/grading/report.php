@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Quiz report to help teachers manually grade quiz questions that need it.
  *
@@ -128,13 +128,13 @@ class quiz_grading_report extends quiz_default_report {
                                     "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
                         print_error('invalidattemptid', 'quiz_grading');
                     }
-    
+
                     // Load the state for this attempt (The questions array was created earlier)
                     $states = get_question_states($questions, $quiz, $attempt);
                     // The $states array is indexed by question id but because we are dealing
                     // with only one question there is only one entry in this array
                     $state = &$states[$question->id];
-    
+
                     // the following will update the state and attempt
                     $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
                     if (is_string($error)) {
@@ -205,7 +205,7 @@ class quiz_grading_report extends quiz_default_report {
 
         // our 2 different views
 
-        // the first view allows a user to select a question and 
+        // the first view allows a user to select a question and
         // displays the users who have answered the essay question
         // and all of their attempts at answering the question
 
@@ -456,7 +456,7 @@ class quiz_grading_report extends quiz_default_report {
             $where  = "WHERE u.id $usql ";
             $params = array_merge($params, $u_params);
         }
-        
+
         $where .= ' AND qs.event IN ('.QUESTION_EVENTS_CLOSED_OR_GRADED.')';
 
         $where .= ' AND u.id = qa.userid AND qa.quiz = ?';
@@ -471,4 +471,4 @@ class quiz_grading_report extends quiz_default_report {
 
 }
 
-?>
+

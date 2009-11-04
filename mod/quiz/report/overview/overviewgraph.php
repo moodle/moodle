@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 include '../../../../config.php';
 include $CFG->dirroot."/lib/graphlib.php";
 include $CFG->dirroot."/mod/quiz/report/reportlib.php";
@@ -96,4 +96,4 @@ while ($gridlines >= 10){
 
 $line->parameter['y_axis_gridlines'] = $gridlines+1;
 $line->draw();
-?>
+

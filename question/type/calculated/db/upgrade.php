@@ -1,6 +1,6 @@
-<?php  // $Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the calculated qtype plugin
 //
 // Sometimes, changes between versions involve
@@ -120,9 +120,9 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint($result, 2009092000, 'qtype', 'calculated');
 
-        
+
     }
-    
+
 /// calculated savepoint reached
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of database_manager methods
@@ -132,4 +132,4 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

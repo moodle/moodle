@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Based on default.php, included by ../import.php
 /**
  * @package questionbank
@@ -15,7 +15,7 @@ function repchar( $text ) {
     $reserved = array( '#','=','~','{','}',"\n","\r" );
     $escaped = array( '\#','\=','\~','\{','\}',' ','' );
 
-    return str_replace( $reserved, $escaped, $text ); 
+    return str_replace( $reserved, $escaped, $text );
     }
 
 function writequestion( $question ) {
@@ -38,12 +38,12 @@ function writequestion( $question ) {
 
     // add header
     $expout .= "<h3>$question->name</h3>\n";
- 
+
     // format and add question text
     $questiontext = $question->questiontext;
     $format = $question->questiontextformat;
     $formatted_text = format_text( $questiontext, $format );
-    $expout .= "<p class=\"questiontext\">$formatted_text</p>\n"; 
+    $expout .= "<p class=\"questiontext\">$formatted_text</p>\n";
 
     // selection depends on question type
     switch($question->qtype) {
@@ -85,9 +85,9 @@ function writequestion( $question ) {
         $ans_list = array();
         foreach($question->options->subquestions as $subquestion) {
            $ans_list[] = $this->repchar( $subquestion->answertext );
-        } 
+        }
         shuffle( $ans_list ); // random display order
-        
+
         // build drop down for answers
         $dropdown = "<select name=\"quest_$id\">\n";
         foreach($ans_list as $ans) {
@@ -111,7 +111,7 @@ function writequestion( $question ) {
     default:
         echo $OUTPUT->notification("No handler for qtype $question->qtype for GIFT export" );
     }
-    // close off div 
+    // close off div
     $expout .= "</div>\n\n\n";
     return $expout;
 }
@@ -124,7 +124,7 @@ function presave_process( $content ) {
 
   // get css bit
   $css_lines = file( "$CFG->dirroot/question/format/xhtml/xhtml.css" );
-  $css = implode( ' ',$css_lines ); 
+  $css = implode( ' ',$css_lines );
 
   $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
   $xp .= "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
@@ -152,4 +152,4 @@ function export_file_extension() {
 }
 
 }
-?>
+

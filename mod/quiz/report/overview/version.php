@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Code fragment to define the version of quiz overview report
@@ -7,4 +7,4 @@
 
 $plugin->version  = 2009091400;   // The (date) version of this module
 
-?>
+

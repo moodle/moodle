@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 function xmldb_quiz_statistics_upgrade($oldversion) {
 

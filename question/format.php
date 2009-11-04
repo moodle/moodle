@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Base class for question import and export formats.
  *
@@ -830,4 +830,4 @@ class qformat_default {
 
 }
 
-?>
+

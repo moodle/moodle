@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /////////////
 /// MATCH ///
@@ -294,7 +294,7 @@ class question_match_qtype extends default_questiontype {
                         $a->feedbackimg = question_get_feedback_image($correctresponse);
                     }
                 }
-                
+
                 $select = html_select::make($answers, $menuname, $response);
                 $select->disabled = $options->readonly;
                 $a->control = $OUTPUT->select($select);
@@ -410,7 +410,7 @@ class question_match_qtype extends default_questiontype {
         }
         return $answers;
     }
-    
+
     // ULPGC ecastro
     function get_actual_response($question, $state) {
        $subquestions = &$state->options->subquestions;
@@ -425,7 +425,7 @@ class question_match_qtype extends default_questiontype {
        }
        return $results;
    }
-   
+
    function get_actual_response_details($question, $state) {
         $responses = $this->get_actual_response($question, $state);
         $teacherresponses = $this->get_possible_responses($question, $state);
@@ -764,4 +764,4 @@ class question_match_qtype extends default_questiontype {
 //// INITIATION - Without this line the question type is not in use... ///
 //////////////////////////////////////////////////////////////////////////
 question_register_questiontype(new question_match_qtype());
-?>
+

@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -20,7 +20,7 @@ class question_export_form extends moodleform {
             $radioarray[] = $radioelement;
         }
         $mform->addGroup($radioarray,'format','',array('<br />'),false);
-        $mform->addRule('format',null,'required',null,'client'); 
+        $mform->addRule('format',null,'required',null,'client');
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
@@ -36,7 +36,7 @@ class question_export_form extends moodleform {
         $mform->disabledIf('categorygroup', 'cattofile', 'notchecked');
         $mform->setDefault('cattofile', 1);
         $mform->setDefault('contexttofile', 1);
-        
+
 
 //        $fileformatnames = get_import_export_formats('export');
 //        $mform->addElement('select', 'format', get_string('fileformat','quiz'), $fileformatnames);
@@ -47,7 +47,7 @@ class question_export_form extends moodleform {
         $mform->setDefault('exportfilename', $defaultfilename);
         $mform->setType('exportfilename', PARAM_FILE);
 
-        // set a template for the format select elements   
+        // set a template for the format select elements
         $renderer =& $mform->defaultRenderer();
         $template = "{help} {element}\n";
         $renderer->setGroupElementTemplate($template, 'format');
@@ -57,4 +57,4 @@ class question_export_form extends moodleform {
 //--------------------------------------------------------------------------------
     }
 }
-?>
+

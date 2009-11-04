@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the shortanswer question type.
  *
@@ -76,4 +76,3 @@ class question_edit_shortanswer_form extends question_edit_form {
         return 'shortanswer';
     }
 }
-?>

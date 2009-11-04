@@ -22,9 +22,9 @@ class question_dataset_dependent_items_form extends moodleform {
     public $regenerate;
 
     public $noofitems;
-    
+
     public $outsidelimit = false ;
-    
+
     public $commentanswers = array();
     /**
      * Add question-type specific form fields.
@@ -97,7 +97,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $mform->addElement('submit', 'updateanswers', get_string('updatetolerancesparam', 'qtype_datasetdependent'));
         $mform->setAdvanced('updateanswers',true);
         $mform->registerNoSubmitButton('updateanswers');
- 
+
         $answers = fullclone($this->question->options->answers);
         $key1 =1;
         foreach ($answers as $key => $answer) {
@@ -122,10 +122,10 @@ class question_dataset_dependent_items_form extends moodleform {
                 $mform->setAdvanced('tolerance['.$key.']',true);
                 $mform->addElement('select', 'tolerancetype['.$key.']', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
                 $mform->setAdvanced('tolerancetype['.$key.']',true);
-        
+
                 $mform->addElement('select', 'correctanswerlength['.$key.']', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
                 $mform->setAdvanced('correctanswerlength['.$key.']',true);
-        
+
                 $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
                 $mform->addElement('select', 'correctanswerformat['.$key.']', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
                 $mform->setAdvanced('correctanswerformat['.$key.']',true);
@@ -133,7 +133,7 @@ class question_dataset_dependent_items_form extends moodleform {
                 $mform->setAdvanced('dividertolerance',true);
             }
             $key1++;
-        }    
+        }
 
         $addremoveoptions = array();
         $addremoveoptions['1']='1';
@@ -211,7 +211,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $mform->addElement('hidden', 'category');
         $mform->setType('category', PARAM_RAW);
         $mform->setDefault('category', array('contexts' => array($this->categorycontext)));
-              
+
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', 0);
@@ -244,10 +244,10 @@ class question_dataset_dependent_items_form extends moodleform {
                         if( is_array($fromform->correctanswerformat[$key])) $fromform->correctanswerformat[$key]= $fromform->correctanswerformat[$key][0];
                         $answer->correctanswerformat = $fromform->correctanswerformat[$key];
                     }
-                    $this->qtypeobj->save_question_calculated($question,$fromform); 
-                }else {             
+                    $this->qtypeobj->save_question_calculated($question,$fromform);
+                }else {
                 foreach ($answers as $key => $answer){
-                  
+
                     $formdata['tolerance['.$key.']'] = $answer->tolerance;
                     $formdata['tolerancetype['.$key.']'] = $answer->tolerancetype;
                     $formdata['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
@@ -351,7 +351,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $errors = array();
         if (isset($data['backtoquiz']) && ($this->noofitems==0) ){
             $errors['warning'] = get_string('warning', 'mnet');
-        } 
+        }
         if ($this->outsidelimit){
          //   if(!isset($errors['warning'])) $errors['warning']=' ';
            $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
@@ -361,18 +361,18 @@ class question_dataset_dependent_items_form extends moodleform {
             if(! is_numeric($number)){
                 if (stristr($number,',')){
                     $errors['number['.$key.']'] = get_string('The , cannot be used, use . as in 0.013 or 1.3e-2', 'qtype_datasetdependent');
-                }else {    
+                }else {
                     $errors['number['.$key.']'] = get_string('This is not a valid number', 'qtype_datasetdependent');
                 }
             }else if( stristr($number,'x')){
                 $errors['number['.$key.']'] = get_string('Hexadecimal format (i.e. 0X12d) is not allowed', 'qtype_datasetdependent');
             } else if( is_nan($number)){
                 $errors['number['.$key.']'] = get_string('is a NAN number', 'qtype_datasetdependent');
-            }        
+            }
         }
         return $errors;
     }
 
 
 }
-?>
+

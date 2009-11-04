@@ -15,7 +15,7 @@
 	    {if $hassize == 1}
 			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" width="{$question->mediax}" height="{$question->mediay}" />
 		{else}
-			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />     
+			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />
 		{/if}
 		</div>
 	{/if}

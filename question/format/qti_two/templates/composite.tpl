@@ -64,7 +64,7 @@
     	    {if $hassize == 1}
     			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" width="{$question->mediax}" height="{$question->mediay}" />
     		{else}
-    			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />     
+    			<object type="{$question->mediamimetype}" data="{$question->mediaurl}" />
     		{/if}
     		</div>
     	{/if}
@@ -96,6 +96,6 @@
        {if $answers[answer].subanswers[subanswer].feedback != ''}
 	<modalFeedback outcomeIdentifier="FEEDBACK" identifier="{$answers[answer].subanswers[subanswer].id}" showHide="show">{$answers[answer].subanswers[subanswer].feedback}</modalFeedback>
 {/if}{/section}
-    {/if}   
+    {/if}
 	{/section}
 </assessmentItem>

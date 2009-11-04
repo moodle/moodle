@@ -1,17 +1,17 @@
-<?php     
+<?php
 // as the entry is controlled the question type here is numerical
                   $nameunit   = "name=\"".$question->name_prefix."unit\"";
                   $nameanswer   = "name=\"".$question->name_prefix."answer\"";
-//if left unit is placed before answer so we need to answer field text and a center pice for the show units options 
+//if left unit is placed before answer so we need to answer field text and a center pice for the show units options
 // split the respnse in 2 element numerical and units
 /*if (!empty($question->options->showunits)){
         if(isset($question->options->units) &&  count($question->options->units)){
             $length = 0;
             $goodkey = 0 ;
             foreach ($question->options->units as $key => $unit){
-                if (false === stripos($value, $unit->unit)){                   
+                if (false === stripos($value, $unit->unit)){
                 }else{
-                    
+
                     if(strlen($unit->unit)> $length) {$length =strlen($unit->unit);
                     $goodkey = $key ;
                 }
@@ -22,7 +22,7 @@
             }
             $state->responses['unit']=$goodkey ;<div class="ablock clearfix">
         }
-        
+
     }*/
             if (isset($state->responses['answer']) && $state->responses['answer']!='') {
             $valueanswer = ' value="'.s($state->responses['answer']).'" ';
@@ -32,13 +32,13 @@
             if (isset($state->responses['unit']) && $state->responses['unit']!='') {
             $valueunit = ' value="'.s($state->responses['unit']).'" ';
         } else {
-            
+
             $valueunit = ' value="" ';
             if ($question->options->showunits == 2 ){
-              $valueunit = ' value="'.s($question->options->units[0]->unit).'" '; 
-            } 
+              $valueunit = ' value="'.s($question->options->units[0]->unit).'" ';
+            }
         }
-        // put a div to enclose the answer and unit elements<div class="clearfix"></div> 
+        // put a div to enclose the answer and unit elements<div class="clearfix"></div>
         $textlength = 20 ;
 ?>
 
@@ -55,28 +55,28 @@
     <?php echo $feedbackimg; ?>
 </fieldset>
   </div>
- 
-    
+
+
 <?php }// display unit
-        $class = ''; 
+        $class = '';
         $feedbackimgunit = '';
         if ($options->feedback){
             $classunit = question_get_feedback_class(1-$this->raw_unitpenalty);
             $feedbackimgunit = question_get_feedback_image(1-$this->raw_unitpenalty, $options->feedback);
         }
         if ($question->options->showunits == 3 || (isset($question->options->units) && count($question->options->units) == 0 )) {// no unit display or tested
-     
+
 ?>
   <div class="answer">
-    <input type="hidden"  
-    <?php 
-    echo $nameunit;  
-    ?> 
+    <input type="hidden"
+    <?php
+    echo $nameunit;
+    ?>
    value ="" />
   </div>
 <?php
-  } else if ($question->options->showunits == 0  ) {// display unit text input 
-?>   
+  } else if ($question->options->showunits == 0  ) {// display unit text input
+?>
 <div class="answer">
     <fieldset class="clearfix"  id="generalheader">
     	 <legend class="ftoggler">
@@ -87,49 +87,49 @@
     <?php echo $feedbackimgunit; ?>
 </fieldset>
   </div>
-<?php            
+<?php
 
   } else if ($question->options->showunits == 2 ) {// display text
-     
+
 ?>
   <div class="answer">
     <fieldset class="clearfix"  id="generalheader">
     	 <legend class="ftoggler">
-    	    <?php echo get_string('unit', 'quiz'); 
+    	    <?php echo get_string('unit', 'quiz');
     	    //echo $question->options->units[0]->unit  ;
     	     ?>
     	 </legend>
-    <input type="hidden"  
-    <?php 
-    echo $nameunit; echo $valueunit ; 
+    <input type="hidden"
+    <?php
+    echo $nameunit; echo $valueunit ;
 
-    ?> 
+    ?>
    />
  <?php   echo $question->options->units[0]->unit  ;
 
-         echo '&nbsp; ' ; 
+         echo '&nbsp; ' ;
      ?>
     </fieldset>
   </div>
-  
+
   <?php
 
-    //display the units as choice    
-    
+    //display the units as choice
+
     } else if ($question->options->showunits == 1){?>
 
 
- 
-<?php 
-    //display the units as choice    
+
+<?php
+    //display the units as choice
     if ($question->options->showunits == 1 && isset($question->options->units)){?>
           <div class="answer">
             <table class="answer">
 
-<?php       foreach ($question->options->units as $key => $unit) { 
+<?php       foreach ($question->options->units as $key => $unit) {
             $checked = '';
             $chosen = false;
-              
+
                 $type = 'type="radio"';
              //   $nameunit   = "name=\"".$question->name_prefix;//."unit\"";
                 if (isset($state->responses['unit'])){
@@ -141,8 +141,8 @@
                     $checked = 'checked="checked"';
                     $chosen = true;
                 }
- 
-            $aid = $question->id ; 
+
+            $aid = $question->id ;
             $a = new stdClass;
             $a->id   = $question->name_prefix."unit" ;//. "2"
             $a->class = '';
@@ -181,15 +181,15 @@
                 <?php } ?>
 
          </table>
-                                      
-         </div>  
+
+         </div>
             <?php } // end unit choices
             // display intructions
             // general message first
         }
-     
+
  if ($question->options->unitsleft == 1 ){?>
-             
+
  <div class="answer">
     <fieldset class="clearfix"  id="generalheader">
     	 <legend class="ftoggler">
@@ -199,8 +199,8 @@
     ?> size="<?php echo $textlength;?>"/>
     <?php echo $feedbackimg; ?>
    </fieldset>
-  </div>                   
-<?php }  
+  </div>
+<?php }
         //</div> put a div to enclose the answer and unit elements
 ?>
 
@@ -217,15 +217,15 @@
      <?php echo get_string('validnumberformats', 'qtype_numerical');?>
     	 </legend>
      <?php echo get_string('validnumbers', 'qtype_numerical');?>
-     </fieldset>      
+     </fieldset>
        </div>
      <?php if (!empty($question->options->instructions)){?>
         <div>
      <?php   echo  format_text($question->options->instructions, true, $formatoptions, $cmoptions->course);?>
-        </div> 
-     <?php }?> 
-     </fieldset>      
-     </div>           
+        </div>
+     <?php }?>
+     </fieldset>
+     </div>
 
   <?php  ?>
 

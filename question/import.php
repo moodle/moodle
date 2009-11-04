@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Import quiz questions into the given category
  *
@@ -167,4 +167,4 @@
     $import_form->display();
     echo $OUTPUT->footer();
 
-?>
+

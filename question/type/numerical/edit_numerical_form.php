@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the numerical question type.
  *
@@ -42,7 +42,7 @@ class question_edit_numerical_form extends question_edit_form {
         /*
         $mform->addElement('header', 'unithandling', get_string("Units handling", 'qtype_numerical'));
         $currentgrp1 = array();
-        
+
         $currentgrp1[] =& $mform->createElement('text', 'unitpenalty', get_string('Penalty for bad unit', 'qtype_numerical') ,
                 array('size' => 3));
         $currentgrp1[] =& $mform->createElement('static', 'penalty1','hello', get_string('as decimal fraction (0-1) of', 'qtype_numerical'));
@@ -179,4 +179,3 @@ class question_edit_numerical_form extends question_edit_form {
         return 'numerical';
     }
 }
-?>

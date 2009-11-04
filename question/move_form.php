@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -21,4 +21,4 @@ class question_move_form extends moodleform {
         $mform->setType('delete', PARAM_INT);
     }
 }
-?>
+

@@ -60,4 +60,4 @@ class quiz_editlib_test extends UnitTestCase {
         $this->assertEqual(quiz_add_page_break_at('1,2,0', 3), '1,2,0');
     }
 }
-?>
+

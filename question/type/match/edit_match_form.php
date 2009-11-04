@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the match question type.
  *
@@ -96,4 +96,3 @@ class question_edit_match_form extends question_edit_form {
         return $errors;
     }
 }
-?>

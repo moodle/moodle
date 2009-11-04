@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Used by ajax calls to toggle the flagged state of a question in an attempt.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -24,7 +24,7 @@ if (!confirm_sesskey()) {
 }
 
 // Check the checksum - it is very hard to know who a question session belongs
-// to, so we require that checksum parameter is matches an md5 hash of the 
+// to, so we require that checksum parameter is matches an md5 hash of the
 // three ids and the users username. Since we are only updating a flag, that
 // probably makes it sufficiently difficult for malicious users to toggle
 // other users flags.
@@ -45,4 +45,3 @@ if (!question_update_flag($sessionid, $newstate)) {
 }
 
 echo 'OK';
-?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Sets up the tabs used by the question bank editing page
  *
@@ -24,4 +24,4 @@
     print_tabs($tabs, $currenttab, array());
 
 
-?>
+

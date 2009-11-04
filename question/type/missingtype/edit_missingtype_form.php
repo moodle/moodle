@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the missingtype question type.
  *
@@ -85,4 +85,4 @@ class question_edit_missingtype_form extends question_edit_form {
         return $errors;
     }
 }
-?>
+

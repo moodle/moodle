@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Defines the editing form for the randomsamatch question type.
  *
@@ -73,4 +73,4 @@ class question_edit_randomsamatch_form extends question_edit_form {
 
     }
 }
-?>
+
