@@ -2735,7 +2735,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                         upgrade_set_timeout(60*20); // this may take a little while
                         $params = array(FORMAT_HTML, '<p%', '%<br />%', FORMAT_MOODLE);
                         $textfield = substr($fieldstr, 0, $pos);
-                        $DB->execute('UPDATE '.$tablestr.' SET '.$fieldstr.'=? WHERE ('.$textfield.' LIKE ? OR '.$textfield.' LIKE ?) AND '.$fieldstr.'=?', $params);
+                        $DB->execute('UPDATE {'.$tablestr.'} SET '.$fieldstr.'=? WHERE ('.$textfield.' LIKE ? OR '.$textfield.' LIKE ?) AND '.$fieldstr.'=?', $params);
                     }
                 }
             }
