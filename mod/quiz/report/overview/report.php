@@ -2,6 +2,7 @@
 /**
  * This script lists student attempts
  *
+ * @version $Id$
  * @author Martin Dougiamas, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz

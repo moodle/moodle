@@ -1,4 +1,4 @@
-<?php
+<?php    // $Id$
 // Alton College, Hampshire, UK - Tom Flannaghan, Andrew Walker
 // Imports learnwise multiple choice quizzes (single and multiple answers)
 // currently ignores the deduct attribute for multiple answer questions

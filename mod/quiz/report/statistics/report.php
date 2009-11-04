@@ -2,6 +2,7 @@
 /**
  * This script calculates various statistics about student attempts
  *
+ * @version $Id$
  * @author Martin Dougiamas, Jamie Pratt, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
