@@ -17,7 +17,7 @@ class profile_field_base {
     /// Everything else can be extracted from them
     var $fieldid;
     var $userid;
-    
+
     var $field;
     var $inputname;
     var $data;
@@ -47,7 +47,7 @@ class profile_field_base {
         print_error('mustbeoveride', 'debug', '', 'edit_field_add');
     }
 
-    
+
 /***** The following methods may be overwritten by child classes *****/
 
     /**
@@ -58,7 +58,7 @@ class profile_field_base {
         $options->para = false;
         return format_text($this->data, FORMAT_MOODLE, $options);
     }
-    
+
     /**
      * Print out the form field in the edit profile page
      * @param   object   instance of the moodleform class
@@ -106,7 +106,7 @@ class profile_field_base {
         }
 
         $data = new object();
-        
+
         $usernew->{$this->inputname} = $this->edit_save_data_preprocess($usernew->{$this->inputname}, $data);
 
         $data->userid  = $usernew->id;
@@ -207,7 +207,7 @@ class profile_field_base {
 
 
 /***** The following methods generally should not be overwritten by child classes *****/
-   
+
     /**
      * Accessor method: set the userid for this instance
      * @param   integer   id from the user table
@@ -313,7 +313,7 @@ class profile_field_base {
     function is_signup_field() {
         return (boolean)$this->field->signup;
     }
-     
+
 
 } /// End of class definition
 
@@ -346,7 +346,7 @@ function profile_definition(&$mform) {
     if ($categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
         foreach ($categories as $category) {
             if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
-                    
+
                 // check first if *any* fields will be displayed
                 $display = false;
                 foreach ($fields as $field) {
@@ -445,7 +445,7 @@ function profile_signup_fields(&$mform) {
     $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
                 FROM {user_info_field} uf
                 JOIN {user_info_category} ic
-                ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0 
+                ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
     if ( $fields = $DB->get_records_sql($sql)) {
@@ -486,4 +486,4 @@ function profile_user_record($userid) {
 }
 
 
-?>
+

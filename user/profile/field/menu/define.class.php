@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 class profile_define_menu extends profile_define_base {
 
@@ -38,4 +38,4 @@ class profile_define_menu extends profile_define_base {
 
 }
 
-?>
+

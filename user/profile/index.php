@@ -53,7 +53,7 @@ switch ($action) {
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
         echo $OUTPUT->heading('profiledeletecategory', 'admin');
-        
+
         $formcontinue = html_form::make_button($redirect, $optionsyes, get_string('yes'), 'post');
         $formcancel = html_form::make_button($redirect, array(), get_string('no'), 'get');
         echo $OUTPUT->confirm(get_string('profileconfirmcategorydeletion', 'admin', $fieldcount), $formcontinue, $formcancel);
@@ -249,4 +249,4 @@ function profile_field_icons($field) {
 }
 
 
-?>
+

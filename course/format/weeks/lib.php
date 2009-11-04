@@ -71,4 +71,4 @@ function callback_weeks_definition() {
 function callback_weeks_request_key() {
     return 'week';
 }
-?>
+

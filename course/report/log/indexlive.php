@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Display link to live logs in separate window
 
     require_once('../../../config.php');
@@ -37,9 +37,9 @@
     echo $OUTPUT->container_start('info');
     $link = html_link::make('/course/report/log/live.php?id='. $course->id, get_string('livelogs'));
     $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
-    echo $OUTPUT->link($link);                    
+    echo $OUTPUT->link($link);
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->footer();
 
-?>
+

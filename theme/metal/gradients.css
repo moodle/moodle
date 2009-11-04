@@ -12,10 +12,10 @@ body {
 
 th.header,
 td.header,
-div.header {     
-    background-image:url(gradient.jpg);     
-    background-position:top;    
-    background-repeat:repeat-x;     
+div.header {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 .navbar {
@@ -42,4 +42,4 @@ div.header {
 .breadcrumb .sep {
   color:#999999;
 }
-   
+

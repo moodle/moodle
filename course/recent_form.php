@@ -56,7 +56,7 @@ class recent_form extends moodleform {
             } else {
                 $groups = '';
             }
-            
+
             if ($courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname', 'lastname ASC, firstname DESC', '', '', $groups)) {
                 foreach ($courseusers as $courseuser) {
                     $options[$courseuser->id] = fullname($courseuser, $viewfullnames);

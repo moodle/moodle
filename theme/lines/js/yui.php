@@ -16,11 +16,11 @@
                 YAHOO.util.Dom.setStyle(formsets[j], 'border-bottom-color', col);
             }
         }
-        
+
         // var check = document.getElementById('admin-settings');
         if (document.getElementById('admin-settings') || document.getElementById('admin-search')) {
             var check = 1;
-        } 
+        }
         // console.log("page: " + check);
         if (!check) return;
 

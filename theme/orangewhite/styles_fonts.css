@@ -1,6 +1,6 @@
 /*******************************************************************
  styles_fonts.css
-  
+
  This CSS file contains all font definitions like family, size,
  weight, text-align, letter-spacing etc.
 
@@ -207,7 +207,7 @@ table.formtable tbody th {
 /***
  *** Blocks
  ***/
- 
+
 .sideblock {
   font-size:0.7em
 }
@@ -393,7 +393,7 @@ body#doc-contents ul {
 .message .summary {
   font-size:0.9em
 }
-.message .note, 
+.message .note,
 .message .pix {
   font-size:0.8em
 }
@@ -464,7 +464,7 @@ body#doc-contents ul {
 #mod-choice-index .cell {
   font-size:0.85em
 }
-  
+
 /***
  *** Modules:Forum
  ***/

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /// Displays external information about a course
 
@@ -94,4 +94,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

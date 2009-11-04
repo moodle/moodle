@@ -182,4 +182,4 @@ echo '<input type="submit" value="'.get_string('savechanges').'" />';
 echo '</div></form>';
 
 echo $OUTPUT->footer();
-?>
+

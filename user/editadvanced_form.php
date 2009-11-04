@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -176,4 +176,4 @@ class user_editadvanced_form extends moodleform {
     }
 }
 
-?>
+

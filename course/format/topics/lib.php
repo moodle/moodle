@@ -70,4 +70,4 @@ function callback_topics_definition() {
 function callback_topics_request_key() {
     return 'topic';
 }
-?>
+

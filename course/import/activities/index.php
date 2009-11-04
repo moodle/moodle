@@ -104,4 +104,3 @@ require_once('mod.php');
 
 echo $OUTPUT->footer();
 
-?>

@@ -1,6 +1,6 @@
 /**
  * CSSClass.js: utilities for manipulating the CSS class of an HTML element.
- * 
+ *
  * This module defines a single global symbol named CSSClass.  This object
  * contains utility functions for working with the class attribute (className
  * property) of HTML elements.  All functions take two arguments: the element

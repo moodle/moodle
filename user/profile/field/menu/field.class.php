@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class profile_field_menu extends profile_field_base {
     var $options;
@@ -86,4 +86,4 @@ class profile_field_menu extends profile_field_base {
     }
 }
 
-?>
+

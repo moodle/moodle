@@ -452,7 +452,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 }
                 if ($event->modulename == 'assignment'){
                     // TODO: rewrite this hack somehow
-                    if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
+                    if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student
                         if (!$assignment = $DB->get_record('assignment', array('id'=>$event->instance))) {
                             // print_error("invalidid", 'assignment');
                             continue;
@@ -572,9 +572,9 @@ function calendar_print_event($event, $showactions=true) {
     if (isset($event->cssclass)) {
         echo '<td class="description '.$event->cssclass.'">';
     } else {
-        echo '<td class="description">'; 
+        echo '<td class="description">';
     }
-    
+
     echo $event->description;
     if (calendar_edit_event_allowed($event) && $showactions) {
         echo '<div class="commands">';
@@ -860,7 +860,7 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
     } else {
         $content .= '<td style="width: 11px;"><img src="'.$OUTPUT->old_icon_url('t/show') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_showcourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showcourses'.$getvars."'".'" /></td>';
         $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
-    
+
     }
 
 
@@ -1190,7 +1190,7 @@ function calendar_session_vars($course=null) {
     if ($course !== null) {
         // speedup hack for calendar related blocks
         $SESSION->cal_courses_shown = array($course->id => $course);
-    } else {    
+    } else {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
     }
     if(empty($SESSION->cal_users_shown)) {
@@ -1219,9 +1219,9 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         $SESSION->cal_courses_shown = intval($SESSION->cal_courses_shown);
     }
     if($courseeventsfrom === NULL) {
-        $courseeventsfrom = $SESSION->cal_courses_shown;    
+        $courseeventsfrom = $SESSION->cal_courses_shown;
     }
-    
+
     // MDL-9059, $courseeventsfrom can be an int, or an array of ints, or an array of course objects
     // convert all to array of objects
     // we probably should do some clean up and make sure that session is set to use the proper form
@@ -1233,8 +1233,8 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         foreach ($courseeventsfrom as $i=>$courseid) { // TODO: this seems wrong, the array is often constructed as [courseid] => 1 ???
             if (is_int($courseid)) {
                 $courseeventsfrom[$i] = $DB->get_record('course', array('id'=>$courseid));
-            } 
-        }    
+            }
+        }
     }
 
     if($groupeventsfrom === NULL) {
@@ -1325,7 +1325,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                             $courserecord = $courseeventsfrom[$courseid];
                         } else {
                             $courserecord = $DB->get_record('course', array('id'=>$courseid));
-                        } 
+                        }
                         $courserecord = $DB->get_record('course', array('id'=>$courseid));
                         if ($courserecord->groupmode != NOGROUPS || !$courserecord->groupmodeforce) {
                             $groupids[] = $courseid;
@@ -1592,7 +1592,7 @@ function calendar_get_allowed_types(&$allowed) {
 
         if(has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $allowed->courses = array($course->id => 1);
-    
+
             if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                 $allowed->groups = groups_get_all_groups($SESSION->cal_course_referer);
             }
@@ -1877,7 +1877,7 @@ class calendar_event {
 
     /**
      * Return the number of repeat events there are in this events series
-     * 
+     *
      * @return int
      */
     public function count_repeats() {
@@ -1965,7 +1965,7 @@ class calendar_event {
 
                 $DB->set_field('event', 'description', $this->properties->description, array('id'=>$this->properties->id));
             }
-            
+
             // Log the event entry.
             add_to_log($this->properties->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$this->properties->id, $this->properties->name);
 
@@ -2209,7 +2209,7 @@ class calendar_event {
             } else {
                 $draftiddescription = 0;
             }
-            
+
             // Structure the description field as the editor requires
             $properties->description = array('text'=>$properties->description, 'format'=>$properties->format, 'itemid'=>$draftiddescription);
         }

@@ -5,13 +5,13 @@ class ChameleonFileBrowser {
     var $path;
     var $dir;
     var $IMAGE_TYPES;
-  
+
     var $founddirs = array();
     var $foundfiles = array();
 
     function ChameleonFileBrowser() {
         $this->IMAGE_TYPES = array('jpeg', 'jpg', 'gif', 'png');
-        
+
         $tmp = explode('/', str_replace('\\', '/', __FILE__));
         array_pop($tmp);
         array_pop($tmp);
@@ -25,11 +25,11 @@ class ChameleonFileBrowser {
         if ($path == 'root') {
             return 'pix';
         }
-        
+
         if (substr($path, 0, 3) != 'pix') {
             $this->send('<chameleon_error>Not a valid directory</chameleon_error>');
         }
-        
+
         return preg_replace('/[.]+/', '', $path);
     }
 
@@ -44,8 +44,8 @@ class ChameleonFileBrowser {
         if (!is_dir($this->dir)) {
             $this->send('<chameleon_error>Not a valid directory</chameleon_error>');
         }
-        
-        $handle = opendir($this->dir);       
+
+        $handle = opendir($this->dir);
         while (false !== ($file = readdir($handle))) {
             if ($file == '.' || $file == '..') {
                 continue;
@@ -72,10 +72,10 @@ class ChameleonFileBrowser {
             $out .= "  <file type=\"img\">$this->path/$file</file>\n";
         }
         $out .= "</files>";
-        
+
         $this->send($out);
     }
-    
+
     function send($out) {
         header("Content-type: application/xml; charset=utf-8");
         die($out);

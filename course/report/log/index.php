@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Displays different views of the logs.
 
     require_once('../../../config.php');
@@ -157,4 +157,4 @@
     echo $OUTPUT->footer();
 
     exit;
-?>
+

@@ -36,7 +36,7 @@ if (!confirm_sesskey()) {
 
 if (strpos($jump, $CFG->wwwroot) === 0) {            // Anything on this site
     redirect(new moodle_url(urldecode($jump)));
-} else if (preg_match('/^[a-z]+\.php\?/', $jump)) { 
+} else if (preg_match('/^[a-z]+\.php\?/', $jump)) {
     redirect(new moodle_url(urldecode($jump)));
 }
 
@@ -44,4 +44,3 @@ if(isset($_SERVER['HTTP_REFERER'])) {
     redirect(new moodle_url($_SERVER['HTTP_REFERER']));   // Return to sender, just in case
 }
 
-?>

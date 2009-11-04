@@ -82,4 +82,4 @@ foreach ($instances as $i) {
 echo $OUTPUT->table($table);
 echo $OUTPUT->footer();
 
-?>
+

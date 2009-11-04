@@ -131,4 +131,3 @@ $enrol->print_entry($course);
 
 /// Easy!
 
-?>

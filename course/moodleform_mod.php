@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 require_once ($CFG->libdir.'/formslib.php');
 if (!empty($CFG->enablecompletion) or !empty($CFG->enableavailability)) {
     require_once($CFG->libdir.'/completionlib.php');
@@ -59,7 +59,7 @@ abstract class moodleform_mod extends moodleform {
         } else {
             $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
         }
-        
+
         // Guess module name
         $matches = array();
         if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
@@ -198,10 +198,10 @@ abstract class moodleform_mod extends moodleform {
                             get_string('completedwarningtext', 'completion', $completedcount)),
                         'unlockcompletion');
                     $mform->setHelpButton('completedwarning', array('completionlocked', get_string('help_completionlocked', 'completion'), 'completion'));
-                            
+
                     $freeze = true;
                 }
-            } 
+            }
 
             if ($freeze) {
                 $mform->freeze('completion');
@@ -212,7 +212,7 @@ abstract class moodleform_mod extends moodleform {
                     $mform->freeze('completionusegrade');
                 }
                 $mform->freeze($this->_customcompletionelements);
-            } 
+            }
         }
 
         // Availability conditions
@@ -273,7 +273,7 @@ abstract class moodleform_mod extends moodleform {
                 $errors['cmidnumber'] = get_string('idnumbertaken');
             }
         }
-        
+
         // Completion: Don't let them choose automatic completion without turning
         // on some conditions
         if (array_key_exists('completion', $data) && $data['completion']==COMPLETION_TRACKING_AUTOMATIC) {
@@ -284,12 +284,12 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // Conditions: Don't let them set dates which make no sense
-        if (array_key_exists('availablefrom', $data) && 
-            $data['availablefrom'] && $data['availableuntil'] && 
+        if (array_key_exists('availablefrom', $data) &&
+            $data['availablefrom'] && $data['availableuntil'] &&
             $data['availablefrom'] > $data['availableuntil']) {
             $errors['availablefrom'] = get_string('badavailabledates', 'condition');
         }
-        
+
         return $errors;
     }
 
@@ -305,7 +305,7 @@ abstract class moodleform_mod extends moodleform {
             $default_values = (array)$default_values;
         }
 
-        $this->data_preprocessing($default_values);        
+        $this->data_preprocessing($default_values);
         parent::set_data($default_values);
     }
 
@@ -401,14 +401,14 @@ abstract class moodleform_mod extends moodleform {
             $grouparray[] =& $mform->createElement('static', '', '','% '.get_string('grade_upto','condition').' ');
             $grouparray[] =& $mform->createElement('text', 'conditiongrademax','',array('size'=>3));
             $grouparray[] =& $mform->createElement('static', '', '','%');
-            $mform->setType('conditiongrademin',PARAM_FLOAT);            
-            $mform->setType('conditiongrademax',PARAM_FLOAT);            
-            $group = $mform->createElement('group','conditiongradegroup', 
+            $mform->setType('conditiongrademin',PARAM_FLOAT);
+            $mform->setType('conditiongrademax',PARAM_FLOAT);
+            $group = $mform->createElement('group','conditiongradegroup',
                 get_string('gradecondition', 'condition'),$grouparray);
 
             // Get version with condition info and store it so we don't ask
             // twice
-            if(!empty($this->_cm)) {           
+            if(!empty($this->_cm)) {
                 $ci = new condition_info($this->_cm, CONDITION_MISSING_EXTRATABLE);
                 $this->_cm = $ci->get_full_course_module();
                 $count = count($this->_cm->conditionsgrade)+1;
@@ -442,10 +442,10 @@ abstract class moodleform_mod extends moodleform {
                     COMPLETION_COMPLETE_PASS=>get_string('completion_pass','condition'),
                     COMPLETION_COMPLETE_FAIL=>get_string('completion_fail','condition'));
 
-                $grouparray = array();        
+                $grouparray = array();
                 $grouparray[] =& $mform->createElement('select','conditionsourcecmid','',$completionoptions);
                 $grouparray[] =& $mform->createElement('select','conditionrequiredcompletion','',$completionvalues);
-                $group = $mform->createElement('group','conditioncompletiongroup', 
+                $group = $mform->createElement('group','conditioncompletiongroup',
                     get_string('completioncondition', 'condition'),$grouparray);
 
                 $count = empty($this->_cm) ? 1 : count($this->_cm->conditionscompletion)+1;
@@ -455,15 +455,15 @@ abstract class moodleform_mod extends moodleform {
                 $mform->setHelpButton('conditioncompletiongroup[0]', array('completioncondition', get_string('help_completioncondition', 'condition'), 'condition'));
             }
 
-            // Do we display availability info to students?        
-            $mform->addElement('select', 'showavailability', get_string('showavailability', 'condition'), 
-                    array(CONDITION_STUDENTVIEW_SHOW=>get_string('showavailability_show', 'condition'), 
+            // Do we display availability info to students?
+            $mform->addElement('select', 'showavailability', get_string('showavailability', 'condition'),
+                    array(CONDITION_STUDENTVIEW_SHOW=>get_string('showavailability_show', 'condition'),
                     CONDITION_STUDENTVIEW_HIDE=>get_string('showavailability_hide', 'condition')));
-            $mform->setDefault('showavailability', CONDITION_STUDENTVIEW_SHOW);                
+            $mform->setDefault('showavailability', CONDITION_STUDENTVIEW_SHOW);
             $mform->setHelpButton('showavailability', array('showavailability', get_string('help_showavailability', 'condition'), 'condition'));
         }
 
-        // Conditional activities: completion tracking section 
+        // Conditional activities: completion tracking section
         if(!isset($completion)) {
             $completion = new completion_info($COURSE);
         }
@@ -477,8 +477,8 @@ abstract class moodleform_mod extends moodleform {
             $mform->addElement('hidden', 'completionunlocked', 0);
             $mform->setType('completionunlocked', PARAM_INT);
 
-            $mform->addElement('select', 'completion', get_string('completion', 'completion'), 
-                array(COMPLETION_TRACKING_NONE=>get_string('completion_none', 'completion'), 
+            $mform->addElement('select', 'completion', get_string('completion', 'completion'),
+                array(COMPLETION_TRACKING_NONE=>get_string('completion_none', 'completion'),
                 COMPLETION_TRACKING_MANUAL=>get_string('completion_manual', 'completion')));
             $mform->setHelpButton('completion', array('completion', get_string('help_completion', 'completion'), 'completion'));
             $mform->setDefault('completion', $this->_features->defaultcompletion
@@ -507,7 +507,7 @@ abstract class moodleform_mod extends moodleform {
             // Automatic completion according to module-specific rules
             $this->_customcompletionelements = $this->add_completion_rules();
             foreach ($this->_customcompletionelements as $element) {
-                $mform->disabledIf($element, 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);                
+                $mform->disabledIf($element, 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
             }
 
             $gotcompletionoptions = $gotcompletionoptions ||
@@ -518,17 +518,17 @@ abstract class moodleform_mod extends moodleform {
                 $mform->getElement('completion')->addOption(
                     get_string('completion_automatic', 'completion'),
                     COMPLETION_TRACKING_AUTOMATIC);
-            } 
+            }
 
             // Completion expected at particular date? (For progress tracking)
             $mform->addElement('date_selector', 'completionexpected', get_string('completionexpected', 'completion'), array('optional'=>true));
             $mform->setHelpButton('completionexpected', array('completionexpected', get_string('help_completionexpected', 'completion'), 'completion'));
-            $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);    
+            $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);
         }
 
         $this->standard_hidden_coursemodule_elements();
     }
-    
+
     /**
      * Can be overridden to add custom completion rules if the module wishes
      * them. If overriding this, you should also override completion_rule_enabled.
@@ -640,4 +640,4 @@ abstract class moodleform_mod extends moodleform {
     }
 }
 
-?>
+

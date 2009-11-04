@@ -689,7 +689,7 @@ final class course_external extends moodle_external {
                 }
 
                 $activities = get_array_of_activities($id);
-               
+
                 foreach ($activities as $activity) {
                     if (empty($type)) {
                         $module = array('id' => $activity->id, 'courseid' => $id, 'name' => $activity->name, 'type' => $activity->mod);
@@ -746,4 +746,4 @@ final class course_external extends moodle_external {
 
 }
 
-?>
+

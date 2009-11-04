@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /// Displays external information about a course
 
@@ -14,7 +14,7 @@
     $show      = optional_param('show', 0, PARAM_INT);
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
     $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
-    
+
     $PAGE->set_url('course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     $search = trim(strip_tags($search)); // trim & clean raw searched string
@@ -190,7 +190,7 @@
 
             $form = new html_form();
             $form->url = new moodle_url("$CFG->wwwroot/course/search.php", array(
-                    'edit' => $edit, 
+                    'edit' => $edit,
                     'sesskey' => sesskey(),
                     'search' => s($search, true),
                     'page' => $page,
@@ -394,4 +394,4 @@
         }
     }
 
-?>
+

@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
  * The mform class for creating and editing a calendar
- * 
+ *
  * @copyright 2009 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -1,27 +1,27 @@
 <?php echo $OUTPUT->container_end(); ?><!-- end container Content -->
 <!-- START OF FOOTER -->
-<?php 
+<?php
 
-global $CFG, $COURSE; 
+global $CFG, $COURSE;
 if (function_exists('is_in_popup')) {
     $inpopup = is_in_popup();
 } else {
     $inpopup = false;
 }
 
-if (!$inpopup) { 
+if (!$inpopup) {
     echo $OUTPUT->container_start('footer');
-    
+
     echo '<p class="helplink">';
     echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-    
+
     echo $loggedinas;
     echo $homelink;
 
     $useridarray = array(2 // MD
                           );
-    
+
     if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
         echo $performanceinfo;
     }

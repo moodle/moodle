@@ -141,4 +141,4 @@ class reject_request_form extends moodleform {
         $this->add_action_buttons(true, get_string('reject'));
     }
 }
-?>
+

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 //  Lists all the users within a given course
 
@@ -24,13 +24,13 @@
     $courseid     = optional_param('id', 0, PARAM_INT);                       // this are required
 
     $PAGE->set_url('user/index.php', array(
-            'page' => $page, 
-            'perpage' => $perpage, 
-            'mode' => $mode, 
-            'accesssince' => $accesssince, 
-            'search' => $search, 
-            'roleid' => $roleid, 
-            'contextid' => $contextid, 
+            'page' => $page,
+            'perpage' => $perpage,
+            'mode' => $mode,
+            'accesssince' => $accesssince,
+            'search' => $search,
+            'roleid' => $roleid,
+            'contextid' => $contextid,
             'courseid' => $courseid));
 
     if ($contextid) {
@@ -333,7 +333,7 @@
                 $picturecell = new html_table_cell();
                 $picturecell->add_classes(array('left', 'side', 'picture'));
                 $picturecell->text = print_group_picture($group, $course->id, true, false, false);
-                
+
                 $contentcell = new html_table_cell();
                 $contentcell->add_class('content');
                 $contentcell->text = print_group_picture($group, $course->id, true, false, false);
@@ -1166,4 +1166,4 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
 
 }
 
-?>
+

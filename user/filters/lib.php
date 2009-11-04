@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/user/filters/text.php');
 require_once($CFG->dirroot.'/user/filters/date.php');
@@ -80,7 +80,7 @@ class user_filtering {
                     }
                     if (empty($SESSION->user_filtering[$fname])) {
                         unset($SESSION->user_filtering[$fname]);
-                    } 
+                    }
                 }
             }
             // clear+reload the form
@@ -144,7 +144,7 @@ class user_filtering {
                         if (empty($hosts[$hostid])) {
                             $choices[$hostid] = 'id: '.$hostid.' ('.get_string('error').')';
                         }
-                    } 
+                    }
                 }
                 if (count($choices) < 2) {
                     return null; // filter not needed

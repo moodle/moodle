@@ -29,7 +29,7 @@ body {
 #header-home hr {
   display: none;
 }
-.headermain, 
+.headermain,
 h1.headermain {
   margin: 10px 0 0 10px;
 }
@@ -68,17 +68,17 @@ h1.headermain {
 .sideblock a {
   color: #eee;
 }
-.sideblock .header, 
+.sideblock .header,
 .sideblock h2.header {
   padding: 5px;
   border-style: none;
   width:  100%;
 }
-#left-column .sideblock .header, 
+#left-column .sideblock .header,
 #left-column .sideblock h2.header {
   background-color: #da5a23;
 }
-#right-column .sideblock .header, 
+#right-column .sideblock .header,
 #right-column .sideblock h2.header {
   background-color: #4b95ed;
 }

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 //
 // Optional course format configuration file
 //
@@ -8,4 +8,4 @@
 // The default blocks layout for this course format:
     $format['defaultblocks'] = ':news_items,recent_activity,calendar_upcoming';
 
-?>
+

@@ -49,7 +49,7 @@ if (isset($_POST['css'])) {
             die('CHAMELEON_ERROR ' . $chameleon->error);
         }
     }
-    
+
 } else {
 
     $css = $chameleon->read();

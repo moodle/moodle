@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 class profile_define_checkbox extends profile_define_base {
 
@@ -10,4 +10,4 @@ class profile_define_checkbox extends profile_define_base {
     }
 }
 
-?>
+

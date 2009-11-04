@@ -37,7 +37,7 @@ String.prototype.trim = function() {
 
     var struct = [];
     var hotspotMode = null;
-        
+
     var Config = {
         THEME_ROOT: '<?php echo $chameleon_theme_root; ?>',
         REMOTE_URI: '<?php echo substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')); ?>/css.php<?php echo (isset($_GET['id'])) ? '?id='.(int) $_GET['id'] : '?dummy=1'; ?>',
@@ -52,7 +52,7 @@ String.prototype.trim = function() {
         UNITS: ['px', 'pt', 'em', '%'],
         PROPS_LIST: ['color', 'background-color', 'background-image', 'background-attachment', 'background-position', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'margin', 'padding', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color']
     };
-      
+
 
 
     var Util = {
@@ -65,7 +65,7 @@ String.prototype.trim = function() {
             obj.setAttribute('id', id);
             return obj;
         },
-    
+
         removeElement: function(obj) {
             if (!obj || !obj.parentNode) return false;
 
@@ -73,7 +73,7 @@ String.prototype.trim = function() {
             if (!kids.length && typeof obj.all != 'undefined') {
                 kids = obj.all;
             }
-            
+
             var n = kids.length;
             while (n--) {
                 if (kids[n].id && Util.__registry[kids[n].id]) {
@@ -83,23 +83,23 @@ String.prototype.trim = function() {
             if (Util.__registry[obj.id]) {
                 Util.__removeAllEvents(obj);
             }
-            obj.parentNode.removeChild(obj); 
+            obj.parentNode.removeChild(obj);
         },
-        
+
         clearElement: function(obj) {
             while (obj.hasChildNodes()) {
                 obj.removeChild(obj.firstChild);
             }
-        }, 
+        },
 
         addEvent: function(obj, ev, fn) {
             if (!Util.__addToRegistry(obj, ev, fn)) return;
-  
+
             if (obj.addEventListener) {
                 obj.addEventListener(ev, fn, false);
             } else if (obj.attachEvent) {
                 obj['e' + ev + fn] = fn;
-                obj[ev + fn] = function() { 
+                obj[ev + fn] = function() {
                     obj['e' + ev + fn](window.event);
                 };
                 obj.attachEvent('on' + ev, obj[ev + fn]);
@@ -112,7 +112,7 @@ String.prototype.trim = function() {
                 obj.removeEventListener(ev, fn, false);
             } else if (obj.detachEvent) {
                 obj.detachEvent('on' + ev, obj[ev + fn]);
-                obj[ev + fn] = null;     
+                obj[ev + fn] = null;
             }
         },
 
@@ -150,9 +150,9 @@ String.prototype.trim = function() {
         },
         __removeFromRegistry: function(obj, ev, fn) {
             var id = Util.__getEventId(obj);
-     
+
             if (!id) return false;
- 
+
             var pos = Util.__findEvent(id, ev, fn);
             if (pos != -1) {
                 Util.__registry[id][ev].splice(pos, 1);
@@ -203,26 +203,26 @@ String.prototype.trim = function() {
             return {x: x, y: y};
         }
     };
-    
-    
-    
+
+
+
 
 
 
 
     var CSS = {
-        
+
         __localCSS: {},
         __remoteCSS: {},
-        
+
         __localSaveRequired: false,
         __remoteSaveRequired: false,
-        
-        
+
+
         requireRemoteSave: function() {
-            CSS.__remoteSaveRequired = true;            
+            CSS.__remoteSaveRequired = true;
         },
-        
+
         clearTheme: function() {
             /*var links = document.getElementsByTagName('link');
             var n = links.length;
@@ -233,7 +233,7 @@ String.prototype.trim = function() {
                 }
             }*/
         },
-        
+
 
         loadRemote: function(doSetup) {
             if (!Sarissa.IS_ENABLED_XMLHTTP) {
@@ -260,34 +260,34 @@ String.prototype.trim = function() {
             xmlhttp.send(null);
             return true;
         },
-        
-        
+
+
         updateTemp: function(e, reset) {
             if (!CSS.__localSaveRequired && !reset) {
                 UI.statusMsg('There are no changes that need saving!', 'chameleon-notice');
                 return;
             }
-            
+
             if (!reset) {
                 UI.statusMsg('Updating temporary styles on the server...', 'chameleon-working');
             } else {
                 UI.statusMsg('Deleting temporary styles from the server...', 'chameleon-working');
             }
-            
+
             var css = CSS.toString();
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText.indexOf('CHAMELEON_ERROR') != -1) {
                         UI.statusMsg('There was an error saving to the server:\n' + xmlhttp.responseText.replace(/CHAMELEON_ERROR /, '') + '.', 'chameleon-error');
-                        
+
                     } else {
                         CSS.__localSaveRequired = false;
                         if (!reset) {
                             UI.statusMsg('Temporary styles have been updated.', 'chameleon-ok');
                         } else {
                             UI.statusMsg('Temporary styles have been cleared.', 'chameleon-ok');
-                        }        
+                        }
                     }
                     xmlhttp = null;
                 }
@@ -296,14 +296,14 @@ String.prototype.trim = function() {
             xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xmlhttp.send('css=' + css);
         },
-        
+
 
         updateRemote: function() {
             if (!CSS.__remoteSaveRequired) {
                 UI.statusMsg('There are no changes that need saving!', 'chameleon-notice');
                 return;
             }
-        
+
             var css = CSS.toString(CSS.__localCSS);
 
             UI.statusMsg('Updating styles on the server...', 'chameleon-working');
@@ -325,33 +325,33 @@ String.prototype.trim = function() {
             xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xmlhttp.send('css=' + css);
         },
-        
-    
-        
-        
-      
-      
+
+
+
+
+
+
         hardReset: function(e, noPrompt) {
             if (noPrompt || confirm('Are you sure? This will erase all styles that have not been permanently saved to the server.')) {
                 CSS.__localCSS = {};
                 CSS.updateTemp(null, true);
-                
+
                 CSS.__localCSS = CSS.__clone(CSS.__remoteCSS);
                 CSS.__localSaveRequired = false;
                 CSS.__remoteSaveRequired = false;
                 CSS.preview();
             }
         },
-        
-        
-        
+
+
+
         setPropValue: function(prop, value, selector) {
             if (!selector) var selector = CSS.Selector.get();
 
             if (!CSS.__localCSS[selector]) {
                 CSS.__localCSS[selector] = {};
             }
-            
+
             var matches = prop.match(/^border\-([^\-]+)$/);
             if (value) {
                 var func = CSS.__requiresFunction(prop);
@@ -375,12 +375,12 @@ String.prototype.trim = function() {
                     CSS.unsetProp(prop, selector);
                 }
             }
-            
+
             CSS.__localSaveRequired = true;
             CSS.__remoteSaveRequired = true;
             CSS.preview(selector);
         },
-        
+
         getPropValue: function(prop, selector) {
             if (!selector) var selector = CSS.Selector.get();
 
@@ -403,8 +403,8 @@ String.prototype.trim = function() {
                 delete CSS.__localCSS[selector];
             }
         },
-        
-        
+
+
         __hasProps: function(selector) {
             for (var prop in CSS.__localCSS[selector]) {
                 if (prop) {
@@ -413,8 +413,8 @@ String.prototype.trim = function() {
             }
             return false;
         },
-        
-        
+
+
 
 
         __cleanFunctions: function(val) {
@@ -444,7 +444,7 @@ String.prototype.trim = function() {
 
         fixPath: function(val) {
             if (val == 'none') return val;
-            
+
             var tmp = val.split('(');
             if (tmp.length > 1) {
                 tmp[1] = Config.THEME_ROOT + '/' + tmp[1];
@@ -452,27 +452,27 @@ String.prototype.trim = function() {
             }
             return Config.THEME_ROOT + '/' + val;
         },
-        
-        
-        
+
+
+
         preview: function(sel) {
             var styleId = 'chameleon-preview-styles';
 
             var h = document.getElementsByTagName('head')[0];
             var s = document.getElementById(styleId);
-            
+
             if (!s) {
                 var s = Util.createElement('style', styleId);
                 s.setAttribute('type', 'text/css');
                 h.appendChild(s);
             }
-            
+
             if (navigator.userAgent.toLowerCase().indexOf('msie') != -1  && !window.opera && document.styleSheets && document.styleSheets.length > 0) {
                 var lastStyle = document.styleSheets[document.styleSheets.length - 1];
-                
+
                 var ieCrashProtector = /[^a-z0-9 #_:\.\-\*]/i; // some characters appearing in a selector can cause addRule to crash IE in spectacular style - if the selector contains any character outside this list don't try to add to the preview
                 var ieWarning = false;
-                
+
                 if (sel) {
                     var matchedSelectors = [];
                     if (typeof sel == 'string') {
@@ -490,7 +490,7 @@ String.prototype.trim = function() {
                                 sel.splice(ns, 1);
                                 break;
                             }
-                            
+
                             if (lastStyle.rules[n].selectorText.toLowerCase() == sel[ns].toLowerCase()) {
                                 matchedSelectors.push(sel[ns]);
                                 sel.splice(ns, 1);
@@ -509,7 +509,7 @@ String.prototype.trim = function() {
                     while (n--) {
                         lastStyle.removeRule(n);
                     }
-                   
+
                     for (var sel in CSS.__localCSS) {
                         if (sel.match(ieCrashProtector)) {
                             ieWarning = true;
@@ -519,18 +519,18 @@ String.prototype.trim = function() {
                         lastStyle.addRule(sel, dec);
                     }
                 }
-                
+
                 if (ieWarning) {
                     UI.statusMsg('The edited CSS contains content that can not be previewed by Internet Explorer', 'chameleon-notice');
                 }
-                
+
             } else {
                 Util.clearElement(s);
                 s.appendChild(document.createTextNode(CSS.toString(CSS.__localCSS, true))); // I think innerHTML would be faster here, but it doesn't work in KHTML browsers (Safari etc)
             }
         },
-        
-        
+
+
 
         __merge: function() {
             var merged = {};
@@ -565,7 +565,7 @@ String.prototype.trim = function() {
             }
             return merged;
         },
-        
+
         __clone: function(src) {
             var cloned = {};
             for (var sel in src) {
@@ -578,30 +578,30 @@ String.prototype.trim = function() {
             }
             return cloned;
         },
-        
-        
+
+
         toString: function(css, fixpath) {
             if (!css) var css = CSS.__localCSS;
-            
+
             var dec = '';
             for (var sel in css) {
                 dec += sel + ' ' + CSS.__propsToString(css[sel], fixpath, sel);
             }
             return dec;
         },
-        
+
         __propsToString: function(css, fixpath) {
             CSS.__Shorthand.border = {};
-            
+
             var hasBorder = false;
             var col = false;
             var importantBorders = [];
 
             var dec = '{\n';
             for (var prop in css) {
-                
+
                 var includeProp = true;
-                
+
                 if (prop.indexOf('border') != -1 && prop.indexOf('spacing') == -1 && prop.indexOf('collapse') == -1) {
                     if (css[prop].indexOf('!important') == -1) {
                         CSS.__Shorthand.recordBorder(prop, css[prop]);
@@ -611,7 +611,7 @@ String.prototype.trim = function() {
                     includeProp = false;
                     hasBorder = true;
                 }
-                
+
                 if (prop == 'color') {
                     col = css[prop];
                 }
@@ -624,7 +624,7 @@ String.prototype.trim = function() {
                     }
                 }
             }
-            
+
             if (hasBorder) {
                 dec += CSS.__Shorthand.getBorderString(col);
             }
@@ -634,14 +634,14 @@ String.prototype.trim = function() {
                     dec += '  ' + importantBorders[n].prop + ': ' + importantBorders[n].css + ';\n';
                 }
             }
-            
+
             dec += '}\n';
             return dec;
         },
-        
-                
-        
-        
+
+
+
+
         toObject: function(css) {
             var cssObj = {};
             var end;
@@ -655,7 +655,7 @@ String.prototype.trim = function() {
                 } else {
                     var selectorArr = [selector];
                 }
-                
+
                 var rules = parts.pop().trim();
                 rules = rules.split(';');
                 for (var i = 0; i < rules.length; ++i) {
@@ -665,22 +665,22 @@ String.prototype.trim = function() {
                     var rule = rules[i].split(':');
                     var prop = rule.shift().trim();
                     var val = rule.pop().trim();
-                    
+
                     for (var j = 0; j < selectorArr.length; ++j) {
                         var noFontPropReset = {};
-                        
+
                         selector = selectorArr[j].trim();
                         if (!cssObj[selector]) {
                             cssObj[selector] = {};
                         }
-                    
+
                         if (prop != 'font' && (prop.indexOf('font') != -1 || prop == 'line-height')) {
                             noFontPropReset[prop] = true;
                         }
-                    
+
                         if (prop == 'background') {
                             CSS.__Shorthand.setBackground(cssObj, selector, val);
-                        } else if (prop == 'font') {    
+                        } else if (prop == 'font') {
                             CSS.__Shorthand.setFont(cssObj, selector, val, noFontPropReset);
                         } else if ((prop == 'border' || prop.match(/^border\-([^-]+)$/)) && prop.indexOf('spacing') == -1 && prop.indexOf('collapse') == -1) {
                             CSS.__Shorthand.setBorder(cssObj, selector, val, prop);
@@ -693,11 +693,11 @@ String.prototype.trim = function() {
             }
             return cssObj;
         },
-        
-        
-        
-        
-        
+
+
+
+
+
         getSelectorCSS: function(selector, asObject) {
             if (!selector) var selector = CSS.Selector.get();
 
@@ -707,36 +707,36 @@ String.prototype.trim = function() {
             }
             return selector + ' ' + CSS.__propsToString(css);
         },
-        
-        
-        
+
+
+
         saveRequired: function() {
             return CSS.__localSaveRequired || CSS.__serverSaveRequired;
         },
-        
-        
+
+
         checkSpec: function(e, selector) {
             if (!selector) var selector = CSS.Selector.get();
             if (selector == '') {
                 UI.statusMsg('First you have to choose which item to style!', 'chameleon-notice');
                 return;
             }
-            
+
             var splitSelector = function(selector) {
                 var selectorEnd = selector.split(' ').pop();
                 selectorEnd = selectorEnd.replace(/([\.:#])/g, '|$1');
                 return selectorEnd.split('|');
             };
-            
+
             var similar = [];
-        
+
             var selectorBits = splitSelector(selector);
-        
+
             for (var sel in CSS.__localCSS) {
                 var selBits = splitSelector(sel);
-        
+
                 var n = selectorBits.length;
-        
+
                 while (n--) {
                     var match = selectorBits[n];
                     var m = selBits.length;
@@ -758,15 +758,15 @@ String.prototype.trim = function() {
                     }
                 }
             }
-            
+
             if (similar.length) {
                 UI.Selector.__displayOverview(null, similar, selector);
             } else {
                 UI.statusMsg('Your file currently contains no selectors that appear similar to "' + selector + '"', 'chameleon-notice');
-            }  
+            }
         },
-        
-        
+
+
         unloadPrompt: function() {
             if (CSS.__localSaveRequired) {
                 if (confirm('You have made changes to the CSS on this page since the last time it was saved, these changes will be lost unless you save them now. Select OK to save a temporary copy or Cancel to continue and discard the unsaved CSS.')) {
@@ -779,18 +779,18 @@ String.prototype.trim = function() {
         }
 
     };
-    
-    
-    
+
+
+
     CSS.Selector = {
-        
+
         trimmed: [],
         full: [],
         selector: '',
-        
+
         create: function() {
             CSS.Selector.trimmed = [];
- 
+
             var n = struct.length;
             while (n--) {
                 if (CSS.Selector.full[n]) {
@@ -799,11 +799,11 @@ String.prototype.trim = function() {
             }
             CSS.Selector.set(CSS.Selector.trimmed.join(' '));
         },
-        
+
         modify: function(e) {
             var target = e.target || e.srcElement;
             var p = target.position;
-            
+
             var sel = CSS.Selector.full;
 
             if (!sel[p]) {
@@ -821,27 +821,27 @@ String.prototype.trim = function() {
             CSS.Selector.create();
             UI.Selector.displaySelector(CSS.Selector.trimmed);
         },
-        
+
         set: function(sel) {
             CSS.Selector.selector = sel;
         },
-        
+
         get: function() {
-            return CSS.Selector.selector;  
+            return CSS.Selector.selector;
         },
 
         reset: function() {
             CSS.Selector.trimmed = [];
             CSS.Selector.full = [];
             CSS.Selector.set('');
-        }               
+        }
     };
-    
-    
-    
+
+
+
     CSS.__Shorthand = {
         border: {},
-        
+
         recordBorder: function(prop, value) {
             var pr = prop.split('-')
             var p = pr.pop();
@@ -858,19 +858,19 @@ String.prototype.trim = function() {
             CSS.__Shorthand.border[p].push({prop: prop, value: value});
             CSS.__Shorthand.border[s][p] = value;
         },
-        
+
         getBorderString: function(col) {
             var cb = CSS.__Shorthand.border;
-            
+
             var useHowManyProps = function(prop) {
                 if (!cb['top'] || !cb['right'] || !cb['bottom'] || !cb['left']) {
                     return false;
                 }
-                
+
                 if (!(cb['top'][prop] && cb['right'][prop] && cb['bottom'][prop] && cb['left'][prop])) {
                     return false;
                 }
-                
+
                 if (cb['top'][prop] == cb['right'][prop] && cb['top'][prop] == cb['bottom'][prop] && cb['top'][prop] == cb['left'][prop]) {
                     return 1;
                 }
@@ -882,13 +882,13 @@ String.prototype.trim = function() {
                 }
                 return 4;
             };
-            
+
             var getPropShorthand = function(prop) {
                 var num = useHowManyProps(prop);
                 if (!num) {
                     return '';
                 }
-                
+
                 if (prop.indexOf('color') != -1) {
                     var l = inheritColor(cb['left'][prop]);
                     var r = inheritColor(cb['right'][prop]);
@@ -900,7 +900,7 @@ String.prototype.trim = function() {
                     var t = cb['top'][prop];
                     var b = cb['bottom'][prop];
                 }
-                
+
                 var propShorthand = '';
                 if (num == 1) {
                     propShorthand += '  border-' + prop + ': ' + l;
@@ -913,7 +913,7 @@ String.prototype.trim = function() {
                 }
                 return propShorthand + ';\n';
             };
-            
+
             var propsStr = function(props) {
                 var str = '';
                 for (var i = 0; i < props.length; ++i) {
@@ -921,29 +921,29 @@ String.prototype.trim = function() {
                 }
                 return str;
             };
-            
+
             var inheritColor = function(val) {
-                if (!col || val != 'inherit') return val;               
+                if (!col || val != 'inherit') return val;
                 return col;
             };
-            
+
             var setImportant = function(str) {
                 if (!str) return '';
                 if (str.indexOf('!important') == -1) return str;
                 str = str.replace(/ *\!important */g, ' ');
                 return str.substr(0, str.lastIndexOf(';')) + ' !important;\n';
             };
-                      
+
             var widthEqual = (cb['width']) ? CSS.__Shorthand.__allPropsEqual(cb['width']) : false;
             var styleEqual = (cb['style']) ? CSS.__Shorthand.__allPropsEqual(cb['style']) : false;
             var colorEqual = (cb['color']) ? CSS.__Shorthand.__allPropsEqual(cb['color']) : false;
-                        
+
             if (widthEqual && styleEqual && colorEqual) {
-                var propStr = setImportant(cb['width'][0].value + ' ' + cb['style'][0].value + ' ' + inheritColor(cb['color'][0].value) + ';\n');              
+                var propStr = setImportant(cb['width'][0].value + ' ' + cb['style'][0].value + ' ' + inheritColor(cb['color'][0].value) + ';\n');
                 if (cb['left'] && cb['top'] && cb['right'] && cb['bottom']) {
                     return '  border: ' + propStr;
                 }
-                
+
                 var sideShorthand = '';
                 if (cb['top']) {
                     sideShorthand += '  border-top: ' + propStr;
@@ -959,7 +959,7 @@ String.prototype.trim = function() {
                 }
                 return sideShorthand;
             }
-            
+
             var widthProps = getPropShorthand('width');
             if (!widthProps) {
                 widthProps = (cb['width']) ? propsStr(cb['width']) : '';
@@ -972,15 +972,15 @@ String.prototype.trim = function() {
             if (!colorProps) {
                 colorProps = (cb['color']) ? propsStr(cb['color']) : '';
             }
-            
+
             return setImportant(widthProps) + setImportant(styleProps) + setImportant(colorProps);
 
         },
-        
-        
-        
-        
-        
+
+
+
+
+
         setBorder: function(css, selector, value, prop) {
             var props = {};
             var p = '';
@@ -997,10 +997,10 @@ String.prototype.trim = function() {
                 regexp: /^((rgb\(\d{1,3} *, *\d{1,3} *, *\d{1,3} *\))|(#[A-F0-9]{3}([A-F0-9]{3})?)|([a-z]+))$/i,
                 def: 'inherit'
             };
-            
+
             var bits = value.split(' ');
             var imp = (bits[bits.length - 1] == '!important') ? ' ' + bits.pop() : '';
-                        
+
             if (prop == 'border') {
                 for (var i in props) {
                     css[selector]['border-top-' + i] = props[i].def;
@@ -1029,7 +1029,7 @@ String.prototype.trim = function() {
                             bits.splice(j, 1);
                             break;
                         }
-                    }   
+                    }
                 }
                 imp = '';
 
@@ -1073,18 +1073,18 @@ String.prototype.trim = function() {
                     }
                 }
             }
-            
+
         },
-        
-        
-        
-        
+
+
+
+
         setBackground: function(css, selector, value) {
             var imp = (value.indexOf('!important') != -1) ? ' !important' : '';
             if (imp != '') {
                 value = value.replace(/ *\!important */g, '');
             }
-            
+
             var urlPos = value.indexOf('url(');
             if (urlPos == -1 && value.indexOf('none') == -1) {
                 css[selector]['background-color'] = value + imp;
@@ -1104,12 +1104,12 @@ String.prototype.trim = function() {
                 return;
             }
             css[selector]['background-image'] = 'url(' + bits[1].substr(0, endImg).replace(/["']+/g, '') + ')' + imp; //"
-            
+
             var pos = [];
-            
+
             var bgOptions =  bits[1].substring(endImg + 1).split(' ');
             var n = bgOptions.length;
-            
+
             for (var i = 0; i < n; ++i) {
                 var opt = bgOptions[i].trim();
                 if (opt.indexOf('repeat') != -1) {
@@ -1128,13 +1128,13 @@ String.prototype.trim = function() {
                 css[selector]['background-color'] = col + imp;
             }
         },
-        
+
         setFont: function(css, selector, value, noreset) {
             var imp = (value.indexOf('!important') != -1) ? ' !important' : '';
             if (imp != '') {
                 value = value.replace(/ *\!important */g, '');
             }
-            
+
             var order = ['font-style', 'font-variant', 'font-weight', 'font-size', 'font-family'];
             var numProps = order.length;
             var allowedVals = {};
@@ -1143,13 +1143,13 @@ String.prototype.trim = function() {
             allowedVals['font-weight'] = /(normal|bold|bolder|lighter|100|200|300|400|500|600|700|800|900|inherit)/;
             allowedVals['font-size'] = /([^ ]+)/;
             allowedVals['font-family'] = /(.+$)/;
-            
+
             if (!noreset['font-style']) css[selector]['font-style'] = 'normal';
             if (!noreset['font-variant']) css[selector]['font-variant'] = 'normal';
             if (!noreset['font-weight']) css[selector]['font-weight'] = 'normal';
             if (!noreset['font-size']) css[selector]['font-size'] = 'medium';
             if (!noreset['line-height']) css[selector]['line-height'] = 'normal';
-            
+
             var expandShorthand = function(bits) {
                 var numBits = bits.length;
                 var startProp = 0;
@@ -1172,7 +1172,7 @@ String.prototype.trim = function() {
                     }
                 }
             };
-            
+
             var removeCommaListSpaces = function(str) {
                 var comma = str.indexOf(',');
                 if (comma != -1) {
@@ -1180,29 +1180,29 @@ String.prototype.trim = function() {
                 }
                 return str;
             };
-            
+
             var hasQuote = value.match(/(["'])/); //"
             if (hasQuote) {
                 var tmp = value.split(hasQuote[1]);
                 var bits = removeCommaListSpaces(tmp.shift()).split(' ');
                 var startFont = bits.pop();
-                
+
                 expandShorthand(bits);
-                
-                css[selector]['font-family'] = startFont + hasQuote[1] + tmp.join(hasQuote[1]) + imp;           
+
+                css[selector]['font-family'] = startFont + hasQuote[1] + tmp.join(hasQuote[1]) + imp;
             } else {
-                value = removeCommaListSpaces(value);            
+                value = removeCommaListSpaces(value);
                 expandShorthand(value.split(' '));
             }
         },
-        
-        
-        
+
+
+
 
         __allPropsEqual: function(props) {
             var num = props.length - 1;
             if (num < 3) return false;
-            
+
             for (var i = 0; i < num; ++i) {
                 if (props[i].value != props[i + 1].value) {
                     return false;
@@ -1211,19 +1211,19 @@ String.prototype.trim = function() {
             return true;
         }
     };
-    
-    
-    
+
+
+
     CSS.FreeEdit = {
-      
+
         __initial: {},
-        
+
         setInitial: function(e) {
             var target = e.target || e.srcElement;
 
             CSS.FreeEdit.__initial = CSS.toObject(target.value);
         },
-        
+
         saveComplete: function(e) {
             var target = e.target || e.srcElement;
             target.value = CSS.FreeEdit.__stripComments(target.value);
@@ -1235,11 +1235,11 @@ String.prototype.trim = function() {
 
             CSS.preview();
         },
-        
+
         saveSelector: function(e) {
             var target = e.target || e.srcElement;
             target.value = CSS.FreeEdit.__stripComments(target.value);
-            
+
             var changedSelectors = [];
             var css = CSS.toObject(target.value);
             for (var sel in css) {
@@ -1266,25 +1266,25 @@ String.prototype.trim = function() {
                     }
                 }
             }
-            
+
             CSS.__localSaveRequired = true;
             CSS.__remoteSaveRequired = true;
             CSS.preview(changedSelectors);
         },
-        
+
         __stripComments: function(str) {
             return str.replace(/\/\*([\s\S])*?\*\//g, '');
         }
-        
+
     };
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     var FileHandler = {
-        
+
         getFiles: function(path) {
             if (!path) path = '';
             var xmlhttp = new XMLHttpRequest();
@@ -1299,11 +1299,11 @@ String.prototype.trim = function() {
             return true;
         }
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     var UI = {
         boxes: [],
         boxOffsetX: 35,
@@ -1314,7 +1314,7 @@ String.prototype.trim = function() {
 
         statusMsg: function(msg, cls) {
             UI.clearStatusMsg();
-            
+
             var target = UI.__getBox();
             if (!target) {
                 var box = Util.createElement('div', 'chameleon-status-msg');
@@ -1322,26 +1322,26 @@ String.prototype.trim = function() {
                 box.style.zIndex = ++UI.zIndex;
                 UI.addToDoc(box);
             } else {
-         
+
                 var statusTable = Util.createElement('table', 'chameleon-status-msg');
                 var statusTableBody = Util.createElement('tbody');
                 var statusRow = Util.createElement('tr');
                 var statusIconCell = Util.createElement('td');
                 var statusMsgCell = Util.createElement('td');
                 var statusBtnCell = Util.createElement('td');
-                
+
                 if (cls) {
                     statusIconCell.className = cls;
                 }
                 statusMsgCell.appendChild(document.createTextNode(msg));
                 statusBtnCell.appendChild(UI.createButton('chameleon-status-msg-btn', 'OK', 'Clear this message', UI.clearStatusMsg));
-                
+
                 statusRow.appendChild(statusIconCell);
                 statusRow.appendChild(statusMsgCell);
                 statusRow.appendChild(statusBtnCell);
                 statusTableBody.appendChild(statusRow);
                 statusTable.appendChild(statusTableBody);
-                
+
                 target.appendChild(statusTable);
             }
         },
@@ -1362,7 +1362,7 @@ String.prototype.trim = function() {
                 var offset = x + 525 - screen.width;
                 x -= offset;
             }
-            
+
             var box = Util.createElement('div', id);
             box.style.left = x + 'px';
             box.style.top = y + 'px';
@@ -1373,7 +1373,7 @@ String.prototype.trim = function() {
             closeBtn.appendChild(document.createTextNode('x'));
             closeBtn.setAttribute('title', 'Close');
             topBar.setAttribute('title', 'Drag me!');
-            
+
             UI.__dragTargetId = id + '-handle';
 
             Util.addEvent(closeBtn, 'click', UI.closeBoxes);
@@ -1383,12 +1383,12 @@ String.prototype.trim = function() {
 
             topBar.appendChild(closeBtn);
             box.appendChild(topBar);
-   
+
             UI.boxes.push(id);
 
             return box;
         },
-        
+
         closeAllBoxes: function() {
             var n = UI.boxes.length;
             while (n--) {
@@ -1403,7 +1403,7 @@ String.prototype.trim = function() {
                 var target = e.target || e.srcElement;
                 var box = target.parentNode.parentNode;
             }
-                        
+
             var n = UI.boxes.length;
             while (n--) {
                 if (UI.boxes[n] == box.id) {
@@ -1422,7 +1422,7 @@ String.prototype.trim = function() {
             var mouseCoords = Pos.getMouse(e);
             var elementCoords = Pos.getElement(target);
             target.mouseX = mouseCoords.x - elementCoords.x;
-            target.mouseY = mouseCoords.y - elementCoords.y;    
+            target.mouseY = mouseCoords.y - elementCoords.y;
 
             UI.__dragTargetId = target.id;
 
@@ -1439,7 +1439,7 @@ String.prototype.trim = function() {
             var mouseCoords = Pos.getMouse(e);
             target.parentNode.style.left = (mouseCoords.x - target.mouseX) + 'px';
             target.parentNode.style.top = (mouseCoords.y - target.mouseY) + 'px';
-            
+
             if (e.preventDefault) {
                 e.preventDefault();
             } else if (window.event) {
@@ -1451,7 +1451,7 @@ String.prototype.trim = function() {
             var target = e.target || e.srcElement;
             target.parentNode.style.zIndex = ++UI.zIndex;
         },
-        
+
         __getBox: function() {
             var obj = document.getElementById(UI.__dragTargetId);
             if (obj && obj.parentNode) {
@@ -1459,10 +1459,10 @@ String.prototype.trim = function() {
             }
             return false;
         },
-        
-        
-        
-        
+
+
+
+
         setupPane: function(tabs, parentId, tabId, active) {
             for (var i = 0; i < tabs.length; ++i) {
                 var obj = document.getElementById(tabId + '-tab-' + tabs[i]);
@@ -1477,7 +1477,7 @@ String.prototype.trim = function() {
             }
             return parent;
         },
-        
+
         setupButtons: function() {
             var parentId = arguments[0];
             var parent = document.getElementById(parentId);
@@ -1496,7 +1496,7 @@ String.prototype.trim = function() {
                 }
             }
         },
-        
+
         createButton: function(id, value, title, fn, hidden) {
             var btn = Util.createElement('input', id);
             btn.setAttribute('type', 'submit');
@@ -1518,15 +1518,15 @@ String.prototype.trim = function() {
             }
         }
     };
-    
-    
+
+
     UI.Selector = {
         controlsId: 'chameleon-selector-controls',
         viewedProp: null,
         displayPropWatch: false,
         sections: ['choose', 'overview', 'free-edit'],
-        
-        
+
+
         editWindow: function(e) {
             if (!e.shiftKey) {
                 return;
@@ -1537,7 +1537,7 @@ String.prototype.trim = function() {
             if (typeof tmpStruct == 'string') {
                 return;
             }
-            
+
             hotspotMode = false;
 
             var box = document.getElementById('chameleon-selector-box');
@@ -1558,7 +1558,7 @@ String.prototype.trim = function() {
             var tabsContainer = Util.createElement('table', 'chameleon-selector-tabs');
             var tabsBody = Util.createElement('tbody');
             var tabs = Util.createElement('tr');
- 
+
             tabs.appendChild(UI.Selector.__createTab('Choose', UI.Selector.__editSelector, true, 'Choose'));
             tabs.appendChild(UI.Selector.__createTab('Overview', UI.Selector.__displayOverview, false, 'Overview'));
             tabs.appendChild(UI.Selector.__createTab('Free Edit', UI.Selector.__editCode, false, 'Free Edit'));
@@ -1575,18 +1575,18 @@ String.prototype.trim = function() {
             UI.addToDoc(box);
 
             UI.Selector.__editSelector();
-            
+
             if (e.preventDefault) {
                 e.preventDefault();
             } else if (window.event) {
                 window.event.returnValue = false;
             }
         },
-        
-       
+
+
         __listProps: function(e) {
              var target = e.target || e.srcElement;
-             
+
              Util.removeElement(document.getElementById('chameleon-selector-element-list'));
              UI.Selector.viewedProp = target.options[target.selectedIndex].value;
              if (!document.getElementById('chameleon-selector-list')) {
@@ -1595,7 +1595,7 @@ String.prototype.trim = function() {
                  target.parentNode.parentNode.insertBefore(UI.Selector.__elementList(target.options[target.selectedIndex].value), document.getElementById('chameleon-selector-list'));
              }
         },
-        
+
         __editSelector: function() {
             var parent = UI.setupPane(UI.Selector.sections, UI.Selector.controlsId, 'chameleon-selector', 'choose');
             UI.setupButtons('chameleon-selector-buttons', 'edit', 'check');
@@ -1605,17 +1605,17 @@ String.prototype.trim = function() {
             var instructions = Util.createElement('p');
             instructions.appendChild(document.createTextNode('Please choose the element you wish to style.'));
             container.appendChild(instructions);
-            
+
             var options = Util.createElement('p');
-            
+
             if (UI.Selector.__displayPropWatch) {
-                            
+
                 var selectProp = Util.createElement('select', 'chameleon-selector-prop-select');
                 var optionProp = Util.createElement('option');
                 optionProp.appendChild(document.createTextNode('Select a CSS property to view'));
                 optionProp.setAttribute('value', '');
                 selectProp.appendChild(optionProp);
-            
+
                 for (var i = 0; i < Config.PROPS_LIST.length; ++i) {
                     optionProp = Util.createElement('option');
                     optionProp.setAttribute('value', Config.PROPS_LIST[i]);
@@ -1623,52 +1623,52 @@ String.prototype.trim = function() {
                         optionProp.setAttribute('selected', 'selected');
                     }
                     optionProp.appendChild(document.createTextNode(Config.PROPS_LIST[i]));
-                    selectProp.appendChild(optionProp); 
+                    selectProp.appendChild(optionProp);
                 }
-            
+
                 Util.addEvent(selectProp, 'change', UI.Selector.__listProps);
-            
+
                 options.appendChild(selectProp);
- 
+
             }
-            
+
             var togglePropWatch = Util.createElement('a');
             togglePropWatch.setAttribute('title', 'The property inspector allows you to check the current value of a range of CSS properties for these elements');
             togglePropWatch.appendChild(document.createTextNode(' (' + (UI.Selector.__displayPropWatch ? 'Hide property inspector' : 'Show property inspector') + ')'));
             Util.addEvent(togglePropWatch, 'click', UI.Selector.__togglePropWatch);
             options.appendChild(togglePropWatch);
-            
-            
+
+
             container.appendChild(options);
-            
+
             container.appendChild(UI.Selector.__elementList());
 
             parent.appendChild(container);
 
             UI.Selector.displaySelector(CSS.Selector.trimmed);
         },
-        
+
         __togglePropWatch: function() {
             UI.Selector.__displayPropWatch = !UI.Selector.__displayPropWatch;
             UI.Selector.__editSelector();
         },
-        
+
         __displayOverview: function(e, selectors, selector) {
             var parent = UI.setupPane(UI.Selector.sections, UI.Selector.controlsId, 'chameleon-selector', 'overview');
             UI.setupButtons('chameleon-selector-buttons');
-            
+
             var container = Util.createElement('div', 'chameleon-style-overview-container');
             parent.appendChild(container); // doing it this way is much faster than creating the table then applying the overflow
             UI.setOverflow(container, 350, true);
-            
+
             var overviewTable = Util.createElement('table', 'chameleon-style-overview');
             var overviewTableBody = Util.createElement('tbody');
-            
+
             if (!selectors) {
 
                 for (var sel in CSS.__localCSS) {
                     var overviewTableRow = Util.createElement('tr');
-                
+
                     var overviewTableCell = Util.createElement('th');
                     overviewTableCell.className = 'selector';
                     overviewTableCell.appendChild(document.createTextNode(sel));
@@ -1698,12 +1698,12 @@ String.prototype.trim = function() {
                     }
                 }
             } else {
-            
+
                 var n = selectors.length;
-                
+
                 if (!CSS.__localCSS[selector]) {
                     var overviewTableRow = Util.createElement('tr');
-                
+
                     var overviewTableCell = Util.createElement('th');
                     overviewTableCell.className = 'current-selector';
                     overviewTableCell.appendChild(document.createTextNode(selector));
@@ -1720,12 +1720,12 @@ String.prototype.trim = function() {
                     overviewTableRow.appendChild(overviewTableCell);
                     overviewTableBody.appendChild(overviewTableRow);
                 }
-                
+
                 for (var i = 0; i < n; ++i) {
                     var sel = selectors[i];
-                    
+
                     var overviewTableRow = Util.createElement('tr');
-                
+
                     var overviewTableCell = Util.createElement('th');
                     overviewTableCell.className = (sel == selector) ? 'current-selector' : 'selector';
                     overviewTableCell.appendChild(document.createTextNode(sel));
@@ -1741,7 +1741,7 @@ String.prototype.trim = function() {
 
                     overviewTableRow.appendChild(overviewTableCell);
                     overviewTableBody.appendChild(overviewTableRow);
-                    
+
                     for (var prop in CSS.__localCSS[sel]) {
                         overviewTableRow = Util.createElement('tr');
                         overviewTableCell = Util.createElement('td');
@@ -1755,18 +1755,18 @@ String.prototype.trim = function() {
                         overviewTableBody.appendChild(overviewTableRow);
                     }
                 }
-            
+
             }
 
-            overviewTable.appendChild(overviewTableBody);            
+            overviewTable.appendChild(overviewTableBody);
             container.appendChild(overviewTable);
         },
-        
+
         __elementList: function(showComputedStyle) {
             if (!showComputedStyle && UI.Selector.viewedProp) {
                 showComputedStyle = UI.Selector.viewedProp;
             }
-            
+
             var list = Util.createElement('ol', 'chameleon-selector-element-list');
             var n = struct.length;
             var classStr = '';
@@ -1783,7 +1783,7 @@ String.prototype.trim = function() {
                 tag.appendChild(document.createTextNode(struct[n].tagname));
                 tag.selectorValue = struct[n].tagname;
                 tag.position = n;
-               
+
                 UI.Selector.__autoHighlight(tag);
 
                 Util.addEvent(tag, 'click', CSS.Selector.modify);
@@ -1792,8 +1792,8 @@ String.prototype.trim = function() {
 
                 if (idStr = struct[n].id) {
                     var id = Util.createElement('span', 'chameleon-id-attr-' + n);
-                    id.selectorValue = struct[n].tagname + '#' + idStr; 
-                    id.position = n;      
+                    id.selectorValue = struct[n].tagname + '#' + idStr;
+                    id.position = n;
                     id.appendChild(document.createTextNode('#' + idStr));
 
                     UI.Selector.__autoHighlight(id);
@@ -1807,7 +1807,7 @@ String.prototype.trim = function() {
                     for (var i = 0; i < classArr.length; ++i) {
                         var cn = Util.createElement('span', 'chameleon-class-attr-' + n + '-' + i);
                         cn.selectorValue = struct[n].tagname + '.' + classArr[i];
-                        cn.position = n;      
+                        cn.position = n;
                         cn.appendChild(document.createTextNode('.' + classArr[i]));
 
                         UI.Selector.__autoHighlight(cn);
@@ -1821,7 +1821,7 @@ String.prototype.trim = function() {
                         var pc = Util.createElement('span', 'chameleon-pseudo-class' + n + '-' + i);
                         pc.selectorValue = struct[n].tagname + ':' + pseudoClasses[i];
 
-                        pc.position = n;      
+                        pc.position = n;
                         pc.appendChild(document.createTextNode(':' + pseudoClasses[i]));
 
                         UI.Selector.__autoHighlight(pc);
@@ -1830,17 +1830,17 @@ String.prototype.trim = function() {
                         item.appendChild(pc);
                     }
                 }
-                
+
                 if (showComputedStyle) {
                     var sides = ['top', 'right', 'bottom', 'left'];
-                    
+
                     if (document.defaultView && document.defaultView.getComputedStyle) {
                         if (showComputedStyle == 'margin' || showComputedStyle == 'padding') {
                             var styleVal = [];
-                            for (var i = 0; i < 4; ++i) {                                
+                            for (var i = 0; i < 4; ++i) {
                                 styleVal.push(document.defaultView.getComputedStyle(struct[n].el, null).getPropertyValue(showComputedStyle + '-' + sides[i]))
                             }
-                            
+
                             if (styleVal[0] == styleVal[1] && styleVal[1] == styleVal[2] && styleVal[2] == styleVal[3]) {
                                 styleVal = styleVal[0];
                             } else if (styleVal[0] == styleVal[2] && styleVal[1] == styleVal[3]) {
@@ -1850,40 +1850,40 @@ String.prototype.trim = function() {
                             } else {
                                 styleVal = styleVal.join(' ');
                             }
-                        } else {                    
+                        } else {
                             var styleVal = document.defaultView.getComputedStyle(struct[n].el, null).getPropertyValue(showComputedStyle);
                         }
 
-                        
+
                         if (styleVal.indexOf('rgb') != -1) {
                             styleVal = UI.Selector.__formatColor(styleVal);
                         }
- 
+
                     } else if (struct[n].el.currentStyle) {
                         var propBits = showComputedStyle.split('-');
                         for (var i = 1; i < propBits.length; ++i) {
                             propBits[i] = propBits[i].charAt(0).toUpperCase() + propBits[i].substring(1);
                         }
-                        var styleVal = struct[n].el.currentStyle[propBits.join('')];                       
+                        var styleVal = struct[n].el.currentStyle[propBits.join('')];
                     }
-                    
+
                     var sp = Util.createElement('span');
                     sp.className = 'prop-value';
                     sp.appendChild(document.createTextNode(styleVal));
-                    
+
                     item.appendChild(sp);
                 }
 
-                
+
                 list.appendChild(item);
             }
-            
+
             return list;
         },
-        
-        
+
+
         __formatColor: function(color) {
-            var newColor = '';            
+            var newColor = '';
             colorBits = color.replace(/rgb\(|[ \)]/g, '').split(',');
             var hexCol = (colorBits[0] << 16 | colorBits[1] << 8 | colorBits[2]).toString(16);
             while (hexCol.length < 6) {
@@ -1891,15 +1891,15 @@ String.prototype.trim = function() {
             }
             return '#' + hexCol;
         },
-        
-        
+
+
         __editCode: function() {
             var parent = UI.setupPane(UI.Selector.sections, UI.Selector.controlsId, 'chameleon-selector', 'free-edit');
             UI.setupButtons('chameleon-selector-buttons', 'revert', 'save-local', 'save-server');
 
             var container = Util.createElement('div');
             var textarea = Util.createElement('textarea', 'chameleon-free-edit-all-field');
-            
+
             textarea.style.width = '100%';
             textarea.style.height = '350px';
             Util.addEvent(textarea, 'blur', CSS.FreeEdit.saveComplete);
@@ -1909,17 +1909,17 @@ String.prototype.trim = function() {
             parent.appendChild(container);
             textarea.value = CSS.toString(); // avoid Konqueror bug
         },
-        
-        
-        
-        
+
+
+
+
         __selectorList: function() {
             return Util.createElement('ol', 'chameleon-selector-list');
         },
-        
-        
-        
-        
+
+
+
+
         __createTab: function(str, fn, active, title) {
             var id = 'chameleon-selector-tab-' + str.replace(/ +/, '-').toLowerCase();
             var tab = Util.createElement('td', id);
@@ -1941,10 +1941,10 @@ String.prototype.trim = function() {
 
             return p;
         },
-        
-        
-        
-        
+
+
+
+
         __autoHighlight: function(el) {
             if (CSS.Selector.full[el.position] && CSS.Selector.full[el.position].val == el.selectorValue) {
                 UI.Selector.highlight(el);
@@ -1952,7 +1952,7 @@ String.prototype.trim = function() {
                 UI.Selector.unhighlight(el);
             }
         },
-        
+
         highlight: function(el) {
             UI.Selector.unhighlight(el);
             el.className += 'active-selector';
@@ -1961,10 +1961,10 @@ String.prototype.trim = function() {
         unhighlight: function(el) {
             el.className = el.className.replace(/\bactive-selector\b/, '');
         },
-        
-        
-        
-        
+
+
+
+
         displaySelector: function(selector) {
             var n = selector.length;
 
@@ -1991,13 +1991,13 @@ String.prototype.trim = function() {
                 item.appendChild(document.createTextNode('That are descended from ' + UI.Selector.__describe(selector[n])));
                 list.appendChild(item);
             }
-            
+
             UI.setOverflow(list, 100);
         },
 
         __describe: function(txt) {
             if (!txt) return '';
-            
+
             if (txt.indexOf(':') != -1) {
                 var parts = txt.split(':');
                 var pc = ' the "' + parts.pop() + '" state of ';
@@ -2017,23 +2017,23 @@ String.prototype.trim = function() {
             return pc + txt + ' tags';
         }
     };
-    
-    
-    
+
+
+
     UI.CSS = {
         redraw: null,
         colorType: null,
         controlsId: 'chameleon-style-controls',
         sections: ['text', 'backgrounds', 'borders-all', 'borders-separate', 'free-edit'],
-        
+
         __borderEditGroup: true,
-        
+
         editWindow: function(e) {
             if (CSS.Selector.get() == '') {
                 UI.statusMsg('First you have to choose which item to style!', 'chameleon-notice');
                 return;
             }
-            
+
             var box = document.getElementById('chameleon-style-box');
             if (box) UI.closeBoxes(true, box);
 
@@ -2052,7 +2052,7 @@ String.prototype.trim = function() {
             var tabsContainer = Util.createElement('table', 'chameleon-style-tabs');
             var tabsBody = Util.createElement('tbody');
             var tabs = Util.createElement('tr');
- 
+
             tabs.appendChild(UI.CSS.__createTab('Text', UI.CSS.__editText, true, 'Text'));
             tabs.appendChild(UI.CSS.__createTab('Backgrounds', UI.CSS.__editBackgrounds, false, 'Backgrounds'));
             tabs.appendChild(UI.CSS.__createTab('Borders (All)', UI.CSS.__editBordersAll, false, 'Borders (All)'));
@@ -2069,19 +2069,19 @@ String.prototype.trim = function() {
             box.appendChild(UI.CSS.__addButtons());
 
             UI.addToDoc(box);
-            
+
             UI.CSS.__editText();
         },
-        
-        
-        
+
+
+
         launchEditWindow: function(e) {
             var target = e.target || e.srcElement;
             CSS.Selector.set(target.value);
             UI.CSS.editWindow(e);
         },
-        
-        
+
+
         __editText: function(e, redraw) {
             UI.CSS.redraw = arguments.callee;
             UI.CSS.colorType = 'color';
@@ -2096,7 +2096,7 @@ String.prototype.trim = function() {
                 container.appendChild(row.node);
 
                 row = UI.CSS.__selectBox('font-family', '-select-font-family', Check.fontFamily, Config.FONTS_LIST);
-                container.appendChild(row.node);        
+                container.appendChild(row.node);
 
                 row = UI.CSS.__inputField('font-family', '-input-font-family', Check.fontFamily, !row.meta.sel);
                 container.appendChild(row.node);
@@ -2112,7 +2112,7 @@ String.prototype.trim = function() {
 
                 row = UI.CSS.__selectBox('font-style', '-select-font-style', Check.fontStyle, Config.FONT_STYLES);
                 container.appendChild(row.node);
-                
+
                 row = UI.CSS.__selectBox('text-align', '-select-text-align', Check.textAlign, Config.TEXT_ALIGN);
                 container.appendChild(row.node);
 
@@ -2127,7 +2127,7 @@ String.prototype.trim = function() {
                 }
             }
         },
-        
+
         __editBackgrounds: function(e, redraw) {
             UI.CSS.redraw = arguments.callee;
             UI.CSS.colorType = 'background-color';
@@ -2145,12 +2145,12 @@ String.prototype.trim = function() {
                 container.appendChild(row.node);
 
                 var extraFields = row.meta;
-                
+
                 row = UI.CSS.__selectBox('background-repeat', '-select-background-repeat', Check.backgroundRepeat, Config.REPEAT_LIST, !extraFields);
                 container.appendChild(row.node);
 
                 row = UI.CSS.__selectBox('background-position', '-select-background-position', Check.backgroundPosition, Config.POSITION_LIST, !extraFields);
-                container.appendChild(row.node);   
+                container.appendChild(row.node);
 
                 containerTable.appendChild(container);
                 parent.appendChild(containerTable);
@@ -2180,24 +2180,24 @@ String.prototype.trim = function() {
                 imgPreview.setAttribute('height', '20');
             }
         },
-        
+
         __editBordersAll: function(e, redraw) {
             UI.CSS.redraw = arguments.callee;
             UI.CSS.colorType = 'border-color';
-                        
+
             var containerTable = document.getElementById('chameleon-style-edit-borders-all-container');
             if (!containerTable) {
-               
+
                 var parent = UI.setupPane(UI.CSS.sections, UI.CSS.controlsId, 'chameleon-style', 'borders-all');
                 containerTable = Util.createElement('table', 'chameleon-style-edit-borders-all-container');
                 var container = Util.createElement('tbody');
 
                 var row = UI.CSS.__inputField('border-width', '-input-border-width', Check.borderWidth);
                 container.appendChild(row.node);
-  
+
                 row = UI.CSS.__inputField('border-color', '-input-border-color', Check.color);
                 container.appendChild(row.node);
-             
+
                 row = UI.CSS.__selectBox('border-style', '-select-border-style', Check.borderStyle, Config.BORDER_LIST);
                 container.appendChild(row.node);
 
@@ -2209,10 +2209,10 @@ String.prototype.trim = function() {
                 }
             }
         },
-        
+
         __editBordersSeparate: function(e, redraw) {
             UI.CSS.redraw = arguments.callee;
-            
+
             var containerTable = document.getElementById('chameleon-style-edit-borders-separate-container');
             if (!containerTable) {
                 var parent = UI.setupPane(UI.CSS.sections, UI.CSS.controlsId, 'chameleon-style', 'borders-separate');
@@ -2221,24 +2221,24 @@ String.prototype.trim = function() {
 
                 var row = UI.CSS.__inputField('border-top-width', '-input-border-top-width', Check.borderWidth);
                 container.appendChild(row.node);
-  
+
                 row = UI.CSS.__inputField('border-top-color', '-input-border-top-color', Check.color, false, UI.CSS.__setColorType);
                 container.appendChild(row.node);
-             
+
                 row = UI.CSS.__selectBox('border-top-style', '-select-border-top-style', Check.borderStyle, Config.BORDER_LIST);
-                container.appendChild(row.node); 
+                container.appendChild(row.node);
 
 
                 row = UI.CSS.__inputField('border-right-width', '-input-border-right-width', Check.borderWidth);
                 container.appendChild(row.node);
- 
+
                 row = UI.CSS.__inputField('border-right-color', '-input-border-right-color', Check.color, false, UI.CSS.__setColorType);
                 container.appendChild(row.node);
 
                 row = UI.CSS.__selectBox('border-right-style', '-select-border-right-style', Check.borderStyle, Config.BORDER_LIST);
-                container.appendChild(row.node);  
+                container.appendChild(row.node);
 
- 
+
                 row = UI.CSS.__inputField('border-bottom-width', '-input-border-bottom-width', Check.borderWidth);
                 container.appendChild(row.node);
 
@@ -2246,9 +2246,9 @@ String.prototype.trim = function() {
                 container.appendChild(row.node);
 
                 row = UI.CSS.__selectBox('border-bottom-style', '-select-border-bottom-style', Check.borderStyle, Config.BORDER_LIST);
-                container.appendChild(row.node);   
+                container.appendChild(row.node);
 
- 
+
                 row = UI.CSS.__inputField('border-left-width', '-input-border-left-width', Check.borderWidth);
                 container.appendChild(row.node);
 
@@ -2257,7 +2257,7 @@ String.prototype.trim = function() {
 
                 row = UI.CSS.__selectBox('border-left-style', '-select-border-left-style', Check.borderStyle, Config.BORDER_LIST);
                 container.appendChild(row.node);
-                
+
                 containerTable.appendChild(container);
                 parent.appendChild(containerTable);
             } else {
@@ -2266,7 +2266,7 @@ String.prototype.trim = function() {
                 }
             }
         },
-        
+
         __editCode: function(e) {
             UI.CSS.redraw = arguments.callee;
 
@@ -2274,7 +2274,7 @@ String.prototype.trim = function() {
 
             var container = Util.createElement('div');
             var textarea = Util.createElement('textarea', 'chameleon-free-edit-field');
-            
+
             textarea.style.width = '100%';
             textarea.style.height = '350px';
 
@@ -2285,32 +2285,32 @@ String.prototype.trim = function() {
             parent.appendChild(container);
             textarea.value = CSS.getSelectorCSS(); // avoid Konqueror bug
         },
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
         __getPropValue: function(prop) {
             var val = UI.CSS.__getBorderPropValue(prop);
             if (val === '') {
                 return false;
             }
-            
+
             if (val === false) {
                 val = CSS.getPropValue(prop);
             }
             return val;
         },
-        
-        
+
+
         __setColorDisplay: function(prop, value, field, picker) {
             if (!field) var field = document.getElementById(UI.CSS.controlsId + '-input-' + prop);
             if (!picker) var picker = document.getElementById(UI.CSS.controlsId + '-color-picker-' + prop);
-            
+
             if (!field || !picker) return;
-            
+
             field.value = value;
             try {
                 picker.style.backgroundColor = (value != '') ? value.replace(/[ ]*\!important/, '') : '#000';
@@ -2321,22 +2321,22 @@ String.prototype.trim = function() {
                 UI.statusMsg(value + ' is an Invalid color!', 'chameleon-error');
             }
         },
-        
+
         __setImageDisplay: function(value, field, picker) {
             if (!field) var field = document.getElementById(UI.CSS.controlsId + '-input-background-image');
             if (!picker) var picker = document.getElementById(UI.CSS.controlsId + '-background-image-picker');
-            
+
             var preview = document.getElementById('chameleon-image-preview');
-            
+
             if (!field || !picker) return;
-            
+
             field.value = value;
             if (value != '') {
                 if (!preview) {
                     preview = Util.createElement('img', 'chameleon-image-preview');
                     picker.appendChild(preview);
                 }
-                
+
                 if (field.value != 'none') {
                     preview.setAttribute('src', CSS.fixPath(value.replace(/[ ]*\!important/, '')));
                 } else {
@@ -2354,57 +2354,57 @@ String.prototype.trim = function() {
                 picker.setAttribute('title', 'Open image picker');
                 Util.addEvent(picker, 'click', UI.CSS.__loadImagePicker);
             }
-            
-            
+
+
         },
-        
+
         __shorthandWarningIcon: function() {
              var img = Util.createElement('img');
              img.setAttribute('src', CSS.fixPath('ui/images/notice.gif'));
              img.style.margin = '0 2px -5px 0';
-             img.setAttribute('title', 'Currently this property has specific values set for one or more individual sides. Updating the value here will set this property for all sides, overwriting these individual values.');  
+             img.setAttribute('title', 'Currently this property has specific values set for one or more individual sides. Updating the value here will set this property for all sides, overwriting these individual values.');
              return img;
         },
-        
+
         __inputField: function(prop, id, validate, hidden, init) {
             var row = Util.createElement('tr', UI.CSS.controlsId + '-row' + id);
             id = UI.CSS.controlsId + id;
-            
+
             var labelCell = Util.createElement('td');
             var fieldCell = Util.createElement('td');
 
             var field = Util.createElement('input', id);
             field.setAttribute('type', 'text');
             field.className = 'chameleon-input-text';
-            
-            
+
+
             var val = UI.CSS.__getPropValue(prop);
             if (val !== false) {
                 field.value = val;
             } else {
                 labelCell.appendChild(UI.CSS.__shorthandWarningIcon());
             }
-            
+
             Util.addEvent(field, 'blur', validate);
             if (init) {
                 Util.addEvent(field, 'focus', init);
             }
-            
+
             labelCell.appendChild(document.createTextNode(UI.CSS.__formatProp(prop) + ': '));
             labelCell.className = 'label';
 
             fieldCell.appendChild(field);
-             
+
             row.appendChild(labelCell);
             row.appendChild(fieldCell);
-            
+
             if (prop == 'color' || prop.indexOf('-color') != -1) {
                 var colorCell = Util.createElement('td');
                 var colorPicker = Util.createElement('div', UI.CSS.controlsId + '-color-picker-' + prop);
 
                 colorPicker.setAttribute('title', 'Open color picker');
                 UI.CSS.__setColorDisplay(prop, field.value, field, colorPicker);
-                
+
                 Util.addEvent(colorPicker, 'click', UI.CSS.__displayColorPicker);
                 if (init) {
                     Util.addEvent(colorPicker, 'click', init);
@@ -2415,12 +2415,12 @@ String.prototype.trim = function() {
             } else if (prop.indexOf('-image') != -1) {
                 var imgCell = Util.createElement('td');
                 var imgPicker = Util.createElement('div', UI.CSS.controlsId + '-background-image-picker');
-                
+
                 UI.CSS.__setImageDisplay(field.value, field, imgPicker);
 
                 imgCell.appendChild(imgPicker);
                 row.appendChild(imgCell);
-                
+
             } else {
                 fieldCell.setAttribute('colspan', '2');
             }
@@ -2429,8 +2429,8 @@ String.prototype.trim = function() {
             }
             return {node: row, meta: (field.value == 'none') ? false : field.value};
         },
-        
-        
+
+
         __selectBox: function(prop, id, validate, src, hidden) {
             var row = Util.createElement('tr', UI.CSS.controlsId + '-row' + id);
             id = UI.CSS.controlsId + id;
@@ -2438,7 +2438,7 @@ String.prototype.trim = function() {
             var labelCell = Util.createElement('td');
             var fieldCell = Util.createElement('td');
             fieldCell.setAttribute('colspan', '2');
-            
+
             var currentValue = UI.CSS.__getPropValue(prop);
             if (currentValue === false) {
                 labelCell.appendChild(UI.CSS.__shorthandWarningIcon());
@@ -2456,7 +2456,7 @@ String.prototype.trim = function() {
 
             var selected = false;
             var otherSelected = false;
-        
+
             for (var i = 0; i < src.length; ++i) {
                 op = Util.createElement('option');
                 op.setAttribute('value', src[i]);
@@ -2484,9 +2484,9 @@ String.prototype.trim = function() {
 
             return {node: row, meta: {sel: otherSelected, value: currentValue}};
         },
-        
-        
-        
+
+
+
         __createTab: function(str, fn, active, title) {
             var id = 'chameleon-style-tab-' + str.replace(/[\( ]+/, '-').replace(/[\)]+/, '').toLowerCase();
             var tab = Util.createElement('td', id);
@@ -2495,7 +2495,7 @@ String.prototype.trim = function() {
             Util.addEvent(tab, 'click', fn);
             return tab;
         },
-        
+
         __addButtons: function() {
             var p = Util.createElement('p', 'chameleon-style-buttons');
             p.style.textAlign = 'right';
@@ -2506,7 +2506,7 @@ String.prototype.trim = function() {
 
             return p;
         },
-        
+
         __formatProp: function(txt) {
             if (txt.length > 15 && txt.indexOf('-') != -1) {
                 return txt.split('-').slice(1).join('-');
@@ -2519,7 +2519,7 @@ String.prototype.trim = function() {
 
         __loadImagePicker: function(e) {
             var target = e.target || e.srcElement;
-        
+
             if (target.value) {
                 UI.statusMsg('Loading file list for ' + target.value + '...', 'chameleon-working');
                 FileHandler.getFiles(target.value);
@@ -2528,7 +2528,7 @@ String.prototype.trim = function() {
                 FileHandler.getFiles('root');
             }
         },
-        
+
         displayImagePicker: function(xmldata) {
             UI.clearStatusMsg();
 
@@ -2537,15 +2537,15 @@ String.prototype.trim = function() {
 
             var coords = Pos.getElement(document.getElementById('chameleon-style-box'));
             box = UI.makeDraggableBox('chameleon-file-box', coords.x + UI.boxOffsetX, coords.y + UI.boxOffsetY);
-            
+
             if (xmldata.firstChild.nodeName.toLowerCase() == 'chameleon_error') {
                 UI.statusMsg('There was an error reading files from the server:\n' + xmldata.firstChild.firstChild.nodeValue + '.', 'chameleon-error');
                 return;
             }
-            
+
             var files = xmldata.firstChild;
             var hasFiles = false;
-        
+
             var infoTable = Util.createElement('table');
             var infoTableBody = Util.createElement('tbody');
             var infoTableRow = Util.createElement('tr');
@@ -2561,7 +2561,7 @@ String.prototype.trim = function() {
                 Util.addEvent(parentLink, 'click', UI.CSS.__loadImagePicker);
                 parentCell.appendChild(parentLink);
                 infoTableRow.appendChild(parentCell);
-            } 
+            }
 
             var location = Util.createElement('td', 'chameleon-files-location');
             var locationPara = Util.createElement('p');
@@ -2575,7 +2575,7 @@ String.prototype.trim = function() {
             infoTableBody.appendChild(infoTableRow);
             infoTable.appendChild(infoTableBody);
             box.appendChild(infoTable);
-        
+
             var fileList = Util.createElement('div');
 
             for (var i = 0; i < files.childNodes.length; ++i) {
@@ -2609,14 +2609,14 @@ String.prototype.trim = function() {
 
             UI.setOverflow(fileList, 350);
         },
-        
-        
-   
-   
+
+
+
+
         __displayColorPicker: function(e) {
             var box = document.getElementById('chameleon-color-box');
             if (box) UI.closeBoxes(true, box);
-            
+
             var extraColors = ['000000', '333333', '666666', '999999', 'cccccc', 'ffffff', 'ff0000', '00ff00', '0000ff', 'ffff00', 'ff00ff', '00ffff'];
 
             var coords = Pos.getElement(document.getElementById('chameleon-style-box'));
@@ -2633,9 +2633,9 @@ String.prototype.trim = function() {
                         while (col.length < 6) {
                             col = '0' + col;
                         }
-                        
+
                         yi = (xx > 17) ? 5 : 0;
-                                                
+
                         var colorTab = Util.createElement('div');
                         colorTab.style.position = 'absolute';
                         colorTab.style.left = ((15 * x) + 17) + 'px';
@@ -2646,7 +2646,7 @@ String.prototype.trim = function() {
                         colorTab.setAttribute('title', '#' + col);
 
                         container.appendChild(colorTab);
-                        
+
                         if (x == 17) {
                             x = 0;
                             if (xx == 35) {
@@ -2659,10 +2659,10 @@ String.prototype.trim = function() {
                             ++x;
                             ++xx;
                         }
-                    }                
+                    }
                 }
             }
-            
+
             for (var i = 0; i < extraColors.length; ++i) {
                 var colorTab = Util.createElement('div');
                 colorTab.style.position = 'absolute';
@@ -2675,23 +2675,23 @@ String.prototype.trim = function() {
 
                 container.appendChild(colorTab);
             }
-            
+
             Util.addEvent(container, 'click', Check.color);
 
             container.style.height = (((y + yi) * 15) + 20) + 'px';
 
             UI.addToDoc(box);
         },
-        
-      
-      
+
+
+
         __setColorType: function(e) {
             var target = e.target || e.srcElement;
 
             UI.CSS.colorType = UI.CSS.getBorderProp(target.id);
         },
-        
-        
+
+
         getBorderProp: function(id) {
             var separators = ['color-picker', 'input', 'select'];
             for (var i = 0; i < separators.length; ++i) {
@@ -2712,36 +2712,36 @@ String.prototype.trim = function() {
                 if (!p1 && !p2 && !p3 && !p4) {
                     return false;
                 }
-                
+
                 if (!(p1 && p2 && p3 && p4)) {
                     return '';
                 }
-                
-                return (p1 == p2 && p2 == p3 && p3 == p4) ?  p1 : ''; 
+
+                return (p1 == p2 && p2 == p3 && p3 == p4) ?  p1 : '';
             }
             return false;
         }
-          
+
     };
-   
-    
-    
+
+
+
     UI.HotSpots = {
         __selectors: null,
         __counter: 0,
         __lookup: {},
-        
+
         init: function() {
             var box = Util.createElement('div', 'chameleon-launch-hotspots');
             box.appendChild(document.createTextNode('Load hotspots'));
             box.style.zIndex = ++UI.zIndex;
-            
+
             box.hotSpotsOn = false;
             Util.addEvent(box, 'click', UI.HotSpots.__load);
-            
+
             UI.addToDoc(box);
         },
-        
+
         getString: function() {
             var sel = CSS.Selector.get();
             if (UI.HotSpots.__selectors[sel]) {
@@ -2749,21 +2749,21 @@ String.prototype.trim = function() {
             }
             return '"' + sel + '"';
         },
-        
+
         __load: function(e) {
             var target = e.target || e.srcElement;
             target.hotSpotsOn = !target.hotSpotsOn;
-            
+
             UI.HotSpots.__counter = 0;
             UI.HotSpots.__lookup = {};
-            
+
             if (!target.hotSpotsOn) {
                 target.firstChild.nodeValue = 'Show hotspots';
                 UI.HotSpots.__clear();
                 return;
             }
             target.firstChild.nodeValue = 'Hide hotspots';
-          
+
             if (!UI.HotSpots.__selectors) {
                 UI.HotSpots.__selectors = {};
                 UI.HotSpots.__selectors['body'] = 'The body of the page (all pages)';
@@ -2798,55 +2798,55 @@ String.prototype.trim = function() {
                 UI.HotSpots.__selectors['table.generaltable tr.r0'] = 'Odd numbered table rows';
                 UI.HotSpots.__selectors['table.generaltable tr.r1'] = 'Even numbered table rows';
             }
-            
+
             UI.HotSpots.__parse();
         },
-        
+
         __parse: function() {
             var pos = {};
-            
+
             for (var sel in UI.HotSpots.__selectors) {
                 var matches = cssQuery(sel);
                 var nm = matches.length;
                 if (!nm) {
                     continue;
                 }
-                
+
                 for (var j = 0; j < nm; ++j) {
                     if (matches[j].hasAttribute && matches[j].hasAttribute('id') && matches[j].getAttribute('id').indexOf('chameleon') != -1) {
                         continue;
                     }
-                    
+
                     if (!matches[j].chameleonHotspotId) {
                         var coords = Pos.getElement(matches[j]);
                         coords.x = 20 * Math.round(coords.x / 20);
                         coords.y = 20 * Math.round(coords.y / 20);
-                        
+
                         while (pos[coords.x + '-' + coords.y]) {
                             coords.x += 20;
                         }
                         pos[coords.x + '-' + coords.y] = true;
-                        
+
                         var button = UI.HotSpots.__makeButton(UI.HotSpots.__selectors[sel], coords.x, coords.y);
                         UI.addToDoc(button);
-                        
+
                         matches[j].chameleonHotspotId = button.id;
                         UI.HotSpots.__lookup[button.id] = sel;
                         break;
                     } else {
                         UI.HotSpots.__lookup[matches[j].chameleonHotspotId] += '|' + sel;
                         document.getElementById(matches[j].chameleonHotspotId).title += ", " + UI.HotSpots.__selectors[sel];
-                        
+
                         break;
                     }
                 }
             }
-            
+
             pos = null;
             matches = null;
         },
-        
-        
+
+
         __clear: function() {
             for (var sel in UI.HotSpots.__selectors) {
                 var matches = cssQuery(sel);
@@ -2854,7 +2854,7 @@ String.prototype.trim = function() {
                 if (!nm) {
                     continue;
                 }
-                
+
                 for (var j = 0; j < nm; ++j) {
                     if (matches[j].chameleonHotspotId) {
                         UI.HotSpots.__lookup[matches[j].chameleonHotspotId] = null;
@@ -2863,10 +2863,10 @@ String.prototype.trim = function() {
                         break;
                     }
                 }
-            }          
+            }
         },
-     
-        
+
+
         __makeButton: function(title, x, y) {
             var d = Util.createElement('img', 'chameleon-hotspot-' + ++UI.HotSpots.__counter);
             d.style.width = d.style.height = '20px';
@@ -2874,33 +2874,33 @@ String.prototype.trim = function() {
             d.style.left = (x - 5) + 'px';
             d.style.top = (y + 15) + 'px';
             d.style.cursor = 'pointer';
-            
+
             d.setAttribute('src', CSS.fixPath('ui/images/hotspot.gif'));
             d.setAttribute('title', title);
             Util.addEvent(d, 'click', UI.HotSpots.__launch);
             return d;
         },
-        
+
         __launch: function(e) {
             var target = e.target || e.srcElement;
             var selectors = UI.HotSpots.__lookup[target.id].split('|');
-                       
+
             var coords = Pos.getMouse(e);
-            
+
             hotspotMode = true;
-                
+
             var box = document.getElementById('chameleon-selector-box');
             if (box) UI.closeBoxes(true, box);
-                
+
             var box = UI.makeDraggableBox('chameleon-selector-box', coords.x, coords.y);
-            
+
             if (selectors.length > 1) {
                 var instructions = Util.createElement('p');
                 instructions.appendChild(document.createTextNode('This element matches more than one selector, please choose which you would like to style.'));
                 instructions.className = 'chameleon-instructions';
                 box.appendChild(instructions);
             }
-            
+
             var selList = Util.createElement('ul');
             for (var i = 0; i < selectors.length; ++i) {
                 var item = Util.createElement('li');
@@ -2908,38 +2908,38 @@ String.prototype.trim = function() {
                 itemLink.appendChild(document.createTextNode('Add/Edit styles for ' + UI.HotSpots.__selectors[selectors[i]]));
                 itemLink.value = selectors[i];
                 Util.addEvent(itemLink, 'click', UI.HotSpots.__launchCSSEditor);
-                    
+
                 item.appendChild(itemLink);
-                    
+
                 selList.appendChild(item);
-                    
-                box.appendChild(selList);   
+
+                box.appendChild(selList);
             }
             UI.addToDoc(box);
         },
-        
+
         __launchCSSEditor: function(e, value) {
             var target = e.target || e.srcElement;
-            
+
             if (!value) {
                 var value = target.value;
             }
             CSS.Selector.set(value);
             UI.CSS.editWindow(e);
         }
-        
-    };
-   
 
-    
-   
-    
-    
+    };
+
+
+
+
+
+
     var Check = {
         color: function(e) {
             var target = e.target || e.srcElement;
             if (e.type == 'click' && !target.value) return;
-            
+
             var originalColor = UI.CSS.__getPropValue(UI.CSS.colorType);
             if (originalColor != target.value) {
                 CSS.setPropValue(UI.CSS.colorType, target.value);
@@ -2949,7 +2949,7 @@ String.prototype.trim = function() {
                 UI.closeBoxes(true, target.parentNode.parentNode);
             }
         },
-        
+
         backgroundImage: function(e) {
             var target = e.target || e.srcElement;
 
@@ -2958,20 +2958,20 @@ String.prototype.trim = function() {
             if (e.type == 'click') {
                 UI.closeBoxes(true, document.getElementById('chameleon-file-box'));
             }
-        },   
-        
+        },
+
         backgroundRepeat: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('background-repeat', value);
         },
-        
+
         backgroundPosition: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('background-position', value);
         },
-        
+
         borderWidth: function(e) {
             var target = e.target || e.srcElement;
 
@@ -2991,41 +2991,41 @@ String.prototype.trim = function() {
             } else if (!hasUnits) {
                 target.value = val + 'px';
             }
-            CSS.setPropValue(UI.CSS.getBorderProp(target.id), target.value);  
+            CSS.setPropValue(UI.CSS.getBorderProp(target.id), target.value);
         },
-        
+
         borderStyle: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue(UI.CSS.getBorderProp(target.id), value);
         },
-        
+
         fontStyle: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('font-style', value);
         },
-        
+
         fontWeight: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('font-weight', value);
         },
-        
+
         fontSize: function(e) {
             var target = e.target || e.srcElement;
             CSS.setPropValue('font-size', target.value);
         },
-        
+
         lineHeight: function(e) {
             var target = e.target || e.srcElement;
             CSS.setPropValue('line-height', target.value);
         },
-        
+
         fontFamily: function(e) {
             var target = e.target || e.srcElement;
             var n = target.nodeName.toLowerCase();
-            
+
             if (n == 'select') {
                 var value = target.options[target.options.selectedIndex].value.toLowerCase();
                 var fontFamilyInputRow = target.parentNode.parentNode.nextSibling;
@@ -3045,21 +3045,21 @@ String.prototype.trim = function() {
                 CSS.setPropValue('font-family', target.value);
             }
         },
-        
+
         textDecoration: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('text-decoration', value);
         },
-        
+
         textAlign: function(e) {
             var target = e.target || e.srcElement;
             var value = target.options[target.options.selectedIndex].value.toLowerCase();
             CSS.setPropValue('text-align', value);
         }
     };
-    
-    
+
+
 
 
 
@@ -3106,18 +3106,18 @@ String.prototype.trim = function() {
 
     var setup = function() {
         UI.clearStatusMsg();
-        
+
         // UI.HotSpots.init();
-        
+
         var crumb = new cookie('chameleon_server_save_required');
         if (crumb.read() == 1) {
             CSS.requireRemoteSave();
         }
-        
+
         Util.addEvent(window, 'unload', CSS.unloadPrompt);
         Util.addEvent(window, 'unload', Util.cleanUp);
         Util.addEvent(document, 'mousedown', UI.Selector.editWindow);
-        
+
         //CSS.clearTheme();
     };
 

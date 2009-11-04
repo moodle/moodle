@@ -48,4 +48,3 @@ if (!confirm_sesskey()) {
 }
 
 require_once($formaction);
-?>

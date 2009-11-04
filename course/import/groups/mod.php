@@ -53,4 +53,3 @@ echo $OUTPUT->box_end();
 
 echo '</p>';
 
-?>

@@ -1,6 +1,6 @@
 /*  $Id$ */
 
-/************************************************* 
+/*************************************************
 ***
 *** pda
 ***
@@ -18,7 +18,7 @@
 *** header and footer styles
 *** content styles (alphabetically)
 *** admin, course, activities, calendar, blocks
-*** 
+***
 *** Please sort new styles for existing content
 *** into the appropriate part of this CSS file.
 *** Styles for new Blocks or Activities please
@@ -32,10 +32,10 @@
   padding:0
 }
 p, a, li, dd, dt, pre, code, input, select {
-  font-size:1.5em !important 
+  font-size:1.5em !important
 }
 .content, .topic {
-  font-size:1.5em !important 
+  font-size:1.5em !important
 }
 #header {
   height:auto;
@@ -55,7 +55,7 @@ p, a, li, dd, dt, pre, code, input, select {
   margin-right:0 !important;
   padding-left:0 !important;
   padding-right:0 !important;
-  border:1px solid #AAA !important 
+  border:1px solid #AAA !important
 }
 #course-view .headingblock,
 #course-view .topics {
@@ -64,7 +64,7 @@ p, a, li, dd, dt, pre, code, input, select {
   border:1px solid #AAA !important;
 }
 #course-view .spacer {
-  height:1em !important; 
+  height:1em !important;
 }
 #course-view .topics .left,
 #course-view .topics .right {
@@ -92,11 +92,11 @@ p, a, li, dd, dt, pre, code, input, select {
   font-weight:bold;
 }
 /** {
-  border:1px solid #A00 !important 
+  border:1px solid #A00 !important
 }*/
 .tabs tr,
 .tabs td {
-  background-image:none !important 
+  background-image:none !important
 }
 .tabs td {
   border:1px solid #AAA !important;
@@ -108,9 +108,9 @@ p, a, li, dd, dt, pre, code, input, select {
 }
 #course-log .r1 td {
   border:1px solid #AAA;
-  text-align:left; 
+  text-align:left;
 }
 .generaltable th,
 .generaltable td {
-  border:1px solid #AAA !important; 
+  border:1px solid #AAA !important;
 }

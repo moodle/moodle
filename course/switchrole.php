@@ -83,4 +83,3 @@ if ($returnurl===false) {
 }
 redirect($returnurl);
 
-?>

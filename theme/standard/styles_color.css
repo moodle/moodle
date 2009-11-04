@@ -754,10 +754,10 @@ body#course-user .section {
 
 /**
  * unread count background on
- * course/view.php 
+ * course/view.php
  **/
 #course-view .unread{
-	background: #9EBEFF; 
+	background: #9EBEFF;
 }
 
 
@@ -979,14 +979,14 @@ table.message_search_results td {
 /**
  * Patch MDL-18971 version 3 puts the forum classes
  * in page sequence. Also added one course class (above)
- * for course/view.php 
+ * for course/view.php
  **/
 
 /** The location of these classes is unknown
  * Commented out with patch MDL-18971 version 3
  **/
 /*.sideblock .post .head {
-  color:#555555; 
+  color:#555555;
 }*/
 
 /** Unread Posts count background on
@@ -996,15 +996,15 @@ table.message_search_results td {
 	background: #9EBEFF;
 }
 
-/** wire frame around cells in 
- * mod/forum/view.php 
+/** wire frame around cells in
+ * mod/forum/view.php
  **/
 .forumheaderlist td {
   border-color: #FFFFFF;
 }
 
-/** Discussion column background in 
- * mod/forum/view.php 
+/** Discussion column background in
+ * mod/forum/view.php
  * The inner class is actually "topic starter"
  **/
 .forumheaderlist .discussion .starter {
@@ -1012,14 +1012,14 @@ table.message_search_results td {
 }
 
 /** unread column background on
- * mod/forum/view.php 
+ * mod/forum/view.php
  **/
 #mod-forum-view .unread{
 	background: #9EBEFF;
 }
 
-/** border around posts in 
- * mod/forum/view.php (forumheaderlist) and 
+/** border around posts in
+ * mod/forum/view.php (forumheaderlist) and
  * mod/forum/discuss.php (forumpost)
  **/
 .forumheaderlist,
@@ -1027,55 +1027,55 @@ table.message_search_results td {
   border-color:#DDDDDD;
 }
 
-/** post body color in 
- * mod/forum/discuss.php 
+/** post body color in
+ * mod/forum/discuss.php
  **/
 .forumpost .content {
   background: #FFFFFF;
 }
 
-/** left photo section of each post in 
- * mod/forum/discuss.php 
+/** left photo section of each post in
+ * mod/forum/discuss.php
  **/
 .forumpost .left {
   background:#EEEEEE;
 }
 
-/** line between header and post body in 
- * mod/forum/discuss.php 
+/** line between header and post body in
+ * mod/forum/discuss.php
  **/
 .forumpost .topic {
   border-bottom-color: #EEEEEE;
 }
 
-/** header of the first post in 
- * mod/forum/discuss.php 
+/** header of the first post in
+ * mod/forum/discuss.php
  **/
 .forumpost .starter {
   background:#DDDDDD;
 }
 
 /** header of reply posts and
- * lower corners of all posts in 
- * mod/forum/discuss.php 
+ * lower corners of all posts in
+ * mod/forum/discuss.php
  **/
 #mod-forum-discuss .forumpost {
   background: none;
 }
 
 /** inside border of unread posts in nested format in
- * mod/forum/discuss.php 
+ * mod/forum/discuss.php
  **/
 #mod-forum-discuss .forumpost.unread .content {
   border-width:2px;
-  border-color: #0046C7; 
+  border-color: #0046C7;
 }
 
 /** headers of unread posts in threaded format in
- * mod/forum/discuss.php 
+ * mod/forum/discuss.php
  **/
 #mod-forum-discuss .forumthread.unread {
-  background: #9EBEFF; 
+  background: #9EBEFF;
 }
 
 

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 /**
  * Generic yes/no filter with radio buttons for integer fields.

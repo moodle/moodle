@@ -163,4 +163,3 @@
 
     echo $OUTPUT->footer();
 
-?>

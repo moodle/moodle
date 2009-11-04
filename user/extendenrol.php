@@ -170,7 +170,7 @@ foreach ($_POST as $k => $v) {
             $timeend = $unlimited;
             unset($userbasemenu[2]);
         }
-        
+
         $checkbox = $OUTPUT->select(html_select::make($periodmenu, "extendperiod[{$m[1]}]", "0", $nochange));
         $checkbox2 = $OUTPUT->select(html_select::make($userbasemenu, "extendbase[{$m[1]}]", "2", false));
         $table->data[] = array(
@@ -185,4 +185,4 @@ echo $OUTPUT->table($table);
 echo "\n<div style=\"width:100%;text-align:center;\"><input type=\"submit\" value=\"".get_string('savechanges')."\" /></div>\n</form>\n";
 
 echo $OUTPUT->footer();
-?>
+

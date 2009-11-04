@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // format.php - course format featuring single activity
       //              included from view.php
 
@@ -12,6 +12,6 @@
     $moduleformat = $module.'_course_format_display';
     if (function_exists($moduleformat)) {
         $moduleformat($USER,$course);
-    } else { 
+    } else {
         echo $OUTPUT->notification('The module '. $module. ' does not support single activity course format');
     }

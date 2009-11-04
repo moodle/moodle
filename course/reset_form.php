@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 require_once $CFG->libdir.'/formslib.php';
 
 class course_reset_form extends moodleform {

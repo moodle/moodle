@@ -22,7 +22,7 @@ function user_selector(name, hash, extrafields, lastsearch, strprevselected, str
             hash + '&sesskey=' + moodle_cfg.sesskey + '&search='
 
     // Set up the data source.
-    this.datasource = new YAHOO.util.XHRDataSource(this.searchurl); 
+    this.datasource = new YAHOO.util.XHRDataSource(this.searchurl);
     this.datasource.connXhrMode = 'cancelStaleRequests';
     this.datasource.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
     this.datasource.responseSchema = {resultsList: 'results'};
@@ -177,7 +177,7 @@ user_selector.prototype.datasource = null;
 
 /**
  * The input element that contains the search term.
- * 
+ *
  * @property searchfield
  * @type HTMLInputElement
  */
@@ -185,7 +185,7 @@ user_selector.prototype.searchfield = null;
 
 /**
  * The clear button.
- * 
+ *
  * @property clearbutton
  * @type HTMLInputElement
  */
@@ -193,7 +193,7 @@ user_selector.prototype.clearbutton = null;
 
 /**
  * The select element that contains the list of users.
- * 
+ *
  * @property listbox
  * @type HTMLSelectElement
  */
@@ -201,7 +201,7 @@ user_selector.prototype.listbox = null;
 
 /**
  * Used to hold the timeout id of the timeout that waits before doing a search.
- * 
+ *
  * @property timeoutid
  * @type Number
  */
@@ -209,7 +209,7 @@ user_selector.prototype.timeoutid = null;
 
 /**
  * The last string that we searched for, so we can avoid unnecessary repeat searches.
- * 
+ *
  * @property lastsearch
  * @type String
  */
@@ -300,7 +300,7 @@ user_selector.prototype.get_search_text = function() {
 }
 
 /**
- * @return the value of one of the option checkboxes.<b> 
+ * @return the value of one of the option checkboxes.<b>
  */
 user_selector.prototype.get_option = function(name) {
     var checkbox = document.getElementById('userselector_' + name + 'id');

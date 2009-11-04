@@ -541,7 +541,7 @@ form.mform div.textarea textarea {
   width: 35em;
 }
 form#adminsettings div.form-item {
-  
+
 /*background: url(pix/small_bg_gradient.png) repeat-x 0 bottom;*/
   border-top: 1px solid #F1ECE6;
 }
@@ -562,7 +562,7 @@ body#admin-langimport div.generalbox {
   border-style: none;
 }
 div.htmlarea iframe {
- 
+
 }
 div#header-home {
   position: relative;

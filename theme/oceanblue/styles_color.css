@@ -863,20 +863,20 @@ table.message_search_results td {
 }
 
 /** inside border of unread posts in nested format in
- * mod/forum/discuss.php 
+ * mod/forum/discuss.php
  **/
 #mod-forum-discuss .forumpost.unread .content {
   border-width:2px;
   border-color: #0000FF;
-} 
+}
 
 #mod-forum-discuss .forumthread .unread {
 }
 /** headers of unread posts in threaded format in
- * mod/forum/discuss.php 
+ * mod/forum/discuss.php
  **/
 #mod-forum-discuss .forumthread.unread {
-  background: #FFFF6B; 
+  background: #FFFF6B;
 }
 
 #mod-forum-index .unread {
@@ -884,7 +884,7 @@ table.message_search_results td {
 
 
 /** unread column background on
- * mod/forum/view.php 
+ * mod/forum/view.php
  **/
 #mod-forum-view .unread{
 	background: #FFFF6B;

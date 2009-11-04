@@ -66,7 +66,7 @@ $DEFAULT_SHEET_LIST = array('styles_layout', 'styles_fonts', 'styles_color');
 $lastmodified = time();
 
 // Set the correct content type. (Should we also be specifying charset here?)
-header('Content-type: text/css'); 
+header('Content-type: text/css');
 header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastmodified) . ' GMT');
 header('Pragma: ');
 

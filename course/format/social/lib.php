@@ -80,4 +80,4 @@ function callback_social_display_content() {
     return false;
 }
 
-?>
+

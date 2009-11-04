@@ -111,7 +111,7 @@ h2.headingblock {
   padding-top: 0;
   font-size: 100%;
 }
-#site-index .headingblock, 
+#site-index .headingblock,
 #course-view .headingblock {
   margin-bottom: 0;
 }
@@ -125,12 +125,12 @@ h2.headingblock {
 table.generalbox {
   border-style: none;
 }
-th.header, 
+th.header,
 td.cell {
   border-bottom: 1px solid #EEE;
   text-align: left;
 }
-.generalbox th, 
+.generalbox th,
 .generalbox td {
   border-bottom: 1px solid #EEE;
   text-align: left;
@@ -438,7 +438,7 @@ link
   margin-top: 10px;
 }
 .admin .header.c0 {
-  
+
 }
 .rolecap .rolecapheading {
   background-color: #FAFAFA;
@@ -646,9 +646,9 @@ link
 .haslayouttable div#content {
   margin: 0;
 }
-.weeks-format #left-column, 
-.weeks-format #right-column, 
-.topics-format #left-column, 
+.weeks-format #left-column,
+.weeks-format #right-column,
+.topics-format #left-column,
 .topics-format #right-column {
 	width: 15.5em;
 }
@@ -728,7 +728,7 @@ link
   margin-bottom: 2em;
 }
 #course-view .weeks .content ,
-#course-view .topics .content, 
+#course-view .topics .content,
 #course-view .weeks .section,
 #course-view .topics .section {
   background-color: #FFF;
@@ -946,7 +946,7 @@ table.minicalendar {
 .cal_popup_fg div a {
   font-size: 100% !important;
 }
-.block_calendar_month .cal_popup_caption, 
+.block_calendar_month .cal_popup_caption,
 .block_calendar_month .cal_popup_fg div {
   border-color: #9B9984;
   font-size: 100% !important;
@@ -1053,7 +1053,7 @@ p.book_chapter_title {
   border-style: none;
   border-top: 1px solid #EEE;
 }
-.glossarypost .concept h3, 
+.glossarypost .concept h3,
 .glossarypost.continuous .concept {
   display: inline;
 }
@@ -1086,7 +1086,7 @@ p.book_chapter_title {
   border-color: #DDD;
 }
 .que .incorrect {
-  
+
 }
 .que.multianswer .incorrect {
   background-color: #faa;

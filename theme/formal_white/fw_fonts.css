@@ -69,7 +69,7 @@ div.header,
 /***
  *** Header
  ***/
- 
+
 .breadcrumb {
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size:.85em;
@@ -84,7 +84,7 @@ div.header,
  /***
  *** Blocks
  ***/
- 
+
 .sideblock .footer {
     font-size:0.85em;
     text-align: left;
@@ -114,11 +114,11 @@ table.minicalendar tr.weekdays th {
 table.minicalendar tr td {
   font-size:0.7em;
   }
-  
+
 /***
  *** Course
  ***/
-  
+
 #course-view .section .left {
   font-weight: bold;
   font-size: 1.2em;

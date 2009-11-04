@@ -28,7 +28,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
 
     global $USER, $CFG, $SITE, $DB, $OUTPUT, $SESSION;
     require_once $CFG->dirroot.'/mnet/peer.php';
-    
+
     $mnet_peer = new mnet_peer();
     $mnet_peer->set_id($hostid);
 
@@ -41,9 +41,9 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
         $showcourses = 1;
     }
-    
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    
+
     // Context for remote data is always SITE
     // Groups for remote data are always OFF
     if ($hostid == $CFG->mnet_localhost_id) {
@@ -254,7 +254,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
     if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
-        $cid = empty($course->id)? '1' : $course->id; 
+        $cid = empty($course->id)? '1' : $course->id;
         $select = html_select::make($dropdown, "host_course", $hostid.'/'.$cid);
         $select->nested = true;
         echo $OUTPUT->select($select);
@@ -299,16 +299,16 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
-    
+
     echo $OUTPUT->select(html_select::make($dates, "date", $selecteddate, get_string("alldays")));
-    
+
     $select = html_select::make($activities, "modid", $selectedactivity);
     $select->nothinglabel = get_string("allactivities");
     $select->nothingvalue = '';
     echo $OUTPUT->select($select);
-    
+
     echo $OUTPUT->select(html_select::make($actions, 'modaction', $modaction, get_string("allactions")));
-    
+
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
@@ -329,10 +329,10 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
         $showcourses = 1;
     }
-    
+
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-   
+
     /// Setup for group handling.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
         $selectedgroup = -1;
@@ -367,7 +367,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         // this may be a lot of users :-(
         $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber');
     }
-   
+
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
         $showusers = 1;
     }
@@ -530,19 +530,19 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         print_string('logtoomanyusers','moodle',$a);
     }
     echo $OUTPUT->select(html_select::make($dates, "date", $selecteddate, get_string("alldays")));
-    
+
     $select = html_select::make($activities, "modid", $selectedactivity);
     $select->nothinglabel = get_string("allactivities");
     $select->nothingvalue = '';
     echo $OUTPUT->select($select);
-    
+
     echo $OUTPUT->select(html_select::make($actions, 'modaction', $modaction, get_string("allactions")));
-    
+
     $logformats = array('showashtml' => get_string('displayonpage'),
                         'downloadascsv' => get_string('downloadtext'),
                         'downloadasods' => get_string('downloadods'),
                         'downloadasexcel' => get_string('downloadexcel'));
-    
+
     echo $OUTPUT->select(html_select::make($logformats, 'logformat', $logformat, false));
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';

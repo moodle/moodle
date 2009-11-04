@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 class profile_define_text extends profile_define_base {
 
@@ -39,4 +39,4 @@ class profile_define_text extends profile_define_base {
 
 }
 
-?>
+

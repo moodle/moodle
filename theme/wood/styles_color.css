@@ -207,9 +207,9 @@ legend,
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
     border-right:1px solid #330000;
-    background-image:url(gradient1.jpg);     
+    background-image:url(gradient1.jpg);
     background-position:bottom;
-    background-repeat:repeat;  
+    background-repeat:repeat;
 }
 .heading-with-help h2.main {
     border:none;
@@ -273,7 +273,7 @@ form.mform fieldset,
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
     border-right:1px solid #330000;
-    background-image:url(gradient2.jpg);     
+    background-image:url(gradient2.jpg);
     background-position:bottom;
     background-repeat:repeat;
 }
@@ -314,7 +314,7 @@ form.mform fieldset,
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
     border-right:1px solid #330000;
-    background-image:url(gradient4.jpg);     
+    background-image:url(gradient4.jpg);
     background-position:bottom;
     background-repeat:repeat;
 }

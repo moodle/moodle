@@ -56,7 +56,7 @@ $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 if ($courseid = optional_param('course', 0, PARAM_INT)) {
-    $course = $DB->get_record('course', array('id'=>$courseid)); 
+    $course = $DB->get_record('course', array('id'=>$courseid));
 } else {
     $course = NULL;
 }

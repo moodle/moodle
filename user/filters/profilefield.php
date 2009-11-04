@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/user/filters/lib.php');
 
@@ -117,7 +117,7 @@ class user_filter_profilefield extends user_filter_type {
         $params = array();
         if (!array_key_exists($profile, $profile_fields)) {
             return array('', array());
-        } 
+        }
 
         $where = "";
         $op = " IN ";
@@ -130,27 +130,27 @@ class user_filter_profilefield extends user_filter_type {
         switch($operator) {
             case 0: // contains
                 $where = "data $ilike :$name";
-                $params[$name] = "%$value%"; 
+                $params[$name] = "%$value%";
                 break;
             case 1: // does not contain
                 $where = "data NOT $ilike :$name";
-                $params[$name] = "%$value%"; 
+                $params[$name] = "%$value%";
                 break;
             case 2: // equal to
                 $where = "data $ilike :$name";
-                $params[$name] = "$value"; 
+                $params[$name] = "$value";
                 break;
             case 3: // starts with
                 $where = "data $ilike :$name";
-                $params[$name] = "$value%"; 
+                $params[$name] = "$value%";
                 break;
             case 4: // ends with
                 $where = "data $ilike :$name";
-                $params[$name] = "%$value"; 
+                $params[$name] = "%$value";
                 break;
             case 5: // empty
                 $where = "data=:$name";
-                $params[$name] = ""; 
+                $params[$name] = "";
                 break;
             case 6: // is not defined
                 $op = " NOT IN "; break;
@@ -188,7 +188,7 @@ class user_filter_profilefield extends user_filter_type {
 
         if (!array_key_exists($profile, $profile_fields)) {
             return '';
-        } 
+        }
 
         $a = new object();
         $a->label    = $this->_label;

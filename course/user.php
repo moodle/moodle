@@ -390,4 +390,3 @@ function print_outline_row($mod, $instance, $result) {
     echo "</tr>";
 }
 
-?>

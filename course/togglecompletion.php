@@ -81,4 +81,3 @@ if($fromajax) {
     redirect($backto);
 }
 
-?>

@@ -613,14 +613,14 @@
             $currenttab = 'update';
             require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
-        
+
         $helpicon = new moodle_help_icon();
         $helpicon->page = 'mods';
         $helpicon->text = $pageheading;
         $helpicon->module = $module->name;
         echo $OUTPUT->heading_with_help($helpicon, $OUTPUT->mod_icon_url('icon', $module->name));
-        
+
         $mform->display();
-        
+
         echo $OUTPUT->footer();
     }

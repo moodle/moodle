@@ -74,7 +74,7 @@ class course_external_test extends UnitTestCase {
         $course->shortname = "TestCourseForCourse";
         $course->idnumber = 123456789;
         $course = create_course($course);
-        $this->course = $course; 
+        $this->course = $course;
 
     }
 
@@ -314,7 +314,7 @@ class course_external_test extends UnitTestCase {
         $course["id"] = $this->course->id;
         $params[] = $course;
         $activities = course_external::get_course_modules($params);
-        
+
         $activities = course_external::get_course_activities($params);
         varlog($activities);
         chat_delete_instance($chatid);
@@ -331,4 +331,4 @@ class course_external_test extends UnitTestCase {
     }
 */
 }
-?>
+

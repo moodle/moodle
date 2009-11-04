@@ -14,7 +14,7 @@ function useredit_load_preferences(&$user, $reload=true) {
             // reload preferences in case it was changed in other session
             unset($USER->preference);
         }
-        
+
         if ($preferences = get_user_preferences(null, null, $user->id)) {
             foreach($preferences as $name=>$value) {
                 $user->{'preference_'.$name} = $value;
@@ -297,4 +297,4 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
 }
 
-?>
+

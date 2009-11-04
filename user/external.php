@@ -74,14 +74,14 @@ final class user_external extends moodle_external {
         if (has_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM))) {
 
             $this->clean_function_params('delete_users', $params);
-            
+
             foreach ($params->usernames as $username) {
                 $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>1));
-             
+
                 if (empty($user)) {
                     throw new moodle_exception('wscouldnotdeletenoexistinguser');
                 }
-                
+
                 if (!delete_user($user)) {
                     $deletionsuccessfull = false; //this function is in moodlelib.php
                 }
@@ -131,4 +131,4 @@ final class user_external extends moodle_external {
 
 }
 
-?>
+

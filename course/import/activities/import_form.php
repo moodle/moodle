@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -57,4 +57,4 @@ class course_import_activities_form_2 extends moodleform {
     }
 
 }
-?>
+

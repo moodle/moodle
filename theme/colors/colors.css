@@ -110,7 +110,7 @@ tr.r1 {
 .highlight2 {
   color: #AA0000;
 }
-.headingblock, 
+.headingblock,
 h2.headingblock {
   margin: 0 0 10px;
   padding: 11px 5px 7px;
@@ -120,7 +120,7 @@ h2.headingblock {
   background-color: #e4e4e4;
   border-style: none;
 }
-body#site-index .headingblock, 
+body#site-index .headingblock,
 body#course-view .headingblock {
   margin-top: -1px;
 }
@@ -134,12 +134,12 @@ div.generalbox {
 table.generalbox {
   border-style: none;
 }
-th.header, 
+th.header,
 td.cell {
   border-bottom: 1px solid #EEE;
   text-align: left;
 }
-table.generalbox th, 
+table.generalbox th,
 table.generalbox td {
   border-bottom: 1px solid #EEE;
   text-align: left;
@@ -470,7 +470,7 @@ link
   margin-top: 10px;
 }
 .admin th.header.c0 {
-  
+
 }
 .rolecap .rolecapheading {
   background-color: #FAFAFA;
@@ -609,11 +609,11 @@ link
   background-color: #EEE;
   padding: 1px;
 }
-#left-column .sideblock .header, 
+#left-column .sideblock .header,
 #left-column .sideblock h2.header {
   background-color: #da5a23;
 }
-#right-column .sideblock .header, 
+#right-column .sideblock .header,
 #right-column .sideblock h2.header {
   background-color: #4b95ed;
 }
@@ -692,9 +692,9 @@ div.loginbox.twocolumns div.loginpanel {
 #course-view .subscribelink {
   padding: 0 5px;
 }
-.weeks-format #left-column, 
-.weeks-format #right-column, 
-.topics-format #left-column, 
+.weeks-format #left-column,
+.weeks-format #right-column,
+.topics-format #left-column,
 .topics-format #right-column {
 	width: 15.5em;
 }
@@ -1099,7 +1099,7 @@ table.glossarypost {
   border-style: none;
   border-top: 1px solid #EEE;
 }
-.glossarypost div.concept h3, 
+.glossarypost div.concept h3,
 .glossarypost.continuous .concept {
   display: inline;
 }
@@ -1132,7 +1132,7 @@ body#mod-quiz-report table#attempts td {
   border-color: #DDD;
 }
 .que .incorrect {
-  
+
 }
 .que.multianswer .incorrect {
   background-color: #faa;

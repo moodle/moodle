@@ -259,4 +259,3 @@ if ($email_changed) {
 /// and proper footer
 echo $OUTPUT->footer();
 
-?>

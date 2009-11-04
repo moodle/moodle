@@ -111,10 +111,10 @@ if (empty($pending)) {
     $keyicon->alt = $strrequireskey;
     $keyicon->add_class('icon');
     $keyicon = $OUTPUT->image($keyicon);
-    
+
     foreach ($pending as $course) {
         $course = new course_request($course);
-        
+
         // Check here for shortname collisions and warn about them.
         $course->check_shortname_collision();
 

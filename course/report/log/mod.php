@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     if (!defined('MOODLE_INTERNAL')) {
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
@@ -18,7 +18,7 @@
         echo '<p>';
         $link = html_link::make('/course/report/log/live.php?id='. $course->id, get_string('livelogs'));
         $link->add_action(new popup_action('click', $link->url, 'livelog', array('height' => 500, 'width' => 800)));
-        echo $OUTPUT->link($link);                    
+        echo $OUTPUT->link($link);
         echo '</p>';
     }
-?>
+

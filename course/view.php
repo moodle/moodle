@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 //  Display the course home page.
 
@@ -69,7 +69,7 @@
     }
 
     //If course is hosted on an external server, redirect to corresponding
-    //url with appropriate authentication attached as parameter 
+    //url with appropriate authentication attached as parameter
     if (file_exists($CFG->dirroot .'/course/externservercourse.php')) {
         include $CFG->dirroot .'/course/externservercourse.php';
         if (function_exists('extern_server_course')) {
@@ -141,7 +141,7 @@
 
 
     // AJAX-capable course format?
-    $useajax = false; 
+    $useajax = false;
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
     $bodytags = '';
 
@@ -178,13 +178,13 @@
     $completion = new completion_info($course);
     if ($completion->is_enabled() && ajaxenabled()) {
         $PAGE->requires->yui_lib('connection')->asap();
-        $PAGE->requires->js('course/completion.js')->asap();      
+        $PAGE->requires->js('course/completion.js')->asap();
         $PAGE->requires->js_function_call('completion_init')->on_dom_ready();
         $PAGE->requires->data_for_js('completion_strsaved', get_string('saved', 'completion'));
         $PAGE->requires->data_for_js('completion_strtitley', get_string('completion-title-manual-y', 'completion'));
         $PAGE->requires->data_for_js('completion_strtitlen', get_string('completion-title-manual-n', 'completion'));
         $PAGE->requires->data_for_js('completion_stralty', get_string('completion-alt-manual-y', 'completion'));
-        $PAGE->requires->data_for_js('completion_straltn', get_string('completion-alt-manual-n', 'completion'));        
+        $PAGE->requires->data_for_js('completion_straltn', get_string('completion-alt-manual-n', 'completion'));
     }
 
     // The "Editing On" button will be appearing only in the "main" course screen
@@ -242,12 +242,12 @@
     // Content wrapper end.
     echo "</div>\n\n";
 
-    // Use AJAX?    
+    // Use AJAX?
     if ($useajax && has_capability('moodle/course:manageactivities', $context)) {
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
-        // because of the way in which lib/ajax/ajaxcourse.js is written.       
-    
+        // because of the way in which lib/ajax/ajaxcourse.js is written.
+
         echo '<script type="text/javascript" ';
         echo "src=\"{$CFG->wwwroot}/lib/ajax/ajaxcourse.js\"></script>\n";
         $COURSE->javascriptportal->print_javascript($course->id);
@@ -256,4 +256,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

@@ -47,10 +47,10 @@ table.generaltable {
   background-color: #EEEEEE;
 }
 span.arrow {
-  font-family: Arial, Helvetica, Courier, sans-serif; 
+  font-family: Arial, Helvetica, Courier, sans-serif;
 }
 p.arrow_button input {
-  font-family: Arial, Helvetica, Courier, sans-serif; 
+  font-family: Arial, Helvetica, Courier, sans-serif;
 }
 img.resize {
   width: 1em;
@@ -446,7 +446,7 @@ body#grade-index table.grades {
   background-color: #EEEEEE;
   border-width: 1px;
   border-style: solid;
-  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;  
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
 body#grade-index .grades td {
   border-color: #FFFFFF;

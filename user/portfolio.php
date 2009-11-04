@@ -122,4 +122,3 @@ if ($display) {
 }
 echo $OUTPUT->footer();
 
-?>

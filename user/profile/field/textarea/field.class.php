@@ -41,4 +41,4 @@ class profile_field_textarea extends profile_field_base {
 
 }
 
-?>
+

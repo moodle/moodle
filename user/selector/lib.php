@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -64,13 +64,13 @@ abstract class user_selector_base {
      * or do we match occurrences anywhere? */
     protected $searchanywhere = false;
 
-    // This is used by get selected users, 
+    // This is used by get selected users,
     private $validatinguserids = null;
     // Used to ensure we only output the search options for one user selector on
     // each page.
     private static $searchoptionsoutput = false;
 
-    
+
     // Public API ==============================================================
 
     /**
@@ -322,7 +322,7 @@ abstract class user_selector_base {
     public abstract function find_users($search);
 
     /**
-     * 
+     *
      * Note: this function must be implemented if you use the search ajax field
      *       (e.g. set $options['file'] = '/admin/filecontainingyourclass.php';)
      * @return array the options needed to recreate this user_selector.
@@ -741,7 +741,7 @@ class group_non_members_selector extends groups_user_selector_base {
         list($searchcondition, $searchparams) = $this->search_sql($search, 'u');
 
         // Build the SQL
-        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid, " . 
+        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid, " .
                 $this->required_fields_sql('u') .
                 ', (SELECT count(igm.groupid) FROM {groups_members} igm JOIN {groups} ig ON
                     igm.groupid = ig.id WHERE igm.userid = u.id AND ig.courseid = ?) AS numgroups ';
@@ -773,4 +773,3 @@ class group_non_members_selector extends groups_user_selector_base {
         return $this->convert_array_format($roles, $search);
     }
 }
-?>

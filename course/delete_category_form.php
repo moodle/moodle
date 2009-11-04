@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?php
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/questionlib.php');
@@ -141,4 +141,4 @@ class delete_category_form extends moodleform {
         return $errors;
     }
 }
-?>
+

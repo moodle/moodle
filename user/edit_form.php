@@ -153,4 +153,4 @@ class user_edit_form extends moodleform {
     }
 }
 
-?>
+

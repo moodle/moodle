@@ -103,4 +103,4 @@ echo $OUTPUT->box(get_string('resetinfo'));
 $mform->display();
 echo $OUTPUT->footer();
 
-?>
+

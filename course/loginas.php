@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Allows a teacher/admin to login as another user (in stealth mode)
 
     require_once('../config.php');
@@ -80,4 +80,4 @@
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 
-?>
+

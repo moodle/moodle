@@ -129,4 +129,4 @@ foreach ($users as $k => $v) {
 echo $OUTPUT->table($table);
 echo '<div style="width:100%;text-align:center;"><input type="submit" value="' . get_string('savechanges'). '" /></div></form>';
 echo $OUTPUT->footer();
-?>
+

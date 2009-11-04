@@ -110,7 +110,7 @@ foreach ($themes as $themename => $themedir) {
     if ($readmeurl) {
         $link = html_link::make($readmeurl, get_string('info'));
         $link->add_action(new popup_action('click', $link->url, $themename));
-        $infoitems['readme'] = $OUTPUT->link($link);                    
+        $infoitems['readme'] = $OUTPUT->link($link);
     }
 
     // Contents of the first screenshot/preview cell.

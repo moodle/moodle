@@ -125,4 +125,4 @@ if ($logcount > 0) {
 
 echo $OUTPUT->footer();
 
-?>
+

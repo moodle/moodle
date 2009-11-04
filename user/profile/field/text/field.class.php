@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 class profile_field_text extends profile_field_base {
 
@@ -38,4 +38,4 @@ class profile_field_text extends profile_field_base {
 
 }
 
-?>
+

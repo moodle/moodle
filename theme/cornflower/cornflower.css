@@ -1,11 +1,11 @@
 /*******************************************************************
  Cornflower CSS
-  
- This CSS file contains all color and layout definitions 
+
+ This CSS file contains all color and layout definitions
  for the Cornflower theme.
- 
+
  This theme requires the Standard theme to be present.
- 
+
 *******************************************************************/
 
 /***
@@ -20,7 +20,7 @@ a:visited {
 a:hover {
   color:#054377;
   text-decoration:underline;
-  
+
   }
 
 body {
@@ -37,21 +37,21 @@ div.header {
 .navbar {
   background-color:#D0E2EE;
   border-color:#D0E2EE;
-  
+
 }
 
 .generalbox {
-  border-color:#739FC4; 
+  border-color:#739FC4;
 }
 .informationbox {
-  border-color:#739FC4; 
+  border-color:#739FC4;
 }
 .feedbackbox {
-  border-color: #739FC4; 
+  border-color: #739FC4;
 }
 
 .noticebox {
-  border-color:#739FC4; 
+  border-color:#739FC4;
 }
 
 .errorbox {
@@ -74,7 +74,7 @@ div.header {
 
 .unread {
   background: #78A2CD;
-} 
+}
 
 /***
  *** Header
@@ -89,7 +89,7 @@ height:112px;
 .headermain {
   background: transparent url(images/hdbgend.jpg) 100% 0 no-repeat;
   float: none;
-  
+
 }
 
 
@@ -98,16 +98,16 @@ height:112px;
  ***/
 
 .admin .generalboxcontent {
-  background-color:#EEEEEE; 
+  background-color:#EEEEEE;
 }
 
 .admin .generalbox {
-  border-color:#739FC4; 
+  border-color:#739FC4;
 }
 
 .admin .informationbox {
-  border-color:#739FC4; 
-  background-color:#FFFFFF; 
+  border-color:#739FC4;
+  background-color:#FFFFFF;
 }
 
 
@@ -348,7 +348,7 @@ table.message_search_results td {
  ***/
 
 .userpicture {
-  background:#EEEEEE; 
+  background:#EEEEEE;
 }
 
 .userinfobox {
@@ -375,21 +375,21 @@ table.message_search_results td {
 }
 
 .forumpost .left {
-  background:#739FC4; 
+  background:#739FC4;
 }
 
 .forumpost .topic {
   border-bottom-color: #739FC4;
-  background:#D0E2EE; 
+  background:#D0E2EE;
 
 }
 
 .forumpost .starter {
-  background:#739FC4; 
+  background:#739FC4;
 }
 
 .forumheaderlist .discussion .starter {
-  background:#D0E2EE; 
+  background:#D0E2EE;
 }
 
 .forumheaderlist td {
@@ -408,10 +408,10 @@ table.message_search_results td {
 }
 
 #mod-forum-discuss .unread .forumpost .message {
-  border-color: #78A2CD; 
-} 
+  border-color: #78A2CD;
+}
 #mod-forum-discuss .forumthread .unread {
-} 
+}
 
 #mod-forum-index .unread {
 }
@@ -548,7 +548,7 @@ h6.main {
   padding-right:10px;
 }
 
-div.headermenu 
+div.headermenu
 {
     position: absolute;
     top: 15px;

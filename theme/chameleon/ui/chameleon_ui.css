@@ -1,9 +1,9 @@
-/* sorry about the massive abuse of !important ;-) this tries to prevent user changes in CSS being 
+/* sorry about the massive abuse of !important ;-) this tries to prevent user changes in CSS being
 inherited by the user interface */
 
 /* general box styles */
-#chameleon-selector-box, #chameleon-style-box, 
-#chameleon-color-box, #chameleon-file-box, 
+#chameleon-selector-box, #chameleon-style-box,
+#chameleon-color-box, #chameleon-file-box,
 #chameleon-export-box {
   position: absolute !important;
   left: 0; top: 0;
@@ -55,8 +55,8 @@ inherited by the user interface */
 }
 
 /* drag handles */
-#chameleon-selector-box #chameleon-selector-box-handle, 
-#chameleon-style-box #chameleon-style-box-handle, 
+#chameleon-selector-box #chameleon-selector-box-handle,
+#chameleon-style-box #chameleon-style-box-handle,
 #chameleon-color-box #chameleon-color-box-handle,
 #chameleon-file-box #chameleon-file-box-handle,
 #chameleon-export-box #chameleon-export-box-handle {
@@ -64,8 +64,8 @@ inherited by the user interface */
   background: #ddd !important;
 }
 
-#chameleon-selector-box #chameleon-selector-box-close, 
-#chameleon-style-box #chameleon-style-box-close, 
+#chameleon-selector-box #chameleon-selector-box-close,
+#chameleon-style-box #chameleon-style-box-close,
 #chameleon-color-box #chameleon-color-box-close,
 #chameleon-file-box #chameleon-file-box-close {
   padding: 1px 5px !important;
@@ -324,9 +324,9 @@ body #chameleon-color-box {
 
 /* the buttons */
 
-#chameleon-selector-box input.chameleon-btn, 
-#chameleon-style-box input.chameleon-btn, 
-#chameleon-color-box input.chameleon-btn, 
+#chameleon-selector-box input.chameleon-btn,
+#chameleon-style-box input.chameleon-btn,
+#chameleon-color-box input.chameleon-btn,
 #chameleon-file-box input.chameleon-btn {
   cursor: pointer !important;
   margin-bottom: 3px !important;

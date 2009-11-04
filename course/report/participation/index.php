@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/tablelib.php');
@@ -13,7 +13,7 @@
     $action     = optional_param('action', '', PARAM_ALPHA);
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-    
+
     $PAGE->set_url('course/report/participation/index.php', compact('id', 'roleid', 'instanceid', 'timefrom', 'page', 'perpage'));
 
     if ($action != 'view' and $action != 'post') {
@@ -185,7 +185,7 @@
         }
 
         list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action0');
-        $actionsql = "l.action $actionsql"; 
+        $actionsql = "l.action $actionsql";
 
         $relatedcontexts = get_related_contexts_string($context);
 
@@ -291,4 +291,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

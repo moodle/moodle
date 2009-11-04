@@ -1,27 +1,27 @@
-<?php // $Id$
+<?php
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 /**
  * Evaluation weekly format for course display - NO layout tables, for accessibility, etc.
- * 
- * A duplicate course format to enable the Moodle development team to evaluate 
- * CSS for the multi-column layout in place of layout tables. 
+ *
+ * A duplicate course format to enable the Moodle development team to evaluate
+ * CSS for the multi-column layout in place of layout tables.
  * Less risk for the Moodle 1.6 beta release.
  *   1. Straight copy of weeks/format.php
  *   2. Replace <table> and <td> with DIVs; inline styles.
  *   3. Reorder columns so that in linear view content is first then blocks;
  * styles to maintain original graphical (side by side) view.
  *
- * Target: 3-column graphical view using relative widths for pixel screen sizes 
+ * Target: 3-column graphical view using relative widths for pixel screen sizes
  * 800x600, 1024x768... on IE6, Firefox. Below 800 columns will shift downwards.
- * 
+ *
  * http://www.maxdesign.com.au/presentation/em/ Ideal length for content.
  * http://www.svendtofte.com/code/max_width_in_ie/ Max width in IE.
  *
  * @copyright &copy; 2006 The Open University
  * @author N.D.Freear@open.ac.uk, and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package  
+ * @package
  */
 //TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formatweekscss']
 
@@ -86,9 +86,9 @@
         // Note, 'right side' is BEFORE content.
         echo '<li id="section-0" class="section main" >';
         echo '<div class="left side">&nbsp;</div>';
-        echo '<div class="right side" >&nbsp;</div>';        
+        echo '<div class="right side" >&nbsp;</div>';
         echo '<div class="content">';
-        
+
         echo '<div class="summary">';
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -103,7 +103,7 @@
                  ' class="icon edit" alt="'.$streditsummary.'" /></a></p>';
         }
         echo '</div>';
-        
+
         print_section($course, $thissection, $mods, $modnamesused);
 
         if ($PAGE->user_is_editing()) {
@@ -177,7 +177,7 @@
 
             // Note, 'right side' is BEFORE content.
             echo '<div class="right side">';
-            
+
             if ($displaysection == $section) {
                 echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
                      '<img src="'.$OUTPUT->old_icon_url('i/all') . '" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';

@@ -134,4 +134,3 @@ if ($scales = $DB->get_records("scale", array("courseid"=>0), "name ASC")) {
 echo $OUTPUT->close_window_button();
 echo $OUTPUT->footer();
 
-?>

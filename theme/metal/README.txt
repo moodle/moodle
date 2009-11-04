@@ -2,7 +2,7 @@ MOODLE THEME: METAL
 
 This theme is designed by A. Chavan (chavan at users.sourceforge.net).
 
-It is based on moodle's "standardwhite" theme. 
+It is based on moodle's "standardwhite" theme.
 It uses the background image from, and is inspired by:
 http://www.alexking.org/software/wordpress/styles/sample.php?wpstyle=metaldreams
 

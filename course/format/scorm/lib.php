@@ -52,4 +52,4 @@ function callback_scorm_display_content() {
     return false;
 }
 
-?>
+

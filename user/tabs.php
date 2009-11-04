@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// This file to be included so we can assume config.php has already been included.
 /// We also assume that $user, $course, $currenttab have been set
 
@@ -207,4 +207,4 @@
       print_tabs($tabs, $currenttab, $inactive, $activetwo);
     }
 
-?>
+

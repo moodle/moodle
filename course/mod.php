@@ -324,4 +324,4 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     print_error('unknowaction');
 }
 
-?>
+

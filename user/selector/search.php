@@ -91,4 +91,3 @@ foreach ($users as &$group) {
 }
 
 echo json_encode(array('results' => $users));
-?>

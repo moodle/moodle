@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/user/filters/lib.php');
 
@@ -130,4 +130,3 @@ class user_filter_date extends user_filter_type {
         return '';
     }
 }
-?>

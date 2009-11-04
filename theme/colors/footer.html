@@ -1,5 +1,5 @@
 
-<?php    
+<?php
     echo $OUTPUT->container_end(); // content container
 
     echo $OUTPUT->container_start('clearfix footer');
@@ -13,11 +13,11 @@
 
     $useridarray = array(2, 3 // MD
                           );
-    
+
     if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
         echo $performanceinfo;
     }
-    
+
     echo $OUTPUT->container_end();
 ?>
 </div>

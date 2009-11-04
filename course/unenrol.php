@@ -121,4 +121,3 @@ if ($userid) {
 
 echo $OUTPUT->footer();
 
-?>

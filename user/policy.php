@@ -87,4 +87,3 @@ echo $OUTPUT->confirm($strpolicyagree, $formcontinue, $formcancel);
 
 echo $OUTPUT->footer();
 
-?>

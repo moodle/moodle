@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
@@ -44,4 +44,4 @@ class category_form extends moodleform {
     }
 }
 
-?>
+

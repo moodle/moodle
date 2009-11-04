@@ -52,7 +52,7 @@ class course_edit_form extends moodleform {
             $coursecontext = null;
             $context = $categorycontext;
         }
-        
+
 /// form definition with new course defaults
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
@@ -114,7 +114,7 @@ class course_edit_form extends moodleform {
             $mform->setConstants('idnumber', $course->idnumber);
         }
 
-        
+
         $mform->addElement('editor','summary_editor', get_string('summary'), null, $editoroptions);
         $mform->setHelpButton('summary_editor', array('text2', get_string('helptext')), true);
         $mform->setType('summary_editor', PARAM_RAW);
@@ -496,4 +496,4 @@ class course_edit_form extends moodleform {
         return $errors;
     }
 }
-?>
+

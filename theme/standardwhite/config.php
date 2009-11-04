@@ -86,11 +86,11 @@ $THEME->layouts = array(
     )
 );
 
-$THEME->resource_mp3player_colors = 
+$THEME->resource_mp3player_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
  'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
-$THEME->filter_mediaplugin_colors = 
+$THEME->filter_mediaplugin_colors =
  'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
  'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
  'waitForPlay=yes';
@@ -100,13 +100,13 @@ $THEME->filter_mediaplugin_colors =
 //$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
 
 $THEME->navmenuwidth = 50;
-// You can use this to control the cutoff point for strings 
+// You can use this to control the cutoff point for strings
 // in the navmenus (list of activities in popup menu etc)
 // Default is 50 characters wide.
 
-$THEME->makenavmenulist = false;  
+$THEME->makenavmenulist = false;
 // By setting this to true, then you will have access to a
 // new variable in your header.html and footer.html called
-// $navmenulist ... this contains a simple XHTML menu of 
-// all activities in the current course, mostly useful for 
+// $navmenulist ... this contains a simple XHTML menu of
+// all activities in the current course, mostly useful for
 // creating popup navigation menus and so on.

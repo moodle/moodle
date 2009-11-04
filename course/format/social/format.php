@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // format.php - course format featuring social forum
       //              included from view.php
 

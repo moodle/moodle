@@ -283,4 +283,3 @@ $userform->display();
 /// and proper footer
 echo $OUTPUT->footer();
 
-?>

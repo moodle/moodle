@@ -83,19 +83,19 @@ th.header {
 }
 
 /* .generaltable .r0 td.cell.c0 {
- background-color:#C6BDA8; 
+ background-color:#C6BDA8;
 } */
 
 .generaltable .r0 {
- background-color:#FEF9F6; 
+ background-color:#FEF9F6;
 }
 
 .generaltable .r1 {
- background-color:#F1EFEB; 
+ background-color:#F1EFEB;
 }
 
 .generaltable .r1 td.cell.c0 {
-border-color:#C6BDA8; 
+border-color:#C6BDA8;
 /* background-color:#E3DFD4; */
 }
 
@@ -169,7 +169,7 @@ h1.headermain {
 
 .sideblock .header, .sideblock .header h2 {
  background: url(pix/grad/gradient_h.jpg) repeat-x;
- background-color:#E3DFD4; 
+ background-color:#E3DFD4;
 }
 
 .sideblock hr {
@@ -189,7 +189,7 @@ h1.headermain {
 /***
  *** Calendar
 ***/
- 
+
 #calendar .maincalendar,
 #calendar .sidecalendar,
 #calendar .maincalendar .event {
@@ -203,7 +203,7 @@ h1.headermain {
 
 table.calendarmonth tr td {
    border-color:#C6BDA8;
-} 
+}
 
 table.minicalendar {
   border-color:#C6BDA8;
@@ -217,17 +217,17 @@ table.minicalendar tr.weekdays th {
 table.minicalendar tr td.day {
    border-color:#C6BDA8;
   }
-  
+
 table.minicalendar tr td.weekend {
   border-color:#C6BDA8;
   color: red;
   }
-  
+
 #calendar .today,
 .minicalendar .today {
   border-color:#000000 !important;
 }
-  
+
 /* colors for calendar events */
 #calendar .event_global,
 .minicalendar .event_global,
@@ -367,7 +367,7 @@ table.minicalendar tr td.weekend {
 }
 
 .forumpost .left {
-  background:#FEF9F6; 
+  background:#FEF9F6;
 }
 
 .forumpost .topic {
@@ -375,11 +375,11 @@ table.minicalendar tr td.weekend {
 }
 
 .forumpost .starter {
-  background:#FEF9F6; 
+  background:#FEF9F6;
 }
 
 .forumheaderlist .discussion .starter {
-  background:#FEF9F6; 
+  background:#FEF9F6;
 }
 
 .forumheaderlist td {
@@ -399,10 +399,10 @@ table.minicalendar tr td.weekend {
 
 #mod-forum-discuss .forumpost.unread .content {
 /*  border-color: #C6BDA8; */
-} 
+}
 
 #mod-forum-discuss .forumthread .unread {
-} 
+}
 
 #mod-forum-index .unread {
 }
@@ -415,7 +415,7 @@ table.minicalendar tr td.weekend {
 .entryattachment,
 .entryapproval {
   background-color: #E3DFD4;
- } 
+ }
 
 .entrybox {
   border-color: #C6BDA8;
@@ -424,7 +424,7 @@ table.minicalendar tr td.weekend {
 .glossarypost.dictionary,
 .glossarypost.fullwithauthor,
 .glossarypost.fullwithoutauthor,
-.glossarypost.continuous, 
+.glossarypost.continuous,
 .glossarypost.encyclopedia,
 .glossarypost.faq {
   border-color: #C6BDA8;
@@ -436,7 +436,7 @@ table.minicalendar tr td.weekend {
 }
 
 
-.glossarycategoryheader h2, 
+.glossarycategoryheader h2,
 .glossarypost .concept h3 {
   background-color: #FFFFFF
 }
@@ -455,14 +455,14 @@ table.minicalendar tr td.weekend {
 .errorboxcontent {
    background-color:#FEF9F6;
 }
- 
+
 
 /***
  *** Grade
  ***/
 
 .grade-report-grader table#user-grades td.cell span.gradepass {
-  background-color: #C2EBBD; 
+  background-color: #C2EBBD;
 }
 
 .grade-report-grader table#user-grades td.cell span.gradefail {

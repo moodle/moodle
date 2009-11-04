@@ -39,7 +39,7 @@ class profile_define_base {
         $form->addElement('selectyesno', 'locked', get_string('profilelocked', 'admin'));
 
         $form->addElement('selectyesno', 'forceunique', get_string('profileforceunique', 'admin'));
-        
+
         $form->addElement('selectyesno', 'signup', get_string('profilesignup', 'admin'));
 
         $choices = array();
@@ -545,4 +545,4 @@ function profile_edit_field($id, $datatype, $redirect) {
     }
 }
 
-?>
+

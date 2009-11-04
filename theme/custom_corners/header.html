@@ -6,29 +6,29 @@
     <title><?php echo $title ?></title>
     <link rel="shortcut icon" href="<?php echo $CFG->httpsthemewww .'/'. current_theme() ?>/favicon.ico" />
 
-    <?php 
+    <?php
         include("$CFG->javascript");
         include($CFG->themedir.'/custom_corners/js/js.php');
-        
+
         // check if page is opened within a popup window
         if (function_exists('is_in_popup')) {
             $inpopup = is_in_popup();
         } else {
             $inpopup = false;
         }
-        
+
         // get class list
         preg_match('/class="([^"]*)"/i', $bodytags, $classes);
         $classlist = explode (' ', $classes[1]);
-        
-        
+
+
         // add "inpopup" or "notinpopup" to class list
         if ($inpopup) {
             array_push($classlist, 'inpopup');
         } else {
             array_push($classlist, 'notinpopup');
         }
-        
+
         //replace classlist with new one
         $bodytags = str_replace($classes[0], 'class="'.implode(' ', $classlist).'"', $bodytags);
     ?>
@@ -46,7 +46,7 @@
     <?php } ?>
 <div id="page">
 
-<?php if (!$inpopup) { 
+<?php if (!$inpopup) {
     if ($home) {  // This is what gets printed on the home page only
 ?>
     <?php echo $OUTPUT->container_start('clearfix header-home'); ?>

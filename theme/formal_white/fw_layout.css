@@ -13,7 +13,7 @@ h5.main,
 h6.main {
   text-align: left;
   padding-left: 5px;
-} 
+}
 
 h1, h2, h3, h4 {
   text-align: left;
@@ -47,15 +47,15 @@ border-bottom-width:1px;
 #content {
 clear:both;
 }
-  
+
 h1, h2, h3, th.header {
   border-width: 1px;
-  border-style: solid; 
+  border-style: solid;
 }
 
 h4 {
   border-bottom-style: solid;
-  border-bottom-width:1px; 
+  border-bottom-width:1px;
 }
 
 input, select {
@@ -72,12 +72,12 @@ input, select {
 }
 
 .generaltable {
-  border-width:0px; 
+  border-width:0px;
 }
 
 .generalbox {
-  border-width:1px; 
-  border-style:solid;  
+  border-width:1px;
+  border-style:solid;
 }
 
 .sitetopiccontent {
@@ -85,17 +85,17 @@ input, select {
   border-style:solid;
 }
 
-.clearfix { 
- min-width: 0; 
- /* overflow: hidden; */ 
+.clearfix {
+ min-width: 0;
+ /* overflow: hidden; */
 }
 
 .clearfix:after {
   /* content: "<!-- -->";  */
-  content: "."; 
-  display: block; 
-  height: 0; 
-  clear: both; 
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
   visibility: hidden;
 }
 
@@ -203,14 +203,14 @@ TABLE.loginbox {
 /***
  *** Footer
  ***/
- 
+
 #footer {
   text-align:left;
   margin-top: 5px;
   margin-bottom: 0px;
 }
 
- 
+
 #footer p.helplink {
  margin-bottom: 0px;
 }
@@ -232,22 +232,22 @@ TABLE.loginbox {
 .sideblock .header .hide-show-image {
  padding-top: 4px;
 }
- 
+
 .sideblock .footer {
   border-top-width:1px;
   border-top-style:dashed;
 }
-  
+
 
 /***
  *** Calendar
  ***/
- 
+
 #calendar .today,
 .minicalendar .today {
   border:1px solid !important;
-} 
- 
+}
+
  table.minicalendar {
   width: 100%;
   margin:10px auto;
@@ -286,7 +286,7 @@ table.calendarmonth tr td  {
 /***
  *** Course
  ***/
- 
+
 .headingblock {
   border-width:1px;
   border-style:solid;
@@ -325,9 +325,9 @@ table.calendarmonth tr td  {
   padding-bottom: 5px;
   }
 
-.tabrow0 { 
-   padding-top: 4px; 
-} 
+.tabrow0 {
+   padding-top: 4px;
+}
 
 /***
  *** Modules: glossary

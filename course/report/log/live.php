@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       //  Displays live view of recent logs
 
     require_once("../../../config.php");
@@ -16,12 +16,12 @@
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('coursereport/log:viewlive', $context);
 
-    add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id); 
+    add_to_log($course->id, "course", "report live", "report/log/live.php?id=$course->id", $course->id);
 
     session_get_instance()->write_close();
 
     // we override the default framename so header/footer
-    // links open in a new window 
+    // links open in a new window
     if (empty($CFG->framename) || $CFG->framename==='_top') {
         $CFG->framename = '_blank';
     }
@@ -46,4 +46,4 @@
 
     exit;
 
-?>
+

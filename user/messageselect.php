@@ -177,4 +177,3 @@ if (count($SESSION->emailto[$id])) {
 echo $OUTPUT->footer();
 
 
-?>

@@ -10,19 +10,19 @@
 </head>
 
 <body<?php echo " $bodytags"; ?>>
-    
+
 <div id="page">
-    
-<?php if ($home) {  // This is what gets printed on the home page only  
+
+<?php if ($home) {  // This is what gets printed on the home page only
 ?>
     <?php echo $OUTPUT->container_start('clearfix header-home'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     <?php echo $OUTPUT->container_end(); ?>
 	<div class="navbar clearfix">
-		&nbsp;      
+		&nbsp;
     </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <?php echo $OUTPUT->container_start('clearfix header'); ?>
         <h1 class="headermain"><?php echo $heading ?></h1>

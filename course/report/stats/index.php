@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
@@ -71,4 +71,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

@@ -2,9 +2,9 @@ function completion_init() {
   // Check the reload-forcing
   var changeDetector=document.getElementById('completion_dynamic_change');
   if(changeDetector.value==1) {
-    changeDetector.value=0;  
+    changeDetector.value=0;
     window.location.reload();
-    return; 
+    return;
   }
 
   var toggles=YAHOO.util.Dom.getElementsByClassName('togglecompletion', 'form');
@@ -13,7 +13,7 @@ function completion_init() {
       completion_init_toggle(toggles[i]);
     }
   }
-} 
+}
 
 function completion_init_toggle(form) {
   // Store all necessary references for easy access
@@ -22,7 +22,7 @@ function completion_init_toggle(form) {
     switch(inputs[i].name) {
       case 'id' : form.cmid=inputs[i].value; break;
       case 'completionstate' : form.otherState=inputs[i].value; break;
-    } 
+    }
     if(inputs[i].type=='image') {
       form.image=inputs[i];
     }
@@ -84,7 +84,7 @@ function completion_handle_failure(o) {
 
 function completion_toggle(e) {
   YAHOO.util.Event.preventDefault(e);
-  // By setting completion_wwwroot you can cause it to use absolute path 
+  // By setting completion_wwwroot you can cause it to use absolute path
   // otherwise script assumes it is called from somewhere in /course
   var target = moodle_cfg.wwwroot + '/course/togglecompletion.php';
   YAHOO.util.Connect.asyncRequest('POST',target,

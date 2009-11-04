@@ -71,4 +71,4 @@ foreach ($imports as $import => $importdir) {
 }
 
 echo $OUTPUT->footer();
-?>
+

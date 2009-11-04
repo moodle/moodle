@@ -3,7 +3,7 @@ var SVGNS='http://www.w3.org/2000/svg',XLINKNS='http://www.w3.org/1999/xlink';
 function textrotate_make_svg(el)
 {
   var string=el.firstChild.nodeValue;
-  
+
   // Add absolute-positioned string (to measure length)
   var abs=document.createElement('div');
   abs.appendChild(document.createTextNode(string));
@@ -18,7 +18,7 @@ function textrotate_make_svg(el)
   var width=(textHeight*9)/8;
   svg.setAttribute('width',width);
   svg.setAttribute('height',textWidth+20);
-  
+
   // Add text
   var text=document.createElementNS(SVGNS,'text');
   svg.appendChild(text);
@@ -27,7 +27,7 @@ function textrotate_make_svg(el)
   text.setAttribute('text-anchor','end');
   text.setAttribute('transform','rotate(90)');
   text.appendChild(document.createTextNode(string));
-  
+
   // Is there an icon near the text?
   var icon=el.parentNode.firstChild;
   if(icon.nodeName.toLowerCase()=='img') {
@@ -41,7 +41,7 @@ function textrotate_make_svg(el)
     image.setAttribute('height',16);
     image.setAttributeNS(XLINKNS,'href',icon.src);
     svg.appendChild(image);
-  }  
+  }
 
   // Replace original content with this new SVG
   el.parentNode.insertBefore(svg,el);
@@ -59,7 +59,7 @@ function textrotate_init() {
 
   elements=YAHOO.util.Dom.getElementsByClassName('completion-expected', 'div');
   for(var i=0;i<elements.length;i++)
-  {    
+  {
     var el=elements[i];
     el.style.display='inline';
     var parent=el.parentNode;
@@ -81,5 +81,5 @@ function textrotate_init() {
   }
 }
 
-YAHOO.util.Event.onDOMReady(textrotate_init); 
+YAHOO.util.Event.onDOMReady(textrotate_init);
 

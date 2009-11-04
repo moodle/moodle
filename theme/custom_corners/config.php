@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?php
 ////////////////////////////////////////////////////////////////////////////////
 /// This file contains a few configuration variables that control
 /// how Moodle uses this theme.

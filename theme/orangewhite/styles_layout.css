@@ -1,6 +1,6 @@
 /*******************************************************************
  styles_layout.css
-  
+
  This CSS file contains all layout definitions like positioning,
  floats, margins, padding, borders etc.
 
@@ -145,7 +145,7 @@ img.resize {
 /***
  *** Footer
  ***/
- 
+
 #footer {
   margin-top:1em
 }
@@ -205,7 +205,7 @@ form.mform div.textarea textarea {
 /***
  *** Admin
  ***/
- 
+
 .logtable th.header {
   border-left:1px solid;
   border-right:1px solid;
@@ -218,7 +218,7 @@ form.mform div.textarea textarea {
 /***
  *** Blocks
  ***/
- 
+
 .sideblock,
 .sideblock .searchform {
   text-align:left
@@ -347,11 +347,11 @@ form.mform div.textarea textarea {
 .loginbox {
   margin-top:12px
 }
-  
+
 /***
  *** Modules:Forum
  ***/
- 
+
 .forumheaderlist {
   width:90%;
   margin-left:auto;
@@ -364,7 +364,7 @@ form.mform div.textarea textarea {
 #mod-forum-index .generalbox {
   width:100%
 }
-  
+
 /***
  *** Modules:Glossary
  ***/
@@ -379,7 +379,7 @@ form.mform div.textarea textarea {
 /***
  *** Modules:Resource
  ***/
- 
+
 .mod-resource #content {
   margin-top:1px
 }

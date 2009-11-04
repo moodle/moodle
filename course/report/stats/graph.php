@@ -181,4 +181,3 @@ if (empty($param->crosstab)) {
 
 $graph->draw_stack();
 
-?>

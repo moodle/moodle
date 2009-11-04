@@ -10,7 +10,7 @@
         $options[CALENDAR_TF_12] = get_string('timeformat_12', 'calendar');
         $options[CALENDAR_TF_24] = get_string('timeformat_24', 'calendar');
         $select = html_select::make($options, "timeformat", $prefs->timeformat, false);
-        $select->nothingvalue = ''; 
+        $select->nothingvalue = '';
         echo $OUTPUT->select($select);
     ?>
     <p><?php print_string('explain_timeformat', 'calendar'); ?></p>
@@ -30,7 +30,7 @@
         $options[5] = get_string('friday', 'calendar');
         $options[6] = get_string('saturday', 'calendar');
         $select = html_select::make($options, 'startwday', $prefs->startwday, false);
-        $select->nothingvalue = ''; 
+        $select->nothingvalue = '';
         echo $OUTPUT->select($select);
     ?>
     <p><?php print_string('explain_startwday', 'calendar'); ?></p>
@@ -46,7 +46,7 @@
             $options[$i] = $i;
         }
         $select = html_select::make($options, "maxevents", $prefs->maxevents, false);
-        $select->nothingvalue = ''; 
+        $select->nothingvalue = '';
         echo $OUTPUT->select($select);
     ?>
     <p><?php print_string('explain_maxevents', 'calendar'); ?></p>
@@ -62,7 +62,7 @@
             $options[$i] = $i;
         }
         $select = html_select::make($options, "lookahead", $prefs->lookahead, false);
-        $select->nothingvalue = ''; 
+        $select->nothingvalue = '';
         echo $OUTPUT->select($select);
     ?>
     <p><?php print_string('explain_lookahead', 'calendar'); ?></p>
@@ -72,9 +72,9 @@
 <tr>
     <th scope="row"><?php print_string('pref_persistflt', 'calendar')?>:</th>
     <td>
-    <?php 
+    <?php
     $select = html_select::make(array(0 => get_string('no'), 1 => get_string('yes')), 'persistflt', $prefs->persistflt, false);
-    $select->nothingvalue = ''; 
+    $select->nothingvalue = '';
     echo $OUTPUT->select($select);
     ?>
     <p><?php print_string('explain_persistflt', 'calendar'); ?></p>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
       // Display all the interfaces for importing data into a specific course
 
     require_once('../config.php');
@@ -40,4 +40,4 @@
     }
 
     echo $OUTPUT->footer();
-?>
+

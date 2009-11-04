@@ -55,7 +55,7 @@ $PAGE->set_heading($strtitle);
 if ($requestform->is_cancelled()){
     redirect($returnurl);
 
-} else if ($data = $requestform->get_data()) {    
+} else if ($data = $requestform->get_data()) {
     $request = course_request::create($data);
 
     // and redirect back to the course listing.

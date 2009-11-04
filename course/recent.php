@@ -304,4 +304,3 @@ function compare_activities_by_time_asc($a, $b) {
     return ($a->timestamp < $b->timestamp) ? -1 : 1;
 }
 
-?>

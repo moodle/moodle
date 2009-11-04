@@ -116,4 +116,4 @@ echo $OUTPUT->heading($strtitle);
 $mform->display();
 
 echo $OUTPUT->footer();
-?>
+

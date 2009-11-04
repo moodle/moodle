@@ -291,4 +291,4 @@ print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     get_string('excelcsvdownload','completion').'</a></li></ul>';
 
 echo $OUTPUT->footer();
-?>
+

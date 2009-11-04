@@ -406,7 +406,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo "<td class=\"cell c2\">\n";
         $link = html_link::make("/iplookup/index.php?ip=$log->ip&user=$log->userid", $log->ip);
         $link->add_action(new popup_action('click', $link->url, 'iplookup', array('height' => 440, 'width' => 700)));
-        echo $OUTPUT->link($link);                    
+        echo $OUTPUT->link($link);
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"cell c3\">\n";
@@ -419,7 +419,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         } else {
             $link = html_link::make(make_log_url($log->module,$log->url), $displayaction);
             $link->add_action(new popup_action('click', $link->url, 'fromloglive'), array('height' => 440, 'width' => 700));
-            echo $OUTPUT->link($link);                    
+            echo $OUTPUT->link($link);
         }
         echo "</td>\n";;
         echo "<td class=\"cell c5\">{$log->info}</td>\n";
@@ -518,7 +518,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         echo "<td class=\"r$row c2\" >\n";
         $link = html_link::make("/iplookup/index.php?ip=$log->ip&user=$log->userid", $log->ip);
         $link->add_action(new popup_action('click', $link->url, 'iplookup', array('height' => 400, 'width' => 700)));
-        echo $OUTPUT->link($link);                    
+        echo $OUTPUT->link($link);
         echo "</td>\n";
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
         echo "<td class=\"r$row c3\" >\n";
@@ -1655,14 +1655,14 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     if (!empty($resources)) {
         $select = html_select::make_popup_form($popupurl, 'add', $resources, "ressection$section", null);
         $select->nothinglabel = $straddresource;
-        $select->set_help_icon('resource/types', $straddresource); 
+        $select->set_help_icon('resource/types', $straddresource);
         $output .= $OUTPUT->select($select);
     }
 
     if (!empty($activities)) {
         $select = html_select::make_popup_form($popupurl, 'add', $activities, "section$section", null);
         $select->nothinglabel = $straddactivity;
-        $select->set_help_icon('mods', $straddactivity); 
+        $select->set_help_icon('mods', $straddactivity);
         $output .= $OUTPUT->select($select);
     }
 
@@ -2010,7 +2010,7 @@ function print_category_info($category, $depth, $showcourses = false) {
                     $link = html_link::make('/course/info.php?id='.$course->id, '<img alt="'.$strsummary.'" src="'.$OUTPUT->old_icon_url('i/info') . '" />');
                     $link->add_action(new popup_action('click', $link->url, 'courseinfo', array('height' => 400, 'width' => 500)));
                     $link->title = $strsummary;
-                    echo $OUTPUT->link($link);                    
+                    echo $OUTPUT->link($link);
                 } else {
                     echo '<img alt="" style="width:18px;height:16px;" src="'.$OUTPUT->old_icon_url('spacer') . '" />';
                 }
@@ -3700,7 +3700,7 @@ class course_request {
         // Notify the admin if required.
         if ($CFG->courserequestnotify) {
             $users = get_users_from_config($CFG->courserequestnotify, 'moodle/site:approvecourse');
-            
+
             $a = new stdClass;
             $a->link = "$CFG->wwwroot/course/pending.php";
             $a->user = fullname($USER);

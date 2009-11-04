@@ -14,4 +14,4 @@ class profile_define_textarea extends profile_define_base {
 
 }
 
-?>
+

@@ -5,15 +5,15 @@
 
 th.header,
 td.header,
-div.header {     
-    background-image:url(gradient.jpg);     
-    background-position:top;    
-    background-repeat:repeat-x;     
+div.header {
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
 .navbar {
-    background-image:url(gradient.jpg);     
-    background-position:top;    
-    background-repeat:repeat-x;     
+    background-image:url(gradient.jpg);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 

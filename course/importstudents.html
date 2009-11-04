@@ -12,7 +12,7 @@
                   onFocus="getElementById('studentform').add.disabled=true;
                            getElementById('studentform').remove.disabled=false;
                            getElementById('studentform').addselect.selectedIndex=-1;">
-          <?php 
+          <?php
             foreach ($alreadycourses as $course) {
                 echo "<option value=\"$course->id\">".course_format_name($course,60)."</option>\n";
             }
@@ -34,7 +34,7 @@
                            getElementById('studentform').remove.disabled=true;
                            getElementById('studentform').removeselect.selectedIndex=-1;">
           <?php
-  
+
               if (!empty($searchcourses)) {
                   echo "<optgroup label=\"$strsearchresults (" . count($searchcourses) . ")\">\n";
                   foreach ($searchcourses as $course) {
@@ -57,7 +57,7 @@
          </select>
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext) ?>" 
+         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext) ?>"
                   onFocus ="getElementById('studentform').add.disabled=true;
                             getElementById('studentform').remove.disabled=true;
                             getElementById('studentform').removeselect.selectedIndex=-1;
