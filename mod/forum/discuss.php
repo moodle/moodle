@@ -217,6 +217,19 @@
                 }
             }
             if (!empty($forummenu)) {
+
+                // Check for empty groups... This can occur if there is the forum we are in is
+                // the only forum within its course section.
+                foreach ($forummenu as $key=>$item) {
+                    // If this option is a group and the next option is a group OR it is
+                    // the last item in the array then remove it... or we get an exception
+                    if (strpos($item, '--------------')===0 && (!array_key_exists($key+1, $forummenu) || strpos($forummenu[$key+1], '--------------')===0)) {
+                        // Remember foreach acts on a copy of the array so things
+                        // will not get out of order
+                        unset($forummenu[$key]);
+                    }
+                }
+
                 echo "<div style=\"float:right;\">";
                 $select = html_select::make_popup_form('', '', $forummenu, 'forummenu');
                 $select->nothinglabel = get_string("movethisdiscussionto", "forum");
