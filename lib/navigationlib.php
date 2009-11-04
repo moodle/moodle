@@ -1213,9 +1213,12 @@ class global_navigation extends navigation_node {
         global $DB, $CFG, $PAGE;
 
         if (!$PAGE->cm && $this->context->contextlevel == CONTEXT_MODULE && $this->context->instanceid) {
-            $cm = get_coursemodule_from_id('chat', $this->context->instanceid);
-            $cm->context = $this->context;
+            // This is risky but we have no other choice... we need that module and the module
+            // itself hasn't set PAGE->cm (usually set by require_login)
+            // Chances are this is a front page module.
+            $cm = get_coursemodule_from_id(false, $this->context->instanceid);
             if ($cm) {
+                $cm->context = $this->context;
                 $PAGE->set_cm($cm, $PAGE->course);
             } else {
                 debugging('The module has not been set against the page but we are attempting to generate module specific information for navigation', DEBUG_DEVELOPER);
@@ -1233,7 +1236,12 @@ class global_navigation extends navigation_node {
         $node = $this->find_child($PAGE->cm->id, self::TYPE_ACTIVITY);
         if ($node) {
             $node->make_active();
-            $this->context = $PAGE->course->context;
+            if (!isset($PAGE->course->context)) {
+                // If we get here chances we are on a front page module
+                $this->context = $PAGE->context;
+            } else {
+                $this->context = $PAGE->course->context;
+            }
             $file = $CFG->dirroot.'/mod/'.$module->name.'/lib.php';
             $function = $module->name.'_extend_navigation';
             if (file_exists($file)) {
