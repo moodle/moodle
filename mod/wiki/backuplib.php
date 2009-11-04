@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //wiki mods
 
@@ -36,7 +36,7 @@
                 }
             }
         }
-       
+
         return $status;
     }
 
@@ -48,7 +48,7 @@
         if (is_numeric($wiki)) {
             $wiki = $DB->get_record('wiki', array('id'=>$wiki));
         }
-        
+
         //Start mod
         fwrite ($bf,start_tag("MOD",3,true));
         //Print assignment data
@@ -68,16 +68,16 @@
         fwrite ($bf,full_tag("REVERTCHANGES",4,false,$wiki->revertchanges));
         fwrite ($bf,full_tag("INITIALCONTENT",4,false,$wiki->initialcontent));
         fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$wiki->timemodified));
-        
+
         //backup entries and pages
         if (backup_userdata_selected($preferences,'wiki',$wiki->id)) {
             $status = backup_wiki_entries($bf,$preferences,$wiki->id, $preferences->mods["wiki"]->userinfo);
             $status = backup_wiki_files_instance($bf,$preferences,$wiki->id);
         }
-        
+
         //End mod
         fwrite ($bf,end_tag("MOD",3,true));
-        
+
         return $status;
     }
 
@@ -171,12 +171,12 @@
         }
         return $status;
     }
-    
+
     function backup_wiki_files_instance($bf,$preferences,$instanceid) {
         global $CFG, $DB;
-        
+
         $status = true;
-        
+
         //First we check to moddata exists and create it as necessary
         //in temp/backup/$backup_code  dir
         $status = check_and_create_moddata_dir($preferences->backup_unique_code);
@@ -240,4 +240,4 @@
         return $result;
     }
 
-?>
+

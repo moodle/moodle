@@ -44,11 +44,11 @@ function ewiki_page_orphanedpages($id, $data, $action) {
    $refs = array_unique($refs);
 
     #-- check pages to be referenced from somewhere
-    foreach ($pages as $p) {    
+    foreach ($pages as $p) {
         if (!ewiki_in_array($p, $refs)) {
             if (!EWIKI_PROTECTED_MODE || EWIKI_PROTECTED_MODE_HIDING || ewiki_auth($p, $uu, "view")) {
-                $orphaned[] = $p;    
-            }  
+                $orphaned[] = $p;
+            }
         }
     }
 
@@ -59,4 +59,4 @@ function ewiki_page_orphanedpages($id, $data, $action) {
 }
 
 
-?>
+

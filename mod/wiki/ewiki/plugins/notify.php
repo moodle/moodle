@@ -84,7 +84,7 @@ function ewiki_notify_edit_hook($id, $data, &$hidden_postdata) {
    $mailto = ewiki_notify_links($data["content"], 0);
 
    if (!count($mailto)) {
-      return(false); 
+      return(false);
    }
 
    #-- generate diff
@@ -230,4 +230,3 @@ function ewiki_format_remove_notify(&$source) {
 
 
 
-?>

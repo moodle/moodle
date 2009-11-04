@@ -55,4 +55,4 @@ CloseTable();   # strange function names ;)
 include("footer.php");
 
 
-?>
+

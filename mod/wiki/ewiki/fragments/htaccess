@@ -5,7 +5,7 @@
 #
 # It uses the mod_rewrite to look a bit more professionall than
 # the usual GET-vars at the end of our URLs. This is highly
-# recommended as things like "script.php?edit=1&id=page" usually 
+# recommended as things like "script.php?edit=1&id=page" usually
 # scare search engines and may prevent your Wiki from getting
 # indexed.
 #

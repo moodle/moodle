@@ -1,5 +1,5 @@
 <?php
-    require_once("../../config.php"); 
+    require_once("../../config.php");
     require_once($CFG->libdir.'/filelib.php');
 
 # this is the upload/download plugin, which allows to put arbitrary binary
@@ -110,7 +110,7 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       $o .= upload_print_form_fragment(1,array(EWIKI_UP_UPLOAD),array(ewiki_t("file")),false,null,0,0,true);
       $o .= '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '" /><br /><br />'
           .'<b>' . ewiki_t("comment") . '</b><br /><textarea name="comment" cols="35" rows="3"></textarea><br /><br />';
-      
+
       if (empty($ewiki_upload_sections[$def_sec])) {
          $ewiki_upload_sections[$def_sec] = $def_sec;
       }
@@ -301,8 +301,8 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $id = $row["id"];
    $p_title = basename($meta["Content-Location"]);
    $p_time = userdate($row["created"]);
-   
-   
+
+
    $p_hits = ($row["hits"] ? $row["hits"] : "0");
    $p_size = $meta["size"];
    $p_size = isset($p_size) ? (", " . ($p_size>=4096 ? round($p_size/1024)."K" : $p_size." bytes")) : "";
@@ -321,12 +321,12 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $p_icon = "";
    /*foreach ($ewiki_binary_icons as $str => $i) {
-      if (empty($str) || strstr($row["Content-Location"], $str) || strstr($p_ct, $str) || strstr($p_ct2, $str)) { 
+      if (empty($str) || strstr($row["Content-Location"], $str) || strstr($p_ct, $str) || strstr($p_ct2, $str)) {
          $p_icon = $i;
          $p_icon_t = $str;
       }
    }*/
-   
+
    /// Moodle Icon Handling
    global $CFG;
    $p_icon = $OUTPUT->old_icon_url(file_extension_icon($id));
@@ -370,8 +370,8 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 //        $o = format_text($o, $moodle_format);
    }
 
-   
-   
+
+
    ewiki_t("DWNL_ENTRY_FORMAT", $info);
 
    return($o);
@@ -398,4 +398,4 @@ function ewiki_action_attachments($id, $data, $action=EWIKI_ACTION_ATTACHMENTS) 
 }
 
 
-?>
+

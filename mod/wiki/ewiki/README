@@ -4,7 +4,7 @@ ErfurtWiki - a fast, user-friendly, highly configurable Wiki engine in PHP
 
 
 README
-¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This is the documentation for ewiki. I tries to describe nearly everything,
 but therefore has now grown to long to be read at once. However it is often
 sufficient to just read the first few paragraphs to set it up (plugins can be
@@ -246,7 +246,7 @@ read this file in hypertext format.
 
 
 What is this?
-¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This is a WikiWikiWeb engine implemented in the PHP web scripting
 language. A WikiWiki is a web site which can be edited by everybody
 who visits it (most commonly without requiring that user to register
@@ -260,7 +260,7 @@ text for inclusion in your pages` body/content area.
 
 
 Why "ErfurtWiki"?
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 My home town (Btw, Erfurt is next to Weimar.de) and really that's
 just a name (you're allowed to rename, extend it and to finally
 ship it GPLifyed). You'll soon see the internal name is "ewiki",
@@ -269,7 +269,7 @@ and it is also sometimes called 'EmbeddableWiki'.
 
 If you asked - Why you should I use it?
 
- - It is contained within a single file. It does not require 20 other 
+ - It is contained within a single file. It does not require 20 other
    files to lie around between your own scripts.
 
  - It does not impose a pre-defined layout, and you do not need
@@ -284,7 +284,7 @@ If you asked - Why you should I use it?
 
 
 WikiAlternatives
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 If you don't like ewiki, then try at least one of these:
 
 * PhpWiki has a more complete approach than this WikiWare,
@@ -306,7 +306,7 @@ If you don't like ewiki, then try at least one of these:
 * coWiki - completely OOP and the source code layout is great; looks
   very featureful, but is more a CMS than a Wiki (authentication bloat)
   and has also a little weird markup,
-  but better check it out yourself on http://cowiki.org/ 
+  but better check it out yourself on http://cowiki.org/
 
 * And of course there are Wikis in other scripting languages (and yes,
   there is still demand for an implementation in assembler or C !!)
@@ -319,9 +319,9 @@ If you don't like ewiki, then try at least one of these:
 
 
 Authors
-¯¯¯¯¯¯¯
-current maintainer: Mario Salzer <mario*erphesfurt·de> icq95596825 (+Yah,Jab)
-main contributor: Andy Fundinger <andy*burgiss·com> from http://burgiss.com/
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+current maintainer: Mario Salzer <mario*erphesfurtï¿½de> icq95596825 (+Yah,Jab)
+main contributor: Andy Fundinger <andy*burgissï¿½com> from http://burgiss.com/
 
 For the complete list of authors and contributors please see the CREDITS
 file.
@@ -333,8 +333,8 @@ contribution (yep, that is not measured in lines of source code).
 
 
 Project Pages
-¯¯¯¯¯¯¯¯¯¯¯¯¯
-official freshmeat project page: 
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+official freshmeat project page:
 - http://freshmeat.net/projects/ewiki
 
 demo site:
@@ -349,7 +349,7 @@ mailing list archive
 
 
 Obtaining Support
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Getting support for problems with ewiki is possible, but please read this
 README first. The author is thankful for BugReports, and of course would
 like to know were this documentation is not detailed enough and fails to
@@ -368,7 +368,7 @@ soon as your problems are solved).
 
 
 License
-¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This "program" is "distributed" as "Public Domain". Public Domain
 is like "FreeWare", but a bit more free ;->  You can think of it
 as the GPL without being bound to the GPL. <note> I didn't want to
@@ -384,7 +384,7 @@ downloaded separately (mime_magic.php, rendering_phpwiki12.php).
 
 
 Known Bugs
-¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Currently none. But this note is just here to encourage you to visit
 http://erfurtwiki.sourceforge.net/?BugReports
 
@@ -398,7 +398,7 @@ http://erfurtwiki.sourceforge.net/?BugReports
 
 
 HowTo
-¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½
 the ewiki script requires:
 
 - Webserver (Apache, Nanoweb, ...)
@@ -414,13 +414,13 @@ get this running).
 
 
 Integration with yoursite.php
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 For the next few paragraphs the "yoursite.php" refers to whatever
 files and/or scripts belong to your already existing website. This
 hypothetical script should at least output the <html><body> tags
 around the output from ewiki. The most simple script to accomplish
 this could look like this (see also example-2.php):
- 
+
     <HTML>
     <BODY>
     <?php
@@ -438,7 +438,7 @@ this could look like this (see also example-2.php):
     ?>
     </BODY>
     </HTML>
-   
+
 [1]  The first two commands open a connection to your MySQL database,
 usually one saves the result of mysql_connect() in a variable named
 $db or so, but as PHP does not depend on it if there is only one
@@ -461,7 +461,7 @@ string but does not output that one itself.
 
 
         Creating a "config.php"
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Instead of including the plain "ewiki.php" script as shown in the
         example above, many people may find it more useful to include()
         a more customized Wiki yoursite.
@@ -506,7 +506,7 @@ string but does not output that one itself.
 
 
         Generation of a "monsterwiki.php" script
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         ewiki over the time grow larger, and nowadays isn't anymore the
         single script it once was. The distribution ships with over hundreds
         of extension plugins. But nevertheless it is still possible to build
@@ -517,7 +517,7 @@ string but does not output that one itself.
         the plugins). - You could still just include() the "ewiki.php"
         script into yoursite and delete everything else the ewiki tarball
         contained.
-        
+
         However, it is also possible to MERGE all wanted plugins and the
         core script together to built a customized (feature enhanced) Wiki
         script from it. All you needed to do was:
@@ -561,13 +561,13 @@ string but does not output that one itself.
         loading it twice is once too much).
 
         StaticPages (read about "spages" plugin) can also be included, if
-        you first convert them into ordinary ["page"] plugins using the 
+        you first convert them into ordinary ["page"] plugins using the
         'mkpageplugin' commandline tool.
 
 
 
         What to do if images don't work
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         The first example, as well as the "example-2.php" have problems with
         binary content, because: the <HTML> is output before the 'ewiki.php'
         library was loaded and got the chance to output pictures.
@@ -606,11 +606,11 @@ string but does not output that one itself.
 
 
 Supplying the WikiPageName
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 If you just call ewiki_page() as shown in the first example, it will
 try to get the name of the requested WikiPage either from the
 $_SERVER["PATH_INFO"] variable or from one of the GET-variables '?id='
-or '?name=' or '?page=' or '?file=' (available as $_REQUEST["name"]). 
+or '?name=' or '?page=' or '?file=' (available as $_REQUEST["name"]).
 If yoursite.php however uses another way or another varname to receive
 the WikiPageName you can just give it as first parameter:
 
@@ -622,7 +622,7 @@ example-4.php shows how this can be used to list a second WikiPage
 
 
         mod_rewrite or PATH_INFO
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         If you dedicate a complete directory for your wiki, you should keep
         in mind, that some of the generated URLs contain slashes (for
         example "edit/WikiPage"), and will look like subdirectories and thus
@@ -646,7 +646,7 @@ example-4.php shows how this can be used to list a second WikiPage
 
 
         use with the 404 trick
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Once I implemented a way to run a web server below another one
         (actually Nanoweb below Apache, for more details see
         http://nanoweb.si.kz/), because the Apache on one of my providers
@@ -675,7 +675,7 @@ example-4.php shows how this can be used to list a second WikiPage
         ewiki.php.
 
            The $url from the above example could also be used as $id
-           parameter to ewiki_page().           
+           parameter to ewiki_page().
 
         It should be noted, that some Apache implementations are garbaging
         POST requests in case of a triggered 404 error - but you can simply
@@ -692,7 +692,7 @@ example-4.php shows how this can be used to list a second WikiPage
 
 
 Security considerations
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ewiki was developed using a PHP5 interpreter, but with limitations of PHP4.3
 in mind. There are huge differences (a rather instable, bug-prone and still
 unfinished language) across the 4.x versions of PHP. The 4.0 series is not
@@ -705,11 +705,11 @@ providers. Some for example enforce users to run their scripts in so called
 Other still use pre-4.3 settings for the PHP interpreter (the Win4 php.ini
 still is outdated). So take care, and adjust settings using .htaccess`
 php_option for Apache servers.
- 
+
 
 
         PHP settings (register_globals)
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Because ewiki was developed on later PHP versions (at least 4.3), it
         heavily uses the $_REQUEST array and assumes a deactivated
         "register_globals" setting in php.ini
@@ -735,7 +735,7 @@ php_option for Apache servers.
 
 
         The two modes of operation (_protected_mode and _flat_real_mode)
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         While this wiki was originally developed as a real wiki, many people
         use it for different things now, like private HomePages, easy CMS on
         commercial web sites.
@@ -763,7 +763,7 @@ php_option for Apache servers.
 
 
 simple usage restrictions via wrappers
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The easiest way to cripple a Wiki setup to be browseable-only for the larger
 public, and to allow only a small subset of users to edit pages is to write
 two wrapper scripts around the ewiki.php library.
@@ -800,7 +800,7 @@ they'll work for you!
 
 
 PhpWiki compatibility
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The MySQL database table is partially compatible to PhpWiki versions 1.2.x,
 but not with the current PhpWiki 1.3.x versions. There is however now the
 db_phpwiki13 plugin which allows to access those (rw).
@@ -808,7 +808,7 @@ db_phpwiki13 plugin which allows to access those (rw).
 
 
         Transition from another WikiWare
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         If you choosed ewiki to replace an already existing wiki script on
         your site, you should first think about, that the syntax/WikiMarkup
         isn't equal across all Wikis. There are a few markup extension
@@ -824,7 +824,7 @@ db_phpwiki13 plugin which allows to access those (rw).
         EWIKI_PAGE_INDEX is not found in the db).
 
         There is a "plugins/db_phpwiki13.php" which may be useful in first
-        trying ewiki, but it is not recommended to use it for daily work. 
+        trying ewiki, but it is not recommended to use it for daily work.
         Speaking of PhpWiki you could also use the "tools/t_convertdb.php"
         to import (and markup convert) all pages from PhpWiki to the ewiki
         database format.
@@ -840,9 +840,9 @@ db_phpwiki13 plugin which allows to access those (rw).
 
 
 Internals
-¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The MySQL database table structure is to a certain degree compatible
-with that of the well known »PHPWiki« v1.2.x (you only need to change
+with that of the well known ï¿½PHPWikiï¿½ v1.2.x (you only need to change
 EWIKI_DB_TABLE_NAME to "wiki" to use it). This is the MySQL statement
 which creates our database table (you can find it at the bottom of the
 "ewiki.php" script):
@@ -900,7 +900,7 @@ to implement the flat file based "database backend".
 
 
 ewiki_ functions
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Some of the core functions of ewiki.php can be used separate from the
 others and some of them were designed to be replaced by different
 implementations.
@@ -982,13 +982,13 @@ or more scripts into one program).
        Is just a ewiki_script() wrapper, but can additionally distinguish
        between binary download and upload URLs, which could be utilized by
        (database external) plain file storages (see plugins/binary_store).
-     
+
 
    ewiki_binary()
    --------------
        Gets called automatically for requests with the ?binary= trailer
        which is used to reference cached and uploaded images (or not
-       yet cached ones).       
+       yet cached ones).
 
 
    ewiki_author()
@@ -1041,7 +1041,7 @@ or more scripts into one program).
      produces the click-through links for inclusion on other dynamic pages,
      allows overlapping of page chunk ranges.
 
-     
+
    ewiki_in_array($value, &$array, $dn=0)
    --------------------------------------
      Case-insensitive variant of PHPs` in_array(), returns the $value if
@@ -1137,7 +1137,7 @@ or more scripts into one program).
 
 
 $GLOBALS pollution
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 At least the ewiki_page() function produces variables in the
 global namespace. Of course they also were named to not interfere
 with anything from yoursite.php:
@@ -1176,7 +1176,7 @@ with anything from yoursite.php:
  $ewiki_auth_user  - Is set by ewiki_auth_user() whenever it successfully
                   authenticates a user in _PROTECTED_MODE. This variable
                   is then used as reliable state setting, which affects
-                  permission granting. 
+                  permission granting.
 
  $ewiki_ring    - Holds the permission level ('ring') of the currently
                   authenticated user (or else will be unset). This value
@@ -1212,11 +1212,11 @@ with anything from yoursite.php:
  $ewiki_script  - Was a global var for a short period of time, but now is
                   a subentry in $ewiki_config.
 
-                  
+
 
 
 EWIKI_ constants
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This chapter explains some of the constants and how you can utilize
 them to tweak some of ewiki's behaviour.
 
@@ -1276,7 +1276,7 @@ ewiki by pre-defining one of the following constants).
      If you do not set this constant, it will be guessed by the
      ewiki_script_url() funciton, what often works but may be suboptimal
      and could also lead to security problems.
-      
+
 
  EWIKI_DB_TABLE_NAME
      Sets the name of the MySQL database table name to be created
@@ -1382,7 +1382,7 @@ ewiki by pre-defining one of the following constants).
      If a not logged-in user however re-saves the page this flag
      won't be set anymore, so you should be careful about that.
      {{edit ewiki.php and define(_DB_F_HTML with 8+16) to change}}
-     
+
  EWIKI_RESCUE_HTML
      Was replaced by "plugins/markup_rescuehtml.php", which now allows
      for certain 'safe' HTML tags within the wiki source to be used.
@@ -1459,7 +1459,7 @@ ewiki by pre-defining one of the following constants).
  EWIKI_DB_F_BINARY
      Used for cached/uploaded images. Prevents a page from getting
      shown.
-    
+
  EWIKI_DB_F_DISABLED
      If set will prevent the page from being shown. Not useful.
      You could more easily unset the TEXT flag to disable page view.
@@ -1588,7 +1588,7 @@ ewiki by pre-defining one of the following constants).
      Note that the renderer relies only on some unique string to detect
      binary references, but the database functions in fact depend upon
      "://" to return image sizes on "FIND" calls.
-     
+
  EWIKI_ACCEPT_BINARY
      Allows users to upload arbitrary binary files through the image upload
      function. You should now rather use the downloads plugin, which adds
@@ -1640,7 +1640,7 @@ ewiki by pre-defining one of the following constants).
      you, which version you are running currently.
      Major releases have a version number like 'R1.00a', while testing and
      unstable releases have another number appended 'R1.00a7'.
-    
+
 
 See the tools/ subdir for a small utility to change the mentioned flags
 in the ewiki database table.
@@ -1648,7 +1648,7 @@ in the ewiki database table.
 
 
 $ewiki_config array
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 As it turned out not all configuration settings are as everlasting that
 they can be constants (this mainly applies to "look&feel"-settings). So
 some of the above mentioned EWIKI_ constants can now be overridden by
@@ -1725,7 +1725,7 @@ before the 'ewiki.php' script gets included().
 
 
 internal coding explained
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This section is to explain some of the coding style of ewiki, and how some
 things work. While many parts of ewiki carry good source code comments, it
 is always difficult to quickly understand larger scripts like the ewiki one
@@ -1734,7 +1734,7 @@ by just reading it.
 
 
          how ewiki operates
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          ewiki_page()
            - decodes the $id and $action from the GET or POST parameters
            - tries to load the page from ewiki_database()
@@ -1780,7 +1780,7 @@ by just reading it.
            - page plugins return html output, which usually is hardcoded as
              strings into them
            - provide some interactivity
-          
+
          ewiki_$action_plugins_*()
            - activate on pages with special registered $action's
            - provide some interactivity (for page editing for example)
@@ -1788,7 +1788,7 @@ by just reading it.
 
 
          used variables
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Variables in ewiki often have similar names, and are also
          regularily passed by reference from one function to another (so it
          is in fact the same variable).
@@ -1835,13 +1835,13 @@ by just reading it.
 
 
 Tweaking
-¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 (this part of the README is also just a collection of random notes)
 
 
 
 Just using the wiki source transformation
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The ewiki_format function was designed to be used independently from the
 ewiki database.
 
@@ -1871,7 +1871,7 @@ stuff). Contributed by Frank Luithle.
 
 
 Customizing ewiki_format()
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 There are various markup extension plugins available for ewiki, which
 allow you to use BBCode or the syntax of another WikiWare. But if you
 have a closer look at $ewiki_config (the defaults are in 'ewiki.php'
@@ -1903,7 +1903,7 @@ Please see the section on "ewiki_format() internals" on how to write a
 
 
 Customization using CSS
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 There are now some interesting ways to style ewiki output, just read on.
 
 Please note, that it in your stylesheets you just write ".wiki" and
@@ -1917,7 +1917,7 @@ lots of class names with minus dashes instead of underscores.)
 
 
 user style classes in pages
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The plugins/markup_css allows you to use CSS classes and style definitions
 in WikiPages. With the double at @@ followed by a css classname or command
 you start styling a paragraph or parts of the text.
@@ -1938,7 +1938,7 @@ like @@color:#ff0000; will work, while specifying font names may not always.
 
 
 rendered page content
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 If you are not interested in walking around the "ewiki.php" script
 when you want to tune how the output looks, you should try to
 utilize the (few) CSS classes ewiki defines (it does not include
@@ -1954,12 +1954,12 @@ even one color setting or <font> tag):
 
    .indent                      // to specify a different space-indentation
 
-</style>   
+</style>
 
 
 
 pages enclosed in style classes
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The most powerful way to style the content ewiki includes into your site
 is to use the generic style class names which enclose every page that comes
 from ewiki:
@@ -1999,7 +1999,7 @@ widespread.)
 
 
 plugin output styling
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 There often appear special 'pieces' within a rendered page that ewiki
 returns, because not everything in the returned html code belongs to the
 requested pages` content.
@@ -2054,7 +2054,7 @@ different naming scheme.
 
 
 Idea Collection
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Here we'll note some tricks, on how to do this and that. Some of the
 following paragraphs also explain workarounds for currently lacking
 features.
@@ -2062,7 +2062,7 @@ features.
 
 
         Multiple Wikis / InterWiki feature abuse
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Other WikiWare provides means to have multiple namespaces in a wiki,
         what if fact is contrary to the original Wiki idea suggesting a
         single flat namespace. ewiki does not support SubWikis or alike, to
@@ -2082,7 +2082,7 @@ features.
           $ewiki_config["interwiki"]["office"] = "/wiki/office/?id=";
           $ewiki_config["interwiki"]["tech"] = "http://tech.company.com/?id=";
           $ewiki_config["interwiki"]["our-www"] = "http://www.company.com/";
-        
+
         The last one is an example, on how to use the InterWiki feature to
         generate references to arbitrary web documents, with a simple syntax
         like "[our-www:/customers/pub/rules.html]" - it's somehow standard to
@@ -2101,14 +2101,14 @@ features.
 
 
 Explanations
-¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The next few paragraphs shall enlight more detailed how some things are
 handled in ewiki (and why it is that way).
 
 
 
 Binary and Text content
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Because I'd like to keep it small (see also the "Everything in one
 script" paragraph) ewiki also creates just one database table.
 Differently from other Wikis this one has the 'flags' setting for
@@ -2134,7 +2134,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
         Image Uploading
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         The currently most important use for the BINARY flag and image
         functions is to upload images with the small form below every page
         edit box.
@@ -2158,7 +2158,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
         Images Caching
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Images are usually redirected through EWIKI_SCRIPT_BINARY, and ewiki
         tries to save them inside the database as with uploaded images. So
         most of the facts from the previous paragraph apply to this function
@@ -2177,7 +2177,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
         Image WikiMarkup
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Usually one writes image references using square brackets around the
         url of an image: [http://www.example.com/pics/image.png] or:
         [internal://md5md5md5md5md5md5md5md5md5md5md5md5.png]
@@ -2211,7 +2211,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
         binary_store, direct access
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         While storing the binary data together with text pages in the same
         database is most often a good thing and suits most sites, there
         exists also a workaround/hack to keep this binary data in plain
@@ -2231,7 +2231,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
         Arbitrary Binary Content
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Set the EWIKI_ACCEPT_BINARY constant, if you'd like to allow any
         binary file to be uploaded and saved in the database using the image
         upload function.  Uploaded files will show up as ordinary (except
@@ -2243,7 +2243,7 @@ throughout the code to separate between _DB_F_BINARY and _DB_F_TEXT content.
 
 
 $action and $id
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Inside of ewiki.php you'll see many occurrences of variables named $id and
 $action. The $id refers to the current page, which usually is a string like
 ThisPage, ThatPage, OrAnotherPage.
@@ -2268,7 +2268,7 @@ example (the "view" gets mandatory in such cases).
 
 
         ewiki URLs
-        ¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         "$action/$id" is most commonly appended as "GET parameter" to an
         ewiki URL, after a string like "?id=" or "?page=" - you've already
         noticed that!
@@ -2302,12 +2302,12 @@ example (the "view" gets mandatory in such cases).
 
 
 Everything in one script
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 I think its handy to have one script for one task, and as ewiki is not
 intended to be used as portal script I think it's senseless to have
 always thousands of libs/scripts surrounding it.
 
-However as time went on, it turned out, that it would either slow down 
+However as time went on, it turned out, that it would either slow down
 the core 'library' when everything was included into it, or that there
 couldn't be much further development at some point.
 
@@ -2332,7 +2332,7 @@ inside ewiki.
 
 
 database plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The ewiki.php core script contains a database request function which is
 tailored to a MySQL database. However that function is already prepared
 to chain to another "database abstraction" function if desired.
@@ -2340,7 +2340,7 @@ to chain to another "database abstraction" function if desired.
 
 
          MySQL support
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The first implemented, and still most recommended way to use
          ewiki is with a MySQL (3.21 or later) database. RDBMS work more
          reliably and of course much faster than any other of the ewiki
@@ -2361,7 +2361,7 @@ to chain to another "database abstraction" function if desired.
 
 
          plugins/db_flat_files
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If you don't have access to a MySQL database, then just include()
          this plugin to save your wiki pages into simple text files (editable,
          often called "flat files") inside a dedicated subdirectory. You
@@ -2375,7 +2375,7 @@ to chain to another "database abstraction" function if desired.
          Usually "/tmp" will work, but this one is purged on every boot; and
          therefore you should create a new sub directory (" mkdir ./pages ")
          where all files go into. This newly created subdir must be made
-         »world-writeable« using the command "chmod 777 ./pages", because the
+         ï¿½world-writeableï¿½ using the command "chmod 777 ./pages", because the
          WebServers user id counts when accessing it.
 
          Usually you can do both from within your ftp client (the commands
@@ -2418,7 +2418,7 @@ to chain to another "database abstraction" function if desired.
            | created: 1046532697
            | lastmodified: 1046532697
            | refs: \nErfurtWiki\nNewestPages\n
-           | 
+           |
            | !! WikiSourceContent
            | <more-text>...
 
@@ -2452,7 +2452,7 @@ to chain to another "database abstraction" function if desired.
 
 
          plugins/db_fast_files
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          NOTE: The db_fast_files has been merged into db_flat_files, so both
          formats can be read now - at the same time! Updated or new pages will
          however always be written in the file format determined by
@@ -2488,7 +2488,7 @@ to chain to another "database abstraction" function if desired.
 
 
          plugins/db_any
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If you use a relational SQL database other than MySQL, then you
          may want to give this plugin a try. It itself provides a wrapper
          for the PHP database access wrapper libraries ADOdb, PEAR::DB and
@@ -2521,13 +2521,13 @@ to chain to another "database abstraction" function if desired.
 
 
          plugins/db_adodb
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          obsoleted by plugins/db_any
 
 
 
          plugins/db_dba
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          including() this plugin enables ewiki to store the WikiPages in the
          Berkeley DB file given with the EWIKI_DBA constant.  Your PHP binary
          must be compiled with either the "dba" or the "dbm" extension to use
@@ -2597,7 +2597,7 @@ to chain to another "database abstraction" function if desired.
 
 
          plugins/binary_store
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is a hack into the ewiki core, which will store binary/uploaded
          files outside of the default ewiki database (as plain files in a
          data directory).
@@ -2616,7 +2616,7 @@ to chain to another "database abstraction" function if desired.
          database, however it has the drawback that only the main ewiki
          script can handle this transparently and all admin tools/ fail to
          deal with the stored plain data files (no backup support and so on).
-         
+
          By setting the EWIKI_DB_STORE_URL constant correctly (corresponding
          to your wiki setup and where you store the data files, compare with
          EWIKI_DB_STORE_DIRECTORY) you can make ewiki create URLs directly
@@ -2631,14 +2631,14 @@ to chain to another "database abstraction" function if desired.
 
 
 core enhancements
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Some really cool features are put into extension plugins, and the most
 important, recommended and most often used ones are listed in this section:
 
 
 
          plugins/patchsaving
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If two users concurrently edit a page, then only the first saving
          attempt will succeed; which the second user is told by the "This
          page version was already saved" failure message.
@@ -2652,7 +2652,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/notify
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin enables users to get notified, whenever someone changes
          a watched page. To enable 'watching' one must just place an email
          address into the page with following syntax:
@@ -2671,7 +2671,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/jump
-         ¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Introduces magic markup for page redirection (switching to another
          page). Possible notations are:
 
@@ -2689,7 +2689,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/email_protect
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin 'ciphers' all valid email addresses inside a WikiPage
          for protection against automated spambots. Additionally it
          throws fake/trap email addresses to spam spammers databases :>
@@ -2702,7 +2702,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/spages (StaticPages)
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The "StaticPages"-plugin allows ewiki to access files in a given
          directory. If these files are in text format, ewiki will parse them
          as WikiPages. But if you put files with an extension .html, .htm or
@@ -2710,9 +2710,9 @@ important, recommended and most often used ones are listed in this section:
          be returned as is from ewiki_page() - the .php files will of course
          get executed and their output is returned.
 
-         The basename of the files in the directories to be used by spages 
+         The basename of the files in the directories to be used by spages
          will make up the WikiPageName with which the files will be
-         accessible. 
+         accessible.
 
          Any given directory (see on top of plugins/spages.php) will be read
          recursively. So files in a subdirectory will get available as a
@@ -2752,7 +2752,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/pluginloader
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The pluginloader plugin automatically loads ["action"] and ["page"]
          plugins, whenever necessary. This allows to skip dozens of
          include() statements within the config.php (which most always just
@@ -2764,7 +2764,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/init
-         ¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Handles database initialization using the distributed standard Wiki
          files from './init-pages'. Unlike the ewiki-builtin function to
          perform that task, this plugin first outputs informational notes
@@ -2775,7 +2775,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/feature/appendonly
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin (a family of) implements the actual support for the
          _DB_F_APPENDONLY page flag. When the flag is set, and this plugin
          active, then ordinary users can further only append text to the
@@ -2809,7 +2809,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/feature/imgresize_gd
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Was extracted from the core during the R1.00f development releases.
          Automatically rescales uploaded images, if they are larger than
          EWIKI_IMAGE_MAXSIZE.
@@ -2821,7 +2821,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/feature/imgresize_magick
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Rescales uploaded images via the ImageMagick utility "mogrify",
          which is usually only available on UNIX systems. It should however
          be fairly simple to make this plugin work with some other image
@@ -2830,7 +2830,7 @@ important, recommended and most often used ones are listed in this section:
 
 
          plugins/feature/spellcheck
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Turns the [preview] button below every page edit box into a
          spellcheck function.
 
@@ -2841,7 +2841,7 @@ important, recommended and most often used ones are listed in this section:
 
 
 action/ plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Action plugins are those, that can be activated ON individual pages. And
 usually are shown as links below a page. The ewiki-builtin EditThisPage,
 BackLinks and PageInfo are ["action"] plugins for example.
@@ -2849,15 +2849,15 @@ BackLinks and PageInfo are ["action"] plugins for example.
 
 
          plugins/action/diff
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Enables to view the differences between two saved page versions
          (what changes somebody has done to the page), but it is rather
          stupid and guessworking in how it does so.
-         
+
 
 
          plugins/action/translation
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin adds a link to the GoogleLanguageTools or AltaVista
          BabelFish, which then remotely translated the current page into
          the users preferred language. It has support to detect the lang
@@ -2866,7 +2866,7 @@ BackLinks and PageInfo are ["action"] plugins for example.
 
 
          plugins/like_pages
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          LikePages is a search feature of WardsWiki, which scans for
          WikiPages whose name is somewhat similar to the one of the current
          page (the pagename must be made up of the same WikiWordParts so a
@@ -2875,13 +2875,13 @@ BackLinks and PageInfo are ["action"] plugins for example.
 
 
          plugins/action/raw
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Can be used to download the unrendered Wiki source of a page.
 
 
 
 plugins related to hypertext links
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The linking/ plugin group deals with how links inside the Wiki will look and
 work. Some of them are would also fall the "core enhancements" group, while
 others are just handy or for link beatification.
@@ -2889,7 +2889,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/tcn
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          ewiki evaluates the Accept-Language HTTP header modern browser
          send with each request. This plugin now automatically brings up
          a variant of the current requested page if it finds a match in
@@ -2913,7 +2913,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/plural
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin tries to alias plural and singular page names against
          each other. That is, "WikiPage" will be shown, whenever "WikiPages"
          was requested (and vice versa).
@@ -2921,7 +2921,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/autolinking
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The autolinking plugin allows to have automatic links inside the
          Wiki for words which exist in the database, but are no real
          WikiWords. This is made possible by the companion StaticPage
@@ -2932,7 +2932,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/link_css
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds CSS classes to the links generated by the Wiki page formatting
          kernel, which then allow you to colorize (or to otherwise change
          appearance of links) via a style sheet.
@@ -2940,7 +2940,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/link_icons
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The link_icons plugin prepends icon <img>s before registered link
          types, like the link_css plugin adds class="..." attributes to the
          html formatted links in every page.
@@ -2948,14 +2948,14 @@ others are just handy or for link beatification.
 
 
          plugins/linking/link_target_blank
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds 'target="blank"' to link tags <a>, which will result in most
          browsers opening pages in a new window.
 
 
 
          plugins/linking/linkexcerpts
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds a short preview text (with <a title="...">) to every link of
          a page. This however requires multiple additonal database accesses
          (slower) and could enlarge delivered .html page sizes dramatically.
@@ -2963,7 +2963,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/linkdatabase
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is a page plugin, which provides a nearly compliant implementation
          of the page and link structure export function known from the UseMod
          WikiWare and MeatBall:LinkDatabase. This is useful for contributing
@@ -2972,7 +2972,7 @@ others are just handy or for link beatification.
 
 
          plugins/linking/instanturls
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to specify URL abbreviations on one or more summary pages.
          This can be done using a table or a definition list to assign
          each URL a title, which then can be used on other pages as square
@@ -2987,14 +2987,14 @@ others are just handy or for link beatification.
 
 
          plugins/linking/titlefix
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to swap [title|PageName] in square brackers [Page|title],
          because that can easily be detected, if the page already exists.
 
 
 
          plugins/interwiki/intermap
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin (in fact only a general include) extends the list of
          known InterWiki: prefixes with a more complete set merged from
          MoinMoin and PhpWiki's interwiki.map.  The links are rather
@@ -3004,28 +3004,28 @@ others are just handy or for link beatification.
 
 
 appearance/ tweaks
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 There are various plugin hooks within ewiki, which allow to mangle text
 strings and data immediately before it would be returned as output.
 
 
 
          plugins/appearance/listpages_br
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin will produce <br> separated lists (for SearchPages,
          PageIndex, MostVisitedPages, and so on).
 
 
 
          plugins/appearance/listpages_ul
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Creates real <ul> lists (WordIndex, CreatedPages, ...) instead of
          the &middot; ones, ewiki core would usually return.
 
 
 
          plugins/listpages_tbl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The listpages_tbl plugin outputs a table instead of the ordinary
          page lists (PageIndex, UpdatedPages, ...). You need to edit its
          source to set colours to fit your site layout.
@@ -3033,7 +3033,7 @@ strings and data immediately before it would be returned as output.
 
 
          plugins/appearance/fancy_list_dict
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The WordIndex and PageIndex plugins (unlike the other page list
          returning ones like SearchPages and UpdatedPages) can utlize this
          plugin to output a pretty dictionary like listing of pages.
@@ -3041,7 +3041,7 @@ strings and data immediately before it would be returned as output.
 
 
          plugins/appearance/title_calendar
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Changes the titles of calendar plugin entries in the database into
          a more readable format for page lists (PageIndex, PowerSearch,
          UpdatedPages, and so on).
@@ -3049,7 +3049,7 @@ strings and data immediately before it would be returned as output.
 
 
 page plugins
-¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The page plugins provide additional "generated/internal" pages, which have
 a standard WikiWordPageName and can thus be referenced easily from within
 ordingary WikiPages. But they are of course uneditable (because their
@@ -3064,7 +3064,7 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/powersearch
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugins provides a (probably) better search function
          with the default page name "PowerSearch". It tries to guess
          a value, which tells something about how good a page matches
@@ -3075,13 +3075,13 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/pageindex
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Lists all pages found in the database alphabetically.
 
 
 
          plugins/page/wordindex
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Lists the word parts of all wiki pages, but requires the
          powersearch plugin to be present, because the result is redirected
          to there as usually many of the listed words belong to multiple
@@ -3090,7 +3090,7 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/imagegallery
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Outputs a page containing all cached/uploaded images. The
          images are currently not rescaled to fit on the page; this
          work is left to the browser.
@@ -3099,14 +3099,14 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/aboutplugins
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Lists all registered plugins (mpi, page, action, task/core). The
          name refers to the "about:plugins" page present in recent browsers.
-        
+
 
 
          plugins/page/orphanedpages
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows up a list of pages, that exist, but are not linked from any
          other pages. These is often also called dead pages.
 
@@ -3117,20 +3117,20 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/wantedpages
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Returns a list of pages to which QuestionMarkLinks? currently
          exist.
 
 
 
          plugins/page/since_updates
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Provides a list of pages with actualization times.
 
 
 
          plugins/page/textupload
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The virtual TextUpload plugin allows to insert new WikiPages by
          uploading text files. It can convert from various formats into Wiki
          content, including some proprietary Office file formats, if one of
@@ -3141,33 +3141,33 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/wikidump
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to download a gzipped tarball containing all readily
          rendered pages as .html files and also images.
 
 
 
          plugins/page/interwikimap
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows up the currently in use InterWikiMap.
 
 
 
          plugins/page/hitcounter
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Sums up the individual {hits} count of all pages and returns the
          overall count.
 
 
 
          plugins/page/scandisk
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Presents an unserious statistic.
 
 
 
          plugins/page/wikinews
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Returns the most recently added pages in an overview, that
          incorporates a small fragment from the content of those newly added
          pages.
@@ -3175,39 +3175,39 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/wikiuserlogin
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to set a free-form username, which then would be stored into
          the database whenever a page was edited.
 
 
 
          plugins/page/randompage
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows up a randomly choosen page from the database.
 
 
 
          plugins/page/fortune
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Calls the Unix /usr/games/fortune program and prints out returned
          content.
 
 
 
          plugins/page/ewikilog
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to review the content of the 'ewiki.log' file.
 
 
 
          plugins/page/phpinfo
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows the settings of your PHP interpreter.
 
 
 
          plugins/page/README
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Can parse the distributed README file and make a hypertext
          presentation from it, for easier reading of the Wiki documentation.
          It is printed in <pre> text, but with WikiLinking enabled (which
@@ -3217,17 +3217,17 @@ them regardless if they're needed or not, how it currently is done).
 
 
          plugins/page/wikiuserlogin
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to post a username (Note: this one does not do any sort of
          real authentication), which is saved in the http client as cookie,
          but can afterwards be evaluated as $ewiki_author, so the according
          field in the database entries contains a bit more than just
          the IP address when a changed page gets saved.
-        
+
 
 
 markup plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The ewiki rendering core is rather fast and consolidated, that was the goal.
 However if you ever happen to need more functionality, this can be added
 easily by the use of plugins.
@@ -3238,7 +3238,7 @@ used WikiWare.
 
 
          Other WikiWares markup
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The WikiWorld still lacks a unified markup (and thus also the
          interchangeablity that made html THE standard it today is), and
          while ewiki usues nearly MeatBall:WikiMarkupStandard, you may want
@@ -3263,7 +3263,7 @@ used WikiWare.
 
 
          plugins/markup/css
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          CSS markup allows you to assign visual styles (or semantic CSS
          class names) to a block of text (paragraph) or to pieces of text.
          @@ is used to start a styled area. The @@ must be immediately
@@ -3282,7 +3282,7 @@ used WikiWare.
 
 
          plugins/markup/css_singleat
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin allows you (like the markup_css plugin) to attach CSS
          classes to a paragraph of text with just a single @ character:
 
@@ -3292,7 +3292,7 @@ used WikiWare.
 
 
          plugins/markup/footnotes
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Introduces the ability to generate footnotes by placing an
          explanation into double curly brackets {{footnote text}}.
 
@@ -3309,7 +3309,7 @@ used WikiWare.
 
 
          plugins/markup/asciitbl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to use ASCII-Art tables as outputed by lynx and other
          console programs inside of WikiPages, which eases life, when
          dealing with multiline table cell content.
@@ -3317,7 +3317,7 @@ used WikiWare.
 
 
          plugins/markup_complextbl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          ewiki allows you to use tables with the || | characters in the wiki
          page source. However the html code for the table layout is
          hardcoded and cannot be changed on a per-page basis.
@@ -3338,7 +3338,7 @@ used WikiWare.
 
 
          plugins/markup/htmltbl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Provides a block escape to use the standard html <table> code
          instead of the limited pipe syntax provided by ewiki. It will parse
          for <tr> and <td> tags and strip any not registered attributes to
@@ -3351,7 +3351,7 @@ used WikiWare.
 
 
          plugins/markup_rescuehtml
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to use some 'safe' HTML tags within the WikiPage. This
          plugin replaces the previous EWIKI_RESCUE_HTML constant.
 
@@ -3372,7 +3372,7 @@ used WikiWare.
          ..................................................................
          : The code of this module is covered by the GPL license, as it   :
          : was copied verbatim from the PhpWiki project.                  :
-         ··································································
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
@@ -3388,7 +3388,7 @@ used WikiWare.
 
 
 mpi
-¯¯¯
+ï¿½ï¿½ï¿½
 The so called "mpi" plugins can be embedded into pages, and produce their
 output there. They are loaded on demand (only if it appears that they should
 be invoked), but it is possible to include() the individual files regardless
@@ -3414,7 +3414,7 @@ create a link inside of the page using the syntax <?plugin-link PluginName ?>
 
 
          mpi_backlinks
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Prints a list of BackLinks to the current page (the same as when
          clicking on the title of a page or on the BackLinks action link).
          <?plugin BackLinks ?>
@@ -3423,13 +3423,13 @@ create a link inside of the page using the syntax <?plugin-link PluginName ?>
 
 
          mpi_multimedia
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to <embed> multimedia files into a page.
 
 
 
          mpi_syndicate
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Embeds remote RSS feeds (abbrv. for "ReallySimpleSyndication" or
          "RichSiteSummary") into the current page. It caches the fetched
          data for quite some time in a pre-parsed _BINARY database entry.
@@ -3437,28 +3437,28 @@ create a link inside of the page using the syntax <?plugin-link PluginName ?>
 
 
          mpi_insert
-         ¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to insert another readily rendered WikiPage into the current
          one, usually inside of a <table border="1">.
 
 
 
          mpi_localsitemap
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is a mix of BackLinks and LinkTree features, and prints the tree of
          pages backreferencing to the current one.
 
 
 
 visual extensions
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The hook following plugins utilize is called "append-view". It allows to put
 content below a pages contents (after the action links).
 
 
 
          plugins/aview/backlinks
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds the list of BackLinks (references from others to the current
          page) to the current page below it (this list is also available,
          when a user clicks on the title of a page).
@@ -3466,7 +3466,7 @@ content below a pages contents (after the action links).
 
 
          plugins/aview/linktree
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Prints the possible (shortest) paths to the FrontPage (determined
          by the EWIKI_PAGE_INDEX constant) starting from the current one
          below. Calculations and database access required by this plugin
@@ -3476,49 +3476,49 @@ content below a pages contents (after the action links).
 
 
          plugins/aview/toc
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Analyzes a pages headlines and generates a list of contents box
          from it, which is inserted as float box on top of it then. Use the
          following CSS selector to style it:
 
-            .wiki .page-toc { 
+            .wiki .page-toc {
                ...
             }
 
 
 
          plugins/aview/posts
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to add separate comment pages, which will then always be
          displayed below the current one, but remain editable as standalone
          pages. (So the page they are appended to could be marked as
          _READONLY).
 
-        
+
 
          plugins/aview/threads
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to group the pages created using the "posts" plugin into
          threads.
 
 
 
          plugins/aview/subpages
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds the list of pages, which appear to be SubPages of the current
          one, below it.
 
 
 
          plugins/aview/downloads
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows the uploaded files, which appear to belong to the current
          page (individual pages can be treated as upload sections).
 
 
 
          plugins/aview/imgappend
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Prints an image uploading box below every page, which allows to
          append an image without prior clicking EditThisPage (the image
          will be automatically appended to the bottom of the page).
@@ -3526,7 +3526,7 @@ content below a pages contents (after the action links).
 
 
          plugins/aview/piclogocntrl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin allows users to select a logo graphic which will be
          made available for use in the site template as
          $ewiki_config["page_logo"]. Configureable through the internal
@@ -3535,21 +3535,21 @@ content below a pages contents (after the action links).
 
 
          plugins/aview/aedit_pageimage
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin allows users to select a page image graphic, and is a
          mix of the aview/piclogocntrl and page/imagegallery plugins.
-         
+
 
 
          plugins/aview/control2
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Shows examplarily how to replace the standard "action-links" box,
          and adds it on top of the page (including the page title).
 
 
 
          plugins/aview/aedit_authorname
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds a text <input> field below the edit/ box, which allows to
          set the AuthorName which then will get stored, when the page is
          saved. This name is then also stored client-side as cookie for
@@ -3564,7 +3564,7 @@ content below a pages contents (after the action links).
 
 
          plugins/aview/aedit_deletebutton.js
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds a JavsScript snippet to allow users to quickly mark a page
          for deleterequest, by inserting the link to "DeleteMe" into the
          contents, when editing it.
@@ -3572,7 +3572,7 @@ content below a pages contents (after the action links).
 
 
 page filters
-¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 A few plugin hooks exist to completely rework generate page output. These
 are often used to insert content into the otherwise readily rendered .html
 pages (some of the above aview plugins do so, too).
@@ -3580,7 +3580,7 @@ pages (some of the above aview plugins do so, too).
 
 
          plugins/filter/f_fixhtml
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is a minimal tag balancer (a highly simplified HTML tidy) and can
          work around various html code problems that the ewiki_format()
          html rendering function has. It is for example specialized to
@@ -3590,7 +3590,7 @@ pages (some of the above aview plugins do so, too).
 
 
          plugins/filter/search_highlight
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Evaluates the Referer header sent by many browsers to detect if
          a visitor came from a search engine (even the internal PowerSearch
          or SearchPages ones) and highlights the searched words in the
@@ -3599,13 +3599,13 @@ pages (some of the above aview plugins do so, too).
 
 
          plugins/filter/fun_chef
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Borg, Borg, Borg!
 
 
 
          plugins/filter/fun_upsidedown
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Transforms a pages content using letter transformation to make
          them readibly from upside down with certain fonts. This however
          is a bit tricky for html pages and thus will always wrongly
@@ -3614,13 +3614,13 @@ pages (some of the above aview plugins do so, too).
 
 
          plugins/filter/fun_wella
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Adds a little CSS to make text swirrling on both sides.
 
 
 
          plugins/filter/fun_screamomatic
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Detects if someone entered a FULL LINE OF YELLING into a page
          when editing it, and then sets a persistent cookie. That cookie
          will result in all pages contents to be converted into uppercase
@@ -3629,23 +3629,23 @@ pages (some of the above aview plugins do so, too).
 
 
          plugins/filter/f_msiepng
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Converts .png <img> references in the WhateverX code required by
-         all current IE versions to display .png images according to the 
+         all current IE versions to display .png images according to the
          specification (which currently only an IE external plugin can handle
          correctly).
 
 
 
 BloatWiki extensions
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ewiki slowly evolves into a well-bloated portal software, and some plugins
 already extend it far beyond the scope of an ordinary Wiki.
 
 
 
          plugins/module/calendar
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          The calendar plugin enables you to add an editable calendar to
          every WikiPage. It is not a fully integral part of ewiki, and needs
          additional calls from yoursite.php to integrate nicely into your
@@ -3700,7 +3700,7 @@ already extend it far beyond the scope of an ordinary Wiki.
 
 
          plugins/module/downloads
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          From the very beginning the ewiki core supported uploading image
          files into the database. As time and discussions went on, there
          came the idea to allow arbitrary binary files to be inserted too.
@@ -3748,7 +3748,7 @@ already extend it far beyond the scope of an ordinary Wiki.
 
 
          plugins/module/tour
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Provides a shortened view of the current page and all linked ones
          (even the backlinked ones). This eases navigation and page content
          "scanning" (getting a quick overview).
@@ -3757,7 +3757,7 @@ already extend it far beyond the scope of an ordinary Wiki.
 
 
 utility code
-¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The plugins/lib/ directory contains code and functionality, which often is
 required by some of the other plugins (they depend on it then), but which
 was too specialized to get part of the ewiki.php core script.
@@ -3768,7 +3768,7 @@ categories.
 
 
          plugins/lib/cache
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This plugin stores readily rendered Wiki page content (already in
          html format) either into a dedicated directory, or into specially
          named _BINARY wiki database entries. This then allows to satisfy
@@ -3784,7 +3784,7 @@ categories.
 
 
          plugins/lib/speed
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Evaluates the "conditional HTTP request headers" to tell a client
          if it could reuse its existing cache entry for a requested page.
          This is believed to reduce traffic and also speed up some
@@ -3795,14 +3795,14 @@ categories.
          always sends.
 
          However this will only work, if you disable EWIKI_NOCACHE - but
-         then some browsers will never see updated pages, if they were 
+         then some browsers will never see updated pages, if they were
          misconfigured to not refetch pages, once they got into the internal
          browser cache. (But on the other hand, that is users fault ;)
 
 
 
          plugins/lib/mime_magic
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Implements the mime_magic feature absent from some (older and
          misconfigured current) PHP interpreter versions (check your phpinfo
          and /etc/mime.types).
@@ -3814,21 +3814,21 @@ categories.
          ..................................................................
          : The data of this plugin is covered by the GNU General Public   :
          : License.  :
-         ··································································
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
          plugins/lib/navbar
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Provides a configureable menu for the contents of your Wiki for
          inclusion in your site template, which changes depending on which
          site area you're currently inside (determined partially by
          the linktree plugin).
-   
+
 
 
          plugins/lib/protmode
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is an extension package (currently in development) with various
          helper functions for ProtectedMode plugins. Especailly useful in
          conjunction with the auth-liveuser framework.
@@ -3836,14 +3836,14 @@ categories.
 
 
          plugins/lib/save_storevars
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          An example script on how to store additional vars into page entries
          of the ewiki database (session like).
 
 
 
 admin/ plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Collects plugins for ewiki / database administration. Often these depend
 upon $ewiki_ring==0 (superuser authentication level in EWIKI_PROTECTED_MODE),
 otherwise refuse to work for security reasons (some functions are however
@@ -3855,7 +3855,7 @@ directory (integrated database tools).
 
 
          control
-         ¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows changing per-page settings, and adds a easily accessible
          "page control" action link below every page.
 
@@ -3871,14 +3871,14 @@ directory (integrated database tools).
 
 
          SearchAndReplace
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is a powerful text/content replacement tool. It features regular
          expression matching, but can also be used as any other simple string
          replace-all tool.
 
 
          SearchCache
-         ¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This tool is intended to create 'shadow pages' (or 'ghost pages')
          for ewiki internal/generated pages (the ["page"] plugins), which
          usually weren't found by the PageSearch and PowerSearch.  This
@@ -3890,20 +3890,20 @@ directory (integrated database tools).
 
 
 other plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 These plugins actually implement some stuff, one usually should do inside
 of the yoursite.php ewiki wrapper script.
 
 
 
          plugins/debug/
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Eventually contains debug plugins.
 
 
 
          plugins/auth/
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Contains various (example and ready to use) plugins for the
          ewiki_auth() interfaces. This directory contains its own
          README.auth, which describes the _PROTECTED_MODE, the _auth API and
@@ -3912,7 +3912,7 @@ of the yoursite.php ewiki wrapper script.
 
 
          plugins/auth-liveuser/
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Contains the more advanced authentication and permission plugin
          bundle for chaining ewiki with the PEAR LiveUser authentication
          framework. There is detailed documentation within the README in
@@ -3921,7 +3921,7 @@ of the yoursite.php ewiki wrapper script.
 
 
 separate "extra" tarball
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 There are a few plugins and extensions, which are not packaged into the
 distributed ewiki tarball for size reasons. You can obtain it from your
 favourite dealer, or from our downloads/ directory as "extra-CVS-*"
@@ -3947,8 +3947,8 @@ beatification purposes.
 
 
 More separate files
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-Even if one of the project goals was to have everything in one script, 
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+Even if one of the project goals was to have everything in one script,
 there are now some support scripts around it, but those are normally
 only required for setup (init-pages for example). With some others you
 need to take a lot of care before installing on a public WebServer
@@ -3957,7 +3957,7 @@ need to take a lot of care before installing on a public WebServer
 
 
 Pages in init-pages/
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This directory just contains text-files with the wiki_source of the
 initial pages, which are inserted if you start ewiki.php for the
 first time.
@@ -3967,7 +3967,7 @@ or the 'ewikictl' commandline utility.
 
 
 Additional tools/
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This directory holds some (external) add-ons, which are intended to
 supply "admin functions" for the ewiki database.
 It is strongly discouraged to integrate this with ewiki, as it could
@@ -4003,15 +4003,15 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_flags
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          WikiPages usually have the page flag TEXT assigned. Other possible
          flags are DISABLED, SYSTEM, BINARY or HTML, READONLY, WRITEABLE.
          Usually page flags are copied from one page version to the next.
 
-         
+
 
          tools/t_backup
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Use this to make backup files from the WikiPages. This www script
          is a wrapper around the ewikictl commandline utility and library,
          and therefore supports almost the same options.
@@ -4019,7 +4019,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_restore
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to reinsert the files generated with the backup utility into
          the database. It is also a www wrapper around ewikictl and thus
          also supports the "plain", "flat" and "fast" file formats.
@@ -4027,7 +4027,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_remove
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Use this to delete a page from the database (including all saved
          versions).
          You should always prefer to set a page DISABLED with the ewiki_flags
@@ -4036,7 +4036,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_holes
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If pages are edited often / regularly you will soon get hundreds of
          saved page versions. As this slows down (particularly the
          db_flat_file ones) and enlarges the database content size, you may
@@ -4054,14 +4054,14 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_textinsert
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Can insert plain text files into the database. This is much the
          same, what usually happens to the files inside init-pages/
 
 
 
          tools/t_transfer
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Allows to download all pages in one big "binary" file, and to
          reinsert it on the same way. This allows for quick moving of
          the whole database content.
@@ -4069,7 +4069,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/t_revert
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Can undo mass changes caused by a script attack (specifically
          designed to spam or corrupt a Wiki) or someone who put enourmous
          energy into garbaging multiple pages. The {auther} field always
@@ -4081,7 +4081,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/ewikictl
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          ewikictl is a commandline based utility - as opposed to the
          www/http based scripts mentioned above.
          UNIX people will find it very useful and handy, while it is
@@ -4095,7 +4095,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
          WebServer running your wiki (because most times one cannot make
          remote mysql server connections).
 
-         The most important feature is to make backups using the 
+         The most important feature is to make backups using the
          --backup switch:
 
              All pages from the database will be saved into backup files
@@ -4112,7 +4112,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
              page will get saved (and think of a garbaged last version, this
              would be a bad idea). So USE --all ALLWAYS!
 
-         Backups can be reread into the database using the 
+         Backups can be reread into the database using the
          --insert switch:
 
              The --dest or --source parameter says where to search for the
@@ -4164,7 +4164,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
              It is however recommended to use the "--format flat"  or
              "--format fast" instead, as both can contain the complete meta
-             data of a page.             
+             data of a page.
 
          --ls
              Will print a directory-listing like list of all pages from
@@ -4205,7 +4205,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/wiki2html
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Renders the WikiPages and saves the resulting <HTML> bodies into
          files. It currently cannot deal with images and binary content
          correctly.
@@ -4213,7 +4213,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/mkhuge
-         ¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          For lazy people - if for some reason your text editor does not
          allow to enter the correct include() commands for the files from
          the plugins/ directory you may find this shell script useful to
@@ -4224,7 +4224,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/mkpluginmap
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Is the companion tool for the new ewiki pluginloader extension. It
          traverses the plugins/ directories and generates a list which
          allows automatical loading of ["page"] and ["action"] plugins.
@@ -4236,8 +4236,8 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
          tools/mkpageplugin
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-         Can convert any StaticPage file (from the spages/ directory) into 
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         Can convert any StaticPage file (from the spages/ directory) into
          a standard ewiki page plugin (to get included() like all the others
          then). It detects automatically the type of the given StaticPage
          input files - Wiki source (.txt), ready HTML content, or even PHP
@@ -4251,7 +4251,7 @@ a call to ewiki_init_spages() with the "./tools/" directory as parameter.
 
 
 examples/
-¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The file "examples-1.php" is the default layout, which you will see, when
 you first run ewiki. The examples/ subdirectories now holds further example
 'ewiki wrappers' or 'layout scripts' (commonly referred to as "yoursite.php"
@@ -4264,7 +4264,7 @@ an image or graphics directory).
 
 
          examples/homepage.php
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This is an example on how to use ewiki.php with an authentication
          frontend. Note that this is not the recommended way to use a wiki
          (adding authentication can be considered "crippling" a wiki).
@@ -4280,7 +4280,7 @@ an image or graphics directory).
 
 
 Nice things in fragments/
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 This directory holds some files to integrate ewiki.php within some
 other web projects (for example PhpNuke) or some helper and extension
 code, or just other example layouts.
@@ -4291,7 +4291,7 @@ files itself!!
 
 
          strip_wonderful_slashes.php
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If you have a PHP 4.1 or a provider using the annoying factory-default
          settings of such a version, you may find this tiny script helpful.
          It removes the just-for-security-reasons-added-backslashes from the
@@ -4302,7 +4302,7 @@ files itself!!
 
 
          fragments/funcs/wiki_format.inc
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          This php include() file contains just the reduced wiki_format() function,
          the code to generate internal WikiLinks and the binary data stuff has
          been removed.
@@ -4313,7 +4313,7 @@ files itself!!
 
 
          404finder.php
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Simple example on how to use "ErrorDocumet 404" rediriction to
          activate the ewiki page search function automatically, which is the
          poor mans mod_rewrite.
@@ -4321,7 +4321,7 @@ files itself!!
 
 
          htaccess
-         ¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          To make a Wiki installation look more profession you should try to
          use your Webservers mod_rewrite module to get nicer looking URLs.
          This file is an example to be installed as ".htaccess" (Web server
@@ -4339,7 +4339,7 @@ files itself!!
 
 
          binary.php
-         ¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          If your ewiki wrapper script is not binary safe (that is, eventually
          printing some <html> or text output to stdout before you include()
          the core ewiki script and called the ewiki_page() function) - then
@@ -4351,7 +4351,7 @@ files itself!!
 
 
          fragments/funcs/auth.php
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Include this script wherever you need authentication. It uses the HTTP
          Basic Authentication scheme, but the passwords are inside the script
          in the $passwords array (so no need for .htpasswd setup).
@@ -4362,7 +4362,7 @@ files itself!!
 
 
          fragments/css/*
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Please understand the *.css as examples that illustrate which style classes
          are defined inside ewiki.php and its companion plugins.
 
@@ -4372,7 +4372,7 @@ files itself!!
 
 
          fragments/blocks/*
-         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+         ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Contains small include() scripts to be loaded into "yoursite.php"
          as "sidebars" and the like for beatification purposes.
          Oftens these are reduced but useful ["page"] or ["action"] plugins,
@@ -4382,7 +4382,7 @@ files itself!!
 
 
 Other patches/
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 In the patches/ directory some code tweaking tips are collected that are
 either not worth a new plugin or to uncommon and unsafe and unsupported to
 get into fragments/ or plugins/. Please see the README and the files therein
@@ -4393,7 +4393,7 @@ I often like to refer to that subdir as the "recoding FAQ".
 
 
 Updates + How to deal with tweaked code
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 If you ever happen to recode parts of a plugin, WHICH WE STRONGLY ENCOURAGE
 TO DO (to match it better to your needs) - then there is always the risk of
 losing your changes as soon as you upgrade and overwrite everything inside
@@ -4427,14 +4427,14 @@ so everybody could enjoy your ideas.
 
 
 Extension HowTo
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Best way to extend it is to read the man page on vi or emacs ;-> However
 the tool that made this all possible was joe.
 
 
 
 the PlugInterface
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 The $ewiki_plugins array holds an array of "task names" connected to
 function names (that of course should do something senseful). As an
 example:
@@ -4463,7 +4463,7 @@ other idf strings as array/hash index.
 
 
 plugin tasks
-¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Here's a short summary of current PlugInterface "tasks" and (recommended)
 function interface definitions (the "= function (..." lines). A plugin hook
 with [] means there can be multiple, and each one would be tried.
@@ -4610,7 +4610,7 @@ edit/ hooks
   ["edit_patch"][0]     - special hook for the patchsaving plugin
                         = function ($id, &$data)
 
-bloat extensions 
+bloat extensions
 ----------------
 
   ["auth_*"][]		- plugin tasks used with ewiki_auth()
@@ -4646,7 +4646,7 @@ very different.
 
 
         mpi plugins
-        ¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Plugins of the class "mpi" extend the wiki markup with html like
         calls to dynamic content generating functions.  They were taken from
         the ewiki adaption of Hans B Pufal and are very similar to the
@@ -4697,14 +4697,14 @@ very different.
 
 
         authentication/permission plugins
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         The paragraph and descriptions about the _auth interfaces have gone
         into plugins/auth/README.auth
 
 
 
 writing your own plugin
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Using the list of current plugin tasks, you could (hopefully) write your own
 extension with ease. It is probably most simple to write a dynamic ["page"]
 plugin, so we start with this as example. All you need is a function
@@ -4736,7 +4736,7 @@ page or to allow to email it to someone else (beware of the spammers!).
 
 
 format_* / rendering plugins
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 It is rather simple to add WikiMarkup using the $ewiki_config["wm_..."]
 settings, but for some tasks you need stronger weapons like rendering
 and markup plugins.
@@ -4749,7 +4749,7 @@ and names used inside of it:
 
 
         ewiki_format() internals
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         When the function receives the input string (WikiSource), it first
         escapes all html tags using &amp; &lt; &gt; to replace the & < >
         chars (because HTML is not allowed within Wiki, initially).
@@ -4777,7 +4777,7 @@ and names used inside of it:
            $iii[0] = array("WikiSource...",0xFFFF,"core"),
            $iii[1] = array("<b>....",0x0002,"html"),
            $iii[2] = array("text",0x0FFF,""),
-        
+
         Besides the $iii[] input array, we'll also have an array containing
         rendering status variables called $s[]. The most important entry
         there is $s["in"], which is the index into the currently accessed
@@ -4819,7 +4819,7 @@ and names used inside of it:
 
 
         the format_ plugin hooks
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         As denoted above, the ["format_source"] and ["format_final"] plugin
         hooks are the simplest to work with, as both only get one parameter
         (passed by reference) containing either the full WikiPage source
@@ -4842,7 +4842,7 @@ and names used inside of it:
 
 
         $iii[] and $ooo[] block flags
-        ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         The $iii[...][1] and $ooo[...][1] hold the flags (as defined by
         $ewiki_config["format_block"][...][2]) for each fragment of the
         WikiPage. The "core" blocks (plain WikiSource) always have the

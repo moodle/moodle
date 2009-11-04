@@ -18,7 +18,7 @@
 /**
  * Library of functions and constants for module wiki
  * (replace wiki with the name of your module and delete this line)
- * 
+ *
  * @package   mod-wiki
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -110,7 +110,7 @@ function wiki_get_students($wiki, $groups='', $sort='u.lastaccess', $fields='u.*
  */
 function wiki_add_instance($wiki) {
     global $DB;
-    
+
     $wiki->timemodified = time();
 
     # May have to add extra stuff in here #
@@ -267,13 +267,13 @@ function wiki_user_complete($course, $user, $mod, $wiki) {
  */
 function wiki_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG, $DB, $OUTPUT;
-    
+
     $sql = "SELECT l.*, cm.instance
-              FROM {log} l JOIN {course_modules} cm ON l.cmid = cm.id 
-             WHERE l.time > ? AND l.course = ? 
+              FROM {log} l JOIN {course_modules} cm ON l.cmid = cm.id
+             WHERE l.time > ? AND l.course = ?
                    AND l.module = 'wiki' AND action LIKE 'edit%'
           ORDER BY l.time ASC";
-            
+
     if (!$logs = $DB->get_records_sql($sql, array($timestart, $course->id))){
         return false;
     }
@@ -523,7 +523,7 @@ function wiki_has_entries(&$wiki) {
  */
 function wiki_get_entries(&$wiki, $byindex=NULL) {
     global $CFG, $DB;
-    
+
     if ($byindex == 'student') {
         return $DB->get_records('wiki_entries', array('wikiid'=>$wiki->id), '',
                            'userid,id,wikiid,course,groupid,pagename,timemodified');
@@ -763,22 +763,22 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
         $groupingid = $wiki->groupingid;
     }
-    
-    
+
+
     switch ($wiki->wtype) {
 
     case 'student':
         /// Get all the existing entries for this wiki.
         $wiki_entries = wiki_get_entries($wiki, 'student');
-        
+
         if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid)) {
             $sql = "SELECT gm.userid FROM {groups_members} gm " .
                     "INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid " .
                     "WHERE gg.groupingid = ? ";
-    
+
             $groupingmembers = $DB->get_records_sql($sql, array($wiki->groupingid));
         }
-        
+
         if ($isteacher and (SITEID != $course->id)) {
 
             /// If the user is an editing teacher, or a non-editing teacher not assigned to a group, show all student
@@ -913,7 +913,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                     if (!empty($CFG->enablegroupings) && !empty($wiki->groupingid) && empty($groupingmembers[$wiki_entry->userid])) {
                         continue;
                     }
-                
+
                     if (($viewall === true) or groups_is_member($viewall, $wiki_entry->userid)) {
                         $key = 'view.php?id='.$id.'&userid='.$wiki_entry->userid.'&page='.$wiki_entry->pagename;
                         $wikis[$key] = fullname($wiki_entry).':'.$wiki_entry->pagename;
@@ -934,7 +934,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
 
         /// Get all the existing entries for this wiki.
         $wiki_entries = wiki_get_entries($wiki, 'group');
-        
+
         if ($groupmode and ($isteacheredit or ($isteacher and !$mygroupid))) {
             if ($groups = groups_get_all_groups($course->id, null, $groupingid)) {
                 $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
@@ -1096,7 +1096,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         }
         break;
     }
-    
+
     return $wikis;
 }
 
@@ -1519,7 +1519,7 @@ function wiki_print_wikilinks_block($cmid, $binary=false, $return=false) {
    if($binary) {
      $links["FileDownload"]=get_string("filedownload", "wiki");
    }
-    
+
     $name = null;
     if (preg_match('/([a-zA-Z0-9\-_]*)=$/', EWIKI_SCRIPT, $matches)) {
         $name = $matches[1];
@@ -1559,7 +1559,7 @@ function wiki_print_page_actions($cmid, $specialpages, $page, $action, $binary=f
   if($canedit && $binary && !in_array($page, $specialpages) && $action != "attachments") {
     $page["attachments/$page"]=get_string("attachments","wiki");
   }
-    
+
     $name = null;
     if (preg_match('/([a-zA-Z0-9\-_]*)=$/', EWIKI_SCRIPT, $matches)) {
         $name = $matches[1];

@@ -14,7 +14,7 @@
  #
  # Additionally it generates faked/trap email addresses to annoy the
  # marketing mafia.
- 
+
 
  #-- change these from time to time:
  define("EWIKI_PAGE_EMAIL", "ProtectedEmail");
@@ -188,7 +188,7 @@
        case -1:  // decode
           $string = base64_decode($string);
           $string = str_rot17($string);
-          break;       
+          break;
 
        case 2:  // url
           $string = ewiki_script("", EWIKI_PAGE_EMAIL,
@@ -236,7 +236,7 @@
     global $ewiki_config;
 
     $ewiki_up_requestlv = optional_param(EWIKI_UP_REQUESTLV, 0, PARAM_CLEAN);
-    
+
     $html = "";
     srand(time()/17-1000*microtime());
 
@@ -310,4 +310,4 @@
  }
 
 
-?>
+

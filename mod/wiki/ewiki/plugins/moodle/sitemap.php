@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
     This plugin will create a sitemap rooted at the given location
@@ -17,7 +17,7 @@ if(!isset($ewiki_config["SiteMap"]["RootList"])){
   $ewiki_config["SiteMap"]["RootList"]=array(EWIKI_PAGE_INDEX);
 }
 
-/* 
+/*
   populates an array with all sites the current user is allowed to access
   calls the sitemap creation function.
   returns the sitemap to be displayed.
@@ -30,13 +30,13 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
   $str_null=NULL;
 
   $a_validpages=ewiki_valid_pages(0,1);
-  
+
   //**end of hijacked code**
   //$time_end=getmicrotime();
 
-  //creates the title bar on top of page 
+  //creates the title bar on top of page
   if($id == EWIKI_PAGE_SITEMAP){
-    $o = ewiki_make_title($id, ewiki_t($id), 2);  
+    $o = ewiki_make_title($id, ewiki_t($id), 2);
 
     foreach($ewiki_config["SiteMap"]["RootList"] as $root){
       if(isset($a_validpages[$root])){
@@ -45,13 +45,13 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
         break;
       }
     }
-    
+
   }else{
-    $o = ewiki_make_title($id, ewiki_t("SMFOR")." ".$id, 2);    
+    $o = ewiki_make_title($id, ewiki_t("SMFOR")." ".$id, 2);
     if(isset($a_validpages[$id])){
       $valid_root=TRUE;
       $str_rootid=$id;
-    }    
+    }
   }
 
   $o .= "<p>".ewiki_t("VIEWSMFOR")." ";
@@ -61,7 +61,7 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
       $o.='<a href="'.ewiki_script('sitemap/',$root).'">'.$root.'</a> ';
     }
   }
-  
+
   $o.="</p>";
 
   //checks to see if the user is allowed to view the root page
@@ -69,7 +69,7 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
     $o .= ewiki_t("INVALIDROOT");
     return $o;
   }
-  
+
   //$timesitemap=getmicrotime();
   $a_sitemap=ewiki_sitemap_create($str_rootid, $a_validpages, EWIKI_SITEMAP_DEPTH);
 
@@ -80,16 +80,16 @@ function ewiki_page_sitemap($id=0, $data=0, $action=0){
   $fin_level=format_sitemap($a_sitemap, $str_rootid, $str_formatted, $level, $timer, $fordump);
   $str_formatted.="</ul>".str_pad("", $fin_level*6, "</ul>\n");
   $o.=$str_formatted;
-  
+
   //$timesitemap_end=getmicrotime();
-  
+
   //$o.="GetAll: ".($time_end-$time)."\n";
   //$o.="SiteMap: ".($timesitemap_end-$timesitemap)."\n";
   //$o.="Total: ".($timesitemap_end-$time);
-  
-  
+
+
   return($o);
-    
+
 }
 
 function ewiki_valid_pages($bool_allowimages=0, $virtual_pages=0){
@@ -99,10 +99,10 @@ function ewiki_valid_pages($bool_allowimages=0, $virtual_pages=0){
   while ($row = $result->get()) {
     if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $str_null, "view")) {
       continue;
-    }   
-    
+    }
+
     $isbinary= ($row["meta"]["class"]=="image"||$row["meta"]["class"]=="file")?true:false;
-    
+
     if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_TEXT || ($bool_allowimages ? $isbinary : 0)) {
       $temp_refs=explode("\n",$row["refs"]);
       foreach($temp_refs as $key => $value) {
@@ -143,7 +143,7 @@ function format_sitemap($a_sitemap, $str_rootpage, &$str_formatted, &$prevlevel,
       $str_mark="";
       if($a_sitemap[$str_rootpage]["level"]>$prevlevel){
         $str_mark="<ul>\n";
-      } 
+      }
       elseif ($a_sitemap[$str_rootpage]["level"]<$prevlevel){
         //markup length is 6 characters
         $str_mark=str_pad("", ($prevlevel-$a_sitemap[$str_rootpage]["level"])*6, "</ul>\n");
@@ -187,9 +187,9 @@ function ewiki_page_listallchildren($str_root, &$a_children, &$a_sitemap, &$a_va
       } else {
         $a_sitemap[$str_root]=array("level" => $i_level);
       }
-    } 
+    }
   }
-}   
+}
 
 
 /*
@@ -211,17 +211,17 @@ function ewiki_sitemap_create($str_rootid, $a_validpages, $i_maxdepth, $i_flatma
   $a_validpages[$str_rootid]["touched"]=TRUE;
   //list all of the children of the root
   ewiki_page_listallchildren($str_rootid, $a_children, $a_sitemap, $a_validpages, $i_depth, $i_maxdepth, $i_flatmap);
-  $i_depth++;    
-    
+  $i_depth++;
+
   if($a_children){
     end($a_children);
     $str_nextlevel=key($a_children);
     reset($a_children);
-    
+
     while($str_child = key($a_children)){
       //list all children of the current child
       ewiki_page_listallchildren($str_child, $a_children, $a_sitemap, $a_validpages, $i_depth, $i_maxdepth, $i_flatmap);
-      
+
       //if the child is the next level marker...
       if($str_child==$str_nextlevel){
         //increment the level counter
@@ -231,7 +231,7 @@ function ewiki_sitemap_create($str_rootid, $a_validpages, $i_maxdepth, $i_flatma
         $str_nextlevel=key($a_children);
         //reset the array counter to the beginning of the array
         reset($a_children);
-        //we are done with this child...get rid of it 
+        //we are done with this child...get rid of it
       }
       array_shift($a_children);
     }
@@ -239,4 +239,4 @@ function ewiki_sitemap_create($str_rootid, $a_validpages, $i_maxdepth, $i_flatma
 
   return $a_sitemap;
 }
-?>
+

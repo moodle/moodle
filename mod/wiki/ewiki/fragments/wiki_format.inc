@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * Wiki-Engine from "ErfurtWiki", Mario Salzer <milky@erphesfurt.de>
  * Adapted by Frank Luithle <sigi@fsinfo.cs.uni-sb.de>
  *
@@ -288,4 +288,4 @@ function wiki_link_regex_callback( $uu ) {
    return($str);
 }
 
-?>
+

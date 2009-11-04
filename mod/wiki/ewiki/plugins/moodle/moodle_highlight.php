@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
    CSS-highlights the terms used as search patterns. This is done
@@ -10,7 +10,7 @@
      em.highlight {
           color: red;
      }
-   
+
      em.marker {
           background: yellow;
      }
@@ -41,7 +41,7 @@ function ewiki_moodle_highlight(&$o, &$id, &$data, &$action) {
          #-- get words out of it
          $q = preg_replace('/[^-_\d'.EWIKI_CHARS_L.EWIKI_CHARS_U.']+/', " ", $q);
          $q = array_unique(explode(" ", $q));
-         #-- walk through words            
+         #-- walk through words
          foreach ($q as $word) {
 
             if (empty($word)) {
@@ -76,4 +76,4 @@ function ewiki_moodle_highlight(&$o, &$id, &$data, &$action) {
 } // func
 
 
-?>
+

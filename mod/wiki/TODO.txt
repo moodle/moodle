@@ -16,7 +16,7 @@ Unassigned or not ready:
  - Wiki HTML: http://moodle.org/mod/forum/discuss.php?d=8920
  - http://moodle.org/mod/forum/discuss.php?d=7768#36954
  - Image Thumbnails http://moodle.org/mod/forum/discuss.php?d=8351
- 
- 
+
+
 ewiki Preparation:
   - Current Version: 1.01d

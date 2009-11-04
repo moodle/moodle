@@ -25,7 +25,7 @@ function ewiki_page_index($id=0, $data=0, $action=0, $args=array()) {
    while ($row = $result->get()) {
     if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $uu, "view")) {
         continue;
-    }   
+    }
     if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_TEXT) {
         if (!stristr($exclude, "\n".$row["id"]."\n")) {
             $sorted[] = $row["id"];
@@ -41,4 +41,4 @@ function ewiki_page_index($id=0, $data=0, $action=0, $args=array()) {
 }
 
 
-?>
+

@@ -26,7 +26,7 @@ fi
 
 
 #-- choose size
-N=$1 
+N=$1
 if [ -z "$N" ] ; then
 	N=0
 fi

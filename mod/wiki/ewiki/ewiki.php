@@ -85,8 +85,8 @@
 
     #-- allowed WikiPageNameCharacters
 
-#### BEGIN MOODLE CHANGES - to remove auto-camelcase linking.   
-    global $moodle_disable_camel_case;   
+#### BEGIN MOODLE CHANGES - to remove auto-camelcase linking.
+    global $moodle_disable_camel_case;
     if ($moodle_disable_camel_case) {
         define("EWIKI_CHARS_L", "");
         define("EWIKI_CHARS_U", "");
@@ -97,10 +97,10 @@
     define("EWIKI_CHARS_L", "a-z_µ¤$\337-\377");
     define("EWIKI_CHARS_U", "A-Z0-9\300-\336");
 
-#### BEGIN MOODLE CHANGES   
+#### BEGIN MOODLE CHANGES
     }
 #### END MOODLE CHANGES
-   
+
     define("EWIKI_CHARS", EWIKI_CHARS_L.EWIKI_CHARS_U);
 
         #-- database
@@ -216,7 +216,7 @@
         (?<![~!])
         ((?:(?:\w+:)*['.EWIKI_CHARS_U.']+['.EWIKI_CHARS_L.']+){2,}[\w\d]*)
         |\^([-'.EWIKI_CHARS_L.EWIKI_CHARS_U.']{3,})
-        |\[ (?:"[^\]\"]+" | \s+ | [^:\]#]+\|)*  ([^\|\"\[\]\#]+)  (?:\s+ | "[^\]\"]+")* [\]\#] 
+        |\[ (?:"[^\]\"]+" | \s+ | [^:\]#]+\|)*  ([^\|\"\[\]\#]+)  (?:\s+ | "[^\]\"]+")* [\]\#]
         |(\w{3,9}:\/\/[^?#\s\[\]\'\"\)\,<]+)    /x',
 
            "wiki_link_regex" => "\007 [!~]?(
@@ -382,8 +382,8 @@
         más adelante si piensa que es necesario.<br />",
            "EDIT_FORM_2" => "<br />Por favor no escriba cosas, que puedan
         enfadar a otras personas. Y por favor tenga en mente que
-        usted no es del todo anónimo en Internet 
-        (encuentre más sobre 
+        usted no es del todo anónimo en Internet
+        (encuentre más sobre
         '<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' de su computador con Google).",
            "BIN_IMGTOOLARGE" => "¡La gráfica es demasiado grande!",
            "BIN_NOIMG" => "¡No es un archivo con una gráfica (formato de archivo inaceptable)!",
@@ -766,7 +766,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
       $o = ewiki_t("THANKSFORCONTRIBUTION") . $o;
    }
 
-   
+
    if (EWIKI_HIT_COUNTING) {
       ewiki_database("HIT", $data);
    }
@@ -812,7 +812,7 @@ function ewiki_id() {
 ## MOODLE-CHANGE: $asid="", Knows the devil why....
 function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=NULL) {
    global $ewiki_config, $ewiki_plugins;
-      
+
    #-- get base script url from config vars
    if (empty($script)) {
       $script = &$ewiki_config[!$bin?"script":"script_binary"];
@@ -880,7 +880,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
       $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&amp;", $url);
    } else {
       //This is going to be used in some header or meta redirect, so It cannot use &amp; (bug 2620)
-      $url = preg_replace('/&amp;/', '&', $url); 
+      $url = preg_replace('/&amp;/', '&', $url);
    }
    return($url);
 }
@@ -936,7 +936,7 @@ function ewiki_script_url() {
    else {
       return(NULL);   #-- could not guess it
    }
- 
+
    #$url = "http://" . $_SERVER["SERVER_NAME"] . $url;
    return($url);
 }
@@ -1059,10 +1059,10 @@ function ewiki_page_ordered_list($orderby="created", $asc=0, $print, $title) {
    if ($asc != 0) { arsort($sorted); }
    else { asort($sorted); }
 
-   foreach ($sorted as $name => $value) { 
+   foreach ($sorted as $name => $value) {
       if (empty($value)) { $value = "0"; }
    ##### BEGIN MOODLE ADDITION #####
-      #$sorted[$name] = strftime(str_replace('%n', $value, $print), $value);      
+      #$sorted[$name] = strftime(str_replace('%n', $value, $print), $value);
       if($print=="LASTCHANGED") {
         $value=strftime("%c",$value);
       }
@@ -1070,7 +1070,7 @@ function ewiki_page_ordered_list($orderby="created", $asc=0, $print, $title) {
    ##### BEGIN MOODLE ADDITION #####
    }
    $o .= ewiki_list_pages($sorted);
-   
+
    return($o);
 }
 
@@ -1143,7 +1143,7 @@ function ewiki_page_search($id, &$data, $action) {
 
       $o .= ewiki_list_pages($found);
    }
- 
+
    return($o);
 }
 
@@ -1162,7 +1162,7 @@ function ewiki_page_info($id, &$data, $action) {
    $pnum = optional_param(EWIKI_UP_PAGENUM, 0, PARAM_INT);
    $pend = optional_param(EWIKI_UP_PAGEEND, 0, PARAM_INT);
 
-   $o = ewiki_make_title($id, ewiki_t("INFOABOUTPAGE")." '{$id}'", 2, $action,"", "_MAY_SPLIT=1"); 
+   $o = ewiki_make_title($id, ewiki_t("INFOABOUTPAGE")." '{$id}'", 2, $action,"", "_MAY_SPLIT=1");
 
    $flagnames = array(
       "TEXT", "BIN", "DISABLED", "HTML", "READONLY", "WRITEABLE",
@@ -1371,7 +1371,7 @@ function ewiki_page_edit($id, $data, $action) {
    $version = optional_param('version', '', PARAM_CLEAN);
    $preview = optional_param('preview', false, PARAM_BOOL);
    $save    = optional_param('save', false, PARAM_BOOL);
-   
+
    $hidden_postdata = array();
 
    #-- previous version come back
@@ -1398,7 +1398,7 @@ function ewiki_page_edit($id, $data, $action) {
    #-- permission checks
    if (isset($ewiki_ring)) {
       $ring = $ewiki_ring;
-   } else { 
+   } else {
       $ring = 3;
    }
    $flags = @$data["flags"];
@@ -1491,7 +1491,7 @@ function ewiki_page_edit($id, $data, $action) {
 
                if (EWIKI_EDIT_REDIRECT) {
                   $url = ewiki_script("", $id, "thankyou=1", 0, 0, EWIKI_HTTP_HEADERS?ewiki_script_url():0);
-                 
+
                   if (EWIKI_HTTP_HEADERS && !headers_sent()) {
                      header("Status: 303 Redirect for GET");
                      header("Location: $url");
@@ -1542,13 +1542,13 @@ function ewiki_data_update(&$data, $author="") {
 
 #-- edit <textarea>
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
-   global $ewiki_plugins, $ewiki_config, $moodle_format;   
+   global $ewiki_plugins, $ewiki_config, $moodle_format;
 
    $content = optional_param('content', '', PARAM_CLEAN);
    $version = optional_param('version', '', PARAM_CLEAN);
 
    $o='';
-      
+
    #-- previously edited, or db fetched content
    if ($content || $version) {
       $data = array(
@@ -1600,8 +1600,8 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", $oldtext);
      echo '</td></tr></table>';
 
-     $o .= ob_get_contents();     
-     ob_end_clean();     
+     $o .= ob_get_contents();
+     ob_end_clean();
 
    } else {
    ##### END MOODLE ADDITION #####
@@ -1613,7 +1613,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    ##### BEGIN MOODLE ADDITION #####
    }
    ##### END MOODLE ADDITION #####
-   
+
    #-- more <input> elements before the submit button
    if ($pf_a = $ewiki_plugins["edit_form_insert"]) foreach ($pf_a as $pf) {
       $o .= $pf($id, $data, $action);
@@ -1660,8 +1660,8 @@ function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
 
 
 function ewiki_page_edit_preview(&$data) {
-#### BEGIN MOODLE CHANGES   
-   global $moodle_format;   
+#### BEGIN MOODLE CHANGES
+   global $moodle_format;
    $preview_text=$GLOBALS["ewiki_plugins"]["render"][0](optional_param("content", null, PARAM_CLEAN), 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
@@ -1670,7 +1670,7 @@ function ewiki_page_edit_preview(&$data) {
            . "<br /><br /><hr noshade><br />"
            . "</div>"
    );
-#### END MOODLE CHANGES   
+#### END MOODLE CHANGES
 }
 
 
@@ -1709,7 +1709,7 @@ function ewiki_control_links($id, &$data, $action) {
       }
    }
 
-   if ($data["lastmodified"] >= UNIX_MILLENNIUM) { 
+   if ($data["lastmodified"] >= UNIX_MILLENNIUM) {
       $o .= '<small>' . strftime(ewiki_t("LASTCHANGED"), @$data["lastmodified"]) . '</small>';
    }
 
@@ -1766,7 +1766,7 @@ function ewiki_format (
       "close" => array(),
    );
    #-- aliases
-   $in = &$s["in"]; 
+   $in = &$s["in"];
    $line = &$s["line"];
    $lines = &$s["lines"];
    $para = &$s["para"];
@@ -1774,7 +1774,7 @@ function ewiki_format (
    $list = &$s["list"];
 
    #-- input and output arrays
-   if ($wiki_source[0] == "<") {            # also prepend an empty line 
+   if ($wiki_source[0] == "<") {            # also prepend an empty line
       $wiki_source = "\n" . $wiki_source;    # for faster strpos() searchs
    }
    $iii = array(
@@ -1861,7 +1861,7 @@ function ewiki_format (
    while ((++$in) < count($iii)) {
       if (($btype = $iii[$in][2]) && ($pf_a = $ewiki_plugins["format_block"][$btype])) {
          $c = &$iii[$in][0];
-         foreach ($pf_a as $pf) {   
+         foreach ($pf_a as $pf) {
             # current buffer $c and pointer $in into $iii[] and state $s
             $pf($c, $in, $iii, $s, $btype);
          }
@@ -1870,7 +1870,7 @@ function ewiki_format (
 
    #-- wiki markup ------------------------------------------------------
    $para = "";
-   $in = -1;   
+   $in = -1;
    while ((++$in) < count($iii)) {
       #-- wikimarkup
       if ($iii[$in][1] & 0x0001) {
@@ -1920,13 +1920,13 @@ function ewiki_format (
                   $s["list"] = "";
                }
                $line = substr($line, 1, -1);
-               if ($pf_tbl) { 
+               if ($pf_tbl) {
                   $pf_tbl($line, $ooo, $s);
                }
                else {
-                  if (!$s["tbl"]) {  
+                  if (!$s["tbl"]) {
                      $out .= "<table " . $wm_table_defaults . ">\n";
-                     $s["close"][] = "\n</table>"; 
+                     $s["close"][] = "\n</table>";
                   }
                   $line = "<tr>\n<td>" . str_replace("|", "</td>\n<td>", $line) . "</td>\n</tr>";
                }
@@ -1940,7 +1940,7 @@ function ewiki_format (
 
             #-- headlines
             if (($c0 == "!") && ($excl = strspn($line, "!"))) {
-               if ($excl > 3) { 
+               if ($excl > 3) {
                   $excl = 3;
                }
                $line = substr($line, $excl);
@@ -1961,12 +1961,12 @@ function ewiki_format (
             $n_indent = 0;
             if (!$list && (!$s["block"]) && ($n_indent = strspn($line, " "))) {
                $n_indent = (int) ($n_indent / 2.65);
-               while ($n_indent > $s["indent"]) { 
+               while ($n_indent > $s["indent"]) {
                   $out .= $wm_indent;
                   $s["indent"]++;
                }
             }
-            while ($n_indent < $s["indent"]) { 
+            while ($n_indent < $s["indent"]) {
                $out .= "";
                $s["indent"]--;
             }
@@ -2018,7 +2018,7 @@ function ewiki_format (
                      list($lopen, $ltag1, $ltag2) = $wm_list[$lchar];
                      $lclose = strtok($lopen, " ");
                      $lspace = str_repeat("  ", $new_len);
-                     
+
                      $out .= "\n$lspace<$lopen>\n" . "$lspace". $linsert . "<$ltag2>";
                      $s["close"][] = "$lspace</$lclose>";
                      $s["close"][] = "$lspace</$ltag2>";
@@ -2129,7 +2129,7 @@ function ewiki_format (
       if ($ooo[$in][1] & 0x0002) {
       ##### BEGIN MOODLE ADDITION #####
       # No WikiLinks in Editor
-      #################################  
+      #################################
         global $ewiki_use_editor, $ewiki_editor_content;
         if(!($ewiki_use_editor && $ewiki_editor_content)) {
       ##### END MOODLE ADDITION #####
@@ -2186,7 +2186,7 @@ function ewiki_format_close_para(&$ooo, &$s) {
 
 function ewiki_format_close_tags(&$ooo, &$s, $count=100) {
    $out = &$ooo[$s["in"]][0];
-   if (!is_array($s) || !is_array($s["close"])) { 
+   if (!is_array($s) || !is_array($s["close"])) {
       die("\$s is garbaged == $s!!");
    }
    while (($count--) && ($add = array_pop($s["close"]))) {
@@ -2203,7 +2203,7 @@ function ewiki_format_pre(&$str, &$in, &$iii, &$s, $btype) {
 function ewiki_format_html(&$str, &$in, &$iii, &$s) {
    $he = array_reverse($GLOBALS["ewiki_config"]["htmlentities"]);
    $str = strtr($str, array_flip($he));
-   $str = "<span class=\"markup html\">" . $str . "\n</span>\n"; 
+   $str = "<span class=\"markup html\">" . $str . "\n</span>\n";
 }
 
 
@@ -2272,7 +2272,7 @@ function ewiki_render_wiki_links(&$o) {
 */
 function ewiki_merge_links(&$ewiki_links) {
    global $ewiki_plugins;
-#### BEGIN MOODLE CHANGES   
+#### BEGIN MOODLE CHANGES
      global $ewiki_link_case;
      $ewiki_link_case=array();
 #### END MOODLE CHANGES
@@ -2280,11 +2280,11 @@ function ewiki_merge_links(&$ewiki_links) {
       foreach ($ewiki_plugins["page"] as $page=>$uu) {
          $ewiki_links[$page] = 1;
       }
-#### BEGIN MOODLE CHANGES   
+#### BEGIN MOODLE CHANGES
      foreach($ewiki_links as $page => $uu) {
        if($uu) {
-         $ewiki_link_case[strtolower($page)]=$page;  
-       }        
+         $ewiki_link_case[strtolower($page)]=$page;
+       }
      }
 #### END MOODLE CHANGES
       $ewiki_links = ewiki_array($ewiki_links);
@@ -2348,7 +2348,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
          $href = str_replace($f, $t, $href);
       }
    }
- 
+
    #-- anchors
    $href2 = "";
    if (($p = strrpos($href, "#")) && ($p) && ($href[$p-1] != "&")) {
@@ -2394,9 +2394,9 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    #-- ordinary internal WikiLinks
    elseif (($ewiki_links === true) || @$ewiki_links[$href_i]) {
       $type = array("wikipage");
-#### BEGIN MOODLE CHANGES   
+#### BEGIN MOODLE CHANGES
       global $ewiki_link_case;
-      $href_realcase=array_key_exists($href_i,$ewiki_link_case) ? $ewiki_link_case[$href_i] : $href;  
+      $href_realcase=array_key_exists($href_i,$ewiki_link_case) ? $ewiki_link_case[$href_i] : $href;
       $str = '<a href="' . ewiki_script("", $href_realcase) . s($href2)
            . '">' . $title . '</a>';
 #### END MOODLE CHANGES
@@ -2426,7 +2426,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    }
 
    #-- convert standard URLs
-   foreach ($ewiki_config["idf"]["url"] as $find) 
+   foreach ($ewiki_config["idf"]["url"] as $find)
     if (strpos($href, $find)===0) {
       $type[-2] = "url";
       $type[-1] = strtok($find, ":");
@@ -2527,7 +2527,7 @@ function ewiki_interwiki($href, &$type) {
 }
 
 
-/* 
+/*
    implements FeatureWiki:InterMapWalking
 */
 function ewiki_intermap_walking($id, &$data, $action) {
@@ -2579,23 +2579,23 @@ function ewiki_binary($break=0) {
    }
 
    #-- what are we doing here?
-   if (($id == EWIKI_IDF_INTERNAL) && ($upload_file)) { 
+   if (($id == EWIKI_IDF_INTERNAL) && ($upload_file)) {
       $do = "upload";
    }
    else {
       $data = ewiki_database("GET", array("id" => $id));
       $flags = @$data["flags"];
-      if (EWIKI_DB_F_BINARY == ($flags & EWIKI_DB_F_TYPE)) { 
+      if (EWIKI_DB_F_BINARY == ($flags & EWIKI_DB_F_TYPE)) {
          $do = "get";
       }
       elseif (empty($data["version"]) and EWIKI_CACHE_IMAGES) {
          $do = "cache";
       }
-      else { 
+      else {
          $do = "nop";
       }
    }
-   
+
    #-- auth only happens when enforced with _PROTECTED_MODE_XXL setting
    #   (authentication for inline images in violation of the WWW spirit)
    if ((EWIKI_PROTECTED_MODE>=5) && !ewiki_auth($id, $data, "binary-{$do}")) {
@@ -2624,12 +2624,12 @@ EOF;
 
    #-- request for contents from the db
    elseif ($do == "get") {
-#### CHANGED FOR MOODLE        
+#### CHANGED FOR MOODLE
    if (EWIKI_HIT_COUNTING) {
       $tmp["id"]=$id;
       ewiki_database("HIT", $tmp);
    }
-#### CHANGED FOR MOODLE        
+#### CHANGED FOR MOODLE
 
       #-- send http_headers from meta
       if (is_array($data["meta"])) {
@@ -2642,10 +2642,10 @@ EOF;
 
       #-- fetch from binary store
       if ($pf_a = $ewiki_plugins["binary_get"]) {
-#### CHANGED FOR MOODLE        
+#### CHANGED FOR MOODLE
         foreach ($pf_a as $pf) { $pf($id, $data["meta"]); }
 
-#### END CHANGED FOR MOODLE        
+#### END CHANGED FOR MOODLE
       }
 
       #-- else fpassthru
@@ -2677,7 +2677,7 @@ EOF;
 
             $result = ewiki_binary_save_image($filename, $id, "RETURN", $add_meta);
          }
-      }      
+      }
 
       #-- deliver
       if ($result && !$break) {
@@ -2687,7 +2687,7 @@ EOF;
       else {
          $data = array(
             "id" => $id,
-            "version" => 1, 
+            "version" => 1,
             "flags" => EWIKI_DB_F_DISABLED,
             "lastmodified" => time(),
             "created" => time(),
@@ -2700,7 +2700,7 @@ EOF;
          header("Location: $id");
          ewiki_log("imgcache: did not find '$id', and marked it now in database as DISABLED", 2);
       }
-      
+
    }
 
    #-- "we don't sell this!"
@@ -2829,7 +2829,7 @@ $add_meta=array(), $accept_all=EWIKI_ACCEPT_BINARY, $care_for_images=1)
    #-- database entry
    $data = array(
       "id" => $id,
-      "version" => "1", 
+      "version" => "1",
       "author" => ewiki_author(),
       "userid" => $USER->id,
       "flags" => EWIKI_DB_F_BINARY | EWIKI_DB_F_READONLY,
@@ -2838,7 +2838,7 @@ $add_meta=array(), $accept_all=EWIKI_ACCEPT_BINARY, $care_for_images=1)
       "meta" => &$meta,
       "content" => &$content,
    );
-   
+
    #-- write if not exist
    $exists = ewiki_database("FIND", array($id));
    if (! $exists[$id] ) {
@@ -2912,11 +2912,11 @@ function ewiki_t($const, $repl=array(), $pref_langs=array()) {
                        "_" => "",
                        " " => "",
                        "+" => "");
-   
+
    $translation=get_string(strtolower(strtr($const,$replacechars)),"wiki",$repl);
    return $translation;
    ##### END MOODLE ADDITION #####
-   
+
 /*   global $ewiki_t;
 
    #-- use default language wishes
@@ -3096,7 +3096,7 @@ function ewiki_auth($id, &$data, $action, $ring=false, $request_auth=0) {
 #echo "_a($id,dat,$action,$ring,$request_auth)<br />\n";
 
    if (EWIKI_PROTECTED_MODE) {
- 
+
       #-- set required vars
       if (!isset($ewiki_ring)) {
          $ewiki_ring = (int)EWIKI_AUTH_DEFAULT_RING;
@@ -3177,7 +3177,7 @@ function ewiki_auth_user($username, $password) {
 
         #-- return if it matches
         if ($success) {
-           if (isset($entry[1])) { 
+           if (isset($entry[1])) {
               $ewiki_ring = (int)($entry[1]);
            } else {
               $ewiki_ring = 2;  //(EWIKI_AUTH_DEFAULT_RING - 1);
@@ -3289,7 +3289,7 @@ function ewiki_eventually_initialize(&$id, &$data, &$action) {
 function ewiki_database($action, $args, $sw1=0, $sw2=0, $pf=false) {
 
    #-- normalize (fetch bad parameters)
-   if (($action=="GET") && !is_array($args) && is_string($args)) {   
+   if (($action=="GET") && !is_array($args) && is_string($args)) {
       $args = array("id" => $args);
    }
 
@@ -3395,13 +3395,13 @@ class ewiki_dbquery_result {
                   foreach ($this->keys as $key) {
                      $row[$key] = $r[$key];
                   }
-               } else { 
+               } else {
                   $row = $r;
                }
             }
             unset($r);
          }
-         else { 
+         else {
             return(NULL);  // no more entries
          }
 

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 # lists pages, which were referenced
 # but not yet written
@@ -15,7 +15,7 @@ function ewiki_page_wantedpages($id, $data, $action) {
     while ($row = $result->get()) {
         if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $uu, "view")) {
             continue;
-        }   
+        }
         $refs .= $row["refs"];
     }
 
@@ -27,17 +27,17 @@ function ewiki_page_wantedpages($id, $data, $action) {
     foreach ($refs as $id=>$exists) {
         if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $uu, "view")) {
             continue;
-        }   
+        }
         if (!$exists && !strstr($id, "://") && strlen(trim($id))) {
             $wanted[] = $id;
         }
     }
 
     // to prevent empty <ul></ul> getting printed out, we have to interate twice.
-    // once to make sure the <ul></ul> is needed at all. 
+    // once to make sure the <ul></ul> is needed at all.
     // MDL-7861, <ul></ul> does not validate.
-   
-    $printul = false; 
+
+    $printul = false;
     foreach ($wanted as $page) {
         $link = ewiki_link_regex_callback(array($page, $page));
         if (strstr($link, "?</a>")) {
@@ -45,9 +45,9 @@ function ewiki_page_wantedpages($id, $data, $action) {
         }
     }
     #-- print out
-   
+
     if ($printul) {
-        $o .= "<ul>";   
+        $o .= "<ul>";
         foreach ($wanted as $page) {
 
             $link = ewiki_link_regex_callback(array($page, $page));
@@ -62,4 +62,4 @@ function ewiki_page_wantedpages($id, $data, $action) {
     return($o);
 }
 
-?>
+

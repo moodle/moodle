@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php
     //This php script contains all the stuff to backup/restore
     //wiki mods
 
@@ -217,7 +217,7 @@
         }
         return $status;
     }
-    
+
     function wiki_restore_files ($oldwikiid, $newwikiid, $oldentryid, $newentryid, $restore) {
 
         global $CFG;
@@ -235,7 +235,7 @@
 
         //First, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
-  
+
         //Check it exists and create it
         $status = check_dir_exists($moddata_path,true);
 
@@ -275,13 +275,13 @@
     //wiki_decode_content_links_caller() function in each module
     //in the restore process
     function wiki_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of wikis
-                
+
         $searchstring='/\$@(WIKIINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -298,7 +298,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/wiki/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/wiki/index.php?id='.$old_id,$result);
                 }
@@ -341,7 +341,7 @@
     function wiki_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         //Process every wiki PAGE in the course
         if ($pages = $DB->get_records_sql("SELECT p.id, p.content
                                              FROM {wiki_pages} p, {wiki} w
@@ -411,4 +411,4 @@
 
         return $status;
     }
-?>
+

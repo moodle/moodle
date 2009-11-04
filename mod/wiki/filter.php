@@ -1,4 +1,4 @@
-<?PHP // $Id$
+<?php
     //This function provides automatic linking to
     //wiki pages when its page title is found inside every Moodle text
     //It's based in the glosssary filter by Williams Castillo
@@ -22,7 +22,7 @@
         if (!isset($cachedcourseid) || $cachedcourseid !== (int)$courseid) {
             $wikipagelist = array();
             $nothingtodo = false;
-        } 
+        }
         $cachedcourseid = (int)$courseid;
 
         if (!empty($nothingtodo)) {   // We've been here in this page already
@@ -44,7 +44,7 @@
         /// Walk through each wiki, and get entries.
             foreach ($wikis as $wiki) {
                 if ($wiki_entries = wiki_get_entries($wiki)) {
-                
+
                 /// Walk through each entry and get the pages.
                     foreach ($wiki_entries as $wiki_entry) {
                         if ($wiki_pages = $DB->get_records('wiki_pages', array('wiki'=>$wiki_entry->id), 'pagename, version DESC')) {
@@ -70,4 +70,4 @@
         return filter_phrases($text, $wikipagelist);
     }
 
-?>
+

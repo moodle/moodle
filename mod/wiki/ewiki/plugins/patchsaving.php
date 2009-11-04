@@ -28,7 +28,7 @@ function ewiki_edit_patch($id, &$data) {
       "GET",
       array("id"=>$id, "version"=>$version)
    );
-   if (!$base) { 
+   if (!$base) {
      return(false);
    }
 
@@ -41,7 +41,7 @@ function ewiki_edit_patch($id, &$data) {
      fwrite($f, $base["content"]);
      fclose($f);
    }
-   else { 
+   else {
      return(false);
    }
 
@@ -49,7 +49,7 @@ function ewiki_edit_patch($id, &$data) {
      fwrite($f, $content);
      fclose($f);
    }
-   else { 
+   else {
      unlink($fn_base);
      return(false);
    }
@@ -58,7 +58,7 @@ function ewiki_edit_patch($id, &$data) {
      fwrite($f, $data["content"]);
      fclose($f);
    }
-   else { 
+   else {
      unlink($fn_base);
      unlink($fn_requ);
      return(false);
@@ -87,4 +87,3 @@ function ewiki_edit_patch($id, &$data) {
 }
 
 
-?>

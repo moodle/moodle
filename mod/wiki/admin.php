@@ -132,7 +132,7 @@
           default: break;
        }
     }
-    
+
     $PAGE->navbar->add(get_string("administration","wiki"));
     $PAGE->set_title($wiki_entry->pagename);
     $PAGE->set_focuscontrol($focus);
@@ -370,4 +370,4 @@
     echo $OUTPUT->footer();
     exit;
 
-?>
+

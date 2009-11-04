@@ -7,7 +7,7 @@
 
    You need this plugin to run only once (when you first run the Wiki),
    afterwards you can and should comment out the include() directive which
-   enabled it.   
+   enabled it.
 */
 
 
@@ -66,7 +66,7 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
          $o .= '<tr><td>WikiSoftware</td><td>ewiki '.EWIKI_VERSION."</td></tr>";
          $o .= "</table>";
 
-         #-- more diagnosis 
+         #-- more diagnosis
          if (ini_get("magic_quotes")) {
             $o.= "<b>Warning</b>: Your PHP interpreter has enabled the ugly and outdated '<i>magic_quotes</i>'. This will lead to problems, so please ask your provider to correct it; or fix it yourself with .htaccess settings as documented in the README. Otherwise don't forget to include() the <tt>fragments/strip_wonderful_slashes.php</tt> (it's ok to proceed for the moment).<br /><br />";
          }
@@ -122,4 +122,4 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
 }
 
 
-?>
+

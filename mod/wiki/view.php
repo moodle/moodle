@@ -511,4 +511,4 @@ $strnojslockwarning
     ';
 
     echo $OUTPUT->footer();
-?>
+

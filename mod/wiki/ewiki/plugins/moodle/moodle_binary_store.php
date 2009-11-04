@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
    This plugin intercepts some of the binary handling functions to
@@ -42,16 +42,16 @@ function moodle_binary_get_path($id, $meta, $course, $wiki, $userid, $groupid) {
     global $CFG;
     $entry=wiki_get_entry($wiki, $course, $userid, $groupid);
     if(!$entry) {
-      print_error('cannotgetentry', 'wiki'); 
+      print_error('cannotgetentry', 'wiki');
     }
-    
+
     $dir=make_upload_directory("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/".$meta["section"]);
     if(substr($id, 0, strlen(EWIKI_IDF_INTERNAL))!=EWIKI_IDF_INTERNAL) {
       print_error('cannotstartwith', 'wiki', '', EWIKI_IDF_INTERNAL.substr($id, 0, strlen(EWIKI_IDF_INTERNAL)));
     }
     $id = substr($id,strlen(EWIKI_IDF_INTERNAL));
     $id = clean_filename($id);
-  
+
     return "$dir/$id";
 }
 
@@ -64,13 +64,13 @@ function moodle_binary_store_file(&$filename, &$id, &$meta, $ext=".bin") {
       print_error('cannotacceptbin', 'wiki');
       return 0;
     }
-    
-    
+
+
     $entry=wiki_get_entry($wiki, $course, $userid, $groupid);
     if(!$entry->id) {
       print_error('cannotgetentry', 'wiki');
     }
-    
+
     require_once($CFG->dirroot.'/lib/uploadlib.php');
     $um = new upload_manager('upload',false,false,$course,false,0,true,true);
     if ($um->process_file_uploads("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/$ewiki_title")) {
@@ -83,7 +83,7 @@ function moodle_binary_store_file(&$filename, &$id, &$meta, $ext=".bin") {
     }
     print_error('uploaderror', 'wiki', '', $um->print_upload_log(true));
     return false;
-   
+
 }
 
 
@@ -97,8 +97,8 @@ function moodle_binary_store_get_file($id, &$meta) {
       print_error('cannotacceptbin', 'wiki');
       return 0;
     }
-    
-    
+
+
     $filepath=moodle_binary_get_path($id, $meta, $course, $wiki, $userid, $groupid);
     if (file_exists($filepath)) {
             readfile($filepath);
@@ -116,4 +116,4 @@ function moodle_binary_store_get_file($id, &$meta) {
       //}
 
 }
-?>
+

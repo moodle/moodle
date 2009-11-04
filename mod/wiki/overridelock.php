@@ -1,6 +1,6 @@
 <?php
 /**
- * Handles what happens when a user with appropriate permission attempts to 
+ * Handles what happens when a user with appropriate permission attempts to
  * override a wiki page editing lock.
  *
  * @copyright &copy; 2006 The Open University
@@ -49,4 +49,4 @@ $pagename=$actions[1];
 $DB->delete_records('wiki_locks', array('pagename'=>$pagename, 'wikiid'=>$wiki->id));
 
 redirect("view.php?id=$id&page=".urlencode($page));
-?>
+

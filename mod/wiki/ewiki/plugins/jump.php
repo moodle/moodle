@@ -18,14 +18,14 @@
    that cannot detect this themselfes).
 */
 
-#-- config 
+#-- config
 define("EWIKI_JUMP_HTTP", 1);       #-- issue a HTTP redirect, or jump in place
 define("EWIKI_UP_REDIRECT_COUNT", "redir");
 
 #-- text
 $ewiki_t["en"]["REDIRECTION_LOOP"] = "<h2>Redirection loop detected<h2>\nOperation stopped, because we're traped in an infinite redirection loop with page \$id.";
 
-#-- plugin glue 
+#-- plugin glue
 $ewiki_plugins["handler"][] = "ewiki_handler_jump";
 $ewiki_config["interwiki"]["jump"] = "";
 $ewiki_config["interwiki"]["goto"] = "";
@@ -35,7 +35,7 @@ function ewiki_handler_jump(&$id, &$data, &$action) {
 
    global $ewiki_config;
    static $redirect_count = 5;
-   
+
    $redirect_count = optional_param("EWIKI_UP_REDIRECT_COUNT", $redirect_count, PARAM_INT);
 
    $jump_markup = array("jump", "goto", "redirect", "location");
@@ -98,4 +98,3 @@ function ewiki_handler_jump(&$id, &$data, &$action) {
 }
 
 
-?>

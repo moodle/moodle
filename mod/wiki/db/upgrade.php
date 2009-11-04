@@ -1,6 +1,6 @@
-<?php  //$Id$
+<?php
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the wiki module
 //
 // Sometimes, changes between versions involve
@@ -71,4 +71,4 @@ function xmldb_wiki_upgrade($oldversion) {
     return $result;
 }
 
-?>
+

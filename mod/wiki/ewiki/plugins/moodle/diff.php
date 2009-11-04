@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
  # this is the "stupid diff", which shows up changes between two
  # saved versions of a WikiPage; even if working very unclean it
@@ -26,13 +26,13 @@
     if ($old_ver > 0) {
        $data0 = ewiki_database("GET", array("id" => $id, "version" => $old_ver));
     }
-    
+
     $a->new_ver=$new_ver;
     $a->old_ver=$old_ver;
     $a->pagename=$id;
     $o = ewiki_make_title($id, get_string("differences","wiki",$a));
 
-    # Different handling for html: closes Bug #1530 - Wiki diffs useless when using HTML editor    
+    # Different handling for html: closes Bug #1530 - Wiki diffs useless when using HTML editor
     if($wiki->htmlmode==2) {
         /// first do the formatiing to get normal display format without filters
         $options = new object();
@@ -46,15 +46,15 @@
         $content0 = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content0); // Remove multiple spaces.
         $content = preg_replace('/\n|\r/i', ' ', $content);
         $content = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content);
-        
+
         /// Replace <p>&nbsp;</p>
         $content0 = preg_replace('#(<p( [^>]*)?>(&nbsp;|\s+)</p>)|(<p( [^>]*)?></p>)#i', "\n", $content0);
         $content = preg_replace('#(<p( [^>]*)?>(&nbsp;|\s+)</p>)|(<p( [^>]*)?></p>)#i', "\n", $content);
-        
+
 
         /// Place new line characters at logical HTML positions.
         $htmlendings = array('+(<br.*?>)+iU', '+(<p( [^>]*)?>)+iU', '+(</p>)+i', '+(<hr.*?>)+iU', '+(<ol.*?>)+iU',
-                             '+(</ol>)+i', '+(<ul.*?>)+iU', '+(</ul>)+i', '+(<li.*?>)+iU', '+(</li>)+i', 
+                             '+(</ol>)+i', '+(<ul.*?>)+iU', '+(</ul>)+i', '+(<li.*?>)+iU', '+(</li>)+i',
                              '+(</tr>)+i', '+(<div.*?>)+iU', '+(</div>)+i');
         $htmlrepl = array("\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
                           "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
@@ -73,7 +73,7 @@
 
     foreach ($txt2 as $i => $line) {
        $i2 = $i;
-       while ($rm = $diff0[$i2++]) {          
+       while ($rm = $diff0[$i2++]) {
           if($wiki->htmlmode == 2) {
             if ($rm == '<br />') { //ugly hack to fix line breaks
                 $rm = '';

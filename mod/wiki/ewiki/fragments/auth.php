@@ -1,7 +1,7 @@
 <?php
 
  # http user space authentication layer
- # ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  # can be used with the tools/, if you don't want to
  # set up the .htaccess and .htpasswd files
 
@@ -28,7 +28,7 @@
  #-- check password
  $_success = false;
  if (strlen($_a_u) && strlen($_a_p) && ($_a_p == @$passwords[$_a_u])) {
-    $_success = $_a_u; 
+    $_success = $_a_u;
  }
 
  #-- request HTTP Basic authentication otherwise
@@ -39,4 +39,3 @@
     die();
  }
 
-?>

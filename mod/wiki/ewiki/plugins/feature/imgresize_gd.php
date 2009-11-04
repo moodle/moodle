@@ -25,7 +25,7 @@ function ewiki_binary_resize_image_gd(&$filename, &$mime, $return=0) {
            /*** this disallows Win32 ***/
    if (    (DIRECTORY_SEPARATOR!="/") && !EWIKI_IMAGERESIZE_WIN
        || (strpos($mime, "image/")!==0) )
-   { 
+   {
       return(false);
    }
 
@@ -119,4 +119,3 @@ function ewiki_binary_resize_image_gd(&$filename, &$mime, $return=0) {
 
 }
 
-?>

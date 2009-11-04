@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
    This filter plugin implements minimal html tag balancing, and can also
@@ -7,7 +7,7 @@
    markup abuse; it however provides no fix for <ul> inside <ul> or even
    <h2> inside <p> problems (this should rather be fixed in the ewiki_format
    function).  So following code is not meant to fix any possible html file,
-   and it certainly won't make valid html files out of random binary data. 
+   and it certainly won't make valid html files out of random binary data.
    So for full html spec conformance you should rather utilize w3c tidy (by
    using your Webservers "Filter" directive).
 */
@@ -174,4 +174,4 @@ function ewiki_html_tag_balancer(&$html) {
 }
 
 
-?>
+

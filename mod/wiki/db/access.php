@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Capability definitions for the wiki module.
  *
@@ -32,7 +32,7 @@ $capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'mod/wiki:overridelock' => array(
 
         'riskbitmask' => 0,

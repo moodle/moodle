@@ -38,7 +38,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
             $versionsql = "AND version = :version";
          } else {
             $versionsql = "";
-            
+
          }
 
          # $result = mysql_query("SELECT * FROM " . EWIKI_DB_TABLE_NAME

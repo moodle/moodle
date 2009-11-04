@@ -25,7 +25,7 @@
  #-- the wiki module itself to add them before
  #-- insert. Strange triple add-strip-add but
  #-- this was the best way to solve problems
- #-- without changing how the rest of the 
+ #-- without changing how the rest of the
  #-- module works.
 
     $superglobals = array(
@@ -49,4 +49,4 @@
 
 
 
-?>
+

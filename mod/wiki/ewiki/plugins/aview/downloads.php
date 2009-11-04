@@ -13,7 +13,7 @@ if (!defined("EWIKI_AUTOVIEW") || !EWIKI_AUTOVIEW) {
 
 
 $ewiki_t["en"]["ATTACHMENTS"] = "attachments";
-$ewiki_t["de"]["ATTACHMENTS"] = "Anhänge";
+$ewiki_t["de"]["ATTACHMENTS"] = "Anhï¿½nge";
 
 
 
@@ -36,12 +36,12 @@ function ewiki_view_append_attachments($id, $data, $action) {
 //   }
 //   arsort($ord);
 //
-//    foreach ($ord as $id => $uu) {    
+//    foreach ($ord as $id => $uu) {
 //        $row = ewiki_database("GET", array("id"=>$id));
 //        if (EWIKI_PROTECTED_MODE && EWIKI_PROTECTED_MODE_HIDING && !ewiki_auth($row["id"], $row, "view")) {
 //            continue;
-//        }           
-//        $o .= ewiki_entry_downloads($row, "*");    
+//        }
+//        $o .= ewiki_entry_downloads($row, "*");
 //    }
 #### END MOODLE CHANGES
 
@@ -58,4 +58,4 @@ function ewiki_attachments() {
 
 
 
-?>
+

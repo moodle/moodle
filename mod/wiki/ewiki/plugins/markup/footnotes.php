@@ -12,7 +12,7 @@
    a WikiLink to explain a more complex task on another page;
    your decision
 
-*/  
+*/
 
 
 
@@ -44,7 +44,7 @@ function ewiki_format_source_footnotes (&$source) {
 
       #-- strip "{{footnote}}"
       $source = substr($source, 0, $l - 2)
-             . "<a href=\"#fn$notenum\">·$notenum</a>"
+             . "<a href=\"#fn$notenum\">ï¿½$notenum</a>"
              . substr($source, $r + 2);
 
       #-- add "footnote" to the end of the wiki page source
@@ -52,10 +52,9 @@ function ewiki_format_source_footnotes (&$source) {
          $source .= "\n----";
       }
       $source .= "\n" .
-                 "<a name=\"fn$notenum\">·$notenum</a> ". $footnote . "\n<br />";
-      
+                 "<a name=\"fn$notenum\">ï¿½$notenum</a> ". $footnote . "\n<br />";
+
    }
 }
 
 
-?>

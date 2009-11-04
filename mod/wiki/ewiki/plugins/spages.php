@@ -19,7 +19,7 @@
    $headers[] or $ewiki_headers[] array.
 
    If you define("EWIKI_SPAGES_DIR") then this directory will be read
-   initially, but you could also just edit the following list/array of 
+   initially, but you could also just edit the following list/array of
    directories, or call ewiki_init_spages() yourself.
 */
 
@@ -179,4 +179,4 @@ function ewiki_init_spages($dirs, $idprep="") {
 
 
 
-?>
+

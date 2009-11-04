@@ -87,4 +87,4 @@ class mod_wiki_mod_form extends moodleform_mod {
 
     }
 }
-?>
+

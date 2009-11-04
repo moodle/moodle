@@ -124,4 +124,3 @@ function ewiki_dynamic_plugin_loader(&$id, &$data, &$action) {
 }
 
 
-?>
