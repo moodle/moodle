@@ -793,4 +793,4 @@ class safebrowser_access_rule extends quiz_access_rule_base {
         return get_string("safebrowsernotice", "quiz");
     }
 }
-?>
+

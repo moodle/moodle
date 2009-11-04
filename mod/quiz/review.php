@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page prints a review of a particular quiz attempt
  *
@@ -56,7 +56,7 @@
         $questionids = $attemptobj->get_question_ids();
     } else {
         $questionids = $attemptobj->get_question_ids($page);
-    } 
+    }
     $attemptobj->load_questions($questionids);
     $attemptobj->load_question_states($questionids);
 
@@ -258,4 +258,4 @@
     echo "</div>";
 
     echo $OUTPUT->footer();
-?>
+

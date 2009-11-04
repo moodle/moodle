@@ -5,7 +5,7 @@ var quiz_edit = {};
 function quiz_edit_init() {
 
     // Add random question dialogue --------------------------------------------
-    
+
     quiz_edit.randomquestiondialog = new YAHOO.widget.Dialog('randomquestiondialog', {
             modal: true,
             width: '100%',

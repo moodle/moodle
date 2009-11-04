@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 // This file keeps track of upgrades to
 // the quiz module

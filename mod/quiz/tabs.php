@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Sets up the tabs used by the quiz pages based on the users capabilites.
  *
@@ -62,7 +62,7 @@ if ($currenttab == 'reports' and isset($mode)) {
     $currenttab = '';
 
     $reportlist = quiz_report_list($context);
-    
+
     foreach ($reportlist as $report) {
         $row[] = new tabobject($report, "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id&amp;mode=$report",
                                 get_string($report, 'quiz_'.$report));
@@ -97,4 +97,4 @@ if (!$quiz->questions) {
 
 print_tabs($tabs, $currenttab, $inactive, $activated);
 
-?>
+

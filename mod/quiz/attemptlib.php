@@ -815,7 +815,7 @@ class quiz_attempt extends quiz {
     }
 
     /**
-     * Given a URL containing attempt={this attempt id}, return an array of variant URLs 
+     * Given a URL containing attempt={this attempt id}, return an array of variant URLs
      * @param $url a URL.
      * @return string HTML fragment. Comma-separated list of links to the other
      * attempts with the attempt number as the link text. The curent attempt is
@@ -1171,4 +1171,4 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         return $html;
     }
 }
-?>
+

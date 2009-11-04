@@ -129,4 +129,4 @@
 
 /// Finish the page
     echo $OUTPUT->footer();
-?>
+

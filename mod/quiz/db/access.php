@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * Capability definitions for the quiz module.
  *
@@ -132,4 +132,4 @@ $mod_quiz_capabilities = array(
         'legacy' => array()
     )
 );
-?>
+

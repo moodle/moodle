@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 // This script uses installed report plugins to print quiz reports
 
@@ -46,10 +46,10 @@
         $url->param('mode', $mode);
     }
     $PAGE->set_url($url);
-    
+
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     $reportlist = quiz_report_list($context);
     if (count($reportlist)==0){
         print_error('erroraccessingreport', 'quiz');
@@ -59,7 +59,7 @@
     } elseif (!in_array($mode, $reportlist)){
         print_error('erroraccessingreport', 'quiz');
     }
-    
+
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?cmid='.$cm->id);
@@ -97,4 +97,4 @@
 
     echo $OUTPUT->footer();
 
-?>
+

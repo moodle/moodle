@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //This php script contains all the stuff to backup quizzes
 
 //This is the "graphical" structure of the quiz mod:
@@ -580,4 +580,4 @@
                                      WHERE g.quiz = ?", array($instanceid));
     }
 
-?>
+

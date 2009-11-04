@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page deals with processing responses during an attempt at a quiz.
  *
@@ -197,4 +197,3 @@ $accessmanager->clear_password_access();
 
 /// Send the user to the review page.
 redirect($attemptobj->review_url());
-?>

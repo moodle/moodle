@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -442,7 +442,7 @@ $strupdatemodule = has_capability('moodle/course:manageactivities',
         $contexts->lowest()) ?
         $OUTPUT->update_module_button($cm->id, 'quiz') :
         "";
-        
+
 $PAGE->navbar->add($pagetitle);
 $PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));

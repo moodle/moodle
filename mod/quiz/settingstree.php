@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * settingstree.php - Tells the admin menu that there are sub menu pages to
  * include for this activity.

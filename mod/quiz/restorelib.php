@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     //This php script contains all the stuff to restore quiz mods
 
 // Todo:
@@ -56,7 +56,7 @@
             //if necessary, write to restorelog and adjust date/time fields
             if ($restore->course_startdateoffset) {
                 restore_log_date_changes('Quiz', $restore, $info['MOD']['#'], array('TIMEOPEN', 'TIMECLOSE'));
-            }            
+            }
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -65,7 +65,7 @@
             $quiz = new stdClass;
             $quiz->course = $restore->course_id;
             $quiz->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
-            $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']); 
+            $quiz->intro = backup_todb($info['MOD']['#']['INTRO']['0']['#']);
             $quiz->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $quiz->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
             $quiz->optionflags = backup_todb($info['MOD']['#']['OPTIONFLAGS']['0']['#']);
@@ -208,20 +208,20 @@
                 //traverse_xmlize($feedback_info);                                                            //Debug
                 //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                 //$GLOBALS['traverse_array']="";                                                              //Debug
-    
+
                 //We'll need this later!!
                 $oldid = backup_todb($feedback_info['#']['ID']['0']['#']);
-    
+
                 //Now, build the quiz_feedback record structure
                 $feedback = new stdClass();
                 $feedback->quizid = $quiz_id;
                 $feedback->feedbacktext = backup_todb($feedback_info['#']['FEEDBACKTEXT']['0']['#']);
                 $feedback->mingrade = backup_todb($feedback_info['#']['MINGRADE']['0']['#']);
                 $feedback->maxgrade = backup_todb($feedback_info['#']['MAXGRADE']['0']['#']);
-    
+
                 //The structure is equal to the db, so insert the quiz_question_instances
                 $newid = $DB->insert_record('quiz_feedback', $feedback);
-    
+
                 if ($newid) {
                     //We have the newid, update backup_ids
                     backup_putid($restore->backup_unique_code, 'quiz_feedback', $oldid, $newid);
@@ -387,11 +387,11 @@
     //in the restore process
     function quiz_decode_content_links ($content,$restore) {
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of quizs
-                
+
         $searchstring='/\$@(QUIZINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -408,7 +408,7 @@
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/quiz/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/quiz/index.php?id='.$old_id,$result);
                 }
@@ -474,7 +474,7 @@
     function quiz_decode_content_links_caller($restore) {
         global $CFG, $DB;
         $status = true;
-        
+
         if ($quizs = $DB->get_records('quiz', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each quiz->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
@@ -775,4 +775,4 @@
         return implode(',', $questionids);
     }
 
-?>
+

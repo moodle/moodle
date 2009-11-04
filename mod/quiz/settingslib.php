@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
@@ -92,4 +92,3 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
                 $this->description, true, '', get_string('everythingon', 'quiz'), $query);
     }
 }
-?>

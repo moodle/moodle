@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -367,7 +367,7 @@ function quiz_repaginate($layout, $perpage, $shuffle = false) {
 /**
  * Creates an array of maximum grades for a quiz
  * The grades are extracted from the quiz_question_instances table.
- * 
+ *
  * @param integer $quiz The quiz object
  * @return array Array of grades indexed by question id. These are the maximum
  *      possible grades that students can achieve for each of the questions.
@@ -1186,7 +1186,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
  * - Remove duplicate question id's
  * - Remove extra "," from beginning and end
  * - Finally, add a ",0" in the end if there is none
- * 
+ *
  * @param $string $layout the quiz layout to clean up, usually from $quiz->questions.
  * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
  * @return $string the cleaned-up layout
@@ -1246,7 +1246,7 @@ function quiz_error($quiz, $errorcode, $a = null) {
 
 /**
  * Checks if browser is safe browser
- * 
+ *
  * @return true, if browser is safe browser else false
 */
 function quiz_check_safe_browser() {

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /**
  * This page deals with starting a new attempt at a quiz.
  *
@@ -122,4 +122,3 @@ foreach ($quizobj->get_questions() as $i => $question) {
 
 /// Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id));
-?>

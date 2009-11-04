@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
     require_once("../../config.php");
 
@@ -24,4 +24,4 @@
         redirect('view.php?id='.$cm->id);
     }
 
-?>
+

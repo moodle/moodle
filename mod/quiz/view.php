@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 
 /// This page prints a particular instance of quiz
 

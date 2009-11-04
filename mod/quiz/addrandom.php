@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 /**
  * Fallback page of /mod/quiz/edit.php add random question dialog,
  * for users who do not use javascript.
@@ -95,4 +95,4 @@ $addonpage = optional_param('addonpage_form', 0, PARAM_SEQUENCE);
 $qcobject->display_randomquestion_user_interface($addonpage);
 
 echo $OUTPUT->footer();
-?>
+

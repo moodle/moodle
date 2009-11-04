@@ -136,4 +136,4 @@ echo $OUTPUT->container_end();
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
 echo $OUTPUT->footer();
 
-?>
+
