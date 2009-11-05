@@ -61,6 +61,7 @@ $string['duplicatefieldname'] = 'Another field with that name exists';
 $string['duplicatekeyname'] = 'Another key with that name exists';
 $string['edit'] = 'Edit';
 $string['edit_field'] = 'Edit Field';
+$string['edit_field_save'] = 'Save Field';
 $string['edit_index'] = 'Edit Index';
 $string['edit_key'] = 'Edit Key';
 $string['edit_sentence'] = 'Edit Sentence';
