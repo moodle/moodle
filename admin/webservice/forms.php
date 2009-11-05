@@ -37,7 +37,16 @@ class external_service_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
-        
+
+
+        /// needed to select automatically the 'No required capability" option
+        $currentcapabilityexist = false;
+        if (empty($service->requiredcapability))
+        {
+          $service->requiredcapability = "norequiredcapability";
+          $currentcapabilityexist = true;
+        }
+
         // Prepare the list of capabilites to choose from
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $allcapabilities = fetch_context_capabilities($systemcontext);
@@ -45,24 +54,26 @@ class external_service_form extends moodleform {
         $capabilitychoices['norequiredcapability'] = get_string('norequiredcapability', 'webservice');
         foreach ($allcapabilities as $cap) {
             $capabilitychoices[$cap->name] = $cap->name . ': ' . get_capability_string($cap->name);
+            if (!empty($service->requiredcapability) && $service->requiredcapability == $cap->name) {
+                $currentcapabilityexist = true;
+            }
         }
 
-        $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'),$capabilitychoices, array('size' => 12));
-        // TODO: change to capability selection or even better if new forms element used,
-        //       we also need to indicate if current capability does not exist in system!
+        $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices, array('size' => 12));
+       
+        /// display notification error if the current requiredcapability doesn't exist anymore
+        if(empty($currentcapabilityexist)) {
+            global $OUTPUT;
+            $mform->addElement('static', 'capabilityerror', '', $OUTPUT->notification(get_string('selectedcapabilitydoesntexit','webservice', $service->requiredcapability)));
+            $service->requiredcapability = "norequiredcapability";
+        }
         $mform->addElement('advcheckbox', 'restrictedusers', get_string('restrictedusers', 'webservice'));
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true);
-
-        ///this three lines are needed to select automatically the 'No required capability" option
-        if (empty($service->requiredcapability))
-        {
-          $service->requiredcapability = "norequiredcapability";
-        }
-
+ 
         $this->set_data($service);
     }
 
@@ -77,10 +88,7 @@ class external_service_form extends moodleform {
     }
 
     function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        //TODO: better make sure the service name is unique
-
+        $errors = parent::validation($data, $files);     
         return $errors;
     }
 }
