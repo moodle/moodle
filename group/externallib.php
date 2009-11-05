@@ -427,7 +427,7 @@ class moodle_group_external extends external_api {
         global $CFG, $DB;
         require_once("$CFG->dirroot/group/lib.php");
 
-        $params = self::validate_parameters(self::delete_groupmembers_parameters(), array($members=>'members'));
+        $params = self::validate_parameters(self::delete_groupmembers_parameters(), array('members'=>$members));
 
         $DB->begin_sql();
         try {
