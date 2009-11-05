@@ -43,6 +43,7 @@ class edit_table_save extends XMLDBAction {
             'tablenameempty' => 'xmldb',
             'incorrecttablename' => 'xmldb',
             'duplicatetablename' => 'xmldb',
+            'back' => 'xmldb',
             'administration' => ''
         ));
     }
@@ -58,8 +59,8 @@ class edit_table_save extends XMLDBAction {
         $result = true;
 
     /// Set own core attributes
-        $this->does_generate = ACTION_NONE;
-        //$this->does_generate = ACTION_GENERATE_HTML;
+        //$this->does_generate = ACTION_NONE;
+        $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
         global $CFG, $XMLDB, $PAGE, $OUTPUT;
@@ -104,58 +105,55 @@ class edit_table_save extends XMLDBAction {
         if (!empty($errors)) {
             $temptable = new xmldb_table($name);
             /// Prepare the output
-            $site = get_site();
-            $PAGE->navbar->add($this->str['administration'], '../index.php');
-            $PAGE->navbar->add('XMLDB', 'index.php');
-            $PAGE->set_title("$site->shortname: XMLDB");
-            $PAGE->set_heading($site->fullname);
-            echo $OUTPUT->header();
+            $o = '<p>' .implode(', ', $errors) . '</p>
+                  <p>' . $temptable->getName() . '</p>';
+            $o.= '<a href="index.php?action=edit_table&amp;table=' . $tableparam .
+                 '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
+            $this->output = $o;
 
-            notice ('<p>' .implode(', ', $errors) . '</p>
-                     <p>' . $temptable->readableInfo() . '</p>',
-                     'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
-            die; /// re-die :-P
-        }
 
-    /// If there is one name change, do it, changing the prev and next
-    /// atributes of the adjacent tables
-        if ($tableparam != $name) {
-            $table->setName($name);
-            if ($table->getPrevious()) {
-                $prev =& $structure->getTable($table->getPrevious());
-                $prev->setNext($name);
-                $prev->setChanged(true);
+    /// Continue if we aren't under errors
+        } else if (empty($errors)) {
+        /// If there is one name change, do it, changing the prev and next
+        /// atributes of the adjacent tables
+            if ($tableparam != $name) {
+                $table->setName($name);
+                if ($table->getPrevious()) {
+                    $prev =& $structure->getTable($table->getPrevious());
+                    $prev->setNext($name);
+                    $prev->setChanged(true);
+                }
+                if ($table->getNext()) {
+                    $next =& $structure->getTable($table->getNext());
+                    $next->setPrevious($name);
+                    $next->setChanged(true);
+                }
+            /// Table has changed
+                $table->setChanged(true);
             }
-            if ($table->getNext()) {
-                $next =& $structure->getTable($table->getNext());
-                $next->setPrevious($name);
-                $next->setChanged(true);
+
+        /// Set comment
+            if ($table->getComment() != $comment) {
+                $table->setComment($comment);
+            /// Table has changed
+                $table->setChanged(true);
             }
-        /// Table has changed
-            $table->setChanged(true);
-        }
 
-    /// Set comment
-        if ($table->getComment() != $comment) {
-            $table->setComment($comment);
-        /// Table has changed
-            $table->setChanged(true);
-        }
+        /// Recalculate the hash
+            $structure->calculateHash(true);
 
-    /// Recalculate the hash
-        $structure->calculateHash(true);
+        /// If the hash has changed from the original one, change the version
+        /// and mark the structure as changed
+            $origstructure =& $dbdir->xml_file->getStructure();
+            if ($structure->getHash() != $origstructure->getHash()) {
+                $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
+                $structure->setChanged(true);
+            }
 
-    /// If the hash has changed from the original one, change the version
-    /// and mark the structure as changed
-        $origstructure =& $dbdir->xml_file->getStructure();
-        if ($structure->getHash() != $origstructure->getHash()) {
-            $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
-            $structure->setChanged(true);
-        }
-
-    /// Launch postaction if exists (leave this here!)
-        if ($this->getPostAction() && $result) {
-            return $this->launch($this->getPostAction());
+        /// Launch postaction if exists (leave this here!)
+            if ($this->getPostAction() && $result) {
+                return $this->launch($this->getPostAction());
+            }
         }
 
     /// Return ok if arrived here

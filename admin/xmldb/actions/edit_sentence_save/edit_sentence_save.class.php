@@ -1,31 +1,34 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This class will save the changes performed to one sentence
+/**
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+/**
+ * This class verifies all the data introduced when editing a sentence for correctness,
+ * peforming changes / displaying errors depending of the results.
+ *
+ * @package   xmldb-editor
+ * @copyright 2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class edit_sentence_save extends XMLDBAction {
 
     /**
@@ -42,6 +45,7 @@ class edit_sentence_save extends XMLDBAction {
             'missingfieldsinsentence' => 'xmldb',
             'missingvaluesinsentence' => 'xmldb',
             'wrongnumberoffieldsorvalues' => 'xmldb',
+            'back' => 'xmldb',
             'administration' => ''
         ));
     }
@@ -57,8 +61,8 @@ class edit_sentence_save extends XMLDBAction {
         $result = true;
 
     /// Set own core attributes
-        $this->does_generate = ACTION_NONE;
-        //$this->does_generate = ACTION_GENERATE_HTML;
+        //$this->does_generate = ACTION_NONE;
+        $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
         global $CFG, $XMLDB;
@@ -119,16 +123,12 @@ class edit_sentence_save extends XMLDBAction {
 
         if (!empty($errors)) {
         /// Prepare the output
-            $site = get_site();
-            $PAGE->navbar->add($this->str['administration'], '../index.php');
-            $PAGE->navbar->add('XMLDB', 'index.php');
-            $PAGE->set_title("$site->shortname: XMLDB");
-            $PAGE->set_heading($site->fullname);
-            echo $OUTPUT->header();
-            notice ('<p>' .implode(', ', $errors) . '</p>
-                     <p>' . s($sentence) . '</p>',
-                    'index.php?action=edit_sentence&amp;sentence=' .$sentenceparam . '&amp;statement=' . urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
-            die; /// re-die :-P
+            $o = '<p>' .implode(', ', $errors) . '</p>
+                  <p>' . s($sentence) . '</p>';
+            $o.= '<a href="index.php?action=edit_sentence&amp;sentence=' .$sentenceparam . '&amp;statement=' .
+                  urlencode($statementparam) . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) .
+                  '">[' . $this->str['back'] . ']</a>';
+            $this->output = $o;
         }
 
     /// Continue if we aren't under errors
