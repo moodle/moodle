@@ -67,7 +67,7 @@ $functions = array(
         'description' => 'Returns group members.',
         'type'        => 'read',
     ),
-/*
+
     'moodle_group_add_groupmembers' => array(
         'classname'   => 'moodle_group_external',
         'methodname'  => 'add_groupmembers',
@@ -83,7 +83,7 @@ $functions = array(
         'description' => 'Deletes group members.',
         'type'        => 'delete',
     ),
-*/
+
     // === user related functions ===
 /*
     'moodle_user_create_users' => array(

@@ -336,11 +336,15 @@ class moodle_group_external extends external_api {
      * @return external_function_parameters
      */
     public static function add_groupmembers_parameters() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'groupid' => new external_value(PARAM_INT, 'group record id'),
-                    'userid' => new external_value(PARAM_INT, 'user id'),
+        return new external_function_parameters(
+            array(
+                'members'=> new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'groupid' => new external_value(PARAM_INT, 'group record id'),
+                            'userid' => new external_value(PARAM_INT, 'user id'),
+                        )
+                    )
                 )
             )
         );
@@ -373,6 +377,10 @@ class moodle_group_external extends external_api {
                 self::validate_context($context);
                 require_capability('moodle/course:managegroups', $context);
 
+                // now make sure user is enrolled in course - this is mandatory requirement,
+                // unfortunately this is extermely slow
+                require_capability('moodle/course:view', $context, $userid, false);
+
                 groups_add_member($group, $user);
             }
         } catch (Exception $ex) {
@@ -396,11 +404,15 @@ class moodle_group_external extends external_api {
      * @return external_function_parameters
      */
     public static function delete_groupmembers_parameters() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'groupid' => new external_value(PARAM_INT, 'group record id'),
-                    'userid' => new external_value(PARAM_INT, 'user id'),
+        return new external_function_parameters(
+            array(
+                'members'=> new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'groupid' => new external_value(PARAM_INT, 'group record id'),
+                            'userid' => new external_value(PARAM_INT, 'user id'),
+                        )
+                    )
                 )
             )
         );
