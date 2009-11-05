@@ -28,39 +28,43 @@ require_once("$CFG->libdir/externallib.php");
 
 class moodle_user_external extends external_api {
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function create_users_parameters() {
         return new external_function_parameters(
             array(
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'username' => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config'),
-                            'password' => new external_value(PARAM_RAW, 'Moodle passwords can consist of any character'),
-                            'firstname' => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
-                            'lastname' => new external_value(PARAM_NOTAGS, 'The family name of the user'),
-                            'email' => new external_value(PARAM_EMAIL, 'A valid and unique email address'),
-                            'auth' => new external_value(PARAM_AUTH, 'Auth plugins include manual, ldap, imap, etc', false),
-                            'confirmed' => new external_value(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise', false),
-                            'idnumber' => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', false),
-                            'emailstop' => new external_value(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise', false),
-                            'lang' => new external_value(PARAM_LANG, 'Language code such as "en_utf8", must exist on server', false),
-                            'theme' => new external_value(PARAM_THEME, 'Theme name such as "standard", must exist on server', false),
-                            'timezone' => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default', false),
-                            'mailformat' => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', false),
+                            'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config'),
+                            'password'    => new external_value(PARAM_RAW, 'Moodle passwords can consist of any character'),
+                            'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
+                            'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
+                            'email'       => new external_value(PARAM_EMAIL, 'A valid and unique email address'),
+                            'auth'        => new external_value(PARAM_SAFEDIR, 'Auth plugins include manual, ldap, imap, etc', false),
+                            'confirmed'   => new external_value(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise', false),
+                            'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', false),
+                            'emailstop'   => new external_value(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise', false),
+                            'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en_utf8", must exist on server', false),
+                            'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server', false),
+                            'timezone'    => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default', false),
+                            'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', false),
                             'description' => new external_value(PARAM_TEXT, 'User profile description, as HTML', false),
-                            'city' => new external_value(PARAM_NOTAGS, 'Home city of the user', false),
-                            'country' => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', false),
+                            'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', false),
+                            'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', false),
                             'preferences' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
-                                        'type' => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
+                                        'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
                                         'value' => new external_value(PARAM_RAW, 'The value of the preference')
                                     )
                                 ), 'User preferences', false),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
-                                        'type' => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
+                                        'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the custom field'),
                                         'value' => new external_value(PARAM_RAW, 'The value of the custom field')
                                     )
                                 ), 'User custom fields', false)
@@ -78,9 +82,9 @@ class moodle_user_external extends external_api {
      *
      * @return array An array of userids, one for each user that was created
      */
-    public static function create_users($userlist) {
+    public static function create_users($users) {
         global $CFG, $DB;
-        //varlog('I\'m in create_users()');
+
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
         require_capability('moodle/user:create', $context);
@@ -92,13 +96,13 @@ class moodle_user_external extends external_api {
         //      2) All required items were sent
         //      3) All data passes clean_param without changes (yes this is strict)
         // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$userlist));
+        $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
 
 
-        // Perform further checks and build up a clean array of user data
-        // Nothing is actually performed until the whole dataset is checked
+        // TODO delegated transaction
+
         $users = array();
-        foreach ($userlist as $user) {
+        foreach ($params['users'] as $user) {
 
             // Empty or no auth is assumed to be manual
             if (empty($user['auth'])) {
@@ -111,7 +115,7 @@ class moodle_user_external extends external_api {
             }
 
             // Make sure that the username doesn't already exist
-            if ($DB->get_record('user', array('username'=>$user['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
+            if ($DB->record_exists('user', array('username'=>$user['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
                 throw new invalid_parameter_exception($user['username']." username is already taken, sorry");
             }
 
@@ -120,43 +124,32 @@ class moodle_user_external extends external_api {
                 throw new invalid_parameter_exception("multiple users with the same username requested");
             }
 
-            // TODO: More checks here?
+            //TODO: validate username, auth, lang and theme
 
-            $users[$user['username']] = $user;   // Add this data to an array (mem overflows?)
-        }
-
-        $result = array();
-
-        foreach ($users as $user) {  // Actually create the user accounts now
+            // finally create user
             $record = create_user_record($user['username'], $user['password'], $user['auth']);
-            unset($user['username']);
-            unset($user['password']);
-            unset($user['auth']);
-
-            // now override the default (or external) values
-            foreach ($user as $key=>$value) {
-                $record->$key = $value;
-            }
-            $DB->update_record('user', $record);
 
             //TODO: preferences and custom fields
 
-            $result[] = $record->id;
-
-            // TODO: Save all the preferences and custom fields here
-
+            $users[] = array('id'=>$record->id, 'username'=>$record->username);
         }
 
-        return $result;
+        return $users;
     }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function create_users_returns() {
-
-//TODO: the format of the description is not decided yet
-
-        $createusersreturn = new object();
-        $createusersreturn->userids = array('multiple' => PARAM_NUMBER);
-
-        return $createusersreturn;
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id'       => new external_value(PARAM_INT, 'user id'),
+                    'username' => new external_value(PARAM_RAW, 'user name'),
+                )
+            )
+        );
     }
 
 
@@ -181,9 +174,14 @@ class moodle_user_external extends external_api {
         //TODO
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function get_users_parameters() {
 
     }
+
     public static function get_users($params) {
         $context = get_context_instance(CONTEXT_SYSTEM);
         require_capability('moodle/user:viewdetails', $context);
@@ -202,6 +200,11 @@ class moodle_user_external extends external_api {
             $result[] = (array)$user;
         }
     }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function get_users_returns() {
 
     }
