@@ -29,6 +29,7 @@ $string['othersettings']='Other settings';
 $string['requiredelement'] = 'Required field';
 $string['revealpassword'] = 'Reveal';
 $string['security'] = 'Security';
+$string['selected'] = 'Selected';
 $string['selectallornone'] = 'Select all/none';
 $string['showadvanced']='Show Advanced';
 $string['somefieldsrequired'] = 'There are required fields in this form marked$a.';

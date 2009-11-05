@@ -67,6 +67,10 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     $data = (object)$data;
+  if (!empty($data->requiredcapability) && $data->requiredcapability == "norequiredcapability")
+      {
+          $data->requiredcapability = "";
+      }
 
     //TODO: add timecreated+modified and maybe logging too
     if (empty($data->id)) {
@@ -74,7 +78,7 @@ if ($mform->is_cancelled()) {
     } else {
         $DB->update_record('external_services', $data);
     }
-
+    
     redirect($returnurl);
 }
 

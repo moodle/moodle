@@ -392,6 +392,7 @@ $string['reportnotavailable'] = 'This type of report is only available for the s
 $string['reverseproxyabused'] = 'Reverse proxy enabled, server can not be accessed directly, sorry.<br />Please contact server administrator.';
 $string['rpcerror'] = 'RPC enrol/mnet/available_courses: ($a)';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
+$string['searchableselectorcannotbemultiple'] = 'A searchableselector form element cannot be multiple. Remove the \'multiple\' attribute from your call.';
 $string['sectionnotexist'] = 'This section does not exist';
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed';
 $string['sendmessage'] = 'Send message';
