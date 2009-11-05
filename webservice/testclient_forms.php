@@ -207,3 +207,53 @@ class moodle_group_delete_groups_form extends moodleform {
         return $params;
     }
 }
+
+
+class moodle_group_get_groupmembers_form extends moodleform {
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        //note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters
+        $mform->addElement('text', 'wsusername', 'wsusername');
+        $mform->addElement('text', 'wspassword', 'wspassword');
+        $mform->addElement('text', 'groupids[0]', 'groupids[0]');
+        $mform->addElement('text', 'groupids[1]', 'groupids[1]');
+        $mform->addElement('text', 'groupids[2]', 'groupids[2]');
+        $mform->addElement('text', 'groupids[3]', 'groupids[3]');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // remove unused from form data
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+
+        $params = array();
+        $params['groupids'] = array();
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->groupids[$i])) {
+                continue;
+            }
+            $params['groupids'][] = $data->groupids[$i];
+        }
+
+        return $params;
+    }
+}
