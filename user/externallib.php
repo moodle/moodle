@@ -152,25 +152,48 @@ class moodle_user_external extends external_api {
     }
 
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function delete_users_parameters() {
-        //TODO
+        return new external_function_parameters(
+            array(
+                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+            )
+        );
     }
+
     public static function delete_users($params) {
         //TODO
     }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function delete_users_returns() {
-        //TODO
+        return null;
     }
 
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
     public static function update_users_parameters() {
         //TODO
     }
     public static function update_users($params) {
         //TODO
     }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
     public static function update_users_returns() {
-        //TODO
+        return null;
     }
 
     /**
@@ -184,6 +207,7 @@ class moodle_user_external extends external_api {
             )
         );
     }
+
 
     /**
      * Get user information
