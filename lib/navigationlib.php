@@ -2261,9 +2261,9 @@ class navbar extends navigation_node {
                     $oldaction = $child->action;
                     $child->action = null;
                 }
-                if (empty($CFG->navhidecategories) || $child->type !== navigation_node::TYPE_CATEGORY) {
-                // Now display the node
-                $output .= '<li>'.$separator.' '.$child->content(true).'</li>';
+                if ($child->type !== navigation_node::TYPE_CATEGORY || !isset($CFG->navshowcategories) || !empty($CFG->navshowcategories)) {
+                    // Now display the node
+                    $output .= '<li>'.$separator.' '.$child->content(true).'</li>';
                 }
                 if (isset($oldaction)) {
                     $child->action = $oldaction;

@@ -67,7 +67,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // Navigation settings
     $temp = new admin_settingpage('navigation', get_string('navigation'));
-    $temp->add(new admin_setting_configcheckbox('navhidecategories', get_string('navhidecategories', 'admin'), get_string('confignavhidecategories', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('navshowcategories', get_string('navshowcategories', 'admin'), get_string('confignavshowcategories', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navshowallcourses', get_string('navshowallcourses', 'admin'), get_string('confignavshowallcourses', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
 

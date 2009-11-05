@@ -127,7 +127,7 @@ class block_global_navigation_tree extends block_tree {
         }
 
         // Load the my courses branch if the user has selected to
-        if (!empty($CFG->navhidecategories)) {
+        if (isset($CFG->navshowcategories) && empty($CFG->navshowcategories)) {
             $this->page->navigation->collapse_course_categories();
         }
 

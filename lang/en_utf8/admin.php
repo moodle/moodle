@@ -241,7 +241,7 @@ $string['configminpasswordupper'] = 'Passwords must have at least these many upp
 $string['condifmodeditdefaults'] = 'The values you set here define the default values that are used in the activity settings form when you create a new activity. You can also configure which activity settings are considered advanced.';
 $string['configmycoursesperpage'] = 'Maximum number of courses to display in any list of a user\'s own courses';
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
-$string['confignavhidecategories'] = 'Do not show course categories in the navigation bar or navigation blocks';
+$string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks';
 $string['confignavshowallcourses'] = 'Setting this ensures that all courses a user is registered in are shown on the navigation at all times. By default once a user browses to a course only that course is shown on the navigation.';
 $string['confignodefaultuserrolelists'] = 'This setting prevents all users from being returned from the database from deprecated calls of get_course_user, etc., for the site course if the default role provides that access. Check this, if you suffer a performance hit.';
 $string['confignonmetacoursesyncroleids'] = 'By default all role assignments from child courses are synchronised to metacourses. Roles that are selected here will not be included in the synchronisation process.';
@@ -647,7 +647,7 @@ $string['mysql416required'] = 'MySQL 4.1.16 is the minimum version required for 
 $string['navigationupgrade'] = 'This upgrade introduces two new navigation blocks that will replace these blocks: Administration, Courses, Activities and Participants.  If you had set any special permissions on those blocks you should check to make sure everything
 is behaving as you want it.<br /><br />
 You should also "Shift-Refresh" your browser to load the new styles, otherwise the new blocks will not work correctly.';
-$string['navhidecategories'] = 'Hide course categories';
+$string['navshowcategories'] = 'Show course categories';
 $string['navshowallcourses'] = 'Show all users courses';
 $string['nobookmarksforuser'] = 'You do not have any bookmarks.';
 $string['nochanges'] = 'No changes';
