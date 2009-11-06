@@ -33,21 +33,22 @@ class moodle_user_external extends external_api {
      * @return external_function_parameters
      */
     public static function create_users_parameters() {
+        global $CFG;
+
         return new external_function_parameters(
             array(
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
                             'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config'),
-                            'password'    => new external_value(PARAM_RAW, 'Moodle passwords can consist of any character'),
+                            'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
                             'email'       => new external_value(PARAM_EMAIL, 'A valid and unique email address'),
-                            'auth'        => new external_value(PARAM_SAFEDIR, 'Auth plugins include manual, ldap, imap, etc', false),
-                            'confirmed'   => new external_value(PARAM_NUMBER, 'Active user: 1 if confirmed, 0 otherwise', false),
+                            'auth'        => new external_value(PARAM_SAFEDIR, 'Auth plugins include manual, ldap, imap, etc', false, 'manual', false),
                             'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', false),
                             'emailstop'   => new external_value(PARAM_NUMBER, 'Email is blocked: 1 is blocked and 0 otherwise', false),
-                            'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en_utf8", must exist on server', false),
+                            'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en_utf8", must exist on server', false, $CFG->lang, false),
                             'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server', false),
                             'timezone'    => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default', false),
                             'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', false),
@@ -97,30 +98,35 @@ class moodle_user_external extends external_api {
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
 
+        $availableauths  = get_plugin_list('auth');
+        unset($availableauths['mnet']);       // these would need mnethostid too
+        unset($availableauths['webservice']); // we do not want new webservice users for now
 
-        // TODO delegated transaction
+        $availablethemes = get_plugin_list('theme');
+        $availablelangs  = get_list_of_languages();
+
+        // TODO start delegated transaction
 
         $users = array();
         foreach ($params['users'] as $user) {
-
-            // Empty or no auth is assumed to be manual
-            if (empty($user['auth'])) {
-                $user['auth'] = 'manual';
-            }
-
-            // Lang must be a real code, not empty string
-            if (isset($user['lang']) && empty($user['lang'])) {
-                unset($user['lang']);
-            }
-
             // Make sure that the username doesn't already exist
             if ($DB->record_exists('user', array('username'=>$user['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
-                throw new invalid_parameter_exception($user['username']." username is already taken, sorry");
+                throw new invalid_parameter_exception('Username already exists: '.$user['username']);
             }
 
-            // Make sure that incoming data doesn't contain duplicate usernames
-            if (isset($users[$user['username']])) {
-                throw new invalid_parameter_exception("multiple users with the same username requested");
+            // Make sure auth is valid
+            if (empty($availableauths[$user['auth']])) {
+                throw new invalid_parameter_exception('Invalid authentication type: '.$user['auth']);
+            }
+
+            // Make sure lang is valid
+            if (empty($availablelangs[$user['lang']])) {
+                throw new invalid_parameter_exception('Invalid language code: '.$user['lang']);
+            }
+
+            // Make sure lang is valid
+            if (empty($availablethemes[$user['theme']])) {
+                throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
             //TODO: validate username, auth, lang and theme
@@ -128,10 +134,34 @@ class moodle_user_external extends external_api {
             // finally create user
             $record = create_user_record($user['username'], $user['password'], $user['auth']);
 
+            // update using given data
+            $user['confirmed'] = 1;
+
+            unset($user['username']);
+            unset($user['password']);
+            unset($user['auth']);
+
+            $preferences = $user['preferences'];
+            unset($user['preferences']);
+
+            $customfields = $user['customfields'];
+            unset($custom['customfields']);
+
+            foreach ($user as $key=>$value) {
+                if (is_null($value)) {
+                    //ignore missing fields
+                    continue;
+                }
+                $record->$key = $value;
+            }
+            $DB->update_record('user', $record);
+
             //TODO: preferences and custom fields
 
             $users[] = array('id'=>$record->id, 'username'=>$record->username);
         }
+
+        // TODO allow commit of delegated transaction
 
         return $users;
     }
