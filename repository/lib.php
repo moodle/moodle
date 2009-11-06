@@ -447,6 +447,31 @@ abstract class repository {
     public $options;
     public $readonly;
     public $returntypes;
+    /**
+     * 1. Initialize context and options
+     * 2. Accept necessary parameters
+     *
+     * @param integer $repositoryid
+     * @param integer $contextid
+     * @param array $options
+     */
+    public function __construct($repositoryid, $contextid = SITEID, $options = array(), $readonly = 0) {
+        $this->id = $repositoryid;
+        $this->context = get_context_instance_by_id($contextid);
+        $this->readonly = $readonly;
+        $this->options = array();
+        if (is_array($options)) {
+            $options = array_merge($this->get_option(), $options);
+        } else {
+            $options = $this->get_option();
+        }
+        foreach ($options as $n => $v) {
+            $this->options[$n] = $v;
+        }
+        $this->name = $this->get_name();
+        $this->returntypes = $this->supported_returntypes();
+        $this->super_called = true;
+    }
 
     /**
      * Return a type for a given type name.
@@ -795,7 +820,7 @@ abstract class repository {
         }
         $fs = get_file_storage();
         $browser = get_file_browser();
-        if ($existingfile = $fs->get_file($context->id, $filearea, $itemid, $path, $name)) {
+        if ($existingfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $name)) {
             $existingfile->delete();
         }
         if ($file = $fs->create_file_from_pathname($entry, $path)) {
@@ -805,7 +830,8 @@ abstract class repository {
             }
             $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
             if(!empty($ret)) {
-                return array('url'=>$ret->get_url(),
+                return array(
+                    'url'=>$ret->get_url(),
                     'id'=>$file->get_itemid(),
                     'file'=>$file->get_filename(),
                     'icon' => $OUTPUT->old_icon_url(file_extension_icon($path, 32))
@@ -819,7 +845,7 @@ abstract class repository {
     }
 
     /**
-     * Save file to local filesystem pool
+     * Upload file to local filesystem pool
      * @param string $elname name of element
      * @param string $filearea
      * @param string $filepath
@@ -827,7 +853,7 @@ abstract class repository {
      * @param bool $override override file if exists
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    public static function store_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
+    public static function upload_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
         global $USER;
 
         if ($filepath !== '/') {
@@ -867,8 +893,11 @@ abstract class repository {
 
         $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
         $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        $ret = array('url'=>$info->get_url(),'id'=>$itemid, 'file'=>$file->get_filename());
-        return $ret;
+        return array(
+            'url'=>$info->get_url(),
+            'id'=>$itemid,
+            'file'=>$file->get_filename()
+        );
     }
 
     /**
@@ -1123,31 +1152,6 @@ abstract class repository {
 
         //print the list + creation links
         print($output);
-    }
-    /**
-     * 1. Initialize context and options
-     * 2. Accept necessary parameters
-     *
-     * @param integer $repositoryid
-     * @param integer $contextid
-     * @param array $options
-     */
-    public function __construct($repositoryid, $contextid = SITEID, $options = array(), $readonly = 0) {
-        $this->id = $repositoryid;
-        $this->context = get_context_instance_by_id($contextid);
-        $this->readonly = $readonly;
-        $this->options = array();
-        if (is_array($options)) {
-            $options = array_merge($this->get_option(), $options);
-        } else {
-            $options = $this->get_option();
-        }
-        foreach ($options as $n => $v) {
-            $this->options[$n] = $v;
-        }
-        $this->name = $this->get_name();
-        $this->returntypes = $this->supported_returntypes();
-        $this->super_called = true;
     }
 
     /**
