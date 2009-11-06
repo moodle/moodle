@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php
 /// Modified by Tom Robb 12 June 2003 to include percentage and comment insertion
 /// facility.
 
