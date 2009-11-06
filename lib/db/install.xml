@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20091029" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20091106" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2229,7 +2229,7 @@
         <INDEX NAME="blockinstanceid-contextid-pagetype-subpage" UNIQUE="true" FIELDS="blockinstanceid, contextid, pagetype, subpage"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_positions" NEXT="external_functions">
+    <TABLE NAME="comments" COMMENT="moodle comments module" PREVIOUS="block_positions" NEXT="external_services">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="commentarea"/>
@@ -2244,7 +2244,25 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="external_functions" COMMENT="list of all external functions" PREVIOUS="comments" NEXT="external_services">
+    <TABLE NAME="external_services" COMMENT="built in and custom external services" PREVIOUS="comments" NEXT="external_functions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="enabled"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="name" NEXT="requiredcapability"/>
+        <FIELD NAME="requiredcapability" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" PREVIOUS="enabled" NEXT="restrictedusers"/>
+        <FIELD NAME="restrictedusers" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="requiredcapability" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="restrictedusers" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="component" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="external_functions" COMMENT="list of all external functions" PREVIOUS="external_services" NEXT="external_services_functions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="classname"/>
@@ -2260,23 +2278,7 @@
         <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="the external function names must be globally unique"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="external_services" COMMENT="built in and custom external services" PREVIOUS="external_functions" NEXT="external_services_functions">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="enabled"/>
-        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="name" NEXT="requiredcapability"/>
-        <FIELD NAME="requiredcapability" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" PREVIOUS="enabled" NEXT="restrictedusers"/>
-        <FIELD NAME="restrictedusers" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="requiredcapability" NEXT="component"/>
-        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="restrictedusers"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="name" UNIQUE="true" FIELDS="name"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="external_services" NEXT="external_services_users">
+    <TABLE NAME="external_services_functions" COMMENT="lists functions available in each service group" PREVIOUS="external_functions" NEXT="external_services_users">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="externalserviceid"/>
         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="functionname"/>

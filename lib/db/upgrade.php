@@ -2746,6 +2746,30 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009110400);
     }
 
+    if ($result && $oldversion < 2009110605) {
+
+    /// Define field timecreated to be added to external_services
+        $table = new xmldb_table('external_services');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'component');
+
+    /// Conditionally launch add field timecreated
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field timemodified to be added to external_services
+        $table = new xmldb_table('external_services');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'timecreated');
+
+    /// Conditionally launch add field timemodified
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009110605);
+    }
+
     return $result;
 }
 

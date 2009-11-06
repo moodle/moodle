@@ -72,11 +72,14 @@ if ($mform->is_cancelled()) {
           $data->requiredcapability = "";
       }
 
-    //TODO: add timecreated+modified and maybe logging too
     if (empty($data->id)) {
+        $data->timecreated = mktime();
         $DB->insert_record('external_services', $data);
+        //TODO: logging
     } else {
+        $data->timemodified = mktime();
         $DB->update_record('external_services', $data);
+        //TODO: logging
     }
     
     redirect($returnurl);
