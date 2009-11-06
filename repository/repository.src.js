@@ -1,8 +1,6 @@
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-//       Don't modify this file unless you know how it works             //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// File picker core Javascript code for Moodle
+// Author: Dongsheng Cai <dongsheng@moodle.com>
+
 /**
  * repository_client is a javascript class, it contains several static
  * methods you can call it directly without creating an instance.
@@ -630,12 +628,12 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-'+client_id+'">'+fp_lang.saveas+'</label>';
     html += '<input type="text" id="newname-'+client_id+'" value="" /></p>';
+    html += '<p><input type="checkbox" id="external-'+client_id+'" value="" /> Link external</p>';
     html += '<p><input type="hidden" id="fileurl-'+client_id+'" value="'+url+'" />';
     html += '<input type="button" onclick="repository_client.download(\''+client_id+'\', \''+repo_id+'\')" value="'+fp_lang.downbtn+'" />';
     html += '<input type="button" onclick="repository_client.viewfiles(\''+client_id+'\')" value="'+fp_lang.cancel+'" /></p>';
     html += '</div>';
     panel.get('element').innerHTML += html;
-    /* to deal with double quote, single quote, we need to use javascript change value */
     document.getElementById('newname-'+client_id).value = oldname;
     var tree = document.getElementById('treediv-'+client_id);
     if(tree){
@@ -1012,10 +1010,14 @@ repository_client.download = function(client_id, repo_id) {
     var title = document.getElementById('newname-'+client_id).value;
     new_filename = title;
     var file = document.getElementById('fileurl-'+client_id).value;
+    var link_external = document.getElementById('external-'+client_id).checked;
     repository_client.loading(client_id, 'download', title);
     var params = [];
     if(fp.itemid){
         params['itemid']=fp.itemid;
+    }
+    if (link_external) {
+        params['link_external'] = 'yes';
     }
     params['env']=fp.env;
     params['file']=file;
@@ -1060,7 +1062,7 @@ repository_client.end = function(client_id, obj) {
             fp.target.value = obj['url'];
         }
         fp.target.onchange();
-    }else if(fp.env=='texturl') {
+    }else if(fp.env=='url') {
         fp.target.value = obj['url'];
     }
     obj.filepath = fp.savepath;

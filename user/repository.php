@@ -63,7 +63,11 @@ include('tabs.php');
 echo $OUTPUT->heading($configstr);
 echo $OUTPUT->box_start();
 
-if (!$instances = repository::get_instances($COURSE->context, $USER->id)) {
+$params = array();
+$params['context'] = array($COURSE->context);
+$params['currentcontext'] = $PAGE->context;
+$params['userid']   = $USER->id;
+if (!$instances = repository::get_instances($params)) {
     print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
 }
 

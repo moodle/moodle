@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+/**
+ * This file is used to browse repositories in non-javascript mode
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../config.php');
 require_once($CFG->libdir.'/filelib.php');
@@ -41,7 +52,7 @@ $thumbnail   = optional_param('thumbnail', '',     PARAM_RAW);
 $targetpath  = optional_param('targetpath', '',    PARAM_PATH);
 $repo_id     = optional_param('repo_id', 0,        PARAM_INT);    // repository ID
 $req_path    = optional_param('p', '',             PARAM_RAW);    // the path in repository
-$page        = optional_param('page', '',          PARAM_RAW);    // What page in repository?
+$curr_page   = optional_param('page', '',          PARAM_RAW);    // What page in repository?
 $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 
 // draft area
@@ -155,7 +166,7 @@ case 'sign':
     echo $OUTPUT->header();
     echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     if ($repo->check_login()) {
-        $list = $repo->get_listing($req_path, $page);
+        $list = $repo->get_listing($req_path, $curr_page);
         $dynload = !empty($list['dynload'])?true:false;
         if (!empty($list['upload'])) {
             echo '<form action="'.$url->out(false).'" method="post" enctype="multipart/form-data" style="display:inline">';
@@ -284,7 +295,11 @@ case 'confirm':
 
 case 'plugins':
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-    $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
+    $params = array();
+    $params['context'] = array($user_context, get_system_context());
+    $params['currentcontext'] = $PAGE->context;
+    $params['returntypes'] = 2;
+    $repos = repository::get_instances($params);
     echo $OUTPUT->header();
     echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     echo '<div>';
@@ -430,7 +445,11 @@ case 'renameform':
 case 'browse':
 default:
     $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-    $repos = repository::get_instances(array($user_context, get_system_context()), null, true, null, '*', 'ref_id');
+    $params = array();
+    $params['context'] = array($user_context, get_system_context());
+    $params['currentcontext'] = $PAGE->context;
+    $params['returntypes'] = 2;
+    $repos = repository::get_instances($params);
     $fs = get_file_storage();
     $files = $fs->get_directory_files($user_context->id, 'user_draft', $itemid, $draftpath, false);
 

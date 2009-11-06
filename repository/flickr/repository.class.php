@@ -18,11 +18,9 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @global <type> $SESSION
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
+     * @param int $repositoryid
+     * @param object $context
+     * @param array $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $CFG;
@@ -52,7 +50,7 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @return <type>
+     * @return bool
      */
     public function check_login() {
         return !empty($this->token);
@@ -60,7 +58,7 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @return <type>
+     * @return mixed
      */
     public function logout() {
         set_user_preference($this->setting, '');
@@ -72,8 +70,8 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $options
-     * @return <type>
+     * @param array $options
+     * @return mixed
      */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
@@ -90,8 +88,8 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $config
-     * @return <type>
+     * @param string $config
+     * @return mixed
      */
     public function get_option($config = '') {
         if ($config==='api_key') {
@@ -108,7 +106,7 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @return <type>
+     * @return bool
      */
     public function global_search() {
         if (empty($this->token)) {
@@ -120,8 +118,7 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $ajax
-     * @return <type>
+     * @return null
      */
     public function print_login() {
         if ($this->options['ajax']) {
@@ -138,9 +135,9 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $photos
-     * @param <type> $page
-     * @return <type>
+     * @param mixed $photos
+     * @param int $page
+     * @return array
      */
     private function build_list($photos, $page = 1) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
@@ -180,8 +177,8 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @param <type> $search_text
-     * @return <type>
+     * @param string $search_text
+     * @return array
      */
     public function search($search_text) {
         $photos = $this->flickr->photos_search(array(
@@ -199,7 +196,7 @@ class repository_flickr extends repository {
      *
      * @param string $path
      * @param int $page
-     * @return <type>
+     * @return array
      */
     public function get_listing($path = '', $page = '1') {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
@@ -215,10 +212,9 @@ class repository_flickr extends repository {
 
     /**
      *
-     * @global <type> $CFG
-     * @param <type> $photo_id
-     * @param <type> $file
-     * @return <type>
+     * @param string $photo_id
+     * @param string $file
+     * @return string
      */
     public function get_file($photo_id, $file = '') {
         global $CFG;
@@ -242,8 +238,7 @@ class repository_flickr extends repository {
 
     /**
      * Add Plugin settings input to Moodle form
-     * @global <type> $CFG
-     * @param <type> $
+     * @param object $mform
      */
     public function type_config_form(&$mform) {
         global $CFG;
@@ -262,14 +257,18 @@ class repository_flickr extends repository {
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
 
         //retrieve the flickr instances
-        $instances = repository::get_instances(array(),null,false,"flickr");
+        $params = array();
+        $params['context'] = array();
+        //$params['currentcontext'] = $this->context;
+        $params['onlyvisible'] = false;
+        $params['type'] = 'flickr';
+        $instances = repository::get_instances($params);
         if (empty($instances)) {
-            $callbackurl = get_string("callbackwarning","repository_flickr");
-             $mform->addElement('static', null, '',  $callbackurl);
-        }
-        else {
-             $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&amp;repo_id='.$instances[0]->id;
-              $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
+            $callbackurl = get_string('callbackwarning', 'repository_flickr');
+            $mform->addElement('static', null, '',  $callbackurl);
+        } else {
+            $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&amp;repo_id='.$instances[0]->id;
+            $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
         }
 
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
@@ -278,7 +277,7 @@ class repository_flickr extends repository {
 
     /**
      * Names of the plugin settings
-     * @return <type>
+     * @return array
      */
     public static function get_type_option_names() {
         return array('api_key', 'secret');

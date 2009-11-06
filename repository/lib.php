@@ -1,41 +1,31 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 2008 onwards  Moodle Pty Ltd   http://moodle.com        //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
- * About repository/lib.php:
- * two main classes:
- * 1. repository_type => a repository plugin, You can activate a plugin into
- * Moodle. You also can set some general settings/options for this type of repository.
- * All instances would share the same options (for example: a API key for the connection
- * to the repository)
- * 2. repository => an instance of a plugin. You can also call it an access or
- * an account. An instance has specific settings (for example: a public url) and a specific
- * name. That's this name which is displayed in the file picker.
+ * This file contains classes used to manage the repository plugins in Moodle
+ * and was introduced as part of the changes occuring in Moodle 2.0
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -44,15 +34,13 @@ require_once($CFG->libdir . '/formslib.php');
 define('FILE_EXTERNAL', 1);
 define('FILE_INTERNAL', 2);
 
-
-// File picker javascript code
-
 /**
+ * This class is used to manage repository plugins
+ *
  * A repository_type is a repository plug-in. It can be Box.net, Flick-r, ...
  * A repository type can be edited, sorted and hidden. It is mandatory for an
  * administrator to create a repository type in order to be able to create
  * some instances of this type.
- *
  * Coding note:
  * - a repository_type object is mapped to the "repository" database table
  * - "typename" attibut maps the "type" database field. It is unique.
@@ -61,6 +49,11 @@ define('FILE_INTERNAL', 2);
  *   options are also deleted from database
  * - When you create a type for a plugin that can't have multiple instances, a
  *   instance is automatically created.
+ *
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Jerome Mouneyrac
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_type {
 
@@ -403,7 +396,11 @@ class repository_type {
         global $DB;
 
         //delete all instances of this type
-        $instances = repository::get_instances(array(), null, false, $this->_typename);
+        $params = array();
+        $params['context'] = array();
+        $params['onlyvisible'] = false;
+        $params['type'] = $this->_typename;
+        $instances = repository::get_instances($params);
         foreach ($instances as $instance) {
             $instance->delete();
         }
@@ -422,9 +419,7 @@ class repository_type {
  *
  * To use repository plugin, see:
  * http://docs.moodle.org/en/Development:Repository_How_to_Create_Plugin
- *
  * class repository is an abstract class, some functions must be implemented in subclass.
- *
  * See an example: repository/boxnet/repository.class.php
  *
  * A few notes:
@@ -438,8 +433,10 @@ class repository_type {
  *   // print a search box
  *   $repo->print_search();
  *
- * @package repository
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class repository {
     // $disabled can be set to true to disable a plugin by force
@@ -575,16 +572,34 @@ abstract class repository {
      * @param string $type a type name to retrieve
      * @return array repository instances
      */
-    public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returntypes = 3) {
+    //public static function get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null, $accepted_types = '*', $returntypes = 3) {
+    public static function get_instances($args = array()) {
         global $DB, $CFG, $USER;
+
+        if (isset($args['currentcontext'])) {
+            $current_context = $args['currentcontext'];
+        } else {
+            $current_context = null;
+        }
+
+        if (!empty($args['context'])) {
+            $contexts = $args['context'];
+        } else {
+            $contexts = array();
+        }
+
+        $onlyvisible = isset($args['onlyvisible']) ? $args['onlyvisible'] : true;
+        $type        = isset($args['type']) ? $args['type'] : null;
+        $acceptedtypes = isset($args['accepted_types']) ? $args['accepted_types'] : '*';
+        $returntypes   = isset($args['returntypes']) ? $args['returntypes'] : 3;
 
         $params = array();
         $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
         $sql .= 'i.typeid = r.id ';
 
-        if (!empty($userid) && is_numeric($userid)) {
+        if (!empty($args['userid']) && is_numeric($args['userid'])) {
             $sql .= ' AND (i.userid = 0 or i.userid = ?)';
-            $params[] = $userid;
+            $params[] = $args['userid'];
         }
 
         foreach ($contexts as $context) {
@@ -611,38 +626,44 @@ abstract class repository {
         }
         $sql .= ' order by r.sortorder, i.name';
 
-        if (!$repos = $DB->get_records_sql($sql, $params)) {
-            $repos = array();
+        if (!$records = $DB->get_records_sql($sql, $params)) {
+            $records = array();
         }
 
-        $ret = array();
+        $repositories = array();
         $ft = new file_type_to_ext();
-        foreach ($repos as $repo) {
-            require_once($CFG->dirroot . '/repository/'. $repo->repositorytype.'/repository.class.php');
-            $options['visible'] = $repo->visible;
-            $options['name']    = $repo->name;
-            $options['type']    = $repo->repositorytype;
-            $options['typeid']  = $repo->typeid;
+        foreach ($records as $record) {
+            require_once($CFG->dirroot . '/repository/'. $record->repositorytype.'/repository.class.php');
+            $options['visible'] = $record->visible;
+            $options['name']    = $record->name;
+            $options['type']    = $record->repositorytype;
+            $options['typeid']  = $record->typeid;
             // tell instance what file types will be accepted by file picker
-            $options['accepted_types'] = $ft->get_file_ext($accepted_types);
-            $classname = 'repository_' . $repo->repositorytype;//
+            $options['accepted_types'] = $ft->get_file_ext($acceptedtypes);
+            $classname = 'repository_' . $record->repositorytype;
+
+            $repository = new $classname($record->id, $record->contextid, $options, $record->readonly);
+
             $is_supported = true;
 
-            $repository = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
-            $context = get_context_instance_by_id($repo->contextid);
             if (empty($repository->super_called)) {
-                debugging('parent::__construct must be called by '.$repo->repositorytype.' plugin.');
+                // to make sure the super construct is called
+                debugging('parent::__construct must be called by '.$record->repositorytype.' plugin.');
             } else {
-                if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
-                    $accepted_types = $ft->get_file_ext($accepted_types);
+                // check mimetypes
+                if ($acceptedtypes !== '*' and $repository->supported_filetypes() !== '*') {
+                    $acceptedtypes = $ft->get_file_ext($acceptedtypes);
                     $supported_filetypes = $ft->get_file_ext($repository->supported_filetypes());
+
                     $is_supported = false;
                     foreach  ($supported_filetypes as $type) {
-                        if (in_array($type, $accepted_types)) {
+                        if (in_array($type, $acceptedtypes)) {
                             $is_supported = true;
                         }
                     }
+
                 }
+                // check return values
                 if ($returntypes !== 3 and $repository->supported_returntypes() !== 3) {
                     $type = $repository->supported_returntypes();
                     if ($type & $returntypes) {
@@ -652,16 +673,21 @@ abstract class repository {
                     }
                 }
                 if (!$onlyvisible || ($repository->is_visible() && !$repository->disabled)) {
-                    // super_called will make sure the parent construct function is called
-                    // by repository construct function
-                    $capability = has_capability('repository/'.$repo->repositorytype.':view', get_system_context());
+
+                    // check capability in current context
+                    if (!empty($current_context)) {
+                        $capability = has_capability('repository/'.$record->repositorytype.':view', $current_context);
+                    } else {
+                        // TODO: what should we do if current context isn't set?
+                        $capability = has_capability('repository/'.$record->repositorytype.':view', get_system_context());
+                    }
                     if ($is_supported && $capability) {
-                        $ret[] = $repository;
+                        $repositories[] = $repository;
                     }
                 }
             }
         }
-        return $ret;
+        return $repositories;
     }
 
     /**
@@ -960,7 +986,6 @@ abstract class repository {
 
                 //}
 
-                //Uncomment this following line if you wanna display all directory ()even empty
                 if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
                     $filecount += $_filecount;
                     $list[] = $tmp;
@@ -1019,7 +1044,12 @@ abstract class repository {
         //instances of a type, even if this type is not visible. In course/user context we
         //want to display only visible instances, but for every type types. The repository::get_instances()
         //third parameter displays only visible type.
-        $instances = repository::get_instances(array($context), null, !$admin, $typename);
+        $params = array();
+        $params['context'] = array($context, get_system_context());
+        $params['currentcontext'] = $context;
+        $params['onlyvisible'] = !$admin;
+        $params['type']        = $typename;
+        $instances = repository::get_instances($params);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
 
@@ -1235,6 +1265,7 @@ abstract class repository {
         $meta->icon = $CFG->httpswwwroot.'/repository/'.$meta->type.'/icon.png';
         $meta->supported_types = $ft->get_file_ext($this->supported_filetypes());
         $meta->accepted_types = $this->options['accepted_types'];
+        $meta->return_types = $this->supported_returntypes();
         return $meta;
     }
 
@@ -1530,7 +1561,7 @@ abstract class repository {
      public function type_config_form(&$mform) {
     }
 
-      /**
+    /**
      * Edit/Create Instance Settings Moodle form
      * @param object $ Moodle form (passed by reference)
      */
@@ -1566,7 +1597,13 @@ abstract class repository {
 }
 
 /**
- * exception class for repository api
+ * Exception class for repository api
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_exception extends moodle_exception {
 }
@@ -1574,16 +1611,18 @@ class repository_exception extends moodle_exception {
 
 
 /**
- * TODO: write comment
+ * This is a class used to define a repository instance form
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class repository_instance_form extends moodleform {
     protected $instance;
     protected $plugin;
 
-    /**
-     * TODO: write comment
-     * @global object $CFG
-     */
     public function definition() {
         global $CFG;
         // type of plugin, string
@@ -1636,12 +1675,6 @@ final class repository_instance_form extends moodleform {
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 
-    /**
-     * TODO: write comment
-     * @global object $DB
-     * @param mixed $data
-     * @return mixed
-     */
     public function validation($data) {
         global $DB;
 
@@ -1655,9 +1688,14 @@ final class repository_instance_form extends moodleform {
     }
 }
 
-
 /**
- * Display a form with the general option fields of a type
+ * This is a class used to define a repository type setting form
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class repository_type_form extends moodleform {
     protected $instance;
@@ -1739,7 +1777,8 @@ function repository_setup_default_plugins() {
 }
 
 /**
- * Loads
+ * Loads file picker Javascript files
+ *
  * @return void
  */
 function repository_head_setup() {
@@ -1769,13 +1808,16 @@ function repository_head_setup() {
 
 /**
  * Return javascript to create file picker to browse repositories
+ *
  * @global object $CFG
  * @global object $USER
+ * @global object $PAGE
+ * @global object $OUTPUT
  * @param object $context the context
  * @param string $id unique id for every file picker
  * @param string $accepted_filetypes
  * @param string $returntypes the return value of file picker
- * @return array
+ * @return string
  */
 function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $returntypes = 3) {
     global $CFG, $USER, $PAGE, $OUTPUT;
@@ -1832,8 +1874,8 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
         $lang = json_encode($lang);
 
         $options = array();
-        $context = get_system_context();
-        $options['contextid'] = $context->id;
+        $sys_context = get_system_context();
+        $options['contextid'] = $sys_context->id;
         $options['icons']['loading'] = $OUTPUT->old_icon_url('i/loading');
         $options['icons']['progressbar'] = $OUTPUT->old_icon_url('i/progressbar');
         $options['icons']['search'] = $OUTPUT->old_icon_url('a/search');
@@ -1865,7 +1907,12 @@ EOD;
     if (is_array($accepted_filetypes) && in_array('*', $accepted_filetypes)) {
         $accepted_filetypes = '*';
     }
-    $repos = repository::get_instances(array($user_context, $context, get_system_context()), null, true, null, $accepted_filetypes, $returntypes);
+    $params = array();
+    $params['context'] = array($user_context, get_system_context());
+    $params['currentcontext'] = $context;
+    $params['accepted_types'] = $accepted_filetypes;
+    $params['returntypes'] = $returntypes;
+    $repos = repository::get_instances($params);
 
     // print repository instances listing
     $js .= <<<EOD

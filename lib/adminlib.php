@@ -5988,10 +5988,16 @@ class admin_setting_managerepository extends admin_setting {
 
             //calculate number of instances in order to display them for the Moodle administrator
                 if (!empty($instanceoptionnames)) {
-                    $admininstancenumber = count(repository::static_function($i->get_typename(), 'get_instances', array(get_context_instance(CONTEXT_SYSTEM)),null,false,$i->get_typename()));
+                    $params = array();
+                    $params['context'] = array(get_system_context());
+                    $params['onlyvisible'] = false;
+                    $params['type'] = $i->get_typename();
+                    $admininstancenumber = count(repository::static_function($i->get_typename(),
+                        'get_instances', array($params)));
                     $admininstancenumbertext =   " <br/> ". $admininstancenumber .
                         " " . get_string('instancesforadmin', 'repository');
-                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', array(),null,false,$i->get_typename())) - $admininstancenumber;
+                    $params['context'] = array();
+                    $instancenumber =  count(repository::static_function($i->get_typename(), 'get_instances', array($params))) - $admininstancenumber;
                     $instancenumbertext =  "<br/>" . $instancenumber .
                         " " . get_string('instancesforothers', 'repository');
                 } else {

@@ -1,6 +1,30 @@
 <?php
 
-/// The Web service script that is called from the filepicker front end
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * The Web service script that is called from the filepicker front end
+ *
+ * @since 2.0
+ * @package moodlecore
+ * @subpackage repository
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once('../config.php');
     require_once('../lib/filelib.php');
@@ -8,19 +32,20 @@
     require_login();
 
 /// Parameters
-    $action =    optional_param('action', '', PARAM_ALPHA);
+    $action    = optional_param('action', '', PARAM_ALPHA);
     $callback  = optional_param('callback', '', PARAM_CLEANHTML);
     $client_id = optional_param('client_id', SITEID, PARAM_RAW);    // client ID
     $contextid = optional_param('ctx_id', SITEID, PARAM_INT);       // context ID
-    $env   =     optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
-    $file  =     optional_param('file', '', PARAM_RAW);             // file to download
-    $title =     optional_param('title', '', PARAM_FILE);           // new file name
-    $itemid =    optional_param('itemid', '', PARAM_INT);
-    $page  =     optional_param('page', '', PARAM_RAW);             // page
+    $env       = optional_param('env', 'filepicker', PARAM_ALPHA);  // opened in editor or moodleform
+    $file      = optional_param('file', '', PARAM_RAW);             // file to download
+    $itemid    = optional_param('itemid', '', PARAM_INT);
+    $title     = optional_param('title', '', PARAM_FILE);           // new file name
+    $page      = optional_param('page', '', PARAM_RAW);             // page
     $repo_id   = optional_param('repo_id', 1, PARAM_INT);           // repository ID
     $req_path  = optional_param('p', '', PARAM_RAW);                // path
     $save_path = optional_param('savepath', '/', PARAM_PATH);
-    $search_text = optional_param('s', '', PARAM_CLEANHTML);
+    $search_text   = optional_param('s', '', PARAM_CLEANHTML);
+    $link_external = optional_param('link_external', '', PARAM_ALPHA);
 
 /// Headers to make it not cacheable
     header("Cache-Control: no-cache, must-revalidate");
@@ -61,8 +86,11 @@
                 die(json_encode($err));
             }
             break;
-        case 'gsearch':     //  Global Search
-            $repos = repository::get_instances(array(get_context_instance_by_id($contextid), get_system_context()));
+        case 'gsearch': //  Global Search
+            $params = array();
+            $params['context'] = array(get_context_instance_by_id($contextid), get_system_context());
+            $params['currentcontext'] = get_context_instance_by_id($contextid);
+            $repos = repository::get_instances($params);
             $list = array();
             foreach($repos as $repo){
                 if ($repo->global_search()) {
@@ -200,7 +228,7 @@ EOD;
             break;
         case 'download':
             try {
-                if ($env == 'url' /* TODO: or request_external_url by user */) {
+                if ($env == 'url' or $link_external === 'yes') {
                     if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $file)) {
                         die(json_encode(array('type'=>'link', 'client_id'=>$client_id,
                             'url'=>$file, 'id'=>$file, 'file'=>$file)));
