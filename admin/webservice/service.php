@@ -57,6 +57,7 @@ if ($action == 'delete' and confirm_sesskey() and $service and empty($service->c
     $DB->delete_records('external_services_users', array('externalserviceid'=>$service->id));
     $DB->delete_records('external_services_functions', array('externalserviceid'=>$service->id));
     $DB->delete_records('external_services', array('id'=>$service->id));
+    add_to_log(1, 'webservice', 'delete', $CFG->wwwroot."/admin/settings.php?section=externalservices", get_string('deleteservice', 'webservice', $service));
     redirect($returnurl);
 }
 
@@ -74,12 +75,12 @@ if ($mform->is_cancelled()) {
 
     if (empty($data->id)) {
         $data->timecreated = mktime();
-        $DB->insert_record('external_services', $data);
-        //TODO: logging
+        $data->id = $DB->insert_record('external_services', $data);
+        add_to_log(1, 'webservice', 'add', $CFG->wwwroot."/admin/settings.php?section=externalservices", get_string('addservice', 'webservice', $data));
     } else {
         $data->timemodified = mktime();
         $DB->update_record('external_services', $data);
-        //TODO: logging
+        add_to_log(1, 'webservice', 'edit', $CFG->wwwroot."/admin/settings.php?section=externalservices", get_string('editservice', 'webservice', $data));
     }
     
     redirect($returnurl);
