@@ -3392,61 +3392,50 @@ function delete_user($user) {
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
 
-    // TODO: decide if this transaction is really needed
-    $DB->begin_sql();
-
-    try {
-        // delete all grades - backup is kept in grade_grades_history table
-        if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
-            foreach ($grades as $grade) {
-                $grade->delete('userdelete');
-            }
+    // delete all grades - backup is kept in grade_grades_history table
+    if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
+        foreach ($grades as $grade) {
+            $grade->delete('userdelete');
         }
-
-        //move unread messages from this user to read
-        message_move_userfrom_unread2read($user->id);
-
-        // remove from all groups
-        $DB->delete_records('groups_members', array('userid'=>$user->id));
-
-        // unenrol from all roles in all contexts
-        role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
-
-        // now do a final accesslib cleanup - removes all role assingments in user context and context itself
-        delete_context(CONTEXT_USER, $user->id);
-
-        require_once($CFG->dirroot.'/tag/lib.php');
-        tag_set('user', $user->id, array());
-
-        // workaround for bulk deletes of users with the same email address
-        $delname = "$user->email.".time();
-        while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
-            $delname++;
-        }
-
-        // mark internal user record as "deleted"
-        $updateuser = new object();
-        $updateuser->id           = $user->id;
-        $updateuser->deleted      = 1;
-        $updateuser->username     = $delname;         // Remember it just in case
-        $updateuser->email        = '';               // Clear this field to free it up
-        $updateuser->idnumber     = '';               // Clear this field to free it up
-        $updateuser->timemodified = time();
-
-        $DB->update_record('user', $updateuser);
-
-        $DB->commit_sql();
-
-        // notify auth plugin - do not block the delete even when plugin fails
-        $authplugin = get_auth_plugin($user->auth);
-        $authplugin->user_delete($user);
-
-        events_trigger('user_deleted', $user);
-
-    } catch (Exception $e) {
-        $DB->rollback_sql();
-        throw $e;
     }
+
+    //move unread messages from this user to read
+    message_move_userfrom_unread2read($user->id);
+
+    // remove from all groups
+    $DB->delete_records('groups_members', array('userid'=>$user->id));
+
+    // unenrol from all roles in all contexts
+    role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
+
+    // now do a final accesslib cleanup - removes all role assingments in user context and context itself
+    delete_context(CONTEXT_USER, $user->id);
+
+    require_once($CFG->dirroot.'/tag/lib.php');
+    tag_set('user', $user->id, array());
+
+    // workaround for bulk deletes of users with the same email address
+    $delname = "$user->email.".time();
+    while ($DB->record_exists('user', array('username'=>$delname))) { // no need to use mnethostid here
+        $delname++;
+    }
+
+    // mark internal user record as "deleted"
+    $updateuser = new object();
+    $updateuser->id           = $user->id;
+    $updateuser->deleted      = 1;
+    $updateuser->username     = $delname;         // Remember it just in case
+    $updateuser->email        = '';               // Clear this field to free it up
+    $updateuser->idnumber     = '';               // Clear this field to free it up
+    $updateuser->timemodified = time();
+
+    $DB->update_record('user', $updateuser);
+
+    // notify auth plugin - do not block the delete even when plugin fails
+    $authplugin = get_auth_plugin($user->auth);
+    $authplugin->user_delete($user);
+
+    events_trigger('user_deleted', $user);
 
     return true;
 }

@@ -185,7 +185,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
     // Activities contexts.
     $mods = array();
     $prog = new progress_bar('modbar', 500, true);
-    $DB->begin_sql();
+    $transaction = $DB->start_delegated_transaction();
     for ($i = 0; $i < $nummodules; $i++) {
         $context = insert_context(CONTEXT_MODULE, $i, $courses[array_rand($courses)]);
         $mods[$context->id] = $context;
@@ -193,7 +193,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
             $prog->update($i, $nummodules, '');
         }
     }
-    $DB->commit_sql();
+    $transaction->allow_commit();
     echo $OUTPUT->notification('Created ' . $nummodules . ' module contexts.', 'notifysuccess'); flush();
 
     $contexts = $categories + $courses + $mods;
@@ -212,20 +212,20 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
     // Local overrides.
     $localstates = array(TEXTFILTER_OFF => 0, TEXTFILTER_ON => 0);
     $prog = new progress_bar('locbar', 500, true);
-    $DB->begin_sql();
+    $transaction = $DB->start_delegated_transaction();
     for ($i = 0; $i < $numoverrides; $i++) {
         filter_set_local_state(array_rand($installedfilters), array_rand($contexts), array_rand($localstates));
         if ($i % 50) {
             $prog->update($i, $numoverrides, '');
         }
     }
-    $DB->commit_sql();
+    $transaction->allow_commit();
     echo $OUTPUT->notification('Set ' . $numoverrides . ' local overrides.', 'notifysuccess'); flush();
 
     // Local config.
     $variablenames = array('frog' => 0, 'toad' => 0, 'elver' => 0, 'eft' => 0, 'tadpole' => 0);
     $prog = new progress_bar('confbar', 500, true);
-    $DB->begin_sql();
+    $transaction = $DB->start_delegated_transaction();
     for ($i = 0; $i < $numconfigs; $i++) {
         filter_set_local_config(array_rand($installedfilters), array_rand($contexts),
                 array_rand($variablenames), random_string(rand(20, 40)));
@@ -233,7 +233,7 @@ function populate_test_database($syscontext, $numcategories, $numcourses, $nummo
             $prog->update($i, $numconfigs, '');
         }
     }
-    $DB->commit_sql();
+    $transaction->allow_commit();
     echo $OUTPUT->notification('Set ' . $numconfigs . ' local configs.', 'notifysuccess'); flush();
 }
 

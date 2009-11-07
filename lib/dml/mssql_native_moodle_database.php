@@ -1199,56 +1199,44 @@ s only returning name of SQL substring function, it now requires all parameters.
 /// transactions
 
     /**
-     * on DBs that support it, switch to transaction mode and begin a transaction
-     * you'll need to ensure you call commit_sql() or your changes *will* be lost.
-     *
-     * this is _very_ useful for massive updates
+     * Driver specific start of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function begin_sql() {
-        if (!parent::begin_sql()) {
-            return false;
-        }
+        protected function begin_transaction() {
         $sql = "BEGIN TRANSACTION"; // Will be using READ COMMITTED isolation
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
-
-        return true;
     }
 
     /**
-     * on DBs that support it, commit the transaction
+     * Driver specific commit of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function commit_sql() {
-        if (!parent::commit_sql()) {
-            return false;
-        }
+        protected function commit_transaction() {
         $sql = "COMMIT TRANSACTION";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
-
-        return true;
     }
 
     /**
-     * on DBs that support it, rollback the transaction
+     * Driver specific abort of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function rollback_sql() {
-        if (!parent::rollback_sql()) {
-            return false;
-        }
+        protected function rollback_transaction() {
         $sql = "ROLLBACK TRANSACTION";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
 
         $this->free_result($result);
-
-        return true;
     }
 }

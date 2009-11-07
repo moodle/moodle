@@ -542,57 +542,36 @@ abstract class pdo_moodle_database extends moodle_database {
         print_error('TODO');
     }
 
-    public function begin_sql() {
-        if (!parent::begin_sql()) {
-            return false;
-        }
-
+    protected function begin_transaction() {
         $this->query_start('', NULL, SQL_QUERY_AUX);
-        $result = true;
-
         try {
             $this->pdb->beginTransaction();
         } catch(PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $result = false;
         }
         $this->query_end($result);
-        return $result;
     }
-    public function commit_sql() {
-        if (!parent::commit_sql()) {
-            return false;
-        }
 
+    protected function commit_transaction() {
         $this->query_start('', NULL, SQL_QUERY_AUX);
-        $result = true;
 
         try {
             $this->pdb->commit();
         } catch(PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $result = false;
         }
         $this->query_end($result);
-        return $result;
     }
 
-    public function rollback_sql() {
-        if (!parent::rollback_sql()) {
-            return false;
-        }
-
+    protected function rollback_transaction() {
         $this->query_start('', NULL, SQL_QUERY_AUX);
-        $result = true;
 
         try {
             $this->pdb->rollBack();
         } catch(PDOException $ex) {
             $this->lastError = $ex->getMessage();
-            $result = false;
         }
         $this->query_end($result);
-        return $result;
     }
 
     /**

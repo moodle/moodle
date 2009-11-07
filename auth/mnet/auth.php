@@ -854,7 +854,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $start = ob_start();
 
         $returnString = '';
-        $DB->begin_sql();
+        $transaction = $DB->start_delegated_transaction();
         $useridarray = array();
 
         foreach($array as $logEntry) {
@@ -883,7 +883,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
         }
         $MNET_REMOTE_CLIENT->commit();
-        $DB->commit_sql();
+        $transaction->allow_commit();
 
         $end = ob_end_clean();
 

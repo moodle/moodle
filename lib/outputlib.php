@@ -859,6 +859,9 @@ class xhtml_container_stack {
             return;
         }
 
+        // TODO: MDL-20625 this looks dangerous and problematic because we never know
+        //       the order of calling of constructors ==> the transaction warning will not be included
+
         // It seems you cannot rely on $CFG, and hence the debugging function here,
         // becuase $CFG may be destroyed before this object is.
         if ($this->isdebugging) {

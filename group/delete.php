@@ -49,11 +49,11 @@ if ($confirm && data_submitted()) {
     if (!confirm_sesskey() ) {
         print_error('confirmsesskeybad','error',$returnurl);
     }
-    $DB->begin_sql();
+
     foreach($groupidarray as $groupid) {
         groups_delete_group($groupid);
     }
-    $DB->commit_sql();
+
     redirect($returnurl);
 } else {
     $PAGE->set_title(get_string('deleteselectedgroup', 'group'));

@@ -208,14 +208,12 @@ function default_exception_handler($ex) {
 function abort_all_db_transactions() {
     global $CFG, $DB, $SCRIPT;
 
+    // default exception handler MUST not throw any exceptions!!
+    
     if ($DB && $DB->is_transaction_started()) {
         error_log('Database transaction aborted automatically in ' . $CFG->dirroot . $SCRIPT);
-        try {
-            // note: transaction blocks should never change current $_SESSION
-            $DB->rollback_sql();
-        } catch (Exception $ignored) {
-            // default exception handler MUST not throw any exceptions!!
-        }
+        // note: transaction blocks should never change current $_SESSION
+        $DB->force_transaction_rollback();
     }
 }
 

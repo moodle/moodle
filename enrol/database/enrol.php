@@ -219,7 +219,8 @@ function sync_enrolments($role = null) {
         return true;
     }
 
-    $DB->begin_sql();
+    $transaction = $DB->start_delegated_transaction();
+
     $extcourses = array();
     while ($extcourse_obj = (object)$rs->FetchRow()) { // there are more course records
         $extcourse_obj = (object)array_change_key_case((array)$extcourse_obj , CASE_LOWER);
@@ -416,7 +417,7 @@ function sync_enrolments($role = null) {
         $ers->close(); // release the handle
     }
 
-    $DB->commit_sql();
+    $transaction->allow_commit();
 
     // we are done now, a bit of housekeeping
     fix_course_sortorder();

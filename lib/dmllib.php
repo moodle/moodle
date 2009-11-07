@@ -197,6 +197,23 @@ class dml_write_exception extends dml_exception {
 }
 
 /**
+ * DML transaction exception - triggered by probles related to DB transactions
+ */
+class dml_transaction_exception extends dml_exception {
+    /** @var moodle_transaction */
+    public $transaction;
+
+    /**
+     * Constructor
+     * @param array $start_backtrace
+     */
+    function __construct($debuginfo=null, $transaction=null) {
+        $this->transaction = $transaction; // TODO: MDL-20625 use the info from $transaction for debugging purposes
+        parent::__construct('dmltransactionexception', NULL, $debuginfo);
+    }
+}
+
+/**
  * Sets up global $DB moodle_database instance
  *
  * @global object

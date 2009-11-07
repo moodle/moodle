@@ -2297,81 +2297,6 @@ class dml_test extends UnitTestCase {
 
     }
 
-    function test_begin_sql() {
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $active = $DB->begin_sql();
-        if ($active) {
-            // test only if driver supports transactions
-            $data = (object)array('course'=>3);
-            $DB->insert_record($tablename, $data);
-            $this->assertEqual(1, $DB->count_records($tablename));
-            $DB->commit_sql();
-        } else {
-            $this->assertTrue(true, 'DB Transactions not supported. Test skipped');
-        }
-    }
-
-    function test_commit_sql() {
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $active = $DB->begin_sql();
-        if ($active) {
-            // test only if driver supports transactions
-            $data = (object)array('course'=>3);
-            $DB->insert_record($tablename, $data);
-            $DB->commit_sql();
-            $this->assertEqual(1, $DB->count_records($tablename));
-        } else {
-            $this->assertTrue(true, 'BD Transactions not supported. Test skipped');
-        }
-    }
-
-    function test_rollback_sql() {
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$tablename] = $table;
-
-        $active = $DB->begin_sql();
-        if ($active) {
-            // test only if driver supports transactions
-            $data = (object)array('course'=>3);
-            $DB->insert_record($tablename, $data);
-            $DB->rollback_sql();
-            $this->assertEqual(0, $DB->count_records($tablename));
-        } else {
-            $this->assertTrue(true, 'DB Transactions not supported. Test skipped');
-        }
-    }
-
     /**
      * Test some more complex SQL syntax which moodle uses and depends on to work
      * useful to determine if new database libraries can be supported.
@@ -2406,6 +2331,254 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(2, count($records));
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
+    }
+
+    function test_onelevel_commit() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $transaction = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $this->assertEqual(0, $DB->count_records($tablename));
+        $DB->insert_record($tablename, $data);
+        $this->assertEqual(1, $DB->count_records($tablename));
+        $transaction->allow_commit();
+        $this->assertEqual(1, $DB->count_records($tablename));
+    }
+
+    function test_onelevel_rollback() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        // this might in fact encourage ppl to migrate from myisam to innodb
+
+        $transaction = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $this->assertEqual(0, $DB->count_records($tablename));
+        $DB->insert_record($tablename, $data);
+        $this->assertEqual(1, $DB->count_records($tablename));
+        try {
+            $transaction->rollback(new Exception('test'));
+            $this->fail('transaction rollback must rethrow exception');
+        } catch (Exception $e) {
+        }
+        $this->assertEqual(0, $DB->count_records($tablename));
+    }
+
+    function test_nested_transactions() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        // two level commit
+        $this->assertFalse($DB->is_transaction_started());
+        $transaction1 = $DB->start_delegated_transaction();
+        $this->assertTrue($DB->is_transaction_started());
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>4);
+        $DB->insert_record($tablename, $data);
+        $transaction2->allow_commit();
+        $this->assertTrue($DB->is_transaction_started());
+        $transaction1->allow_commit();
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertEqual(2, $DB->count_records($tablename));
+
+        $DB->delete_records($tablename);
+
+        // rollback from top level
+        $transaction1 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>4);
+        $DB->insert_record($tablename, $data);
+        $transaction2->allow_commit();
+        try {
+            $transaction1->rollback(new Exception('test'));
+            $this->fail('transaction rollback must rethrow exception');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'Exception');
+        }
+        $this->assertEqual(0, $DB->count_records($tablename));
+
+        $DB->delete_records($tablename);
+
+        // rollback from nested level
+        $transaction1 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>4);
+        $DB->insert_record($tablename, $data);
+        try {
+            $transaction2->rollback(new Exception('test'));
+            $this->fail('transaction rollback must rethrow exception');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'Exception');
+        }
+        $this->assertEqual(2, $DB->count_records($tablename)); // not rolled back yet
+        try {
+            $transaction1->allow_commit();
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        $this->assertEqual(2, $DB->count_records($tablename)); // not rolled back yet
+        // the forced rollback is done from the default_exception hadnler and similar places,
+        // let's do it manually here
+        $this->assertTrue($DB->is_transaction_started());
+        $DB->force_transaction_rollback();
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertEqual(0, $DB->count_records($tablename)); // finally rolled back
+
+        $DB->delete_records($tablename);
+    }
+
+    function test_transactions_forbidden() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $DB->transactions_forbidden();
+        $transaction = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>1);
+        $DB->insert_record($tablename, $data);
+        try {
+            $DB->transactions_forbidden();
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        // the previous test does not force rollback
+        $transaction->allow_commit();
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertEqual(1, $DB->count_records($tablename));
+    }
+
+    function test_wrong_transactions() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+
+        // wrong order of nested commits
+        $transaction1 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>4);
+        $DB->insert_record($tablename, $data);
+        try {
+            $transaction1->allow_commit();
+            $this->fail('wrong order of commits must throw exception');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        try {
+            $transaction2->allow_commit();
+            $this->fail('first wrong commit forces rollback');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        // this is done in default exception hadnler usually
+        $this->assertTrue($DB->is_transaction_started());
+        $this->assertEqual(2, $DB->count_records($tablename)); // not rolled back yet
+        $DB->force_transaction_rollback();
+        $this->assertEqual(0, $DB->count_records($tablename));
+        $DB->delete_records($tablename);
+
+
+        // wrong order of nested rollbacks
+        $transaction1 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>4);
+        $DB->insert_record($tablename, $data);
+        try {
+            // this first rollback should prevent all otehr rollbacks
+            $transaction1->rollback(new Exception('test'));
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'Exception');
+        }
+        try {
+            $transaction2->rollback(new Exception('test'));
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'Exception');
+        }
+        try {
+            $transaction1->rollback(new Exception('test'));
+        } catch (Exception $e) {
+            // the rollback was used already once, no way to use it again
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        // this is done in default exception hadnler usually
+        $this->assertTrue($DB->is_transaction_started());
+        $DB->force_transaction_rollback();
+        $DB->delete_records($tablename);
+
+
+        // unknown transaction object
+        $transaction1 = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>3);
+        $DB->insert_record($tablename, $data);
+        $transaction2 = new moodle_transaction($DB);
+        try {
+            $transaction2->allow_commit();
+            $this->fail('foreign transaction must fail');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        try {
+            $transaction1->allow_commit();
+            $this->fail('first wrong commit forces rollback');
+        } catch (Exception $e) {
+            $this->assertEqual(get_class($e), 'dml_transaction_exception');
+        }
+        $DB->force_transaction_rollback();
+        $DB->delete_records($tablename);
     }
 }
 
@@ -2454,4 +2627,7 @@ class moodle_database_for_testing extends moodle_database {
     public function sql_concat(){}
     public function sql_concat_join($separator="' '", $elements=array()){}
     public function sql_substr($expr, $start, $length=false){}
+    public function begin_transaction() {}
+    public function commit_transaction() {}
+    public function rollback_transaction() {}
 }

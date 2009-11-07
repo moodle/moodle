@@ -27,6 +27,7 @@
 
 require_once($CFG->libdir.'/dml/database_column_info.php');
 require_once($CFG->libdir.'/dml/moodle_recordset.php');
+require_once($CFG->libdir.'/dml/moodle_transaction.php');
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
@@ -109,8 +110,10 @@ abstract class moodle_database {
     /** @var bool true if db used for db sessions */
     protected $used_for_db_sessions = false;
 
-    /** @var bool Flag indicating transaction in progress */
-    protected $intransaction = false;
+    /** @var array open transactions */
+    private $transactions = array();
+    /** @var bool force rollback of all current transactions */
+    private $force_rollback = false;
 
     /** @var int internal temporary variable */
     private $fix_sql_params_i;
@@ -281,8 +284,10 @@ abstract class moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        if ($this->intransaction) {
-            // unfortunately we can not access global $CFG any more and can not print debug
+        if ($this->transactions) {
+            // unfortunately we can not access global $CFG any more and can not print debug,
+            // the diagnostic info should be printed in footer instead
+            $this->force_transaction_rollback();
             error_log('Active database transaction detected when disposing database!');
         }
         if ($this->used_for_db_sessions) {
@@ -1883,59 +1888,181 @@ abstract class moodle_database {
     }
 
 /// transactions
+
+    /**
+     * Are transactions supported?
+     * It is not responsible to run productions servers
+     * on databases without transaction support ;-)
+     *
+     * Override in driver if needed.
+     *
+     * @return bool
+     */
+    protected function transactions_supported() {
+        // protected for now, this might be changed to public if really necessary
+        return true;
+    }
+
     /**
      * Returns true if transaction in progress
      * @return bool
      */
-    function is_transaction_started() {
-        return $this->intransaction;
+    public function is_transaction_started() {
+        return !empty($this->transactions);
     }
 
     /**
-     * on DBs that support it, switch to transaction mode and begin a transaction
-     * you'll need to ensure you call commit_sql() or your changes *will* be lost.
+     * Throws exception if transaction in progress.
+     * This test does not force rollback of active transactions.
+     * @return void
+     */
+    public function transactions_forbidden() {
+        if ($this->is_transaction_started()) {
+            throw new dml_transaction_exception('This code can not be excecuted in transaction');
+        }
+    }
+
+    /**
+     * On DBs that support it, switch to transaction mode and begin a transaction
+     * you'll need to ensure you call commit() or your changes *will* be lost.
      *
      * this is _very_ useful for massive updates
      *
-     * Please note only one level of transactions is supported, please do not use
-     * transaction in moodle core! Transaction are intended for web services
-     * enrolment and auth synchronisation scripts, etc.
+     * Delegated database transactions can be nested, but only one actual database
+     * transaction is used for the outer-most delegated transaction. This method
+     * returns a transaction object which you should keep until the end of the
+     * delegated transaction. The actual database transaction will
+     * only be committed if all the nested delegated transactions commit
+     * successfully. If any part of the transaction rolls back then the whole
+     * thing is rolled back.
      *
-     * @return bool success
+     * @return moodle_transaction
      */
-    public function begin_sql() {
-        if ($this->intransaction) {
-            debugging('Transaction already in progress');
-            return false;
+    public function start_delegated_transaction() {
+        $transaction = new moodle_transaction($this);
+        $this->transactions[] = $transaction;
+        if (count($this->transactions) == 1) {
+            $this->begin_transaction();
         }
-        $this->intransaction = true;
-        return true;
+        return $transaction;
     }
 
     /**
-     * on DBs that support it, commit the transaction
-     * @return bool success
+     * Driver specific start of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function commit_sql() {
-        if (!$this->intransaction) {
-            debugging('Transaction not in progress');
-            return false;
+    protected abstract function begin_transaction();
+
+    /**
+     * Indicates delegated transaction finished successfully.
+     * The real database transaction is committed only if
+     * all delegated transactions committed.
+     * @return void
+     */
+    public function commit_delegated_transaction(moodle_transaction $transaction) {
+        if ($transaction->is_disposed()) {
+            throw new dml_transaction_exception('Transactions already disposed', $transaction);
         }
-        $this->intransaction = false;
-        return true;
+        // mark as disposed so that it can not be used again
+        $transaction->dispose();
+
+        if (empty($this->transactions)) {
+            throw new dml_transaction_exception('Transaction not started', $transaction);
+        }
+
+        if ($this->force_rollback) {
+            throw new dml_transaction_exception('Tried to commit transaction after lower level rollback', $transaction);
+        }
+
+        if ($transaction !== $this->transactions[count($this->transactions) - 1]) {
+            // one incorrect commit at any level rollbacks everything
+            $this->force_rollback = true;
+            throw new dml_transaction_exception('Invalid transaction commit attempt', $transaction);
+        }
+
+        if (count($this->transactions) == 1) {
+            // only commit the top most level
+            $this->commit_transaction();
+        }
+        array_pop($this->transactions);
     }
 
     /**
-     * on DBs that support it, rollback the transaction
-     * @return bool success
+     * Driver specific commit of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function rollback_sql() {
-        if (!$this->intransaction) {
-            debugging('Transaction not in progress');
-            return false;
+    protected abstract function commit_transaction();
+
+    /**
+     * Call when delegated transaction failed, this rolls back
+     * all delegated transactions up to the top most level.
+     *
+     * In many cases you do not need to call this method manually,
+     * because all open delegated transactions are rolled back
+     * automatically if exceptions not caucht.
+     *
+     * @param moodle_transaction $transaction
+     * @param Exception $e exception that caused the problem
+     * @return does not return, exception is rethrown
+     */
+    public function rollback_delegated_transaction(moodle_transaction $transaction, Exception $e) {
+        if ($transaction->is_disposed()) {
+            throw new dml_transaction_exception('Transactions already disposed', $transaction);
         }
-        $this->intransaction = false;
-        return true;
+        // mark as disposed so that it can not be used again
+        $transaction->dispose();
+
+        // one rollback at any level rollbacks everything
+        $this->force_rollback = true;
+
+        if (empty($this->transactions) or $transaction !== $this->transactions[count($this->transactions) - 1]) {
+            // this may or may not be a coding problem, better just rethrow the exception,
+            // because we do not want to loose the original $e
+            throw $e;
+        }
+
+        if (count($this->transactions) == 1) {
+            // only rollback the top most level
+            $this->rollback_transaction();
+        }
+        array_pop($this->transactions);
+        if (empty($this->transactions)) {
+            // finally top most level rolled back
+            $this->force_rollback = false;
+        }
+        throw $e;
+    }
+
+    /**
+     * Driver specific bort of real database transaction,
+     * this can not be used directly in code.
+     * @return void
+     */
+    protected abstract function rollback_transaction();
+
+    /**
+     * Force rollback of all delegted transaction.
+     * Does not trow any exceptions and does not log anything.
+     *
+     * This method should be used only from default exception handlers and other
+     * core code.
+     *
+     * @return void
+     */
+    public function force_transaction_rollback() {
+        if ($this->transactions) {
+            try {
+                $this->rollback_transaction();
+            } catch (dml_exception $e) {
+                // ignore any sql errors here, the connection might be broken
+            }
+        }
+
+        // now enable transactions again
+        $this->transactions = array(); // unfortunately all unfinished exceptions are kept in memory
+        $this->force_rollback = false;
     }
 
 /// session locking

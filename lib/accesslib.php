@@ -2455,24 +2455,18 @@ function cleanup_contexts() {
                      ON c.instanceid = t.id
                WHERE t.id IS NULL AND c.contextlevel = ".CONTEXT_BLOCK."
            ";
+
+    // transactions used only for performance reasons here
+    $transaction = $DB->start_delegated_transaction();
+
     if ($rs = $DB->get_recordset_sql($sql)) {
-        $DB->begin_sql();
-        $ok = true;
         foreach ($rs as $ctx) {
-            if (!delete_context($ctx->contextlevel, $ctx->instanceid)) {
-                $ok = false;
-                break;
-            }
+            delete_context($ctx->contextlevel, $ctx->instanceid);
         }
         $rs->close();
-        if ($ok) {
-            $DB->commit_sql();
-            return true;
-        } else {
-            $DB->rollback_sql();
-            return false;
-        }
     }
+
+    $transaction->allow_commit();
     return true;
 }
 

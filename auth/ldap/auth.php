@@ -729,7 +729,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $creatorrole = false;
                 }
 
-                $DB->begin_sql();
+                $transaction = $DB->start_delegated_transaction();
                 $xcount = 0;
                 $maxxcount = 100;
 
@@ -749,14 +749,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                             role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id, 'ldap');
                         }
                     }
-
-                    if ($xcount++ > $maxxcount) {
-                        $DB->commit_sql();
-                        $DB->begin_sql();
-                        $xcount = 0;
-                    }
                 }
-                $DB->commit_sql();
+                $transaction->allow_commit();
                 unset($users); // free mem
             }
         } else { // end do updates
@@ -785,7 +779,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $creatorrole = false;
             }
 
-            $DB->begin_sql();
+            $transaction = $DB->start_delegated_transaction();
             foreach ($add_users as $user) {
                 $user = $this->get_userinfo_asobj($user->username);
 
@@ -816,7 +810,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'ldap');
                 }
             }
-            $DB->commit_sql();
+            $transaction->allow_commit();
             unset($add_users); // free mem
         } else {
             print "No users to be added\n";

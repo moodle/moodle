@@ -344,7 +344,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!empty($add_users)) {
             print_string('auth_dbuserstoadd','auth_db',count($add_users)); echo "\n";
-            $DB->begin_sql();
+            $transaction = $DB->start_delegated_transaction();
             foreach($add_users as $user) {
                 $username = $user;
                 $user = $this->get_userinfo_asobj($user);
@@ -375,7 +375,7 @@ class auth_plugin_db extends auth_plugin_base {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth_db', $user->username); echo "\n";
                 }
             }
-            $DB->commit_sql();
+            $transaction->allow_commit();
             unset($add_users); // free mem
         }
         return true;

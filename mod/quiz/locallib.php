@@ -496,7 +496,7 @@ function quiz_has_feedback($quiz) {
  *
  * @param float $newgrade the new maximum grade for the quiz.
  * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
- * @return boolean indicating success or failure.
+ * @return boolean indicating success or failure. TODO: MDL-20625
  */
 function quiz_set_grade($newgrade, &$quiz) {
     global $DB;
@@ -507,43 +507,45 @@ function quiz_set_grade($newgrade, &$quiz) {
     }
 
     // Use a transaction, so that on those databases that support it, this is safer.
-    $DB->begin_sql();
+    $transaction = $DB->start_delegated_transaction();
 
-    // Update the quiz table.
-    $success = $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));
+    try {
+        // Update the quiz table.
+        $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));
 
-    // Rescaling the other data is only possible if the old grade was non-zero.
-    if ($quiz->grade > 1e-7) {
-        global $CFG;
+        // Rescaling the other data is only possible if the old grade was non-zero.
+        if ($quiz->grade > 1e-7) {
+            global $CFG;
 
-        $factor = $newgrade/$quiz->grade;
-        $quiz->grade = $newgrade;
+            $factor = $newgrade/$quiz->grade;
+            $quiz->grade = $newgrade;
 
-        // Update the quiz_grades table.
-        $timemodified = time();
-        $success = $success && $DB->execute("
-                UPDATE {quiz_grades}
-                SET grade = ? * grade, timemodified = ?
-                WHERE quiz = ?
-        ", array($factor, $timemodified, $quiz->id));
+            // Update the quiz_grades table.
+            $timemodified = time();
+            $DB->execute("
+                    UPDATE {quiz_grades}
+                    SET grade = ? * grade, timemodified = ?
+                    WHERE quiz = ?
+            ", array($factor, $timemodified, $quiz->id));
 
-        // Update the quiz_feedback table.
-        $success = $success && $DB->execute("
-                UPDATE {quiz_feedback}
-                SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
-                WHERE quizid = ?
-        ", array($factor, $factor, $quiz->id));
-    }
+            // Update the quiz_feedback table.
+            $DB->execute("
+                    UPDATE {quiz_feedback}
+                    SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
+                    WHERE quizid = ?
+            ", array($factor, $factor, $quiz->id));
+        }
 
-    // update grade item and send all grades to gradebook
-    quiz_grade_item_update($quiz);
-    quiz_update_grades($quiz);
+        // update grade item and send all grades to gradebook
+        quiz_grade_item_update($quiz);
+        quiz_update_grades($quiz);
 
-    if ($success) {
-        return $DB->commit_sql();
-    } else {
-        $DB->rollback_sql();
-        return false;
+        $transaction->allow_commit();
+        return true;
+
+    } catch (Exception $e) {
+        //TODO: MDL-20625 this part was returning false, but now throws exception
+        $transaction->rollback($e);
     }
 }
 

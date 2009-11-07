@@ -1527,46 +1527,35 @@ class oci_native_moodle_database extends moodle_database {
 
 /// transactions
     /**
-     * on DBs that support it, switch to transaction mode and begin a transaction
-     * you'll need to ensure you call commit_sql() or your changes *will* be lost.
-     *
-     * this is _very_ useful for massive updates
+     * Driver specific start of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function begin_sql() {
-        if (!parent::begin_sql()) {
-            return false;
-        }
+    protected function begin_transaction() {
         $this->commit_status = OCI_DEFAULT; //Done! ;-)
-        return true;
     }
 
     /**
-     * on DBs that support it, commit the transaction
+     * Driver specific commit of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function commit_sql() {
-        if (!parent::commit_sql()) {
-            return false;
-        }
-
+    protected function commit_transaction() {
         $this->query_start('--oracle_commit', NULL, SQL_QUERY_AUX);
         $result = oci_commit($this->oci);
         $this->commit_status = OCI_COMMIT_ON_SUCCESS;
         $this->query_end($result);
-        return true;
     }
 
     /**
-     * on DBs that support it, rollback the transaction
+     * Driver specific abort of real database transaction,
+     * this can not be used directly in code.
+     * @return void
      */
-    public function rollback_sql() {
-        if (!parent::rollback_sql()) {
-            return false;
-        }
-
+    protected function rollback_transaction() {
         $this->query_start('--oracle_rollback', NULL, SQL_QUERY_AUX);
         $result = oci_rollback($this->oci);
         $this->commit_status = OCI_COMMIT_ON_SUCCESS;
         $this->query_end($result);
-        return true;
     }
 }

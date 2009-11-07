@@ -57,6 +57,8 @@ class database_importer {
      * How to use transactions.
      */
     protected $transactionmode = 'allinone';
+    /** Transaction object */
+    protected $transaction;
 
     /**
      * Object constructor.
@@ -123,7 +125,7 @@ class database_importer {
             throw new dbtransfer_exception('importschemaexception', $details);
         }
         if ($this->transactionmode == 'allinone') {
-            $this->mdb->begin_sql();
+            $this->transaction = $this->mdb->start_delegated_transaction();
         }
     }
 
@@ -140,7 +142,7 @@ class database_importer {
      */
     public function begin_table_import($tablename, $schemaHash) {
         if ($this->transactionmode == 'pertable') {
-            $this->mdb->begin_sql();
+            $this->transaction = $this->mdb->start_delegated_transaction();
         }
         if (!$table = $this->schema->getTable($tablename)) {
             throw new dbtransfer_exception('unknowntableexception', $tablename);
@@ -171,7 +173,7 @@ class database_importer {
             }
         }
         if ($this->transactionmode == 'pertable') {
-            $this->mdb->commit_sql();
+            $this->transaction->allow_commit();
         }
     }
 
@@ -182,7 +184,7 @@ class database_importer {
      */
     public function finish_database_import() {
         if ($this->transactionmode == 'allinone') {
-            $this->mdb->commit_sql();
+            $this->transaction->allow_commit();
         }
     }
 

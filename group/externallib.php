@@ -60,36 +60,31 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::create_groups_parameters(), array('groups'=>$groups));
 
-        // ideally create all groups or none at all, unfortunately myisam engine does not support transactions :-(
-        $DB->begin_sql();
-        try {
-//TODO: there is a potential problem with events propagating actions to external systems :-(
-            $groups = array();
+        $transaction = $DB->start_delegated_transaction();
 
-            foreach ($params['groups'] as $group) {
-                $group = (object)$group;
+        $groups = array();
 
-                if (trim($group->name) == '') {
-                    throw new invalid_parameter_exception('Invalid group name');
-                }
-                if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
-                    throw new invalid_parameter_exception('Group with the same name already exists in the course');
-                }
+        foreach ($params['groups'] as $group) {
+            $group = (object)$group;
 
-                // now security checks
-                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-                self::validate_context($context);
-                require_capability('moodle/course:managegroups', $context);
-
-                // finally create the group
-                $group->id = groups_create_group($group, false);
-                $groups[] = (array)$group;
+            if (trim($group->name) == '') {
+                throw new invalid_parameter_exception('Invalid group name');
             }
-        } catch (Exception $ex) {
-            $DB->rollback_sql();
-            throw $ex;
+            if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
+                throw new invalid_parameter_exception('Group with the same name already exists in the course');
+            }
+
+            // now security checks
+            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            self::validate_context($context);
+            require_capability('moodle/course:managegroups', $context);
+
+            // finally create the group
+            $group->id = groups_create_group($group, false);
+            $groups[] = (array)$group;
         }
-        $DB->commit_sql();
+
+        $transaction->allow_commit();
 
         return $groups;
     }
@@ -242,30 +237,27 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::delete_groups_parameters(), array('groupids'=>$groupids));
 
-        $DB->begin_sql();
-        try {
+        $transaction = $DB->start_delegated_transaction();
+
 // TODO: this is problematic because the DB rollback does not handle deleting of images!!
 //       there is also potential problem with events propagating action to external systems :-(
-            foreach ($params['groupids'] as $groupid) {
-                // validate params
-                $groupid = validate_param($groupid, PARAM_INTEGER);
-                if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
-                    // silently ignore attempts to delete nonexisting groups
-                    continue;
-                }
-
-                // now security checks
-                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-                self::validate_context($context);
-                require_capability('moodle/course:managegroups', $context);
-
-                groups_delete_group($group);
+        foreach ($params['groupids'] as $groupid) {
+            // validate params
+            $groupid = validate_param($groupid, PARAM_INTEGER);
+            if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
+                // silently ignore attempts to delete nonexisting groups
+                continue;
             }
-        } catch (Exception $ex) {
-            $DB->rollback_sql();
-            throw $ex;
+
+            // now security checks
+            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            self::validate_context($context);
+            require_capability('moodle/course:managegroups', $context);
+
+            groups_delete_group($group);
         }
-        $DB->commit_sql();
+
+        $transaction->allow_commit();
     }
 
    /**
@@ -361,33 +353,29 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::add_groupmembers_parameters(), array('members'=>$members));
 
-        $DB->begin_sql();
-        try {
-// TODO: there is a potential problem with events propagating action to external systems :-(
-            foreach ($params['members'] as $member) {
-                // validate params
-                $groupid = $member['groupid'];
-                $userid = $member['userid'];
+        $transaction = $DB->start_delegated_transaction();
+        // TODO: there is a potential problem with events propagating action to external systems :-(
+        foreach ($params['members'] as $member) {
+            // validate params
+            $groupid = $member['groupid'];
+            $userid = $member['userid'];
 
-                $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
-                $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
+            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
-                // now security checks
-                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-                self::validate_context($context);
-                require_capability('moodle/course:managegroups', $context);
+            // now security checks
+            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            self::validate_context($context);
+            require_capability('moodle/course:managegroups', $context);
 
-                // now make sure user is enrolled in course - this is mandatory requirement,
-                // unfortunately this is extermely slow
-                require_capability('moodle/course:view', $context, $userid, false);
+            // now make sure user is enrolled in course - this is mandatory requirement,
+            // unfortunately this is extermely slow
+            require_capability('moodle/course:view', $context, $userid, false);
 
-                groups_add_member($group, $user);
-            }
-        } catch (Exception $ex) {
-            $DB->rollback_sql();
-            throw $ex;
+            groups_add_member($group, $user);
         }
-        $DB->commit_sql();
+
+        $transaction->allow_commit();
     }
 
    /**
@@ -429,29 +417,26 @@ class moodle_group_external extends external_api {
 
         $params = self::validate_parameters(self::delete_groupmembers_parameters(), array('members'=>$members));
 
-        $DB->begin_sql();
-        try {
+        $transaction = $DB->start_delegated_transaction();
+
 // TODO: there is a potential problem with events propagating action to external systems :-(
         foreach ($params['members'] as $member) {
-                // validate params
-                $groupid = $member['groupid'];
-                $userid = $member['userid'];
+            // validate params
+            $groupid = $member['groupid'];
+            $userid = $member['userid'];
 
-                $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
-                $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
+            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
-                // now security checks
-                $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
-                self::validate_context($context);
-                require_capability('moodle/course:managegroups', $context);
+            // now security checks
+            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            self::validate_context($context);
+            require_capability('moodle/course:managegroups', $context);
 
-                groups_remove_member($group, $user);
-            }
-        } catch (Exception $ex) {
-            $DB->rollback_sql();
-            throw $ex;
+            groups_remove_member($group, $user);
         }
-        $DB->commit_sql();
+
+        $transaction->allow_commit();
     }
 
    /**
