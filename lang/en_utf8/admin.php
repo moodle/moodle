@@ -39,28 +39,10 @@ $string['blockmultiple'] = 'Multiple';
 $string['blocksettings'] = 'Manage blocks';
 $string['bloglevel'] = 'Blog visibility';
 $string['bloglevelupgrade'] = 'Blog visibility upgrade';
-$string['bloglevelupgradebody'] = 'Hi! You are receiving this message as an administrator of $a->sitename.
-
-This site has recently been upgraded to Moodle 2.0.
-
-Blog visibility was simplified in 2.0, but your site still uses one of the old visibility types.
-
-To preserve the course-based or group-based visibility of the blog entries on your site, you need to run the following upgrade script, which will create a special "blog" type forum in each course whose enrolled users have posted blog entries, and will copy these blog entries in this special forum.
-
-Blogs will then be entirely switched off at the site level. No blog entries will be deleted in the process.
-
-You can run the script by visiting $a->fixurl.
-';
-$string['bloglevelupgradehtml'] = '<p>Hi! You are receiving this message as an administrator of $a->sitename.</p>
-
-<p>This site has recently been upgraded to Moodle 2.0.</p>
-
+$string['bloglevelupgradedescription'] = '<p>This site has recently been upgraded to Moodle 2.0.</p>
 <p>Blog visibility was simplified in 2.0, but your site still uses one of the old visibility types. </p>
-
-<p>To preserve the course-based or group-based visibility of the blog entries on your site, you need to run the following upgrade script, which will create a special "blog" type forum in each course whose enrolled users have posted blog entries, and will copy these blog entries in this special forum. </p>
-
+<p>To preserve the course-based or group-based visibility of the blog entries on your site, you need to run the following upgrade script, which will create a special \"blog\" type forum in each course whose enrolled users have posted blog entries, and will copy these blog entries in this special forum. </p>
 <p>Blogs will then be entirely switched off at the site level. No blog entries will be deleted in the process.</p>
-
 <p>You can run the script by visiting <a href=\"$a->fixurl\">the blog level upgrade page</a>.</p>';
 $string['bloglevelupgradeinfo'] = 'Blog visibility was simplified in 2.0, but your site still uses one of the old visibility types. To preserve the course-based or group-based visibility of the blog entries on your site, the following upgrade script will create a special "blog" type forum in each course whose enrolled users have posted blog entries, and will copy these blog entries in this special forum. Blogs will then be entirely switched off at the site level. No blog entries will be deleted in the process.';
 $string['bloglevelupgradenotice'] = 'Your site is using an old blog visibility setting, the <a href=\"bloglevelupgrade.php\">blog visibility upgrade</a> is recommended.';

@@ -2686,21 +2686,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $a->sitename = $site->fullname;
             $a->fixurl   = "$CFG->wwwroot/$CFG->admin/bloglevelupgrade.php";
 
-            $subject   = get_string('bloglevelupgrade', 'admin');
-            $plainbody = get_string('bloglevelupgradebody', 'admin', $a);
-            $htmlbody  = get_string('bloglevelupgradehtml', 'admin', $a);
+            $subject = get_string('bloglevelupgrade', 'admin');
+            $description = get_string('bloglevelupgradedescription', 'admin', $a);
 
-            foreach ($admins as $admin) {
-                $eventdata = new object();
-                $eventdata->component = 'moodle';
-                $eventdata->userfrom = $USER;
-                $eventdata->userto = $admin;
-                $eventdata->subject = $subject;
-                $eventdata->fullmessage = $plainbody;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml = $htmlbody;
-                events_trigger('message_send', $eventdata);
-            }
+            // can not use messaging here because it is not configured yet!
+            upgrade_log(UPGRADE_LOG_NOTICE, null, $subject, $description);
         }
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2009103000);
