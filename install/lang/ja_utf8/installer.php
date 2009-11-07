@@ -182,7 +182,7 @@ $string['magicquotesruntimehelp'] = '<p>Moodleを正常に動作させるため�
 
 <p>php.iniファイルにアクセスできない場合は、Moodleディレクトリの.htaccessファイルに次の行を追加してください:</p>
 <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>';
-$string['mbstringrecommended'] = 'より良いパフォーマンスを得るため、mbstringライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
+$string['mbstringrecommended'] = 'サイトパフォーマンスを改善するため、mbstringライブラリのインストールおよび稼動を強くお勧めします。あなたのサイトがラテン文字以外をサポートしている場合、特にお勧めします。';
 $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'PHPのmemory limitが低すぎます ... 後で問題が発生する可能性があります。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されています。</p>
@@ -203,7 +203,7 @@ $string['mssqlextensionisnotpresentinphp'] = 'PHPのMSSQL拡張モジュール�
 $string['mssql_n'] = 'SQL*Server UTF-8サポート (mssql_n)';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'あなたのサイトがiso-8859-1 (ラテン) 言語のみ使用している場合、現在インストールされている MySQL 4.1.12 (またはそれ以上) を使用することができます。';
-$string['mysql416required'] = 'Moodle1.6では、将来すべてのデータをUTF-8に変換するため、MySQL 4.1.16が要求される最低限のバージョンです。';
+$string['mysql416required'] = '将来すべてのデータをUTF-8に変換できるため、Moodle 1.6では、MySQL 4.1.16が要求される最低限のバージョンです。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHPのMySQL拡張モジュールが適切に設定されていないため、MySQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHPのMySQLi拡張モジュールが適切に設定されていないため、MySQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。MySQLi拡張モジュールは、PHP4では使用できません。';
