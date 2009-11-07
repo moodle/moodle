@@ -2451,7 +2451,7 @@ class dml_test extends UnitTestCase {
             $this->assertEqual(get_class($e), 'dml_transaction_exception');
         }
         $this->assertEqual(2, $DB->count_records($tablename)); // not rolled back yet
-        // the forced rollback is done from the default_exception hadnler and similar places,
+        // the forced rollback is done from the default_exception handler and similar places,
         // let's do it manually here
         $this->assertTrue($DB->is_transaction_started());
         $DB->force_transaction_rollback();
@@ -2522,7 +2522,7 @@ class dml_test extends UnitTestCase {
         } catch (Exception $e) {
             $this->assertEqual(get_class($e), 'dml_transaction_exception');
         }
-        // this is done in default exception hadnler usually
+        // this is done in default exception handler usually
         $this->assertTrue($DB->is_transaction_started());
         $this->assertEqual(2, $DB->count_records($tablename)); // not rolled back yet
         $DB->force_transaction_rollback();
@@ -2554,7 +2554,7 @@ class dml_test extends UnitTestCase {
             // the rollback was used already once, no way to use it again
             $this->assertEqual(get_class($e), 'dml_transaction_exception');
         }
-        // this is done in default exception hadnler usually
+        // this is done in default exception handler usually
         $this->assertTrue($DB->is_transaction_started());
         $DB->force_transaction_rollback();
         $DB->delete_records($tablename);

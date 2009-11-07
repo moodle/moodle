@@ -576,7 +576,7 @@ function get_current_group($courseid, $full = false) {
 /**
  * Inndicates fatal error. This function was originally printing the
  * error message directly, since 2.0 it is throwing exception instead.
- * The error printing is handled in default exception hadnler.
+ * The error printing is handled in default exception handler.
  *
  * Old method, don't call directly in new code - use print_error instead.
  *

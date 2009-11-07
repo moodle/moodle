@@ -429,7 +429,7 @@ function events_trigger($eventname, $eventdata) {
                 // we need to send them to queue instead - this is slow but necessary.
                 // It could be improved in future by adding internal/external flag to each handler.
 
-                $DB->set_field('events_handlers', 'status', ($hadnler->status+1), array('id'=>$handler->id));
+                $DB->set_field('events_handlers', 'status', ($handler->status+1), array('id'=>$handler->id));
                 // reset static handler cache
                 events_get_handlers('reset');
 
