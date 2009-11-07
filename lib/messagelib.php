@@ -18,28 +18,40 @@
 /**
  * messagelib.php - Contains generic messaging functions for the message system
  *
- * @package moodlecore
+ * @package   moodlecore
  * @copyright Luis Rodrigues and Martin Dougiamas
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/** TIMETOSHOWUSERS = 300 */
-define('TIMETOSHOWUSERS', 300);
-
 /**
- * Triggered when a message provider wants to send a message.
+ * Called when a message provider wants to send a message.
  * This functions checks the user's processor configuration to send the given type of message,
  * then tries to send it.
- * @param object $eventdata information about the message (origin, destination, type, content)
+ *
+ * Required parameter $eventdata structure:
+ *  modulename     -
+ *  userfrom
+ *  userto
+ *  subject
+ *  fullmessage - the full message in a given format
+ *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
+ *  fullmessagehtml  - the full version (the message processor will choose with one to use)
+ *  smallmessage - the small version of the message
+ *
+ * @param object $eventdata information about the message (modulename, userfrom, userto, ...)
  * @return boolean success
  */
-function message_send_handler($eventdata){
+function message_send($eventdata) {
     global $CFG, $DB;
+
+    //TODO: this function is very slow and inefficient, it would be a major bottleneck in cron processing, this has to be improved in 2.0
+    //      probably we could add two parameters with user messaging preferences and we could somehow preload/cache them in cron
+    //TODO: we need to solve problems with database transactions here somehow
 
     if (isset($CFG->block_online_users_timetosee)) {
         $timetoshowusers = $CFG->block_online_users_timetosee * 60;
     } else {
-        $timetoshowusers = TIMETOSHOWUSERS;
+        $timetoshowusers = 300;
     }
 
 /// Work out if the user is logged in or not
@@ -64,19 +76,19 @@ function message_send_handler($eventdata){
 /// When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
     $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, NULL, $eventdata->userto->id);
 
-    if ($processor == NULL){ //this user never had a preference, save default
-        if (!message_set_default_message_preferences( $eventdata->userto )){
+    if ($processor == NULL) { //this user never had a preference, save default
+        if (!message_set_default_message_preferences($eventdata->userto)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        if ( $userstate == 'loggedin'){
-            $processor='popup';
+        if ($userstate == 'loggedin') {
+            $processor = 'popup';
         }
-        if ( $userstate == 'loggedoff'){
-            $processor='email';
+        if ($userstate == 'loggedoff') {
+            $processor = 'email';
         }
     }
 
-    //if we are suposed to do something with this message
+    // if we are suposed to do something with this message
     // No processor for this message, mark it as read
     if ($processor == "") {  //this user cleared all the preferences
         $savemessage->timeread = time();
@@ -94,13 +106,13 @@ function message_send_handler($eventdata){
             $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
 
             if (is_readable($processorfile)) {
-                include_once( $processorfile );  // defines $module with version etc
+                include_once($processorfile);  // defines $module with version etc
                 $processclass = 'message_output_' . $procname;
 
                 if (class_exists($processclass)) {
                     $pclass = new $processclass();
 
-                    if (! $pclass->send_message($savemessage)) {
+                    if (!$pclass->send_message($savemessage)) {
                         debugging('Error calling message processor '.$procname);
                         return false;
                     }
@@ -141,8 +153,8 @@ function message_update_providers($component='moodle') {
 
             } else {                                // Update existing one
                 $provider = new object();
-                $provider->id             = $dbproviders[$messagename]->id;
-                $provider->capability     = $fileprovider['capability'];
+                $provider->id         = $dbproviders[$messagename]->id;
+                $provider->capability = $fileprovider['capability'];
                 $DB->update_record('message_providers', $provider);
                 unset($dbproviders[$messagename]);
                 continue;
@@ -199,12 +211,7 @@ function message_get_my_providers() {
 function message_get_providers_from_db($component) {
     global $DB;
 
-    if ($dbproviders = $DB->get_records('message_providers', array('component'=>$component), '',
-                                        'name, id, component, capability')) {  // Name is unique per component
-        return $dbproviders;
-    }
-
-    return array();
+    return $DB->get_records('message_providers', array('component'=>$component), '', 'name, id, component, capability');  // Name is unique per component
 }
 
 /**
@@ -245,14 +252,14 @@ function message_uninstall($component) {
  * Set default message preferences.
  * @param $user - User to set message preferences
  */
-function message_set_default_message_preferences( $user ) {
+function message_set_default_message_preferences($user) {
     global $DB;
 
     $providers = $DB->get_records('message_providers');
     $preferences = array();
-    foreach ( $providers as $providerid => $provider){
-        $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'  ] = 'popup';
-        $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'  ] = 'email';
+    foreach ($providers as $providerid => $provider) {
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = 'popup';
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = 'email';
     }
-    return set_user_preferences( $preferences, $user->id );
+    return set_user_preferences($preferences, $user->id);
 }

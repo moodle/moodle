@@ -68,7 +68,7 @@ function notify_user($user,$subject,$a) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
-    events_trigger('message_send', $eventdata);
+    message_send($eventdata);
 }
 
 
@@ -87,7 +87,7 @@ function notify_admins($user,$subject,$a) {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 }
 
@@ -108,7 +108,7 @@ function notify_admins_unknown($file,$a) {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 }
 

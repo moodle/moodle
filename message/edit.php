@@ -24,7 +24,6 @@
  */
 
 require_once('../config.php');
-require_once($CFG->libdir.'/messagelib.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)

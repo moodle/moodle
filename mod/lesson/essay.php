@@ -228,15 +228,12 @@
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml  = $message;
                     $eventdata->smallmessage     = '';
-                    if ( events_trigger('message_send', $eventdata) == 0){
-                        $essayinfo->sent = 1;
-                        $attempt->useranswer = serialize($essayinfo);
-                        $DB->update_record('lesson_attempts', $attempt);
-                        // Log it
-                        add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
-                    } else {
-                        print_error('emailfail');
-                    }
+                    message_send($eventdata);
+                    $essayinfo->sent = 1;
+                    $attempt->useranswer = serialize($essayinfo);
+                    $DB->update_record('lesson_attempts', $attempt);
+                    // Log it
+                    add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
                 }
             }
             lesson_set_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');

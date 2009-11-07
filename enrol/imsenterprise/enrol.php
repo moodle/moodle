@@ -389,7 +389,7 @@ function cron() {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';			
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
 
         $this->log_line('Notification email sent to administrator.');
 

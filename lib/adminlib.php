@@ -114,7 +114,6 @@
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
-require_once($CFG->libdir.'/messagelib.php');      // Messagelib functions
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);

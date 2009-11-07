@@ -210,7 +210,7 @@ function schedule_backup_cron() {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 
     //Everything is finished stop backup_sche_running

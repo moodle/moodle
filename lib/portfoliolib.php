@@ -994,6 +994,6 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
         $eventdata->fullmessagehtml = $htmlbody;
         $eventdata->smallmessage = $smallbody;
         error_log(print_r($eventdata, true));
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 }

@@ -31,7 +31,7 @@
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
 
         redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         exit;

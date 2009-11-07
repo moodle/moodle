@@ -330,7 +330,7 @@ function cron() {
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';			
-                            events_trigger('message_send', $eventdata);
+                            message_send($eventdata);
                         }
                     }
                 }
@@ -355,7 +355,7 @@ function cron() {
                         $eventdata->fullmessageformat = FORMAT_PLAIN;
                         $eventdata->fullmessagehtml   = '';
                         $eventdata->smallmessage      = '';			
-                        events_trigger('message_send', $eventdata);
+                        message_send($eventdata);
                     }
                 }
             }

@@ -613,7 +613,7 @@ function forum_cron() {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
-                if ( events_trigger('message_send', $eventdata) > 0){
+                if (!message_send($eventdata)){
 
                     mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
@@ -907,7 +907,7 @@ function forum_cron() {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
-                if ( events_trigger('message_send', $eventdata) > 0){
+                if (!message_send($eventdata)){
                     mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);

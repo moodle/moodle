@@ -131,7 +131,7 @@ function message_to_admin($subject, $data)
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
-    events_trigger('message_send', $eventdata);
+    message_send($eventdata);
 }
 
 function send_welcome_messages($orderdata)
@@ -198,7 +198,7 @@ function send_welcome_messages($orderdata)
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                events_trigger('message_send', $eventdata);
+                message_send($eventdata);
             }
         }
         while ($ei);

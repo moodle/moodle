@@ -252,7 +252,7 @@ class enrolment_plugin_authorize
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
-                            events_trigger('message_send', $eventdata);
+                            message_send($eventdata);
                         }
                     }
                     redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
@@ -285,7 +285,7 @@ class enrolment_plugin_authorize
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
-                            events_trigger('message_send', $eventdata);
+                            message_send($eventdata);
                         }
                         if (!empty($CFG->enrol_mailadmins)) {
                             $a = new stdClass;
@@ -302,7 +302,7 @@ class enrolment_plugin_authorize
                                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                                 $eventdata->fullmessagehtml   = '';
                                 $eventdata->smallmessage      = '';
-                                events_trigger('message_send', $eventdata);
+                                message_send($eventdata);
                             }
                         }
                     }
@@ -723,7 +723,7 @@ class enrolment_plugin_authorize
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
-            events_trigger('message_send', $eventdata);
+            message_send($eventdata);
         }
         if (!empty($CFG->enrol_mailadmins)) {
             $eventdata = new object();
@@ -735,7 +735,7 @@ class enrolment_plugin_authorize
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
-            events_trigger('message_send', $eventdata);
+            message_send($eventdata);
         }
 
         // Send emails to students about which courses have enrolled.
@@ -803,7 +803,7 @@ class enrolment_plugin_authorize
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                events_trigger('message_send', $eventdata);
+                message_send($eventdata);
             }
             mtrace("        users who have 'enrol/authorize:uploadcsv' were mailed");
         }
@@ -847,7 +847,7 @@ class enrolment_plugin_authorize
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
 
         // Email to payment managers
         if (empty($CFG->an_emailexpiredteacher)) {
@@ -895,7 +895,7 @@ class enrolment_plugin_authorize
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';
-                    events_trigger('message_send', $eventdata);
+                    message_send($eventdata);
                 }
             }
         }

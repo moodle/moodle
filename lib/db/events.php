@@ -31,23 +31,6 @@
 
 $handlers = array (
 
-/* Messaging required parameters (object):
- *  modulename     -
- *  userfrom
- *  userto
- *  subject
- *  fullmessage - the full message in a given format
- *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
- *  fullmessagehtml  - the full version (the message processor will choose with one to use)
- *  smallmessage - the small version of the message
- */
-
-    'message_send' => array (
-         'handlerfile'      => '/lib/messagelib.php',
-         'handlerfunction'  => 'message_send_handler',
-         'schedule'         => 'instant'
-     ),
-
 /*
  * portfolio queued event - for non interactive file transfers
 */

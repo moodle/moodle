@@ -241,7 +241,7 @@ function authorize_process_csv($filename)
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';			
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 
 /// Send welcome messages to users

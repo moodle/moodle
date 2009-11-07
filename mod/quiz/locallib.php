@@ -1026,7 +1026,7 @@ function quiz_send_confirmation($a) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
-    return (events_trigger('message_send', $eventdata) == 0);
+    return message_send($eventdata);
 }
 
 /**
@@ -1060,7 +1060,7 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
-    return (events_trigger('message_send', $eventdata) == 0);
+    return message_send($eventdata);
 }
 
 /**

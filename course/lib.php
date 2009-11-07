@@ -3996,6 +3996,6 @@ class course_request {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
-        events_trigger('message_send', $eventdata);
+        message_send($eventdata);
     }
 }

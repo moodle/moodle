@@ -1681,8 +1681,7 @@ class assignment_base {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
-                if ( events_trigger('message_send', $eventdata) > 0 ){
-                }
+                message_send($eventdata);
             }
         }
     }
@@ -2351,9 +2350,7 @@ function assignment_cron () {
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $posthtml;
             $eventdata->smallmessage     = '';
-            if ( events_trigger('message_send', $eventdata) > 0 ){
-                echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
-            }
+            message_send($eventdata);
         }
 
         cron_setup_user();

@@ -227,7 +227,7 @@ function get_access_icons($course) {
                             $eventdata->fullmessageformat = FORMAT_PLAIN;
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
-                            events_trigger('message_send', $eventdata);
+                            message_send($eventdata);
                         }
 
                         if (!empty($CFG->enrol_mailteachers) && $teachers) {
@@ -247,7 +247,7 @@ function get_access_icons($course) {
                                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                                     $eventdata->fullmessagehtml   = '';
                                     $eventdata->smallmessage      = '';			
-                                    events_trigger('message_send', $eventdata);
+                                    message_send($eventdata);
                                 }
                             }
                         }
@@ -274,7 +274,7 @@ function get_access_icons($course) {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                events_trigger('message_send', $eventdata);
+                message_send($eventdata);
                 $this->log .= "Error unlinking file $filename\n";
             }
 
@@ -288,7 +288,7 @@ function get_access_icons($course) {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                events_trigger('message_send', $eventdata);
+                message_send($eventdata);
             }
 
         } // end of if(file_exists)

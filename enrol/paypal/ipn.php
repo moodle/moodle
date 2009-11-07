@@ -118,7 +118,7 @@
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
-                events_trigger('message_send', $eventdata);
+                message_send($eventdata);
 
                 message_paypal_error_to_admin("Payment pending", $data);
                 die;
@@ -203,7 +203,7 @@
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';
-                    events_trigger('message_send', $eventdata);
+                    message_send($eventdata);
 
                 }
 
@@ -220,7 +220,7 @@
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';			
-                    events_trigger('message_send', $eventdata);
+                    message_send($eventdata);
                 }
 
                 if (!empty($CFG->enrol_mailadmins)) {
@@ -237,7 +237,7 @@
                         $eventdata->fullmessageformat = FORMAT_PLAIN;
                         $eventdata->fullmessagehtml   = '';
                         $eventdata->smallmessage      = '';
-                        events_trigger('message_send', $eventdata);
+                        message_send($eventdata);
                     }
                 }
 
@@ -277,7 +277,7 @@ function message_paypal_error_to_admin($subject, $data) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
-    events_trigger('message_send', $eventdata);
+    message_send($eventdata);
 }
 
 

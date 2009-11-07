@@ -1023,7 +1023,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $eventdata->fullmessagehtml  = '';
     $eventdata->smallmessage     = '';
     $eventdata->timecreated     = time();
-    return events_trigger('message_send', $eventdata);
+    return message_send($eventdata);
 
 }
 
