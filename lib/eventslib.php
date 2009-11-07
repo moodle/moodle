@@ -424,7 +424,16 @@ function events_trigger($eventname, $eventdata) {
 
            $errormessage = '';
 
-           if ($handler->schedule == 'instant') {
+           if ($handler->schedule == 'instant' and $DB->is_transaction_started()) {
+                // Instant events can not be rolled back in DB transactions,
+                // we need to send them to queue instead - this is slow but necessary.
+                // It could be improved in future by adding internal/external flag to each handler.
+
+                $DB->set_field('events_handlers', 'status', ($hadnler->status+1), array('id'=>$handler->id));
+                // reset static handler cache
+                events_get_handlers('reset');
+
+           } else if ($handler->schedule == 'instant') {
                 if ($handler->status) {
                     //check if previous pending events processed
                     if (!$DB->record_exists('events_queue_handlers', array('handlerid'=>$handler->id))) {
