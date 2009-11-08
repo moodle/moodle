@@ -285,10 +285,15 @@ abstract class moodle_database {
      */
     public function dispose() {
         if ($this->transactions) {
+            // this should not happen, it isually indicates wrong catching of exceptions,
+            // because all transactions should be finished manually or in default exception hadnler.
             // unfortunately we can not access global $CFG any more and can not print debug,
             // the diagnostic info should be printed in footer instead
+            $lowesttransaction = end($this->transactions);
+            $backtrace = $lowesttransaction->get_backtrace();
+
+            error_log('Potential coding error - active database transaction detected when disposing database:'."\n".format_backtrace($backtrace, true));
             $this->force_transaction_rollback();
-            error_log('Active database transaction detected when disposing database!');
         }
         if ($this->used_for_db_sessions) {
             // this is needed because we need to save session to db before closing it

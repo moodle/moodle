@@ -41,6 +41,15 @@ class moodle_transaction {
     public function __construct($database) {
         $this->database = $database;
         $this->start_backtrace = debug_backtrace();
+        array_shift($this->start_backtrace);
+    }
+
+    /**
+     * Returns backtrace of the code starting exception.
+     * @return array
+     */
+    public function get_backtrace() {
+        return $this->start_backtrace;
     }
 
     /**
