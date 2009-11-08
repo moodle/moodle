@@ -685,7 +685,6 @@ class moodle_core_renderer extends moodle_renderer_base {
      * @return string HTML that you must output this, preferably immediately.
      */
     public function header() {
-        // TODO remove $navigation and $menu arguments - replace with $PAGE->navigation
         global $USER, $CFG;
 
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
