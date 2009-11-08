@@ -239,8 +239,7 @@ class moodle_group_external extends external_api {
 
         $transaction = $DB->start_delegated_transaction();
 
-// TODO: this is problematic because the DB rollback does not handle deleting of images!!
-//       there is also potential problem with events propagating action to external systems :-(
+// TODO: this is problematic because the DB rollback does not handle deleting of group images!
         foreach ($params['groupids'] as $groupid) {
             // validate params
             $groupid = validate_param($groupid, PARAM_INTEGER);
@@ -354,7 +353,6 @@ class moodle_group_external extends external_api {
         $params = self::validate_parameters(self::add_groupmembers_parameters(), array('members'=>$members));
 
         $transaction = $DB->start_delegated_transaction();
-        // TODO: there is a potential problem with events propagating action to external systems :-(
         foreach ($params['members'] as $member) {
             // validate params
             $groupid = $member['groupid'];
@@ -419,7 +417,6 @@ class moodle_group_external extends external_api {
 
         $transaction = $DB->start_delegated_transaction();
 
-// TODO: there is a potential problem with events propagating action to external systems :-(
         foreach ($params['members'] as $member) {
             // validate params
             $groupid = $member['groupid'];
