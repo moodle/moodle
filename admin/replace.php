@@ -5,6 +5,11 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+// workaround for problems with compression
+if (ini_get('zlib.output_compression')) {
+    @ini_set('zlib.output_compression', 'Off');
+}
+
 admin_externalpage_setup('replace');
 
 $search  = optional_param('search', '', PARAM_RAW);
