@@ -2582,6 +2582,10 @@ class dml_test extends UnitTestCase {
     }
 
     function test_concurent_transactions() {
+        // Notes about this test:
+        // 1- MySQL needs to use one engine with transactions support (InnoDB).
+        // 2- MSSQL needs to have enabled versioning for read committed
+        //    transactions (ALTER DATABASE xxx SET READ_COMMITTED_SNAPSHOT ON)
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
