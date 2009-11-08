@@ -205,7 +205,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $temp->add(new admin_setting_managerepository());
     $temp->add(new admin_setting_heading('managerepositoriescommonheading', get_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_configtext('repositorycacheexpire', get_string('cacheexpire', 'repository'), get_string('configcacheexpire', 'repository'), 120));
-    $temp->add(new admin_setting_configcheckbox('repositoryuseexternallink', get_string('useexternallink', 'repository'), get_string('configuseexternallink', 'repository'), 0));
+    $temp->add(new admin_setting_configcheckbox('repositoryallowexternallinks', get_string('allowexternallinks', 'repository'), get_string('configallowexternallinks', 'repository'), 1));
     $ADMIN->add('repositorysettings', $temp);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorynew',
         get_string('addplugin', 'repository'), $url, 'moodle/site:config', true),

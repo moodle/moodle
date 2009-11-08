@@ -228,15 +228,6 @@ EOD;
             break;
         case 'download':
             try {
-                if ($env == 'url' or $link_external === 'yes') {
-                    if (preg_match('#(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)#', $file)) {
-                        die(json_encode(array('type'=>'link', 'client_id'=>$client_id,
-                            'url'=>$file, 'id'=>$file, 'file'=>$file)));
-                    } else {
-                        $err->e = get_string('invalidurl');
-                        die(json_encode($err));
-                    }
-                }
                 // we have two special repoisitory type need to deal with
                 if ($repo->options['type'] == 'local' or $repo->options['type'] == 'draft') {
                     $fileinfo = $repo->move_to_draft($file, $title, $itemid, $save_path);
@@ -245,6 +236,28 @@ EOD;
                     $info['file'] = $fileinfo['title'];
                     $info['id'] = $itemid;
                     $info['url'] = $CFG->httpswwwroot.'/draftfile.php/'.$fileinfo['contextid'].'/user_draft/'.$itemid.'/'.$fileinfo['title'];
+                    die(json_encode($info));
+                }
+
+                $allowexternallink = (int)get_config(null, 'repositoryallowexternallinks');
+                if (!empty($allowexternallink)) {
+                    $allowexternallink = true;
+                } else {
+                    $allowexternallink = false;
+                }
+                // allow external links in url element all the time
+                $allowexternallink = ($allowexternallink || ($env == 'url'));
+
+                if ($allowexternallink and $link_external === 'yes' and ($repo->supported_returntypes() || FILE_EXTERNAL)) {
+                    try {
+                        $link = $repo->get_link($file);
+                    } catch (repository_exception $e){
+                    }
+                    $info = array();
+                    $info['client_id'] = $client_id;
+                    $info['file'] = $title;
+                    $info['type'] = 'link';
+                    $info['url'] = $link;
                     die(json_encode($info));
                 }
 

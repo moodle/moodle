@@ -602,6 +602,7 @@ repository_client.buildtree = function(client_id, node, level) {
     }
 }
 repository_client.select_file = function(oldname, url, icon, client_id, repo_id) {
+    var fp = repository_client.fp[client_id];
     if (repository_client.files[client_id] == undefined) {
         repository_client.files[client_id] = 0;
     }
@@ -628,7 +629,10 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-'+client_id+'">'+fp_lang.saveas+'</label>';
     html += '<input type="text" id="newname-'+client_id+'" value="" /></p>';
-    html += '<p><input type="checkbox" id="external-'+client_id+'" value="" /> Link external</p>';
+
+    if (fp_config.externallink && fp.env == 'editor') {
+        html += '<p><input type="checkbox" id="external_link-'+client_id+'" value="" />'+fp_lang.linkexternal+'</p>';
+    }
     html += '<p><input type="hidden" id="fileurl-'+client_id+'" value="'+url+'" />';
     html += '<input type="button" onclick="repository_client.download(\''+client_id+'\', \''+repo_id+'\')" value="'+fp_lang.downbtn+'" />';
     html += '<input type="button" onclick="repository_client.viewfiles(\''+client_id+'\')" value="'+fp_lang.cancel+'" /></p>';
@@ -1006,18 +1010,22 @@ repository_client.logout = function(client_id, repo_id) {
             repository_client.req_cb, repository_client.postdata(params));
 }
 repository_client.download = function(client_id, repo_id) {
+    var params = [];
     var fp = repository_client.fp[client_id];
     var title = document.getElementById('newname-'+client_id).value;
     new_filename = title;
     var file = document.getElementById('fileurl-'+client_id).value;
-    var link_external = document.getElementById('external-'+client_id).checked;
+    if (fp.env == 'editor') {
+        var link_external = document.getElementById('external_link-'+client_id).checked;
+        if (link_external) {
+            params['link_external'] = 'yes';
+        }
+    } if (fp.env == 'url') {
+        params['link_external'] = 'yes';
+    }
     repository_client.loading(client_id, 'download', title);
-    var params = [];
     if(fp.itemid){
         params['itemid']=fp.itemid;
-    }
-    if (link_external) {
-        params['link_external'] = 'yes';
     }
     params['env']=fp.env;
     params['file']=file;

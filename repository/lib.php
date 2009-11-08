@@ -1177,6 +1177,17 @@ abstract class repository {
     }
 
     /**
+     * Return file URL, for most plugins, the parameter is the original
+     * url, but some plugins use a file id, so we need this function to
+     * convert file id to original url.
+     *
+     * @param string $url the url of file
+     */
+    public function get_link($url) {
+        return $url;
+    }
+
+    /**
      * Download a file, this function can be overridden by
      * subclass.
      *
@@ -1853,6 +1864,7 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
         $lang['refresh']   = get_string('refresh', 'repository');
         $lang['invalidjson'] = get_string('invalidjson', 'repository');
         $lang['listview']  = get_string('listview', 'repository');
+        $lang['linkexternal'] = get_string('linkexternal', 'repository');
         $lang['login']     = get_string('login', 'repository');
         $lang['logout']    = get_string('logout', 'repository');
         $lang['loading']   = get_string('loading', 'repository');
@@ -1880,13 +1892,19 @@ function repository_get_client($context, $id = '',  $accepted_filetypes = '*', $
         $options = array();
         $sys_context = get_system_context();
         $options['contextid'] = $sys_context->id;
+        $externallink = (int)get_config(null, 'repositoryallowexternallinks');
+        if (empty($externallink)) {
+            $options['externallink'] = false;
+        } else {
+            $options['externallink'] = true;
+        }
         $options['icons']['loading'] = $OUTPUT->old_icon_url('i/loading');
+        $options['icons']['logout']  = $OUTPUT->old_icon_url('a/logout');
+        $options['icons']['help']    = $OUTPUT->old_icon_url('a/help');
         $options['icons']['progressbar'] = $OUTPUT->old_icon_url('i/progressbar');
-        $options['icons']['search'] = $OUTPUT->old_icon_url('a/search');
-        $options['icons']['refresh'] = $OUTPUT->old_icon_url('a/refresh');
+        $options['icons']['search']  = $OUTPUT->old_icon_url('a/search');
         $options['icons']['setting'] = $OUTPUT->old_icon_url('a/setting');
-        $options['icons']['logout'] = $OUTPUT->old_icon_url('a/logout');
-        $options['icons']['help'] = $OUTPUT->old_icon_url('a/help');
+        $options['icons']['refresh'] = $OUTPUT->old_icon_url('a/refresh');
         $options = json_encode($options);
         // fp_config includes filepicker options
 

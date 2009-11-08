@@ -210,6 +210,20 @@ class repository_flickr extends repository {
         return $this->build_list($photos, $page);
     }
 
+    public function get_link($photo_id) {
+        global $CFG;
+        $result = $this->flickr->photos_getSizes($photo_id);
+        $url = '';
+        if(!empty($result[4])) {
+            $url = $result[4]['source'];
+        } elseif(!empty($result[3])) {
+            $url = $result[3]['source'];
+        } elseif(!empty($result[2])) {
+            $url = $result[2]['source'];
+        }
+        return $url;
+    }
+
     /**
      *
      * @param string $photo_id
