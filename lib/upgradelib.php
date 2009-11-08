@@ -810,6 +810,7 @@ function external_update_descriptions($component) {
         $dbservice->requiredcapability = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
         $dbservice->restrictedusers    = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
         $dbservice->component          = $component;
+        $dbservice->timecreated        = time();
         $dbservice->id = $DB->insert_record('external_services', $dbservice);
         foreach ($service['functions'] as $fname) {
             $newf = new object();
