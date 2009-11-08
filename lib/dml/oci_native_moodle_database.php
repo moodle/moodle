@@ -180,19 +180,20 @@ class oci_native_moodle_database extends moodle_database {
         $pass = addcslashes($this->dbpass, "'\\");
 
         if (empty($this->dbhost)) {
-            // old style full address
+            // old style full address (TNS)
+            $dbstring = $this->dbname;
         } else {
             if (empty($this->dboptions['dbport'])) {
                 $this->dboptions['dbport'] = 1521;
             }
-            $this->dbname = '//'.$this->dbhost.':'.$this->dboptions['dbport'].'/'.$this->dbname;
+            $dbstring = '//'.$this->dbhost.':'.$this->dboptions['dbport'].'/'.$this->dbname;
         }
 
         ob_start();
         if (empty($this->dboptions['dbpersit'])) {
-            $this->oci = oci_connect($this->dbuser, $this->dbpass, $this->dbname, 'AL32UTF8');
+            $this->oci = oci_new_connect($this->dbuser, $this->dbpass, $dbstring, 'AL32UTF8');
         } else {
-            $this->oci = oci_pconnect($this->dbuser, $this->dbpass, $this->dbname, 'AL32UTF8');
+            $this->oci = oci_pconnect($this->dbuser, $this->dbpass, $dbstring, 'AL32UTF8');
         }
         $dberr = ob_get_contents();
         ob_end_clean();
