@@ -205,7 +205,7 @@
                     //Restore glossary_alias
                     $status = glossary_alias_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now restore glossary_comments
-                    $status = glossary_comments_restore_mods($oldid,$newid,$ent_info,$restore);
+                    $status = glossary_comments_restore_mods($oldid,$newid,$old_glossary_id,$new_glossary_id,$ent_info,$restore);
                     //Now restore glossary_ratings
                     $status = glossary_ratings_restore_mods($oldid,$newid,$ent_info,$restore);
                     //Now copy moddata associated files if needed
@@ -223,10 +223,13 @@
     }
 
     //This function restores the glossary_comments
-    function glossary_comments_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
+    function glossary_comments_restore_mods($old_entry_id,$new_entry_id,$old_gid,$new_gid,$info,$restore) {
         global $CFG, $DB;
 
         $status = true;
+
+        $newmodcontext = restore_get_new_context($restore, 'course_modules', CONTEXT_MODULE, $old_gid);
+
 
         //Get the comments array
         $comments = isset($info['#']['COMMENTS']['0']['#']['COMMENT'])?$info['#']['COMMENTS']['0']['#']['COMMENT']:array();
@@ -242,15 +245,17 @@
             $oldid = backup_todb($com_info['#']['ID']['0']['#']);
 
             //Now, build the GLOSSARY_COMMENTS record structure
-            $comment->entryid = $new_entry_id;
-            $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+            $comment->itemid = $new_entry_id;
             if (isset($com_info['#']['COMMENT']['0']['#'])) {
-                $comment->entrycomment = backup_todb($com_info['#']['COMMENT']['0']['#']);
+                $comment->content = backup_todb($com_info['#']['COMMENT']['0']['#']);
             } else {
-                $comment->entrycomment = backup_todb($com_info['#']['ENTRYCOMMENT']['0']['#']);
+                $comment->content = backup_todb($com_info['#']['ENTRYCOMMENT']['0']['#']);
             }
-            $comment->timemodified = backup_todb($com_info['#']['TIMEMODIFIED']['0']['#']);
-            $comment->entrycommentformat = backup_todb($com_info['#']['FORMAT']['0']['#']);
+            $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+            $comment->timecreated = backup_todb($com_info['#']['TIMECREATED']['0']['#']);
+            $comment->format = backup_todb($com_info['#']['FORMAT']['0']['#']);
+            $comment->commentarea = backup_todb($com_info['#']['COMMENTAREA']['0']['#']);
+            $comment->contextid = $newmodcontext->id;
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$comment->userid);
@@ -259,7 +264,7 @@
             }
 
             //The structure is equal to the db, so insert the glossary_comments
-            $newid = $DB->insert_record ("glossary_comments",$comment);
+            $newid = $DB->insert_record ("comments", $comment);
 
             //Do some output
             if (($i+1) % 50 == 0) {

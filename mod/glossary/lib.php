@@ -198,7 +198,7 @@ function glossary_delete_instance($id) {
 
     // Delete any dependent records
     $entry_select = "SELECT id FROM {glossary_entries} WHERE glossaryid = ?";
-    $DB->delete_records_select('glossary_comments', "entryid IN ($entry_select)", array($id));
+    $DB->delete_records_select('comments', "contextid={$context->id} AND commentarea='glossary_entry' AND itemid IN ($entry_select)", array($id));
     $DB->delete_records_select('glossary_alias',    "entryid IN ($entry_select)", array($id));
     $DB->delete_records_select('glossary_ratings',  "entryid IN ($entry_select)", array($id));
 
@@ -948,13 +948,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $output = true;
         $return .= get_string('entryishidden','glossary');
     }
-    $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
-
-    if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
-        $output = true;
-        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;entryid='.$entry->id.'"><img src="comment.gif" class="iconsmall" alt="'.get_string('addcomment','glossary').$altsuffix.'" /></a>';
-    }
-
 
     if (has_capability('mod/glossary:manageentries', $context) or (!empty($USER->id) and has_capability('mod/glossary:write', $context) and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
@@ -998,46 +991,26 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     $return .= '</span>';
 
+    if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
+        $output = true;
+        if (!empty($CFG->usecomments)) {
+            require_once($CFG->libdir . '/commentlib.php');
+            $cmt = new stdclass;
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $cmt->area    = 'glossary_entry';
+            $cmt->context = $modcontext;
+            $cmt->itemid  = $entry->id;
+            $cmt->showcount = true;
+            $comment = new comment($cmt);
+            $return .= '<div style="width:500px">'.$comment->init(true).'</div>';
+        }
+    }
+
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {
         $return = '';
     }
     //Print or get
-    if ($type == 'print') {
-        echo $return;
-    } else {
-        return $return;
-    }
-}
-
-/**
- * @global object
- * @param object $course
- * @param object $cm
- * @param object $glossary
- * @param object $entry
- * @param string $mode
- * @param string $hook
- * @param string $type
- * @return string|void
- */
-function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {
-    global $DB;
-
-    $return = '';
-
-    $count = $DB->count_records('glossary_comments', array('entryid'=>$entry->id));
-    if ($count) {
-        $return = '';
-        $return .= "<a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$count ";
-        if ($count == 1) {
-            $return .= get_string('comment', 'glossary');
-        } else {
-            $return .= get_string('comments', 'glossary');
-        }
-        $return .= '</a>';
-    }
-
     if ($type == 'print') {
         echo $return;
     } else {
@@ -1748,65 +1721,6 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
     }
 }
 
-/**
- * @global object
- * @global object
- * @global object
- * @param object $course
- * @param object $cm
- * @param object $glossary
- * @param object $entry
- * @param object $comment
- */
-function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    $user = $DB->get_record('user', array('id'=>$comment->userid));
-    $strby = get_string('writtenby','glossary');
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-
-    echo '<div class="boxaligncenter">';
-    echo '<table class="glossarycomment" cellspacing="0">';
-    echo '<tr valign="top">';
-    echo '<td class="left picture">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($user, $course->id));
-    echo '</td>';
-    echo '<td class="entryheader">';
-
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
-    $by = new object();
-    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-    $by->date = userdate($comment->timemodified);
-    echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
-
-    echo '</td></tr>';
-
-    echo '<tr valign="top"><td class="left side">';
-    echo '&nbsp;';
-    echo '</td><td class="entry">';
-
-    $options = new object();
-    $options->trusted = $comment->entrycommenttrust;
-    echo format_text($comment->entrycomment, $comment->entrycommentformat, $options);
-
-    echo '<div class="icons commands">';
-
-    $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || has_capability('mod/glossary:managecomments', $context)) {
-        echo "<a href=\"comment.php?id=$comment->id&amp;action=edit\"><img
-               alt=\"" . get_string("edit") . "\" src=\"" . $OUTPUT->old_icon_url('t/edit') . "\" class=\"iconsmall\" /></a> ";
-    }
-    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || has_capability('mod/glossary:managecomments', $context) ) {
-        echo "<a href=\"comment.php?id=$comment->id&amp;action=delete\"><img
-               alt=\"" . get_string("delete") . "\" src=\"" . $OUTPUT->old_icon_url('t/delete') . "\" class=\"iconsmall\" /></a>";
-    }
-
-    echo '</div></td></tr>';
-    echo '</table></div>';
-
-}
 
 /**
  * @global object
@@ -2495,7 +2409,7 @@ function glossary_get_view_actions() {
  * @return array
  */
 function glossary_get_post_actions() {
-    return array('add category','add comment','add entry','approve entry','delete category','delete comment','delete entry','edit category','update comment','update entry');
+    return array('add category','add entry','approve entry','delete category','delete entry','edit category','update entry');
 }
 
 
@@ -2589,7 +2503,8 @@ function glossary_reset_userdata($data) {
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
 
         $DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
-        $DB->delete_records_select('glossary_comments', "entryid IN ($allentriessql)", $params);
+        // TODO: delete comments 
+        //$DB->delete_records_select('comments', "entryid IN ($allentriessql)", array());
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
 
         // now get rid of all attachments
@@ -2706,7 +2621,7 @@ function glossary_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
     }
 
-    // remove all comments
+    // TODO: remove all comments
     if (!empty($data->reset_glossary_comments)) {
         $DB->delete_records_select('glossary_comments', "entryid IN ($allentriessql)", $params);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);

@@ -49,6 +49,8 @@ if (!empty($id)) {
 require_course_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    require_once($CFG->libdir . '/commentlib.php');
+    comment::js();
 /// Loading the textlib singleton instance. We are going to need it.
 $textlib = textlib_get_instance();
 

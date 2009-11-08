@@ -92,7 +92,7 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
     } else {
         $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
-        $DB->delete_records("glossary_comments", array("entryid"=>$entry->id));
+        $DB->delete_records("comments", array('itemid'=>$entry->id, 'commentarea'=>'glossary_entry', 'contextid'=>$context->id));
         $DB->delete_records("glossary_alias", array("entryid"=>$entry->id));
         $DB->delete_records("glossary_ratings", array("entryid"=>$entry->id));
         $DB->delete_records("glossary_entries", array("id"=>$entry->id));
@@ -115,4 +115,3 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
 
     echo $OUTPUT->footer();
 }
-

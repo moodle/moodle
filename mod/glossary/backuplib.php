@@ -217,8 +217,15 @@
         global $CFG, $DB;
 
         $status = true;
+        $params = array();
+        $params[] = $entryid;
+        $sql = 'SELECT g.id AS glossaryid, g.course as courseid FROM {glossary_entries} e, {glossary} g WHERE e.glossaryid = g.id AND e.id=?';
+        $result = $DB->get_record_sql($sql, $params);
+        if ($cm = get_coursemodule_from_instance('glossary', $result->glossaryid, $result->courseid)) {
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
 
-        $comments = $DB->get_records("glossary_comments", array("entryid"=>$entryid));
+        $comments = $DB->get_records('comments', array('itemid'=>$entryid, 'commentarea'=>'glossary_entry', 'contextid'=>$context->id));
         if ($comments) {
             $status =fwrite ($bf,start_tag("COMMENTS",6,true));
             foreach ($comments as $comment) {
@@ -226,9 +233,10 @@
 
                 fwrite ($bf,full_tag("ID",8,false,$comment->id));
                 fwrite ($bf,full_tag("USERID",8,false,$comment->userid));
-                fwrite ($bf,full_tag("ENTRYCOMMENT",8,false,$comment->entrycomment));
-                fwrite ($bf,full_tag("FORMAT",8,false,$comment->entrycommentformat));
-                fwrite ($bf,full_tag("TIMEMODIFIED",8,false,$comment->timemodified));
+                fwrite ($bf,full_tag("CONTENT",8,false,$comment->content));
+                fwrite ($bf,full_tag("COMMENTAREA",8,false,$comment->commentarea));
+                fwrite ($bf,full_tag("FORMAT",8,false,$comment->format));
+                fwrite ($bf,full_tag("TIMECREATED",8,false,$comment->timecreated));
 
                 $status =fwrite ($bf,end_tag("COMMENT",7,true));
             }

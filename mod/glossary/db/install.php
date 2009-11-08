@@ -18,9 +18,6 @@ function xmldb_glossary_install() {
     update_log_display_entry('glossary', 'add category', 'glossary', 'name');
     update_log_display_entry('glossary', 'update category', 'glossary', 'name');
     update_log_display_entry('glossary', 'delete category', 'glossary', 'name');
-    update_log_display_entry('glossary', 'add comment', 'glossary', 'name');
-    update_log_display_entry('glossary', 'update comment', 'glossary', 'name');
-    update_log_display_entry('glossary', 'delete comment', 'glossary', 'name');
     update_log_display_entry('glossary', 'approve entry', 'glossary', 'name');
     update_log_display_entry('glossary', 'view entry', 'glossary_entries', 'concept');
 

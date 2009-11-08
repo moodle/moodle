@@ -204,6 +204,55 @@ function xmldb_glossary_upgrade($oldversion) {
     /// glossary savepoint reached
         upgrade_mod_savepoint($result, 2009042006, 'glossary');
     }
+    if ($result && $oldversion < 2009110800) {
+        require_once($CFG->libdir . '/commentlib.php');
+ 
+    /// Define table glossary_comments to be dropped
+        $table = new xmldb_table('glossary_comments');
+
+    /// Conditionally launch drop table for glossary_comments
+        if ($dbman->table_exists($table)) {
+            $sql = 'SELECT e.glossaryid AS glossaryid,
+                g.course AS courseid,
+                e.id AS itemid,
+                c.id AS old_id,
+                c.entrycomment AS comment,
+                c.entrycommentformat AS format,
+                c.entrycommenttrust AS trust,
+                c.timemodified AS timemodified
+                FROM {glossary_comments} c, {glossary_entries} e, {glossary} g
+                WHERE c.entryid=e.id AND e.glossaryid=g.id';
+        /// move glossary comments to new comments table
+            $error = false;
+            if ($rs = $DB->get_recordset_sql($sql)) {
+                foreach($rs as $res) {
+                    if ($cm = get_coursemodule_from_instance('glossary', $res->glossaryid, $res->courseid)) {
+                        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        $cmt = new stdclass;
+                        $cmt->contextid = $context->id;
+                        $cmt->courseid  = $res->courseid;
+                        $cmt->area      = 'glossary_entry';
+                        $cmt->itemid    = $res->itemid;
+                        $comment = new comment($cmt);
+                        try {
+                            $cmt = $comment->add($res->comment, $res->format);
+                        } catch (comment_exception $e) {
+                            add_to_log($res->courseid, 'comments', 'add', '', 'Cannot migrate glossary comment with ID# '.$res->old_id);
+                            $error = true;
+                        }
+                    }
+                }
+            }
+            if (empty($error)) {
+                $dbman->drop_table($table);
+            } else {
+                print_error('error');
+            }
+        }
+
+    /// glossary savepoint reached
+        upgrade_mod_savepoint($result, 2009110800, 'glossary');
+    }
 
     return $result;
 }
