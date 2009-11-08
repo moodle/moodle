@@ -23,7 +23,7 @@ class repository_upload extends repository {
         $itemid = optional_param('itemid', '', PARAM_INT);
         $filepath = optional_param('savepath', '/', PARAM_PATH);
         if($action=='upload'){
-            $this->info = repository::store_to_filepool('repo_upload_file', 'user_draft', $filepath, $itemid);
+            $this->info = repository::upload_to_filepool('repo_upload_file', 'user_draft', $filepath, $itemid);
         }
     }
 
