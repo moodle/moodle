@@ -2580,6 +2580,49 @@ class dml_test extends UnitTestCase {
         $DB->force_transaction_rollback();
         $DB->delete_records($tablename);
     }
+
+    function test_concurent_transactions() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $transaction = $DB->start_delegated_transaction();
+        $data = (object)array('course'=>1);
+        $this->assertEqual(0, $DB->count_records($tablename));
+        $DB->insert_record($tablename, $data);
+        $this->assertEqual(1, $DB->count_records($tablename));
+
+        //open second connection
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = array();
+        }
+        $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+
+        // second instance should not see pending inserts
+        $this->assertEqual(0, $DB2->count_records($tablename));
+        $data = (object)array('course'=>2);
+        $DB2->insert_record($tablename, $data);
+        $this->assertEqual(1, $DB2->count_records($tablename));
+
+        // first should see the changes done from second
+        $this->assertEqual(2, $DB->count_records($tablename));
+
+        // now commit and we should see it finally in second connections
+        $transaction->allow_commit();
+        $this->assertEqual(2, $DB2->count_records($tablename));
+
+        $DB2->dispose();
+    }
 }
 
 /**
