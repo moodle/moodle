@@ -91,10 +91,6 @@ class moodle_user_external extends external_api {
         self::validate_context($context);
 
         // Do basic automatic PARAM checks on incoming data, using params description
-        // This checks to make sure that:
-        //      1) No extra data was sent
-        //      2) All required items were sent
-        //      3) All data passes clean_param without changes (yes this is strict)
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
 
@@ -105,7 +101,7 @@ class moodle_user_external extends external_api {
         $availablethemes = get_plugin_list('theme');
         $availablelangs  = get_list_of_languages();
 
-        // TODO start delegated transaction
+        $transaction = $DB->start_delegated_transaction();
 
         $users = array();
         foreach ($params['users'] as $user) {
@@ -129,39 +125,43 @@ class moodle_user_external extends external_api {
                 throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
-            //TODO: validate username, auth, lang and theme
+            // make sure there is no data loss during truncation
+            $truncated = truncate_userinfo($user);
+            foreach ($truncated as $key=>$value) {
+                if ($truncated[$key] !== $user[$key]) {
+                    throw new invalid_parameter_exception('Property: '.$key.' is too long: '.$user[$key]);
+                }
+            }
 
-            // finally create user
+            // finally create user and beter fetch from DB
             $record = create_user_record($user['username'], $user['password'], $user['auth']);
+            $newuser = $DB->get_record('user', array('id'=>$record->id), '*', MUST_EXIST);
 
-            // update using given data
-            $user['confirmed'] = 1;
-
+            // remove already used data
             unset($user['username']);
             unset($user['password']);
             unset($user['auth']);
 
-            $preferences = $user['preferences'];
-            unset($user['preferences']);
-
-            $customfields = $user['customfields'];
-            unset($custom['customfields']);
-
+            // update using given data
             foreach ($user as $key=>$value) {
                 if (is_null($value)) {
                     //ignore missing fields
                     continue;
                 }
-                $record->$key = $value;
+                if (!array_key_exists($key, $newuser)) {
+                    // set only existing
+                    continue;
+                }
+                $newuser->$key = $value;
             }
-            $DB->update_record('user', $record);
+            $DB->update_record('user', $newuser);
 
             //TODO: preferences and custom fields
 
-            $users[] = array('id'=>$record->id, 'username'=>$record->username);
+            $users[] = array('id'=>$newuser->id, 'username'=>$newuser->username);
         }
 
-        // TODO allow commit of delegated transaction
+        $transaction->allow_commit();
 
         return $users;
     }
@@ -194,8 +194,27 @@ class moodle_user_external extends external_api {
         );
     }
 
-    public static function delete_users($params) {
-        //TODO
+    public static function delete_users($userids) {
+        global $CFG, $DB;
+
+        // Ensure the current user is allowed to run this function
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        require_capability('moodle/user:delete', $context);
+        self::validate_context($context);
+
+        $params = self::validate_parameters(self::delete_users_parameters(), array('useids'=>$userids));
+
+        $transaction = $DB->start_delegated_transaction();
+// TODO: this is problematic because the DB rollback does not handle deleting of user images!
+
+        foreach ($params['userids'] as $userid) {
+            $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
+            delete_user($user);
+        }
+
+        $transaction->allow_commit();
+
+        return null;
     }
 
    /**
@@ -214,8 +233,26 @@ class moodle_user_external extends external_api {
     public static function update_users_parameters() {
         //TODO
     }
-    public static function update_users($params) {
-        //TODO
+
+    public static function update_users($users) {
+        global $CFG, $DB;
+
+        // Ensure the current user is allowed to run this function
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        require_capability('moodle/user:update', $context);
+        self::validate_context($context);
+
+        $params = self::validate_parameters(self::update_users_parameters(), array('users'=>$users));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['users'] as $user) {
+            //TODO
+        }
+
+        $transaction->allow_commit();
+
+        return null;
     }
 
    /**
@@ -254,7 +291,6 @@ class moodle_user_external extends external_api {
 
         //TODO: this search is probably useless for external systems because it is not exact
         //      1/ we should specify multiple search parameters including the mnet host id
-        //      2/ custom profile fileds not included
 
         $result = array();
 /*
