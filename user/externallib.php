@@ -205,7 +205,7 @@ class moodle_user_external extends external_api {
         $params = self::validate_parameters(self::delete_users_parameters(), array('useids'=>$userids));
 
         $transaction = $DB->start_delegated_transaction();
-// TODO: this is problematic because the DB rollback does not handle deleting of user images!
+// TODO: this is problematic because the DB rollback does not handle rollbacking of deleted user images!
 
         foreach ($params['userids'] as $userid) {
             $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
