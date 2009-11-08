@@ -717,9 +717,10 @@ function redirect_if_major_upgrade_required() {
         } catch (Exception $e) {
             // Ignore any errors, redirect to upgrade anyway.
         }
+        $url = $CFG->wwwroot . '/' . $CFG->admin . '/index.php';
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
-        @header('Location: ' . $CFG->wwwroot . '/' . $CFG->admin . '/index.php');
-        echo bootstrap_renderer::plain_redirect_message($encodedurl);
+        @header('Location: ' . $url);
+        echo bootstrap_renderer::plain_redirect_message(htmlspecialchars($url));
         exit;
     }
 }
