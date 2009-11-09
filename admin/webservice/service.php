@@ -82,7 +82,7 @@ if ($mform->is_cancelled()) {
         $DB->update_record('external_services', $data);
         add_to_log(1, 'webservice', 'edit', $CFG->wwwroot."/admin/settings.php?section=externalservices", get_string('editservice', 'webservice', $data));
     }
-    
+
     redirect($returnurl);
 }
 

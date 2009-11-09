@@ -169,7 +169,7 @@ class edit_index_save extends XMLDBAction {
         /// Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $tempindex->readableInfo() . '</p>';
-            $o.= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . 
+            $o.= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() .
                  '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
             $this->output = $o;
         }

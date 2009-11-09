@@ -60,7 +60,7 @@ class external_service_form extends moodleform {
         }
 
         $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices);
-       
+
         /// display notification error if the current requiredcapability doesn't exist anymore
         if(empty($currentcapabilityexist)) {
             global $OUTPUT;
@@ -73,7 +73,7 @@ class external_service_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         $this->add_action_buttons(true);
- 
+
         $this->set_data($service);
     }
 
@@ -88,7 +88,7 @@ class external_service_form extends moodleform {
     }
 
     function validation($data, $files) {
-        $errors = parent::validation($data, $files);     
+        $errors = parent::validation($data, $files);
         return $errors;
     }
 }
