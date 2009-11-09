@@ -59,7 +59,7 @@ class external_service_form extends moodleform {
             }
         }
 
-        $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices, array('size' => 12));
+        $mform->addElement('searchableselector', 'requiredcapability', get_string('requiredcapability', 'webservice'), $capabilitychoices);
        
         /// display notification error if the current requiredcapability doesn't exist anymore
         if(empty($currentcapabilityexist)) {
@@ -90,5 +90,36 @@ class external_service_form extends moodleform {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);     
         return $errors;
+    }
+}
+
+
+class external_service_functions_form extends moodleform {
+    function definition() {
+        global $CFG, $USER, $DB;
+
+        $mform = $this->_form;
+        $data = $this->_customdata;
+
+        $mform->addElement('header', 'addfunction', get_string('addfunction', 'webservice'));
+
+        $select = "name NOT IN (SELECT s.functionname
+                                  FROM {external_services_functions} s
+                                 WHERE s.externalserviceid = :sid
+                               )";
+
+        $functions = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$data['id']), 'name', 'id, name');
+
+        $mform->addElement('searchableselector', 'fid', get_string('name'), $functions);
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ACTION);
+
+        $this->add_action_buttons(true);
+
+        $this->set_data($data);
     }
 }

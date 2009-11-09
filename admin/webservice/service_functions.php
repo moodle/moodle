@@ -26,6 +26,7 @@
 require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/externallib.php');
+require_once('forms.php');
 
 $id      = required_param('id', PARAM_INT);
 $fid     = optional_param('fid', 0, PARAM_INT);
@@ -57,9 +58,13 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
     redirect($thisurl);
 
 } else if ($action === 'add' and confirm_sesskey() and $service and empty($service->component)) {
+    $mform = new external_service_functions_form(null, array('action'=>'add', 'id'=>$service->id));
 
-    if ($fid and $function = $DB->get_record('external_functions', array('id'=> $fid))) {
+    if ($mform->is_cancelled()) {
+        redirect($thisurl);
+    } else if ($data = $mform->get_data()) {
         ignore_user_abort(true); // no interruption here!
+        $function = $DB->get_record('external_functions', array('id'=>$data->fid), '*', MUST_EXIST);
         // make sure the function is not there yet
         if ($DB->record_exists('external_services_functions', array('externalserviceid'=>$service->id, 'functionname'=>$function->name))) {
             redirect($thisurl);
@@ -71,53 +76,10 @@ if ($action === 'delete' and confirm_sesskey() and $service and empty($service->
         redirect($thisurl);
     }
 
-    // Prepare the list of function to choose from
-   $select = "name NOT IN (SELECT s.functionname
-                                  FROM {external_services_functions} s
-                                 WHERE s.externalserviceid = :sid
-                               )";
-    $functionchoices = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$id), 'name', 'id, name');
-
-    // Javascript for the function search/selection fields
-    $PAGE->requires->yui_lib('event');
-    $PAGE->requires->js($CFG->admin.'/webservice/script.js');
-    $PAGE->requires->js_function_call('capability_service.cap_filter_init', array(get_string('search'))); //TODO generalize javascript
-
+    //ask for function id
     admin_externalpage_print_header();
-
     echo $OUTPUT->heading($service->name);
-    echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
-
-    //TODO: hmm, is this supposed to be replaced by the roles UI, right? If not the use of output lib is definitely wrong, we need more buttons (Cancel!) and custom JS, etc.
-    //TODO: add JS disabling of submit button if no functio nselected, the error string is not user friendly
-
-    //the service form
-    $form = new html_form();
-    $form->url = new moodle_url('service_functions.php', array('id' => $id, 'action' => 'add', 'save' => 1)); // Required
-    $form->button = new html_button();
-    $form->button->id = 'settingssubmit';
-    $form->button->text = get_string('addfunction', 'webservice'); // Required
-    $form->button->disabled = false;
-    $form->button->title = get_string('addfunction', 'webservice');
-    $form->method = 'post';
-    $form->id = 'settingsform';
-    //help text
-    $contents = '<p id="intro">'. get_string('addfunctionhelp', 'webservice') . '</p>';
-    //function section (search field + selection field)
-    $select = new html_select();
-    $select->options = $functionchoices;
-    $select->name = 'fid';
-    $select->id = 'menucapability'; //TODO generalize javascript
-    $select->nothinglabel = '';
-    $select->nothingvalue = '';
-    $select->listbox = true;
-    $select->tabindex = 0;
-    $contents .= $OUTPUT->select($select);
-    $contents .= "<br/><br/>";
-    echo $OUTPUT->form($form, $contents);
-
-    echo $OUTPUT->box_end();
-
+    $mform->display();
     echo $OUTPUT->footer();
     die;
 }
