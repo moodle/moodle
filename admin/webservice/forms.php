@@ -110,6 +110,12 @@ class external_service_functions_form extends moodleform {
 
         $functions = $DB->get_records_select_menu('external_functions', $select, array('sid'=>$data['id']), 'name', 'id, name');
 
+        //we add the descriptions to the functions
+        foreach ($functions as $functionid => $functionname) {
+            $function = external_function_info($functionname); //retrieve full function information (including the description)
+            $functions[$functionid] = $function->name.':'.$function->description;
+        }
+
         $mform->addElement('searchableselector', 'fid', get_string('name'), $functions);
 
         $mform->addElement('hidden', 'id');
