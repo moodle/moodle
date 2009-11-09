@@ -38,7 +38,7 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
     function MoodleQuickForm_searchableselector($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         //return exception if the selector is set as multiple (TODO: implement multiple support)
         if (!empty($attributes) && key_exists('multiple', $attributes)) {
-            throw new moodle_exception('searchableselectorcannotbemultiple');     
+            throw new moodle_exception('searchableselectorcannotbemultiple');
         }
         //set size default to 12
         if (empty($attributes) || empty($attributes['size'])) {
@@ -58,10 +58,10 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
             $PAGE->requires->js('lib/form/searchableselector.js');
             $PAGE->requires->js_function_call('selector.filter_init', array(get_string('search'),$this->getAttribute('id')));
 
-            $strHtml = '';     
+            $strHtml = '';
             $strHtml .= parent::toHtml(); //the select input
             return $strHtml;
         }
     }
-  
+
 }

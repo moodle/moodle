@@ -158,7 +158,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 
         // Must be logged in, if they are not then they obviously can't be this user
         require_login();
-        
+
         // Don't want guests here, potentially saves a DB call
         if (isguestuser()) {
             send_file_not_found();
@@ -300,7 +300,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
         }
 
         $fullpath = $context->id.$filearea.implode('/', $args);
-        
+
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
         }

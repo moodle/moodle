@@ -880,7 +880,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $footer = $this->opencontainers->pop('header/footer');
 
         if (debugging() and $DB and $DB->is_transaction_started()) {
-            // TODO: MDL-20625 print warning - transaction will be rolled back 
+            // TODO: MDL-20625 print warning - transaction will be rolled back
         }
 
         // Provide some performance info if required

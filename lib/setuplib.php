@@ -209,7 +209,7 @@ function abort_all_db_transactions() {
     global $CFG, $DB, $SCRIPT;
 
     // default exception handler MUST not throw any exceptions!!
-    
+
     if ($DB && $DB->is_transaction_started()) {
         error_log('Database transaction aborted automatically in ' . $CFG->dirroot . $SCRIPT);
         // note: transaction blocks should never change current $_SESSION

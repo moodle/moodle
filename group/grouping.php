@@ -36,7 +36,7 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
-    
+
 } else {
     $url->param('courseid', $courseid);
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {

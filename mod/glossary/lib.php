@@ -2503,7 +2503,7 @@ function glossary_reset_userdata($data) {
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
 
         $DB->delete_records_select('glossary_ratings', "entryid IN ($allentriessql)", $params);
-        // TODO: delete comments 
+        // TODO: delete comments
         //$DB->delete_records_select('comments', "entryid IN ($allentriessql)", array());
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
 

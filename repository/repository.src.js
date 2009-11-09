@@ -29,7 +29,7 @@ var id2clientid = {};
 var id2itemid   = {};
 
 /**
- * repository_client is a javascript class, it contains several static 
+ * repository_client is a javascript class, it contains several static
  * methods you can call it directly without creating an instance.
  * If you are going to create a file picker, you need create an instance
  * repo = new repository_client();
@@ -188,7 +188,7 @@ var repository_client = (function(){
             var container = new YAHOO.util.Element('repo-list-'+this.client_id);
             container.set('innerHTML', '');
             container.on('contentReady', function() {
-                this.init_search();    
+                this.init_search();
                 for(var i in MOODLE.repository.listing[this.client_id]) {
                     var repo = MOODLE.repository.listing[this.client_id][i];
                     var support = false;

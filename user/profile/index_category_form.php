@@ -44,7 +44,7 @@ class category_form extends moodleform {
         else { // new profile category
             $dupfound = $duplicate;
         }
-        
+
         if ($dupfound ) {
             $errors['name'] = get_string('profilecategorynamenotunique', 'admin');
         }

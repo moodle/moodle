@@ -206,7 +206,7 @@ function xmldb_glossary_upgrade($oldversion) {
     }
     if ($result && $oldversion < 2009110800) {
         require_once($CFG->libdir . '/commentlib.php');
- 
+
     /// Define table glossary_comments to be dropped
         $table = new xmldb_table('glossary_comments');
 

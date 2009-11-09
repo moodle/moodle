@@ -94,7 +94,7 @@ if ($tagnew = $tagform->get_data()) {
     if (empty($errorstring)) {    // All is OK, let's save it
 
         $tagnew = file_postupdate_standard_editor($tagnew, 'description', $editoroptions, $systemcontext, 'tag_description', $tag->id);
-        
+
         tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
 
         $tagnew->timemodified = time();
