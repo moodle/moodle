@@ -817,6 +817,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 backup_putid ($restore->backup_unique_code,"course",$course_header->course_id,$newid);
                 //Replace old course_id in course_header
                 $course_header->course_id = $newid;
+                $SESSION->restore->course_id = $newid;
+                return $newid;
             } else {
                 $status = false;
             }
@@ -3688,7 +3690,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     function restore_create_events($restore,$xml_file) {
         global $DB;
 
-        global $CFG;
+        global $CFG, $SESSION;
 
         $status = true;
         //Check it exists
@@ -8670,7 +8672,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         }
 
         //Now create log entries as needed
-        if ($status and ($restore->logs)) {
+        if ($status and ($info->backup_logs == 'true' && $restore->logs)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("creatinglogentries");
             }
