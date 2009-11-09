@@ -655,7 +655,6 @@
      */
     function import_backup_file_silently($pathtofile,$destinationcourse,$emptyfirst=false,$userdata=false, $preferences=array()) {
         global $CFG,$SESSION,$USER; // is there such a thing on cron? I guess so..
-        global $restore; // ick
 
         if (!defined('RESTORE_SILENTLY')) {
             define('RESTORE_SILENTLY',true); // don't output all the stuff to us.
@@ -665,7 +664,8 @@
         $cleanupafter = false;
         $errorstr = ''; // passed by reference to restore_precheck to get errors from.
 
-        if (!$course = get_record('course','id',$destinationcourse)) {
+        $course = null;
+        if ($destinationcourse && !$course = get_record('course','id',$destinationcourse)) {
             mtrace($debuginfo.'Course with id $destinationcourse was not a valid course!');
             return false;
         }
@@ -720,29 +720,65 @@
             return false;
         }
 
-        $SESSION->restore = new StdClass;
+        global $restore; // ick
+        $restore = new StdClass;
+        // copy back over the stuff that gets set in restore_precheck
+        $restore->course_header = $SESSION->course_header;
+        $restore->info          = $SESSION->info;
+
+        $xmlfile = "$CFG->dataroot/temp/backup/$backup_unique_code/moodle.xml";
+        $info = restore_read_xml_roles($xmlfile);
+        $restore->rolesmapping = array();
+        if (isset($info->roles) && is_array($info->roles)) {
+            foreach ($info->roles as $id => $info) {
+                if ($newroleid = get_field('role', 'id', 'shortname', $info->shortname)) {
+                    $restore->rolesmapping[$id] = $newroleid;
+                }
+            }
+        }
 
         // add on some extra stuff we need...
-        $SESSION->restore->metacourse   = $restore->metacourse = (isset($preferences['restore_metacourse']) ? $preferences['restore_metacourse'] : 0);
-        $SESSION->restore->restoreto    = $restore->restoreto = RESTORETO_CURRENT_ADDING;
-        $SESSION->restore->users        = $restore->users = $userdata;
-        $SESSION->restore->groups       = $restore->groups = (isset($preferences['restore_groups']) ? $preferences['restore_groups'] : RESTORE_GROUPS_NONE);
-        $SESSION->restore->logs         = $restore->logs = (isset($preferences['restore_logs']) ? $preferences['restore_logs'] : 0);
-        $SESSION->restore->user_files   = $restore->user_files = $userdata;
-        $SESSION->restore->messages     = $restore->messages = (isset($preferences['restore_messages']) ? $preferences['restore_messages'] : 0);
-        $SESSION->restore->blogs        = $restore->blogs = (isset($preferences['restore_blogs']) ? $preferences['restore_blogs'] : 0);
-        $SESSION->restore->course_id    = $restore->course_id = $destinationcourse;
-        $SESSION->restore->deleting     = $emptyfirst;
-        $SESSION->restore->restore_course_files = $restore->course_files = (isset($preferences['restore_course_files']) ? $preferences['restore_course_files'] : 0);
-        $SESSION->restore->restore_site_files = $restore->site_files = (isset($preferences['restore_site_files']) ? $preferences['restore_site_files'] : 0);
-        $SESSION->restore->backup_version = $SESSION->info->backup_backup_version;
-        $SESSION->restore->course_startdateoffset = $course->startdate - $SESSION->course_header->course_startdate;
+        $restore->metacourse = (isset($preferences['restore_metacourse']) ? $preferences['restore_metacourse'] : 0);
+        $restore->course_id = $destinationcourse;
+        if ($destinationcourse) {
+            $restore->restoreto              = RESTORETO_CURRENT_ADDING;
+            $restore->course_startdateoffset = $course->startdate - $restore->course_header->course_startdate;
+        } else {
+            $restore->restoreto              = RESTORETO_NEW_COURSE;
+            $restore->restore_restorecatto   = 0; // let this be handled by the headers
+            $restore->course_startdateoffset = 0;
 
-        restore_setup_for_check($SESSION->restore,$backup_unique_code);
+        }
 
-        // maybe we need users (defaults to 2 in restore_setup_for_check)
+        $restore->users      = $userdata;
+        $restore->user_files = $userdata;
+        $restore->deleting   = $emptyfirst;
+
+        $restore->groups       = (isset($preferences['restore_groups']) ? $preferences['restore_groups'] : RESTORE_GROUPS_NONE);
+        $restore->logs         = (isset($preferences['restore_logs']) ? $preferences['restore_logs'] : 0);
+        $restore->messages     = (isset($preferences['restore_messages']) ? $preferences['restore_messages'] : 0);
+        $restore->blogs        = (isset($preferences['restore_blogs']) ? $preferences['restore_blogs'] : 0);
+        $restore->course_files = (isset($preferences['restore_course_files']) ? $preferences['restore_course_files'] : 0);
+        $restore->site_files   = (isset($preferences['restore_site_files']) ? $preferences['restore_site_files'] : 0);
+
+        $restore->backup_version   = $restore->info->backup_backup_version;
+        $restore->original_wwwroot = $restore->info->original_wwwroot;
+
+        // now copy what we have over to the session
+        // this needs to happen before restore_setup_for_check
+        // which for some reason reads the session
+        $SESSION->restore =& $restore;
+        // rename the things that are called differently 
+        $SESSION->restore->restore_course_files = $restore->course_files;
+        $SESSION->restore->restore_site_files   = $restore->site_files;
+        $SESSION->restore->backup_version       = $restore->info->backup_backup_version;
+
+        restore_setup_for_check($restore, $backup_unique_code);
+
+        // maybe we need users (defaults to 2 (none) in restore_setup_for_check)
+        // so set this again here
         if (!empty($userdata)) {
-            $SESSION->restore->users = 1;
+            $restore->users = 1;
         }
 
         // we also need modules...
@@ -750,20 +786,26 @@
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 //Now check that we have that module info in the backup file
-                if (isset($SESSION->info->mods[$modname]) && $SESSION->info->mods[$modname]->backup == "true") {
-                    $SESSION->restore->mods[$modname]->restore = true;
-                    $SESSION->restore->mods[$modname]->userinfo = $userdata;
+                if (isset($restore->info->mods[$modname]) && $restore->info->mods[$modname]->backup == "true") {
+                    $restore->mods[$modname]->restore = true;
+                    $restore->mods[$modname]->userinfo = $userdata;
                 }
                 else {
                     // avoid warnings
-                    $SESSION->restore->mods[$modname]->restore = false;
-                    $SESSION->restore->mods[$modname]->userinfo = false;
+                    $restore->mods[$modname]->restore = false;
+                    $restore->mods[$modname]->userinfo = false;
                 }
             }
         }
-        $restore = clone($SESSION->restore);
-        if (!restore_execute($SESSION->restore,$SESSION->info,$SESSION->course_header,$errorstr)) {
+        if (!$status = restore_execute($restore,$restore->info,$restore->course_header,$errorstr)) {
             mtrace($debuginfo.'Failed restore_execute (error was '.$errorstr.')');
+            return false;
+        }
+        // now get out the new courseid and return that
+        if ($restore->restoreto = RESTORETO_NEW_COURSE) {
+            if (!empty($SESSION->restore->course_id)) {
+                return $SESSION->restore->course_id;
+            }
             return false;
         }
         return true;
@@ -785,6 +827,7 @@
             return false;
         }
         $preferences = backup_generate_preferences_artificially($course, $prefs);
+        $preferences->destination    = array_key_exists('destination', $prefs) ? $prefs['destination'] : 0;
         if (backup_execute($preferences, $errorstring)) {
             return $CFG->dataroot . '/' . $course->id . '/backupdata/' . $preferences->backup_name;
         }
@@ -806,6 +849,7 @@
             backup_course_files
             backup_site_files
             backup_messages
+            userdata
     * and if not provided, they will not be included.
     */
 
@@ -815,6 +859,7 @@
         $preferences->backup_unique_code = time();
         $preferences->backup_users = (isset($prefs['backup_users']) ? $prefs['backup_users'] : 0);
         $preferences->backup_name = backup_get_zipfile_name($course, $preferences->backup_unique_code);
+        $preferences->mods = array();
         $count = 0;
 
         if ($allmods = get_records("modules") ) {
@@ -831,7 +876,6 @@
                 if (!function_exists($modbackup) || !function_exists($modcheckbackup)) {
                     continue;
                 }
-                $modcheckbackup($course->id, $preferences->backup_users, $preferences->backup_unique_code);
                 $var = "exists_".$modname;
                 $preferences->$var = true;
                 $count++;
@@ -849,8 +893,8 @@
                     $preferences->$var = true;
                     $preferences->mods[$modname]->instances[$instance->id]->backup = true;
                     $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                    $preferences->$var = true;
-                    $preferences->mods[$modname]->instances[$instance->id]->userinfo = true;
+                    $preferences->$var = (!array_key_exists('userdata', $prefs) || $prefs['userdata']);
+                    $preferences->mods[$modname]->instances[$instance->id]->userinfo = $preferences->$var;
                     $var = 'backup_'.$modname.'_instances';
                     $preferences->$var = 1; // we need this later to determine what to display in modcheckbackup.
                 }
@@ -865,9 +909,31 @@
 
                 //Check include user info
                 $var = "backup_user_info_".$modname;
-                $preferences->$var = true;
-                $preferences->mods[$modname]->userinfo = true;
+                $preferences->$var = (!array_key_exists('userdata', $prefs) || $prefs['userdata']);
+                $preferences->mods[$modname]->userinfo = $preferences->$var;
 
+                //Call the check function to show more info
+                $modcheckbackup = $modname."_check_backup_mods";
+                $var = $modname.'_instances';
+                $instancestopass = array();
+                if (!empty($preferences->$var) && is_array($preferences->$var) && count($preferences->$var)) {
+                    $table->data = array();
+                    $countinstances = 0;
+                    foreach ($preferences->$var as $instance) {
+                        $var1 = 'backup_'.$modname.'_instance_'.$instance->id;
+                        $var2 = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
+                        if (!empty($preferences->$var1)) {
+                            $obj = new StdClass;
+                            $obj->name = $instance->name;
+                            $obj->userdata = $preferences->$var2;
+                            $obj->id = $instance->id;
+                            $instancestopass[$instance->id]= $obj;
+                            $countinstances++;
+
+                        }
+                    }
+                }
+                $modcheckbackup($course->id,$preferences->$var,$preferences->backup_unique_code,$instancestopass);
             }
         }
 
