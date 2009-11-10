@@ -630,8 +630,18 @@ repository_client.select_file = function(oldname, url, icon, client_id, repo_id)
     html += '<p><label for="newname-'+client_id+'">'+fp_lang.saveas+'</label>';
     html += '<input type="text" id="newname-'+client_id+'" value="" /></p>';
 
+    var le_checked = '';
+    var le_style = '';
+    if (MOODLE.repository.listing[client_id][repo_id].return_types == 1) {
+        // support external links only
+        le_checked = 'checked';
+        le_style = ' style="display:none;"';
+    } else if(MOODLE.repository.listing[client_id][repo_id].return_types == 2) {
+        // support internal files only
+        le_style = ' style="display:none;"';
+    }
     if (fp_config.externallink && fp.env == 'editor') {
-        html += '<p><input type="checkbox" id="external_link-'+client_id+'" value="" />'+fp_lang.linkexternal+'</p>';
+        html += '<p'+le_style+'><input type="checkbox" id="external_link-'+client_id+'" value="" '+le_checked+' />'+fp_lang.linkexternal+'</p>';
     }
     html += '<p><input type="hidden" id="fileurl-'+client_id+'" value="'+url+'" />';
     html += '<input type="button" onclick="repository_client.download(\''+client_id+'\', \''+repo_id+'\')" value="'+fp_lang.downbtn+'" />';
