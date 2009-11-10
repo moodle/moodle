@@ -148,7 +148,7 @@ abstract class webservice_server implements webservice_server_interface {
             }
 
             if (!$auth->user_login_webservice($this->username, $this->password)) {
-                // TODO: log failed login attempts
+                // TODO: MDL-12886 log failed login attempts
                 throw new webservice_access_exception('Wrong username or password');
             }
 
@@ -156,7 +156,7 @@ abstract class webservice_server implements webservice_server_interface {
 
         } else {
             if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>EXTERNAL_TOKEN_PERMANENT))) {
-                // TODO: log failed login attempts
+                // TODO: MDL-12886 log failed login attempts
                 throw new webservice_access_exception('Invalid token');
             }
 

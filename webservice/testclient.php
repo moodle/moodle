@@ -34,7 +34,7 @@ $protocol = optional_param('protocol', '', PARAM_SAFEDIR);
 $PAGE->set_url('webservice/testclient.php');
 
 require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)); // TODO: do we need some new capability?
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 // list of all available functions for testing
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
