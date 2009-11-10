@@ -461,6 +461,11 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
         if (!plugin_supports('mod', $modname, FEATURE_MOD_INTRO, true)) {
             send_file_not_found();
         }
+        if (!$cm = get_coursemodule_from_instance($modname, $cminfo->instance, $course->id)) {
+            send_file_not_found();
+        }
+        require_course_login($course, true, $cm);
+
         if (!$cminfo->uservisible) {
             send_file_not_found();
         }
