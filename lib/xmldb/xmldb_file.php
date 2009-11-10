@@ -67,7 +67,7 @@ class xmldb_file extends xmldb_object {
     }
 
     /**
-     * This function will check/validate the XML file for correctness 
+     * This function will check/validate the XML file for correctness
      * Dinamically if will use the best available checker/validator
      * (expat syntax checker or DOM schema validator
      */
@@ -117,7 +117,7 @@ class xmldb_file extends xmldb_object {
             /// Create one structure to store errors
                 $structure = new xmldb_structure($this->path);
             /// Add error to structure
-                $structure->errormsg = sprintf("XML Error: %s at line %d", 
+                $structure->errormsg = sprintf("XML Error: %s at line %d",
                          xml_error_string(xml_get_error_code($parser)),
                          xml_get_current_line_number($parser));
             /// Add structure to file
