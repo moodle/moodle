@@ -490,6 +490,8 @@ class database_session extends session_stub {
     public function handler_write($sid, $session_data) {
         global $USER;
 
+        // TODO: MDL-20625 we need to rollabck all active transactions and log error if any open needed
+
         $userid = 0;
         if (!empty($USER->realuser)) {
             $userid = $USER->realuser;
