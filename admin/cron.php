@@ -513,7 +513,7 @@
                 $cron_function = 'grade_import_'.$gradeimport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook import function $cron_function ...", '');
-                    $cron_function;
+                    $cron_function();
                 }
             }
         }
@@ -526,7 +526,7 @@
                 $cron_function = 'grade_export_'.$gradeexport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook export function $cron_function ...", '');
-                    $cron_function;
+                    $cron_function();
                 }
             }
         }
@@ -539,7 +539,7 @@
                 $cron_function = 'grade_report_'.$gradereport.'_cron';
                 if (function_exists($cron_function)) {
                     mtrace("Processing gradebook report function $cron_function ...", '');
-                    $cron_function;
+                    $cron_function();
                 }
             }
         }
