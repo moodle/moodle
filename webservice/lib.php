@@ -169,6 +169,7 @@ abstract class webservice_server implements webservice_server_interface {
             }
 
             $this->restricted_context = get_context_instance_by_id($token->contextid);
+            $this->restricted_serviceid = $token->externalserviceid;
 
             $user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
 
