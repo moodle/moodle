@@ -58,7 +58,7 @@ function webservice_protocol_is_enabled($protocol) {
 //=== WS classes ===
 
 /**
- * Mandatory test client interface.
+ * Mandatory interface for all test client classes.
  * @author Petr Skoda (skodak)
  */
 interface webservice_test_client_interface {
@@ -73,7 +73,7 @@ interface webservice_test_client_interface {
 }
 
 /**
- * Mandatory web service server interface
+ * Mandatory interface for all web service protocol classes
  * @author Petr Skoda (skodak)
  */
 interface webservice_server_interface {
