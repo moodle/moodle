@@ -2043,6 +2043,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $newblock->defaultregion = $newregions[$stickyblock->position];
             $newblock->defaultweight = $stickyblock->weight;
             $newblock->configdata = $stickyblock->configdata;
+            $newblock->visible = 1;
             $DB->insert_record('block_instances', $newblock);
         }
 
