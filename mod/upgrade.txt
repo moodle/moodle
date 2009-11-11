@@ -9,6 +9,7 @@ required changes in code:
 * replace defaults.php by settings.php and db/install.php
 * replace STATEMENTS section in db/install.xml by db/install.php
 * move post installation code from lib.php into db/install.php
+* move uninstallation code from lib.php to db/uninstall.php
 * completely rewrite file handling
 * rewrite backup/restore
 * rewrite trusttext support - new db table columns needed
