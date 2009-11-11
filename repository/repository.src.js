@@ -789,7 +789,7 @@ repository_client.view_as_icons = function(client_id, data) {
         el.className='fp-grid';
         // the file name
         var title = document.createElement('div');
-        title.id = 'grid-title-'+String(count);
+        title.id = 'grid-title-'+client_id+'-'+String(count);
         title.className = 'label';
         if (list[k].shorttitle) {
             list[k].title = list[k].shorttitle;
@@ -816,7 +816,7 @@ repository_client.view_as_icons = function(client_id, data) {
         }
         var link = document.createElement('A');
         link.href='###';
-        link.id = 'img-id-'+String(count);
+        link.id = 'img-id-'+client_id+'-'+String(count);
         if(list[k].url) {
             el.innerHTML += '<p><a target="_blank" href="'+list[k].url+'">'+fp_lang.preview+'</a></p>';
         }
@@ -827,7 +827,7 @@ repository_client.view_as_icons = function(client_id, data) {
             var delbtn = document.createElement('A');
             delbtn.href = '###';
             delbtn.innerHTML = "[X]";
-            delbtn.id = 'del-id-'+String(count);
+            delbtn.id = 'del-id-'+client_id+'-'+String(count);
             el.appendChild(delbtn);
             delbtn.itemid=fp.itemid;
             delbtn.client_id=client_id;
