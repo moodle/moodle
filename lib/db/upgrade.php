@@ -2029,7 +2029,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         );
         $stickyblocks = $DB->get_recordset('block_pinned_old');
         foreach ($stickyblocks as $stickyblock) {
-            $newblock = stdClass;
+            $newblock = new object();
             $newblock->blockname = $blocks[$stickyblock]->name;
             $newblock->contextid = $syscontext->id;
             $newblock->showinsubcontexts = 1;
