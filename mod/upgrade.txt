@@ -22,6 +22,7 @@ required changes in code:
 optional - no changes needed in older code:
 * portfolio support
 * course completion tracking support
+* add new navigation features
 
 
 
