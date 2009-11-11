@@ -17,6 +17,7 @@ required changes in code:
 * implement new gradebook support (legacy 1.8.x grading not supported anymore)
 * migrate custom resource module subtypes into separate modules
 * migrate to new comments subsystem
+* use new $PAGE and $OUTPUT instead of old weblib functions
 
 optional - no changes needed in older code:
 * portfolio support
