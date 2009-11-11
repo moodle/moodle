@@ -12,7 +12,7 @@ Upgrade procedure:
  2/ replace tiny_mce*.* files, themes/*, utils/* and plugins/*
     (keep dragmath, moodlenolink, spellchecker)
  3/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
- 4/ apply strings & form_utils.js patch
+ 4/ apply strings & form_utils.js & tinymce_plugin_advimage patches
  5/ copy yuicompressor.jar from dev package into extra/tools/, use shell
     script extra/tools/compress.sh to compress modified files
  6/ download all TinyMCE lang files (extra/tools/download_langs.sh)
