@@ -8,11 +8,11 @@ required changes in code:
 * use new DDL syntax in db/upgrade.php
 * replace defaults.php by settings.php and db/install.php
 * replace STATEMENTS section in db/install.xml by db/install.php
-* move post instalation code from lib.php into db/install.php
+* move post installation code from lib.php into db/install.php
 * completely rewrite file handling
 * rewrite backup/restore
-* rewrite trusstext support - new db table columns needed
-* migrade all module features from mod_edit.php form to lib.php/modulename_supports() function
+* rewrite trusttext support - new db table columns needed
+* migrate all module features from mod_edit.php form to lib.php/modulename_supports() function
 * implement new gradebook support (legacy 1.8.x grading not supported anymore)
 * migrate custom resource module subtypes into separate modules
 
