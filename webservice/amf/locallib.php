@@ -46,6 +46,8 @@ class webservice_amf_server extends webservice_zend_server {
      */
     protected function init_zend_server() {
         parent::init_zend_server();
+        $this->zend_server->setProduction(false); //set to false for development mode
+                                                 //(complete error message displayed into your AMF client)
         // TODO: add some exception handling
     }
 }
