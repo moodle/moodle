@@ -124,13 +124,14 @@
             error("Confirm delete: submission id missing");
             }
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")),
-             "submissions.php?action=delete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id#sid=$sid");
+             "submissions.php?sesskey=" . sesskey() . "&amp;action=delete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id#sid=$sid");
         }
 
 
     /******************* delete ************************************/
     elseif ($action == 'delete' ) {
 
+        require_sesskey();
         if (empty($sid)) {
             error("Delete: submission id missing");
         }
