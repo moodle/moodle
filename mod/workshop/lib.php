@@ -109,6 +109,12 @@ function workshop_add_instance($workshop) {
         return get_string('invaliddates', 'workshop');
     }
 
+    // set the workshop's type
+    $wtype = 0; // 3 phases, no grading grades
+    if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
+    if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades
+    $workshop->wtype = $wtype;
+
     if ($returnid = insert_record("workshop", $workshop)) {
 
         $event = NULL;
