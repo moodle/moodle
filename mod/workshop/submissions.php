@@ -99,6 +99,7 @@
     elseif ($action == 'adminclearlate' ) {
 
         require_capability('mod/workshop:manage', $context);
+        require_sesskey();
         if (empty($sid)) {
             error("Admin clear late flag: submission id missing");
         }
@@ -178,7 +179,7 @@
         }
 
         notice_yesno(get_string("clearlateflag","workshop")."?",
-             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$sid",
+             "submissions.php?sesskey=" . sesskey() . "&amp;action=adminclearlate&amp;id=$cm->id&amp;sid={$submission->id}",
              "view.php?id=$cm->id");
     }
 
