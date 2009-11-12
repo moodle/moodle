@@ -75,6 +75,7 @@
         <form id="amendtitleform" action="submissions.php" method="post">
         <fieldset class="invisiblefieldset">
         <input type="hidden" name="action" value="adminupdatetitle" />
+        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />
         <div class="boxaligncenter">
@@ -197,6 +198,7 @@
     elseif ($action == 'adminupdatetitle' ) {
 
         require_capability('mod/workshop:manage', $context);
+        require_sesskey();
         if (empty($sid)) {
             error("Admin Update Title: submission id missing");
         }
