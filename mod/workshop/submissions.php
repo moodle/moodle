@@ -153,9 +153,9 @@
                 delete_records("workshop_grades", "assessmentid", $assessment->id);
                 echo ".";
             }
-            // ...now delete the assessments...
-            delete_records("workshop_assessments", "submissionid", $submission->id);
         }
+        // ...now delete the assessments...
+        delete_records("workshop_assessments", "submissionid", $submission->id);
         // ...and the submission record...
         delete_records("workshop_submissions", "id", $submission->id);
         // ..and finally the submitted file
