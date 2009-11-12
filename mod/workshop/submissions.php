@@ -223,7 +223,7 @@
         }
 
         notice_yesno(get_string("confirmremoveattachments","workshop"),
-             "submissions.php?action=removeattachments&amp;id=$cm->id&amp;sid=$sid",
+             "submissions.php?sesskey=" . sesskey() . "&amp;action=removeattachments&amp;id=$cm->id&amp;sid=$sid",
              "view.php?id=$cm->id");
     }
 
@@ -340,6 +340,7 @@
     /******************* remove (all) attachments ************************************/
     elseif ($action == 'removeattachments' ) {
 
+        require_sesskey();
         $form = data_submitted();
 
         if (empty($form->sid)) {
