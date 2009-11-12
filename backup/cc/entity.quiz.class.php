@@ -98,7 +98,7 @@ class quiz extends entities {
                             $questions = $this->get_questions($assessment, $last_question_id, $last_answer_id, dirname($assessment_file), $is_question_bank);
                             $question_count = count($questions);
 
-                            if ($question_count > 1) {
+                            if (!empty($question_count)) {
 
                                 $last_instance_id++;
 
