@@ -67,19 +67,19 @@
         $form->maxbytes = "";
     }
     if (empty($form->submissionstart)) {
-        $form->submissionstart = time();
+        $form->submissionstart = time()+60*60*24;
     }
     if (empty($form->assessmentstart)) {
-        $form->assessmentstart = time();
+        $form->assessmentstart = time()+60*60*24;
     }
     if (empty($form->submissionend)) {
-        $form->submissionend = time();
+        $form->submissionend = time()+60*60*24*8;
     }
     if (empty($form->assessmentend)) {
-        $form->assessmentend = time();
+        $form->assessmentend = time()+60*60*24*8;
     }
     if (empty($form->releasegrades)) {
-        $form->releasegrades = time();
+        $form->releasegrades = time()+60*60*24*15;
     }
 ?>
 
