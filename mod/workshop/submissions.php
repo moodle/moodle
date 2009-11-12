@@ -248,6 +248,7 @@
         <form id="editform" enctype="multipart/form-data" action="submissions.php" method="post">
         <fieldset class="invisiblefieldset">
         <input type="hidden" name="action" value="updatesubmission" />
+        <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
         <input type="hidden" name="sid" value="<?php echo $sid ?>" />
         <div class="boxaligncenter">
@@ -413,6 +414,7 @@
     /*************** update submission ***************************/
     elseif ($action == 'updatesubmission') {
 
+        require_sesskey();
         if (empty($sid)) {
             error("Update submission: submission id missing");
         }
