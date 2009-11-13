@@ -1136,7 +1136,7 @@ function grade_update_mod_grades($modinstance, $userid=0) {
                         // good old numeric value
                         $grade->rawgrade = $usergrade;
                     }
-                    $grades[] = $grade;
+                    $grades[$uid] = $grade;
                 }
 
                 grade_update('legacygrab', $grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
