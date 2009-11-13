@@ -304,6 +304,7 @@ $string['listcantmoveright'] = 'Failed to move item right, as there is no peer t
 $string['loginasonecourse'] = 'You cannot enter this course.<br /> You have to terminate the \"Login as\" session before entering any other course.';
 $string['loginasnoenrol'] = 'You cannot use enrol or unenrol when in course \"Login as\" session';
 $string['logfilenotavailable'] = 'Logs not available';
+$string['maxbytes'] = 'This file is bigger than the maximum size';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['missingfield'] = 'Field \"$a\" is missing';
 $string['missingkeyinsql'] = 'ERROR: missing param \"$a\" in query';

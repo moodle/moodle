@@ -1147,14 +1147,13 @@ repository_client.upload = function(client_id) {
 repository_client.upload_cb = {
 upload: function(o) {
         var ret = repository_client.parse_json(o.responseText, 'upload');
-        client_id = ret.client_id;
         if(ret && ret.e) {
-            var panel = new YAHOO.util.Element('panel-'+client_id);
+            var panel = new YAHOO.util.Element('panel-'+ret.client_id);
             panel.get('element').innerHTML = ret.e;
             return;
         }
         if(ret) {
-            repository_client.end(client_id, ret);
+            repository_client.end(ret.client_id, ret);
         }
     }
 }

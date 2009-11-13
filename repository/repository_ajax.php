@@ -279,11 +279,12 @@ EOD;
             break;
         case 'upload':
             try {
-                $upload = $repo->get_listing();
-                $upload['client_id'] = $client_id;
-                echo json_encode($upload);
-            } catch (repository_exception $e){
+                $result = $repo->upload();
+                $result['client_id'] = $client_id;
+                echo json_encode($result);
+            } catch (Exception $e){
                 $err->e = $e->getMessage();
+                $err->client_id = $client_id;
                 die(json_encode($err));
             }
             break;

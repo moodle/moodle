@@ -845,62 +845,6 @@ abstract class repository {
     }
 
     /**
-     * Upload file to local filesystem pool
-     * @param string $elname name of element
-     * @param string $filearea
-     * @param string $filepath
-     * @param string $filename - use specified filename, if not specified name of uploaded file used
-     * @param bool $override override file if exists
-     * @return mixed stored_file object or false if error; may throw exception if duplicate found
-     */
-    public static function upload_to_filepool($elname, $filearea='user_draft', $filepath='/', $itemid='', $filename = '', $override = false) {
-        global $USER;
-
-        if ($filepath !== '/') {
-            $filepath = trim($filepath, '/');
-            $filepath = '/'.$filepath.'/';
-        }
-
-        if (!isset($_FILES[$elname])) {
-            return false;
-        }
-
-        if (!$filename) {
-            $filename = $_FILES[$elname]['name'];
-        }
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
-        if (empty($itemid)) {
-            $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
-        }
-        $fs = get_file_storage();
-        $browser = get_file_browser();
-
-        if ($file = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
-            if ($override) {
-                $file->delete();
-            } else {
-                return false;
-            }
-        }
-
-        $file_record = new object();
-        $file_record->contextid = $context->id;
-        $file_record->filearea  = $filearea;
-        $file_record->itemid    = $itemid;
-        $file_record->filepath  = $filepath;
-        $file_record->filename  = $filename;
-        $file_record->userid    = $USER->id;
-
-        $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
-        $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        return array(
-            'url'=>$info->get_url(),
-            'id'=>$itemid,
-            'file'=>$file->get_filename()
-        );
-    }
-
-    /**
      * Return the user files tree in a format to be returned by the function get_listing
      * @global object $CFG
      * @param string $search
