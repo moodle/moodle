@@ -372,9 +372,9 @@ repository_client.print_login = function(id, data) {
                 field_id = ' id="'+login[k].id+'"';
             }
             if (login[k].label) {
-                str += '<td align="right" valign="top"><label'+label_id+'>'+login[k].label+'</label> </td>';
+                str += '<td align="right" width="30%" valign="center"><label'+label_id+'>'+login[k].label+'</label> </td>';
             } else {
-                str += '<td></td>';
+                str += '<td width="30%"></td>';
             }
             if(login[k].value) {
                 field_value = ' value="'+login[k].value+'"';
