@@ -38,7 +38,7 @@
     $strcourse = get_string("course");
     $strtimetaken = get_string("timetaken","quiz");
     $strstatus = get_string("status");
-    $strnext = get_string("next");
+    $strnext = get_string("backupnext");
 
 /// Decide when to show last execution logs or detailed logs
 /// Lastlog view
