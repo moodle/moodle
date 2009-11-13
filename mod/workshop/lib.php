@@ -1757,7 +1757,7 @@ function workshop_grade_assessments($workshop, $verbose=false) {
                                 set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
                             } else {
                                 // it's one of the pack, compare with the best...
-                                $gradinggrade = workshop_compare_assessments($workshop, $best, $assessment);
+                                $gradinggrade = round(workshop_compare_assessments($workshop, $best, $assessment));
                                 // ...and save the grade for the assessment
                                 set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $assessment->id);
                                 set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
