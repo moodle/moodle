@@ -818,6 +818,7 @@ class resource_file extends resource_base {
         $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
         $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
         $mform->disabledIf('windowpopup', 'forcedownload', 'checked');
+        $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
 
         $navoptions = array(0 => get_string('keepnavigationvisibleno','resource'), 1 => get_string('keepnavigationvisibleyesframe','resource'), 2 => get_string('keepnavigationvisibleyesobject','resource'));
         $mform->addElement('select', 'framepage', get_string('keepnavigationvisible', 'resource'), $navoptions);
