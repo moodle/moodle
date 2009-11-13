@@ -1789,9 +1789,11 @@ function workshop_grade_assessments($workshop, $verbose=false) {
 function workshop_gradinggrade($workshop, $student) {
     // returns the current (external) grading grade of the based on their (cold) assessments
     // (needed as it's called by grade)
+    global $CFG;
+    require_once(dirname(__FILE__) . '/locallib.php');
 
     $gradinggrade = 0;
-    if ($assessments = workshop_get_user_assessments($workshop, $student)) {
+    if ($assessments = workshop_get_user_assessments_done($workshop, $student)) {
         $n = 0;
         foreach ($assessments as $assessment) {
             $gradinggrade += $assessment->gradinggrade;
