@@ -2752,17 +2752,20 @@ class curl_cache {
 }
 
 /**
- * @todo Document this class
+ * This class is used to parse lib/file/file_types.mm which help get file
+ * extensions by file types. 
+ * The file_types.mm file can be edited by freemind in graphic environment.
  *
  * @package moodlecore
  * @subpackage file
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_type_to_ext {
     /**
-     * @todo Document this function
-     * @global object
+     * Check file_types.mm file, setup variables
+     *
+     * @global object $CFG
      * @param string $file
      */
     public function __construct($file = '') {
@@ -2777,7 +2780,8 @@ class file_type_to_ext {
     }
 
     /**
-     * @todo Document this function
+     * A private function to browse xml nodes
+     *
      * @param array $parent
      * @param array $types
      */
@@ -2798,7 +2802,8 @@ class file_type_to_ext {
     }
 
     /**
-     * @todo Document this function
+     * A private function to select text nodes
+     *
      * @param array $parent
      */
     private function _select_nodes($parent){
@@ -2813,7 +2818,8 @@ class file_type_to_ext {
 
 
     /**
-     * @todo Document this function
+     * Get file extensions by file types names.
+     *
      * @param array $types
      * @return mixed
      */
