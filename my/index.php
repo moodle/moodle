@@ -24,6 +24,17 @@
         die();
     }
 
+     // Bounds for block widths
+    // more flexible for theme designers taken from theme config.php
+    $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
+    $lmax = (empty($THEME->block_l_max_width)) ? 210 : $THEME->block_l_max_width;
+    $rmin = (empty($THEME->block_r_min_width)) ? 100 : $THEME->block_r_min_width;
+    $rmax = (empty($THEME->block_r_max_width)) ? 210 : $THEME->block_r_max_width;
+
+    define('BLOCK_L_MIN_WIDTH', $lmin);
+    define('BLOCK_L_MAX_WIDTH', $lmax);
+    define('BLOCK_R_MIN_WIDTH', $rmin);
+    define('BLOCK_R_MAX_WIDTH', $rmax);
 
     $edit        = optional_param('edit', -1, PARAM_BOOL);
     $blockaction = optional_param('blockaction', '', PARAM_ALPHA);
@@ -46,7 +57,7 @@
         switch ($column) {
             case 'left':
 
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+    $blocks_preferred_width = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), BLOCK_L_MAX_WIDTH);
 
     if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
         echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
@@ -112,7 +123,7 @@
             break;
             case 'right':
             
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
+    $blocks_preferred_width = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), BLOCK_R_MAX_WIDTH);
 
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
         echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
