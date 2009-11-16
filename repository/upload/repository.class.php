@@ -21,14 +21,19 @@ class repository_upload extends repository {
     }
 
     /**
+     * Print a upload form
      *
-     * @param boolean $ajax
-     * @return mixed
+     * @return array
      */
-    public function print_login($ajax = true) {
+    public function print_login() {
         return $this->get_listing();
     }
 
+    /**
+     * Process uploaded file
+     *
+     * @return array
+     */
     public function upload() {
         try {
             $this->info = $this->upload_to_filepool('repo_upload_file', 'user_draft', $this->filepath, $this->itemid);
@@ -39,6 +44,7 @@ class repository_upload extends repository {
     }
 
     public function get_listing() {
+        global $CFG;
         $ret = array();
         $ret['nologin']  = true;
         $ret['nosearch'] = true;
