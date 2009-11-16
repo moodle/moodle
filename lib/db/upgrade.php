@@ -2761,6 +2761,27 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009110605);
     }
 
+    if ($result && $oldversion < 2009111600) {
+
+    /// Define field instance to be added to portfolio_tempdata
+        $table = new xmldb_table('portfolio_tempdata');
+        $field = new xmldb_field('instance', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'userid');
+
+    /// Conditionally launch add field instance
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+       $key = new xmldb_key('instancefk', XMLDB_KEY_FOREIGN, array('instance'), 'portfolio_instance', array('id'));
+
+    /// Launch add key instancefk
+        $dbman->add_key($table, $key);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009111600);
+    }
+
+
     return $result;
 }
 

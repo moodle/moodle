@@ -619,11 +619,15 @@ class portfolio_exporter {
                 'data' => base64_encode(serialize($this)),
                 'expirytime' => time() + (60*60*24),
                 'userid' => $this->user->id,
+                'instance' => (empty($this->instance)) ? null : $this->instance->get('id'),
             );
             $this->id = $DB->insert_record('portfolio_tempdata', $r);
             $this->save(); // call again so that id gets added to the save data.
         } else {
-            $DB->set_field('portfolio_tempdata', 'data', base64_encode(serialize($this)), array('id' => $this->id));
+            $r = $DB->get_record('portfolio_tempdata', array('id' => $this->id));
+            $r->data = base64_encode(serialize($this));
+            $r->instance = (empty($this->instance)) ? null : $this->instance->get('id');
+            $DB->update_record('portfolio_tempdata', $r);
         }
     }
 

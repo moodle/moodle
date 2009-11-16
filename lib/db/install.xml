@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20091106" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20091116" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1967,8 +1967,8 @@
         <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="config value" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="instance"/>
-        <KEY NAME="instance" TYPE="foreign" FIELDS="instance" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to plugin instance" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="instancefk"/>
+        <KEY NAME="instancefk" TYPE="foreign" FIELDS="instance" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to plugin instance" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="name index"/>
@@ -2009,11 +2009,13 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="data"/>
         <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="dumping ground for portfolio callers to store their data in." PREVIOUS="id" NEXT="expirytime"/>
         <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="time this record will expire (used for cron cleanups) - the start of export + 24 hours" PREVIOUS="data" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="psuedo fk to user.  this is stored in the serialised data structure in the data field, but added here for ease of lookups." PREVIOUS="expirytime"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="psuedo fk to user.  this is stored in the serialised data structure in the data field, but added here for ease of lookups." PREVIOUS="expirytime" NEXT="instance"/>
+        <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="which portfolio plugin instance is being used" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userfk"/>
-        <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to usertable" PREVIOUS="primary"/>
+        <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to usertable" PREVIOUS="primary" NEXT="instance"/>
+        <KEY NAME="instance" TYPE="foreign" FIELDS="instance" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to portfolio_instance" PREVIOUS="userfk"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="message_providers" COMMENT="This table stores the message providers (modules and core systems)" PREVIOUS="portfolio_tempdata" NEXT="message_processors">

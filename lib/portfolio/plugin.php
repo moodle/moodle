@@ -696,6 +696,7 @@ abstract class portfolio_plugin_base {
         global $DB;
         $DB->delete_records('portfolio_instance_config', array('instance' => $this->get('id')));
         $DB->delete_records('portfolio_instance_user', array('instance' => $this->get('id')));
+        $DB->delete_records('portfolio_tempdata', array('instance' => $this->get('id')));
         $DB->delete_records('portfolio_instance', array('id' => $this->get('id')));
         $this->dirty = false;
         return true;
