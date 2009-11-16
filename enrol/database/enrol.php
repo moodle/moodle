@@ -1,5 +1,6 @@
 <?php
 
+require_once($CFG->libdir.'/adodb/adodb.inc.php');
 require_once($CFG->dirroot.'/enrol/enrol.class.php');
 
 class enrolment_plugin_database {
