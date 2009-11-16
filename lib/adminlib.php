@@ -5142,7 +5142,7 @@ class admin_setting_manageportfolio extends admin_setting {
         $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br /><br />';
         $addable = 0;
         foreach ($plugins as $p) {
-            if (!portfolio_static_function($p, 'allows_multiple') && in_array($p, $alreadyplugins)) {
+            if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $alreadyplugins)) {
                 continue;
             }
             if (array_key_exists($p, $insane)) {

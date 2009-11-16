@@ -378,7 +378,7 @@ abstract class portfolio_plugin_base {
     *
     * @return boolean
     */
-    public static function allows_multiple() {
+    public static function allows_multiple_instances() {
         return true;
     }
 
@@ -436,10 +436,10 @@ abstract class portfolio_plugin_base {
             'plugin' => $plugin,
             'name'   => $name,
         );
-        if (!portfolio_static_function($plugin, 'allows_multiple')) {
+        if (!portfolio_static_function($plugin, 'allows_multiple_instances')) {
             // check we don't have one already
             if ($DB->record_exists('portfolio_instance', array('plugin' => $plugin))) {
-                throw new portfolio_exception('multipledisallowed', 'portfolio', '', $plugin);
+                throw new portfolio_exception('multipleinstancesdisallowed', 'portfolio', '', $plugin);
             }
         }
         $newid = $DB->insert_record('portfolio_instance', $new);

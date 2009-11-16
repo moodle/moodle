@@ -51,7 +51,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
         }
     }
 
-    public static function allows_multiple() {
+    public static function allows_multiple_instances() {
         return false;
     }
 
