@@ -15,6 +15,7 @@ $PAGE->requires->yui_lib('dom');
 $id = required_param('id', PARAM_INT);
 
 require_login();
+$PAGE->set_url('/portfolio/type/download/file.php', array('id' => $id));
 
 $exporter = portfolio_exporter::rewaken_object($id);
 $exporter->verify_rewaken();
@@ -23,18 +24,16 @@ $exporter->print_header(get_string('downloading', 'portfolio_download'), false);
 $returnurl = $exporter->get('caller')->get_return_url();
 echo $OUTPUT->notification('<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />');
 
+$PAGE->requires->js('/portfolio/type/download/helper.js');
+$PAGE->requires->js_function_call('submit_download_form')->on_dom_ready();
+
 // if they don't have javascript, they can submit the form here to get the file.
 // if they do, it does it nicely for them.
 echo '<div id="redirect">
     <form action="' . $exporter->get('instance')->get_base_file_url() . '" method="post" id="redirectform">
       <input type="submit" value="' . get_string('downloadfile', 'portfolio_download') . '" />
     </form>
-    <script language="javascript">
-        f = YAHOO.util.Dom.get("redirectform");
-        YAHOO.util.Dom.addClass(f.parentNode, "hide");
-        f.submit();
-    </script>';
-
+';
 echo $OUTPUT->footer();
 
 
