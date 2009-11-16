@@ -355,6 +355,23 @@ abstract class portfolio_caller_base {
 
     public abstract function load_data();
 
+    /**
+     * set up the required files for this export.
+     * this supports either passing files directly
+     * or passing area arguments directly through
+     * to the files api using file_storage::get_area_files
+     *
+     * @param mixed $ids one of:
+     *                   - single file id
+     *                   - single stored_file ojbect
+     *                   - array of file ids or stored_file objects
+     *                   - null
+     * @param int    $contextid   (optional), passed to {@link see file_storage::get_area_files}
+     * @param string $filearea    (optional), passed to {@link see file_storage::get_area_files}
+     * @param int    $itemid      (optional), passed to {@link see file_storage::get_area_files}
+     * @param string $sort        (optional), passed to {@link see file_storage::get_area_files}
+     * @param bool   $includedirs (optional), passed to {@link see file_storage::get_area_files}
+     */
     public function set_file_and_format_data($ids=null /* ..pass arguments to area files here. */) {
         $args = func_get_args();
         array_shift($args); // shift off $ids
@@ -393,6 +410,17 @@ abstract class portfolio_caller_base {
         }
     }
 
+    /**
+     * array of arguments the caller expects to be passed through to it
+     * this must be keyed on the argument name, and the array value is a boolean,
+     * whether it is requrired, or just optional
+     * eg array(
+     *     id            => true,
+     *     somethingelse => false,
+     * )
+     *
+     * @return array
+     */
     public static abstract function expected_callbackargs();
 
 }

@@ -719,6 +719,7 @@ class portfolio_exporter {
     *
     * @param string $content content to write
     * @param string $name filename to use
+    * @param bool $maifest whether this is the main file or an secondary file (eg attachment)
     * @return new stored_file object
     */
     public function write_new_file($content, $name, $manifest=true) {

@@ -8,6 +8,7 @@ $string['addalltoportfolio'] = 'Save all...';
 $string['activeexport'] = 'Resolve active export';
 $string['alreadyexporting'] = 'You already have an active portfolio export in this session. Before continuing, you must either complete this export, or cancel it.  Would you like to continue it? (No will cancel it)';
 $string['availableformats'] = 'Available export formats';
+$string['callbackclassinvalid'] = 'Callback class specified was invalid or not part of the portfolio_caller hierarchy';
 $string['callercouldnotpackage'] = 'Failed to package up your data for export: original error was $a';
 $string['cannotsetvisible'] = 'Cannot set this to visible - the plugin has been completely disabled because of a misconfiguration';
 $string['configexport'] = 'Configure exported data';

@@ -32,14 +32,28 @@
 * the most basic type - pretty much everything is a subtype
 */
 class portfolio_format_file {
+
+    /**
+     * array of mimetypes this format supports
+     */
     public static function mimetypes() {
         return array(null);
     }
 
+    /**
+     * for multipart formats, eg html with attachments,
+     * we need to have a directory to place associated files in
+     * inside the zip file. this is the name of that directory
+     */
     public static function get_file_directory() {
         return null;
     }
 
+    /**
+     * given a file, return a snippet of markup in whatever format
+     * to link to that file.
+     * usually involves the path given by {@link get_file_directory}
+     */
     public static function file_output($file) {
         return '';
     }
@@ -49,6 +63,9 @@ class portfolio_format_file {
 * image format, subtype of file.
 */
 class portfolio_format_image extends portfolio_format_file {
+    /**
+     * return all mimetypes that use image.gif (eg all images)
+     */
     public static function mimetypes() {
         return mimeinfo_from_icon('type', 'image.gif', true);
     }
@@ -68,15 +85,14 @@ class portfolio_format_plainhtml extends portfolio_format_file {
 /**
 * video format, subtype of file.
 *
-* I guess there could be a youtube/google video plugin
-* and anyway, the flickr plugin can support it already
+* for portfolio plugins that support videos specifically
 */
 class portfolio_format_video extends portfolio_format_file {
     public static function mimetypes() {
         return array_merge(
-                mimeinfo_from_icon('type', 'video.gif', true),
-                mimeinfo_from_icon('type', 'avi.gif', true)
-               );
+            mimeinfo_from_icon('type', 'video.gif', true),
+            mimeinfo_from_icon('type', 'avi.gif', true)
+        );
     }
 }
 
@@ -90,12 +106,20 @@ class portfolio_format_text extends portfolio_format_file {
     }
 }
 
+/**
+ * base class for rich formats.
+ * these are multipart - eg things with attachments
+ */
 class portfolio_format_rich {
     public static function mimetypes() {
         return array(null);
     }
 }
 
+/**
+ * most commonly used rich format - richhtml - html with attachments
+ * eg inline images
+ */
 class portfolio_format_richhtml extends portfolio_format_rich {
     public static function get_file_directory() {
         return 'site_files';

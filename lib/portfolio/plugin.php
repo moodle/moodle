@@ -145,6 +145,12 @@ abstract class portfolio_plugin_base {
     */
     public abstract function is_push();
 
+    /**
+     * returns the user-friendly name for this plugin
+     * usually just get_string('pluginname', 'portfolio_something')
+     *
+     * @return string
+     */
     public static abstract function get_name();
 
     /**
@@ -152,7 +158,7 @@ abstract class portfolio_plugin_base {
     * if this function returns something non empty, ALL instances of your plugin
     * will be set to invisble and not be able to be set back until it's fixed
     *
-    * @return mixed - string = error string KEY (must be inside plugin_$yourplugin) or 0/false if you're ok
+    * @return mixed - string = error string KEY (must be inside portfolio_$yourplugin) or 0/false if you're ok
     */
     public static function plugin_sanity_check() {
         return 0;
@@ -163,7 +169,7 @@ abstract class portfolio_plugin_base {
     * if this function returns something non empty, the instance will be
     * set to invislbe and not be able to be set back until it's fixed.
     *
-    * @return mixed - string = error string KEY (must be inside plugin_$yourplugin) or 0/false if you're ok
+    * @return mixed - string = error string KEY (must be inside portfolio_$yourplugin) or 0/false if you're ok
     */
     public function instance_sanity_check() {
         return 0;
@@ -702,6 +708,11 @@ abstract class portfolio_plugin_base {
         return true;
     }
 
+    /**
+     * return array of mnet methods, keyed by service (pf)
+     * in the same format used everywhere else in moodle.
+     * see the mahara portfolio plugin for an example
+     */
     public static function mnet_publishes() {
         return array();
     }
