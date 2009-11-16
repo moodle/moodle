@@ -84,9 +84,9 @@ function setup_enrolments(&$user) {
 
                 //$count = 0;
                 $courselist = array();
-                while ($fields_obj = (object)$rs->FetchRow()) {         // Make a nice little array of courses to process
-                    $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
-                    $courselist[] = $fields_obj->enrolremotecoursefield;
+                while ($fields = $rs->FetchRow()) {         // Make a nice little array of courses to process
+                    $fields = array_change_key_case($fields, CASE_LOWER);
+                    $courselist[] = $fields['enrolremotecoursefield'];
                     //$count++;
                 }
                 $rs->close();
@@ -223,9 +223,9 @@ function sync_enrolments($role = null) {
     $transaction = $DB->start_delegated_transaction();
 
     $extcourses = array();
-    while ($extcourse_obj = (object)$rs->FetchRow()) { // there are more course records
-        $extcourse_obj = (object)array_change_key_case((array)$extcourse_obj , CASE_LOWER);
-        $extcourse = $extcourse_obj->{strtolower($CFG->enrol_remotecoursefield)};
+    while ($rsextcourse = $rs->FetchRow()) { // there are more course records
+        $rsextcourse = array_change_key_case($rsextcourse, CASE_LOWER);
+        $extcourse = $rsextcourse[strtolower($CFG->enrol_remotecoursefield)];
         array_push($extcourses, $extcourse);
 
         // does the course exist in moodle already?
@@ -279,9 +279,9 @@ function sync_enrolments($role = null) {
         }
 
         // slurp results into an array
-        while ($crs_obj = (object)$crs->FetchRow()) {
-            $crs_obj = (object)array_change_key_case((array)$crs_obj , CASE_LOWER);
-            array_push($extenrolments, $crs_obj->{strtolower($CFG->enrol_remoteuserfield)});
+        while ($rscrs = $crs->FetchRow()) {
+            $rscrs = array_change_key_case($rscrs, CASE_LOWER);
+            array_push($extenrolments, $rscrs[strtolower($CFG->enrol_remoteuserfield)]);
         }
         $crs->close(); // release the handle
 
