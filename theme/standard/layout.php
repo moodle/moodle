@@ -17,7 +17,7 @@
     </div>
 <?php } ?>
 
-<?php if ($OUTPUT->has_navbar()) { // This is the navigation bar with breadcrumbs  ?>
+<?php if ($PAGE->has_navbar()) { // This is the navigation bar with breadcrumbs  ?>
     <div class="navbar clearfix">
         <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
         <div class="navbutton"><?php echo $PAGE->button; ?></div>

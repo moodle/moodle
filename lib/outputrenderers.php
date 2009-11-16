@@ -742,7 +742,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $COURSE = $this->page->course;
 
         // Required for legacy template uses
-        $navigation = $this->has_navbar();
+        $navigation = $this->page->has_navbar();
 
         ob_start();
         include($templatefile);
@@ -789,7 +789,7 @@ class moodle_core_renderer extends moodle_renderer_base {
         $course = $this->page->course;
         $performanceinfo = self::PERFORMANCE_INFO_TOKEN;
 
-        $navigation = $this->has_navbar();
+        $navigation = $this->page->has_navbar();
         if (!$menu && $navigation) {
             $menu = $loggedinas;
         }
@@ -2373,15 +2373,7 @@ class moodle_core_renderer extends moodle_renderer_base {
     public function navbar() {
         return $this->page->navbar->content();
     }
-
-    /**
-     * Checks to see if there are any items on the navbar object
-     * @return bool true if there are, false if not
-     */
-    public function has_navbar() {
-        return $this->page->navbar->has_items();
     }
-}
 
 
 /// RENDERERS

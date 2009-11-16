@@ -476,6 +476,17 @@ class moodle_page {
     }
 
     /**
+     * Checks to see if there are any items on the navbar object
+     * @return bool true if there are, false if not
+     */
+    public function has_navbar() {
+        if ($this->_navbar === null) {
+            $this->_navbar = new navbar($this);
+        }
+        return $this->_navbar->has_items();
+    }
+
+    /**
      * Returns the settings navigation object
      * @return settings_navigation
      */
