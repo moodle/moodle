@@ -24,6 +24,9 @@ class user_bulk_action_form extends moodleform {
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[5] = get_string('download', 'admin');
         }
+        if (has_capability('moodle/user:update', $syscontext)) {
+            $actions[6] = get_string('forcepasswordchange');
+        }
 
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', null, $actions);
