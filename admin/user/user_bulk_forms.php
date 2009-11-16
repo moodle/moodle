@@ -27,6 +27,9 @@ class user_bulk_action_form extends moodleform {
         if (has_capability('moodle/role:assign', $syscontext)){
             $actions[6] = get_string('enrolmultipleusers', 'admin');
         }
+        if (has_capability('moodle/user:update', $syscontext)) {
+            $actions[7] = get_string('forcepasswordchange');
+        }
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', null, $actions);
         $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
