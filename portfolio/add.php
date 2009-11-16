@@ -46,7 +46,7 @@ $callbackfile  = optional_param('callbackfile', null, PARAM_PATH);            //
 $callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);       // callback class eg forum_portfolio_caller - the class to handle the exporting content.
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
-
+$PAGE->set_url('/portfolio/add.php', array('id' => $dataid));
 $exporter = null;
 
 // try and find a partial export id in the session if it's not passed explicitly

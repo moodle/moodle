@@ -41,6 +41,7 @@ require_once($CFG->libdir . '/filelib.php');
 $id = required_param('id', PARAM_INT);
 
 require_login();
+$PAGE->set_url('/portfolio/add.php', array('id' => $id));
 
 $exporter = portfolio_exporter::rewaken_object($id);
 $exporter->verify_rewaken();
