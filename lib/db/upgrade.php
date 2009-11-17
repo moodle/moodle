@@ -3198,7 +3198,7 @@ function xmldb_main_upgrade($oldversion=0) {
             $message .= "\n".get_string('upgrade197salt', 'admin');
         }
         notify($message, 'notifysuccess');
-        
+
         unset($message);
 
         upgrade_main_savepoint($result, 2007101561.01);
