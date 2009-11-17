@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20091116" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20091117" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1996,7 +1996,8 @@
         <FIELD NAME="portfolio" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="fk to portfolio_instance" PREVIOUS="time" NEXT="caller_class"/>
         <FIELD NAME="caller_class" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false" COMMENT="the name of the class used to create the transfer" PREVIOUS="portfolio" NEXT="caller_file"/>
         <FIELD NAME="caller_file" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="path to file to include where the class definition lives. (relative to dirroot)" PREVIOUS="caller_class" NEXT="caller_sha1"/>
-        <FIELD NAME="caller_sha1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 of exported content as far as the caller is concerned (before the portfolio plugin gets a hold of it)" PREVIOUS="caller_file"/>
+        <FIELD NAME="caller_sha1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 of exported content as far as the caller is concerned (before the portfolio plugin gets a hold of it)" PREVIOUS="caller_file" NEXT="tempdataid"/>
+        <FIELD NAME="tempdataid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="old id from portfolio_tempdata.  This is so that we can gracefully catch a race condition between an external system requesting a file and causing the tempdata to be deleted, before the user gets the &quot;your transfer is requested&quot; page" PREVIOUS="caller_sha1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userfk"/>
