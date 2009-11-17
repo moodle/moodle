@@ -1147,7 +1147,7 @@ final class t3lib_div {
 	 * @return	string
 	 */
 	public static function rm_endcomma($string)	{
-		return ereg_replace(',$','',$string);
+        return preg_replace('/,$/','',$string);
 	}
 
 	/**
@@ -1287,7 +1287,7 @@ final class t3lib_div {
 	 * @see calcParenthesis()
 	 */
 	public static function calcPriority($string)	{
-		$string=ereg_replace('[[:space:]]*','',$string);	// removing all whitespace
+		$string=preg_replace('/[ ]*/','',$string);	// removing all whitespace
 		$string='+'.$string;	// Ensuring an operator for the first entrance
 		$qm='\*\/\+-^%';
 		$regex = '(['.$qm.'])(['.$qm.']?[0-9\.]*)';
@@ -1370,7 +1370,7 @@ final class t3lib_div {
 	 * @return	string		Converted result.
 	 */
 	public static function deHSCentities($str)	{
-		return ereg_replace('&amp;([#[:alnum:]]*;)','&\1',$str);
+		return preg_replace('/&amp;([#A-Za-z0-9]*;)/','&\1',$str);
 	}
 
 	/**
@@ -1894,7 +1894,7 @@ final class t3lib_div {
 						$name = '';
 					}
 				} else {
-					if ($key = strtolower(ereg_replace('[^a-zA-Z0-9]','',$val)))	{
+					if ($key = strtolower(preg_replace('/[^a-zA-Z0-9]/','',$val)))	{
 						$attributes[$key] = '';
 						$name = $key;
 					}
@@ -1917,9 +1917,9 @@ final class t3lib_div {
 	 * @internal
 	 */
 	public static function split_tag_attributes($tag)	{
-		$tag_tmp = trim(eregi_replace ('^<[^[:space:]]*','',trim($tag)));
+		$tag_tmp = trim(preg_replace ('/^<[^[:space:]]*/i','',trim($tag)));
 			// Removes any > in the end of the string
-		$tag_tmp = trim(eregi_replace ('>$','',$tag_tmp));
+		$tag_tmp = trim(preg_replace ('/>$/i','',$tag_tmp));
 
 		$value = array();
 		while (strcmp($tag_tmp,''))	{	// Compared with empty string instead , 030102
@@ -2184,7 +2184,7 @@ final class t3lib_div {
 			}
 
 				// The tag name is cleaned up so only alphanumeric chars (plus - and _) are in there and not longer than 100 chars either.
-			$tagName = substr(ereg_replace('[^[:alnum:]_-]','',$tagName),0,100);
+			$tagName = substr(preg_replace('/[^[:alnum:]_-]/','',$tagName),0,100);
 
 				// If the value is an array then we will call this function recursively:
 			if (is_array($v))	{
@@ -2848,7 +2848,7 @@ final class t3lib_div {
 			// Initialize variabels:
 		$filearray = array();
 		$sortarray = array();
-		$path = ereg_replace('\/$','',$path);
+		$path = preg_replace('#\/$#','',$path);
 
 			// Find files+directories:
 		if (@is_dir($path))	{
@@ -3266,7 +3266,7 @@ final class t3lib_div {
 
 		$pString = t3lib_div::implodeArrayForUrl('',$params);
 
-		return $pString ? $parts.'?'.ereg_replace('^&','',$pString) : $parts;
+		return $pString ? $parts.'?'.preg_replace('/^&/','',$pString) : $parts;
 	}
 
 	/**
@@ -3389,7 +3389,7 @@ final class t3lib_div {
 					list($v,$n) = explode('|',$GLOBALS['TYPO3_CONF_VARS']['SYS']['requestURIvar']);
 					$retVal = $GLOBALS[$v][$n];
 				} elseif (!$_SERVER['REQUEST_URI'])	{	// This is for ISS/CGI which does not have the REQUEST_URI available.
-					$retVal = '/'.ereg_replace('^/','',t3lib_div::getIndpEnv('SCRIPT_NAME')).
+					$retVal = '/'.preg_replace('#^/#','',t3lib_div::getIndpEnv('SCRIPT_NAME')).
 						($_SERVER['QUERY_STRING']?'?'.$_SERVER['QUERY_STRING']:'');
 				} else {
 					$retVal = $_SERVER['REQUEST_URI'];
@@ -3612,11 +3612,11 @@ final class t3lib_div {
 				break;
 				case 'msie':
 					$tmp = strstr($useragent,'MSIE');
-					$bInfo['VERSION'] = doubleval(ereg_replace('^[^0-9]*','',substr($tmp,4)));
+					$bInfo['VERSION'] = doubleval(preg_replace('/^[^0-9]*/','',substr($tmp,4)));
 				break;
 				case 'opera':
 					$tmp = strstr($useragent,'Opera');
-					$bInfo['VERSION'] = doubleval(ereg_replace('^[^0-9]*','',substr($tmp,5)));
+					$bInfo['VERSION'] = doubleval(preg_replace('/^[^0-9]*/','',substr($tmp,5)));
 				break;
 				case 'konqu':
 					$tmp = strstr($useragent,'Konqueror/');

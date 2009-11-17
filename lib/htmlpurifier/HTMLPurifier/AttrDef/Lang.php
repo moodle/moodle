@@ -10,7 +10,7 @@ class HTMLPurifier_AttrDef_Lang extends HTMLPurifier_AttrDef
     public function validate($string, $config, $context) {
 
 // moodle change - we use special lang strings unfortunatelly
-        return ereg_replace('[^0-9a-zA-Z_-]', '', $string);
+        return preg_replace('/[^0-9a-zA-Z_-]/', '', $string);
 // moodle change end
 
         $string = trim($string);

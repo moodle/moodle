@@ -794,8 +794,8 @@ class t3lib_cs {
 			$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES));		// Getting them in iso-8859-1 - but thats ok since this is observed below.
 		}
 
-		$token = md5(microtime());
-		$parts = explode($token,ereg_replace('(&([#[:alnum:]]*);)',$token.'\2'.$token,$str));
+		$token = 'a'.md5(microtime());//token must start with a letter or preg_replace substitution won't work
+		$parts = explode($token,preg_replace('/(&([#[:alnum:]]*);)/',$token.'\2'.$token,$str));
 		foreach($parts as $k => $v)	{
 			if ($k%2)	{
 				if (substr($v,0,1)=='#')	{	// Dec or hex entities:

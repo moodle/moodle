@@ -147,7 +147,7 @@ class tex_filter extends moodle_text_filter {
             $texexp = str_replace('</nolink>','',$texexp);
             $texexp = str_replace('<span class="nolink">','',$texexp);
             $texexp = str_replace('</span>','',$texexp);
-            $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
+            $texexp = preg_replace("/<br[[:space:]]*\/?>/i", '', $texexp);  //dlnsk
             $align = "middle";
             if (preg_match('/^align=bottom /',$texexp)) {
               $align = "text-bottom";
