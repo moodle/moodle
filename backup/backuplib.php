@@ -1340,7 +1340,11 @@
                 fwrite ($bf,full_tag("POLICYAGREED",4,false,$user->policyagreed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user->deleted));
                 fwrite ($bf,full_tag("USERNAME",4,false,$user->username));
-                fwrite ($bf,full_tag("PASSWORD",4,false,$user->password));
+                // Prevent user passwords in backup files unless
+                // $CFG->includeuserpasswordsinbackup is defined. MDL-20838
+                if (!empty($CFG->includeuserpasswordsinbackup)) {
+                    fwrite ($bf,full_tag("PASSWORD",4,false,$user->password));
+                }
                 fwrite ($bf,full_tag("IDNUMBER",4,false,$user->idnumber));
                 fwrite ($bf,full_tag("FIRSTNAME",4,false,$user->firstname));
                 fwrite ($bf,full_tag("LASTNAME",4,false,$user->lastname));
