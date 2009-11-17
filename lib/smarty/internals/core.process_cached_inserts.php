@@ -20,7 +20,7 @@ function smarty_core_process_cached_inserts($params, &$smarty)
     for ($i = 0, $for_max = count($cached_inserts); $i < $for_max; $i++) {
         if ($smarty->debugging) {
             $_params = array();
-            require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.get_microtime.php');
+            require_once(SMARTY_CORE_DIR . 'core.get_microtime.php');
             $debug_start_time = smarty_core_get_microtime($_params, $smarty);
         }
 
@@ -29,7 +29,7 @@ function smarty_core_process_cached_inserts($params, &$smarty)
 
         if (isset($args['script'])) {
             $_params = array('resource_name' => $smarty->_dequote($args['script']));
-            require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.get_php_resource.php');
+            require_once(SMARTY_CORE_DIR . 'core.get_php_resource.php');
             if(!smarty_core_get_php_resource($_params, $smarty)) {
                 return false;
             }
@@ -52,10 +52,10 @@ function smarty_core_process_cached_inserts($params, &$smarty)
             $replace = '';
         }
 
-        $params['results'] = str_replace($cached_inserts[$i], $replace, $params['results']);
+        $params['results'] = substr_replace($params['results'], $replace, strpos($params['results'], $cached_inserts[$i]), strlen($cached_inserts[$i]));
         if ($smarty->debugging) {
             $_params = array();
-            require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.get_microtime.php');
+            require_once(SMARTY_CORE_DIR . 'core.get_microtime.php');
             $smarty->_smarty_debug_info[] = array('type'      => 'insert',
                                                 'filename'  => 'insert_'.$name,
                                                 'depth'     => $smarty->_inclusion_depth,

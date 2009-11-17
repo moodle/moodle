@@ -19,9 +19,10 @@
  *         - width = image width (optional, default actual width)
  *         - basedir = base directory for absolute paths, default
  *                     is environment variable DOCUMENT_ROOT
+ *         - path_prefix = prefix for path output (optional, default empty)
  *
- * Examples: {html_image file="images/masthead.gif"}
- * Output:   <img src="images/masthead.gif" width=400 height=23>
+ * Examples: {html_image file="/images/masthead.gif"}
+ * Output:   <img src="/images/masthead.gif" width=400 height=23>
  * @link http://smarty.php.net/manual/en/language.function.html.image.php {html_image}
  *      (Smarty online manual)
  * @author   Monte Ohrt <monte at ohrt dot com>
@@ -44,6 +45,7 @@ function smarty_function_html_image($params, &$smarty)
     $extra = '';
     $prefix = '';
     $suffix = '';
+    $path_prefix = '';
     $server_vars = ($smarty->request_use_auto_globals) ? $_SERVER : $GLOBALS['HTTP_SERVER_VARS'];
     $basedir = isset($server_vars['DOCUMENT_ROOT']) ? $server_vars['DOCUMENT_ROOT'] : '';
     foreach($params as $_key => $_val) {
@@ -52,6 +54,7 @@ function smarty_function_html_image($params, &$smarty)
             case 'height':
             case 'width':
             case 'dpi':
+            case 'path_prefix':
             case 'basedir':
                 $$_key = $_val;
                 break;
@@ -90,15 +93,9 @@ function smarty_function_html_image($params, &$smarty)
     } else {
         $_image_path = $file;
     }
-
+    
     if(!isset($params['width']) || !isset($params['height'])) {
-        if ($smarty->security &&
-            ($_params = array('resource_type' => 'file', 'resource_name' => $_image_path)) &&
-            (require_once(SMARTY_CORE_DIR . 'core.is_secure.php')) &&
-            (!smarty_core_is_secure($_params, $smarty)) ) {
-            $smarty->trigger_error("html_image: (secure) '$_image_path' not in secure directory", E_USER_NOTICE);
-
-        } elseif (!$_image_data = @getimagesize($_image_path)) {
+        if(!$_image_data = @getimagesize($_image_path)) {
             if(!file_exists($_image_path)) {
                 $smarty->trigger_error("html_image: unable to find '$_image_path'", E_USER_NOTICE);
                 return;
@@ -110,7 +107,13 @@ function smarty_function_html_image($params, &$smarty)
                 return;
             }
         }
-
+        if ($smarty->security &&
+            ($_params = array('resource_type' => 'file', 'resource_name' => $_image_path)) &&
+            (require_once(SMARTY_CORE_DIR . 'core.is_secure.php')) &&
+            (!smarty_core_is_secure($_params, $smarty)) ) {
+            $smarty->trigger_error("html_image: (secure) '$_image_path' not in secure directory", E_USER_NOTICE);
+        }        
+        
         if(!isset($params['width'])) {
             $width = $_image_data[0];
         }
@@ -131,7 +134,7 @@ function smarty_function_html_image($params, &$smarty)
         $height = round($height * $_resize);
     }
 
-    return $prefix . '<img src="'.$file.'" alt="'.$alt.'" width="'.$width.'" height="'.$height.'"'.$extra.' />' . $suffix;
+    return $prefix . '<img src="'.$path_prefix.$file.'" alt="'.$alt.'" width="'.$width.'" height="'.$height.'"'.$extra.' />' . $suffix;
 }
 
 /* vim: set expandtab: */

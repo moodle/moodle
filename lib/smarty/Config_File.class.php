@@ -17,8 +17,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * @link http://smarty.php.net/
- * @version 2.6.9
+ * For questions, help, comments, discussion, etc., please join the
+ * Smarty mailing list. Send a blank e-mail to
+ * smarty-discussion-subscribe@googlegroups.com 
+ *
+ * @link http://www.smarty.net/
+ * @version 2.6.26
  * @copyright Copyright: 2001-2005 New Digital Group, Inc.
  * @author Andrei Zmievski <andrei@php.net>
  * @access public
@@ -105,7 +109,7 @@ class Config_File {
      * @param string $var_name (optional) variable to get info for
      * @return string|array a value or array of values
      */
-    function &get($file_name, $section_name = NULL, $var_name = NULL)
+    function get($file_name, $section_name = NULL, $var_name = NULL)
     {
         if (empty($file_name)) {
             $this->_trigger_error_msg('Empty config file name');
@@ -285,9 +289,9 @@ class Config_File {
             $line = $lines[$i];
             if (empty($line)) continue;
 
-            if ( $line{0} == '[' && preg_match('!^\[(.*?)\]!', $line, $match) ) {
+            if ( substr($line, 0, 1) == '[' && preg_match('!^\[(.*?)\]!', $line, $match) ) {
                 /* section found */
-                if ($match[1]{0} == '.') {
+                if (substr($match[1], 0, 1) == '.') {
                     /* hidden section */
                     if ($this->read_hidden) {
                         $section_name = substr($match[1], 1);
@@ -347,7 +351,7 @@ class Config_File {
      */
     function _set_config_var(&$container, $var_name, $var_value, $booleanize)
     {
-        if ($var_name{0} == '.') {
+        if (substr($var_name, 0, 1) == '.') {
             if (!$this->read_hidden)
                 return;
             else
