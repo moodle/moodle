@@ -4,6 +4,7 @@
 */
 
 require_once('../../config.php');
+require_once('lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -20,29 +21,34 @@ if (empty($SESSION->bulk_users)) {
 
 admin_externalpage_print_header();
 
-//TODO: add support for large number of users
-
 if ($confirm and confirm_sesskey()) {
     $primaryadmin = get_admin();
 
-    $in = implode(',', $SESSION->bulk_users);
-    if ($rs = get_recordset_select('user', "id IN ($in)")) {
-        while ($user = rs_fetch_next_record($rs)) {
-            if ($primaryadmin->id != $user->id and $USER->id != $user->id
-                and set_user_preference('auth_forcepasswordchange', 1, $user->id)) {
-                unset($SESSION->bulk_users[$user->id]);
-            } else {
-                notify(get_string('forcepasswordchangenot', '', fullname($user, true)));
+    $parts = array_chunk($SESSION->bulk_users, 300);
+    foreach ($parts as $users) {
+        $in = implode(',', $users);
+        if ($rs = get_recordset_select('user', "id IN ($in)")) {
+            while ($user = rs_fetch_next_record($rs)) {
+                if ($primaryadmin->id != $user->id and $USER->id != $user->id
+                    and set_user_preference('auth_forcepasswordchange', 1, $user->id)) {
+                    unset($SESSION->bulk_users[$user->id]);
+                } else {
+                    notify(get_string('forcepasswordchangenot', '', fullname($user, true)));
+                }
             }
+            rs_close($rs);
         }
-        rs_close($rs);
     }
-    redirect($return, get_string('changessaved'));
+    notify(get_string('changessaved'), 'notifysuccess');
+    print_continue($return);
 
 } else {
     $in = implode(',', $SESSION->bulk_users);
-    $userlist = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
+    $userlist = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname', 0, MAX_BULK_USERS);
     $usernames = implode(', ', $userlist);
+    if (count($SESSION->bulk_users) > MAX_BULK_USERS) {
+        $usernames .= ', ...';
+    }
     $optionsyes = array();
     $optionsyes['confirm'] = 1;
     $optionsyes['sesskey'] = sesskey();
