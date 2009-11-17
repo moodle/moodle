@@ -7554,6 +7554,30 @@ function random_string ($length=15) {
 }
 
 /**
+ * Generate a complex random string (usefull for md5 salts)
+ *
+ * This function is based on the above {@link random_string()} however it uses a
+ * larger pool of characters and generates a string between 24 and 32 characters
+ *
+ * @param int $length Optional if set generates a string to exactly this length
+ * @return string
+ */
+function complex_random_string($length=null) {
+    $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    $pool .= '`~!@#%^&*()_+-=[];,./<>?:{} ';
+    $poollen = strlen($pool);
+    mt_srand ((double) microtime() * 1000000);
+    if ($length===null) {
+        $length = floor(rand(24,32));
+    }
+    $string = '';
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $pool[(mt_rand()%$poollen)];
+    }
+    return $string;
+}
+
+/**
  * Given some text (which may contain HTML) and an ideal length,
  * this function truncates the text neatly on a word boundary if possible
  *
@@ -7564,7 +7588,6 @@ function random_string ($length=15) {
  * @param string $ending The string to append if the passed string is truncated
  * @return string $truncate - shortened string
  */
-
 function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
     global $CFG;

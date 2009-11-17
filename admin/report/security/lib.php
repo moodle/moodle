@@ -49,6 +49,7 @@ function report_security_get_issue_list() {
         'report_security_check_openprofiles',
         'report_security_check_google',
         'report_security_check_passwordpolicy',
+        'report_security_check_passwordsaltmain',
         'report_security_check_emailchangeconfirmation',
         'report_security_check_cookiesecure',
         'report_security_check_configrw',
@@ -468,6 +469,35 @@ function report_security_check_configrw($detailed=false) {
 
     if ($detailed) {
         $result->details = get_string('check_configrw_details', 'report_security');
+    }
+
+    return $result;
+}
+
+function report_security_check_passwordsaltmain($detailed=false) {
+    global $CFG;
+
+    $result = new object();
+    $result->issue   = 'report_security_check_passwordsaltmain';
+    $result->name    = get_string('check_passwordsaltmain_name', 'report_security');
+    $result->info    = null;
+    $result->details = null;
+    $result->status  = null;
+    $result->link    = null;
+    
+    if (empty($CFG->passwordsaltmain)) {
+        $result->status = REPORT_SECURITY_WARNING;
+        $result->info   = get_string('check_passwordsaltmain_warning', 'report_security');
+    } else if (trim($CFG->passwordsaltmain)=='' || preg_match('/^([\w]+|[\d]+)$/i', $CFG->passwordsaltmain)) {
+        $result->status = REPORT_SECURITY_WARNING;
+        $result->info   = get_string('check_passwordsaltmain_weak', 'report_security');
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+        $result->info   = get_string('check_passwordsaltmain_ok', 'report_security');
+    }
+
+    if ($detailed) {
+        $result->details = get_string('check_passwordsaltmain_details', 'report_security');
     }
 
     return $result;

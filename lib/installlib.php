@@ -203,6 +203,9 @@ function install_generate_configphp($database, $cfg, $userealpath=false) {
     $configphp .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $configphp .= "\r\n";
 
+    $configphp .= '$CFG->passwordsaltmain = '.var_export(complex_random_string(), true).";\r\n";
+    $configphp .= "\r\n";
+
     $configphp .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n\r\n";
     $configphp .= '// There is no php closing tag in this file,'."\r\n";
     $configphp .= '// it is intentional because it prevents trailing whitespace problems!'."\r\n";
