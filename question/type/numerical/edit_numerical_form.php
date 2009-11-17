@@ -38,7 +38,7 @@ class question_edit_numerical_form extends question_edit_form {
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
                 $creategrades->gradeoptions);
 //------------------------------------------------------------------------------------------
-        $QTYPES['numerical']->edit_numerical_options($mform);
+        $QTYPES['numerical']->edit_numerical_options($mform,$this);
         /*
         $mform->addElement('header', 'unithandling', get_string("Units handling", 'qtype_numerical'));
         $currentgrp1 = array();
