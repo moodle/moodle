@@ -14,6 +14,7 @@
  * Purpose:  simple search/replace
  * @link http://smarty.php.net/manual/en/language.modifier.replace.php
  *          replace (Smarty online manual)
+ * @author   Monte Ohrt <monte at ohrt dot com>
  * @param string
  * @param string
  * @param string

@@ -8,8 +8,8 @@
 /**
  * Smarty debug_console function plugin
  *
- * Type:     core<br />
- * Name:     display_debug_console<br />
+ * Type:     core<br>
+ * Name:     display_debug_console<br>
  * Purpose:  display the javascript debug console window
  * @param array Format: null
  * @param Smarty
@@ -23,8 +23,9 @@ function smarty_core_display_debug_console($params, &$smarty)
         // set path to debug template from SMARTY_DIR
         $smarty->debug_tpl = SMARTY_DIR . 'debug.tpl';
         if($smarty->security && is_file($smarty->debug_tpl)) {
-            $smarty->secure_dir[] = dirname(realpath($smarty->debug_tpl));
+            $smarty->secure_dir[] = realpath($smarty->debug_tpl);
         }
+        $smarty->debug_tpl = 'file:' . SMARTY_DIR . 'debug.tpl';
     }
 
     $_ldelim_orig = $smarty->left_delimiter;

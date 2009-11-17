@@ -14,6 +14,7 @@
  * Purpose:  count the number of characters in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.characters.php
  *          count_characters (Smarty online manual)
+ * @author   Monte Ohrt <monte at ohrt dot com>
  * @param string
  * @param boolean include whitespace in the character count
  * @return integer

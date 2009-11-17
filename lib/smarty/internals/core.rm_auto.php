@@ -28,7 +28,7 @@ function smarty_core_rm_auto($params, &$smarty)
             'level' => 0,
             'exp_time' => $params['exp_time']
         );
-        require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.rmdir.php');
+        require_once(SMARTY_CORE_DIR . 'core.rmdir.php');
         $_res = smarty_core_rmdir($_params, $smarty);
     } else {
         $_tname = $smarty->_get_auto_filename($params['auto_base'], $params['auto_source'], $params['auto_id']);
@@ -47,7 +47,7 @@ function smarty_core_rm_auto($params, &$smarty)
                 'level' => 1,
                 'exp_time' => $params['exp_time']
             );
-            require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.rmdir.php');
+            require_once(SMARTY_CORE_DIR . 'core.rmdir.php');
             $_res = smarty_core_rmdir($_params, $smarty);
         } else {
             // remove matching file names
