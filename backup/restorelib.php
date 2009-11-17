@@ -2506,6 +2506,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         global $CFG, $DB;
         require_once ($CFG->dirroot.'/tag/lib.php');
 
+        $authcache = array(); // Cache to get some bits from authentication plugins
+
         $status = true;
         //Check it exists
         if (!file_exists($xml_file)) {
@@ -2585,12 +2587,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //Has role teacher or student or needed
                 $is_course_user = ($is_teacher or $is_student or $is_needed);
 
-                // in case we are restoring to same server, look for user by id
+                // in case we are restoring to same server, look for user by id and username
                 // it should return record always, but in sites rebuilt from scratch
                 // and being reconstructed using course backups
                 $user_data = false;
                 if (backup_is_same_site($restore)) {
-                    $user_data = $DB->get_record('user', array('id'=>$user->id));
+                    $user_data = $DB->get_record('user', array('id'=>$user->id, 'username'=>$user->username));
                 }
 
                 // Only try to perform mnethost/auth modifications if restoring to another server
@@ -2632,8 +2634,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
-                if (!backup_is_same_site($restore)) { /// Restoring to another server, look for existing user based on fields
-                                                      /// If restoring to same server, look has been performed some lines above (by id)
+                if (!backup_is_same_site($restore) || !$user_data) { /// Restoring to another server, or rebuilding site (failed id&
+                                                                     /// login search above), look for existing user based on fields
                     $user_data = $DB->get_record('user', array('username'=>$user->username, 'mnethostid'=>$user->mnethostid));
                 }
 
@@ -2682,14 +2684,44 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
 
                     //We need to analyse the AUTH field to recode it:
-                    //   - if the field isn't set, we are in a pre 1.4 backup and we'll
-                    //     use manual
-
-                    if (empty($user->auth)) {
+                    //   - if the field isn't set, we are in a pre 1.4 backup and $CFG->registerauth will decide
+                    //   - if the auth isn't enabled in target site, $CFG->registerauth will decide
+                    //   - finally, if the auth resulting isn't enabled, default to 'manual'
+                    if (empty($user->auth) || !is_enabled_auth($user->auth)) {
                         if ($CFG->registerauth == 'email') {
                             $user->auth = 'email';
                         } else {
                             $user->auth = 'manual';
+                        }
+                    }
+                    if (!is_enabled_auth($user->auth)) { // Final auth check verify, default to manual if not enabled
+                        $user->auth = 'manual';
+                    }
+
+                    // Now that we know the auth method, for users to be created without pass
+                    // if password handling is internal and reset password is available
+                    // we set the password to "restored" (plain text), so the login process
+                    // will know how to handle that situation in order to allow the user to
+                    // recover the password. MDL-20846
+                    if (empty($user->password)) { // Only if restore comes without password
+                        if (!array_key_exists($user->auth, $authcache)) { // Not in cache
+                            $userauth = new stdClass();
+                            $authplugin = get_auth_plugin($user->auth);
+                            $userauth->preventpassindb = !empty($authplugin->config->preventpassindb);
+                            $userauth->isinternal      = $authplugin->is_internal();
+                            $userauth->canresetpwd     = $authplugin->can_reset_password();
+                            $authcache[$user->auth] = $userauth;
+                        } else {
+                            $userauth = $authcache[$user->auth]; // Get from cache
+                        }
+
+                        // Respect strange config in some (ldap) plugins. Isn't this a dupe of is_internal() ?
+                        if (!empty($userauth->preventpassindb)) {
+                            $user->password = 'not cached';
+
+                        // If Moodle is responsible for storing/validating pwd and reset functionality is available, mark
+                        } else if ($userauth->isinternal and $userauth->canresetpwd) {
+                            $user->password = 'restored';
                         }
                     }
 
