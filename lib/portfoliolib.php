@@ -993,7 +993,27 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml = $htmlbody;
         $eventdata->smallmessage = $smallbody;
-        error_log(print_r($eventdata, true));
         message_send($eventdata);
     }
+}
+
+function portfolio_export_pagesetup($PAGE, $caller) {
+    // for build navigation
+    if (!$course = $caller->get('course')) {
+        $course = $courseid;
+    }
+
+    // set up the course so that build_navigation works nice
+    $PAGE->set_course($course);
+
+    list($extranav, $cm) = $caller->get_navigation();
+
+    // and now we know the course for sure and maybe the cm, call require_login with it
+    // todo this will have to change when we have things exporting content outside the course context (eg blogs)
+    require_login($course, false, $cm);
+
+    foreach ($extranav as $navitem) {
+        $PAGE->navbar->add($navitem['name']);
+    }
+    $PAGE->navbar->add(get_string('exporting', 'portfolio'));
 }

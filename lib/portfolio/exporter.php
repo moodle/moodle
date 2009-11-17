@@ -53,12 +53,6 @@ class portfolio_exporter {
     private $noexportconfig;
 
     /**
-    * the navigation to display on the wizard screens
-    * built from build_navigation
-    */
-    private $navigation;
-
-    /**
     * the user currently exporting content
     * always $USER, but more conveniently placed here
     */
@@ -125,11 +119,8 @@ class portfolio_exporter {
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
     * @param portfolio_caller_base subclass $caller portfolio caller (passed by reference)
     * @param string $callerfile path to callerfile (relative to dataroot)
-    * @param string $navigation result of build_navigation (passed to print_header)
-    *                deprecated argument as of Moodle 2.0, please use $PAGE methods
-    *                instead.
     */
-    public function __construct(&$instance, &$caller, $callerfile, $navigation='') {
+    public function __construct(&$instance, &$caller, $callerfile) {
         $this->instance =& $instance;
         $this->caller =& $caller;
         if ($instance) {
@@ -138,7 +129,6 @@ class portfolio_exporter {
         }
         $this->callerfile = $callerfile;
         $this->stage = PORTFOLIO_STAGE_CONFIG;
-        $this->navigation = $navigation;
         $this->caller->set('exporter', $this);
         $this->alreadystolen = array();
         $this->newfilehashes = array();

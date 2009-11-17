@@ -98,6 +98,9 @@ if (!empty($dataid)) {
             $exporter->save();
         }
     }
+
+    portfolio_export_pagesetup($PAGE, $exporter->get('caller')); // this calls require_login($course) if it can..
+
 // completely new request, look to see what information we've been passed and set up the exporter object.
 } else {
     // you cannot get here with no information for us, we must at least have the caller.
@@ -157,24 +160,7 @@ if (!empty($dataid)) {
         throw new portfolio_caller_exception('nopermissions', 'portfolio', $caller->get_return_url());
     }
 
-    // for build navigation
-    if (!$course = $caller->get('course')) {
-        $course = $courseid;
-    }
-
-    // set up the course so that build_navigation works nice
-    $PAGE->set_course($course);
-
-    list($extranav, $cm) = $caller->get_navigation();
-
-    // and now we know the course for sure and maybe the cm, call require_login with it
-    // todo this will have to change when we have things exporting content outside the course context (eg blogs)
-    require_login($course, false, $cm);
-
-    foreach ($extranav as $navitem) {
-        $PAGE->navbar->add($navitem['name']);
-    }
-    $PAGE->navbar->add(get_string('exporting', 'portfolio'));
+    portfolio_export_pagesetup($PAGE, $caller); // this calls require_login($course) if it can..
 
     // finally! set up the exporter object with the portfolio instance, and caller information elements
     $exporter = new portfolio_exporter($instance, $caller, $callbackfile);
