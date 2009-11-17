@@ -1,9 +1,10 @@
-<?php //$Id$
+<?php
 /**
 * script for bulk user force password change
 */
 
 require_once('../../config.php');
+require_once('lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -20,34 +21,38 @@ if (empty($SESSION->bulk_users)) {
 
 admin_externalpage_print_header();
 
-//TODO: add support for large number of users
-
 if ($confirm and confirm_sesskey()) {
     $primaryadmin = get_admin();
 
-    $in = implode(',', $SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null)) {
-        foreach ($rs as $user) {
-            if ($primaryadmin->id != $user->id and $USER->id != $user->id
-                and set_user_preference('auth_forcepasswordchange', 1, $user->id)) {
-                unset($SESSION->bulk_users[$user->id]);
-            } else {
-                echo $OUTPUT->notification(get_string('forcepasswordchangenot', '', fullname($user, true)));
+    $parts = array_chunk($SESSION->bulk_users, 300);
+    foreach ($parts as $users) {
+        list($in, $params) = $DB->get_in_or_equal($users);
+        if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
+            foreach ($rs as $user) {
+                if ($primaryadmin->id != $user->id and $USER->id != $user->id
+                    and set_user_preference('auth_forcepasswordchange', 1, $user->id)) {
+                    unset($SESSION->bulk_users[$user->id]);
+                } else {
+                    echo $OUTPUT->notification(get_string('forcepasswordchangenot', '', fullname($user, true)));
+                }
             }
+            $rs->close();
         }
-        $rs->close;
     }
-    redirect($return, get_string('changessaved'));
+    echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
+    echo $OUTPUT->continue_button($return);
 
 } else {
-    $in = implode(',', $SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname', 0, MAX_BULK_USERS);
     $usernames = implode(', ', $userlist);
+    if (count($SESSION->bulk_users) > MAX_BULK_USERS) {
+        $usernames .= ', ...';
+    }
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = html_form::make_button('user_bulk_forcepasswordchange.php', array('confirm' => 1), get_string('yes'));
-    $formcancel = html_form::make_button('user_bulk.php', $optionsno, get_string('no'), 'get');
+    $formcancel = html_form::make_button('user_bulk.php', array(), get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('forcepasswordchangecheckfull', '', $usernames), $formcontinue, $formcancel);
 }
 
 echo $OUTPUT->footer();
-?>
