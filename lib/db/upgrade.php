@@ -3213,7 +3213,7 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
         // Force administrators to change password on next login
-        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, u.password
               FROM {$CFG->prefix}role_capabilities rc
               JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
               JOIN {$CFG->prefix}user u ON u.id = ra.userid
@@ -3224,6 +3224,10 @@ function xmldb_main_upgrade($oldversion=0) {
 
         $adminusers = get_records_sql($sql);
         foreach ($adminusers as $adminuser) {
+            if ($adminuser->password === 'not cached') {
+                // no need to change password if stored only outside of moodle - most probably ldap auth
+                continue;
+            }
             if ($preference = get_record('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange')) {
                 if ($preference->value == '1') {
                     continue;
