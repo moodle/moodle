@@ -2796,6 +2796,36 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint($result, 2009111700);
     }
 
+    if ($result && $oldversion < 2009111701) {
+
+    /// Define field returnurl to be added to portfolio_log
+        $table = new xmldb_table('portfolio_log');
+        $field = new xmldb_field('returnurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'tempdataid');
+
+    /// Conditionally launch add field returnurl
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009111701);
+    }
+
+    if ($result && $oldversion < 2009111702) {
+
+    /// Define field continueurl to be added to portfolio_log
+        $table = new xmldb_table('portfolio_log');
+        $field = new xmldb_field('continueurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'returnurl');
+
+    /// Conditionally launch add field continueurl
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2009111702);
+    }
+
 
     return $result;
 }
