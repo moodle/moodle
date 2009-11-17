@@ -148,6 +148,13 @@ $CFG->admin = 'admin';
 // Useful for webhost operators who have alternate methods of backups
 //      $CFG->disablescheduledbackups = true;
 //
+// Allow user passwords to be included in backup files. Very dangerous
+// setting as far as it publishes password hashes that can be unencrypted
+// if the backup file is publicy available. Use it only if you can guarantee
+// that all your backup files remain only privacy available and are never
+// shared out from your site/institution!
+//      $CFG->includeuserpasswordsinbackup = true;
+//
 // Prevent stats processing and hide the GUI
 //      $CFG->disablestatsprocessing = true;
 //
