@@ -14,6 +14,7 @@
  * Purpose:  strip html tags from text
  * @link http://smarty.php.net/manual/en/language.modifier.strip.tags.php
  *          strip_tags (Smarty online manual)
+ * @author   Monte Ohrt <monte at ohrt dot com>
  * @param string
  * @param boolean
  * @return string

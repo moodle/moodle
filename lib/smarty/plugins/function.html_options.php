@@ -21,6 +21,7 @@
  *           the passed parameters
  * @link http://smarty.php.net/manual/en/language.function.html.options.php {html_image}
  *      (Smarty online manual)
+ * @author Monte Ohrt <monte at ohrt dot com>
  * @param array
  * @param Smarty
  * @return string

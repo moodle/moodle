@@ -14,6 +14,7 @@
  * Purpose:  count the number of sentences in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.paragraphs.php
  *          count_sentences (Smarty online manual)
+ * @author   Monte Ohrt <monte at ohrt dot com>
  * @param string
  * @return integer
  */
