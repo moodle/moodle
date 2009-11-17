@@ -488,7 +488,8 @@ function report_security_check_passwordsaltmain($detailed=false) {
     if (empty($CFG->passwordsaltmain)) {
         $result->status = REPORT_SECURITY_WARNING;
         $result->info   = get_string('check_passwordsaltmain_warning', 'report_security');
-    } else if (trim($CFG->passwordsaltmain)=='' || preg_match('/^([\w]+|[\d]+)$/i', $CFG->passwordsaltmain)) {
+    } else if ($CFG->passwordsaltmain === 'a_very_long_random_string_of_characters#@6&*1'
+            || trim($CFG->passwordsaltmain) === '' || preg_match('/^([\w]+|[\d]+)$/i', $CFG->passwordsaltmain)) {
         $result->status = REPORT_SECURITY_WARNING;
         $result->info   = get_string('check_passwordsaltmain_weak', 'report_security');
     } else {
