@@ -2963,7 +2963,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
         } else if ($course === 'home') {   // special case for site home page - please do not remove
             $course = get_site();
             $homelink  = '<div class="sitelink">'.
-               '<a title="Moodle '. $CFG->release .'" href="http://moodle.org/">'.
+               '<a title="Moodle" href="http://moodle.org/">'.
                '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
             $home  = true;
 
