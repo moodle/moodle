@@ -1,6 +1,5 @@
 <?php
 /**
- * @version $Id$
  * @author Martin Dougiamas and many others. Tim Hunt.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank
@@ -311,7 +310,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // temporary
              $state->responses['answer']= $state->responses[''];
              $state->responses['unit'] = '';
-             split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
+             $this->split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
        }else {
             $responses = explode('|||||', $state->responses['']);
             $state->responses['answer']= $responses[0];
