@@ -3184,6 +3184,70 @@ function xmldb_main_upgrade($oldversion=0) {
         }
         upgrade_main_savepoint($result, 2007101551);
     }
+
+    if ($result && $oldversion < 2007101561.01) {
+        // As part of security changes password policy will now be enabled by default.
+        // If it has not already been enabled then we will enable it... Admins will still
+        // be able to switch it off after this upgrade
+        if (record_exists('config', 'name', 'passwordpolicy', 'value', 0)) {
+            unset_config('passwordpolicy');
+        }
+
+        $message = get_string('upgrade197notice', 'admin');
+        if (empty($CFG->passwordmainsalt)) {
+            $message .= "\n".get_string('upgrade197salt', 'admin');
+        }
+        notify($message, 'notifysuccess');
+        
+        unset($message);
+
+        upgrade_main_savepoint($result, 2007101561.01);
+    }
+
+    if ($result && $oldversion < 2007101561.02) {
+
+        $messagesubject = get_string('upgrade197noticesubject', 'admin');
+        $message  = addslashes(get_string('upgrade197notice', 'admin'));
+        if (empty($CFG->passwordmainsalt)) {
+            $message .= "\n".get_string('upgrade197salt', 'admin');
+        }
+
+        // Force administrators to change password on next login
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
+              FROM {$CFG->prefix}role_capabilities rc
+              JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = rc.contextid AND ra.roleid = rc.roleid)
+              JOIN {$CFG->prefix}user u ON u.id = ra.userid
+             WHERE rc.capability = 'moodle/site:doanything'
+                   AND rc.permission = ".CAP_ALLOW."
+                   AND u.deleted = 0
+                   AND rc.contextid = ".SYSCONTEXTID."";
+
+        $adminusers = get_records_sql($sql);
+        foreach ($adminusers as $adminuser) {
+            if ($preference = get_record('user_preferences', 'userid', $adminuser->id, 'name', 'auth_forcepasswordchange')) {
+                if ($preference->value == '1') {
+                    continue;
+                }
+                set_field('user_preferences', 'value', '1', 'id', $preference->id);
+            } else {
+                $preference = new stdClass;
+                $preference->userid = $adminuser->id;
+                $preference->name   = 'auth_forcepasswordchange';
+                $preference->value  = '1';
+                insert_record('user_preferences', $preference);
+            }
+            // Message them with the notice about upgrading
+            email_to_user($adminuser, $adminuser, $messagesubject, $message);
+        }
+
+        unset($adminusers);
+        unset($preference);
+        unset($message);
+        unset($messagesubject);
+
+        upgrade_main_savepoint($result, 2007101561.02);
+    }
+
     return $result;
 }
 

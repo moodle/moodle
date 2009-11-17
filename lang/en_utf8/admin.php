@@ -758,6 +758,12 @@ $string['uploadpicture_userskipped'] = 'Skipping user $a (already has a picture)
 $string['uploadpicture_userupdated'] = 'Picture updated for user $a.';
 $string['uploadpicture_cannotsave'] = 'Cannot save picture for user $a. Check original picture file.';
 $string['updatetimezones'] = 'Update timezones';
+$string['upgrade197notice'] = '<p>Moodle 1.9.7 contains a number of security fixes to user passwords and backups to protect the user information on your site.<br />
+As a result some of your settings and permissions relating to backups may have changed.<br />
+Please see the <a href=\'http://docs.moodle.org/en/Moodle_1.9.7_release_notes\' target=\'_blank\'>Moodle 1.9.7 release</a> notes for full details.</p>';
+$string['upgrade197noticesubject'] = 'Moodle 1.9.7 upgrade security notices';
+$string['upgrade197salt'] = 'It is also now strongly recommended that you set a password salt to greatly reduce the risk of password theft.<br />
+Please refer to the Moodle security report for more information on this topic. The security report can be accessed by logging into your site as an administrator and go to Site Administration - Security - Site policies';
 $string['upgradeforumread'] = 'A new feature has been added in Moodle 1.5 to track read/unread forum posts.<br />To use this functionality you need to <a href=\"$a\">update your tables</a>.';
 $string['upgradeforumreadinfo'] = 'A new feature has been added in Moodle 1.5 to track read/unread forum posts.  To use this functionality you need to update your tables with all the tracking information for existing posts.  Depending on the size of your site this can take a long time (hours) and can be quite taxing on the database, so it\'s best to do it during a quiet period.  However, your site will continue functioning during this upgrade and users won\'t be affected.  Once you start this process you should let it finish (keep your browser window open).  However, if you stop the process by closing the window: don\'t worry, you can start over.<br /><br />Do you want to start the upgrading process now?';
 $string['upgradelogs'] = 'For full functionality, your old logs need to be upgraded.  <a href=\"$a\">More information</a>';

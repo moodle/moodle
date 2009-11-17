@@ -554,6 +554,9 @@ if ($nextstage == SAVE) {
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
     $str .= "\r\n";
 
+    $str .= '$CFG->passwordsaltmain = \''.addsingleslashes(complex_random_string()).'\';'."\r\n";
+    $str .= "\r\n";
+
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
     $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\r\n";
     $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\r\n";
