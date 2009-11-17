@@ -123,7 +123,7 @@ $string['check_passwordsaltmain_name'] = 'Password salt';
 $string['check_passwordsaltmain_warning'] = 'No password salt has been set';
 $string['check_passwordsaltmain_ok'] = 'Password salt is OK';
 $string['check_passwordsaltmain_weak'] = 'Password salt is weak';
-$string['check_passwordsaltmain_details'] = '<p>It is strongly recommended that a password salt is set as it greatly reduces the risk of password theft.<br />To set a password salt add the following to your config.php file.</p><code>\$CFG->passwordsaltmain = \'arandomstringofcharacters\';</code><p>The random string of characters should be a mix of letters, numbers and other characters.</p>';
+$string['check_passwordsaltmain_details'] = '<p>It is strongly recommended that a password salt is set as it greatly reduces the risk of password theft.<br />To set a password salt add the following to your config.php file.</p><code>\$CFG->passwordsaltmain = \'a_very_long_random_string_of_characters#@6&*1\';</code><p>The random string of characters should be a mix of letters, numbers and other characters.</p>';
 
 $string['check_riskadmin_detailsok'] = '<p>Please verify the following list of system administrators:</p>$a';
 $string['check_riskadmin_detailswarning'] = '<p>Please verify the following list of system administrators:</p>$a->admins

@@ -67,7 +67,7 @@ $CFG->dbpersist = false;         // Should database connections be reused?
 // automatically in installer, you have to uncomment and modify value
 // on the next line if you are creating config.php manually.
 //
-// $CFG->passwordsaltmain = 'type_something_random_long_and_unique_here_!/.,#$~^@{}*&';
+// $CFG->passwordsaltmain = 'a_very_long_random_string_of_characters#@6&*1';
 //
 // After changing the main salt you have to copy old value into one
 // of the following settings - this allows migration to the new salt
