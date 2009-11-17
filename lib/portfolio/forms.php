@@ -45,9 +45,11 @@ final class portfolio_export_form extends moodleform {
 
         $mform =& $this->_form;
         $mform->addElement('hidden', 'stage', PORTFOLIO_STAGE_CONFIG);
-        $mform->setType('stage', PARAM_INT);
+        $mform->addElement('hidden', 'id', $this->_customdata['id']);
         $mform->addElement('hidden', 'instance', $this->_customdata['instance']->get('id'));
         $mform->setType('instance', PARAM_INT);
+        $mform->setType('stage', PARAM_INT);
+        $mform->setType('id', PARAM_INT);
 
         if (array_key_exists('formats', $this->_customdata) && is_array($this->_customdata['formats'])) {
             if (count($this->_customdata['formats']) > 1) {
@@ -260,12 +262,16 @@ class portfolio_instance_select extends moodleform {
             true,
             true
         );
+        // TODO maybe add on some information to the user if they're already exporting
+        // and some of the options were skipped because they are for plugins that don't support
+        // multiple exports per session
         if (empty($options)) {
             debugging('noavailableplugins', 'portfolio');
             return false;
         }
         $mform =& $this->_form;
         $mform->addElement('select', 'instance', get_string('selectplugin', 'portfolio'), $options);
+        $mform->addElement('hidden', 'id', $this->_customdata['id']);
         $this->add_action_buttons(true, get_string('next'));
     }
 }

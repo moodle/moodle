@@ -36,8 +36,11 @@ require_once($CFG->libdir . '/portfoliolib.php');
 // so plugins don't have to.
 require_once($CFG->libdir . '/formslib.php');
 
+$dataid        = optional_param('id', 0, PARAM_INT);                          // id of partially completed export. corresponds to a record in portfolio_tempdata
+$type          = optional_param('type', null, PARAM_SAFEDIR);                 // if we're returning from an external system (postcontrol) for a single-export only plugin
 $cancel        = optional_param('cancel', 0, PARAM_RAW);                      // user has cancelled the request
-$dataid        = optional_param('id', 0, PARAM_INT);                          // id of partially completed export (in session, everything else in portfolio_tempdata
+$cancelsure    = optional_param('cancelsure', 0, PARAM_BOOL);                 // make sure they confirm first
+$logreturn     = optional_param('logreturn', 0, PARAM_BOOL);                  // when cancelling, we can also come from the log page, rather than the caller
 $instanceid    = optional_param('instance', 0, PARAM_INT);                    // instanceof of configured portfolio plugin
 $courseid      = optional_param('course', 0, PARAM_INT);                      // courseid the data being exported belongs to (caller object should provide this later)
 $stage         = optional_param('stage', PORTFOLIO_STAGE_CONFIG, PARAM_INT);  // stage of the export we're at (stored in the exporter)
@@ -46,14 +49,23 @@ $callbackfile  = optional_param('callbackfile', null, PARAM_PATH);            //
 $callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);       // callback class eg forum_portfolio_caller - the class to handle the exporting content.
 
 require_login();  // this is selectively called again with $course later when we know for sure which one we're in.
-$PAGE->set_url('/portfolio/add.php', array('id' => $dataid));
+$PAGE->set_url('/portfolio/add.php', array('id' => $dataid, 'sesskey' => sesskey()));
 $exporter = null;
 
-// try and find a partial export id in the session if it's not passed explicitly
-if (empty($dataid)) {
-    if (isset($SESSION->portfolioexport)) {
-        $dataid = $SESSION->portfolioexport;
+if ($postcontrol && $type && !$dataid) {
+    // we're returning from an external system that can't construct dynamic return urls
+    // this is a special "one export of this type only per session" case
+    if (portfolio_static_function($type, 'allows_multiple_exports')) {
+        throw new portfolio_exception('multiplesingleresume', 'portfolio');
     }
+
+    if (!$dataid = $DB->get_field('portfolio_tempdata', 'id', array('type' => $type, 'userid' => $USER->id))) {
+        throw new portfolio_exception('invalidtempid', 'portfolio');
+    }
+} else {
+    // we can't do this in the above case, because we're redirecting straight back from an external system
+    // this is not really ideal, but since we're in a "staged" wizard, the session key is checked in other stages.
+    require_sesskey(); // pretty much everything in this page is a write that could be hijacked, so just do this at the top here
 }
 
 // if we have a dataid, it means we're in the middle of an export,
@@ -65,18 +77,34 @@ if (!empty($dataid)) {
         // this can happen in some cases, a cancel request is sent when something is already broken
         // so process it elegantly and move on.
         if ($cancel) {
-            unset($SESSION->portfolioexport);
+            if ($logreturn) {
+                redirect($CFG->wwwroot . '/user/portfoliologs.php');
+            }
             redirect($CFG->wwwroot);
         } else {
-            portfolio_exporter::print_expired_export();
+            throw $e;
         }
     }
     // we have to wake it up first before we can cancel it
     // so temporary directories etc get cleaned up.
     if ($cancel) {
-        $exporter->cancel_request();
+        if ($cancelsure) {
+            $exporter->cancel_request($logreturn);
+        } else {
+            $yesurl = $CFG->wwwroot . '/portfolio/add.php?id=' . $dataid . '&cancel=1&cancelsure=1&logreturn=' . $logreturn . '&sesskey=' . sesskey();
+            $nourl  = $CFG->wwwroot . '/portfolio/add.php?id=' . $dataid . '&sesskey=' . sesskey();
+            if ($logreturn) {
+                $nourl = $CFG->wwwroot . '/user/portfoliologs.php';
+            }
+            $exporter->print_header('confirmcancel');
+            echo $OUTPUT->box_start();
+            echo $OUTPUT->confirm(get_string('confirmcancel', 'portfolio'), $yesurl, $nourl);
+            echo $OUTPUT->box_end();
+            echo $OUTPUT->footer();
+            exit;
+        }
     }
-    // verify we still belong to the correct user and session
+    // verify we still belong to the correct user and permissions are still ok
     $exporter->verify_rewaken();
     // if we don't have an instanceid in the exporter
     // it means we've just posted from the 'choose portfolio instance' page
@@ -142,9 +170,6 @@ if (!empty($dataid)) {
             $callbackargs[substr($key, 3)] = $value;
         }
     }
-    if (!confirm_sesskey()) {
-        throw new portfolio_caller_exception('confirmsesskeybad', 'error');
-    }
     // righto, now we have the callback args set up
     // load up the caller file and class and tell it to set up all the data
     // it needs
@@ -167,11 +192,7 @@ if (!empty($dataid)) {
 
     // set the export-specific variables, and save.
     $exporter->set('user', $USER);
-    $exporter->set('sesskey', sesskey());
     $exporter->save();
-
-    // and finally, put it in the session for waking up again later.
-    $SESSION->portfolioexport = $exporter->get('id');
 }
 
 if (!$exporter->get('instance')) {
@@ -179,7 +200,7 @@ if (!$exporter->get('instance')) {
     // in this case the exporter object and the caller object have been set up above
     // so just make a little form to select the portfolio plugin instance,
     // which is the last thing to do before starting the export.
-    $mform = new portfolio_instance_select('', array('caller' => $exporter->get('caller')));
+    $mform = new portfolio_instance_select('', array('id' => $exporter->get('id'), 'caller' => $exporter->get('caller')));
     if ($mform->is_cancelled()) {
         $exporter->cancel_request();
     } else if ($fromform = $mform->get_data()){

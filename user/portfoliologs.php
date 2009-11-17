@@ -63,7 +63,10 @@ echo $OUTPUT->header();
 
 $currenttab = 'portfoliologs';
 $showroles = 1;
+$somethingprinted = false;
 include('tabs.php');
+
+echo $OUTPUT->box_start();
 
 $queued = $DB->get_records('portfolio_tempdata', array('userid' => $USER->id), '', 'id, expirytime');
 if (count($queued) > 0) {
@@ -73,22 +76,45 @@ if (count($queued) > 0) {
         get_string('plugin', 'portfolio'),
         get_string('displayinfo', 'portfolio'),
         get_string('displayexpiry', 'portfolio'),
+        '',
     );
     $table->data = array();
+    $now = time();
     foreach ($queued as $q){
         $e = portfolio_exporter::rewaken_object($q->id);
         $e->verify_rewaken(true);
+        $queued = $e->get('queued');
+        $base = $CFG->wwwroot . '/portfolio/add.php?id=' . $q->id . '&logreturn=1&sesskey=' . sesskey();
+        $iconstr = '';
+
+        $cancel = new moodle_action_icon();
+        $cancel->link->url = new moodle_url($base . '&cancel=1');
+        $cancel->image->src = $OUTPUT->old_icon_url('t/stop');
+        $cancel->linktext = get_string('cancel');
+
+        $iconstr = $OUTPUT->action_icon($cancel);
+
+        if (!$e->get('queued') && $e->get('expirytime') > $now) {
+            $continue = new moodle_action_icon();
+            $continue->link->url = new moodle_url($base);
+            $continue->image->src = $OUTPUT->old_icon_url('t/go');
+            $continue->linktext = get_string('continue');
+            $iconstr .= '&nbsp;' . $OUTPUT->action_icon($continue);
+        }
         $table->data[] = array(
             $e->get('caller')->display_name(),
-            $e->get('instance')->get('name'),
+            (($e->get('instance')) ? $e->get('instance')->get('name') : get_string('noinstanceyet', 'portfolio')),
             $e->get('caller')->heading_summary(),
             userdate($q->expirytime),
+            $iconstr,
         );
         unset($e); // this could potentially be quite big, so free it.
     }
     echo $OUTPUT->heading(get_string('queuesummary', 'portfolio'));
     echo $OUTPUT->table($table);
+    $somethingprinted = true;
 }
+// paging - get total count separately
 $logcount = $DB->count_records('portfolio_log', array('userid' => $USER->id));
 if ($logcount > 0) {
     $table = new html_table();
@@ -120,9 +146,13 @@ if ($logcount > 0) {
     echo $OUTPUT->paging_bar($pagingbar);
     echo $OUTPUT->table($table);
     echo $OUTPUT->paging_bar($pagingbar);
-
+    $somethingprinted = true;
 }
-
+if (!$somethingprinted) {
+    echo $OUTPUT->heading($strportfolios);
+    echo get_string('nologs', 'portfolio');
+}
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
 

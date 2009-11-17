@@ -717,6 +717,20 @@ abstract class portfolio_plugin_base {
     public static function mnet_publishes() {
         return array();
     }
+
+    /**
+     * whether this plugin supports multiple exports in the same session
+     * most plugins should handle this, but some that require a redirect for authentication
+     * and then don't support dynamically constructed urls to return to (eg box.net)
+     * need to override this to return false.
+     * this means that moodle will prevent multiple exports of this *type* of plugin
+     * occurring in the same session.
+     *
+     * @return boolean
+     */
+    public static function allows_multiple_exports() {
+        return true;
+    }
 }
 
 /**

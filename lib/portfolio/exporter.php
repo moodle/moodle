@@ -90,12 +90,6 @@ class portfolio_exporter {
     private $id;
 
     /**
-    * the session key during the export
-    * used to avoid hijacking transfers
-    */
-    private $sesskey;
-
-    /**
     * array of stages that have had the portfolio plugin already steal control from them
     */
     private $alreadystolen;
@@ -112,6 +106,16 @@ class portfolio_exporter {
     * this is also set in export_config in the portfolio and caller classes
     */
     private $format;
+
+    /**
+     * queued - this is set after the event is triggered
+     */
+    private $queued = false;
+
+    /**
+     * expiry time - set the first time the object is saved out
+     */
+    private $expirytime;
 
     /**
     * construct a new exporter for use
@@ -286,6 +290,7 @@ class portfolio_exporter {
         if ($pluginobj || $callerobj || count($formats) > 1 || ($expectedtime != PORTFOLIO_TIME_LOW && $expectedtime != PORTFOLIO_TIME_FORCEQUEUE)) {
             $customdata = array(
                 'instance' => $this->instance,
+                'id'       => $this->id,
                 'plugin' => $pluginobj,
                 'caller' => $callerobj,
                 'userid' => $this->user->id,
@@ -371,8 +376,9 @@ class portfolio_exporter {
             return true;
         }
         $strconfirm = get_string('confirmexport', 'portfolio');
-        $yesurl = $CFG->wwwroot . '/portfolio/add.php?stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
-        $nourl  = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
+        $baseurl = $CFG->wwwroot . '/portfolio/add.php?sesskey=' . sesskey() . '&id=' . $this->get('id');
+        $yesurl = $baseurl . '&stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
+        $nourl  = $baseurl . '&cancel=1';
         $this->print_header('confirmexport');
         echo $OUTPUT->box_start();
         echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 4);
@@ -420,11 +426,10 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_queueorwait() {
-        global $SESSION;
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
             events_trigger('portfolio_send', $this->id);
-            unset($SESSION->portfolioexport);
+            $this->queued = true;
             return $this->process_stage_finished(true);
         }
         return true;
@@ -465,10 +470,9 @@ class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_cleanup($pullok=false) {
-        global $CFG, $DB, $SESSION;
+        global $CFG, $DB;
 
         if (!$pullok && $this->get('instance') && !$this->get('instance')->is_push()) {
-            unset($SESSION->portfolioexport);
             return true;
         }
         if ($this->get('instance')) {
@@ -478,7 +482,6 @@ class portfolio_exporter {
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);
-        unset($SESSION->portfolioexport);
         return true;
     }
 
@@ -590,11 +593,15 @@ class portfolio_exporter {
     * cancels a potfolio request and cleans up the tempdata
     * and redirects the user back to where they started
     */
-    public function cancel_request() {
+    public function cancel_request($logreturn=false) {
+        global $CFG;
         if (!isset($this)) {
             return;
         }
         $this->process_stage_cleanup(true);
+        if ($logreturn) {
+            redirect($CFG->wwwroot . '/user/portfoliologs.php');
+        }
         redirect($this->caller->get_return_url());
         exit;
     }
@@ -612,6 +619,7 @@ class portfolio_exporter {
                 'instance' => (empty($this->instance)) ? null : $this->instance->get('id'),
             );
             $this->id = $DB->insert_record('portfolio_tempdata', $r);
+            $this->expirytime = $r->expirytime;
             $this->save(); // call again so that id gets added to the save data.
         } else {
             $r = $DB->get_record('portfolio_tempdata', array('id' => $this->id));
@@ -641,6 +649,13 @@ class portfolio_exporter {
         }
         require_once($CFG->dirroot . '/' . $exporter->callerfile);
         $exporter = unserialize(serialize($exporter));
+        if (!$exporter->get('id')) {
+            // workaround for weird case
+            // where the id doesn't get saved between a new insert
+            // and the subsequent call that sets this field in the serialised data
+            $exporter->set('id', $id);
+            $exporter->save();
+        }
         return $exporter;
     }
 
@@ -669,14 +684,21 @@ class portfolio_exporter {
     * @throws portfolio_exception
     */
     public function verify_rewaken($readonly=false) {
-        global $USER;
-        if ($this->get('user')->id != $USER->id) {
+        global $USER, $CFG;
+        if ($this->get('user')->id != $USER->id) { // make sure it belongs to the right user
             throw new portfolio_exception('notyours', 'portfolio');
         }
-        if (!$readonly && !confirm_sesskey($this->get('sesskey'))) {
-            throw new portfolio_exception('confirmsesskeybad');
+        if (!$readonly && $this->get('instance') && !$this->get('instance')->allows_multiple_exports()
+            && ($already = portfolio_exporter::existing_exports($this->get('user')->id, $this->get('instance')->get('plugin')))
+            && array_shift(array_keys($already)) != $this->get('id')
+        ) {
+            $a = (object)array(
+                'plugin'  => $this->get('instance')->get('plugin'),
+                'link'    => $CFG->wwwroot . '/user/portfoliologs.php',
+            );
+            throw new portfolio_exception('nomultipleexports', 'portfolio', '', $a);
         }
-        if (!$this->caller->check_permissions()) {
+        if (!$this->caller->check_permissions()) { // recall the caller permission check
             throw new portfolio_caller_exception('nopermissions', 'portfolio', $this->caller->get_return_url());
         }
     }
@@ -799,4 +821,37 @@ class portfolio_exporter {
         exit;
     }
 
+    /**
+     * return a list of current exports for the given user
+     * this will not go through and call rewaken_object, because it's heavy
+     * it's really just used to figure out what exports are currently happening.
+     * this is useful for plugins that don't support multiple exports per session
+     *
+     * @param int $userid  the user to check for
+     * @param string $type (optional) the portfolio plugin to filter by
+     *
+     * @return array
+     */
+    public static function existing_exports($userid, $type=null) {
+        global $DB;
+        $sql = 'SELECT t.*,t.instance,i.plugin,i.name FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
+        $values = array($userid);
+        if ($type) {
+            $sql .= ' AND i.plugin = ?';
+            $values[] = $type;
+        }
+        return $DB->get_records_sql($sql, $values);
+    }
+
+    /**
+     * Return an array of existing exports by type for a given user.
+     * This is much more lightweight than {@see existing_exports} because it only returns the types, rather than the whole serialised data
+     * so can be used for checking availability of multiple plugins at the same time.
+     */
+    public static function existing_exports_by_plugin($userid) {
+        global $DB;
+        $sql = 'SELECT t.instance,i.plugin FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
+        $values = array($userid);
+        return $DB->get_records_sql_menu($sql, $values);
+    }
 }

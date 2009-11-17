@@ -66,7 +66,6 @@ require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes f
 */
 class portfolio_add_button {
 
-    private $alreadyexporting;
     private $callbackclass;
     private $callbackargs;
     private $callbackfile;
@@ -87,14 +86,11 @@ class portfolio_add_button {
     */
     public function __construct($options=null) {
         global $SESSION, $CFG;
-        if (isset($SESSION->portfolioexport)) {
-            $this->alreadyexporting = true;
-            return;
-        }
         $this->instances = portfolio_instances();
         if (empty($options)) {
             return true;
         }
+        $constructoroptions = array('callbackclass', 'callbackargs', 'callbackfile', 'formats');
         foreach ((array)$options as $key => $value) {
             if (!in_array($key, $constructoroptions)) {
                 throw new portfolio_button_exception('invalidbuttonproperty', 'portfolio', $key);
@@ -117,9 +113,6 @@ class portfolio_add_button {
     *                        this path should be relative (ie, not include) dirroot, eg '/mod/forum/lib.php'
     */
     public function set_callback_options($class, array $argarray, $file=null) {
-        if ($this->alreadyexporting) {
-            return;
-        }
         global $CFG;
         if (empty($file)) {
             $backtrace = debug_backtrace();
@@ -159,9 +152,6 @@ class portfolio_add_button {
     *                       {@see portfolio_format_from_file} for how to get the appropriate formats to pass here for uploaded files.
     */
     public function set_formats($formats=null) {
-        if ($this->alreadyexporting) {
-            return;
-        }
         if (is_string($formats)) {
             $formats = array($formats);
         }
@@ -198,9 +188,6 @@ class portfolio_add_button {
     *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
     */
     public function to_html($format=null, $addstr=null) {
-        if ($this->alreadyexporting) {
-            return $this->already_exporting($format, $addstr);
-        }
         global $CFG, $COURSE, $OUTPUT;
         if (!$this->is_renderable()) {
             return;
@@ -235,7 +222,7 @@ class portfolio_add_button {
         if (count($this->instances) == 1) {
             $tmp = array_values($this->instances);
             $instance = $tmp[0];
-            //$instance = array_shift($this->instances);
+
             $formats = portfolio_supported_formats_intersect($this->formats, $instance->supported_formats());
             if (count($formats) == 0) {
                 // bail. no common formats.
@@ -245,6 +232,10 @@ class portfolio_add_button {
             if ($error = portfolio_instance_sanity_check($instance)) {
                 // bail, plugin is misconfigured
                 debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+                return;
+            }
+            if (!$instance->allows_multiple_exports() && $already = portfolio_exporter::existing_exports($USER->id, $instance->get('plugin'))) {
+                debugging(get_string('singleinstancenomultiallowed', 'portfolio'));
                 return;
             }
             $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
@@ -336,33 +327,6 @@ class portfolio_add_button {
     public function get_callbackclass() {
         return $this->callbackclass;
     }
-
-    private function already_exporting($format, $addstr) {
-        global $CFG, $OUTPUT;
-        $url  = $CFG->wwwroot . '/portfolio/already.php';
-        $icon = $OUTPUT->old_icon_url('t/portfoliono') . '';
-        $alt  = get_string('alreadyalt', 'portfolio');
-        if (empty($format)) {
-            $format = PORTFOLIO_ADD_FULL_FORM;
-        }
-        if (empty($addstr)) {
-            $addstr = get_string('addtoportfolio', 'portfolio');
-        }
-        switch ($format) {
-            case PORTFOLIO_ADD_FULL_FORM:
-                return '<form action="' . $url . '">' . "\n"
-                    . '<input type="submit" value="' . $addstr . '" />' . "\n"
-                    . '<img src="' . $icon . '" alt="' . $alt . '" />' . "\n"
-                    . ' </form>';
-            case PORTFOLIO_ADD_ICON_FORM:
-            case PORTFOLIO_ADD_ICON_LINK:
-                return '<a href="' . $url . '"><img src="' . $icon . '" alt="' . $alt . '" /></a>';
-            case PORTFOLIO_ADD_TEXT_LINK:
-                return '<a href="' . $url . '">' . $addstr . '(!) </a>';
-            default:
-                debugging(get_string('invalidaddformat', 'portfolio', $format));
-        }
-    }
 }
 
 /**
@@ -378,7 +342,7 @@ class portfolio_add_button {
 * @return string the html, from <select> to </select> inclusive.
 */
 function portfolio_instance_select($instances, $callerformats, $callbackclass, $selectname='instance', $return=false, $returnarray=false) {
-    global $CFG;
+    global $CFG, $USER;
 
     if (empty($CFG->enableportfolios)) {
         return;
@@ -389,6 +353,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
 
     $count = 0;
     $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
+    $existingexports = portfolio_exporter::existing_exports_by_plugin($USER->id);
     foreach ($instances as $instance) {
         $formats = portfolio_supported_formats_intersect($callerformats, $instance->supported_formats());
         if (count($formats) == 0) {
@@ -404,6 +369,11 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
             debugging(get_string('pluginismisconfigured', 'portfolio', get_string($pinsane[$instance->get('plugin')], 'portfolio_' . $instance->get('plugin'))));
             continue;
         }
+        if (!$instance->allows_multiple_exports() && in_array($instance->get('plugin'), $existingexports)) {
+            // bail, already exporting something with this plugin and it doesn't support multiple exports
+            continue;
+        }
+
         $count++;
         $selectoutput .= "\n" . '<option value="' . $instance->get('id') . '">' . $instance->get('name') . '</option>' . "\n";
         $options[$instance->get('id')] = $instance->get('name');
@@ -786,7 +756,7 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
 */
 function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackargs) {
     global $CFG;
-    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&amp;callbackclass=' . $classname . '&amp;callbackfile=' . $classfile;
+    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&amp;callbackclass=' . $classname . '&amp;callbackfile=' . $classfile . '&sesskey=' . sesskey();
 
     if (is_object($callbackargs)) {
         $callbackargs = (array)$callbackargs;
