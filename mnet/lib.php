@@ -473,9 +473,10 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
             h2s.hostid in ($id_list) AND
             h2s.publish = '1'";
     $params = array("$callprefix/$functionname");
-    $permissionobj = $DB->record_exists_sql($sql, $params);
 
-    if ($permissionobj === false && 'dangerous' != $CFG->mnet_dispatcher_mode) {
+    $permission = $DB->count_records_sql($sql, $params);
+
+    if (!$permission && 'dangerous' != $CFG->mnet_dispatcher_mode) {
         return RPC_FORBIDDENMETHOD;
     }
 
