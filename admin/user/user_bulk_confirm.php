@@ -23,8 +23,8 @@ admin_externalpage_print_header();
 //TODO: add support for large number of users
 
 if ($confirm and confirm_sesskey()) {
-    $in = implode(',', $SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null, '', 'id, username, secret, confirmed, auth, firstname, lastname')) {
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    if ($rs = $DB->get_recordset_select('user', "id $in", $params, '', 'id, username, secret, confirmed, auth, firstname, lastname')) {
         foreach ($rs as $user) {
             if ($user->confirmed) {
                 continue;
@@ -40,8 +40,8 @@ if ($confirm and confirm_sesskey()) {
     redirect($return, get_string('changessaved'));
 
 } else {
-    $in = implode(',', $SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = html_form::make_button('user_bulk_confirm.php', array('confirm' => 1), get_string('yes'));

@@ -25,8 +25,8 @@ admin_externalpage_print_header();
 if ($confirm and confirm_sesskey()) {
     $primaryadmin = get_admin();
 
-    $in = implode(',', $SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null)) {
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
         foreach ($rs as $user) {
             if ($primaryadmin->id != $user->id and $USER->id != $user->id and delete_user($user)) {
                 unset($SESSION->bulk_users[$user->id]);
@@ -40,8 +40,8 @@ if ($confirm and confirm_sesskey()) {
     redirect($return, get_string('changessaved'));
 
 } else {
-    $in = implode(',', $SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = html_form::make_button('user_bulk_delete.php', array('confirm' => 1), get_string('yes'));

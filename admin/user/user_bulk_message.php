@@ -24,8 +24,8 @@ if (empty($CFG->messaging)) {
 //TODO: add support for large number of users
 
 if ($confirm and !empty($msg) and confirm_sesskey()) {
-    $in = implode(',', $SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null)) {
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
         foreach ($rs as $user) {
             message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct');
         }
@@ -52,8 +52,8 @@ if ($msgform->is_cancelled()) {
 
     $msg = format_text($formdata->messagebody, $formdata->format, $options);
 
-    $in = implode(',', $SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
+    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     admin_externalpage_print_header();
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
