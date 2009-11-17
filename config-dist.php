@@ -60,6 +60,27 @@ $CFG->dbpersist = false;         // Should database connections be reused?
 
 
 //=========================================================================
+// 1.5. SECRET PASSWORD SALT
+//=========================================================================
+// User password salt is very important security feature, it is created
+// automatically in installer, you have to uncomment and modify value
+// on the next line if you are creating config.php manually.
+//
+// $CFG->passwordsaltmain = 'type_something_random_long_and_unique_here_!/.,#$~^@{}*&';
+//
+// After changing the main salt you have to copy old value into one
+// of the following settings - this allows migration to the new salt
+// during the next login of each user.
+//
+// $CFG->passwordsaltalt1 = '';
+// $CFG->passwordsaltalt2 = '';
+// $CFG->passwordsaltalt3 = '';
+// ....
+// $CFG->passwordsaltalt19 = '';
+// $CFG->passwordsaltalt20 = '';
+
+
+//=========================================================================
 // 2. WEB SITE LOCATION
 //=========================================================================
 // Now you need to tell Moodle where it is located. Specify the full
