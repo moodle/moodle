@@ -244,6 +244,7 @@ class portfolio_exporter {
             throw $e;
         } catch (Exception $e) {
             debugging(get_string('thirdpartyexception', 'portfolio', get_class($e)));
+            debugging($e);
             portfolio_export_rethrow_exception($this, $e);
         }
     }
@@ -467,6 +468,8 @@ class portfolio_exporter {
     /**
     * processes the 'cleanup' stage of the export
     *
+    * @param boolean $pullok normally cleanup is deferred for pull plugins until after the file is requested from portfolio/file.php
+    *                        if you want to clean up earlier, pass true here (defaults to false)
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_cleanup($pullok=false) {
@@ -544,17 +547,7 @@ class portfolio_exporter {
             }
         }
         $this->print_header($key, false);
-        if ($returnurl) {
-            echo '<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />';
-        }
-        if ($continueurl) {
-            echo '<a href="' . $continueurl . '">' . get_string('continuetoportfolio', 'portfolio') . '</a><br />';
-        }
-        if (is_array($extras)) {
-            foreach ($extras as $link => $string) {
-                echo '<a href="' . $link . '">' . $string . '</a><br />';
-            }
-        }
+        self::print_finish_info($returnurl, $continueurl, $extras);
         echo $OUTPUT->footer();
         return false;
     }
@@ -622,7 +615,10 @@ class portfolio_exporter {
             $this->expirytime = $r->expirytime;
             $this->save(); // call again so that id gets added to the save data.
         } else {
-            $r = $DB->get_record('portfolio_tempdata', array('id' => $this->id));
+            if (!$r = $DB->get_record('portfolio_tempdata', array('id' => $this->id))) {
+                debugging("tried to save current object, but failed - see  MDL-20872");
+                return;
+            }
             $r->data = base64_encode(serialize($this));
             $r->instance = (empty($this->instance)) ? null : $this->instance->get('id');
             $DB->update_record('portfolio_tempdata', $r);
@@ -641,6 +637,11 @@ class portfolio_exporter {
         global $DB, $CFG;
         require_once($CFG->libdir . '/filelib.php');
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
+            // maybe it's been finished already by a pull plugin
+            // so look in the logs
+            if ($log = $DB->get_record('portfolio_log', array('tempdataid' => $id))) {
+                self::print_cleaned_export($log);
+            }
             throw new portfolio_exception('invalidtempid', 'portfolio');
         }
         $exporter = unserialize(base64_decode($data->data));
@@ -850,8 +851,36 @@ class portfolio_exporter {
      */
     public static function existing_exports_by_plugin($userid) {
         global $DB;
-        $sql = 'SELECT t.instance,i.plugin FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
+        $sql = 'SELECT t.id,i.plugin FROM {portfolio_tempdata} t JOIN {portfolio_instance} i ON t.instance = i.id WHERE t.userid = ? ';
         $values = array($userid);
         return $DB->get_records_sql_menu($sql, $values);
+    }
+
+    public static function print_cleaned_export($log) {
+        global $CFG, $OUTPUT, $PAGE;
+        $title = get_string('exportalreadyfinished', 'portfolio');
+        $PAGE->navbar->add($title);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+        echo $OUTPUT->header();
+        echo $OUTPUT->notification(get_string('exportalreadyfinished', 'portfolio'));
+        self::print_finish_info($log->returnurl, $log->continueurl);
+        echo $OUTPUT->continue_button($CFG->wwwroot);
+        echo $OUTPUT->footer();
+        exit;
+    }
+
+    public static function print_finish_info($returnurl, $continueurl, $extras=null) {
+        if ($returnurl) {
+            echo '<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />';
+        }
+        if ($continueurl) {
+            echo '<a href="' . $continueurl . '">' . get_string('continuetoportfolio', 'portfolio') . '</a><br />';
+        }
+        if (is_array($extras)) {
+            foreach ($extras as $link => $string) {
+                echo '<a href="' . $link . '">' . $string . '</a><br />';
+            }
+        }
     }
 }
