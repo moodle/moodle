@@ -13,7 +13,7 @@ function removedoublecr($filename) {
     
     $filearray = file($filename);
     /// Check for Macintosh OS line returns (ie file on one line), and fix
-    if (ereg("\r", $filearray[0]) AND !ereg("\n", $filearray[0])) {
+    if (preg_match("#\r#", $filearray[0]) AND !preg_match("#\n#", $filearray[0])) {
         $outfile = explode("\r", $filearray[0]);
     } else {
         $outfile = $filearray;

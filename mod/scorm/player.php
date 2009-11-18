@@ -281,7 +281,7 @@
             echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";   
         } else {
             // Clean the name for the window as IE is fussy
-            $name = ereg_replace("[^A-Za-z0-9]", "", $scorm->name);
+            $name = preg_replace("/[^A-Za-z0-9]/", "", $scorm->name);
             if (!$name) {
                 $name = 'DefaultPlayerWindow';
             }

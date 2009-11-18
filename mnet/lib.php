@@ -314,7 +314,7 @@ function mnet_generate_keypair($dn = null, $days=28) {
     }
 
     $host = strtolower($CFG->wwwroot);
-    $host = ereg_replace("^http(s)?://",'',$host);
+    $host = preg_replace("#^http(s)?://#",'',$host);
     $break = strpos($host.'/' , '/');
     $host   = substr($host, 0, $break);
 

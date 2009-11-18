@@ -63,7 +63,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
             } else {
                 // Try to find out using the user's cookie
                 foreach ($_COOKIE as $name => $value){
-                    if (eregi('_shibsession_', $name)){
+                    if (preg_match('/_shibsession_/i', $name)){
                         $sessionkey = $value;
                     }
                 }

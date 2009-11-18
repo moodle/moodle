@@ -140,7 +140,7 @@ function assignment_get_content_for_index(&$assignment) {
                 } elseif ($submitted->source = 'files'){
                     $SUBMITTED = opendir($submitted->path);
                     while($entry = readdir($SUBMITTED)){
-                        if (ereg("^\.", $entry)) continue; // exclude hidden and dirs . and .. 
+                        if (preg_match("/^\./", $entry)) continue; // exclude hidden and dirs . and ..
                         $path = "{$submitted->path}/{$entry}";
                         $documents[] = assignment_get_physical_file($submission, $assignment, $cm, $path, $context_id, $documents);
                         mtrace("finished attachement $path for {$submission->authors} in assignement {$assignment->name}");

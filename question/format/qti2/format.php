@@ -33,8 +33,8 @@ class qformat_qti2 extends qformat_default {
         // Remove all tabs.
         $source = str_replace("\t", '', $source);
         // Remove all space after ">" and before "<".
-        $source = ereg_replace(">( )*", ">", $source);
-        $source = ereg_replace("( )*<", "<", $source);
+        $source = preg_replace("/>( )*/", ">", $source);
+        $source = preg_replace("/( )*</", "<", $source);
 
         // Iterate through the source.
         $level = 0;

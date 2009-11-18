@@ -164,7 +164,7 @@ class XMLDBObject {
     function checkName () {
         $result = true;
 
-        if ($this->name != eregi_replace('[^a-z0-9_ -]', '', $this->name)) {
+        if ($this->name != preg_replace('/[^a-z0-9_ -]/i', '', $this->name)) {
             $result = false;
         }
         return $result;

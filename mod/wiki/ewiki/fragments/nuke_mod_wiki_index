@@ -15,7 +15,7 @@
 
 
 #-- stupid legacy code
-if (!eregi("modules.php", $PHP_SELF)) {
+if (!preg_match("/modules.php/i", $PHP_SELF)) {
     die ("You can't access this file directly...");
 }
 

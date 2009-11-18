@@ -1001,7 +1001,7 @@ function detect_munged_arguments($string, $allowdots=1) {
     if (substr_count($string, '..') > $allowdots) {   // Sometimes we allow dots in references
         return true;
     }
-    if (ereg('[\|\`]', $string)) {  // check for other bad characters
+    if (preg_match('/[\|\`]/i', $string)) {  // check for other bad characters
         return true;
     }
     if (empty($string) or $string == '/') {

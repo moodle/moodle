@@ -376,7 +376,7 @@ class ADORecordSet_array_sybase extends ADORecordSet_array {
 	global $ADODB_sybase_mths;
 	
 		//Dec 30 2000 12:00AM
-		if (!ereg( "([A-Za-z]{3})[-/\. ]+([0-9]{1,2})[-/\. ]+([0-9]{4})"
+		if (!preg_match( "#([A-Za-z]{3})[-/\. ]+([0-9]{1,2})[-/\. ]+([0-9]{4})#"
 			,$v, $rr)) return parent::UnixDate($v);
 			
 		if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
@@ -393,7 +393,7 @@ class ADORecordSet_array_sybase extends ADORecordSet_array {
 	global $ADODB_sybase_mths;
 		//11.02.2001 Toni Tunkkari toni.tunkkari@finebyte.com
 		//Changed [0-9] to [0-9 ] in day conversion
-		if (!ereg( "([A-Za-z]{3})[-/\. ]([0-9 ]{1,2})[-/\. ]([0-9]{4}) +([0-9]{1,2}):([0-9]{1,2}) *([apAP]{0,1})"
+		if (!preg_match( "#([A-Za-z]{3})[-/\. ]([0-9 ]{1,2})[-/\. ]([0-9]{4}) +([0-9]{1,2}):([0-9]{1,2}) *([apAP]{0,1})#"
 			,$v, $rr)) return parent::UnixTimeStamp($v);
 		if ($rr[3] <= TIMESTAMP_FIRST_YEAR) return 0;
 		

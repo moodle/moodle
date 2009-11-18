@@ -185,7 +185,7 @@ function scorm_tempdir($strPath)
             $len = 8;
             for ($i=0; $i<$len; $i++) {
                 $char = chr(rand(48,122));
-                while (!ereg('[a-zA-Z0-9]', $char)){
+                while (!preg_match('/[a-zA-Z0-9]/', $char)){
                     if ($char == $lchar) continue;
                         $char = chr(rand(48,90));
                     }

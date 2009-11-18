@@ -199,6 +199,17 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param($CFG->wwwroot, PARAM_LOCALURL), $CFG->wwwroot);
         $this->assertEqual(clean_param('/just/a/path', PARAM_LOCALURL), '/just/a/path');
         $this->assertEqual(clean_param('funny:thing', PARAM_LOCALURL), '');
+
+        //test filename param
+        $this->assertEqual(clean_param('correctfile.txt', PARAM_FILE), 'correctfile.txt');
+        $this->assertEqual(clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_FILE), 'badfile.txt');
+        $this->assertEqual(clean_param('../parentdirfile.txt', PARAM_FILE), 'parentdirfile.txt');
+        //The following behaviours have been maintained although they seem a little odd
+        $this->assertEqual(clean_param('funny:thing', PARAM_FILE), 'funnything');
+        $this->assertEqual(clean_param('./currentdirfile.txt', PARAM_FILE), '.currentdirfile.txt');
+        $this->assertEqual(clean_param('c:\temp\windowsfile.txt', PARAM_FILE), 'ctempwindowsfile.txt');
+        $this->assertEqual(clean_param('/home/user/linuxfile.txt', PARAM_FILE), 'homeuserlinuxfile.txt');
+        $this->assertEqual(clean_param('~/myfile.txt', PARAM_FILE), '~myfile.txt');
     }
 
     function test_make_user_directory() {

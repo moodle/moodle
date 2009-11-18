@@ -439,7 +439,7 @@ session_set_save_handler(
 if (0) {
 
 	session_start();
-	session_register('AVAR');
+	session_register('AVAR');//this is deprecated in php 5.3
 	$_SESSION['AVAR'] += 1;
 	ADOConnection::outp( "
 -- \$_SESSION['AVAR']={$_SESSION['AVAR']}</p>",false);

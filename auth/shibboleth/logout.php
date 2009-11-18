@@ -139,7 +139,7 @@ function LogoutNotification($SessionID){
                 while (($file = readdir($dh)) !== false) {
                     // Check if it is a file
                     if (is_file($dir.'/'.$file)){
-                        $session_key = ereg_replace('sess_', '', $file);
+                        $session_key = preg_replace('/sess_/', '', $file);
                         
                         // Read session file data
                         $data = file($dir.'/'.$file);

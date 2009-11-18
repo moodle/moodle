@@ -321,7 +321,7 @@ function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     if (!is_object($MNET_REMOTE_CLIENT->object_to_call)) {
         return @call_user_func_array($functionname, $argsarray);
     } else {
-        return @call_user_method_array($functionname, $MNET_REMOTE_CLIENT->object_to_call, $argsarray);
+        return @call_user_func_array( array($MNET_REMOTE_CLIENT->object_to_call,$functionname), $argsarray);
     }
 }
 

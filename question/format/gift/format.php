@@ -119,7 +119,7 @@ class qformat_gift extends qformat_default {
         $question = $this->defaultquestion();
         $comment = NULL;
         // define replaced by simple assignment, stop redefine notices
-        $gift_answerweight_regex = "^%\-*([0-9]{1,2})\.?([0-9]*)%";        
+        $gift_answerweight_regex = "/^%\-*([0-9]{1,2})\.?([0-9]*)%/";
 
         // REMOVED COMMENTED LINES and IMPLODE
         foreach ($lines as $key => $line) {
@@ -139,7 +139,7 @@ class qformat_gift extends qformat_default {
         $text = $this->escapedchar_pre($text);
 
         // Look for category modifier
-        if (ereg( '^\$CATEGORY:', $text)) {
+        if (preg_match( '/^\$CATEGORY:/', $text)) {
             // $newcategory = $matches[1];
             $newcategory = trim(substr( $text, 10 ));
 
@@ -317,7 +317,7 @@ class qformat_gift extends qformat_default {
                         $answer_weight = 1;
                         $answer = substr($answer, 1);
     
-                    } elseif (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
+                    } elseif (preg_match($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     
                     } else {     //default, i.e., wrong anwer
@@ -408,7 +408,7 @@ class qformat_gift extends qformat_default {
                     $answer = trim($answer);
 
                     // Answer Weight
-                    if (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
+                    if (preg_match($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;
@@ -456,7 +456,7 @@ class qformat_gift extends qformat_default {
                     $answer = trim($answer);
 
                     // Answer weight
-                    if (ereg($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
+                    if (preg_match($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;

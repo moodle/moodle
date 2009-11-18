@@ -99,7 +99,7 @@ class login_signup_form extends moodleform {
             $errors['username'] = get_string('usernameexists');
         } else {
             if (empty($CFG->extendedusernamechars)) {
-                $string = eregi_replace("[^(-\.[:alnum:])]", '', $data['username']);
+                $string = preg_replace("/[^(-\.[:alnum:])]/i", '', $data['username']);
                 if (strcmp($data['username'], $string)) {
                     $errors['username'] = get_string('alphanumerical');
                 }

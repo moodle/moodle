@@ -49,7 +49,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
-        if (!ereg('^dataset([0-9]+)[^-]*-(.*)$',
+        if (!preg_match('/^dataset([0-9]+)[^-]*-(.*)$/',
                 $state->responses[''], $regs)) {
             notify ("Wrongly formatted raw response answer " .
                    "{$state->responses['']}! Could not restore session for " .
@@ -732,7 +732,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     /// Returns the possible dataset names found in the text as an array
     /// The array has the dataset name for both key and value
         $datasetnames = array();
-        while (ereg('\\{([[:alpha:]][^>} <{"\']*)\\}', $text, $regs)) {
+        while (preg_match('/\\{([[:alpha:]][^>} <{"\']*)\\}/', $text, $regs)) {
             $datasetnames[$regs[1]] = $regs[1];
             $text = str_replace($regs[0], '', $text);
         }
@@ -740,7 +740,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function create_virtual_nameprefix($nameprefix, $datasetinput) {
-        if (!ereg('([0-9]+)' . $this->name() . '$', $nameprefix, $regs)) {
+        if (!preg_match('/([0-9]+)/' . $this->name() . '$', $nameprefix, $regs)) {
             error("Wrongly formatted nameprefix $nameprefix");
         }
         $virtualqtype = $this->get_virtual_qtype();

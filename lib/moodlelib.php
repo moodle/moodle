@@ -418,16 +418,16 @@ function clean_param($param, $type) {
             return (float)$param;  // Convert to integer
 
         case PARAM_ALPHA:        // Remove everything not a-z
-            return eregi_replace('[^a-zA-Z]', '', $param);
+            return preg_replace('/[^a-zA-Z]/i', '', $param);
 
         case PARAM_ALPHANUM:     // Remove everything not a-zA-Z0-9
-            return eregi_replace('[^A-Za-z0-9]', '', $param);
+            return preg_replace('/[^A-Za-z0-9]/i', '', $param);
 
         case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z/_-
-            return eregi_replace('[^a-zA-Z/_-]', '', $param);
+            return preg_replace('/[^a-zA-Z/_-]/i', '', $param);
 
         case PARAM_SEQUENCE:     // Remove everything not 0-9,
-            return eregi_replace('[^0-9,]', '', $param);
+            return preg_replace('/[^0-9,]/i', '', $param);
 
         case PARAM_BOOL:         // Convert to 1 or 0
             $tempstr = strtolower($param);
@@ -447,14 +447,14 @@ function clean_param($param, $type) {
             return clean_param(strip_tags($param, '<lang><span>'), PARAM_CLEAN);
 
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
-            return eregi_replace('[^a-zA-Z0-9_-]', '', $param);
+            return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
         case PARAM_CLEANFILE:    // allow only safe characters
             return clean_filename($param);
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
-            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
-            $param = ereg_replace('\.\.+', '', $param);
+            $param = preg_replace('/[[:cntrl:]]|[\/<>\"`|\':\\\\]/', '', $param);
+            $param = preg_replace('/\.\./', '', $param);//remove double full stops
             if($param == '.') {
                 $param = '';
             }
@@ -464,10 +464,10 @@ function clean_param($param, $type) {
             $param = str_replace('\\\'', '\'', $param);
             $param = str_replace('\\"', '"', $param);
             $param = str_replace('\\', '/', $param);
-            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
-            $param = ereg_replace('\.\.+', '', $param);
-            $param = ereg_replace('//+', '/', $param);
-            return ereg_replace('/(\./)+', '/', $param);
+            $param = preg_replace('#[[:cntrl:]]|[<>"`\|\':]#', '', $param);
+            $param = preg_replace('#\.\.+#', '', $param);
+            $param = preg_replace('#//+#', '/', $param);
+            return preg_replace('#/(\./)+#', '/', $param);
 
         case PARAM_HOST:         // allow FQDN or IPv4 dotted quad
             $param = preg_replace('/[^\.\d\w-]/','', $param ); // only allowed chars
@@ -4310,7 +4310,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 
     if ($attachment && $attachname) {
-        if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
+        if (preg_match( "/\\.\\./" ,$attachment )) {    // Security check for ".." in dir path
             $mail->AddAddress($supportuser->email, fullname($supportuser, true) );
             $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
@@ -4734,7 +4734,7 @@ function make_mod_upload_directory($courseid) {
 function make_user_directory($userid, $test=false) {
     global $CFG;
 
-    if (is_bool($userid) || $userid < 0 || !ereg('^[0-9]{1,10}$', $userid) || $userid > 2147483647) {
+    if (is_bool($userid) || $userid < 0 || !preg_match('/^[0-9]{1,10}$/', $userid) || $userid > 2147483647) {
         if (!$test) {
             notify("Given userid was not a valid integer! (" . gettype($userid) . " $userid)");
         }
@@ -6823,7 +6823,7 @@ function count_letters($string) {
     $textlib = textlib_get_instance();
 
     $string = strip_tags($string); // Tags are out now
-    $string = ereg_replace('[[:space:]]*','',$string); //Whitespace are out now
+    $string = preg_replace('/[[:space:]]*/','',$string); //Whitespace are out now
 
     return $textlib->strlen($string);
 }
@@ -7736,11 +7736,11 @@ function unzip_cleanfilename ($p_event, &$p_header) {
 //This function is used as callback in unzip_file() function
 //to clean illegal characters for given platform and to prevent directory traversal.
 //Produces the same result as info-zip unzip.
-    $p_header['filename'] = ereg_replace('[[:cntrl:]]', '', $p_header['filename']); //strip control chars first!
-    $p_header['filename'] = ereg_replace('\.\.+', '', $p_header['filename']); //directory traversal protection
+    $p_header['filename'] = preg_replace('/[[:cntrl:]]/', '', $p_header['filename']); //strip control chars first!
+    $p_header['filename'] = preg_replace('#\.\.+#', '', $p_header['filename']); //directory traversal protection
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $p_header['filename'] = ereg_replace('[:*"?<>|]', '_', $p_header['filename']); //replace illegal chars
-        $p_header['filename'] = ereg_replace('^([a-zA-Z])_', '\1:', $p_header['filename']); //repair drive letter
+        $p_header['filename'] = preg_replace('/[:*"?<>|]/', '_', $p_header['filename']); //replace illegal chars
+        $p_header['filename'] = preg_replace('/^([a-zA-Z])_/', '\1:', $p_header['filename']); //repair drive letter
     } else {
         //Add filtering for other systems here
         // BSD: none (tested)

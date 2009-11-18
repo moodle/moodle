@@ -173,8 +173,8 @@ function blocks_name_allowed_in_format($name, $pageformat) {
     $depth   = -1;
     if ($formats = block_method_result($name, 'applicable_formats')) {
         foreach($formats as $format => $allowed) {
-            $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-            if(ereg($thisformat, $pageformat)) {
+            $thisformat = '/^'.str_replace('*', '[^-]*', $format).'.*$/';
+            if(preg_match($thisformat, $pageformat)) {
                 if(($scount = substr_count($format, '-')) > $depth) {
                     $depth  = $scount;
                     $accept = $allowed;

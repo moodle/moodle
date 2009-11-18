@@ -438,7 +438,7 @@ class qformat_default {
             $filearray = file($filename);
 
             /// Check for Macintosh OS line returns (ie file on one line), and fix
-            if (ereg("\r", $filearray[0]) AND !ereg("\n", $filearray[0])) {
+            if (preg_match("/\r/", $filearray[0]) AND !preg_match("/\n/", $filearray[0])) {
                 return explode("\r", $filearray[0]);
             } else {
                 return $filearray;
@@ -583,7 +583,7 @@ class qformat_default {
         fclose( $fh );
 
         // return the (possibly) new filename
-        $newfile = ereg_replace("{$CFG->dataroot}/{$this->course->id}/", '',$newfullpath);
+        $newfile = preg_replace("#{$CFG->dataroot}/{$this->course->id}/#", '',$newfullpath);
         return $newfile;
     }
 
