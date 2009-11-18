@@ -21,6 +21,11 @@ and documented for Moodle at:
 Such modifications should be carefuly each time the Excel PEAR package is updated
 to a new release within Moodle.
 
+XML/Parser
+=================
+1/ changed ereg_ to preg_
+* http://cvs.moodle.org/moodle/lib/pear/XML/Parser.php.diff?r1=1.1&r2=1.2
+
 
 PHP/CodeSniffer
 ===============
