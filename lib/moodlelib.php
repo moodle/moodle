@@ -2525,6 +2525,22 @@ function is_internal_auth($auth) {
 }
 
 /**
+ * Returns true if the user is a 'restored' one
+ *
+ * Used in the login process to inform the user
+ * and allow him/her to reset the password
+ *
+ * @uses $CFG
+ * @param string $username username to be checked
+ * @return bool
+ */
+function is_restored_user($username) {
+    global $CFG;
+
+    return record_exists('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id, 'password', 'restored');
+}
+
+/**
  * Returns an array of user fields
  *
  * @uses $CFG
@@ -5885,6 +5901,30 @@ function random_string ($length=15) {
     $string = '';
     for ($i = 0; $i < $length; $i++) {
         $string .= substr($pool, (mt_rand()%($poollen)), 1);
+    }
+    return $string;
+}
+
+/**
+ * Generate a complex random string (usefull for md5 salts)
+ *
+ * This function is based on the above {@link random_string()} however it uses a
+ * larger pool of characters and generates a string between 24 and 32 characters
+ *
+ * @param int $length Optional if set generates a string to exactly this length
+ * @return string
+ */
+function complex_random_string($length=null) {
+    $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    $pool .= '`~!@#%^&*()_+-=[];,./<>?:{} ';
+    $poollen = strlen($pool);
+    mt_srand ((double) microtime() * 1000000);
+    if ($length===null) {
+        $length = floor(rand(24,32));
+    }
+    $string = '';
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $pool[(mt_rand()%$poollen)];
     }
     return $string;
 }
