@@ -704,6 +704,7 @@ $string['smtphosts'] = 'SMTP hosts';
 $string['smtpmaxbulk'] = 'SMTP session limit';
 $string['smtppass'] = 'SMTP password';
 $string['smtpuser'] = 'SMTP username';
+$string['soaprecommended'] = 'Installing the optional soap extension is useful for web services and some contrib modules.';
 $string['spamcleaner'] = 'Spam cleaner';
 $string['stats'] = 'Statistics';
 $string['statscatdepth'] = 'Maximum parent categories';
