@@ -498,7 +498,7 @@ function report_security_check_passwordsaltmain($detailed=false) {
     }
 
     if ($detailed) {
-        $result->details = get_string('check_passwordsaltmain_details', 'report_security');
+        $result->details = get_string('check_passwordsaltmain_details', 'report_security', get_docs_url('report/security/report_security_check_passwordsaltmain'));
     }
 
     return $result;
