@@ -242,7 +242,9 @@ class portfolio_add_button {
             $linkoutput .= '&amp;instance=' . $instance->get('id');
         }
         else {
-            $selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->callbackclass, 'instance', true);
+            if (!$selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->callbackclass, 'instance', true)) {
+                return;
+            }
         }
 
         if (empty($addstr)) {
