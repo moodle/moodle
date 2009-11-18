@@ -4,6 +4,9 @@
     //Check login
     require_login();
 
+    // Init backupuserinfo
+    $backupuserinfo = false;
+
     if (!empty($course->id)) {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
             if (empty($to)) {
@@ -14,10 +17,12 @@
                 }
             }
         }
+        $backupuserinfo = has_capability('moodle/backup:userinfo', get_context_instance(CONTEXT_COURSE, $course->id));
     } else {
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
+        $backupuserinfo = has_capability('moodle/backup:userinfo', get_context_instance(CONTEXT_SYSTEM));
     }
 
 
@@ -63,6 +68,11 @@
         echo "<tr>";
         echo "<td colspan=\"2\" align=\"center\"><b>";
 
+    }
+
+    // Re-enforce moodle/backup:userinfo capability
+    if (!$backupuserinfo) {
+        $backupprefs->backup_users = 2; // users => none
     }
 
     //Here we check if backup_users = None. Then, we switch off every module
