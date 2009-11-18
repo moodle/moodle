@@ -145,7 +145,7 @@
     if (!empty($callback)) {
         // call opener window to refresh repository
         // the callback url should be something like this:
-        // http://xx.moodle.com/repository/ws.php?callback=yes&repo_id=1&sid=xxx
+        // http://xx.moodle.com/repository/repository_ajax.php?callback=yes&repo_id=1&sid=xxx
         // sid is the attached auth token from external source
         // If Moodle is working on HTTPS mode, then we are not allowed to access
         // parent window, in this case, we need to alert user to refresh the repository

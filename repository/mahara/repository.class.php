@@ -84,7 +84,7 @@ class repository_mahara extends repository {
 
         $mnetauth = get_auth_plugin('mnet');
         $host = $DB->get_record('mnet_host',array('id' => $this->options['peer'])); //need to retrieve the host url
-        $url = $mnetauth->start_jump_session($host->id, '/repository/ws.php?callback=yes&repo_id='.$this->id, true);
+        $url = $mnetauth->start_jump_session($host->id, '/repository/repository_ajax.php?callback=yes&repo_id='.$this->id, true);
 
         //set session
         $SESSION->loginmahara = true;
