@@ -193,6 +193,17 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/site:restore'
     ),
 
+    'moodle/backup:userinfo' => array(
+
+        'riskbitmask' => RISK_PERSONAL | RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:restore' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
