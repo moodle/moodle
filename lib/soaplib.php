@@ -18,104 +18,118 @@
 /**
  * Web services wrapper library script
  *
+ * Since Moodle 2.0 we rely only on native PHP Soap extension,
+ * the original name of this file was lib/soap/phpsoap.php
+ *
  * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @author    Alex Smith and others members of the Serving Mathematics project
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *            {@link http://maths.york.ac.uk/serving_maths}
+ *            and others
  */
 
-if (check_php_version('5') && class_exists('SoapClient')) {
-    /** Use the native PHP5 support */
-    require_once($CFG->libdir . '/soap/phpsoap.php');
+/**
+* Create a new SoapClient object
+*
+* @param string $wsdl   URI of the WSDL file
+* @param boolean $trace indicates if the soap messages should be saved (i.e. if
+*                       get_soap_messages is used) and should be used only for debugging
+* @return mixed         Returns either a SoapClient object or, if the connection failed,
+*                       a SoapFault object.
+*/
+function soap_connect($wsdl, $trace=false) {
+    try {
+        $connection = new SoapClient($wsdl, array('soap_version'=>SOAP_1_1, 'exceptions'=>true, 'trace'=>$trace));
+    }
+    catch (SoapFault $f) {
+        $connection = $f;
+    }
+    catch (Exception $e) {
+        $connection = new SoapFault('client', 'Could not connect to the service');
+    }
+    return $connection;
 }
-else{
-    /** Use nuSOAP instead */
-    require_once($CFG->libdir . '/soap/nusoap.php');
 
-    function make_soap_fault($faultcode, $faultstring, $faultactor='', $detail='', $faultname='', $headerfault='') {
-        return new soap_fault($faultcode, $faultactor, $faultstring, $detail);
+/**
+* Make a call to a SoapClient
+*
+* @param SoapClient $connection  The SoapClient to call
+* @param string $call            Operation to be performed by client
+* @param array $params           Parameters for the call
+* @return mixed                  The return parameters of the operation or a SoapFault
+*                                If the operation returned several parameters then these
+*                                are returned as an object rather than an array
+*/
+function soap_call($connection, $call, $params) {
+    try {
+        $return = $connection->__soapCall($call, $params);
     }
-
-    function is_soap_fault($obj) {
-        if (!is_object($obj))
-            return false;
-        return (strcasecmp(get_class($obj), 'soap_fault') === 0);
+    catch (SoapFault $f) {
+        $return = $f;
     }
-
-    if (class_exists('soap_client')) {
-        function soap_connect($wsdl, $trace=false) {
-            return new soap_client($wsdl, 'wsdl');
-        }
+    catch (Exception $e) {
+        $return = new SoapFault('client', 'Could call the method');
     }
-    else {
-        /** @ignore */
-        function soap_connect($wsdl, $trace=false) {
-            return new soapclient($wsdl, 'wsdl');
-        }
-    }
-
-    function soap_call($connection, $call, $params) {
-        $result = $connection->call($call, $params);
-        if ($connection->fault) {
-            return @make_soap_fault($result['faultcode'], $result['faultstring'], '', $result['detail']);
-        }
-        if ($connection->error_str) {
-            return @make_soap_fault('server', $connection->error_str, '', $connection->response);
-        }
-        /* Fix objects being returned as associative arrays (to fit with PHP5
-        SOAP support */
-        return fix_object($result);
-    }
-
-    function soap_serve($wsdl, $functions) {
-        global $HTTP_RAW_POST_DATA;
-
-        $s = new soap_server($wsdl);
-        $s->service(isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '');
-    }
-
-    function get_last_soap_messages($connection) {
-        return array('request'=>$connection->request, 'response'=>$connection->response);
-    }
-
-    /* Fix objects being returned as associative arrays (to fit with PHP5
-    SOAP support */
-    function fix_object($value) {
-        if (is_array($value)) {
-            $value = array_map('fix_object', $value);
-            $keys = array_keys($value);
-            /* check for arrays of length 1 (they get given the key "item"
-            rather than 0 by nusoap) */
-            if (1 === count($value) && 'item' === $keys[0]) {
-               $value = array_values($value);
-            }
-            else {
-                /* cast to object if it is an associative array with at least
-                one string key */
-                foreach ($keys as $key) {
-                    if (is_string($key)) {
-                        $value = (object) $value;
-                        break;
-                    }
-                }
+    // return multiple parameters using an object rather than an array
+    if (is_array($return)) {
+        $keys = array_keys($return);
+        $assoc = true;
+        foreach ($keys as $key) {
+            if (!is_string($key)) {
+                $assoc = false;
+                break;
             }
         }
-        return $value;
+        if ($assoc)
+            $return = (object) $return;
     }
+    return $return;
+}
 
-    // Fix simple type encoding - not needed for nuSOAP
-    function soap_encode($value, $name, $type, $namespace, $encode=0) {
-        return $value;
-    }
+function soap_serve($wsdl, $functions) {
+    // create server object
+    $s = new SoapServer($wsdl);
+    // export functions
+    foreach ($functions as $func)
+        $s->addFunction($func);
+    // handle the request
+    $s->handle();
+}
 
-    // Fix complex type encoding - not needed for nuSOAP
-    function soap_encode_object($value, $name, $type, $namespace) {
-        return $value;
-    }
+function make_soap_fault($faultcode, $faultstring, $faultactor='', $detail='', $faultname='', $headerfault='') {
+    return new SoapFault($faultcode, $faultstring, $faultactor, $detail, $faultname, $headerfault);
+}
 
-    // Fix array encoding - not needed for nuSOAP
-    function soap_encode_array($value, $name, $type, $namespace) {
+function get_last_soap_messages($connection) {
+    return array('request'=>$connection->__getLastRequest(), 'response'=>$connection->__getLastResponse());
+}
+
+// Fix simple type encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
+function soap_encode($value, $name, $type, $namespace, $encode=XSD_STRING) {
+    $value = new SoapVar($value, $encode, $type, $namespace);
+    if ('' === $name)
         return $value;
-    }
+    return new SoapParam($value, $name);
+}
+
+// Fix complex type encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
+function soap_encode_object($value, $name, $type, $namespace) {
+    if (!is_object($value))
+        return $value;
+    $value = new SoapVar($value, SOAP_ENC_OBJECT, $type, $namespace);
+    if ('' === $name)
+        return $value;
+    return new SoapParam($value, $name);
+}
+
+// Fix array encoding - work around a bug in early versions of PHP5 < 5.0.3, see http://bugs.php.net/bug.php?id=31832
+function soap_encode_array($value, $name, $type, $namespace) {
+    if (!is_array($value))
+        return $value;
+    $value = new SoapVar($value, SOAP_ENC_ARRAY, 'ArrayOf' . $type, $namespace);
+    if ('' === $name)
+        return $value;
+    return new SoapParam($value, $name);
 }
 
 // In both cases...
