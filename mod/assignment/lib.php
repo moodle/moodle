@@ -3379,8 +3379,8 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidid', 'assignment');
         }
 
-        $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
-        require_once($this->assignmentfile);
+        $this->assignmentfile = '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
+        require_once($CFG->dirroot . $this->assignmentfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
 
         $this->assignment = new $assignmentclass($this->cm->id, $assignment, $this->cm);
@@ -3428,7 +3428,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (empty($CFG)) {
             return true; // too early yet
         }
-        require_once($this->assignmentfile);
+        require_once($CFG->dirroot . $this->assignmentfile);
         $this->assignment = unserialize(serialize($this->assignment));
     }
 
