@@ -133,6 +133,21 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
             $user = authenticate_user_login($frm->username, $frm->password);
         }
     }
+
+    // Intercept 'restored' users to provide them with info & reset password
+    if (!$user and $frm and is_restored_user($frm->username)) {
+        $PAGE->set_title(get_string('restoredaccount'));
+        $PAGE->set_heading($site->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('restoredaccount'));
+        echo $OUTPUT->box(get_string('restoredaccountinfo'), 'generalbox boxaligncenter');
+        require_once('restored_password_form.php'); // Use our "supplanter" login_forgot_password_form. MDL-20846
+        $form = new login_forgot_password_form('forgot_password.php', array('username' => $frm->username));
+        $form->display();
+        echo $OUTPUT->footer();
+        die;
+    }
+
     update_login_count();
 
     if ($user) {
@@ -149,7 +164,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
 
         if (empty($user->confirmed)) {       // This account was never confirmed
             $PAGE->set_title(get_string("mustconfirm"));
-            $PAGE->set_heading(get_string("mustconfirm"));
+            $PAGE->set_heading($site->fullname);
             echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string("mustconfirm"));
             echo $OUTPUT->box(get_string("emailconfirmsent", "", $user->email), "generalbox boxaligncenter");
