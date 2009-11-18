@@ -819,7 +819,7 @@ function xmldb_main_upgrade($oldversion=0) {
                 $preference->value  = '1';
                 insert_record('user_preferences', $preference);
             }
-            
+            $adminuser->maildisplay = 0; // do not use return email to self, it might actually help emails to get through and prevents notices
             // Message them with the notice about upgrading
             email_to_user($adminuser, $adminuser, $messagesubject, $message);
         }
