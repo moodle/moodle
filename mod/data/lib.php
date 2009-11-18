@@ -1139,8 +1139,8 @@ function data_get_participants($dataid) {
                                       WHERE r.dataid = ? AND u.id = r.userid", array($dataid));
 
     $comments = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u, {data_records} r, {data_comments} c
-                                       WHERE r.dataid = ? AND u.id = r.userid AND r.id = c.recordid", array($dataid));
+                                        FROM {user} u, {data_records} r, {comments} c
+                                       WHERE r.dataid = ? AND u.id = r.userid AND r.id = c.itemid AND c.commentarea='database_entry'", array($dataid));
 
     $ratings = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                        FROM {user} u, {data_records} r, {data_ratings} a
@@ -1277,8 +1277,18 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##comments##';
         if (($template == 'listtemplate') && ($data->comments)) {
-            $comments = $DB->count_records('data_comments', array('recordid'=>$record->id));
-            $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('commentsn','data', $comments).'</a>';
+
+            if (!empty($CFG->usecomments)) {
+                require_once($CFG->libdir . '/commentlib.php');
+                $cmt = new stdclass;
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $cmt->area    = 'database_entry';
+                $cmt->context = $context;
+                $cmt->itemid  = $record->id;
+                $cmt->showcount = true;
+                $comment = new comment($cmt);
+                $replacement[] = $comment->init(true);
+            }
         } else {
             $replacement[] = '';
         }
@@ -1304,8 +1314,17 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
              *    Printing Ratings Form       *
              *********************************/
             if (($template == 'singletemplate') && ($data->comments)) {    //prints ratings options
-
-                data_print_comments($data, $record, $page);
+                if (!empty($CFG->usecomments)) {
+                    require_once($CFG->libdir . '/commentlib.php');
+                    $cmt = new stdclass;
+                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $cmt->area    = 'database_entry';
+                    $cmt->context = $context;
+                    $cmt->itemid  = $record->id;
+                    $cmt->showcount = true;
+                    $comment = new comment($cmt);
+                    $comment->init(false);
+                }
             }
         }
     }
@@ -1667,120 +1686,6 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
                                   WHERE r.recordid = ? AND r.userid = u.id
                                ORDER BY $sort", array($recordid));
 }
-
-/**
- * Prints all comments + a text box for adding additional comment
- *
- * @global object
- * @global object
- * @param object $data
- * @param object $record
- * @param int $page
- * @param bool $mform
- * @return void Output is echo'd
- */
-function data_print_comments($data, $record, $page=0, $mform=false) {
-    global $CFG, $DB;
-
-    $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $cancomment = has_capability('mod/data:comment', $context);
-    echo '<a name="comments"></a>';
-
-    if ($comments = $DB->get_records('data_comments', array('recordid'=>$record->id))) {
-        foreach ($comments as $comment) {
-            data_print_comment($data, $comment, $page);
-        }
-        echo '<br />';
-    }
-
-    if (!isloggedin() or has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), 0, false) or !$cancomment) {
-        return;
-    }
-
-    $editor = optional_param('addcomment', 0, PARAM_BOOL);
-
-    if (!$mform and !$editor) {
-        echo '<div class="newcomment" style="text-align:center">';
-        echo '<a href="view.php?d='.$data->id.'&amp;rid='.$record->id.'&amp;mode=single&amp;addcomment=1">'.get_string('addcomment', 'data').'</a>';
-        echo '</div>';
-    } else {
-        if (!$mform) {
-            require_once('comment_form.php');
-            $mform = new mod_data_comment_form('comment.php');
-            $mform->set_data(array('mode'=>'add', 'page'=>$page, 'rid'=>$record->id));
-        }
-        echo '<div class="newcomment" style="text-align:center">';
-        $mform->display();
-        echo '</div>';
-    }
-}
-
-/**
- * prints a single comment entry
- *
- * @global object
- * @global object
- * @global object
- * @uses CONTEXT_MODULE
- * @param object $data
- * @param string $comment
- * @param int $page
- * @return void Output is echo'd
- */
-function data_print_comment($data, $comment, $page=0) {
-    global $USER, $CFG, $DB, $OUTPUT;
-
-    $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    $stredit = get_string('edit');
-    $strdelete = get_string('delete');
-
-    $user = $DB->get_record('user', array('id'=>$comment->userid));
-
-    echo '<table cellspacing="0" align="center" width="50%" class="datacomment forumpost">';
-
-    echo '<tr class="header"><td class="picture left">';
-    echo $OUTPUT->user_picture(moodle_user_picture::make($user, $data->course));
-    echo '</td>';
-
-    echo '<td class="topic starter" align="left"><div class="author">';
-    $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
-    $by = new object();
-    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                $user->id.'&amp;course='.$data->course.'">'.$fullname.'</a>';
-    $by->date = userdate($comment->modified);
-    print_string('bynameondate', 'data', $by);
-    echo '</div></td></tr>';
-
-    echo '<tr><td class="left side">';
-    if ($groups = groups_get_all_groups($data->course, $comment->userid, $cm->groupingid)) {
-        print_group_picture($groups, $data->course, false, false, true);
-    } else {
-        echo '&nbsp;';
-    }
-
-// Actual content
-
-    echo '</td><td class="content" align="left">'."\n";
-
-    // Print whole message
-    echo format_text($comment->content, $comment->format);
-
-// Commands
-
-    echo '<div class="commands">';
-    if (data_isowner($comment->recordid) or has_capability('mod/data:managecomments', $context)) {
-            echo '<a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=edit&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$stredit.'</a>';
-            echo '| <a href="'.$CFG->wwwroot.'/mod/data/comment.php?rid='.$comment->recordid.'&amp;mode=delete&amp;commentid='.$comment->id.'&amp;page='.$page.'">'.$strdelete.'</a>';
-    }
-
-    echo '</div>';
-
-    echo '</td></tr></table>'."\n\n";
-}
-
 
 /**
  * For Participantion Reports
@@ -2576,7 +2481,7 @@ function data_reset_userdata($data) {
     // delete entries if requested
     if (!empty($data->reset_data)) {
         $DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
-        $DB->delete_records_select('data_comments', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
         $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
 
@@ -2609,7 +2514,7 @@ function data_reset_userdata($data) {
                 if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
                   or !has_capability('moodle/course:view', $course_context , $record->userid)) {
                     $DB->delete_records('data_ratings', array('recordid'=>$record->id));
-                    $DB->delete_records('data_comments', array('recordid'=>$record->id));
+                    $DB->delete_records('comments', array('itemid'=>$record->id, 'commentarea'=>'database_entry'));
                     $DB->delete_records('data_content', array('recordid'=>$record->id));
                     $DB->delete_records('data_records', array('id'=>$record->id));
                     // HACK: this is ugly - the recordid should be before the fieldid!
@@ -2645,7 +2550,7 @@ function data_reset_userdata($data) {
 
     // remove all comments
     if (!empty($data->reset_data_comments)) {
-        $DB->delete_records_select('data_comments', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
     }
 

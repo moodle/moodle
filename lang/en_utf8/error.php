@@ -85,6 +85,7 @@ $string['cannotmanualctrack'] = 'Activity does not provide manual completion tra
 $string['cannotmapfield'] = 'Mapping collision detected - two fields maps to the same grade item $a';
 $string['cannotmarktopic'] = 'Could not mark that topic for this course';
 $string['cannotmetacourse'] = 'Cannot not add the selected course to this meta course!';
+$string['cannotmigratedatacomments'] = 'Cannot migrate data module comments';
 $string['cannotmoverolewithid'] = 'Cannot move role with ID $a';
 $string['cannotmodulename'] = 'Cannot get the module name in build navigation';
 $string['cannotmoduletype'] = 'Cannot get the module type in build navigation';

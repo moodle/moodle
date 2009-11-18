@@ -229,7 +229,22 @@ function backup_data_comments($bf,$preferences,$recordid){
     global $CFG, $DB;
 
     $status = true;
-    $data_comments = $DB->get_records("data_comments", array("recordid"=>$recordid));
+
+    $lastrecord   = $DB->get_record_sql('SELECT d.id AS dataid, d.course AS course FROM {data} d, {data_records} r
+                                          WHERE r.dataid = d.id AND r.id = ?', array($recordid));
+
+    $params = array();
+    $params[] = $recordid;
+    $sql = 'SELECT d.id, d.course FROM {data_records} r, {data} d WHERE r.dataid = d.id AND r.id=?';
+    $result = $DB->get_record_sql($sql, $params);
+    if ($cm = get_coursemodule_from_instance('data', $result->id, $result->course)) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+    $data_comments = $DB->get_records('comments', array(
+                        'itemid'=>$recordid,
+                        'commentarea'=>'database_entry',
+                        'contextid'=>$context->id)
+                    );
 
     //If there is submissions
     if ($data_comments) {
@@ -239,14 +254,16 @@ function backup_data_comments($bf,$preferences,$recordid){
         foreach ($data_comments as $com_sub) {
             //Start submission
             $status =fwrite ($bf,start_tag("COMMENT",7,true));
+
             //Print submission contents
             fwrite ($bf,full_tag("ID",8,false,$com_sub->id));
-            fwrite ($bf,full_tag("RECORDID",8,false,$com_sub->recordid));
             fwrite ($bf,full_tag("USERID",8,false,$com_sub->userid));
             fwrite ($bf,full_tag("CONTENT",8,false,$com_sub->content));
-            fwrite ($bf,full_tag("CREATED",8,false,$com_sub->created));
-            fwrite ($bf,full_tag("MODIFIED",8,false,$com_sub->modified));
+            fwrite ($bf,full_tag("COMMENTAREA",8,false,'database_entry'));
+            fwrite ($bf,full_tag("FORMAT",8,false,$com_sub->format));
+            fwrite ($bf,full_tag("TIMECREATED",8,false,$com_sub->timecreated));
             //End submission
+
             $status =fwrite ($bf,end_tag("COMMENT",7,true));
         }
         //Write end tag

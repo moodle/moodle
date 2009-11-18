@@ -180,6 +180,53 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2009042000, 'data');
     }
 
+    if ($result && $oldversion < 2009111700) {
+        require_once($CFG->libdir . '/commentlib.php');
+ 
+    /// Define table data_comments to be dropped
+        $table = new xmldb_table('data_comments');
+
+    /// Conditionally launch drop table for data_comments
+        if ($dbman->table_exists($table)) {
+            $sql = 'SELECT d.id AS dataid,
+                d.course AS courseid,
+                r.id AS itemid,
+                c.content AS comment,
+                c.format AS format,
+                c.created AS timemodified
+                FROM {data_comments} c, {data_records} r, {data} d
+                WHERE c.recordid=r.id AND r.dataid=d.id';
+        /// move data comments to new comments table
+            if ($rs = $DB->get_recordset_sql($sql)) {
+                $error = false;
+                foreach($rs as $res) {
+                    if ($cm = get_coursemodule_from_instance('data', $res->dataid, $res->courseid)) {
+                        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        $cmt = new stdclass;
+                        $cmt->contextid = $context->id;
+                        $cmt->courseid  = $res->courseid;
+                        $cmt->area      = 'database_entry';
+                        $cmt->itemid    = $res->itemid;
+                        $comment = new comment($cmt);
+                        try {
+                            $cmt = $comment->add($res->comment, $res->format);
+                        } catch (comment_exception $e) {
+                            add_to_log($res->courseid, 'comments', 'add', '', 'Cannot migrate data module comment with ID# '.$res->old_id);
+                            $error = true;
+                        }
+                    }
+                }
+            }
+            if (empty($error)) {
+                $dbman->drop_table($table);
+            } else {
+                print_error('cannotmigratedatacomments');
+            }
+        }
+
+    /// data savepoint reached
+        upgrade_mod_savepoint($result, 2009111700, 'data');
+    }
     return $result;
 }
 

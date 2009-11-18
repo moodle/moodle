@@ -265,7 +265,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 
             $status = $status and data_content_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $rec_info, $restore);
             $status = $status and data_ratings_restore_mods ($oldid, $newid, $info, $rec_info);
-            $status = $status and data_comments_restore_mods ($oldid, $newid, $info, $rec_info);
+            $status = $status and data_comments_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $info, $rec_info);
 
         } else {
             $status = false;
@@ -397,10 +397,12 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
     return $status;
 }
 
-function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
+function data_comments_restore_mods ($oldid, $newid, $old_data_id, $new_data_id, $info, $rec_info) {
     global $CFG, $DB;
 
     $status = true;
+
+    $newmodcontext = restore_get_new_context($restore, 'course_modules', CONTEXT_MODULE, $old_gid);
 
     $comments= $rec_info['#']['COMMENTS']['0']['#']['COMMENT'];
 
@@ -412,12 +414,17 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
 
         $com_info = $comments[$i];
 
-        $comment -> recordid = $newid;
-        $comment -> userid = backup_todb($com_info['#']['USERID']['0']['#']);
-        $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
-        $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
-        $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
-        $DB->insert_record("data_comments", $comment);
+        $comment->itemid = $newid;
+        $comment->contextid = $newmodcontext->id;
+        $comment->userid = backup_todb($com_info['#']['USERID']['0']['#']);
+        $comment->content = backup_todb($com_info['#']['CONTENT']['0']['#']);
+        $comment->commentarea = backup_todb($com_info['#']['COMMENTAREA']['0']['#']);
+        $comment->timecreated = backup_todb($com_info['#']['TIMECREATED']['0']['#']);
+        $user = backup_getid($restore->backup_unique_code,"user",$comment->userid);
+        if ($user) {
+            $comment->userid = $user->new_id;
+        }
+        $DB->insert_record("comments", $comment);
     }
     return $status;
 

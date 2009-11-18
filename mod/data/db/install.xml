@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/data/db" VERSION="20090420" COMMENT="XMLDB file for Moodle mod/data"
+<XMLDB PATH="mod/data/db" VERSION="20091006" COMMENT="XMLDB file for Moodle mod/data"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -86,7 +86,7 @@
         <KEY NAME="dataid" TYPE="foreign" FIELDS="dataid" REFTABLE="data" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields" PREVIOUS="data_records" NEXT="data_comments">
+    <TABLE NAME="data_content" COMMENT="the content introduced in each record/fields" PREVIOUS="data_records" NEXT="data_ratings">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="fieldid"/>
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
@@ -103,22 +103,7 @@
         <KEY NAME="fieldid" TYPE="foreign" FIELDS="fieldid" REFTABLE="data_fields" REFFIELDS="id" PREVIOUS="recordid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="data_comments" COMMENT="to comment data records" PREVIOUS="data_content" NEXT="data_ratings">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
-        <FIELD NAME="recordid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="recordid" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="content" NEXT="created"/>
-        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format" NEXT="modified"/>
-        <FIELD NAME="modified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="created"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="recordid"/>
-        <KEY NAME="recordid" TYPE="foreign" FIELDS="recordid" REFTABLE="data_records" REFFIELDS="id" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="data_ratings" COMMENT="to rate data records" PREVIOUS="data_comments">
+    <TABLE NAME="data_ratings" COMMENT="to rate data records" PREVIOUS="data_content">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="recordid"/>
