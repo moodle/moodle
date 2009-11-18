@@ -1,13 +1,13 @@
 <?php
 require_once("$CFG->libdir/simpletest/testportfoliolib.php");
-require_once("$CFG->dirroot/portfolio/type/boxnet/lib.php");
+require_once("$CFG->dirroot/portfolio/boxnet/lib.php");
 require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 Mock::generate('boxclient', 'mock_boxclient');
 Mock::generatePartial('portfolio_plugin_boxnet', 'mock_boxnetplugin', array('ensure_ticket', 'ensure_account_tree'));
 
 class testPortfolioPluginBoxnet extends portfoliolib_test {
-    public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/type/boxnet/lib.php');
+    public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/boxnet/lib.php');
     public function setUp() {
         global $DB;
 

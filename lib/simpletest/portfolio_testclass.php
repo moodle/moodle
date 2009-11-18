@@ -178,9 +178,9 @@ Mock::generatePartial('portfolio_exporter_test', 'partialmock_exporter', array('
 
 
 // Generate a mock class for each plugin subclass present
-$portfolio_plugins = get_list_of_plugins('portfolio/type');
+$portfolio_plugins = get_list_of_plugins('portfolio');
 foreach ($portfolio_plugins as $plugin) {
-    require_once($CFG->dirroot . "/portfolio/type/$plugin/lib.php");
+    require_once($CFG->dirroot . "/portfolio/$plugin/lib.php");
     Mock::generatePartial("portfolio_plugin_$plugin", "partialmock_plugin_$plugin", array('send_package'));
 }
 
@@ -231,7 +231,7 @@ class portfoliolib_test extends FakeDBUnitTestCase {
 
     public function test_caller_with_plugins() {
         if (!empty($this->caller)) {
-            $plugins = get_list_of_plugins('portfolio/type');
+            $plugins = get_list_of_plugins('portfolio');
 
             foreach ($plugins as $plugin) {
                 // Instantiate a fake plugin instance

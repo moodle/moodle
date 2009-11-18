@@ -2,7 +2,7 @@
 
 $handlers = array (
     'user_deleted' => array (
-         'handlerfile'      => '/portfolio/type/googledocs/lib.php',
+         'handlerfile'      => '/portfolio/googledocs/lib.php',
          'handlerfunction'  => 'portfolio_googledocs_user_deleted',
          'schedule'         => 'cron'
      ),

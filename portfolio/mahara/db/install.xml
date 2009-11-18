@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="portfolio/type/mahara/db" VERSION="20080827" COMMENT="XMLDB file for Moodle portfolio/type/mahara"
+<XMLDB PATH="portfolio/mahara/db" VERSION="20080827" COMMENT="XMLDB file for Moodle portfolio/mahara"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >

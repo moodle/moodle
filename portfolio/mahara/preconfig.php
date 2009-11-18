@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(dirname(dirname(__FILE__)))). '/config.php');
+require_once(dirname(dirname(dirname(__FILE__))). '/config.php');
 
 if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
@@ -18,7 +18,7 @@ if (!$landed) {
     $exporter->verify_rewaken();
 
     $mnetauth = get_auth_plugin('mnet');
-    if (!$url = $mnetauth->start_jump_session($exporter->get('instance')->get_config('mnethostid'), '/portfolio/type/mahara/preconfig.php?landed=1&id=' . $id, true)) {
+    if (!$url = $mnetauth->start_jump_session($exporter->get('instance')->get_config('mnethostid'), '/portfolio/mahara/preconfig.php?landed=1&id=' . $id, true)) {
         throw new porfolio_exception('failedtojump', 'portfolio_mahara');
     }
     redirect($url);

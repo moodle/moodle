@@ -462,7 +462,7 @@ abstract class portfolio_plugin_base {
             }
         }
         $newid = $DB->insert_record('portfolio_instance', $new);
-        require_once($CFG->dirroot . '/portfolio/type/' . $plugin . '/lib.php');
+        require_once($CFG->dirroot . '/portfolio/' . $plugin . '/lib.php');
         $classname = 'portfolio_plugin_'  . $plugin;
         $obj = new $classname($newid);
         $obj->set_config($config);

@@ -37,7 +37,7 @@ function mnet_get_functions($type, $parentname) {
         }
     } else if ('portfolio' == $type) {
         $docname = 'lib.php';
-        $relname = '/portfolio/type/' . $parentname . '/'. $docname;
+        $relname = '/portfolio/' . $parentname . '/'. $docname;
         $filename = $CFG->dirroot . $relname;
         require_once($CFG->libdir . '/portfoliolib.php');
         $publishes = (array)portfolio_static_function($parentname, 'mnet_publishes');
@@ -197,7 +197,7 @@ function upgrade_RPC_functions() {
         }
     }
 
-    if ($plugins = get_list_of_plugins('portfolio/type')) {
+    if ($plugins = get_list_of_plugins('portfolio')) {
         foreach ($plugins as $p) {
             mnet_get_functions('portfolio', $p);
         }

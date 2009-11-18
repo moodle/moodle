@@ -178,7 +178,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliocontroller', get_string('manageportfolios', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
 
     foreach (portfolio_instances(false, false) as $portfolio) {
-        require_once($CFG->dirroot . '/portfolio/type/' . $portfolio->get('plugin') . '/lib.php');
+        require_once($CFG->dirroot . '/portfolio/' . $portfolio->get('plugin') . '/lib.php');
         $classname = 'portfolio_plugin_' . $portfolio->get('plugin');
         $ADMIN->add(
             'portfoliosettings',

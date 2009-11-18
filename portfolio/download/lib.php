@@ -32,7 +32,7 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
     public function steal_control($stage) {
         if ($stage == PORTFOLIO_STAGE_FINISHED) {
             global $CFG;
-            return $CFG->wwwroot . '/portfolio/type/download/file.php?id=' . $this->get('exporter')->get('id');
+            return $CFG->wwwroot . '/portfolio/download/file.php?id=' . $this->get('exporter')->get('id');
         }
     }
 

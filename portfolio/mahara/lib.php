@@ -234,7 +234,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             return false;
         }
         global $CFG;
-        return $CFG->wwwroot . '/portfolio/type/mahara/preconfig.php?id=' . $this->exporter->get('id');
+        return $CFG->wwwroot . '/portfolio/mahara/preconfig.php?id=' . $this->exporter->get('id');
     }
 
     public function verify_file_request_params($params) {

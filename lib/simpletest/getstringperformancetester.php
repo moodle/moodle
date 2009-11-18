@@ -302,7 +302,7 @@ function places_to_search_for_lang_strings() {
         'gradeimport_' => array('grade/import'),
         'gradeexport_' => array('grade/export'),
         'profilefield_' => array('user/profile/field'),
-        'portfolio_' => array('portfolio/type'),
+        'portfolio_' => array('portfolio'),
         '' => array('mod')
     );
 }

@@ -587,7 +587,7 @@ function portfolio_instance($instanceid, $record=null) {
             throw new portfolio_exception('invalidinstance', 'portfolio');
         }
     }
-    require_once($CFG->dirroot . '/portfolio/type/'. $instance->plugin . '/lib.php');
+    require_once($CFG->dirroot . '/portfolio/'. $instance->plugin . '/lib.php');
     $classname = 'portfolio_plugin_' . $instance->plugin;
     return new $classname($instanceid, $instance);
 }
@@ -622,7 +622,7 @@ function portfolio_static_function($plugin, $function) {
         array_shift($args);
     }
 
-    require_once($CFG->dirroot . '/portfolio/type/' . $plugin .  '/lib.php');
+    require_once($CFG->dirroot . '/portfolio/' . $plugin .  '/lib.php');
     return call_user_func_array(array('portfolio_plugin_' . $plugin, $function), $args);
 }
 

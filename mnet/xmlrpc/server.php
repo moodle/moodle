@@ -488,7 +488,7 @@ function mnet_server_dispatch($payload) {
 
         if ($filename == 'lib.php') {
             $pluginclass = 'portfolio_plugin_' . $plugin;
-            $includefile = '/portfolio/type/'.$plugin.'/lib.php';
+            $includefile = '/portfolio/'.$plugin.'/lib.php';
             $response    = mnet_server_invoke_method($includefile, $methodname, $method, $payload, $pluginclass);
             $response = mnet_server_prepare_response($response);
             echo $response;

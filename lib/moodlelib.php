@@ -6727,7 +6727,7 @@ function get_plugin_types($fullpaths=true) {
                       'gradereport'   => 'grade/report',
                       'webservice'    => 'webservice',
                       'repository'    => 'repository',
-                      'portfolio'     => 'portfolio/type',
+                      'portfolio'     => 'portfolio',
                       'qtype'         => 'question/type',
                       'qformat'       => 'question/format');
 

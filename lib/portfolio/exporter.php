@@ -134,7 +134,7 @@ class portfolio_exporter {
         $this->instance =& $instance;
         $this->caller =& $caller;
         if ($instance) {
-            $this->instancefile = 'portfolio/type/' . $instance->get('plugin') . '/lib.php';
+            $this->instancefile = 'portfolio/' . $instance->get('plugin') . '/lib.php';
             $this->instance->set('exporter', $this);
         }
         $this->callerfile = $callerfile;
@@ -169,7 +169,7 @@ class portfolio_exporter {
         if (property_exists($this, $field)) {
             $this->{$field} =& $value;
             if ($field == 'instance') {
-                $this->instancefile = 'portfolio/type/' . $this->instance->get('plugin') . '/lib.php';
+                $this->instancefile = 'portfolio/' . $this->instance->get('plugin') . '/lib.php';
                 $this->instance->set('exporter', $this);
             }
             $this->dirty = true;
